@@ -5,6 +5,7 @@ Our product makes it quick and easy for SaaS teams to ship customer-facing integ
 
 We do so by providing a single API that abstracts similar tools your customer may use along your product behind a common data model.
 
+
 This way, you can write one code to push data anywhere!
 
 
@@ -23,5 +24,5 @@ This guide is intended for people willing to contribute to Panora.
 
 You can follow this guide to set up a Panora development environment on your machine.
 
-You can contribute by following our guidelines.
+You can contribute by following our [guidelines.](https://github.com/panoratech/Panora/blob/main/CONTRIBUTING.md)
 
