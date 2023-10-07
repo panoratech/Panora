@@ -23,7 +23,7 @@ We're currently in a private pre-alpha. Click [here](https://form.typeform.com/t
  ```
   # Get the code
  
-  git clone https://github.com/panoratech/panora.git
+  git clone https://github.com/panoratech/Panora.git
 
   # Go to Panora folder
 
