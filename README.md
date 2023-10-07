@@ -3,7 +3,9 @@
 
 Our product makes it quick and easy for SaaS teams to ship customer-facing integrations between their product and others. 
 
-We do so by providing a single API that abstracts similar tools your customer may use along your product behind a common data model. This way, you can write one code to push data anywhere!
+We do so by providing a single API that abstracts similar tools your customer may use along your product behind a common data model.
+
+This way, you can write one code to push data anywhere!
 
 
 # ✨ Join The Pre-Alpha 
