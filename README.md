@@ -10,13 +10,29 @@ This way, you can write one code to push data anywhere!
 
 
 # ✨ Join The Pre-Alpha 
-
-Fill the form : https://form.typeform.com/to/KtthfECD
+We're currently in a private pre-alpha. Click [here](https://form.typeform.com/to/KtthfECD) to get notified when we go public !
 
 # 💻  Deploy Locally
  ## Requirements
+ 
+ 1. Install Docker on your machine.
+ 2. Make sure Docker Compose is installed and available (it should be the case if you have chosen to install Docker via Docker Desktop).
+ 3. Make sure Git is installed on your machine.
 
  ## Run the app
+ ```
+  # Get the code
+ 
+  git clone https://github.com/panoratech/panora.git
+
+  # Go to Panora folder
+  cd panora
+  
+  # Start
+  docker-compose up
+ ```
+
+You can now open your browser and go to http://localhost to connect to the application. Panora's API is exposed at http://localhost:3000.
 
 # 🚀 Contributions
 
