@@ -26,9 +26,11 @@ We're currently in a private pre-alpha. Click [here](https://form.typeform.com/t
   git clone https://github.com/panoratech/panora.git
 
   # Go to Panora folder
+
   cd panora
   
   # Start
+
   docker-compose up
  ```
 
