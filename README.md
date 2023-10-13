@@ -20,17 +20,18 @@ We're currently in a private pre-alpha. Click [here](https://form.typeform.com/t
  3. Make sure Git is installed on your machine.
 
  ## Run the app
- ```
-  # Get the code
- 
+ 1. Get the code
+
+```
   git clone https://github.com/panoratech/Panora.git
+ ```
+ 2. Go to Panora folder
 
-  # Go to Panora folder
-
+```
   cd panora
-  
-  # Start
-
+  ```
+ 3. Start
+```
   docker-compose up
  ```
 
