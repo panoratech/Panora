@@ -24,6 +24,7 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/swagger": "^7.1.14",
     "@prisma/client": "^5.4.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
