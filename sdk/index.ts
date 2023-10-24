@@ -1,13 +1,38 @@
-export interface Lib {
-    "/crm": {},
-    "/crm/{crmId}": {}
+import axios from 'axios';
+
+/*export interface Lib {
+    "/crm/contact": {},
 }
 
-export type Path = (path: keyof Lib) => void;
+export type Path = (path: keyof Lib) => void;*/
 
-export declare function PanoraApiClient(): {
-    path: Path;
-};
+type Method = "GET" | "POST" | "PATCH" | "DELETE"
 
+type ContactBody = {
+    first_name: string;
+    last_name: string;
+    email_addresses: string[];
+    phone_numbers: string[];
+}
 
-const client = PanoraApiClient().path("/crm/{crmId}")
+export default class PanoraApiClient {
+
+    static readonly API_URL = "";
+
+    constructor(){}
+
+    public async getContacts(): Promise<string[]> {
+        return [];
+    }
+
+    public async createContact({
+        first_name, 
+        last_name, 
+        email_addresses, 
+        phone_numbers
+    } : ContactBody): Promise<string[]> {
+        const res = await axios.post("", {});
+        return [];
+    }
+
+}
