@@ -22,7 +22,7 @@ export class CrmController {
 
   @Get()
   findAll() {
-    return this.crmService.findAll();
+    return this.crmService.findAllContacts();
   }
 
   @Get(':id')
