@@ -29,10 +29,13 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install dependencies
-        run: cd api && pnpm install
+        run: pnpm install
+        working-directory: api
 
       - name: Build
         run: pnpm run build
+        working-directory: api
 
       - name: Test
         run: pnpm run test
+        working-directory: api
