@@ -19,5 +19,8 @@
     "**/*.{ts,tsx,js}": [
       "eslint"
     ]
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.26.2"
   }
 }
