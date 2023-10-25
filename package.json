@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "release": "pnpm --recursive run lint && pnpm --recursive run build && pnpm --recursive run test"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +20,8 @@
     "**/*.{ts,tsx,js}": [
       "eslint"
     ]
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.26.2"
   }
 }
