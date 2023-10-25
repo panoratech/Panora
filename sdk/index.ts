@@ -1,4 +1,4 @@
-import axios from 'axios';
+//import axios from 'axios';
 
 /*export interface Lib {
     "/crm/contact": {},
@@ -6,7 +6,7 @@ import axios from 'axios';
 
 export type Path = (path: keyof Lib) => void;*/
 
-type Method = "GET" | "POST" | "PATCH" | "DELETE"
+//type Method = "GET" | "POST" | "PATCH" | "DELETE"
 
 type ContactBody = {
     first_name: string;
@@ -25,14 +25,21 @@ export default class PanoraApiClient {
         return [];
     }
 
-    public async createContact({
+    public createContact({
         first_name, 
         last_name, 
         email_addresses, 
         phone_numbers
-    } : ContactBody): Promise<string[]> {
-        const res = await axios.post("", {});
-        return [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } : ContactBody): any {
+        const app = {
+            first_name, 
+            last_name, 
+            email_addresses, 
+            phone_numbers
+        }
+        //const res = await axios.post("", {});
+        return app;
     }
 
 }
