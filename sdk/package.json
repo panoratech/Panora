@@ -2,10 +2,12 @@
   "name": "panora-sdk",
   "version": "1.0.2",
   "description": "Panora SDK",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsup index.ts --format cjs,esm --dts"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,7 @@
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
     "eslint": "^8.52.0",
-    "eslint-plugin-react": "^7.33.2"
+    "eslint-plugin-react": "^7.33.2",
+    "tsup": "^7.2.0"
   }
 }
