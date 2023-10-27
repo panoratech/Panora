@@ -1,5 +1,6 @@
 # **Panora**
 ![Group 1_updated](https://github.com/panoratech/Panora/assets/39710677/c9a35848-7b48-43af-bd6c-6a5257e19bea)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpanoratech%2FPanora.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpanoratech%2FPanora?ref=badge_shield)
 
 Our product makes it quick and easy for SaaS teams to ship customer-facing integrations between their product and others. 
 
@@ -45,3 +46,7 @@ You can follow this guide to set up a Panora development environment on your mac
 
 You can contribute by following our [guidelines.](https://github.com/panoratech/Panora/blob/main/CONTRIBUTING.md)
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpanoratech%2FPanora.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpanoratech%2FPanora?ref=badge_large)
