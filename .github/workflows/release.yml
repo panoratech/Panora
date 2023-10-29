@@ -28,7 +28,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install dependencies
-        run: pnpm --recursive install
+        run: pnpm --recursive install --no-frozen-lockfile
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
