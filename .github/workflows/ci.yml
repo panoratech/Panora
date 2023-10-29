@@ -30,8 +30,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: api
+        working-directory: packages/api
 
       - name: Lint, Build & Test
         run: pnpm run ci
-        working-directory: api
+        working-directory: packages/api
