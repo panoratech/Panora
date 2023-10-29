@@ -23,7 +23,7 @@ export default class PanoraApiClient {
 
     constructor(){}
 
-    public async getContacts(): Promise<string[]> {
+    public async getContact(): Promise<string[]> {
         return [];
     }
 
