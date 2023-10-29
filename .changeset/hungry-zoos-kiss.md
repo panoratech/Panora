@@ -1,5 +1,0 @@
----
-"panora-sdk": patch
----
-
-dddd
