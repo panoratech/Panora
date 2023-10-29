@@ -1,3 +1,0 @@
-# Panora
-
-![](assets/architecture.png)
