@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 //import axios from 'axios';
 
 /*export interface Lib {
@@ -13,6 +14,7 @@ type ContactBody = {
     last_name: string;
     email_addresses: string[];
     phone_numbers: string[];
+    other?: any[];
 }
 
 export default class PanoraApiClient {
