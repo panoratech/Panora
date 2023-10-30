@@ -19,7 +19,7 @@ type ContactBody = {
 
 export default class PanoraApiClient {
 
-    static readonly API_URL = "test-api";
+    static readonly API_URL = "test-app";
 
     constructor(){}
 

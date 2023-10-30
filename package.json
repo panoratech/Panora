@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\"",
     "prepare": "husky install",
-    "release": "pnpm --recursive run lint && pnpm --recursive run build && pnpm --recursive run test"
+    "version": "changeset version",
+    "release": "pnpm --recursive run lint && pnpm --recursive run build && pnpm --recursive run test && changeset publish"
   },
   "keywords": [],
   "author": "",
