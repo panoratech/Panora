@@ -1,5 +1,11 @@
 # panora-sdk
 
+## 4.1.1
+
+### Patch Changes
+
+- 30d3fc5: small fix 2
+
 ## 4.1.0
 
 ### Minor Changes
