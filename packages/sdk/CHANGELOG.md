@@ -1,5 +1,11 @@
 # panora-sdk
 
+## 4.1.0
+
+### Minor Changes
+
+- b7ee928: change api text
+
 ## 4.0.0
 
 ### Major Changes
