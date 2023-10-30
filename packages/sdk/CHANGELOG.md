@@ -1,5 +1,11 @@
 # panora-sdk
 
+## 4.0.0
+
+### Major Changes
+
+- 1b4ecae: test api
+
 ## 3.0.0
 
 ### Major Changes
