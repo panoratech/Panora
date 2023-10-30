@@ -1,7 +1,6 @@
 
 ## API
 
-
 ## Installation
 
 ```bash
@@ -11,6 +10,9 @@ pnpm install
 ## Running the app
 
 ```bash
+# build
+pnpm run build
+
 # development
 pnpm run start
 
