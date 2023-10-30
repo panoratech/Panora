@@ -10,6 +10,9 @@ pnpm install
 ## Running the app
 
 ```bash
+# Copy the example env file
+cp .env.example .env 
+
 # build
 pnpm run build
 
