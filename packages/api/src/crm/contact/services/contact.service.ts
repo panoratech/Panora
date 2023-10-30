@@ -20,9 +20,15 @@ export class ContactService {
 
   async addContact(createContactDto: CreateContactDto, integrationId: string) {
     //TODO: add createContact info body to DB => addToDbBackup()
+    // 1. insert job_db => status: INITIALIZED uuid_job
+    //    uuid_job
+    // 2. insert inside crm_contact DB uuid_job
+    //    uuid_contact
+    //    update job_db => status: WRITTEN
+
     //TODO: get the destination provider => call destinationCRMInDb()
     const dest = {};
-    let resp;
+    let resp; //{data: {freshsales rep}, code: };
     switch (dest) {
       case 'freshsales':
         resp = await this.freshsales.addContact();
@@ -48,6 +54,8 @@ export class ContactService {
         break;
     }
     //TODO: sanitize the resp to normalize it
+
+    //3. update job_db => status: SUCCESS/FAIL
     return resp;
   }
 }
