@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateContactDto } from '../dto/create-contact.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
@@ -6,6 +6,22 @@ import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  ApiResponse,
+  FreshSales_ContactCreated,
+  Hubspot_ContactCreated,
+  Pipedrive_ContactCreated,
+  Zendesk_ContactCreated,
+  Zoho_ContactCreated,
+} from '../types';
+
+type AddContactResponse =
+  | FreshSales_ContactCreated
+  | Hubspot_ContactCreated
+  | Zendesk_ContactCreated
+  | Pipedrive_ContactCreated
+  | Zoho_ContactCreated;
 
 @Injectable()
 export class ContactService {
@@ -18,20 +34,65 @@ export class ContactService {
     public pipedrive: PipedriveService,
   ) {}
 
+  //utils functions
+  async addContactToDb(data: CreateContactDto, job_uuid: string) {
+    const { first_name, last_name, email_addresses, phone_numbers } = data;
+    const uuid_crm_contact = uuidv4();
+    const resp = await this.prisma.crm_contacts.create({
+      data: {
+        id_crm_contact: 10,
+        uuid_crm_contact: uuid_crm_contact,
+        first_name: first_name,
+        last_name: last_name,
+        // TODO: job_uuid: job_uuid,
+      },
+    });
+    for (const mail of email_addresses) {
+      const resp_mail = await this.prisma.crm_contact_email_addresses.create({
+        data: {
+          id_crm_contact_email: 1,
+          uuid_crm_contact_email: uuidv4(),
+          uuid_crm_contact: uuid_crm_contact,
+          email_address: mail,
+          email_address_type: '',
+        },
+      });
+    }
+    for (const mobile of phone_numbers) {
+      const resp_mobile = await this.prisma.crm_contacts_phone_numbers.create({
+        data: {
+          id_crm_contacts_phone_number: 1,
+          uuid_crm_contacts_phone_number: uuidv4(),
+          uuid_crm_contact: uuid_crm_contact,
+          phone: mobile,
+          phone_type: '',
+        },
+      });
+    }
+  }
+
   async addContact(createContactDto: CreateContactDto, integrationId: string) {
-    //TODO: add createContact info body to DB => addToDbBackup()
-    // 1. insert job_db => status: INITIALIZED uuid_job
-    //    uuid_job
-    // 2. insert inside crm_contact DB uuid_job
-    //    uuid_contact
-    //    update job_db => status: WRITTEN
+    const job_uuid = uuidv4();
+    /* TODO: const job_resp_create = await this.prisma.jobs.create({
+      data: {
+        status: 'initialized'
+      }
+    })*/
+    await this.addContactToDb(createContactDto, job_uuid);
+    /* TODO: const job_resp_update = await this.prisma.jobs.update({
+      data: {
+        status: 'written'
+      }, where: {
+        job_uuid: job_uuid
+      }
+    })*/
 
     //TODO: get the destination provider => call destinationCRMInDb()
-    const dest = {};
-    let resp; //{data: {freshsales rep}, code: };
+    const dest: any = 'freshsales';
+    let resp: ApiResponse<AddContactResponse>;
     switch (dest) {
       case 'freshsales':
-        resp = await this.freshsales.addContact();
+        resp = await this.freshsales.addContact(createContactDto);
         break;
 
       case 'zoho':
@@ -55,7 +116,15 @@ export class ContactService {
     }
     //TODO: sanitize the resp to normalize it
 
+    const status_resp = resp.statusCode === HttpStatus.OK ? 'success' : 'fail';
     //3. update job_db => status: SUCCESS/FAIL
+    /* TODO: const job_resp = await this.prisma.jobs.update({
+      data: {
+        status: status_resp
+      }, where: {
+        job_uuid: job_uuid
+      }
+    })*/
     return resp;
   }
 }
