@@ -10,6 +10,8 @@ on:
 
 jobs:
   build-api:
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     runs-on: ubuntu-latest
 
     strategy:

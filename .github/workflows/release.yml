@@ -7,10 +7,10 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-permissions: {}
-
 jobs:
   release:
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     permissions:
       contents: write # to create release (changesets/action)
       issues: write # to post issue comments (changesets/action)
