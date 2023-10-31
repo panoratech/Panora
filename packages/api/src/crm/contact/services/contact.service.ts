@@ -96,19 +96,19 @@ export class ContactService {
         break;
 
       case 'zoho':
-        resp = await this.zoho.addContact();
+        resp = await this.zoho.addContact(createContactDto);
         break;
 
       case 'zendesk':
-        resp = await this.zendesk.addContact();
+        resp = await this.zendesk.addContact(createContactDto);
         break;
 
       case 'hubspot':
-        resp = await this.hubspot.addContact();
+        resp = await this.hubspot.addContact(createContactDto);
         break;
 
       case 'pipedrive':
-        resp = await this.pipedrive.addContact();
+        resp = await this.pipedrive.addContact(createContactDto);
         break;
 
       default:
