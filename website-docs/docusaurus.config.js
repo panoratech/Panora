@@ -1,6 +1,6 @@
-// @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+/* eslint-disable */
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
@@ -11,15 +11,16 @@ const config = {
   favicon: 'img/logo.png',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-test-site.com',
+  url: 'https://panoratech.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/Panora/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'panoratech', // Usually your GitHub org/user name.
+  projectName: 'Panora', // Usually your repo name.
+  deploymentBranch: 'gh-pages', // default branch for GitHub Pages
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -44,6 +45,7 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
+          editUrl: 'https://github.com/panoratech/Panora/edit/main/docs/',
           
         },
         blog: false,
@@ -52,6 +54,7 @@ const config = {
         },
       }),
     ],
+
   ],
 
   themeConfig:

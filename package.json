@@ -18,7 +18,8 @@
     "lint-staged": "^15.0.2"
   },
   "lint-staged": {
-    "**/*.{ts,tsx,js}": [
+    "!website-docs/**/*.{ts,tsx,js}": [],
+    "packages/*.{ts,tsx,js}": [
       "eslint"
     ]
   },
