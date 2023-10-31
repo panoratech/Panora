@@ -20,7 +20,8 @@
   "lint-staged": {
     "**/*.{ts,tsx,js}": [
       "eslint"
-    ]
+    ],
+    "!docs/**/*": "eslint --fix"
   },
   "dependencies": {
     "@changesets/cli": "^2.26.2"
