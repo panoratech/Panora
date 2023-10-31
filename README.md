@@ -32,7 +32,7 @@ We're currently in a private pre-alpha. Click [here](https://form.typeform.com/t
   ```
  3. Start
 ```
-  docker-compose up
+  docker compose --env-file ./.env.example up
  ```
 
 You can now open your browser and go to http://localhost to connect to the application. Panora's API is exposed at http://localhost:3000.
