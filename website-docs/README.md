@@ -1,5 +1,7 @@
 # Panora Documentation
 
+<https://panoratech.github.io/Panora/>
+
 ### Installation
 
 ```
