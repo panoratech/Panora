@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateContactDto } from '../dto/create-contact.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/_core/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
 import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';

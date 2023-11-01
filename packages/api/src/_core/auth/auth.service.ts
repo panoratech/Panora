@@ -17,6 +17,11 @@ export class AuthService {
     }
     return null;
   }
+
+  //TODO
+  async register() {
+    return;
+  }
   async login(user: any) {
     const payload = { username: user.username, sub: user.userId };
     return {
