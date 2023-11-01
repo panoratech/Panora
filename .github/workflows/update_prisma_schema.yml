@@ -74,5 +74,3 @@ jobs:
           commitMessage: "chore: Update Prisma schema"
           pullRequestFilterLabels: "auto-merge"
           requiredLabels: "auto-merge"
-          blockingLabels: "do not merge"
-          requiredChecks: "release,build-api (16.x)"
