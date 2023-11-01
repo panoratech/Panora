@@ -7,6 +7,8 @@ on:
 
 jobs:
   update-schema:
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository

@@ -82,7 +82,6 @@ export class ContactService {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
         status: 'initialized',
-        timestamp: new Date(),
       },
     });
     const job_id = job_resp_create.id_job;
@@ -93,7 +92,6 @@ export class ContactService {
       },
       data: {
         status: 'written',
-        timestamp: new Date(),
       },
     });
 
