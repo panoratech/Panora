@@ -7,56 +7,87 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model applications {
-  id           BigInt @id
-  uuid_project String
-}
-
-model connections {
-  id BigInt @id
-}
-
 model crm_contact_email_addresses {
-  id_crm_contact_email   BigInt @id
-  uuid_crm_contact_email String @unique(map: "crm_contact_email_addresses_uuid_crm_contact_email_unique")
-  uuid_crm_contact       String
-  email_address          String
-  email_address_type     String
+  id_crm_contact_email BigInt       @id(map: "pk_crm_contact_email_addresses")
+  email_address        String
+  email_address_type   String
+  id_crm_contact       BigInt
+  crm_contacts         crm_contacts @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_3")
+
+  @@index([id_crm_contact], map: "crm_contactid_crm_contact_email_address")
 }
 
 model crm_contacts {
-  id_crm_contact   BigInt @id
-  uuid_crm_contact String @unique(map: "crm_contacts_uuid_crm_contact_unique")
-  first_name       String
-  last_name        String
+  id_crm_contact              BigInt                        @id(map: "pk_crm_contacts")
+  first_name                  String
+  last_name                   String
+  id_job                      BigInt
+  crm_contact_email_addresses crm_contact_email_addresses[]
+  jobs                        jobs                          @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "job_id_crm_contact")
+  crm_contacts_phone_numbers  crm_contacts_phone_numbers[]
+
+  @@index([id_job], map: "crm_contact_id_job")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model crm_contacts_phone_numbers {
-  id_crm_contacts_phone_number   BigInt @id
-  uuid_crm_contacts_phone_number String @unique(map: "crm_contacts_phone_numbers_uuid_crm_contacts_phone_number_uniqu")
-  uuid_crm_contact               String
-  phone                          String
-  phone_type                     String
+  id_crm_contacts_phone_number BigInt       @id(map: "pk_crm_contacts_phone_numbers")
+  phone_number                 String
+  phone_type                   String
+  id_crm_contact               BigInt
+  crm_contacts                 crm_contacts @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_2")
+
+  @@index([id_crm_contact], map: "crm_contactid_crm_contact_phone_number")
 }
 
 model organizations {
-  id_organization    BigInt @id
+  id_organization    BigInt     @id(map: "pk_organizations")
   name               String
   stripe_customer_id String
+  timezone           String
+  logo_url           String
+  projects           projects[]
+  users              users[]
 }
 
 model projects {
-  id_project BigInt @id
-  name       String
+  id_project      BigInt        @id(map: "pk_projects")
+  name            String
+  id_organization BigInt
+  organizations   organizations @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_6")
+
+  @@index([id_organization], map: "fk_1_projects")
 }
 
 model users {
-  id_user           BigInt @id
-  uuid_user         String @unique(map: "users_uuid_user_unique")
-  email             String
-  password          String
-  first_name        String
-  last_name         String
-  uuid_organization String
+  id_user         BigInt        @id(map: "pk_users")
+  email           String
+  password        String
+  first_name      String
+  last_name       String
+  id_organization BigInt
+  organizations   organizations @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
+
+  @@index([id_organization], map: "fk_1_users")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model jobs {
+  id_job              BigInt                @id(map: "pk_jobs")
+  status              String
+  timestamp           DateTime              @db.Timestamp(6)
+  crm_contacts        crm_contacts[]
+  jobs_status_history jobs_status_history[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model jobs_status_history {
+  id              BigInt   @id(map: "pk_1")
+  timestamp       DateTime @db.Timestamp(6)
+  previous_status String
+  new_status      String
+  id_job          BigInt
+  jobs            jobs     @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "fk_4")
+
+  @@index([id_job], map: "id_job_jobs_status_history")
 }

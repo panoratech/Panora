@@ -1,6 +1,6 @@
-#!/bin/bash
-
-# Script to update Prisma schema based on DB changes and generate the Prisma Client.
+# SCRIPT TO USE IF YOU WANT TO UPDATE YOUR DB BASED ON YOUR PRISMA UPDATES
+# it pushes changes from your Prisma schema to the database 
+# PRISMA MODEL => DB 
 
 # Check if there are any new migrations and run them.
 npx prisma migrate dev --name init
