@@ -73,7 +73,7 @@ export class ContactService {
         crm_contacts_phone_numbers: {
           create: normalizedPhones,
         },
-        id_job: job_id,
+        id_job: job_id as number,
       },
     });
   }

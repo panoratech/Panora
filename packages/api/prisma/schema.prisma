@@ -8,20 +8,20 @@ datasource db {
 }
 
 model crm_contact_email_addresses {
-  id_crm_contact_email BigInt       @id(map: "pk_crm_contact_email_addresses") @default(autoincrement())
+  id_crm_contact_email Int          @id(map: "pk_crm_contact_email_addresses") @default(autoincrement())
   email_address        String
   email_address_type   String
-  id_crm_contact       BigInt
+  id_crm_contact       Int          @default(autoincrement())
   crm_contacts         crm_contacts @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_3")
 
   @@index([id_crm_contact], map: "crm_contactid_crm_contact_email_address")
 }
 
 model crm_contacts {
-  id_crm_contact              BigInt                        @id(map: "pk_crm_contacts") @default(autoincrement())
+  id_crm_contact              Int                           @id(map: "pk_crm_contacts") @default(autoincrement())
   first_name                  String
   last_name                   String
-  id_job                      BigInt
+  id_job                      Int                           @default(autoincrement())
   crm_contact_email_addresses crm_contact_email_addresses[]
   jobs                        jobs                          @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "job_id_crm_contact")
   crm_contacts_phone_numbers  crm_contacts_phone_numbers[]
@@ -30,29 +30,29 @@ model crm_contacts {
 }
 
 model crm_contacts_phone_numbers {
-  id_crm_contacts_phone_number BigInt       @id(map: "pk_crm_contacts_phone_numbers") @default(autoincrement())
+  id_crm_contacts_phone_number Int          @id(map: "pk_crm_contacts_phone_numbers") @default(autoincrement())
   phone_number                 String
   phone_type                   String
-  id_crm_contact               BigInt
+  id_crm_contact               Int          @default(autoincrement())
   crm_contacts                 crm_contacts @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_2")
 
   @@index([id_crm_contact], map: "crm_contactid_crm_contact_phone_number")
 }
 
 model jobs {
-  id_job              BigInt                @id(map: "pk_jobs") @default(autoincrement())
+  id_job              Int                   @id(map: "pk_jobs") @default(autoincrement())
   status              String
-  timestamp           DateTime              @db.Timestamp(6)
+  timestamp           DateTime              @default(now()) @db.Timestamp(6)
   crm_contacts        crm_contacts[]
   jobs_status_history jobs_status_history[]
 }
 
 model jobs_status_history {
-  id              BigInt   @id(map: "pk_1") @default(autoincrement())
-  timestamp       DateTime @db.Timestamp(6)
+  id              Int      @id(map: "pk_1") @default(autoincrement())
+  timestamp       DateTime @default(now()) @db.Timestamp(6)
   previous_status String
   new_status      String
-  id_job          BigInt
+  id_job          Int      @default(autoincrement())
   jobs            jobs     @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "fk_4")
 
   @@index([id_job], map: "id_job_jobs_status_history")
@@ -63,12 +63,13 @@ model organizations {
   name               String
   stripe_customer_id String
   timezone           String
+  logo_url           String
   projects           projects[]
   users              users[]
 }
 
 model projects {
-  id_project      BigInt        @id(map: "pk_projects") @default(autoincrement())
+  id_project      Int           @id(map: "pk_projects") @default(autoincrement())
   name            String
   id_organization BigInt
   organizations   organizations @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_6")
@@ -77,11 +78,13 @@ model projects {
 }
 
 model users {
-  id_user         BigInt        @id(map: "pk_users") @default(autoincrement())
+  id_user         Int           @id(map: "pk_users") @default(autoincrement())
   email           String
-  password        String
+  password_hash   String
   first_name      String
   last_name       String
+  created_at      DateTime      @default(now()) @db.Timestamp(6)
+  modified_at     DateTime      @default(now()) @db.Timestamp(6)
   id_organization BigInt
   organizations   organizations @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
 
