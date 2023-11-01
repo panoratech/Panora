@@ -1,10 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import {
-  CreateContactDto,
-  Email,
-  NormalizedContactInfo,
-  Phone,
-} from '../dto/create-contact.dto';
+import { CreateContactDto } from '../dto/create-contact.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
 import { HubspotService } from './hubspot';
@@ -13,8 +8,11 @@ import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
 import {
   ApiResponse,
+  Email,
   FreshSales_ContactCreated,
   Hubspot_ContactCreated,
+  NormalizedContactInfo,
+  Phone,
   Pipedrive_ContactCreated,
   Zendesk_ContactCreated,
   Zoho_ContactCreated,

@@ -63,7 +63,6 @@ model organizations {
   name               String
   stripe_customer_id String
   timezone           String
-  logo_url           String
   projects           projects[]
   users              users[]
 }
