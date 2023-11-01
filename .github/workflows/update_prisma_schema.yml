@@ -1,9 +1,12 @@
 name: Update Prisma Schema
 
 on:
-  schedule:
-    # Runs every 30 minutes
-    - cron: "*/2 * * * *"
+  push:
+    branches:
+      - main
+  #schedule:
+  # Runs every 30 minutes
+  #- cron: "*/2 * * * *"
 
 jobs:
   update-schema:
