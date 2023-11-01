@@ -1,12 +1,16 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { CreateContactDto } from '../dto/create-contact.dto';
+import {
+  CreateContactDto,
+  Email,
+  NormalizedContactInfo,
+  Phone,
+} from '../dto/create-contact.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
 import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
-import { v4 as uuidv4 } from 'uuid';
 import {
   ApiResponse,
   FreshSales_ContactCreated,
@@ -35,57 +39,65 @@ export class ContactService {
   ) {}
 
   //utils functions
-  async addContactToDb(data: CreateContactDto, job_uuid: string) {
+  normalizeEmailsAndNumbers(
+    email_addresses: Email[],
+    phone_numbers: Phone[],
+  ): NormalizedContactInfo {
+    const normalizedEmails = email_addresses.map((email) => ({
+      ...email,
+      email_address_type:
+        email.email_address_type === '' ? 'work' : email.email_address_type,
+    }));
+
+    const normalizedPhones = phone_numbers.map((phone) => ({
+      ...phone,
+      phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
+    }));
+
+    return {
+      normalizedEmails,
+      normalizedPhones,
+    };
+  }
+
+  async addContactToDb(data: CreateContactDto, job_id: number | bigint) {
     const { first_name, last_name, email_addresses, phone_numbers } = data;
-    const uuid_crm_contact = uuidv4();
+    const { normalizedEmails, normalizedPhones } =
+      this.normalizeEmailsAndNumbers(email_addresses, phone_numbers);
+
     const resp = await this.prisma.crm_contacts.create({
       data: {
-        id_crm_contact: 10,
-        uuid_crm_contact: uuid_crm_contact,
         first_name: first_name,
         last_name: last_name,
-        // TODO: job_uuid: job_uuid,
+        crm_contact_email_addresses: {
+          create: normalizedEmails,
+        },
+        crm_contacts_phone_numbers: {
+          create: normalizedPhones,
+        },
+        id_job: job_id,
       },
     });
-    for (const mail of email_addresses) {
-      const resp_mail = await this.prisma.crm_contact_email_addresses.create({
-        data: {
-          id_crm_contact_email: 1,
-          uuid_crm_contact_email: uuidv4(),
-          uuid_crm_contact: uuid_crm_contact,
-          email_address: mail,
-          email_address_type: '',
-        },
-      });
-    }
-    for (const mobile of phone_numbers) {
-      const resp_mobile = await this.prisma.crm_contacts_phone_numbers.create({
-        data: {
-          id_crm_contacts_phone_number: 1,
-          uuid_crm_contacts_phone_number: uuidv4(),
-          uuid_crm_contact: uuid_crm_contact,
-          phone: mobile,
-          phone_type: '',
-        },
-      });
-    }
   }
 
   async addContact(createContactDto: CreateContactDto, integrationId: string) {
-    const job_uuid = uuidv4();
-    /* TODO: const job_resp_create = await this.prisma.jobs.create({
+    const job_resp_create = await this.prisma.jobs.create({
       data: {
-        status: 'initialized'
-      }
-    })*/
-    await this.addContactToDb(createContactDto, job_uuid);
-    /* TODO: const job_resp_update = await this.prisma.jobs.update({
+        status: 'initialized',
+        timestamp: new Date(),
+      },
+    });
+    const job_id = job_resp_create.id_job;
+    await this.addContactToDb(createContactDto, job_id);
+    const job_resp_update = await this.prisma.jobs.update({
+      where: {
+        id_job: job_id,
+      },
       data: {
-        status: 'written'
-      }, where: {
-        job_uuid: job_uuid
-      }
-    })*/
+        status: 'written',
+        timestamp: new Date(),
+      },
+    });
 
     //TODO: get the destination provider => call destinationCRMInDb()
     const dest: any = 'freshsales';
@@ -117,14 +129,14 @@ export class ContactService {
     //TODO: sanitize the resp to normalize it
 
     const status_resp = resp.statusCode === HttpStatus.OK ? 'success' : 'fail';
-    //3. update job_db => status: SUCCESS/FAIL
-    /* TODO: const job_resp = await this.prisma.jobs.update({
+    const job_resp = await this.prisma.jobs.update({
+      where: {
+        id_job: job_id,
+      },
       data: {
-        status: status_resp
-      }, where: {
-        job_uuid: job_uuid
-      }
-    })*/
+        status: status_resp,
+      },
+    });
     return resp;
   }
 }
