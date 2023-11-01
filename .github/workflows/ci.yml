@@ -34,6 +34,10 @@ jobs:
         run: pnpm install --no-frozen-lockfile
         working-directory: packages/api
 
+      - name: Set script permissions
+        run: chmod +x ./scripts/pull-database.sh
+        working-directory: packages/api
+
       - name: Lint, Build & Test
         run: pnpm run ci
         working-directory: packages/api
