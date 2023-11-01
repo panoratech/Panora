@@ -3,10 +3,15 @@ name: Update Prisma Schema
 on:
   schedule:
     # Runs every 30 minutes
-    - cron: "*/5 * * * *"
+    - cron: "*/2 * * * *"
 
 jobs:
   update-schema:
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
     runs-on: ubuntu-latest
@@ -59,7 +64,7 @@ jobs:
         if: steps.git-check.outputs.changes_detected == 'true'
         uses: pascalgn/automerge-action@v0.14.3
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           mergeMethod: squash
           commitMessage: "chore: Update Prisma schema"
           pullRequestFilterLabels: "auto-merge"
