@@ -6,7 +6,7 @@ import { CreateContactDto } from './dto/create-contact.dto';
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
-  @Post('add-contact')
+  @Post()
   addContact(
     @Body() createContactDto: CreateContactDto,
     @Query() integrationId: string,
