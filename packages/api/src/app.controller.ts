@@ -7,8 +7,6 @@ import {
   Body,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { AuthGuard } from '@nestjs/passport';
-import { LocalAuthGuard } from './@core/auth/guards/local-auth.guard';
 import { AuthService } from './@core/auth/auth.service';
 import { JwtAuthGuard } from './@core/auth/guards/jwt-auth.guard';
 import { ApiKeyAuthGuard } from './@core/auth/guards/api-key.guard';
@@ -16,7 +14,6 @@ import {
   CreateUserDto,
   LoginCredentials,
 } from './@core/auth/dto/create-user.dto';
-import { ApiKey } from './@core/auth/types';
 
 @Controller()
 export class AppController {
@@ -25,7 +22,6 @@ export class AppController {
     private authService: AuthService,
   ) {}
 
-  @UseGuards(ApiKeyAuthGuard)
   @Get()
   getHello(): string {
     return this.appService.getHello();
