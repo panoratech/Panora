@@ -11,8 +11,6 @@ services:
     volumes:
       - ./pg_data:/var/lib/postgresql/data
       - ./packages/api/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - my_network
   api:
     build: ./packages/api
     environment: 
@@ -23,7 +21,3 @@ services:
       - 3000:3000
     depends_on:
       - postgres
-
-networks:
-  my_network:
-    driver: bridge
