@@ -16,7 +16,7 @@ services:
   api:
     build: ./packages/api
     environment: 
-        DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@host.docker.internal:5432/${POSTGRES_DB}?ssl=false
+        DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?ssl=false
     restart:
       unless-stopped
     ports:
