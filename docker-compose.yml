@@ -1,6 +1,8 @@
+name: panora
 version: '3.8'
 
 services:
+
   postgres:
     image: postgres:14.6
     environment:
@@ -11,19 +13,16 @@ services:
       - "5432:5432"
     volumes:
       - ./pg_data:/var/lib/postgresql/data
-    networks:
-      - my_network
+      - ./packages/api/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+
   api:
     build: ./packages/api
     environment: 
-        DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@host.docker.internal:5432/${POSTGRES_DB}?ssl=false
+        DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?ssl=false
+        DISTRIBUTION: ${DISTRIBUTION}
     restart:
       unless-stopped
     ports:
       - 3000:3000
     depends_on:
       - postgres
-
-networks:
-  my_network:
-    driver: bridge

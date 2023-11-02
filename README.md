@@ -1,6 +1,12 @@
 # **Panora**
 ![Group 1_updated](https://github.com/panoratech/Panora/assets/39710677/c9a35848-7b48-43af-bd6c-6a5257e19bea)
 
+
+<div style="text-align:center">
+  <img src="https://snyk.io/test/github/panoratech/Panora/badge.svg" alt="Known Vulnerabilities">
+</div>
+
+
 Our product makes it quick and easy for SaaS teams to ship customer-facing integrations between their product and others. 
 
 We do so by providing a single API that abstracts similar tools your customer may use along your product behind a common data model.
