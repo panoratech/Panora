@@ -10,6 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - ./pg_data:/var/lib/postgresql/data
+      - ./packages/api/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - my_network
   api:
