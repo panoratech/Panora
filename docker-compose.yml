@@ -1,5 +1,8 @@
+name: supabase
 version: '3.8'
+
 services:
+
   postgres:
     image: postgres:14.6
     environment:
@@ -11,6 +14,7 @@ services:
     volumes:
       - ./pg_data:/var/lib/postgresql/data
       - ./packages/api/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+
   api:
     build: ./packages/api
     environment: 
