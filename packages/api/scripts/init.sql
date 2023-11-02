@@ -1,5 +1,4 @@
 
-
 -- ************************************** organizations
 
 CREATE TABLE organizations
@@ -193,21 +192,14 @@ CREATE TABLE api_keys
  id_api_key bigint NOT NULL GENERATED ALWAYS AS IDENTITY,
  api_key    text NOT NULL,
  id_project int NULL,
- id_user    int NULL,
  CONSTRAINT id_ PRIMARY KEY ( id_api_key ),
  CONSTRAINT unique_api_keys UNIQUE ( api_key ),
- CONSTRAINT FK_7 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
- CONSTRAINT FK_8 FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
+ CONSTRAINT FK_7 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
 );
 
 CREATE INDEX FK_1 ON api_keys
 (
  id_project
-);
-
-CREATE INDEX FK_2 ON api_keys
-(
- id_user
 );
 
 
