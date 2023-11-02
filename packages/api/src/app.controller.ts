@@ -37,7 +37,6 @@ export class AppController {
     return req.user;
   }
 
-  // TODO: client must pay to call the register route
   @Post('auth/register')
   async registerUser(@Body() user: CreateUserDto) {
     return this.authService.register(user);
@@ -55,13 +54,12 @@ export class AppController {
     @Request() req,
     @Body() data: { projectId: number },
   ): Promise<string> {
-    /*const userId = req.user.userId;
+    const userId = req.user.userId;
     const apiKey = await this.authService.generateApiKeyForUser(
       userId,
       data.projectId,
-      data.apiName,
-    );*/
-    const apiKey = await this.authService.generateApiKey1(data.projectId);
+    );
+    //const apiKey = await this.authService.generateApiKey1(data.projectId);
 
     return apiKey;
   }
