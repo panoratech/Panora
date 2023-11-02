@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { ContactController } from './contact.controller';
-import { PrismaService } from 'src/_core/prisma/prisma.service';
+import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { FreshSalesService } from './services/freshsales';
 import { ZendeskService } from './services/zendesk';
 import { ZohoService } from './services/zoho';

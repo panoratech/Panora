@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model api_keys {
+  id_api_key   BigInt   @id(map: "id_") @default(autoincrement())
+  api_key_hash String   @unique(map: "unique_api_keys")
+  id_project   Int
+  id_user      Int
+  projects     projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_7")
+  users        users    @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_8")
+
+  @@index([id_project], map: "fk_1")
+  @@index([id_user], map: "fk_2")
+}
+
 model crm_contact_email_addresses {
   id_crm_contact_email Int          @id(map: "pk_crm_contact_email_addresses") @default(autoincrement())
   email_address        String
@@ -39,6 +51,7 @@ model crm_contacts_phone_numbers {
   @@index([id_crm_contact], map: "crm_contactid_crm_contact_phone_number")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model jobs {
   id_job              Int                   @id(map: "pk_jobs") @default(autoincrement())
   status              String
@@ -47,6 +60,7 @@ model jobs {
   jobs_status_history jobs_status_history[]
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model jobs_status_history {
   id_jobs_status_history Int      @id(map: "pk_1") @default(autoincrement())
   timestamp              DateTime @default(now()) @db.Timestamp(6)
@@ -62,7 +76,6 @@ model organizations {
   id_organization    BigInt     @id(map: "pk_organizations") @default(autoincrement())
   name               String
   stripe_customer_id String
-  timezone           String
   projects           projects[]
   users              users[]
 }
@@ -71,31 +84,24 @@ model projects {
   id_project      Int           @id(map: "pk_projects") @default(autoincrement())
   name            String
   id_organization BigInt
+  api_keys        api_keys[]
   organizations   organizations @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_6")
 
   @@index([id_organization], map: "fk_1_projects")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model users {
-  id_user         Int           @id(map: "pk_users") @default(autoincrement())
+  id_user         Int            @id(map: "pk_users") @default(autoincrement())
   email           String
   password_hash   String
   first_name      String
   last_name       String
-  created_at      DateTime      @default(now()) @db.Timestamp(6)
-  modified_at     DateTime      @default(now()) @db.Timestamp(6)
-  id_organization BigInt
+  created_at      DateTime       @default(now()) @db.Timestamp(6)
+  modified_at     DateTime       @default(now()) @db.Timestamp(6)
+  id_organization BigInt?
   api_keys        api_keys[]
-  organizations   organizations @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
+  organizations   organizations? @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
 
   @@index([id_organization], map: "fk_1_users")
-}
-
-model api_keys {
-  id_api_key BigInt @id(map: "id_") @default(autoincrement())
-  api_key    String @unique(map: "unique_api_keys")
-  id_user    Int
-  users      users  @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_7")
-
-  @@index([id_user], map: "fk_1")
 }

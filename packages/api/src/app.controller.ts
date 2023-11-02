@@ -1,9 +1,22 @@
-import { Controller, Get, Request, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Request,
+  Post,
+  UseGuards,
+  Body,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from '@nestjs/passport';
-import { LocalAuthGuard } from './_core/auth/guards/local-auth.guard';
-import { AuthService } from './_core/auth/auth.service';
-import { JwtAuthGuard } from './_core/auth/guards/jwt-auth.guard';
+import { LocalAuthGuard } from './@core/auth/guards/local-auth.guard';
+import { AuthService } from './@core/auth/auth.service';
+import { JwtAuthGuard } from './@core/auth/guards/jwt-auth.guard';
+import { ApiKeyAuthGuard } from './@core/auth/guards/api-key.guard';
+import {
+  CreateUserDto,
+  LoginCredentials,
+} from './@core/auth/dto/create-user.dto';
+import { ApiKey } from './@core/auth/types';
 
 @Controller()
 export class AppController {
@@ -12,20 +25,44 @@ export class AppController {
     private authService: AuthService,
   ) {}
 
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   getHello(): string {
     return this.appService.getHello();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
   }
 
-  @UseGuards(LocalAuthGuard)
+  // TODO: client must pay to call the register route
+  @Post('auth/register')
+  async registerUser(@Body() user: CreateUserDto) {
+    return this.authService.register(user);
+  }
+
+  //@UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  async login(@Body() user: LoginCredentials) {
+    return this.authService.login(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('generate-apikey')
+  async generateApiKey(
+    @Request() req,
+    @Body() data: { projectId: number },
+  ): Promise<string> {
+    /*const userId = req.user.userId;
+    const apiKey = await this.authService.generateApiKeyForUser(
+      userId,
+      data.projectId,
+      data.apiName,
+    );*/
+    const apiKey = await this.authService.generateApiKey1(data.projectId);
+
+    return apiKey;
   }
 }
