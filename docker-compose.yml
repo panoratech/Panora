@@ -19,6 +19,7 @@ services:
     build: ./packages/api
     environment: 
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?ssl=false
+        DISTRIBUTION: ${DISTRIBUTION}
     restart:
       unless-stopped
     ports:
