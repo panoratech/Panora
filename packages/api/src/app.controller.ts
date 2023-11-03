@@ -28,7 +28,6 @@ export class AppController {
   }
 
   @UseGuards(ApiKeyAuthGuard)
-  @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;

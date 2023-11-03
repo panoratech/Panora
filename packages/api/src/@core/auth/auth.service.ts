@@ -170,11 +170,11 @@ export class AuthService {
     }
   }
 
-  async validateApiKey(apiKey: string, userId: number): Promise<boolean> {
+  async validateApiKey(apiKey: string): Promise<boolean> {
     try {
       // Decode the JWT to verify if it's valid and get the payload
       const decoded = this.jwtService.verify(apiKey, {
-        secret: process.env.API_KEY_SECRET,
+        secret: process.env.JWT_SECRET,
       });
 
       const hashed_api_key = this.hashApiKey(apiKey);
@@ -194,7 +194,7 @@ export class AuthService {
       }
 
       // Validate that the JWT payload matches the provided userId and projectId
-      if (decoded.sub !== userId) {
+      if (decoded.sub !== saved_api_key.id_user) {
         throw new UnauthorizedException(
           'Failed to validate API key: userId invalid.',
         );
