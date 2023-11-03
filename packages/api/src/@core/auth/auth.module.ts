@@ -6,6 +6,7 @@ import { jwtConstants } from './utils/constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ApiKeyStrategy } from './strategies/auth-header-api-key.strategy';
 import { PrismaService } from '../prisma/prisma.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   providers: [
@@ -14,12 +15,12 @@ import { PrismaService } from '../prisma/prisma.service';
     JwtService,
     ApiKeyStrategy,
     PrismaService,
+    ConfigService,
   ],
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      secret: process.env.JWT_SECRET,
     }),
   ],
   exports: [PrismaService, JwtService],

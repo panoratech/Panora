@@ -6,6 +6,7 @@ export class CreateUserDto {
 }
 
 export type LoginCredentials = {
-  email: string;
+  id_user?: number;
+  email?: string;
   password_hash: string;
 };

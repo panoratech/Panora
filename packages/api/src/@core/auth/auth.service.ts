@@ -36,8 +36,8 @@ export class AuthService {
 
   async login(user: LoginCredentials): Promise<{ access_token: string }> {
     try {
-      const foundUser = await this.prisma.users.findFirst({
-        where: { email: user.email },
+      const foundUser = await this.prisma.users.findUnique({
+        where: { id_user: user.id_user },
       });
       //TODO: if not founder
       if (
@@ -56,7 +56,9 @@ export class AuthService {
       };
 
       return {
-        access_token: this.jwtService.sign(payload), // token used to generate api keys
+        access_token: this.jwtService.sign(payload, {
+          secret: process.env.JWT_SECRET,
+        }), // token used to generate api keys
       };
     } catch (error) {
       console.log(error);
@@ -64,6 +66,7 @@ export class AuthService {
   }
 
   hashApiKey(apiKey: string): string {
+    console.log('hey hashing...');
     return crypto.createHash('sha256').update(apiKey).digest('hex');
   }
 
@@ -94,23 +97,44 @@ export class AuthService {
     return Boolean(api_key);
   }*/
 
-  async generateApiKey(projectId: number, userId: number): Promise<string> {
-    const secret = process.env.TOKEN_API_SECRET;
+  async generateApiKey(
+    projectId: number,
+    userId: number,
+  ): Promise<{ access_token: string }> {
+    console.log("'ddddd");
+    const secret = process.env.JWT_SECRET;
     const jwtPayload = {
       sub: userId,
       projectId: projectId,
     };
-    return this.jwtService.sign(jwtPayload, {
-      secret,
-      expiresIn: '1y',
-    });
+    return {
+      access_token: this.jwtService.sign(jwtPayload, {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '1y',
+      }),
+    };
   }
 
   async generateApiKeyForUser(
     userId: number,
     projectId: number,
-  ): Promise<string> {
+  ): Promise<{ api_key: string }> {
     try {
+      console.log('here is my userId ', userId);
+      //tmp:
+      const resp = await this.prisma.organizations.create({
+        data: {
+          name: 'org1',
+          stripe_customer_id: 'oneone',
+        },
+      });
+      await this.prisma.projects.create({
+        data: {
+          name: 'proj',
+          id_organization: resp.id_organization,
+        },
+      });
+      //TODO: CHECK IF PROJECT_ID IS EXISTENT
       //fetch user_id
       const foundUser = await this.prisma.users.findUnique({
         where: { id_user: userId },
@@ -123,23 +147,27 @@ export class AuthService {
       //TODO: check if user is indeed inside the project
 
       // Generate a new API key (use a secure method for generation)
-      const key = await this.generateApiKey(projectId, userId);
-
+      const { access_token } = await this.generateApiKey(projectId, userId);
+      console.log('hey');
       // Store the API key in the database associated with the user
+      const hashed_token = this.hashApiKey(access_token);
+      console.log('hey2');
       const new_api_key = await this.prisma.api_keys.create({
         data: {
-          api_key_hash: this.hashApiKey(key),
+          api_key_hash: hashed_token,
           id_project: projectId,
           id_user: userId,
         },
       });
-
       if (!new_api_key) {
         throw new UnauthorizedException('api keys issue to add to db');
       }
+      console.log('.....');
 
-      return key;
-    } catch (error) {}
+      return { api_key: access_token };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async validateApiKey(apiKey: string, userId: number): Promise<boolean> {

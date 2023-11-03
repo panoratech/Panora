@@ -28,6 +28,7 @@ export class AppController {
   }
 
   @UseGuards(ApiKeyAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
@@ -38,7 +39,6 @@ export class AppController {
     return this.authService.register(user);
   }
 
-  //@UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Body() user: LoginCredentials) {
     return this.authService.login(user);
@@ -49,14 +49,8 @@ export class AppController {
   async generateApiKey(
     @Request() req,
     @Body() data: { projectId: number },
-  ): Promise<string> {
+  ): Promise<{ api_key: string }> {
     const userId = req.user.userId;
-    const apiKey = await this.authService.generateApiKeyForUser(
-      userId,
-      data.projectId,
-    );
-    //const apiKey = await this.authService.generateApiKey1(data.projectId);
-
-    return apiKey;
+    return await this.authService.generateApiKeyForUser(userId, data.projectId);
   }
 }
