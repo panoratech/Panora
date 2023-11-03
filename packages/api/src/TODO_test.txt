@@ -1,0 +1,32 @@
+PART 1:
+describe('AppController (e2e)', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+
+  it('/ (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/')
+      .expect(200)
+      .expect('Hello World!');
+  });
+
+  // More tests for each endpoint
+});
+
+PART 2:
+
+curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"email":"test@example.com","password_hash":"password", "first_name": "John", "last_name": "Doe"}'
+
+curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" -d '{"email":"test@example.com","password_hash":"password"}'
+
+curl -X POST http://localhost:3000/generate-apikey -H "Authorization: Bearer <JWT_TOKEN>"
+
+curl -X GET http://localhost:3000/profile -H "Authorization: <API_KEY>"

@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateContactDto } from '../dto/create-contact.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
 import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
@@ -29,11 +29,11 @@ type AddContactResponse =
 export class ContactService {
   constructor(
     private prisma: PrismaService,
-    public freshsales: FreshSalesService,
-    public hubspot: HubspotService,
-    public zoho: ZohoService,
-    public zendesk: ZendeskService,
-    public pipedrive: PipedriveService,
+    private freshsales: FreshSalesService,
+    private hubspot: HubspotService,
+    private zoho: ZohoService,
+    private zendesk: ZendeskService,
+    private pipedrive: PipedriveService,
   ) {}
 
   //utils functions
