@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConnectionsController } from './connections.controller';
-import { ConnectionsService } from './connections.service';
+import { ConnectionsService } from './services/connections.service';
 
 describe('ConnectionsController', () => {
   let controller: ConnectionsController;

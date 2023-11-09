@@ -10,13 +10,13 @@ datasource db {
 model api_keys {
   id_api_key   BigInt   @id(map: "id_") @default(autoincrement())
   api_key_hash String   @unique(map: "unique_api_keys")
-  id_project   Int
   id_user      Int
+  id_project   BigInt
   projects     projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_7")
   users        users    @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_8")
 
-  @@index([id_project], map: "fk_1")
   @@index([id_user], map: "fk_2")
+  @@index([id_project], map: "fk_api_keys_projects")
 }
 
 model crm_contact_email_addresses {
@@ -81,10 +81,11 @@ model organizations {
 }
 
 model projects {
-  id_project      Int           @id(map: "pk_projects") @default(autoincrement())
+  id_project      BigInt        @id(map: "pk_projects") @default(autoincrement())
   name            String
   id_organization BigInt
   api_keys        api_keys[]
+  connections     connections[]
   organizations   organizations @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_6")
 
   @@index([id_organization], map: "fk_1_projects")
@@ -104,4 +105,20 @@ model users {
   organizations   organizations? @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
 
   @@index([id_organization], map: "fk_1_users")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model connections {
+  id_connection        BigInt    @id(map: "pk_connections") @default(autoincrement())
+  provider_slug        String
+  token_type           String
+  access_token         String?
+  refresh_token        String?
+  expiration_timestamp DateTime? @db.Timestamp(6)
+  created_at           DateTime  @db.Timestamp(6)
+  id_project           BigInt
+  projects             projects  @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_9")
+
+  @@unique([access_token, refresh_token], map: "index_3")
+  @@index([id_project], map: "fk_1")
 }
