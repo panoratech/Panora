@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateConnectionDto } from './dto/create-connection.dto';
-import { UpdateConnectionDto } from './dto/update-connection.dto';
 
 @Injectable()
 export class ConnectionsService {
