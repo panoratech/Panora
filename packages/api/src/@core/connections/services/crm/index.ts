@@ -16,12 +16,11 @@ export class CrmConnectionsService {
   async handleHubspotCallback(
     customerId: string,
     projectId: string,
-    returnUrl: string,
     code: string,
   ) {
     try {
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = ''; // TODO;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`; //tocheck
 
       const formData = {
         grant_type: 'authorization_code',
@@ -68,7 +67,6 @@ export class CrmConnectionsService {
   async handleZohoCallback(
     customerId: string,
     projectId: string,
-    returnUrl: string,
     code: string,
     accountURL: string,
   ) {
@@ -116,7 +114,6 @@ export class CrmConnectionsService {
   async handlePipedriveCallback(
     customerId: string,
     projectId: string,
-    returnUrl: string,
     code: string,
   ) {
     try {
@@ -173,7 +170,6 @@ export class CrmConnectionsService {
   async handleZendeskCallback(
     customerId: string,
     projectId: string,
-    returnUrl: string,
     code: string,
   ) {
     try {

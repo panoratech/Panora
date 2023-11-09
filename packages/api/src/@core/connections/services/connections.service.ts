@@ -23,13 +23,11 @@ export class ConnectionsService {
     projectId: string,
     customerId: string,
     providerName: string,
-    returnUrl: string,
     code: string,
     zohoAccountURL?: string,
   ) {
     //TODO; ADD VERIFICATION OF PARAMS
     try {
-      //switch case to know the provider whether it needs query params
       switch (providerName) {
         case 'hubspot':
           if (!code) {
@@ -38,7 +36,6 @@ export class ConnectionsService {
           return this.crmConnectionService.handleHubspotCallback(
             customerId,
             projectId,
-            returnUrl,
             code,
           );
         case 'zoho':
@@ -48,7 +45,6 @@ export class ConnectionsService {
           return this.crmConnectionService.handleZohoCallback(
             customerId,
             projectId,
-            returnUrl,
             code,
             zohoAccountURL,
           );
@@ -59,7 +55,6 @@ export class ConnectionsService {
           return this.crmConnectionService.handlePipedriveCallback(
             customerId,
             projectId,
-            returnUrl,
             code,
           );
         case 'freshsales':
@@ -72,10 +67,8 @@ export class ConnectionsService {
           return this.crmConnectionService.handleZendeskCallback(
             customerId,
             projectId,
-            returnUrl,
             code,
           );
-
         default:
           return;
       }
