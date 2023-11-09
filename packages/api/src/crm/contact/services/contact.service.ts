@@ -79,6 +79,7 @@ export class ContactService {
   }
 
   async addContact(createContactDto: CreateContactDto, integrationId: string) {
+    //TODO; customerId must be passed here
     const job_resp_create = await this.prisma.jobs.create({
       data: {
         status: 'initialized',
@@ -98,6 +99,7 @@ export class ContactService {
     //TODO: get the destination provider => call destinationCRMInDb()
     const dest: any = 'freshsales';
     let resp: ApiResponse<AddContactResponse>;
+    //TODO: desunify the data according to the target obj wanted
     switch (dest) {
       case 'freshsales':
         resp = await this.freshsales.addContact(createContactDto);
