@@ -16,6 +16,8 @@ export class ConnectionsController {
     @Query('code') code: string,
     @Query('accountURL') zohoAccountURL?: string,
   ) {
+    //TODO; ADD VERIFICATION OF PARAMS
+
     this.connectionsService.handleCRMCallBack(
       projectId,
       customerId,
@@ -24,5 +26,15 @@ export class ConnectionsController {
       zohoAccountURL,
     );
     res.redirect(returnUrl);
+  }
+
+  @Get('oauth/crm/refresh')
+  handleCRMTokensRefresh(
+    @Query('customerId') customerId: string,
+    @Query('providerName') providerName: string,
+  ) {
+    //TODO; ADD VERIFICATION OF PARAMS
+
+    this.connectionsService.handleCRMTokensRefresh(customerId, providerName);
   }
 }

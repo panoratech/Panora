@@ -7,7 +7,7 @@ import {
   ZohoOAuthResponse,
 } from './types';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
-import config from 'src/@core/config';
+import config from 'src/@core/utils/config';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -64,6 +64,7 @@ export class CrmConnectionsService {
       console.log(error);
     }
   }
+
   async handleZohoCallback(
     customerId: string,
     projectId: string,
@@ -90,6 +91,7 @@ export class CrmConnectionsService {
       console.log('OAuth credentials : zoho ', data);
       // save tokens for this customer inside our db
       //TODO: encrypt the access token and refresh tokens
+      //TODO: add account_url for ZOHO
       const db_res = await this.prisma.connections.create({
         data: {
           provider_slug: 'zoho',
@@ -101,6 +103,7 @@ export class CrmConnectionsService {
           ),
           id_project: Number(projectId),
           id_end_customer: customerId,
+          account_url: accountURL,
         },
       });
     } catch (error) {
@@ -114,6 +117,7 @@ export class CrmConnectionsService {
       console.log(error);
     }
   }
+
   async handlePipedriveCallback(
     customerId: string,
     projectId: string,
@@ -169,10 +173,12 @@ export class CrmConnectionsService {
       console.log(error);
     }
   }
+
   //TODO: later
   async handleFreshsalesCallback() {
     return;
   }
+
   async handleZendeskCallback(
     customerId: string,
     projectId: string,
@@ -217,6 +223,213 @@ export class CrmConnectionsService {
           id_end_customer: customerId,
         },
       });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.error('Error with Axios request:', error.response?.data);
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Error with Prisma request:', error);
+      }
+      console.log(error);
+    }
+  }
+
+  async handleHubspotTokenRefresh(customerId: string) {
+    try {
+      //get the refresh token for the expired one
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_end_customer: customerId,
+          provider_slug: 'hubspot',
+        },
+      });
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
+
+      const formData = {
+        grant_type: 'refresh_token',
+        client_id: config.HUBSPOT_CLIENT_ID,
+        client_secret: config.HUBSPOT_CLIENT_SECRET,
+        redirect_uri: REDIRECT_URI,
+        refresh_token: connection.refresh_token,
+      };
+      const res = await axios.post(
+        'https://api.hubapi.com/oauth/v1/token',
+        formData,
+      );
+      const data: HubspotOAuthResponse = res.data;
+      await this.prisma.connections.update({
+        where: {
+          id_end_customer: customerId,
+          provider_slug: 'hubspot',
+        },
+        data: {
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+          expiration_timestamp: new Date(
+            new Date().getTime() + data.expires_in * 1000,
+          ),
+        },
+      });
+      console.log('OAuth credentials updated : hubspot ', data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.error('Error with Axios request:', error.response?.data);
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Error with Prisma request:', error);
+      }
+      console.log(error);
+    }
+  }
+
+  async handlePipedriveTokenRefresh(customerId: string) {
+    try {
+      //get the refresh token for the expired one
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_end_customer: customerId,
+          provider_slug: 'pipedrive',
+        },
+      });
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
+
+      const formData = {
+        grant_type: 'refresh_token',
+        redirect_uri: REDIRECT_URI,
+        refresh_token: connection.refresh_token,
+      };
+      const res = await axios.post(
+        'https://oauth.pipedrive.com/oauth/token',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic ${Buffer.from(
+              `${config.PIPEDRIVE_CLIENT_ID}:${config.PIPEDRIVE_CLIENT_SECRET}`,
+            ).toString('base64')}`,
+          },
+        },
+      );
+      const data: HubspotOAuthResponse = res.data;
+      await this.prisma.connections.update({
+        where: {
+          id_end_customer: customerId,
+          provider_slug: 'pipedrive',
+        },
+        data: {
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+          expiration_timestamp: new Date(
+            new Date().getTime() + data.expires_in * 1000,
+          ),
+        },
+      });
+      console.log('OAuth credentials updated : pipedrive ', data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.error('Error with Axios request:', error.response?.data);
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Error with Prisma request:', error);
+      }
+      console.log(error);
+    }
+  }
+
+  async handleZohoTokenRefresh(customerId: string) {
+    try {
+      //get the refresh token for the expired one
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_end_customer: customerId,
+          provider_slug: 'hubspot',
+        },
+      });
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
+
+      const formData = {
+        grant_type: 'refresh_token',
+        client_id: config.HUBSPOT_CLIENT_ID,
+        client_secret: config.HUBSPOT_CLIENT_SECRET,
+        redirect_uri: REDIRECT_URI,
+        refresh_token: connection.refresh_token,
+      };
+      const res = await axios.post(
+        `${connection.account_url}/oauth/v2/token`,
+        formData,
+      );
+      const data: ZohoOAuthResponse = res.data;
+      await this.prisma.connections.update({
+        where: {
+          id_end_customer: customerId,
+          provider_slug: 'zoho',
+        },
+        data: {
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+          expiration_timestamp: new Date(
+            new Date().getTime() + data.expires_in * 1000,
+          ),
+        },
+      });
+      console.log('OAuth credentials updated : zoho ', data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.error('Error with Axios request:', error.response?.data);
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Error with Prisma request:', error);
+      }
+      console.log(error);
+    }
+  }
+
+  async handleZendeskTokenRefresh(customerId: string) {
+    try {
+      //get the refresh token for the expired one
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_end_customer: customerId,
+          provider_slug: 'zendesk',
+        },
+      });
+      //const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
+
+      const formData = {
+        grant_type: 'refresh_token',
+        refresh_token: connection.refresh_token,
+      };
+      const res = await axios.post(
+        'https://api.getbase.com/oauth2/token',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic ${Buffer.from(
+              `${config.ZENDESK_CLIENT_ID}:${config.ZENDESK_CLIENT_SECRET}`,
+            ).toString('base64')}`,
+          },
+        },
+      );
+      const data: ZendeskOAuthResponse = res.data;
+      await this.prisma.connections.update({
+        where: {
+          id_end_customer: customerId,
+          provider_slug: 'zendesk',
+        },
+        data: {
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+          expiration_timestamp: new Date(
+            new Date().getTime() + data.expires_in * 1000,
+          ),
+        },
+      });
+      console.log('OAuth credentials updated : zendesk ', data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         // Handle Axios-specific errors

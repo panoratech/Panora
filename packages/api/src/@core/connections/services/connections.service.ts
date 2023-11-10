@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CrmConnectionsService } from './crm';
 import { NotFoundError } from 'src/@core/utils/errors';
+import { PrismaService } from 'src/@core/prisma/prisma.service';
 
 @Injectable()
 export class ConnectionsService {
@@ -18,7 +19,10 @@ export class ConnectionsService {
   // we catch the tmp token and swap it against oauth2 server for access/refresh tokens
   // to perform actions on his behalf
   // this call pass 1. integrationID 2. CustomerId 3. Panora Api Key
-  constructor(private crmConnectionService: CrmConnectionsService) {}
+  constructor(
+    private crmConnectionService: CrmConnectionsService,
+    private prismaService: PrismaService,
+  ) {}
 
   async handleCRMCallBack(
     projectId: string,
@@ -27,7 +31,6 @@ export class ConnectionsService {
     code: string,
     zohoAccountURL?: string,
   ) {
-    //TODO; ADD VERIFICATION OF PARAMS
     try {
       switch (providerName) {
         case 'hubspot':
@@ -69,6 +72,37 @@ export class ConnectionsService {
             customerId,
             projectId,
             code,
+          );
+        default:
+          return;
+      }
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        console.log(error);
+      }
+      return error;
+    }
+  }
+
+  async handleCRMTokensRefresh(customerId: string, providerId: string) {
+    try {
+      switch (providerId) {
+        case 'hubspot':
+          return this.crmConnectionService.handleHubspotTokenRefresh(
+            customerId,
+          );
+        case 'zoho':
+          return this.crmConnectionService.handleZohoTokenRefresh(customerId);
+        case 'pipedrive':
+          return this.crmConnectionService.handlePipedriveTokenRefresh(
+            customerId,
+          );
+        case 'freshsales':
+          //todo: LATER
+          break;
+        case 'zendesk':
+          return this.crmConnectionService.handleZendeskTokenRefresh(
+            customerId,
           );
         default:
           return;
