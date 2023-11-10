@@ -67,7 +67,7 @@ COMMENT ON COLUMN users.created_at IS 'DEFAULT NOW() to automatically insert a v
 
 CREATE TABLE projects
 (
- id_project      serial NOT NULL,
+ id_project      bigint NOT NULL GENERATED ALWAYS AS IDENTITY,
  name            text NOT NULL,
  id_organization bigint NOT NULL,
  CONSTRAINT PK_projects PRIMARY KEY ( id_project ),
@@ -137,6 +137,34 @@ CREATE INDEX crm_contact_id_job ON crm_contacts
 
 
 
+-- ************************************** linked_users
+
+CREATE TABLE linked_users
+(
+ id_linked_user        bigint NOT NULL GENERATED ALWAYS AS IDENTITY,
+ linked_user_origin_id text NOT NULL,
+ alias                 text NOT NULL,
+ status                text NOT NULL,
+ id_project            bigint NOT NULL,
+ CONSTRAINT key_id_linked_users PRIMARY KEY ( id_linked_user ),
+ CONSTRAINT FK_10 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
+);
+
+CREATE INDEX FK_proectID_linked_users ON linked_users
+(
+ id_project
+);
+
+
+
+COMMENT ON COLUMN linked_users.linked_user_origin_id IS 'id of the customer, in our customers own systems';
+COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME company)';
+COMMENT ON COLUMN linked_users.status IS 'ONLY FOR INVITE LINK';
+
+
+
+
+
 -- ************************************** crm_contacts_phone_numbers
 
 CREATE TABLE crm_contacts_phone_numbers
@@ -191,20 +219,65 @@ CREATE TABLE api_keys
 (
  id_api_key   bigint NOT NULL GENERATED ALWAYS AS IDENTITY,
  api_key_hash text NOT NULL,
- id_project   int NOT NULL,
  id_user      int NOT NULL,
+ id_project   bigint NOT NULL,
  CONSTRAINT id_ PRIMARY KEY ( id_api_key ),
  CONSTRAINT unique_api_keys UNIQUE ( api_key_hash ),
- CONSTRAINT FK_7 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
- CONSTRAINT FK_8 FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
-);
-
-CREATE INDEX FK_1 ON api_keys
-(
- id_project
+ CONSTRAINT FK_8 FOREIGN KEY ( id_user ) REFERENCES users ( id_user ),
+ CONSTRAINT FK_7 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
 );
 
 CREATE INDEX FK_2 ON api_keys
 (
  id_user
 );
+
+CREATE INDEX FK_api_keys_projects ON api_keys
+(
+ id_project
+);
+
+
+
+
+
+
+
+
+-- ************************************** connections
+
+CREATE TABLE connections
+(
+ id_connection        bigint NOT NULL GENERATED ALWAYS AS IDENTITY,
+ provider_slug        text NOT NULL,
+ account_url          text NULL,
+ token_type           text NOT NULL,
+ access_token         text NULL,
+ refresh_token        text NULL,
+ expiration_timestamp timestamp NULL,
+ created_at           timestamp NOT NULL,
+ id_project           bigint NOT NULL,
+ id_linked_user       bigint NOT NULL,
+ CONSTRAINT PK_connections PRIMARY KEY ( id_connection ),
+ CONSTRAINT Index_3 UNIQUE ( access_token, refresh_token ),
+ CONSTRAINT FK_9 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
+ CONSTRAINT FK_11 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
+);
+
+CREATE INDEX FK_1 ON connections
+(
+ id_project
+);
+
+CREATE INDEX FK_connections_to_LinkedUsersID ON connections
+(
+ id_linked_user
+);
+
+
+
+COMMENT ON COLUMN connections.token_type IS 'The type of the token, such as "Bearer," "JWT," or any other supported type.';
+
+
+
+
