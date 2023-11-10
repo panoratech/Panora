@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CrmConnectionsService } from './crm';
+import { NotFoundError } from 'src/@core/utils/errors';
 
 @Injectable()
 export class ConnectionsService {
@@ -31,7 +32,7 @@ export class ConnectionsService {
       switch (providerName) {
         case 'hubspot':
           if (!code) {
-            throw new Error('no hubspot code found');
+            throw new NotFoundError('no hubspot code found');
           }
           return this.crmConnectionService.handleHubspotCallback(
             customerId,
@@ -40,7 +41,7 @@ export class ConnectionsService {
           );
         case 'zoho':
           if (!code || !zohoAccountURL) {
-            throw new Error('no zoho code/ zoho AccountURL found');
+            throw new NotFoundError('no zoho code/ zoho AccountURL found');
           }
           return this.crmConnectionService.handleZohoCallback(
             customerId,
@@ -50,7 +51,7 @@ export class ConnectionsService {
           );
         case 'pipedrive':
           if (!code) {
-            throw new Error('no pipedrive code found');
+            throw new NotFoundError('no pipedrive code found');
           }
           return this.crmConnectionService.handlePipedriveCallback(
             customerId,
@@ -62,7 +63,7 @@ export class ConnectionsService {
           break;
         case 'zendesk':
           if (!code) {
-            throw new Error('no zendesk code found');
+            throw new NotFoundError('no zendesk code found');
           }
           return this.crmConnectionService.handleZendeskCallback(
             customerId,
@@ -73,7 +74,9 @@ export class ConnectionsService {
           return;
       }
     } catch (error) {
-      console.log(error);
+      if (error instanceof NotFoundError) {
+        console.log(error);
+      }
       return error;
     }
   }

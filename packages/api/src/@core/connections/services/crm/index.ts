@@ -8,6 +8,7 @@ import {
 } from './types';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import config from 'src/@core/config';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CrmConnectionsService {
@@ -52,15 +53,14 @@ export class CrmConnectionsService {
           // without it, we cant retrieve the right row in our db
         },
       });
-      if (!db_res) {
-        throw new Error('error inserting new connection');
-      }
-      /*const infoResult = await axios.get(
-        'https://api.hubapi.com/oauth/v1/access-tokens/' +
-          res.data.access_token,
-      );
-      console.log('OAuth token : hubspot ', infoResult.data);*/
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.error('Error with Axios request:', error.response?.data);
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Error with Prisma request:', error);
+      }
       console.log(error);
     }
   }
@@ -72,7 +72,7 @@ export class CrmConnectionsService {
   ) {
     try {
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = ''; // TODO;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`; // TODO;
 
       const formData = {
         grant_type: 'authorization_code',
@@ -103,12 +103,15 @@ export class CrmConnectionsService {
           id_end_customer: customerId,
         },
       });
-      if (!db_res) {
-        throw new Error('error inserting new connection');
-      }
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.error('Error with Axios request:', error.response?.data);
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Error with Prisma request:', error);
+      }
       console.log(error);
-      return error;
     }
   }
   async handlePipedriveCallback(
@@ -118,7 +121,7 @@ export class CrmConnectionsService {
   ) {
     try {
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = ''; // TODO;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`; // TODO;
 
       const formData = {
         grant_type: 'authorization_code',
@@ -155,12 +158,15 @@ export class CrmConnectionsService {
           id_end_customer: customerId,
         },
       });
-      if (!db_res) {
-        throw new Error('error inserting new connection');
-      }
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.error('Error with Axios request:', error.response?.data);
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Error with Prisma request:', error);
+      }
       console.log(error);
-      return error;
     }
   }
   //TODO: later
@@ -174,7 +180,7 @@ export class CrmConnectionsService {
   ) {
     try {
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = ''; // TODO;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`; // TODO;
 
       const formData = {
         grant_type: 'authorization_code',
@@ -211,12 +217,15 @@ export class CrmConnectionsService {
           id_end_customer: customerId,
         },
       });
-      if (!db_res) {
-        throw new Error('error inserting new connection');
-      }
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.error('Error with Axios request:', error.response?.data);
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Error with Prisma request:', error);
+      }
       console.log(error);
-      return error;
     }
   }
 }
