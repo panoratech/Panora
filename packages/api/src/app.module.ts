@@ -10,6 +10,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './@core/tasks/tasks.service';
 import { SentryModule } from './@core/sentry/sentry.module';
 import { CrmConnectionModule } from './@core/connections/crm/crm-connection.module';
+import { LoggerModule } from 'nestjs-pino';
+import { LoggerService } from './@core/logger/logger.service';
 
 @Module({
   imports: [
@@ -20,8 +22,9 @@ import { CrmConnectionModule } from './@core/connections/crm/crm-connection.modu
     CrmConnectionModule,
     ScheduleModule.forRoot(),
     SentryModule.forRoot(),
+    LoggerModule.forRoot({}),
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService, TasksService],
+  providers: [AppService, AuthService, TasksService, LoggerService],
 })
 export class AppModule {}

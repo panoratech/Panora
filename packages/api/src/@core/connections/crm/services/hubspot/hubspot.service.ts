@@ -4,10 +4,13 @@ import axios from 'axios';
 import config from 'src/@core/utils/config';
 import { Prisma } from '@prisma/client';
 import { HubspotOAuthResponse } from '../../types';
+import { LoggerService } from 'src/@core/logger/logger.service';
 
 @Injectable()
 export class HubspotConnectionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private logger: LoggerService) {
+    this.logger.setContext(HubspotConnectionService.name);
+  }
 
   async handleHubspotCallback(
     linkedUserId: string,
@@ -31,7 +34,8 @@ export class HubspotConnectionService {
         formData,
       );
       const data: HubspotOAuthResponse = res.data;
-      console.log('OAuth credentials : hubspot ', data);
+      //console.log('OAuth credentials : hubspot ', data);
+      this.logger.log('OAuth credentials : hubspot ' + data);
       // save tokens for this customer inside our db
       //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
@@ -57,12 +61,14 @@ export class HubspotConnectionService {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         // Handle Axios-specific errors
-        console.error('Error with Axios request:', error.response?.data);
+        //console.error('Error with Axios request:', error.response?.data);
+        this.logger.error('Error with Axios request:', error.response?.data);
       }
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error('Error with Prisma request:', error);
+        //console.error('Error with Prisma request:', error);
+        this.logger.error('Error with Prisma request:', error.message);
       }
-      console.log(error);
+      this.logger.error('An error occurred', error);
     }
   }
   async handleHubspotTokenRefresh(connectionId: bigint, refresh_token: string) {
