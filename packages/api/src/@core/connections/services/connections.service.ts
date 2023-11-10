@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CrmConnectionsService } from './crm';
+import { CrmConnectionsService } from './crm/crm-connection.service';
 import { NotFoundError } from 'src/@core/utils/errors';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
 
 @Injectable()
 export class ConnectionsService {
@@ -19,14 +18,11 @@ export class ConnectionsService {
   // we catch the tmp token and swap it against oauth2 server for access/refresh tokens
   // to perform actions on his behalf
   // this call pass 1. integrationID 2. CustomerId 3. Panora Api Key
-  constructor(
-    private crmConnectionService: CrmConnectionsService,
-    private prismaService: PrismaService,
-  ) {}
+  constructor(private crmConnectionService: CrmConnectionsService) {}
 
   async handleCRMCallBack(
     projectId: string,
-    customerId: string,
+    linkedUserId: string,
     providerName: string,
     code: string,
     zohoAccountURL?: string,
@@ -38,7 +34,7 @@ export class ConnectionsService {
             throw new NotFoundError('no hubspot code found');
           }
           return this.crmConnectionService.handleHubspotCallback(
-            customerId,
+            linkedUserId,
             projectId,
             code,
           );
@@ -47,7 +43,7 @@ export class ConnectionsService {
             throw new NotFoundError('no zoho code/ zoho AccountURL found');
           }
           return this.crmConnectionService.handleZohoCallback(
-            customerId,
+            linkedUserId,
             projectId,
             code,
             zohoAccountURL,
@@ -57,7 +53,7 @@ export class ConnectionsService {
             throw new NotFoundError('no pipedrive code found');
           }
           return this.crmConnectionService.handlePipedriveCallback(
-            customerId,
+            linkedUserId,
             projectId,
             code,
           );
@@ -69,7 +65,7 @@ export class ConnectionsService {
             throw new NotFoundError('no zendesk code found');
           }
           return this.crmConnectionService.handleZendeskCallback(
-            customerId,
+            linkedUserId,
             projectId,
             code,
           );
@@ -84,25 +80,37 @@ export class ConnectionsService {
     }
   }
 
-  async handleCRMTokensRefresh(customerId: string, providerId: string) {
+  async handleCRMTokensRefresh(
+    connectionId: bigint,
+    providerId: string,
+    refresh_token: string,
+    account_url?: string,
+  ) {
     try {
       switch (providerId) {
         case 'hubspot':
           return this.crmConnectionService.handleHubspotTokenRefresh(
-            customerId,
+            connectionId,
+            refresh_token,
           );
         case 'zoho':
-          return this.crmConnectionService.handleZohoTokenRefresh(customerId);
+          return this.crmConnectionService.handleZohoTokenRefresh(
+            connectionId,
+            refresh_token,
+            account_url,
+          );
         case 'pipedrive':
           return this.crmConnectionService.handlePipedriveTokenRefresh(
-            customerId,
+            connectionId,
+            refresh_token,
           );
         case 'freshsales':
           //todo: LATER
           break;
         case 'zendesk':
           return this.crmConnectionService.handleZendeskTokenRefresh(
-            customerId,
+            connectionId,
+            refresh_token,
           );
         default:
           return;

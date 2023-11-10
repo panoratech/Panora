@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 const config = {
   HUBSPOT_CLIENT_ID: process.env.HUBSPOT_CLIENT_ID,
   HUBSPOT_CLIENT_SECRET: process.env.HUBSPOT_CLIENT_SECRET,
@@ -14,6 +10,9 @@ const config = {
   ZENDESK_CLIENT_ID: process.env.ZENDESK_CLIENT_ID,
   ZENDESK_CLIENT_SECRET: process.env.ZENDESK_CLIENT_SECRET,
   OAUTH_REDIRECT_BASE: process.env.OAUTH_REDIRECT_BASE,
+  SENTRY_DSN: process.env.SENTRY_DSN,
+  NODE_ENV: process.env.ENV,
+  PROD_DISTRIBUTION: process.env.PROD_DISTRIBUTION,
 };
 
 export default config;

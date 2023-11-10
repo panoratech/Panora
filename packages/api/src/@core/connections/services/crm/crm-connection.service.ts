@@ -15,11 +15,12 @@ export class CrmConnectionsService {
   constructor(private prisma: PrismaService) {}
 
   async handleHubspotCallback(
-    customerId: string,
+    linkedUserId: string,
     projectId: string,
     code: string,
   ) {
     try {
+      //first create a linked_user
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`; //tocheck
 
@@ -47,8 +48,13 @@ export class CrmConnectionsService {
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
-          id_project: Number(projectId),
-          id_end_customer: customerId,
+          created_at: new Date(),
+          projects: {
+            connect: { id_project: BigInt(projectId) },
+          },
+          linked_users: {
+            connect: { id_linked_user: BigInt(linkedUserId) },
+          },
           //id of the end-customer defined in the company application, this is how requests could be made on behlaf of the user
           // without it, we cant retrieve the right row in our db
         },
@@ -66,7 +72,7 @@ export class CrmConnectionsService {
   }
 
   async handleZohoCallback(
-    customerId: string,
+    linkedUserId: string,
     projectId: string,
     code: string,
     accountURL: string,
@@ -86,12 +92,9 @@ export class CrmConnectionsService {
         `https://${accountURL}/oauth/v2/token`,
         formData,
       );
-      //TODO: handle if res throws an error
       const data: ZohoOAuthResponse = res.data;
       console.log('OAuth credentials : zoho ', data);
-      // save tokens for this customer inside our db
       //TODO: encrypt the access token and refresh tokens
-      //TODO: add account_url for ZOHO
       const db_res = await this.prisma.connections.create({
         data: {
           provider_slug: 'zoho',
@@ -101,8 +104,13 @@ export class CrmConnectionsService {
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
-          id_project: Number(projectId),
-          id_end_customer: customerId,
+          created_at: new Date(),
+          projects: {
+            connect: { id_project: BigInt(projectId) },
+          },
+          linked_users: {
+            connect: { id_linked_user: BigInt(linkedUserId) },
+          },
           account_url: accountURL,
         },
       });
@@ -119,7 +127,7 @@ export class CrmConnectionsService {
   }
 
   async handlePipedriveCallback(
-    customerId: string,
+    linkedUserId: string,
     projectId: string,
     code: string,
   ) {
@@ -158,8 +166,13 @@ export class CrmConnectionsService {
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
-          id_project: Number(projectId),
-          id_end_customer: customerId,
+          created_at: new Date(),
+          projects: {
+            connect: { id_project: BigInt(projectId) },
+          },
+          linked_users: {
+            connect: { id_linked_user: BigInt(linkedUserId) },
+          },
         },
       });
     } catch (error) {
@@ -180,7 +193,7 @@ export class CrmConnectionsService {
   }
 
   async handleZendeskCallback(
-    customerId: string,
+    linkedUserId: string,
     projectId: string,
     code: string,
   ) {
@@ -219,8 +232,13 @@ export class CrmConnectionsService {
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
-          id_project: Number(projectId),
-          id_end_customer: customerId,
+          created_at: new Date(),
+          projects: {
+            connect: { id_project: BigInt(projectId) },
+          },
+          linked_users: {
+            connect: { id_linked_user: BigInt(linkedUserId) },
+          },
         },
       });
     } catch (error) {
@@ -235,15 +253,8 @@ export class CrmConnectionsService {
     }
   }
 
-  async handleHubspotTokenRefresh(customerId: string) {
+  async handleHubspotTokenRefresh(connectionId: bigint, refresh_token: string) {
     try {
-      //get the refresh token for the expired one
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_end_customer: customerId,
-          provider_slug: 'hubspot',
-        },
-      });
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
 
       const formData = {
@@ -251,7 +262,7 @@ export class CrmConnectionsService {
         client_id: config.HUBSPOT_CLIENT_ID,
         client_secret: config.HUBSPOT_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
-        refresh_token: connection.refresh_token,
+        refresh_token: refresh_token,
       };
       const res = await axios.post(
         'https://api.hubapi.com/oauth/v1/token',
@@ -260,8 +271,7 @@ export class CrmConnectionsService {
       const data: HubspotOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
-          id_end_customer: customerId,
-          provider_slug: 'hubspot',
+          id_connection: connectionId,
         },
         data: {
           access_token: data.access_token,
@@ -284,21 +294,17 @@ export class CrmConnectionsService {
     }
   }
 
-  async handlePipedriveTokenRefresh(customerId: string) {
+  async handlePipedriveTokenRefresh(
+    connectionId: bigint,
+    refresh_token: string,
+  ) {
     try {
-      //get the refresh token for the expired one
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_end_customer: customerId,
-          provider_slug: 'pipedrive',
-        },
-      });
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
 
       const formData = {
         grant_type: 'refresh_token',
         redirect_uri: REDIRECT_URI,
-        refresh_token: connection.refresh_token,
+        refresh_token: refresh_token,
       };
       const res = await axios.post(
         'https://oauth.pipedrive.com/oauth/token',
@@ -315,8 +321,7 @@ export class CrmConnectionsService {
       const data: HubspotOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
-          id_end_customer: customerId,
-          provider_slug: 'pipedrive',
+          id_connection: connectionId,
         },
         data: {
           access_token: data.access_token,
@@ -339,15 +344,12 @@ export class CrmConnectionsService {
     }
   }
 
-  async handleZohoTokenRefresh(customerId: string) {
+  async handleZohoTokenRefresh(
+    connectionId: bigint,
+    refresh_token: string,
+    account_url: string,
+  ) {
     try {
-      //get the refresh token for the expired one
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_end_customer: customerId,
-          provider_slug: 'hubspot',
-        },
-      });
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
 
       const formData = {
@@ -355,17 +357,13 @@ export class CrmConnectionsService {
         client_id: config.HUBSPOT_CLIENT_ID,
         client_secret: config.HUBSPOT_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
-        refresh_token: connection.refresh_token,
+        refresh_token: refresh_token,
       };
-      const res = await axios.post(
-        `${connection.account_url}/oauth/v2/token`,
-        formData,
-      );
+      const res = await axios.post(`${account_url}/oauth/v2/token`, formData);
       const data: ZohoOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
-          id_end_customer: customerId,
-          provider_slug: 'zoho',
+          id_connection: connectionId,
         },
         data: {
           access_token: data.access_token,
@@ -388,20 +386,11 @@ export class CrmConnectionsService {
     }
   }
 
-  async handleZendeskTokenRefresh(customerId: string) {
+  async handleZendeskTokenRefresh(connectionId: bigint, refresh_token: string) {
     try {
-      //get the refresh token for the expired one
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_end_customer: customerId,
-          provider_slug: 'zendesk',
-        },
-      });
-      //const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
-
       const formData = {
         grant_type: 'refresh_token',
-        refresh_token: connection.refresh_token,
+        refresh_token: refresh_token,
       };
       const res = await axios.post(
         'https://api.getbase.com/oauth2/token',
@@ -418,8 +407,7 @@ export class CrmConnectionsService {
       const data: ZendeskOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
-          id_end_customer: customerId,
-          provider_slug: 'zendesk',
+          id_connection: connectionId,
         },
         data: {
           access_token: data.access_token,

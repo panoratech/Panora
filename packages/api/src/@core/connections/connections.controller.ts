@@ -10,7 +10,7 @@ export class ConnectionsController {
   handleCRMCallback(
     @Res() res: Response,
     @Query('projectId') projectId: string,
-    @Query('customerId') customerId: string,
+    @Query('linkedUserId') linkedUserId: string,
     @Query('providerName') providerName: string,
     @Query('returnUrl') returnUrl: string,
     @Query('code') code: string,
@@ -20,21 +20,11 @@ export class ConnectionsController {
 
     this.connectionsService.handleCRMCallBack(
       projectId,
-      customerId,
+      linkedUserId,
       providerName,
       code,
       zohoAccountURL,
     );
     res.redirect(returnUrl);
-  }
-
-  @Get('oauth/crm/refresh')
-  handleCRMTokensRefresh(
-    @Query('customerId') customerId: string,
-    @Query('providerName') providerName: string,
-  ) {
-    //TODO; ADD VERIFICATION OF PARAMS
-
-    this.connectionsService.handleCRMTokensRefresh(customerId, providerName);
   }
 }
