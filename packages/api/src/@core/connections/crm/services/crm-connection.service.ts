@@ -1,9 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { CrmConnectionsService } from './crm/crm-connection.service';
+import { PrismaService } from 'src/@core/prisma/prisma.service';
+import { ZohoConnectionService } from './zoho/zoho.service';
 import { NotFoundError } from 'src/@core/utils/errors';
+import { HubspotConnectionService } from './hubspot/hubspot.service';
+import { PipedriveConnectionService } from './pipedrive/pipedrive.service';
+import { ZendeskConnectionService } from './zendesk/zendesk.service';
+import { FreshsalesConnectionService } from './freshsales/freshsales.service';
 
 @Injectable()
-export class ConnectionsService {
+export class CrmConnectionsService {
+  constructor(
+    private zohoConnectionService: ZohoConnectionService,
+    private hubspotConnectionService: HubspotConnectionService,
+    private pipedriveConnectionService: PipedriveConnectionService,
+    private zendeskConnectionService: ZendeskConnectionService,
+    private freshsalesConnectionService: FreshsalesConnectionService,
+  ) {}
   //STEP 1:[FRONTEND STEP]
   //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click
   // on it to grant access => they grant US the access and then when confirmed
@@ -18,8 +30,6 @@ export class ConnectionsService {
   // we catch the tmp token and swap it against oauth2 server for access/refresh tokens
   // to perform actions on his behalf
   // this call pass 1. integrationID 2. CustomerId 3. Panora Api Key
-  constructor(private crmConnectionService: CrmConnectionsService) {}
-
   async handleCRMCallBack(
     projectId: string,
     linkedUserId: string,
@@ -33,7 +43,7 @@ export class ConnectionsService {
           if (!code) {
             throw new NotFoundError('no hubspot code found');
           }
-          return this.crmConnectionService.handleHubspotCallback(
+          return this.hubspotConnectionService.handleHubspotCallback(
             linkedUserId,
             projectId,
             code,
@@ -42,7 +52,7 @@ export class ConnectionsService {
           if (!code || !zohoAccountURL) {
             throw new NotFoundError('no zoho code/ zoho AccountURL found');
           }
-          return this.crmConnectionService.handleZohoCallback(
+          return this.zohoConnectionService.handleZohoCallback(
             linkedUserId,
             projectId,
             code,
@@ -52,7 +62,7 @@ export class ConnectionsService {
           if (!code) {
             throw new NotFoundError('no pipedrive code found');
           }
-          return this.crmConnectionService.handlePipedriveCallback(
+          return this.pipedriveConnectionService.handlePipedriveCallback(
             linkedUserId,
             projectId,
             code,
@@ -64,7 +74,7 @@ export class ConnectionsService {
           if (!code) {
             throw new NotFoundError('no zendesk code found');
           }
-          return this.crmConnectionService.handleZendeskCallback(
+          return this.zendeskConnectionService.handleZendeskCallback(
             linkedUserId,
             projectId,
             code,
@@ -89,18 +99,18 @@ export class ConnectionsService {
     try {
       switch (providerId) {
         case 'hubspot':
-          return this.crmConnectionService.handleHubspotTokenRefresh(
+          return this.hubspotConnectionService.handleHubspotTokenRefresh(
             connectionId,
             refresh_token,
           );
         case 'zoho':
-          return this.crmConnectionService.handleZohoTokenRefresh(
+          return this.zohoConnectionService.handleZohoTokenRefresh(
             connectionId,
             refresh_token,
             account_url,
           );
         case 'pipedrive':
-          return this.crmConnectionService.handlePipedriveTokenRefresh(
+          return this.pipedriveConnectionService.handlePipedriveTokenRefresh(
             connectionId,
             refresh_token,
           );
@@ -108,7 +118,7 @@ export class ConnectionsService {
           //todo: LATER
           break;
         case 'zendesk':
-          return this.crmConnectionService.handleZendeskTokenRefresh(
+          return this.zendeskConnectionService.handleZendeskTokenRefresh(
             connectionId,
             refresh_token,
           );

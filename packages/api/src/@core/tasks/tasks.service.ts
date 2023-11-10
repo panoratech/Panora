@@ -2,13 +2,13 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
-import { ConnectionsService } from '../connections/services/connections.service';
+import { CrmConnectionsService } from '../connections/crm/services/crm-connection.service';
 
 @Injectable()
 export class TasksService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
-    private connectionsService: ConnectionsService,
+    private crmConnectionsService: CrmConnectionsService,
   ) {}
 
   onModuleInit() {
@@ -33,7 +33,7 @@ export class TasksService implements OnModuleInit {
       if (connection.refresh_token) {
         const account_url =
           connection.provider_slug == 'zoho' ? connection.account_url : '';
-        await this.connectionsService.handleCRMTokensRefresh(
+        await this.crmConnectionsService.handleCRMTokensRefresh(
           connection.id_connection,
           connection.provider_slug,
           connection.refresh_token,

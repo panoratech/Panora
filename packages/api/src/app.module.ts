@@ -9,8 +9,7 @@ import { ConnectionsModule } from './@core/connections/connections.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './@core/tasks/tasks.service';
 import { SentryModule } from './@core/sentry/sentry.module';
-import { ConnectionsService } from './@core/connections/services/connections.service';
-import { CrmConnectionsService } from './@core/connections/services/crm/crm-connection.service';
+import { CrmConnectionModule } from './@core/connections/crm/crm-connection.module';
 
 @Module({
   imports: [
@@ -18,16 +17,11 @@ import { CrmConnectionsService } from './@core/connections/services/crm/crm-conn
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ConnectionsModule,
+    CrmConnectionModule,
     ScheduleModule.forRoot(),
     SentryModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    AuthService,
-    TasksService,
-    ConnectionsService,
-    CrmConnectionsService,
-  ],
+  providers: [AppService, AuthService, TasksService],
 })
 export class AppModule {}

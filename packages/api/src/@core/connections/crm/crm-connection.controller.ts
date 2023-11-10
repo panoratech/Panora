@@ -1,12 +1,12 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
-import { ConnectionsService } from './services/connections.service';
 import { Response } from 'express'; // Importing the Express Response type for type checking
+import { CrmConnectionsService } from './services/crm-connection.service';
 
-@Controller('connections')
-export class ConnectionsController {
-  constructor(private readonly connectionsService: ConnectionsService) {}
+@Controller('connections/crm')
+export class CrmConnectionsController {
+  constructor(private readonly crmConnectionsService: CrmConnectionsService) {}
 
-  @Get('oauth/crm/callback')
+  @Get('oauth/callback')
   handleCRMCallback(
     @Res() res: Response,
     @Query('projectId') projectId: string,
@@ -18,7 +18,7 @@ export class ConnectionsController {
   ) {
     //TODO; ADD VERIFICATION OF PARAMS
 
-    this.connectionsService.handleCRMCallBack(
+    this.crmConnectionsService.handleCRMCallBack(
       projectId,
       linkedUserId,
       providerName,
