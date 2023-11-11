@@ -7,6 +7,7 @@ import { HubspotConnectionService } from './services/hubspot/hubspot.service';
 import { PipedriveConnectionService } from './services/pipedrive/pipedrive.service';
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
 import { ZohoConnectionService } from './services/zoho/zoho.service';
+import { LoggerService } from 'src/@core/logger/logger.service';
 
 @Module({
   controllers: [CrmConnectionsController],
@@ -18,6 +19,7 @@ import { ZohoConnectionService } from './services/zoho/zoho.service';
     PipedriveConnectionService,
     ZendeskConnectionService,
     ZohoConnectionService,
+    LoggerService,
   ],
   exports: [CrmConnectionsService],
 })

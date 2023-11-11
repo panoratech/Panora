@@ -10,6 +10,10 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './@core/tasks/tasks.service';
 import { SentryModule } from './@core/sentry/sentry.module';
 import { CrmConnectionModule } from './@core/connections/crm/crm-connection.module';
+import { LoggerModule } from 'nestjs-pino';
+import { LoggerService } from './@core/logger/logger.service';
+import { HttpExceptionFilter } from './@core/filters/exception.filters';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -20,8 +24,21 @@ import { CrmConnectionModule } from './@core/connections/crm/crm-connection.modu
     CrmConnectionModule,
     ScheduleModule.forRoot(),
     SentryModule.forRoot(),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        customProps: (req, res) => ({
+          context: 'HTTP',
+        }),
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            singleLine: true,
+          },
+        },
+      },
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService, TasksService],
+  providers: [AppService, AuthService, TasksService, LoggerService],
 })
 export class AppModule {}
