@@ -12,7 +12,7 @@ const config = {
   OAUTH_REDIRECT_BASE: process.env.OAUTH_REDIRECT_BASE,
   SENTRY_DSN: process.env.SENTRY_DSN,
   NODE_ENV: process.env.ENV,
-  PROD_DISTRIBUTION: process.env.PROD_DISTRIBUTION,
+  DISTRIBUTION: process.env.DISTRIBUTION,
 };
 
 export default config;

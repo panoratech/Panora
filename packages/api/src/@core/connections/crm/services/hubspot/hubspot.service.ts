@@ -5,11 +5,45 @@ import config from 'src/@core/utils/config';
 import { Prisma } from '@prisma/client';
 import { HubspotOAuthResponse } from '../../types';
 import { LoggerService } from 'src/@core/logger/logger.service';
+import qs from 'qs';
 
 @Injectable()
 export class HubspotConnectionService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(HubspotConnectionService.name);
+  }
+  async addLinkedUserAndProjectTest() {
+    // Adding a new organization
+    const newOrganization = {
+      name: 'New Organization',
+      stripe_customer_id: 'stripe-customer-123',
+    };
+
+    const org = await this.prisma.organizations.create({
+      data: newOrganization,
+    });
+    this.logger.log('Added new organisation ' + org);
+
+    // Example data for a new project
+    const newProject = {
+      name: 'New Project',
+      id_organization: 1n, // bigint value
+    };
+    const data1 = await this.prisma.projects.create({
+      data: newProject,
+    });
+    this.logger.log('Added new project ' + data1);
+
+    const newLinkedUser = {
+      linked_user_origin_id: '12345',
+      alias: 'ACME COMPANY',
+      status: 'Active',
+      id_project: 1n, // bigint value
+    };
+    const data = await this.prisma.linked_users.create({
+      data: newLinkedUser,
+    });
+    this.logger.log('Added new linked_user ' + data);
   }
 
   async handleHubspotCallback(
@@ -18,20 +52,25 @@ export class HubspotConnectionService {
     code: string,
   ) {
     try {
-      //first create a linked_user
+      //TMP STEP = first create a linked_user and a project id
+      await this.addLinkedUserAndProjectTest();
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`; //tocheck
-
-      const formData = {
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
+      const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: config.HUBSPOT_CLIENT_ID,
         client_secret: config.HUBSPOT_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
-      };
+      });
       const res = await axios.post(
         'https://api.hubapi.com/oauth/v1/token',
-        formData,
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        },
       );
       const data: HubspotOAuthResponse = res.data;
       //console.log('OAuth credentials : hubspot ', data);
@@ -58,6 +97,7 @@ export class HubspotConnectionService {
           // without it, we cant retrieve the right row in our db
         },
       });
+      this.logger.log('Successfully added tokens inside DB ' + db_res);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         // Handle Axios-specific errors
@@ -68,23 +108,31 @@ export class HubspotConnectionService {
         //console.error('Error with Prisma request:', error);
         this.logger.error('Error with Prisma request:', error.message);
       }
-      this.logger.error('An error occurred', error);
+      this.logger.error(
+        'An error occurred...',
+        error.response?.data || error.message,
+      );
     }
   }
   async handleHubspotTokenRefresh(connectionId: bigint, refresh_token: string) {
     try {
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
 
-      const formData = {
+      const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         client_id: config.HUBSPOT_CLIENT_ID,
         client_secret: config.HUBSPOT_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         refresh_token: refresh_token,
-      };
+      });
       const res = await axios.post(
         'https://api.hubapi.com/oauth/v1/token',
-        formData,
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        },
       );
       const data: HubspotOAuthResponse = res.data;
       await this.prisma.connections.update({
