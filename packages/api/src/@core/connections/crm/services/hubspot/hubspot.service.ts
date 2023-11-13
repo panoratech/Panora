@@ -5,7 +5,6 @@ import config from 'src/@core/utils/config';
 import { Prisma } from '@prisma/client';
 import { HubspotOAuthResponse } from '../../types';
 import { LoggerService } from 'src/@core/logger/logger.service';
-import qs from 'qs';
 
 @Injectable()
 export class HubspotConnectionService {
