@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { CrmConnectionsController } from './crm-connection.controller';
 import { CrmConnectionsService } from './services/crm-connection.service';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { FreshsalesConnectionService } from './services/freshsales/freshsales.service';
@@ -10,7 +9,6 @@ import { ZohoConnectionService } from './services/zoho/zoho.service';
 import { LoggerService } from 'src/@core/logger/logger.service';
 
 @Module({
-  controllers: [CrmConnectionsController],
   providers: [
     CrmConnectionsService,
     PrismaService,

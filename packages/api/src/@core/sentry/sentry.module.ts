@@ -10,7 +10,7 @@ export class SentryModule {
   static forRoot(): DynamicModule {
     const isProduction = config.NODE_ENV === 'production';
     const sentry_dsn = config.SENTRY_DSN;
-    const distribution = config.PROD_DISTRIBUTION;
+    const distribution = config.DISTRIBUTION;
 
     //enable sentry only if we are in production environment and if the product is managed by Panora
     if (isProduction && sentry_dsn && distribution == 'managed') {
