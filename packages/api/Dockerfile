@@ -6,7 +6,7 @@ ENV DATABASE_URL ${DATABASE_URL}
 ENV JWT_SECRET ${JWT_SECRET}
 
 RUN corepack enable
-COPY ./packages/api/ /app
+COPY . /app
 WORKDIR /app
 
 #FROM base AS prod-deps
