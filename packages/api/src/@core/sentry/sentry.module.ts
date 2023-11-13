@@ -1,5 +1,5 @@
 // sentry.module.ts
-import { Module, DynamicModule, Global } from '@nestjs/common';
+import { Module, DynamicModule, Global, Provider } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { SentryInterceptor } from './sentry.interceptor';
 import config from '../utils/config';
@@ -8,7 +8,6 @@ import config from '../utils/config';
 @Module({})
 export class SentryModule {
   static forRoot(): DynamicModule {
-    const isProduction = config.NODE_ENV === 'production';
     const sentry_dsn = config.SENTRY_DSN;
     const distribution = config.DISTRIBUTION;
 
@@ -19,16 +18,19 @@ export class SentryModule {
       });
     }
 
+    const providers: Provider[] = [];
+
+    if (distribution === 'managed') {
+      providers.push({
+        provide: 'APP_INTERCEPTOR',
+        useClass: SentryInterceptor,
+      });
+    }
+
     return {
       module: SentryModule,
-      providers:
-        distribution == 'managed'
-          ? [{ provide: 'APP_INTERCEPTOR', useClass: SentryInterceptor }]
-          : [],
-      exports:
-        distribution == 'managed'
-          ? [{ provide: 'APP_INTERCEPTOR', useClass: SentryInterceptor }]
-          : [],
+      providers: providers,
+      exports: providers,
     };
   }
 }
