@@ -20,7 +20,7 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
   }, []);
 
   const constructAuthUrl = () => {
-    const encodedRedirectUrl = encodeURIComponent(`http://localhost:3000/connections/oauth/callback`);
+    const encodedRedirectUrl = encodeURIComponent(`${import.meta.env.VITE_BACKEND_DOMAIN}/connections/oauth/callback`);
     const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
 
     const vertical = 'CRM'; //TODO when multiple verticals

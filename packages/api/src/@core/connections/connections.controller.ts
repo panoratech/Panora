@@ -2,7 +2,6 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express'; // Importing the Express Response type for type checking
 import { CrmConnectionsService } from './crm/services/crm-connection.service';
 import { ProviderVertical, getProviderVertical } from '../utils/providers';
-import { LoggerService } from '../logger/logger.service';
 
 @Controller('connections')
 export class ConnectionsController {

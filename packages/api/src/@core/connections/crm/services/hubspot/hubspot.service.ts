@@ -52,7 +52,7 @@ export class HubspotConnectionService {
   ) {
     try {
       //TMP STEP = first create a linked_user and a project id
-      await this.addLinkedUserAndProjectTest();
+      //await this.addLinkedUserAndProjectTest();
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
       const formData = new URLSearchParams({
