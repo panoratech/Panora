@@ -3,6 +3,7 @@ import { Module, DynamicModule, Global, Provider } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { SentryInterceptor } from './sentry.interceptor';
 import config from '../utils/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Global()
 @Module({})
@@ -22,7 +23,7 @@ export class SentryModule {
 
     if (distribution === 'managed') {
       providers.push({
-        provide: 'APP_INTERCEPTOR',
+        provide: APP_INTERCEPTOR,
         useClass: SentryInterceptor,
       });
     }
