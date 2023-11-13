@@ -15,16 +15,16 @@ export class ZendeskConnectionService {
   ) {
     try {
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`; // TODO;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
-      const formData = {
+      const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
         code: code,
-      };
+      });
       const res = await axios.post(
         'https://api.getbase.com/oauth2/token',
-        formData,
+        formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -70,13 +70,13 @@ export class ZendeskConnectionService {
   }
   async handleZendeskTokenRefresh(connectionId: bigint, refresh_token: string) {
     try {
-      const formData = {
+      const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: refresh_token,
-      };
+      });
       const res = await axios.post(
         'https://api.getbase.com/oauth2/token',
-        formData,
+        formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',

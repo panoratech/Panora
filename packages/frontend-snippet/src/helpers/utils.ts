@@ -30,29 +30,30 @@ export const providersConfig: ProvidersConfig = {
       authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
       logoPath: './assets/crm/hubspot_logo.png',
     },
-    // TODO
     'zoho': {
-      clientId: 'Zoho_Client_Id',
-      scopes: 'Zoho_Scope',
-      authBaseUrl: '',
+      clientId: '1000.CWBWAO0XK6QNROXMA2Y0RUZYMGJIGT',
+      scopes: 'AaaServer.profile.Read', //todo
+      authBaseUrl: 'https://accounts.zoho.eu/oauth/v2/auth',
       logoPath: 'assets/crm/zoho_logo.png',
     },
     'pipedrive': {
-      clientId: 'Pipedrive_Client_Id',
+      clientId: '8a60094f9108f085',
       scopes: 'Pipedrive_Scope',
-      authBaseUrl: '',
+      authBaseUrl: 'https://oauth.pipedrive.com/oauth/authorize',
       logoPath: 'assets/crm/pipedrive_logo.jpeg',
     },
+    //TODO
     'freshsales': {
       clientId: 'Pipedrive_Client_Id',
       scopes: 'Pipedrive_Scope',
       authBaseUrl: '',
       logoPath: 'assets/crm/freshsales_logo.webp',
     },
+    //TODO
     'zendesk': {
-      clientId: 'Pipedrive_Client_Id',
+      clientId: 'panora-zendesk',
       scopes: 'Pipedrive_Scope',
-      authBaseUrl: '',
+      authBaseUrl: 'https://api.getbase.com/oauth2/authorize',
       logoPath: 'assets/crm/zendesk_logo.png',
     },
 

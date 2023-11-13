@@ -35,7 +35,7 @@ export class CrmConnectionsService {
     linkedUserId: string,
     providerName: string,
     code: string,
-    zohoAccountURL?: string,
+    zohoLocation?: string,
   ) {
     try {
       switch (providerName) {
@@ -49,14 +49,17 @@ export class CrmConnectionsService {
             code,
           );
         case 'zoho':
-          if (!code || !zohoAccountURL) {
-            throw new NotFoundError('no zoho code/ zoho AccountURL found');
+          if (!code) {
+            throw new NotFoundError('no zoho code');
+          }
+          if (!zohoLocation) {
+            throw new NotFoundError('no zoho location');
           }
           return this.zohoConnectionService.handleZohoCallback(
             linkedUserId,
             projectId,
             code,
-            zohoAccountURL,
+            zohoLocation,
           );
         case 'pipedrive':
           if (!code) {

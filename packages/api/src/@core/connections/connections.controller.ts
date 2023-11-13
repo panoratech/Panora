@@ -12,7 +12,7 @@ export class ConnectionsController {
     @Res() res: Response,
     @Query('state') state: string,
     @Query('code') code: string,
-    @Query('accountURL') zohoAccountURL?: string,
+    @Query('location') zohoLocation?: string,
   ) {
     try {
       if (!state || !code) throw new Error('no params found');
@@ -21,13 +21,13 @@ export class ConnectionsController {
       //TODO; ADD VERIFICATION OF PARAMS
       switch (getProviderVertical(providerName)) {
         case ProviderVertical.CRM:
-          const zohoAccount = zohoAccountURL ? zohoAccountURL : '';
+          const zohoLocation_ = zohoLocation ? zohoLocation : '';
           this.crmConnectionsService.handleCRMCallBack(
             projectId,
             linkedUserId,
             providerName,
             code,
-            zohoAccount,
+            zohoLocation_,
           );
         case ProviderVertical.ATS:
           break;

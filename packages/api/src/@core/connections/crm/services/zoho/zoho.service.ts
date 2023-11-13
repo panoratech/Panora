@@ -4,30 +4,43 @@ import config from 'src/@core/utils/config';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { ZohoOAuthResponse } from '../../types';
+
+const ZOHOLocations = {
+  us: 'https://accounts.zoho.com',
+  eu: 'https://accounts.zoho.eu',
+  in: 'https://accounts.zoho.in',
+  au: 'https://accounts.zoho.com.au',
+  jp: 'https://accounts.zoho.jp',
+};
 @Injectable()
 export class ZohoConnectionService {
   constructor(private prisma: PrismaService) {}
-
   async handleZohoCallback(
     linkedUserId: string,
     projectId: string,
     code: string,
-    accountURL: string,
+    zohoLocation: string,
   ) {
     try {
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`; // TODO;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
-      const formData = {
+      const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: config.ZOHOCRM_CLIENT_ID,
         client_secret: config.ZOHOCRM_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
-      };
+      });
+      const domain = ZOHOLocations[zohoLocation];
       const res = await axios.post(
-        `https://${accountURL}/oauth/v2/token`,
-        formData,
+        `${domain}/oauth/v2/token`,
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        },
       );
       const data: ZohoOAuthResponse = res.data;
       console.log('OAuth credentials : zoho ', data);
@@ -48,7 +61,7 @@ export class ZohoConnectionService {
           linked_users: {
             connect: { id_linked_user: BigInt(linkedUserId) },
           },
-          account_url: accountURL,
+          account_url: domain,
         },
       });
     } catch (error) {
@@ -65,19 +78,27 @@ export class ZohoConnectionService {
   async handleZohoTokenRefresh(
     connectionId: bigint,
     refresh_token: string,
-    account_url: string,
+    domain: string,
   ) {
     try {
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
-      const formData = {
+      const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         client_id: config.HUBSPOT_CLIENT_ID,
         client_secret: config.HUBSPOT_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         refresh_token: refresh_token,
-      };
-      const res = await axios.post(`${account_url}/oauth/v2/token`, formData);
+      });
+      const res = await axios.post(
+        `${domain}/oauth/v2/token`,
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        },
+      );
       const data: ZohoOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {

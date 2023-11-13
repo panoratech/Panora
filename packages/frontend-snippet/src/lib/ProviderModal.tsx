@@ -12,7 +12,7 @@ const ProviderModal = ({ isOpen, onSelectProvider, onClose }: ProviderModalProps
   const PROVIDERS = providersArray('CRM');
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
-      <div className="bg-black rounded-lg shadow-lg p-5" style={{ width: '80%', maxWidth: '600px' }}>
+      <div className="bg-zinc-800 rounded-lg shadow-lg p-5" style={{ width: '80%', maxWidth: '600px' }}>
         <div className="flex justify-between items-center mb-4">
           <h6 className="text-xl font-bold">Select CRM Provider</h6>
           <button onClick={onClose}>X</button>

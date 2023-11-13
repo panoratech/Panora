@@ -36,8 +36,18 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
     if (!baseUrl) {
       throw new Error(`Unsupported provider: ${providerName}`);
     }
-
-    return `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`;
+    const addScope = providerName == "pipedrive" ? false : true;
+    let finalAuth = '';
+    if ( providerName == 'zoho' ) {
+      finalAuth = `${baseUrl}?response_type=code&client_id=${encodeURIComponent(clientId)}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodedRedirectUrl}&state=${state}`
+    } else if(providerName == "zendesk"){
+      finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&state=${state}`
+    } else {
+      finalAuth = addScope ? 
+      `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
+      : `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
+    }
+    return finalAuth;
   };
 
   const openModal = () => {

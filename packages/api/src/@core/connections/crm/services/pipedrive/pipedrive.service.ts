@@ -16,16 +16,16 @@ export class PipedriveConnectionService {
   ) {
     try {
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`; // TODO;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
-      const formData = {
+      const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
         code: code,
-      };
+      });
       const res = await axios.post(
         'https://oauth.pipedrive.com/oauth/token',
-        formData,
+        formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -75,16 +75,16 @@ export class PipedriveConnectionService {
     refresh_token: string,
   ) {
     try {
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
-      const formData = {
+      const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         redirect_uri: REDIRECT_URI,
         refresh_token: refresh_token,
-      };
+      });
       const res = await axios.post(
         'https://oauth.pipedrive.com/oauth/token',
-        formData,
+        formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
