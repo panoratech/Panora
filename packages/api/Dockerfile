@@ -2,10 +2,11 @@ FROM node:16-alpine AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-ENV DATABASE_URL `DATABASE_URL`
+ENV DATABASE_URL ${DATABASE_URL}
+ENV JWT_SECRET ${JWT_SECRET}
 
 RUN corepack enable
-COPY . /app
+COPY ./packages/api/ /app
 WORKDIR /app
 
 #FROM base AS prod-deps
