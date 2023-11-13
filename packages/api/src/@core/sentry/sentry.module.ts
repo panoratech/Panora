@@ -13,7 +13,7 @@ export class SentryModule {
     const distribution = config.DISTRIBUTION;
 
     //enable sentry only if we are in production environment and if the product is managed by Panora
-    if (isProduction && sentry_dsn && distribution == 'managed') {
+    if (sentry_dsn && distribution == 'managed') {
       Sentry.init({
         dsn: sentry_dsn,
       });
@@ -21,12 +21,14 @@ export class SentryModule {
 
     return {
       module: SentryModule,
-      providers: isProduction
-        ? [{ provide: 'APP_INTERCEPTOR', useClass: SentryInterceptor }]
-        : [],
-      exports: isProduction
-        ? [{ provide: 'APP_INTERCEPTOR', useClass: SentryInterceptor }]
-        : [],
+      providers:
+        distribution == 'managed'
+          ? [{ provide: 'APP_INTERCEPTOR', useClass: SentryInterceptor }]
+          : [],
+      exports:
+        distribution == 'managed'
+          ? [{ provide: 'APP_INTERCEPTOR', useClass: SentryInterceptor }]
+          : [],
     };
   }
 }
