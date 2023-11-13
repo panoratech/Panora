@@ -47,7 +47,7 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
     const top = (window.innerHeight - height) / 2;
     window.open(authUrl, 'OAuth', `width=${width},height=${height},top=${top},left=${left}`);
 
-    // Call the onSuccess function here if needed, or after the OAuth flow is completed
+    onSuccess();
   };
 
   return { open: openModal, isReady };
