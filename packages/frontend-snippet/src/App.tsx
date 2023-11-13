@@ -7,9 +7,9 @@ import { CRM_PROVIDERS } from './helpers/utils';
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [providerId, setProviderId] = useState("");
-  const [returnUrl, setReturnUrl] = useState("");
+  const [returnUrl, setReturnUrl] = useState("http://127.0.0.1:5173/");
   const [projectId, setPojectId] = useState("1");
-  const [userId, setUserId] = useState("10");
+  const [userId, setUserId] = useState("1");
 
   const { open, isReady } = useOAuth({
     //clientId: CLIENT_ID!, not needed as we manage it for now
@@ -56,7 +56,7 @@ function App() {
   };
   return (
     <>
-      <h1>Integrations Flow</h1>
+      <h1 className='text-5xl font-bold'>Integrations Flow</h1>
       <div className="card">
         <button disabled={!isReady} onClick={() => setIsModalOpen(true)}>
           Start OAuth Flow

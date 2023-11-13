@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { providerAuthBaseUrls, providersConfig } from '../helpers/utils';
+import { providersConfig } from '../helpers/utils';
 
 type UseOAuthProps = {
   clientId?: string;
@@ -20,7 +20,7 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
   }, []);
 
   const constructAuthUrl = () => {
-    const encodedRedirectUrl = encodeURIComponent(`http://localhost:3000/oauth/callback`);
+    const encodedRedirectUrl = encodeURIComponent(`http://localhost:3000/connections/oauth/callback`);
     const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
 
     const vertical = 'CRM'; //TODO when multiple verticals
@@ -32,7 +32,7 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
 
     const { clientId, scopes } = config;
 
-    const baseUrl = providerAuthBaseUrls[providerName];
+    const baseUrl = config.authBaseUrl;
     if (!baseUrl) {
       throw new Error(`Unsupported provider: ${providerName}`);
     }
