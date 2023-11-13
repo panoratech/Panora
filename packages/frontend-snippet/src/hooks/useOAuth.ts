@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
+import { providerAuthBaseUrls, providersConfig } from '../helpers/utils';
 
 type UseOAuthProps = {
-  linkToken: string;
-  clientId: string;       // Your OAuth client ID
-  scopes: string;         // The scopes you are requesting
-  redirectUri: string;    // The redirect URI registered with the OAuth provider
+  clientId?: string;
+  providerName: string;           // Name of the OAuth provider
+  returnUrl: string;              // Return URL after OAuth flow
+  projectId: string;              // Project ID
+  linkedUserId: string;           // Linked User ID
   onSuccess: () => void;
 };
 
-const useOAuth = ({ linkToken, clientId, scopes, redirectUri, onSuccess }: UseOAuthProps) => {
+
+const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -16,9 +19,29 @@ const useOAuth = ({ linkToken, clientId, scopes, redirectUri, onSuccess }: UseOA
     setTimeout(() => setIsReady(true), 1000); // Simulating async operation
   }, []);
 
+  const constructAuthUrl = () => {
+    const encodedRedirectUrl = encodeURIComponent(`http://localhost:3000/oauth/callback`);
+    const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
+
+    const vertical = 'CRM'; //TODO when multiple verticals
+
+    const config = providersConfig[vertical][providerName];
+    if (!config) {
+      throw new Error(`Unsupported provider: ${providerName}`);
+    }
+
+    const { clientId, scopes } = config;
+
+    const baseUrl = providerAuthBaseUrls[providerName];
+    if (!baseUrl) {
+      throw new Error(`Unsupported provider: ${providerName}`);
+    }
+
+    return `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`;
+  };
+
   const openModal = () => {
-    //const authUrl = `https://app-eu1.hubspot.com/oauth/authorize?client_id=${encodeURIComponent(clientId)}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
-    const authUrl = `https://app-eu1.hubspot.com/oauth/authorize?client_id=${clientId}&redirect_uri=http://localhost:3000/oauth/callback&scope=crm.lists.read%20crm.lists.write`
+    const authUrl = constructAuthUrl();
     const width = 600, height = 600;
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
