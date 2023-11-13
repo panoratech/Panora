@@ -2,6 +2,8 @@ FROM node:16-alpine AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+ENV DATABASE_URL `DATABASE_URL`
+
 RUN corepack enable
 COPY . /app
 WORKDIR /app
