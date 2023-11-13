@@ -53,17 +53,7 @@ export class HubspotConnectionService {
   ) {
     try {
       //TMP STEP = first create a linked_user and a project id
-      //await this.addLinkedUserAndProjectTest();
-      const newLinkedUser = {
-        linked_user_origin_id: '12345',
-        alias: 'ACME COMPANY',
-        status: 'Active',
-        id_project: 1n, // bigint value
-      };
-      const data_ = await this.prisma.linked_users.create({
-        data: newLinkedUser,
-      });
-      this.logger.log('Added new linked_user ' + data_);
+      await this.addLinkedUserAndProjectTest();
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
       const formData = new URLSearchParams({
@@ -126,18 +116,23 @@ export class HubspotConnectionService {
   }
   async handleHubspotTokenRefresh(connectionId: bigint, refresh_token: string) {
     try {
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/oauth/crm/callback`;
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
 
-      const formData = {
+      const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         client_id: config.HUBSPOT_CLIENT_ID,
         client_secret: config.HUBSPOT_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         refresh_token: refresh_token,
-      };
+      });
       const res = await axios.post(
         'https://api.hubapi.com/oauth/v1/token',
-        formData,
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        },
       );
       const data: HubspotOAuthResponse = res.data;
       await this.prisma.connections.update({
