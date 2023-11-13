@@ -19,19 +19,20 @@ export class SentryModule {
       });
     }
 
-    const providers: Provider[] = [];
-
-    if (distribution === 'managed') {
-      providers.push({
-        provide: APP_INTERCEPTOR,
-        useClass: SentryInterceptor,
-      });
-    }
-
     return {
       module: SentryModule,
-      providers: providers,
-      exports: providers,
+      providers: [
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: SentryInterceptor,
+        },
+      ],
+      exports: [
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: SentryInterceptor,
+        },
+      ],
     };
   }
 }
