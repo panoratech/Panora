@@ -1,5 +1,6 @@
 
 
+
 -- ************************************** organizations
 
 CREATE TABLE organizations
