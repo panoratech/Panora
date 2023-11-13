@@ -1,8 +1,13 @@
 import { providersArray } from "../helpers/utils";
 
+// Assuming you have these types defined
+type ProviderModalProps = {
+  isOpen: boolean;
+  onSelectProvider: (providerName: string) => void;
+  onClose: () => void;
+};
 
-
-const ProviderModal = ({ isOpen, onSelectProvider, onClose }) => {
+const ProviderModal = ({ isOpen, onSelectProvider, onClose }: ProviderModalProps) => {
   if (!isOpen) {console.log("null modal"); return null}
   const PROVIDERS = providersArray('CRM');
   return (
