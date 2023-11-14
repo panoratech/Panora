@@ -1,29 +1,25 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { CreateContactDto } from '../dto/create-contact.dto';
+import { UnifiedContactInput } from '../dto/create-contact.dto';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
 import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
+import { ApiResponse, Email, NormalizedContactInfo, Phone } from '../types';
+import { desunify } from 'src/@core/utils/unification';
 import {
-  ApiResponse,
-  Email,
-  FreshSales_ContactCreated,
-  Hubspot_ContactCreated,
-  NormalizedContactInfo,
-  Phone,
-  Pipedrive_ContactCreated,
-  Zendesk_ContactCreated,
-  Zoho_ContactCreated,
-} from '../types';
+  CrmObject,
+  FreshsalesContactInput,
+  FreshsalesContactOutput,
+  HubspotContactInput,
+  HubspotContactOutput,
+  PipedriveContactInput,
+  ZendeskContactInput,
+  ZohoContactInput,
+} from 'src/crm/@types';
 
-type AddContactResponse =
-  | FreshSales_ContactCreated
-  | Hubspot_ContactCreated
-  | Zendesk_ContactCreated
-  | Pipedrive_ContactCreated
-  | Zoho_ContactCreated;
+export type ContactOutput = FreshsalesContactOutput | HubspotContactOutput;
 
 @Injectable()
 export class ContactService {
@@ -58,7 +54,7 @@ export class ContactService {
     };
   }
 
-  async addContactToDb(data: CreateContactDto, job_id: number | bigint) {
+  async addContactToDb(data: UnifiedContactInput, job_id: number | bigint) {
     const { first_name, last_name, email_addresses, phone_numbers } = data;
     const { normalizedEmails, normalizedPhones } =
       this.normalizeEmailsAndNumbers(email_addresses, phone_numbers);
@@ -78,7 +74,11 @@ export class ContactService {
     });
   }
 
-  async addContact(createContactDto: CreateContactDto, integrationId: string) {
+  async addContact(
+    unifiedContactData: UnifiedContactInput,
+    integrationId: string,
+    linkedUserId: string,
+  ) {
     //TODO; customerId must be passed here
     const job_resp_create = await this.prisma.jobs.create({
       data: {
@@ -86,7 +86,7 @@ export class ContactService {
       },
     });
     const job_id = job_resp_create.id_job;
-    await this.addContactToDb(createContactDto, job_id);
+    await this.addContactToDb(unifiedContactData, job_id);
     const job_resp_update = await this.prisma.jobs.update({
       where: {
         id_job: job_id,
@@ -96,36 +96,47 @@ export class ContactService {
       },
     });
 
-    //TODO: get the destination provider => call destinationCRMInDb()
-    const dest: any = 'freshsales';
-    let resp: ApiResponse<AddContactResponse>;
-    //TODO: desunify the data according to the target obj wanted
-    switch (dest) {
+    let resp: ApiResponse<ContactOutput>;
+    //desunify the data according to the target obj wanted
+    const desunifiedObject = await desunify<UnifiedContactInput>({
+      sourceObject: unifiedContactData,
+      targetType: CrmObject.contact,
+      providerName: integrationId,
+    });
+    switch (integrationId) {
       case 'freshsales':
-        resp = await this.freshsales.addContact(createContactDto);
+        resp = await this.freshsales.addContact(
+          desunifiedObject as FreshsalesContactInput,
+        );
         break;
 
       case 'zoho':
-        resp = await this.zoho.addContact(createContactDto);
+        resp = await this.zoho.addContact(desunifiedObject as ZohoContactInput);
         break;
 
       case 'zendesk':
-        resp = await this.zendesk.addContact(createContactDto);
+        resp = await this.zendesk.addContact(
+          desunifiedObject as ZendeskContactInput,
+        );
         break;
 
       case 'hubspot':
-        resp = await this.hubspot.addContact(createContactDto);
+        resp = await this.hubspot.addContact(
+          desunifiedObject as HubspotContactInput,
+        );
         break;
 
       case 'pipedrive':
-        resp = await this.pipedrive.addContact(createContactDto);
+        resp = await this.pipedrive.addContact(
+          desunifiedObject as PipedriveContactInput,
+        );
         break;
 
       default:
         break;
     }
-    //TODO: sanitize the resp to normalize it
 
+    //TODO: sanitize the resp to normalize it
     const status_resp = resp.statusCode === HttpStatus.OK ? 'success' : 'fail';
     const job_resp = await this.prisma.jobs.update({
       where: {

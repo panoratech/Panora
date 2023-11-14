@@ -1,4 +1,9 @@
-export interface FreshSales_ContactCreated {
+export interface FreshsalesContactInput {
+  first_name: string;
+  last_name: string;
+  phone_numbers: string[];
+}
+export interface FreshsalesContactOutput {
   id: number;
   first_name: string;
   last_name: string;

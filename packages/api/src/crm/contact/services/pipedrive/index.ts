@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Pipedrive_ContactCreated } from './types';
 import { ApiResponse } from '../../types';
-import { CreateContactDto } from '../../dto/create-contact.dto';
+import { PipedriveContactInput, PipedriveContactOutput } from 'src/crm/@types';
 
 @Injectable()
 export class PipedriveService {
   async addContact(
-    createContactDto: CreateContactDto,
-  ): Promise<ApiResponse<Pipedrive_ContactCreated>> {
+    contactData: PipedriveContactInput,
+  ): Promise<ApiResponse<PipedriveContactOutput>> {
     return;
   }
 }

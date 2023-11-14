@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse, Zendesk_ContactCreated } from '../../types';
-import { CreateContactDto } from '../../dto/create-contact.dto';
-
+import { ApiResponse } from '../../types';
+import { ZendeskContactInput, ZendeskContactOutput } from 'src/crm/@types';
 @Injectable()
 export class ZendeskService {
   async addContact(
-    createContactDto: CreateContactDto,
-  ): Promise<ApiResponse<Zendesk_ContactCreated>> {
+    contactData: ZendeskContactInput,
+  ): Promise<ApiResponse<ZendeskContactOutput>> {
     return;
   }
 }

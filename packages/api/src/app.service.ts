@@ -4,6 +4,6 @@ import { LoggerService } from './@core/logger/logger.service';
 @Injectable()
 export class AppService {
   getHello(): string {
-    return 'Hello World!';
+    return 'Hello You Are On The Panora API!';
   }
 }

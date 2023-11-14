@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse, Hubspot_ContactCreated } from '../../types';
-import { CreateContactDto } from '../../dto/create-contact.dto';
+import { ApiResponse } from '../../types';
+import { HubspotContactInput, HubspotContactOutput } from 'src/crm/@types';
 
 @Injectable()
 export class HubspotService {
   async addContact(
-    createContactDto: CreateContactDto,
-  ): Promise<ApiResponse<Hubspot_ContactCreated>> {
+    contactData: HubspotContactInput,
+  ): Promise<ApiResponse<HubspotContactOutput>> {
     return;
   }
 }

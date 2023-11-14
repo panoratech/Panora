@@ -8,22 +8,30 @@ import { ConfigModule } from '@nestjs/config';
 import { ConnectionsModule } from './@core/connections/connections.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './@core/tasks/tasks.service';
-import { SentryModule } from './@core/sentry/sentry.module';
 import { CrmConnectionModule } from './@core/connections/crm/crm-connection.module';
 import { LoggerModule } from 'nestjs-pino';
 import { LoggerService } from './@core/logger/logger.service';
-import { HttpExceptionFilter } from './@core/filters/exception.filters';
-import { APP_FILTER } from '@nestjs/core';
+import { TicketingModule } from './ticketing/ticketing.module';
+import { HrisModule } from './hris/hris.module';
+import { MarketingAutomationModule } from './marketing-automation/marketing-automation.module';
+import { AtsModule } from './ats/ats.module';
+import { AccountingModule } from './accounting/accounting.module';
+import { FileStorageModule } from './file-storage/file-storage.module';
 
 @Module({
   imports: [
+    TicketingModule,
+    HrisModule,
+    MarketingAutomationModule,
+    AtsModule,
+    AccountingModule,
+    FileStorageModule,
     CrmModule,
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ConnectionsModule,
     CrmConnectionModule,
     ScheduleModule.forRoot(),
-    SentryModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
         customProps: (req, res) => ({
