@@ -35,7 +35,7 @@ export class PipedriveService {
         },
       );
       return {
-        data: resp.data,
+        data: resp.data.data,
         message: 'Pipedrive contact created',
         statusCode: 200,
       };
