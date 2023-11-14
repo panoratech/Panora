@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Query } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
-import { CreateContactDto } from './dto/create-contact.dto';
+import { UnifiedContactInput } from './dto/create-contact.dto';
 
 @Controller('crm/contact')
 export class ContactController {
@@ -8,9 +8,14 @@ export class ContactController {
 
   @Post()
   addContact(
-    @Body() createContactDto: CreateContactDto,
+    @Body() unfiedContactData: UnifiedContactInput,
     @Query() integrationId: string,
+    @Query() linkedUserId: string,
   ) {
-    return this.contactService.addContact(createContactDto, integrationId);
+    return this.contactService.addContact(
+      unfiedContactData,
+      integrationId,
+      linkedUserId,
+    );
   }
 }

@@ -1,3 +1,6 @@
-export interface Hubspot_ContactCreated {
+export interface HubspotContactInput {
+  company_size: string;
+}
+export interface HubspotContactOutput {
   id: number;
 }

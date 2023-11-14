@@ -27,12 +27,6 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @UseGuards(ApiKeyAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
-
   @Post('auth/register')
   async registerUser(@Body() user: CreateUserDto) {
     return this.authService.register(user);

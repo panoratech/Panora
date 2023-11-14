@@ -17,14 +17,13 @@ export class TasksService implements OnModuleInit {
 
   @Cron(CronExpression.EVERY_HOUR)
   async handleCron() {
-    // refresh all tokens that expire in 3 days
-    const threeDaysFromNow = new Date();
-    threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
+    // refresh all tokens that expire in less than 10 hours
+    const tenHoursFromNow = new Date();
+    tenHoursFromNow.setHours(tenHoursFromNow.getHours() + 10);
     const connectionsToRefresh = await this.prisma.connections.findMany({
       where: {
         expiration_timestamp: {
-          lte: threeDaysFromNow,
+          lte: tenHoursFromNow,
         },
       },
     });

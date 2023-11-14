@@ -30,6 +30,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/schedule": "^4.0.0",
     "@nestjs/swagger": "^7.1.14",
+    "@ntegral/nestjs-sentry": "^4.0.0",
     "@prisma/client": "^5.4.2",
     "@sentry/node": "^7.80.0",
     "@sentry/tracing": "^7.80.0",
