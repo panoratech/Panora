@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpException, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CrmModule } from './crm/crm.module';
@@ -17,6 +17,8 @@ import { MarketingAutomationModule } from './marketing-automation/marketing-auto
 import { AtsModule } from './ats/ats.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { FileStorageModule } from './file-storage/file-storage.module';
+import { SentryInterceptor, SentryModule } from '@ntegral/nestjs-sentry';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -29,6 +31,13 @@ import { FileStorageModule } from './file-storage/file-storage.module';
     CrmModule,
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    SentryModule.forRoot({
+      dsn: process.env.SENTRY_DSN,
+      debug: true,
+      environment: 'dev',
+      release: 'some_release',
+      logLevels: ['debug'],
+    }),
     ConnectionsModule,
     CrmConnectionModule,
     ScheduleModule.forRoot(),
@@ -47,6 +56,23 @@ import { FileStorageModule } from './file-storage/file-storage.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService, TasksService, LoggerService],
+  providers: [
+    AppService,
+    AuthService,
+    TasksService,
+    LoggerService,
+    {
+      provide: APP_INTERCEPTOR,
+      useFactory: () =>
+        new SentryInterceptor({
+          filters: [
+            {
+              type: HttpException,
+              filter: (exception: HttpException) => 500 > exception.getStatus(), // Only report 500 errors
+            },
+          ],
+        }),
+    },
+  ],
 })
 export class AppModule {}
