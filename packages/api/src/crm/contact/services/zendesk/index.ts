@@ -5,6 +5,7 @@ import { ZendeskContactInput, ZendeskContactOutput } from 'src/crm/@types';
 export class ZendeskService {
   async addContact(
     contactData: ZendeskContactInput,
+    linkedUserId: string,
   ): Promise<ApiResponse<ZendeskContactOutput>> {
     return;
   }

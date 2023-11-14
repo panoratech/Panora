@@ -6,6 +6,7 @@ import { PipedriveContactInput, PipedriveContactOutput } from 'src/crm/@types';
 export class PipedriveService {
   async addContact(
     contactData: PipedriveContactInput,
+    linkedUserId: string,
   ): Promise<ApiResponse<PipedriveContactOutput>> {
     return;
   }

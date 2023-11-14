@@ -6,6 +6,7 @@ import { ZohoContactInput, ZohoContactOutput } from 'src/crm/@types';
 export class ZohoService {
   async addContact(
     contactData: ZohoContactInput,
+    linkedUserId: string,
   ): Promise<ApiResponse<ZohoContactOutput>> {
     return;
   }

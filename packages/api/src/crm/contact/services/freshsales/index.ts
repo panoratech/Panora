@@ -11,6 +11,7 @@ import {
 export class FreshSalesService {
   async addContact(
     contactData: FreshsalesContactInput,
+    linkedUserId: string,
   ): Promise<ApiResponse<FreshsalesContactOutput>> {
     const mobile = contactData.phone_numbers[0];
     const url = 'https://domain.freshsales.io/api/contacts';

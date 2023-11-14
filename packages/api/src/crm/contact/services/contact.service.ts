@@ -79,7 +79,7 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
   ) {
-    //TODO; customerId must be passed here
+    //TODO; linkedUserId must be passed here
     const job_resp_create = await this.prisma.jobs.create({
       data: {
         status: 'initialized',
@@ -107,28 +107,35 @@ export class ContactService {
       case 'freshsales':
         resp = await this.freshsales.addContact(
           desunifiedObject as FreshsalesContactInput,
+          linkedUserId,
         );
         break;
 
       case 'zoho':
-        resp = await this.zoho.addContact(desunifiedObject as ZohoContactInput);
+        resp = await this.zoho.addContact(
+          desunifiedObject as ZohoContactInput,
+          linkedUserId,
+        );
         break;
 
       case 'zendesk':
         resp = await this.zendesk.addContact(
           desunifiedObject as ZendeskContactInput,
+          linkedUserId,
         );
         break;
 
       case 'hubspot':
         resp = await this.hubspot.addContact(
           desunifiedObject as HubspotContactInput,
+          linkedUserId,
         );
         break;
 
       case 'pipedrive':
         resp = await this.pipedrive.addContact(
           desunifiedObject as PipedriveContactInput,
+          linkedUserId,
         );
         break;
 
