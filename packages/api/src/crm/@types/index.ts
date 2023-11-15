@@ -1,3 +1,6 @@
+import { UnifiedContactInput } from '../contact/dto/create-contact.dto';
+import { UnifiedDealInput } from '../deal/dto/create-deal.dto';
+
 export enum CrmObject {
   company = 'company',
   contact = 'contact',
@@ -8,6 +11,8 @@ export enum CrmObject {
   task = 'task',
   user = 'user',
 }
+
+export type UnifiedCrm = UnifiedContactInput | UnifiedDealInput;
 
 export * from './../contact/services/freshsales/types';
 export * from './../contact/services/zendesk/types';

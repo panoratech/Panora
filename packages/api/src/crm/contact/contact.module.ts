@@ -7,6 +7,7 @@ import { ZendeskService } from './services/zendesk';
 import { ZohoService } from './services/zoho';
 import { PipedriveService } from './services/pipedrive';
 import { HubspotService } from './services/hubspot';
+import { LoggerService } from 'src/@core/logger/logger.service';
 
 @Module({
   controllers: [ContactController],
@@ -18,6 +19,7 @@ import { HubspotService } from './services/hubspot';
     ZohoService,
     PipedriveService,
     HubspotService,
+    LoggerService,
   ],
 })
 export class ContactModule {}

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ContactModule } from './contact/contact.module';
+import { DealModule } from './deal/deal.module';
 
 @Module({
-  imports: [ContactModule],
+  imports: [ContactModule, DealModule],
 })
 export class CrmModule {}

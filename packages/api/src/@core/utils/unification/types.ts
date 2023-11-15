@@ -3,16 +3,19 @@ import {
   FreshsalesContactInput,
   HubspotContactInput,
   PipedriveContactInput,
+  UnifiedCrm,
   ZendeskContactInput,
   ZohoContactInput,
 } from 'src/crm/@types';
 
 import { HrisObject } from 'src/hris/@types';
-import { AtsObject } from 'src/ats/@types';
+import { AtsObject, UnifiedAts } from 'src/ats/@types';
 import { AccountingObject } from 'src/accounting/@types';
 import { MarketingAutomationObject } from 'src/marketing-automation/@types';
 import { TicketingObject } from 'src/ticketing/@types';
 import { FileStorageObject } from 'src/file-storage/@types';
+
+export type Unified = UnifiedCrm | UnifiedAts;
 
 // Actions TYPE
 export type ContactInput =

@@ -1,7 +1,7 @@
 import { CrmObject } from 'src/crm/@types';
 import { ProviderVertical, getProviderVertical } from '../providers';
 import { desunifyCrm } from './crm';
-import { DesunifyReturnType, TargetObject } from './types';
+import { DesunifyReturnType, TargetObject, Unified } from './types';
 
 /* to insert data
 
@@ -9,7 +9,7 @@ SaaS > [Panora] > 3rdParties >
 
 */
 
-export async function desunify<T extends Record<string, any>>({
+export async function desunify<T extends Unified>({
   sourceObject,
   targetType,
   providerName,

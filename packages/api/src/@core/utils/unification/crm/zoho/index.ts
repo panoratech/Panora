@@ -1,7 +1,7 @@
 import { CrmObject } from 'src/crm/@types';
-import { CrmObjectInput } from '../../types';
+import { CrmObjectInput, Unified } from '../../types';
 
-export async function desunifyZoho<T extends Record<string, any>>({
+export async function desunifyZoho<T extends Unified>({
   sourceObject,
   targetType_,
 }: {

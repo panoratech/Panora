@@ -1,12 +1,12 @@
 import { CrmObject } from 'src/crm/@types';
 import { desunifyHubspot } from './hubspot';
-import { CrmObjectInput } from '../types';
+import { CrmObjectInput, Unified } from '../types';
 import { desunifyPipedrive } from './pipedrive';
 import { desunifyZoho } from './zoho';
 import { desunifyZendesk } from './zendesk';
 import { desunifyFreshsales } from './freshsales';
 
-export async function desunifyCrm<T extends Record<string, any>>({
+export async function desunifyCrm<T extends Unified>({
   sourceObject,
   targetType_,
   providerName,

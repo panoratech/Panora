@@ -1,7 +1,7 @@
 import { CrmObject } from 'src/crm/@types';
-import { CrmObjectInput } from '../../types';
+import { CrmObjectInput, Unified } from '../../types';
 
-export async function desunifyZendesk<T extends Record<string, any>>({
+export async function desunifyZendesk<T extends Unified>({
   sourceObject,
   targetType_,
 }: {
