@@ -15,11 +15,19 @@ import {
   HubspotContactInput,
   HubspotContactOutput,
   PipedriveContactInput,
+  PipedriveContactOutput,
   ZendeskContactInput,
+  ZendeskContactOutput,
   ZohoContactInput,
+  ZohoContactOutput,
 } from 'src/crm/@types';
 
-export type ContactOutput = FreshsalesContactOutput | HubspotContactOutput;
+export type ContactOutput =
+  | FreshsalesContactOutput
+  | HubspotContactOutput
+  | ZohoContactOutput
+  | ZendeskContactOutput
+  | PipedriveContactOutput;
 
 @Injectable()
 export class ContactService {
@@ -107,28 +115,35 @@ export class ContactService {
       case 'freshsales':
         resp = await this.freshsales.addContact(
           desunifiedObject as FreshsalesContactInput,
+          linkedUserId,
         );
         break;
 
       case 'zoho':
-        resp = await this.zoho.addContact(desunifiedObject as ZohoContactInput);
+        resp = await this.zoho.addContact(
+          desunifiedObject as ZohoContactInput,
+          linkedUserId,
+        );
         break;
 
       case 'zendesk':
         resp = await this.zendesk.addContact(
           desunifiedObject as ZendeskContactInput,
+          linkedUserId,
         );
         break;
 
       case 'hubspot':
         resp = await this.hubspot.addContact(
           desunifiedObject as HubspotContactInput,
+          linkedUserId,
         );
         break;
 
       case 'pipedrive':
         resp = await this.pipedrive.addContact(
           desunifiedObject as PipedriveContactInput,
+          linkedUserId,
         );
         break;
 
