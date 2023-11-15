@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ApiResponse } from '../../types';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import {
+  CrmObject,
   FreshsalesContactInput,
   FreshsalesContactOutput,
 } from 'src/crm/@types';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { LoggerService } from 'src/@core/logger/logger.service';
+import { handleServiceError } from 'src/@core/utils/errors';
 
 @Injectable()
 export class FreshSalesService {
@@ -44,16 +46,7 @@ export class FreshSalesService {
         statusCode: 201,
       };
     } catch (error) {
-      console.error(error.response ? error.response.data : error.message);
-      const status: number = error.response
-        ? error.response.status
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-      return {
-        data: null,
-        error: error.message,
-        message: 'Failed to create contact.',
-        statusCode: status,
-      };
+      handleServiceError(error, this.logger, 'Freshsales', CrmObject.contact);
     }
   }
 }

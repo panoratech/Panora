@@ -15,11 +15,19 @@ import {
   HubspotContactInput,
   HubspotContactOutput,
   PipedriveContactInput,
+  PipedriveContactOutput,
   ZendeskContactInput,
+  ZendeskContactOutput,
   ZohoContactInput,
+  ZohoContactOutput,
 } from 'src/crm/@types';
 
-export type ContactOutput = FreshsalesContactOutput | HubspotContactOutput;
+export type ContactOutput =
+  | FreshsalesContactOutput
+  | HubspotContactOutput
+  | ZohoContactOutput
+  | ZendeskContactOutput
+  | PipedriveContactOutput;
 
 @Injectable()
 export class ContactService {
@@ -79,9 +87,9 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
   ) {
-    //TODO; linkedUserId must be passed here
     const job_resp_create = await this.prisma.jobs.create({
       data: {
+        id_linked_user: BigInt(linkedUserId),
         status: 'initialized',
       },
     });
