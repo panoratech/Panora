@@ -24,8 +24,7 @@ export class PipedriveService {
         },
       });
       const resp = await axios.post(
-        //TODO
-        `/v1/persons`,
+        `https://api.pipedrive.com/v1/persons`,
         JSON.stringify(contactData),
         {
           headers: {
@@ -35,9 +34,9 @@ export class PipedriveService {
         },
       );
       return {
-        data: resp.data.data,
+        data: resp.data,
         message: 'Pipedrive contact created',
-        statusCode: 200,
+        statusCode: 201,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {

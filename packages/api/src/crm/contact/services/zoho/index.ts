@@ -37,7 +37,7 @@ export class ZohoService {
       return {
         data: resp.data,
         message: 'Zoho contact created',
-        statusCode: 200,
+        statusCode: 201,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {

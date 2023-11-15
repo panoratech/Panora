@@ -35,7 +35,7 @@ export class HubspotService {
       return {
         data: resp.data,
         message: 'Hubspot contact created',
-        statusCode: 200,
+        statusCode: 201,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {

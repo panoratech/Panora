@@ -36,7 +36,7 @@ export class ZendeskService {
       return {
         data: resp.data,
         message: 'Zendesk contact created',
-        statusCode: 200,
+        statusCode: 201,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {
