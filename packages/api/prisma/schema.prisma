@@ -56,8 +56,12 @@ model jobs {
   id_job              Int                   @id(map: "pk_jobs") @default(autoincrement())
   status              String
   timestamp           DateTime              @default(now()) @db.Timestamp(6)
+  id_linked_user      BigInt
   crm_contacts        crm_contacts[]
+  linked_users        linked_users          @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
   jobs_status_history jobs_status_history[]
+
+  @@index([id_linked_user], map: "fk_linkeduserid_projectid")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -136,6 +140,7 @@ model linked_users {
   status                String
   id_project            BigInt
   connections           connections[]
+  jobs                  jobs[]
   projects              projects      @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_10")
 
   @@index([id_project], map: "fk_proectid_linked_users")

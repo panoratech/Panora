@@ -79,9 +79,9 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
   ) {
-    //TODO; customerId must be passed here
     const job_resp_create = await this.prisma.jobs.create({
       data: {
+        id_linked_user: BigInt(linkedUserId),
         status: 'initialized',
       },
     });
