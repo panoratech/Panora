@@ -21,6 +21,7 @@ import {
   ZohoContactInput,
   ZohoContactOutput,
 } from 'src/crm/@types';
+import { LoggerService } from 'src/@core/logger/logger.service';
 
 export type ContactOutput =
   | FreshsalesContactOutput
@@ -38,7 +39,10 @@ export class ContactService {
     private zoho: ZohoService,
     private zendesk: ZendeskService,
     private pipedrive: PipedriveService,
-  ) {}
+    private logger: LoggerService,
+  ) {
+    this.logger.setContext(ContactService.name);
+  }
 
   //utils functions
   normalizeEmailsAndNumbers(
