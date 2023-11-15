@@ -1,7 +1,7 @@
 export interface FreshsalesContactInput {
   first_name: string;
   last_name: string;
-  phone_numbers: string[];
+  mobile_number: string | string[];
 }
 export interface FreshsalesContactOutput {
   id: number;

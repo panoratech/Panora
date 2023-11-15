@@ -22,9 +22,12 @@ export class HubspotService {
           id_linked_user: BigInt(linkedUserId),
         },
       });
+      const dataBody = {
+        properties: contactData,
+      };
       const resp = await axios.post(
         `https://api.hubapi.com/crm/v3/objects/contacts/`,
-        JSON.stringify(contactData),
+        JSON.stringify(dataBody),
         {
           headers: {
             'Content-Type': 'application/json',
