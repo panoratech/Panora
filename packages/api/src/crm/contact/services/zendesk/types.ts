@@ -1,23 +1,23 @@
 export interface ZendeskContactInput {
-  contact_id: number;
+  contact_id?: number;
   name: string;
   first_name: string;
   last_name: string;
-  title: string;
-  description: string;
-  industry: string;
-  website: string;
-  email: string;
-  phone: string;
-  mobile: string;
-  fax: string;
-  twitter: string;
-  facebook: string;
-  linkedin: string;
-  skype: string;
-  address: Address;
-  tags: string[];
-  custom_fields: CustomFields;
+  title?: string;
+  description?: string;
+  industry?: string;
+  website?: string;
+  email?: string;
+  phone?: string;
+  mobile?: string;
+  fax?: string;
+  twitter?: string;
+  facebook?: string;
+  linkedin?: string;
+  skype?: string;
+  address?: Address;
+  tags?: string[];
+  custom_fields?: CustomFields;
   // Include any additional fields specific to Zendesk if needed
 }
 export interface ZendeskContactOutput {

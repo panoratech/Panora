@@ -2,10 +2,18 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express'; // Importing the Express Response type for type checking
 import { CrmConnectionsService } from './crm/services/crm-connection.service';
 import { ProviderVertical, getProviderVertical } from '../utils/providers';
+import { LoggerService } from '../logger/logger.service';
+import { handleServiceError } from '../utils/errors';
 
 @Controller('connections')
 export class ConnectionsController {
-  constructor(private readonly crmConnectionsService: CrmConnectionsService) {}
+  constructor(
+    private readonly crmConnectionsService: CrmConnectionsService,
+    private logger: LoggerService,
+  ) {
+    this.logger.setContext(ConnectionsController.name);
+  }
+
   @Get('oauth/callback')
   handleCallback(
     @Res() res: Response,
@@ -14,7 +22,9 @@ export class ConnectionsController {
     @Query('location') zohoLocation?: string,
   ) {
     try {
-      if (!state || !code) throw new Error('no params found');
+      if (!state) throw new Error('No Callback Params found for state');
+      if (!code) throw new Error('No Callback Params found for code');
+
       const stateData = JSON.parse(decodeURIComponent(state));
       const { projectId, linkedUserId, providerName, returnUrl } = stateData;
       //TODO; ADD VERIFICATION OF PARAMS
@@ -46,7 +56,7 @@ export class ConnectionsController {
 
       res.redirect(returnUrl);
     } catch (error) {
-      console.error('An error occurred', error.response?.data || error.message);
+      handleServiceError(error, this.logger);
     }
   }
 }

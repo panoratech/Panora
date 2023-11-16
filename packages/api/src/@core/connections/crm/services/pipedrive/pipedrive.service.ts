@@ -4,10 +4,18 @@ import axios from 'axios';
 import config from 'src/@core/utils/config';
 import { PipeDriveOAuthResponse } from '../../types';
 import { Prisma } from '@prisma/client';
+import {
+  Action,
+  NotUniqueRecord,
+  handleServiceError,
+} from 'src/@core/utils/errors';
+import { LoggerService } from 'src/@core/logger/logger.service';
 
 @Injectable()
 export class PipedriveConnectionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private logger: LoggerService) {
+    this.logger.setContext(PipedriveConnectionService.name);
+  }
 
   async handlePipedriveCallback(
     linkedUserId: string,
@@ -15,6 +23,15 @@ export class PipedriveConnectionService {
     code: string,
   ) {
     try {
+      const isNotUnique = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: BigInt(linkedUserId),
+        },
+      });
+      if (isNotUnique)
+        throw new NotUniqueRecord(
+          `A connection already exists for userId ${linkedUserId} and the provider pipedrive`,
+        );
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
@@ -59,14 +76,7 @@ export class PipedriveConnectionService {
         },
       });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        console.error('Error with Axios request:', error.response?.data);
-      }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error('Error with Prisma request:', error);
-      }
-      console.log(error);
+      handleServiceError(error, this.logger, 'pipedrive', Action.oauthCallback);
     }
   }
 
@@ -109,14 +119,7 @@ export class PipedriveConnectionService {
       });
       console.log('OAuth credentials updated : pipedrive ', data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        console.error('Error with Axios request:', error.response?.data);
-      }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error('Error with Prisma request:', error);
-      }
-      console.log(error);
+      handleServiceError(error, this.logger, 'pipedrive', Action.oauthRefresh);
     }
   }
 }

@@ -5,12 +5,14 @@ import axios from 'axios';
 import { Prisma } from '@prisma/client';
 import { LoggerService } from 'src/@core/logger/logger.service';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
-import { handleServiceError } from 'src/@core/utils/errors';
+import { ActionType, handleServiceError } from 'src/@core/utils/errors';
 
 @Injectable()
 export class ZohoService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
-    this.logger.setContext(ZohoService.name);
+    this.logger.setContext(
+      CrmObject.contact.toUpperCase() + ':' + ZohoService.name,
+    );
   }
 
   async addContact(
@@ -41,8 +43,46 @@ export class ZohoService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(error, this.logger, 'Zoho', CrmObject.contact);
+      handleServiceError(
+        error,
+        this.logger,
+        'Zoho',
+        CrmObject.contact,
+        ActionType.POST,
+      );
     }
     return;
+  }
+
+  async getContacts(
+    linkedUserId: string,
+  ): Promise<ApiResponse<ZohoContactOutput[]>> {
+    try {
+      //TODO: check required scope  => crm.objects.contacts.READ
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: BigInt(linkedUserId),
+        },
+      });
+      const resp = await axios.get(`https://www.zohoapis.com/crm/v3/Contacts`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${connection.access_token}`,
+        },
+      });
+      return {
+        data: resp.data,
+        message: 'Zoho contacts retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Zoho',
+        CrmObject.contact,
+        ActionType.GET,
+      );
+    }
   }
 }

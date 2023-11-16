@@ -4,6 +4,12 @@ import config from 'src/@core/utils/config';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { ZohoOAuthResponse } from '../../types';
+import { LoggerService } from 'src/@core/logger/logger.service';
+import {
+  Action,
+  NotUniqueRecord,
+  handleServiceError,
+} from 'src/@core/utils/errors';
 
 const ZOHOLocations = {
   us: 'https://accounts.zoho.com',
@@ -14,7 +20,9 @@ const ZOHOLocations = {
 };
 @Injectable()
 export class ZohoConnectionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private logger: LoggerService) {
+    this.logger.setContext(ZohoConnectionService.name);
+  }
   async handleZohoCallback(
     linkedUserId: string,
     projectId: string,
@@ -22,6 +30,15 @@ export class ZohoConnectionService {
     zohoLocation: string,
   ) {
     try {
+      const isNotUnique = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: BigInt(linkedUserId),
+        },
+      });
+      if (isNotUnique)
+        throw new NotUniqueRecord(
+          `A connection already exists for userId ${linkedUserId} and the provider zoho`,
+        );
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
@@ -65,14 +82,7 @@ export class ZohoConnectionService {
         },
       });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        console.error('Error with Axios request:', error.response?.data);
-      }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error('Error with Prisma request:', error);
-      }
-      console.log(error);
+      handleServiceError(error, this.logger, 'zoho', Action.oauthCallback);
     }
   }
   async handleZohoTokenRefresh(
@@ -114,14 +124,7 @@ export class ZohoConnectionService {
       });
       console.log('OAuth credentials updated : zoho ', data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        console.error('Error with Axios request:', error.response?.data);
-      }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error('Error with Prisma request:', error);
-      }
-      console.log(error);
+      handleServiceError(error, this.logger, 'zoho', Action.oauthRefresh);
     }
   }
 }

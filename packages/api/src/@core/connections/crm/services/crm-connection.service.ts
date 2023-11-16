@@ -6,6 +6,7 @@ import { HubspotConnectionService } from './hubspot/hubspot.service';
 import { PipedriveConnectionService } from './pipedrive/pipedrive.service';
 import { ZendeskConnectionService } from './zendesk/zendesk.service';
 import { FreshsalesConnectionService } from './freshsales/freshsales.service';
+import { LoggerService } from 'src/@core/logger/logger.service';
 
 @Injectable()
 export class CrmConnectionsService {
@@ -15,7 +16,10 @@ export class CrmConnectionsService {
     private pipedriveConnectionService: PipedriveConnectionService,
     private zendeskConnectionService: ZendeskConnectionService,
     private freshsalesConnectionService: FreshsalesConnectionService,
-  ) {}
+    private logger: LoggerService,
+  ) {
+    this.logger.setContext(CrmConnectionsService.name);
+  }
   //STEP 1:[FRONTEND STEP]
   //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click
   // on it to grant access => they grant US the access and then when confirmed
@@ -37,59 +41,52 @@ export class CrmConnectionsService {
     code: string,
     zohoLocation?: string,
   ) {
-    try {
-      switch (providerName) {
-        case 'hubspot':
-          if (!code) {
-            throw new NotFoundError('no hubspot code found');
-          }
-          return this.hubspotConnectionService.handleHubspotCallback(
-            linkedUserId,
-            projectId,
-            code,
-          );
-        case 'zoho':
-          if (!code) {
-            throw new NotFoundError('no zoho code');
-          }
-          if (!zohoLocation) {
-            throw new NotFoundError('no zoho location');
-          }
-          return this.zohoConnectionService.handleZohoCallback(
-            linkedUserId,
-            projectId,
-            code,
-            zohoLocation,
-          );
-        case 'pipedrive':
-          if (!code) {
-            throw new NotFoundError('no pipedrive code found');
-          }
-          return this.pipedriveConnectionService.handlePipedriveCallback(
-            linkedUserId,
-            projectId,
-            code,
-          );
-        case 'freshsales':
-          //todo: LATER
-          break;
-        case 'zendesk':
-          if (!code) {
-            throw new NotFoundError('no zendesk code found');
-          }
-          return this.zendeskConnectionService.handleZendeskCallback(
-            linkedUserId,
-            projectId,
-            code,
-          );
-        default:
-          return;
-      }
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        console.log(error);
-      }
-      return error;
+    switch (providerName) {
+      case 'hubspot':
+        if (!code) {
+          throw new NotFoundError('no hubspot code found');
+        }
+        return this.hubspotConnectionService.handleHubspotCallback(
+          linkedUserId,
+          projectId,
+          code,
+        );
+      case 'zoho':
+        if (!code) {
+          throw new NotFoundError('no zoho code');
+        }
+        if (!zohoLocation) {
+          throw new NotFoundError('no zoho location');
+        }
+        return this.zohoConnectionService.handleZohoCallback(
+          linkedUserId,
+          projectId,
+          code,
+          zohoLocation,
+        );
+      case 'pipedrive':
+        if (!code) {
+          throw new NotFoundError('no pipedrive code found');
+        }
+        return this.pipedriveConnectionService.handlePipedriveCallback(
+          linkedUserId,
+          projectId,
+          code,
+        );
+      case 'freshsales':
+        //todo: LATER
+        break;
+      case 'zendesk':
+        if (!code) {
+          throw new NotFoundError('no zendesk code found');
+        }
+        return this.zendeskConnectionService.handleZendeskCallback(
+          linkedUserId,
+          projectId,
+          code,
+        );
+      default:
+        return;
     }
   }
 
@@ -99,40 +96,33 @@ export class CrmConnectionsService {
     refresh_token: string,
     account_url?: string,
   ) {
-    try {
-      switch (providerId) {
-        case 'hubspot':
-          return this.hubspotConnectionService.handleHubspotTokenRefresh(
-            connectionId,
-            refresh_token,
-          );
-        case 'zoho':
-          return this.zohoConnectionService.handleZohoTokenRefresh(
-            connectionId,
-            refresh_token,
-            account_url,
-          );
-        case 'pipedrive':
-          return this.pipedriveConnectionService.handlePipedriveTokenRefresh(
-            connectionId,
-            refresh_token,
-          );
-        case 'freshsales':
-          //todo: LATER
-          break;
-        case 'zendesk':
-          return this.zendeskConnectionService.handleZendeskTokenRefresh(
-            connectionId,
-            refresh_token,
-          );
-        default:
-          return;
-      }
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        console.log(error);
-      }
-      return error;
+    switch (providerId) {
+      case 'hubspot':
+        return this.hubspotConnectionService.handleHubspotTokenRefresh(
+          connectionId,
+          refresh_token,
+        );
+      case 'zoho':
+        return this.zohoConnectionService.handleZohoTokenRefresh(
+          connectionId,
+          refresh_token,
+          account_url,
+        );
+      case 'pipedrive':
+        return this.pipedriveConnectionService.handlePipedriveTokenRefresh(
+          connectionId,
+          refresh_token,
+        );
+      case 'freshsales':
+        //todo: LATER
+        break;
+      case 'zendesk':
+        return this.zendeskConnectionService.handleZendeskTokenRefresh(
+          connectionId,
+          refresh_token,
+        );
+      default:
+        return;
     }
   }
 }

@@ -1,15 +1,15 @@
 import { CrmObject } from 'src/crm/@types';
 import { ProviderVertical, getProviderVertical } from '../providers';
-import { desunifyCrm } from './crm';
-import { DesunifyReturnType, TargetObject, Unified } from './types';
+import { TargetObject, UnifyReturnType, UnifySourceType } from '../types';
+import { unifyCrm } from './crm';
 
-/* to insert data
+/* to fetch data
 
-SaaS > [Panora] > 3rdParties > 
+3rdParties > [Panora] > SaaS
 
 */
 
-export async function desunify<T extends Unified>({
+export async function unify<T extends UnifySourceType | UnifySourceType[]>({
   sourceObject,
   targetType,
   providerName,
@@ -17,11 +17,12 @@ export async function desunify<T extends Unified>({
   sourceObject: T;
   targetType: TargetObject;
   providerName: string;
-}): Promise<DesunifyReturnType> {
+}): Promise<UnifyReturnType> {
+  if (sourceObject == null) return [];
   switch (getProviderVertical(providerName)) {
     case ProviderVertical.CRM:
       const targetType_ = targetType as CrmObject;
-      return desunifyCrm({ sourceObject, targetType_, providerName });
+      return unifyCrm({ sourceObject, targetType_, providerName });
     case ProviderVertical.ATS:
       break;
     case ProviderVertical.Accounting:
@@ -37,23 +38,5 @@ export async function desunify<T extends Unified>({
     case ProviderVertical.Unknown:
       break;
   }
-  return;
-}
-
-// TODO
-/* to fetch data
-
-3rdParties > [Panora] > SaaS
-
-*/
-export async function unify<T extends Record<string, any>>({
-  sourceObject,
-  targetType,
-  providerName,
-}: {
-  sourceObject: T;
-  targetType: TargetObject;
-  providerName: string;
-}): Promise<DesunifyReturnType> {
   return;
 }
