@@ -2,8 +2,22 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { LoggerService } from '../logger/logger.service';
 import axios, { AxiosError } from 'axios';
 import { Prisma } from '@prisma/client';
-import { TargetObject } from './unification/types';
+import { TargetObject } from './types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
+type ServiceError = AxiosError | PrismaClientKnownRequestError | Error;
+
+export enum Action {
+  oauthCallback = 'oauth-callback',
+  oauthRefresh = 'oauth-refresh',
+}
+
+export enum ActionType {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
+}
 
 // Custom error for general application errors
 export class AppError extends Error {
@@ -37,13 +51,20 @@ export class UnauthorizedError extends HttpException {
   }
 }
 
-type ServiceError = AxiosError | PrismaClientKnownRequestError | Error;
+// Custom error for duplicate element inside Prisma DB errors
+export class NotUniqueRecord extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'NotUniqueRecord';
+  }
+}
 
 export function handleServiceError(
   error: ServiceError,
   logger: LoggerService,
-  providerName: string,
-  action: TargetObject,
+  providerName?: string,
+  action?: TargetObject | Action,
+  actionType?: ActionType,
 ) {
   let statusCode = 500; // Default to internal server error
   let errorMessage = error.message;
@@ -58,11 +79,19 @@ export function handleServiceError(
   } else {
     logger.error('An unknown error occurred...', errorMessage);
   }
-
   return {
     data: null,
     error: errorMessage,
-    message: `Failed to create ${action} for ${providerName}.`,
+    message:
+      action && providerName && actionType
+        ? actionType == 'POST'
+          ? `Failed to create ${action} for ${providerName}.`
+          : actionType == 'GET'
+          ? `Failed to retrieve ${action} for ${providerName}.`
+          : actionType == 'PUT'
+          ? `Failed to update ${action} for ${providerName}.`
+          : `Failed to delete ${action} for ${providerName}.`
+        : errorMessage,
     statusCode: statusCode,
   };
 }

@@ -6,3 +6,5 @@ export class UnifiedContactInput {
   email_addresses: Email[];
   phone_numbers: Phone[];
 }
+
+export class UnifiedContactOutput extends UnifiedContactInput {}

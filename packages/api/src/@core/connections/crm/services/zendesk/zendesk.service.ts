@@ -4,16 +4,32 @@ import config from 'src/@core/utils/config';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { ZendeskOAuthResponse } from '../../types';
+import {
+  Action,
+  NotUniqueRecord,
+  handleServiceError,
+} from 'src/@core/utils/errors';
+import { LoggerService } from 'src/@core/logger/logger.service';
 @Injectable()
 export class ZendeskConnectionService {
-  constructor(private prisma: PrismaService) {}
-
+  constructor(private prisma: PrismaService, private logger: LoggerService) {
+    this.logger.setContext(ZendeskConnectionService.name);
+  }
   async handleZendeskCallback(
     linkedUserId: string,
     projectId: string,
     code: string,
   ) {
     try {
+      const isNotUnique = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: BigInt(linkedUserId),
+        },
+      });
+      if (isNotUnique)
+        throw new NotUniqueRecord(
+          `A connection already exists for userId ${linkedUserId} and the provider zendesk`,
+        );
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
@@ -58,14 +74,7 @@ export class ZendeskConnectionService {
         },
       });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        console.error('Error with Axios request:', error.response?.data);
-      }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error('Error with Prisma request:', error);
-      }
-      console.log(error);
+      handleServiceError(error, this.logger, 'zendesk', Action.oauthCallback);
     }
   }
   async handleZendeskTokenRefresh(connectionId: bigint, refresh_token: string) {
@@ -101,14 +110,7 @@ export class ZendeskConnectionService {
       });
       console.log('OAuth credentials updated : zendesk ', data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        console.error('Error with Axios request:', error.response?.data);
-      }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error('Error with Prisma request:', error);
-      }
-      console.log(error);
+      handleServiceError(error, this.logger, 'zendesk', Action.oauthRefresh);
     }
   }
 }

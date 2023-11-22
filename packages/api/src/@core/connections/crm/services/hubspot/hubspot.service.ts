@@ -5,6 +5,11 @@ import config from 'src/@core/utils/config';
 import { Prisma } from '@prisma/client';
 import { HubspotOAuthResponse } from '../../types';
 import { LoggerService } from 'src/@core/logger/logger.service';
+import {
+  Action,
+  NotUniqueRecord,
+  handleServiceError,
+} from 'src/@core/utils/errors';
 
 @Injectable()
 export class HubspotConnectionService {
@@ -51,7 +56,15 @@ export class HubspotConnectionService {
     code: string,
   ) {
     try {
-      //TODO: make sure no connections already exists for {linkedUserId, projectId}
+      const isNotUnique = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: BigInt(linkedUserId),
+        },
+      });
+      if (isNotUnique)
+        throw new NotUniqueRecord(
+          `A connection already exists for userId ${linkedUserId} and the provider hubspot`,
+        );
       //TMP STEP = first create a linked_user and a project id
       await this.addLinkedUserAndProjectTest();
       //reconstruct the redirect URI that was passed in the frontend it must be the same
@@ -99,21 +112,10 @@ export class HubspotConnectionService {
       });
       this.logger.log('Successfully added tokens inside DB ' + db_res);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        //console.error('Error with Axios request:', error.response?.data);
-        this.logger.error('Error with Axios request:', error.response?.data);
-      }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        //console.error('Error with Prisma request:', error);
-        this.logger.error('Error with Prisma request:', error.message);
-      }
-      this.logger.error(
-        'An error occurred...',
-        error.response?.data || error.message,
-      );
+      handleServiceError(error, this.logger, 'hubspot', Action.oauthCallback);
     }
   }
+
   async handleHubspotTokenRefresh(connectionId: bigint, refresh_token: string) {
     try {
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
@@ -149,14 +151,7 @@ export class HubspotConnectionService {
       });
       console.log('OAuth credentials updated : hubspot ', data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        console.error('Error with Axios request:', error.response?.data);
-      }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error('Error with Prisma request:', error);
-      }
-      console.log(error);
+      handleServiceError(error, this.logger, 'hubspot', Action.oauthRefresh);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Query } from '@nestjs/common';
+import { Controller, Post, Body, Query, Get } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { UnifiedContactInput } from './dto/create-contact.dto';
 import { LoggerService } from 'src/@core/logger/logger.service';
@@ -10,6 +10,14 @@ export class ContactController {
     private logger: LoggerService,
   ) {
     this.logger.setContext(ContactController.name);
+  }
+
+  @Get()
+  getContacts(
+    @Query('integrationId') integrationId: string,
+    @Query('linkedUserId') linkedUserId: string,
+  ) {
+    return this.contactService.getContacts(integrationId, linkedUserId);
   }
 
   @Post()

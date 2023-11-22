@@ -1,10 +1,16 @@
 import { CrmObject } from 'src/crm/@types';
-import { desunifyHubspot } from './hubspot';
-import { CrmObjectInput, Unified } from '../types';
-import { desunifyPipedrive } from './pipedrive';
-import { desunifyZoho } from './zoho';
-import { desunifyZendesk } from './zendesk';
-import { desunifyFreshsales } from './freshsales';
+import { desunifyHubspot, unifyHubspot } from './hubspot';
+import {
+  CrmObjectInput,
+  Unified,
+  UnifyReturnType,
+  UnifySourceType,
+} from '../../types';
+import { desunifyPipedrive, unifyPipedrive } from './pipedrive';
+import { desunifyZoho, unifyZoho } from './zoho';
+import { desunifyZendesk, unifyZendesk } from './zendesk';
+import { desunifyFreshsales, unifyFreshsales } from './freshsales';
+import { UnifiedContactOutput } from 'src/crm/contact/dto/create-contact.dto';
 
 export async function desunifyCrm<T extends Unified>({
   sourceObject,
@@ -26,6 +32,30 @@ export async function desunifyCrm<T extends Unified>({
       return desunifyZendesk({ sourceObject, targetType_ });
     case 'freshsales':
       return desunifyFreshsales({ sourceObject, targetType_ });
+  }
+  return;
+}
+
+export async function unifyCrm<T extends UnifySourceType | UnifySourceType[]>({
+  sourceObject,
+  targetType_,
+  providerName,
+}: {
+  sourceObject: T;
+  targetType_: CrmObject;
+  providerName: string;
+}): Promise<UnifyReturnType> {
+  switch (providerName) {
+    case 'hubspot':
+      return unifyHubspot({ sourceObject, targetType_ });
+    case 'pipedrive':
+      return unifyPipedrive({ sourceObject, targetType_ });
+    case 'zoho':
+      return unifyZoho({ sourceObject, targetType_ });
+    case 'zendesk':
+      return unifyZendesk({ sourceObject, targetType_ });
+    case 'freshsales':
+      return unifyFreshsales({ sourceObject, targetType_ });
   }
   return;
 }

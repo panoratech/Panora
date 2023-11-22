@@ -1,5 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { UnifiedContactInput } from '../dto/create-contact.dto';
+import {
+  UnifiedContactInput,
+  UnifiedContactOutput,
+} from '../dto/create-contact.dto';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
 import { HubspotService } from './hubspot';
@@ -7,7 +10,7 @@ import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
 import { ApiResponse, Email, NormalizedContactInfo, Phone } from '../types';
-import { desunify } from 'src/@core/utils/unification';
+import { desunify } from 'src/@core/utils/unification/desunify';
 import {
   CrmObject,
   FreshsalesContactInput,
@@ -22,6 +25,7 @@ import {
   ZohoContactOutput,
 } from 'src/crm/@types';
 import { LoggerService } from 'src/@core/logger/logger.service';
+import { unify } from 'src/@core/utils/unification/unify';
 
 export type ContactOutput =
   | FreshsalesContactOutput
@@ -90,7 +94,7 @@ export class ContactService {
     unifiedContactData: UnifiedContactInput,
     integrationId: string,
     linkedUserId: string,
-  ) {
+  ): Promise<ApiResponse<ContactOutput>> {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
         id_linked_user: BigInt(linkedUserId),
@@ -166,5 +170,64 @@ export class ContactService {
       },
     });
     return resp;
+  }
+
+  async getContacts(
+    integrationId: string,
+    linkedUserId: string,
+  ): Promise<ApiResponse<UnifiedContactOutput[]>> {
+    const job_resp_create = await this.prisma.jobs.create({
+      data: {
+        id_linked_user: BigInt(linkedUserId),
+        status: 'written',
+      },
+    });
+    const job_id = job_resp_create.id_job;
+
+    let resp: ApiResponse<ContactOutput[]>;
+    switch (integrationId) {
+      case 'freshsales':
+        resp = await this.freshsales.getContacts(linkedUserId);
+        break;
+
+      case 'zoho':
+        resp = await this.zoho.getContacts(linkedUserId);
+        break;
+
+      case 'zendesk':
+        resp = await this.zendesk.getContacts(linkedUserId);
+        break;
+
+      case 'hubspot':
+        resp = await this.hubspot.getContacts(linkedUserId);
+        break;
+
+      case 'pipedrive':
+        resp = await this.pipedrive.getContacts(linkedUserId);
+        break;
+
+      default:
+        break;
+    }
+    const sourceObject: ContactOutput[] = resp.data;
+
+    //unify the data according to the target obj wanted
+    const unifiedObject = await unify<ContactOutput[]>({
+      sourceObject,
+      targetType: CrmObject.contact,
+      providerName: integrationId,
+    });
+
+    const status_resp = resp.statusCode === HttpStatus.OK ? 'success' : 'fail';
+
+    const job_resp = await this.prisma.jobs.update({
+      where: {
+        id_job: job_id,
+      },
+      data: {
+        status: status_resp,
+      },
+    });
+    return { ...resp, data: unifiedObject as UnifiedContactOutput[] };
   }
 }

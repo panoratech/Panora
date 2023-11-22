@@ -1,6 +1,9 @@
 import { HubspotContactInput } from 'src/crm/@types';
-import { UnifiedContactInput } from 'src/crm/contact/dto/create-contact.dto';
-import { Unified } from '../../../types';
+import {
+  UnifiedContactInput,
+  UnifiedContactOutput,
+} from 'src/crm/contact/dto/create-contact.dto';
+import { Unified, UnifySourceType } from '../../../../types';
 
 export function mapToHubspotContact<T extends Unified>(
   source: T,
@@ -18,4 +21,11 @@ export function mapToHubspotContact<T extends Unified>(
     // Map other fields as needed
     // If there are fields such as city, country, etc., in your UnifiedContactInput, map them here
   };
+}
+
+//TODO
+export function mapToUnifiedContact<
+  T extends UnifySourceType | UnifySourceType[],
+>(source: T): UnifiedContactOutput | UnifiedContactOutput[] {
+  return;
 }
