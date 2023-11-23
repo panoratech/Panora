@@ -1,18 +1,15 @@
-import { PipedriveContactInput } from 'src/crm/@types';
+import { PipedriveContactInput, PipedriveContactOutput } from 'src/crm/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from 'src/crm/contact/dto/create-contact.dto';
-import { Unified, UnifySourceType } from '../../../../types';
 
-export function mapToPipedriveContact<T extends Unified>(
-  source: T,
+export function mapToPipedriveContact(
+  source: UnifiedContactInput,
 ): PipedriveContactInput {
-  const source_ = source as UnifiedContactInput;
-
   // Assuming 'email_addresses' and 'phone_numbers' arrays contain at least one entry
-  const primaryEmail = source_.email_addresses?.[0]?.email_address;
-  const primaryPhone = source_.phone_numbers?.[0]?.phone_number;
+  const primaryEmail = source.email_addresses?.[0]?.email_address;
+  const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
   // Convert to Pipedrive format if needed
   const emailObject = primaryEmail
@@ -23,7 +20,7 @@ export function mapToPipedriveContact<T extends Unified>(
     : [];
 
   return {
-    name: `${source_.first_name} ${source_.last_name}`,
+    name: `${source.first_name} ${source.last_name}`,
     email: emailObject,
     phone: phoneObject,
     // Map other optional fields as needed
@@ -31,9 +28,30 @@ export function mapToPipedriveContact<T extends Unified>(
   };
 }
 
-//TODO
-export function mapToUnifiedContact<
-  T extends UnifySourceType | UnifySourceType[],
->(source: T): UnifiedContactOutput | UnifiedContactOutput[] {
-  return;
+export function mapToUnifiedContact(
+  source: PipedriveContactOutput | PipedriveContactOutput[],
+): UnifiedContactOutput | UnifiedContactOutput[] {
+  if (!Array.isArray(source)) {
+    return _mapSinglePipedriveContact(source);
+  }
+
+  // Handling array of PipedriveContactOutput
+  return source.map(_mapSinglePipedriveContact);
+}
+
+function _mapSinglePipedriveContact(
+  contact: PipedriveContactOutput,
+): UnifiedContactOutput {
+  return {
+    first_name: contact.first_name,
+    last_name: contact.last_name,
+    email_addresses: contact.email.map((e) => ({
+      email_address: e.value,
+      email_address_type: e.label,
+    })), // Map each email
+    phone_numbers: contact.phone.map((p) => ({
+      phone_number: p.value,
+      phone_type: p.label,
+    })), // Map each phone number
+  };
 }

@@ -1,28 +1,63 @@
-import { FreshsalesContactInput, HubspotContactInput } from 'src/crm/@types';
+import {
+  FreshsalesContactInput,
+  FreshsalesContactOutput,
+} from 'src/crm/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from 'src/crm/contact/dto/create-contact.dto';
-import { Unified, UnifySourceType } from '../../../../types';
 
-export function mapToFreshsalesContact<T extends Unified>(
-  source: T,
+export function mapToFreshsalesContact(
+  source: UnifiedContactInput,
 ): FreshsalesContactInput {
-  const source_ = source as UnifiedContactInput;
   // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
-  const primaryEmail = source_.email_addresses?.[0]?.email_address;
-  const primaryPhone = source_.phone_numbers?.[0]?.phone_number;
+  const primaryEmail = source.email_addresses?.[0]?.email_address;
+  const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
   return {
-    first_name: source_.first_name,
-    last_name: source_.last_name,
+    first_name: source.first_name,
+    last_name: source.last_name,
     mobile_number: primaryPhone,
   };
 }
 
-//TODO
-export function mapToUnifiedContact<
-  T extends UnifySourceType | UnifySourceType[],
->(source: T): UnifiedContactOutput | UnifiedContactOutput[] {
-  return;
+export function mapToUnifiedContact(
+  source: FreshsalesContactOutput | FreshsalesContactOutput[],
+): UnifiedContactOutput | UnifiedContactOutput[] {
+  // Handling single FreshsalesContactOutput
+  if (!Array.isArray(source)) {
+    return _mapSingleFreshsalesContact(source);
+  }
+
+  // Handling array of FreshsalesContactOutput
+  return source.map(_mapSingleFreshsalesContact);
+}
+
+function _mapSingleFreshsalesContact(
+  contact: FreshsalesContactOutput,
+): UnifiedContactOutput {
+  // Map email and phone details
+  const email_addresses = contact.email
+    ? [{ email_address: contact.email, email_address_type: 'primary' }]
+    : [];
+  const phone_numbers = [];
+  if (contact.work_number) {
+    phone_numbers.push({
+      phone_number: contact.work_number,
+      phone_type: 'work',
+    });
+  }
+  if (contact.mobile_number) {
+    phone_numbers.push({
+      phone_number: contact.mobile_number,
+      phone_type: 'mobile',
+    });
+  }
+
+  return {
+    first_name: contact.first_name,
+    last_name: contact.last_name,
+    email_addresses,
+    phone_numbers,
+  };
 }
