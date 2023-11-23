@@ -7,6 +7,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { ApiKeyStrategy } from './strategies/auth-header-api-key.strategy';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { LoggerService } from '../logger/logger.service';
 
 @Module({
   providers: [
@@ -16,6 +17,7 @@ import { ConfigService } from '@nestjs/config';
     ApiKeyStrategy,
     PrismaService,
     ConfigService,
+    LoggerService,
   ],
   imports: [
     PassportModule,

@@ -6,5 +6,6 @@ import { LoggerService } from '../logger/logger.service';
 @Module({
   controllers: [ConnectionsController],
   imports: [CrmConnectionModule],
+  providers: [LoggerService],
 })
 export class ConnectionsModule {}
