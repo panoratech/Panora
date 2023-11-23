@@ -1,21 +1,19 @@
-import { HubspotContactInput } from 'src/crm/@types';
+import { HubspotContactInput, HubspotContactOutput } from 'src/crm/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from 'src/crm/contact/dto/create-contact.dto';
-import { Unified, UnifySourceType } from '../../../../types';
 
-export function mapToHubspotContact<T extends Unified>(
-  source: T,
+export function mapToHubspotContact(
+  source: UnifiedContactInput,
 ): HubspotContactInput {
-  const source_ = source as UnifiedContactInput;
   // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
-  const primaryEmail = source_.email_addresses?.[0]?.email_address;
-  const primaryPhone = source_.phone_numbers?.[0]?.phone_number;
+  const primaryEmail = source.email_addresses?.[0]?.email_address;
+  const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
   return {
-    firstname: source_.first_name,
-    lastname: source_.last_name,
+    firstname: source.first_name,
+    lastname: source.last_name,
     email: primaryEmail,
     phone: primaryPhone,
     // Map other fields as needed
@@ -23,9 +21,26 @@ export function mapToHubspotContact<T extends Unified>(
   };
 }
 
-//TODO
-export function mapToUnifiedContact<
-  T extends UnifySourceType | UnifySourceType[],
->(source: T): UnifiedContactOutput | UnifiedContactOutput[] {
-  return;
+export function mapToUnifiedContact(
+  source: HubspotContactOutput | HubspotContactOutput[],
+): UnifiedContactOutput | UnifiedContactOutput[] {
+  if (!Array.isArray(source)) {
+    return _mapSingleContact(source);
+  }
+
+  // Handling array of HubspotContactOutput
+  return source.map(_mapSingleContact);
+}
+
+function _mapSingleContact(
+  contact: HubspotContactOutput,
+): UnifiedContactOutput {
+  return {
+    first_name: contact.firstname,
+    last_name: contact.lastname,
+    email_addresses: [
+      { email_address: contact.email, email_address_type: 'primary' },
+    ],
+    phone_numbers: [{ phone_number: contact.phone, phone_type: 'primary' }],
+  };
 }

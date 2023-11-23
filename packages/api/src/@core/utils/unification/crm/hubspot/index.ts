@@ -1,6 +1,7 @@
-import { CrmObject } from 'src/crm/@types';
+import { CrmObject, HubspotContactOutput } from 'src/crm/@types';
 import { CrmObjectInput, Unified, UnifySourceType } from '../../../types';
 import { mapToHubspotContact, mapToUnifiedContact } from './mappers/contact';
+import { UnifiedContactInput } from 'src/crm/contact/dto/create-contact.dto';
 
 export async function desunifyHubspot<T extends Unified>({
   sourceObject,
@@ -11,7 +12,7 @@ export async function desunifyHubspot<T extends Unified>({
 }): Promise<CrmObjectInput> {
   switch (targetType_) {
     case CrmObject.contact:
-      return mapToHubspotContact(sourceObject);
+      return mapToHubspotContact(sourceObject as UnifiedContactInput);
     case CrmObject.deal:
     //return mapToHubspotDeal(sourceObject);
     case CrmObject.company:
@@ -26,7 +27,9 @@ export async function unifyHubspot<
 >({ sourceObject, targetType_ }: { sourceObject: T; targetType_: CrmObject }) {
   switch (targetType_) {
     case CrmObject.contact:
-      return mapToUnifiedContact(sourceObject);
+      return mapToUnifiedContact(
+        sourceObject as HubspotContactOutput | HubspotContactOutput[],
+      );
     case CrmObject.deal:
     //return mapToHubspotDeal(sourceObject);
     case CrmObject.company:

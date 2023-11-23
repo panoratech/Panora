@@ -145,3 +145,8 @@ model linked_users {
 
   @@index([id_project], map: "fk_proectid_linked_users")
 }
+
+model crm_users {
+  id_crm_user String @id(map: "pk_test") @db.Uuid
+  test        String
+}

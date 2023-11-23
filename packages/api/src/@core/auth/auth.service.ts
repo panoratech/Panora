@@ -4,11 +4,16 @@ import { CreateUserDto, LoginCredentials } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
+import { LoggerService } from '../logger/logger.service';
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+    private logger: LoggerService,
+  ) {}
 
   async register(user: CreateUserDto) {
     try {
@@ -97,12 +102,12 @@ export class AuthService {
     return Boolean(api_key);
   }*/
 
+  //must be called only if user is logged in
   async generateApiKey(
     projectId: number,
     userId: number,
   ): Promise<{ access_token: string }> {
     console.log("'ddddd");
-    const secret = process.env.JWT_SECRET;
     const jwtPayload = {
       sub: userId,
       projectId: projectId,
@@ -120,9 +125,8 @@ export class AuthService {
     projectId: number,
   ): Promise<{ api_key: string }> {
     try {
-      console.log('here is my userId ', userId);
-      //tmp:
-      const resp = await this.prisma.organizations.create({
+      //tmp create first these 2 :
+      /*const resp = await this.prisma.organizations.create({
         data: {
           name: 'org1',
           stripe_customer_id: 'oneone',
@@ -133,7 +137,7 @@ export class AuthService {
           name: 'proj',
           id_organization: resp.id_organization,
         },
-      });
+      });*/
       //TODO: CHECK IF PROJECT_ID IS EXISTENT
       //fetch user_id
       const foundUser = await this.prisma.users.findUnique({
@@ -162,7 +166,6 @@ export class AuthService {
       if (!new_api_key) {
         throw new UnauthorizedException('api keys issue to add to db');
       }
-      console.log('.....');
 
       return { api_key: access_token };
     } catch (error) {
@@ -186,15 +189,14 @@ export class AuthService {
       if (!saved_api_key) {
         throw new UnauthorizedException('Failed to fetch API key from DB');
       }
-
-      if (decoded.projectId !== saved_api_key.id_project) {
+      if (Number(decoded.projectId) !== Number(saved_api_key.id_project)) {
         throw new UnauthorizedException(
           'Failed to validate API key: projectId invalid.',
         );
       }
 
       // Validate that the JWT payload matches the provided userId and projectId
-      if (decoded.sub !== saved_api_key.id_user) {
+      if (Number(decoded.sub) !== Number(saved_api_key.id_user)) {
         throw new UnauthorizedException(
           'Failed to validate API key: userId invalid.',
         );
