@@ -3,6 +3,7 @@ import './App.css'
 import useOAuth from './hooks/useOAuth';
 import ProviderModal from './lib/ProviderModal';
 import { CRM_PROVIDERS } from './helpers/utils';
+import WalletModal from './components/newCatalogue';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,6 +59,7 @@ function App() {
     <>
       <h1 className='text-5xl font-bold'>Integrations Flow</h1>
       <div className="card">
+        <WalletModal/>
         <button disabled={!isReady} onClick={() => setIsModalOpen(true)}>
           Start OAuth Flow
         </button>

@@ -19,9 +19,15 @@ import { AccountingModule } from './accounting/accounting.module';
 import { FileStorageModule } from './file-storage/file-storage.module';
 import { SentryInterceptor, SentryModule } from '@ntegral/nestjs-sentry';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LinkedUsersModule } from './@core/linked-users/linked-users.module';
+import { OrganisationsModule } from './@core/organisations/organisations.module';
+import { ProjectsModule } from './@core/projects/projects.module';
 
 @Module({
   imports: [
+    LinkedUsersModule,
+    OrganisationsModule,
+    ProjectsModule,
     TicketingModule,
     HrisModule,
     MarketingAutomationModule,

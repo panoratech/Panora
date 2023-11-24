@@ -50,14 +50,24 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
     return finalAuth;
   };
 
-  const openModal = () => {
+  const openModal = (onWindowClose) => {
     const authUrl = constructAuthUrl();
     const width = 600, height = 600;
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
-    window.open(authUrl, 'OAuth', `width=${width},height=${height},top=${top},left=${left}`);
+    const authWindow = window.open(authUrl, 'OAuth', `width=${width},height=${height},top=${top},left=${left}`);
+    
+    const interval = setInterval(() => {
+      if (authWindow!.closed) {
+        clearInterval(interval);
+        if (onWindowClose) {
+          onWindowClose();
+        }
+        onSuccess();
+      }
+    }, 500);
 
-    onSuccess();
+    return authWindow;
   };
 
   return { open: openModal, isReady };
