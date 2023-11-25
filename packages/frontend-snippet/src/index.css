@@ -9,7 +9,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: seal;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -86,4 +86,33 @@ button:hover {
 .modal-content button {
   margin: 10px;
   padding: 10px 20px;
+}
+/* CSS */
+.loading-animation-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-border {
+  position: absolute;
+  width: 100px; /* Match this to the size of your icon */
+  height: 100px; /* Match this to the size of your icon */
+}
+
+.icon {
+  width: 100px; /* Match this to the size of your icon */
+  height: 100px; /* Match this to the size of your icon */
+  border-radius: 0.75rem; /* Tailwind's rounded-xl */
+  position: relative;
+  z-index: 1;
+}
+
+.text {
+  position: absolute;
+  top: 120px; /* Position below the icon */
+  text-align: center;
+  color: white;
 }

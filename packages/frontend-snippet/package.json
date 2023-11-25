@@ -16,6 +16,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-loader-spinner": "^5.4.5",
     "tailwind-scrollbar-hide": "^1.1.7"
   },
   "devDependencies": {
