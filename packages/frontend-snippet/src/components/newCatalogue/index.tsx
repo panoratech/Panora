@@ -6,7 +6,7 @@ import { findProviderByName, providersArray } from '../../helpers/utils';
 const categories = ['CRM', 'Ticketing', 'Marketing Automation','ATS', 'Accounting', 'File Storage', 'HR & Payroll'];
 
 
-const LoadingOverlay = ({ providerName }) => {
+const LoadingOverlay = ({ providerName }: { providerName: string }) => {
 
     const provider = findProviderByName(providerName);
     return (
@@ -65,13 +65,13 @@ const WalletModal = () => {
     
   }, [selectedProvider, isReady, open]);
   
-  const handleWalletClick = (walletName) => {
+  const handleWalletClick = (walletName: string) => {
     console.log(`Wallet selected: ${walletName}`);
     setSelectedProvider(walletName.toLowerCase());
     setLoading({status: true, provider: walletName});
   };
 
-  const handleCategoryClick = (category) => {
+  const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
   };
   
