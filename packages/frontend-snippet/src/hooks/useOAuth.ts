@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { providersConfig } from '../helpers/utils';
+import { findProviderVertical, providersConfig } from '../helpers/utils';
 
 type UseOAuthProps = {
   clientId?: string;
@@ -23,7 +23,10 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
     const encodedRedirectUrl = encodeURIComponent(`${import.meta.env.VITE_BACKEND_DOMAIN}/connections/oauth/callback`);
     const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
 
-    const vertical = 'CRM'; //TODO when multiple verticals
+    const vertical = findProviderVertical(providerName);
+    if(vertical == null) {
+      return null;
+    }
 
     const config = providersConfig[vertical][providerName];
     if (!config) {

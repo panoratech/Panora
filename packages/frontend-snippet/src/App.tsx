@@ -6,7 +6,7 @@ import { CRM_PROVIDERS } from './helpers/utils';
 import WalletModal from './components/newCatalogue';
 
 function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  /*const [isModalOpen, setIsModalOpen] = useState(false);
   const [providerId, setProviderId] = useState("");
   const [returnUrl, setReturnUrl] = useState("http://127.0.0.1:5173/");
   const [projectId, setPojectId] = useState("1");
@@ -54,20 +54,11 @@ function App() {
     }
     open();
     setIsModalOpen(false);
-  };
+  };*/
   return (
     <>
-      <h1 className='text-5xl font-bold'>Integrations Flow</h1>
       <div className="card">
         <WalletModal/>
-        <button disabled={!isReady} onClick={() => setIsModalOpen(true)}>
-          Start OAuth Flow
-        </button>
-        <ProviderModal
-          isOpen={isModalOpen}
-          onSelectProvider={handleProviderSelection}
-          onClose={() => setIsModalOpen(false)}
-        />
       </div>
     </>
   )

@@ -1,40 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import useOAuth from '../../hooks/useOAuth';
 import { TailSpin } from  'react-loader-spinner'
-
-// Sample wallet data
-const wallets = [
-  { name: 'Pipedrive', icon: 'assets/crm/pipedrive_logo.jpeg', status: 'CRM', category: 'CRM' },
-  { name: 'Zendesk', icon: 'assets/crm/zendesk_logo.png', status: 'CRM', category: 'CRM'  },
-  { name: 'freshsales',icon: 'assets/crm/freshsales_logo.webp', status: null, category: 'CRM' },
-  { name: 'Zoho',icon: 'assets/crm/zoho_logo.png', status: null, category: 'CRM'  },
-  { name: 'Hubspot',icon: 'assets/crm/hubspot_logo.png', status: null, category: 'CRM'  },
-  { name: 'Pennylane',icon: 'assets/accounting/pennylanelogo.png', status: null, category: 'Accounting'  },
-  { name: 'Freshbooks',icon: 'assets/accounting/freshbooks.jpeg', status: null, category: 'Accounting'  },
-  { name: 'Clearbooks',icon: 'assets/accounting/clearbooksLogo.png', status: null, category: 'Accounting'  },
-  { name: 'FreeAgent',icon: 'assets/accounting/freeagent.png', status: null, category: 'Accounting'  },
-  { name: 'Sage',icon: 'assets/accounting/sageLogo.png', status: null, category: 'Accounting'  },
-
-];
+import { findProviderByName, providersArray } from '../../helpers/utils';
 
 const categories = ['CRM', 'Ticketing', 'Marketing Automation','ATS', 'Accounting', 'File Storage', 'HR & Payroll'];
 
 
 const LoadingOverlay = ({ providerName }) => {
-    //get The wallet associated to the providerName
-    const findWalletByName = () => {
-        return wallets.find(wallet => wallet.name.toLowerCase() === providerName.toLowerCase());
-    };
-    const wallet = findWalletByName();
 
+    const provider = findProviderByName(providerName);
     return (
       <div className="fixed inset-0 flex justify-center items-center">
         <div className="text-center p-6 bg-[#1d1d1d] rounded-lg">
           <div className='icon-wrapper'>
-            <img src={wallet!.icon} alt={wallet!.name} className="mx-auto mb-4 w-14 h-14 rounded-xl" />
+            <img src={provider!.logoPath} alt={provider!.name} className="mx-auto mb-4 w-14 h-14 rounded-xl" />
           </div>
           
-          <h4 className="text-lg font-bold mb-2">Continue in {wallet!.name}</h4>
+          <h4 className="text-lg font-bold mb-2">Continue in {provider!.name}</h4>
           <p className="text-gray-400 mb-4">Accepting oAuth access to Panora</p>
           <div className='flex justify-center items-center'>
           <TailSpin
@@ -51,7 +33,7 @@ const LoadingOverlay = ({ providerName }) => {
         </div>
       </div>
     );
-  };
+};
 
 const WalletModal = () => {
   const [selectedCategory, setSelectedCategory] = useState(categories[0]); // Default to the first category
@@ -93,7 +75,7 @@ const WalletModal = () => {
     setSelectedCategory(category);
   };
   
-  const filteredWallets = wallets.filter(wallet => wallet.category === selectedCategory);
+  const PROVIDERS = providersArray(selectedCategory);
 
 
   return (
@@ -118,15 +100,15 @@ const WalletModal = () => {
                 </div>
                 {(
                     <>
-                    {filteredWallets.map((wallet, index) => (
+                    {PROVIDERS.map((provider, index) => (
                         <div
                         key={index}
                         className="flex items-center justify-between px-4 py-2 my-2 bg-neutral-900 hover:bg-neutral-800 border-black  hover:border-indigo-800 rounded-xl transition duration-150 cursor-pointer"
-                        onClick={() => handleWalletClick(wallet.name)}
+                        onClick={() => handleWalletClick(provider.name)}
                         >
                         <div className="flex items-center">
-                        <img className="w-8 h-8 rounded-lg mr-3" src={wallet.icon} alt={wallet.name} />
-                            <span>{wallet.name}</span>
+                        <img className="w-8 h-8 rounded-lg mr-3" src={provider.logoPath} alt={provider.name} />
+                            <span>{provider.name}</span>
                         </div>
                         
                         </div>
