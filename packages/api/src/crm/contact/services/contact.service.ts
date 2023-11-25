@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import {
+  ContactResponse,
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '../dto/create-contact.dto';
@@ -70,7 +71,7 @@ export class ContactService {
     };
   }
 
-  async addContactToDb(data: UnifiedContactInput, job_id: number | bigint) {
+  async addContactToDb(data: UnifiedContactInput, job_id: string) {
     const { first_name, last_name, email_addresses, phone_numbers } = data;
     const { normalizedEmails, normalizedPhones } =
       this.normalizeEmailsAndNumbers(email_addresses, phone_numbers);
@@ -85,7 +86,7 @@ export class ContactService {
         crm_contacts_phone_numbers: {
           create: normalizedPhones,
         },
-        id_job: job_id as number,
+        id_job: job_id,
       },
     });
   }
@@ -97,7 +98,7 @@ export class ContactService {
   ): Promise<ApiResponse<ContactOutput>> {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
-        id_linked_user: BigInt(linkedUserId),
+        id_linked_user: linkedUserId,
         status: 'initialized',
       },
     });
@@ -175,10 +176,11 @@ export class ContactService {
   async getContacts(
     integrationId: string,
     linkedUserId: string,
-  ): Promise<ApiResponse<UnifiedContactOutput[]>> {
+    remote_data?: boolean,
+  ): Promise<ApiResponse<ContactResponse>> {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
-        id_linked_user: BigInt(linkedUserId),
+        id_linked_user: linkedUserId,
         status: 'written',
       },
     });
@@ -212,11 +214,22 @@ export class ContactService {
     const sourceObject: ContactOutput[] = resp.data;
 
     //unify the data according to the target obj wanted
-    const unifiedObject = await unify<ContactOutput[]>({
+    const unifiedObject = (await unify<ContactOutput[]>({
       sourceObject,
       targetType: CrmObject.contact,
       providerName: integrationId,
-    });
+    })) as UnifiedContactOutput[];
+
+    let res: ContactResponse = {
+      contacts: unifiedObject,
+    };
+
+    if (remote_data) {
+      res = {
+        ...res,
+        remote_data: sourceObject,
+      };
+    }
 
     const status_resp = resp.statusCode === HttpStatus.OK ? 'success' : 'fail';
 
@@ -228,6 +241,6 @@ export class ContactService {
         status: status_resp,
       },
     });
-    return { ...resp, data: unifiedObject as UnifiedContactOutput[] };
+    return { ...resp, data: res };
   }
 }

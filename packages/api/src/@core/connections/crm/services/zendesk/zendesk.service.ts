@@ -23,7 +23,7 @@ export class ZendeskConnectionService {
     try {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: BigInt(linkedUserId),
+          id_linked_user: linkedUserId,
         },
       });
       if (isNotUnique)
@@ -66,10 +66,10 @@ export class ZendeskConnectionService {
           ),
           created_at: new Date(),
           projects: {
-            connect: { id_project: BigInt(projectId) },
+            connect: { id_project: projectId },
           },
           linked_users: {
-            connect: { id_linked_user: BigInt(linkedUserId) },
+            connect: { id_linked_user: linkedUserId },
           },
         },
       });
@@ -77,7 +77,7 @@ export class ZendeskConnectionService {
       handleServiceError(error, this.logger, 'zendesk', Action.oauthCallback);
     }
   }
-  async handleZendeskTokenRefresh(connectionId: bigint, refresh_token: string) {
+  async handleZendeskTokenRefresh(connectionId: string, refresh_token: string) {
     try {
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',

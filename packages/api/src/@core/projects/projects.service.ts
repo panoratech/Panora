@@ -13,7 +13,7 @@ export class ProjectsService {
     const res = await this.prisma.projects.create({
       data: {
         ...rest,
-        id_organization: Number(id_organization),
+        id_organization: id_organization,
       },
     });
   }

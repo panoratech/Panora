@@ -22,9 +22,11 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LinkedUsersModule } from './@core/linked-users/linked-users.module';
 import { OrganisationsModule } from './@core/organisations/organisations.module';
 import { ProjectsModule } from './@core/projects/projects.module';
+import { FieldMappingModule } from './@core/field-mapping/field-mapping.module';
 
 @Module({
   imports: [
+    FieldMappingModule,
     LinkedUsersModule,
     OrganisationsModule,
     ProjectsModule,

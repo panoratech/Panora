@@ -58,7 +58,7 @@ export class HubspotConnectionService {
     try {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: BigInt(linkedUserId),
+          id_linked_user: linkedUserId,
         },
       });
       if (isNotUnique)
@@ -101,10 +101,10 @@ export class HubspotConnectionService {
           ),
           created_at: new Date(),
           projects: {
-            connect: { id_project: BigInt(projectId) },
+            connect: { id_project: projectId },
           },
           linked_users: {
-            connect: { id_linked_user: BigInt(linkedUserId) },
+            connect: { id_linked_user: linkedUserId },
           },
           //id of the end-customer defined in the company application, this is how requests could be made on behlaf of the user
           // without it, we cant retrieve the right row in our db
@@ -116,7 +116,7 @@ export class HubspotConnectionService {
     }
   }
 
-  async handleHubspotTokenRefresh(connectionId: bigint, refresh_token: string) {
+  async handleHubspotTokenRefresh(connectionId: string, refresh_token: string) {
     try {
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
 

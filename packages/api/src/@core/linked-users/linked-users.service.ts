@@ -14,7 +14,7 @@ export class LinkedUsersService {
     const res = await this.prisma.linked_users.create({
       data: {
         ...rest,
-        id_project: Number(id_project),
+        id_project: id_project,
         status: data.status || 'active',
       },
     });

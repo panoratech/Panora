@@ -16,8 +16,13 @@ export class ContactController {
   getContacts(
     @Query('integrationId') integrationId: string,
     @Query('linkedUserId') linkedUserId: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.getContacts(integrationId, linkedUserId);
+    return this.contactService.getContacts(
+      integrationId,
+      linkedUserId,
+      remote_data,
+    );
   }
 
   @Post()

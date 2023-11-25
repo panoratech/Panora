@@ -25,7 +25,7 @@ export class PipedriveConnectionService {
     try {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: BigInt(linkedUserId),
+          id_linked_user: linkedUserId,
         },
       });
       if (isNotUnique)
@@ -68,10 +68,10 @@ export class PipedriveConnectionService {
           ),
           created_at: new Date(),
           projects: {
-            connect: { id_project: BigInt(projectId) },
+            connect: { id_project: projectId },
           },
           linked_users: {
-            connect: { id_linked_user: BigInt(linkedUserId) },
+            connect: { id_linked_user: linkedUserId },
           },
         },
       });
@@ -81,7 +81,7 @@ export class PipedriveConnectionService {
   }
 
   async handlePipedriveTokenRefresh(
-    connectionId: bigint,
+    connectionId: string,
     refresh_token: string,
   ) {
     try {
