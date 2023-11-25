@@ -6,6 +6,14 @@ export enum CRM_PROVIDERS {
   FRESHSALES = 'freshsales',
 }
 
+export enum ACCOUNTING_PROVIDERS {
+  PENNYLANE = 'pennylane',
+  FRESHBOOKS = 'freshbooks',
+  CLEARBOOKS = 'clearbooks',
+  FREEAGENT = 'freeagent',
+  SAGE = 'sage',
+}
+
 type ProviderConfig = {
   clientId: string;
   scopes: string;
@@ -57,6 +65,38 @@ export const providersConfig: ProvidersConfig = {
       logoPath: 'assets/crm/zendesk_logo.png',
     },
 
+  },
+  'Accounting': {
+    'pennylane': {
+      clientId: '',
+      scopes: '',
+      authBaseUrl: '',
+      logoPath: './assets/accounting/pennylanelogo.png',
+    },
+    'freshbooks': {
+      clientId: '',
+      scopes: '',
+      authBaseUrl: '',
+      logoPath: './assets/accounting/freshbooks.jpeg',
+    },
+    'clearbooks': {
+      clientId: '',
+      scopes: '',
+      authBaseUrl: '',
+      logoPath: './assets/accounting/clearbooksLogo.png',
+    },
+    'freeAgent': {
+      clientId: '',
+      scopes: '',
+      authBaseUrl: '',
+      logoPath: './assets/accounting/freeagent.png',
+    },
+    'sage': {
+      clientId: '',
+      scopes: '',
+      authBaseUrl: '',
+      logoPath: './assets/accounting/sageLogo.png',
+    },
   }
 };
 
@@ -78,4 +118,29 @@ export function providersArray(vertical: string): Provider[] {
       logoPath: config.logoPath,
     };
   });
+}
+
+export const findProviderVertical = (providerName: string): string | null => {
+  for (const [vertical, providers] of Object.entries(providersConfig)) {
+    if (providers.hasOwnProperty.call(providers, providerName)) {
+      return vertical;
+    }
+  }
+  return null;
+};
+
+export function findProviderByName(providerName: string): Provider | null {
+  for (const vertical in providersConfig) {
+    if (providersConfig.hasOwnProperty.call(providersConfig, vertical)) {
+      const providers = providersConfig[vertical];
+      if (providers.hasOwnProperty.call(providers, providerName)) {
+        const providerDetails = providers[providerName];
+        return {
+          name: providerName,
+          ...providerDetails,
+        };
+      }
+    }
+  }
+  return null;
 }

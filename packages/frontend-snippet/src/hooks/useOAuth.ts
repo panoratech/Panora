@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { providersConfig } from '../helpers/utils';
+import { findProviderVertical, providersConfig } from '../helpers/utils';
 
 type UseOAuthProps = {
   clientId?: string;
@@ -23,7 +23,10 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
     const encodedRedirectUrl = encodeURIComponent(`${import.meta.env.VITE_BACKEND_DOMAIN}/connections/oauth/callback`);
     const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
 
-    const vertical = 'CRM'; //TODO when multiple verticals
+    const vertical = findProviderVertical(providerName);
+    if(vertical == null) {
+      return null;
+    }
 
     const config = providersConfig[vertical][providerName];
     if (!config) {
@@ -50,14 +53,24 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
     return finalAuth;
   };
 
-  const openModal = () => {
+  const openModal = (onWindowClose: () => void) => {
     const authUrl = constructAuthUrl();
     const width = 600, height = 600;
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
-    window.open(authUrl, 'OAuth', `width=${width},height=${height},top=${top},left=${left}`);
+    const authWindow = window.open(authUrl as string, 'OAuth', `width=${width},height=${height},top=${top},left=${left}`);
+    
+    const interval = setInterval(() => {
+      if (authWindow!.closed) {
+        clearInterval(interval);
+        if (onWindowClose) {
+          onWindowClose();
+        }
+        onSuccess();
+      }
+    }, 500);
 
-    onSuccess();
+    return authWindow;
   };
 
   return { open: openModal, isReady };
