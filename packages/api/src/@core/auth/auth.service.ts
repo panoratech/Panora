@@ -23,6 +23,7 @@ export class AuthService {
 
       const res = await this.prisma.users.create({
         data: {
+          id_user: '1', //todo
           email: user.email,
           password_hash: hashedPassword,
           first_name: user.first_name,
@@ -42,7 +43,7 @@ export class AuthService {
   async login(user: LoginCredentials): Promise<{ access_token: string }> {
     try {
       const foundUser = await this.prisma.users.findUnique({
-        where: { id_user: user.id_user },
+        where: { id_user: String(user.id_user) },
       });
       //TODO: if not founder
       if (
@@ -104,8 +105,8 @@ export class AuthService {
 
   //must be called only if user is logged in
   async generateApiKey(
-    projectId: number,
-    userId: number,
+    projectId: number | string,
+    userId: number | string,
   ): Promise<{ access_token: string }> {
     console.log("'ddddd");
     const jwtPayload = {
@@ -121,8 +122,8 @@ export class AuthService {
   }
 
   async generateApiKeyForUser(
-    userId: number,
-    projectId: number,
+    userId: number | string,
+    projectId: number | string,
   ): Promise<{ api_key: string }> {
     try {
       //tmp create first these 2 :
@@ -141,7 +142,7 @@ export class AuthService {
       //TODO: CHECK IF PROJECT_ID IS EXISTENT
       //fetch user_id
       const foundUser = await this.prisma.users.findUnique({
-        where: { id_user: userId },
+        where: { id_user: userId as string },
       });
       if (!foundUser) {
         throw new UnauthorizedException(
@@ -158,9 +159,10 @@ export class AuthService {
       console.log('hey2');
       const new_api_key = await this.prisma.api_keys.create({
         data: {
+          id_api_key: '1', //TODO
           api_key_hash: hashed_token,
-          id_project: projectId,
-          id_user: userId,
+          id_project: projectId as string,
+          id_user: userId as string,
         },
       });
       if (!new_api_key) {

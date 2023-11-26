@@ -91,7 +91,7 @@ export class CrmConnectionsService {
   }
 
   async handleCRMTokensRefresh(
-    connectionId: bigint,
+    connectionId: string,
     providerId: string,
     refresh_token: string,
     account_url?: string,

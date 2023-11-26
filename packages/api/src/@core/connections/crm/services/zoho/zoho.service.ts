@@ -32,7 +32,7 @@ export class ZohoConnectionService {
     try {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: BigInt(linkedUserId),
+          id_linked_user: linkedUserId,
         },
       });
       if (isNotUnique)
@@ -64,6 +64,7 @@ export class ZohoConnectionService {
       //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
+          id_connection: '1', //TODO
           provider_slug: 'zoho',
           token_type: 'oauth',
           access_token: data.access_token,
@@ -73,10 +74,10 @@ export class ZohoConnectionService {
           ),
           created_at: new Date(),
           projects: {
-            connect: { id_project: BigInt(projectId) },
+            connect: { id_project: projectId },
           },
           linked_users: {
-            connect: { id_linked_user: BigInt(linkedUserId) },
+            connect: { id_linked_user: linkedUserId },
           },
           account_url: domain,
         },
@@ -86,7 +87,7 @@ export class ZohoConnectionService {
     }
   }
   async handleZohoTokenRefresh(
-    connectionId: bigint,
+    connectionId: string,
     refresh_token: string,
     domain: string,
   ) {

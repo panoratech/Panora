@@ -26,7 +26,7 @@ export class FreshSalesService {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: BigInt(linkedUserId),
+          id_linked_user: linkedUserId,
         },
       });
       const dataBody = {
@@ -65,7 +65,7 @@ export class FreshSalesService {
       //TODO: check required scope  => crm.objects.contacts.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: BigInt(linkedUserId),
+          id_linked_user: linkedUserId,
         },
       });
       const resp = await axios.get(

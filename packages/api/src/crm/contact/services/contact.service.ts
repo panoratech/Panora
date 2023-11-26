@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import {
+  ContactResponse,
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '../dto/create-contact.dto';
@@ -9,7 +10,7 @@ import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
-import { ApiResponse, Email, NormalizedContactInfo, Phone } from '../types';
+import { ApiResponse, Email, Phone } from '../types';
 import { desunify } from 'src/@core/utils/unification/desunify';
 import {
   CrmObject,
@@ -49,18 +50,25 @@ export class ContactService {
   }
 
   //utils functions
-  normalizeEmailsAndNumbers(
-    email_addresses: Email[],
-    phone_numbers: Phone[],
-  ): NormalizedContactInfo {
+  normalizeEmailsAndNumbers(email_addresses: Email[], phone_numbers: Phone[]) {
     const normalizedEmails = email_addresses.map((email) => ({
       ...email,
+      owner_type: email.owner_type ? email.owner_type : '',
+      created_at: new Date(),
+      modified_at: new Date(),
+      id_crm_contact_email: '1', //TODO
       email_address_type:
         email.email_address_type === '' ? 'work' : email.email_address_type,
     }));
 
     const normalizedPhones = phone_numbers.map((phone) => ({
       ...phone,
+      owner_type: phone.owner_type ? phone.owner_type : '',
+      created_at: new Date(),
+      modified_at: new Date(),
+      id_crm_company: '1', //TODO
+      id_crm_contact: '1', //TODO
+      id_crm_contacts_phone_number: '1', //TODO
       phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
     }));
 
@@ -70,13 +78,16 @@ export class ContactService {
     };
   }
 
-  async addContactToDb(data: UnifiedContactInput, job_id: number | bigint) {
+  async addContactToDb(data: UnifiedContactInput, job_id: string) {
     const { first_name, last_name, email_addresses, phone_numbers } = data;
     const { normalizedEmails, normalizedPhones } =
       this.normalizeEmailsAndNumbers(email_addresses, phone_numbers);
 
     const resp = await this.prisma.crm_contacts.create({
       data: {
+        id_crm_contact: '1',
+        created_at: new Date(),
+        modified_at: new Date(),
         first_name: first_name,
         last_name: last_name,
         crm_contact_email_addresses: {
@@ -85,7 +96,7 @@ export class ContactService {
         crm_contacts_phone_numbers: {
           create: normalizedPhones,
         },
-        id_job: job_id as number,
+        id_job: job_id,
       },
     });
   }
@@ -97,7 +108,8 @@ export class ContactService {
   ): Promise<ApiResponse<ContactOutput>> {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
-        id_linked_user: BigInt(linkedUserId),
+        id_job: '1', //TODO
+        id_linked_user: linkedUserId,
         status: 'initialized',
       },
     });
@@ -175,10 +187,12 @@ export class ContactService {
   async getContacts(
     integrationId: string,
     linkedUserId: string,
-  ): Promise<ApiResponse<UnifiedContactOutput[]>> {
+    remote_data?: boolean,
+  ): Promise<ApiResponse<ContactResponse>> {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
-        id_linked_user: BigInt(linkedUserId),
+        id_job: '1', //TODO
+        id_linked_user: linkedUserId,
         status: 'written',
       },
     });
@@ -212,11 +226,22 @@ export class ContactService {
     const sourceObject: ContactOutput[] = resp.data;
 
     //unify the data according to the target obj wanted
-    const unifiedObject = await unify<ContactOutput[]>({
+    const unifiedObject = (await unify<ContactOutput[]>({
       sourceObject,
       targetType: CrmObject.contact,
       providerName: integrationId,
-    });
+    })) as UnifiedContactOutput[];
+
+    let res: ContactResponse = {
+      contacts: unifiedObject,
+    };
+
+    if (remote_data) {
+      res = {
+        ...res,
+        remote_data: sourceObject,
+      };
+    }
 
     const status_resp = resp.statusCode === HttpStatus.OK ? 'success' : 'fail';
 
@@ -228,6 +253,6 @@ export class ContactService {
         status: status_resp,
       },
     });
-    return { ...resp, data: unifiedObject as UnifiedContactOutput[] };
+    return { ...resp, data: res };
   }
 }

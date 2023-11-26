@@ -8,3 +8,8 @@ export class UnifiedContactInput {
 }
 
 export class UnifiedContactOutput extends UnifiedContactInput {}
+
+export class ContactResponse {
+  contacts: UnifiedContactOutput[];
+  remote_data?: Record<string, any>[];
+}
