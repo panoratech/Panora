@@ -1,4 +1,4 @@
-import { CrmObject } from 'src/crm/@types';
+import { CrmObject } from '@crm/@types';
 import { ProviderVertical, getProviderVertical } from '../providers';
 import { TargetObject, UnifyReturnType, UnifySourceType } from '../types';
 import { unifyCrm } from './crm';

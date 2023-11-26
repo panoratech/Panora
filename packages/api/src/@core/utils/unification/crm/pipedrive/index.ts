@@ -1,7 +1,7 @@
 import { CrmObject, PipedriveContactOutput } from 'src/crm/@types';
 import { CrmObjectInput, Unified, UnifySourceType } from '../../../types';
 import { mapToPipedriveContact, mapToUnifiedContact } from './mappers/contact';
-import { UnifiedContactInput } from 'src/crm/contact/dto/create-contact.dto';
+import { UnifiedContactInput } from '@contact/types/model.unified';
 
 export async function desunifyPipedrive<T extends Unified>({
   sourceObject,

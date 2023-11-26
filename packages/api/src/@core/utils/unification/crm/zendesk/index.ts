@@ -1,7 +1,7 @@
 import { CrmObject, ZendeskContactOutput } from 'src/crm/@types';
 import { CrmObjectInput, Unified, UnifySourceType } from '../../../types';
 import { mapToUnifiedContact, mapToZendeskContact } from './mappers/contact';
-import { UnifiedContactInput } from 'src/crm/contact/dto/create-contact.dto';
+import { UnifiedContactInput } from '@contact/types/model.unified';
 
 export async function desunifyZendesk<T extends Unified>({
   sourceObject,

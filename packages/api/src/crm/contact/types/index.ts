@@ -1,3 +1,5 @@
+import { UnifiedContactOutput } from './model.unified';
+
 export class ApiResponse<T> {
   data: T;
   message?: string;
@@ -21,3 +23,8 @@ export type NormalizedContactInfo = {
   normalizedEmails: Email[];
   normalizedPhones: Phone[];
 };
+
+export class ContactResponse {
+  contacts: UnifiedContactOutput[];
+  remote_data?: Record<string, any>[]; //data in original format
+}

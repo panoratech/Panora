@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateProjectDto } from './dto/create-project.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProjectsService {
@@ -13,9 +14,10 @@ export class ProjectsService {
     const res = await this.prisma.projects.create({
       data: {
         ...rest,
-        id_project: '1', //TODO
+        id_project: uuidv4(),
         id_organization: id_organization,
       },
     });
+    return res;
   }
 }

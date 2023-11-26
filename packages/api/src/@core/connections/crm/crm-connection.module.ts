@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { CrmConnectionsService } from './services/crm-connection.service';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import { FreshsalesConnectionService } from './services/freshsales/freshsales.service';
 import { HubspotConnectionService } from './services/hubspot/hubspot.service';
 import { PipedriveConnectionService } from './services/pipedrive/pipedrive.service';
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
 import { ZohoConnectionService } from './services/zoho/zoho.service';
-import { LoggerService } from 'src/@core/logger/logger.service';
+import { LoggerService } from '@@core/logger/logger.service';
 
 @Module({
   providers: [

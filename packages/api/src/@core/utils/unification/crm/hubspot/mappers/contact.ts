@@ -2,7 +2,7 @@ import { HubspotContactInput, HubspotContactOutput } from 'src/crm/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-} from 'src/crm/contact/dto/create-contact.dto';
+} from '@contact/types/model.unified';
 
 export function mapToHubspotContact(
   source: UnifiedContactInput,
@@ -16,8 +16,6 @@ export function mapToHubspotContact(
     lastname: source.last_name,
     email: primaryEmail,
     phone: primaryPhone,
-    // Map other fields as needed
-    // If there are fields such as city, country, etc., in your UnifiedContactInput, map them here
   };
 }
 
@@ -36,11 +34,16 @@ function _mapSingleContact(
   contact: HubspotContactOutput,
 ): UnifiedContactOutput {
   return {
-    first_name: contact.firstname,
-    last_name: contact.lastname,
+    first_name: contact.properties.firstname,
+    last_name: contact.properties.lastname,
     email_addresses: [
-      { email_address: contact.email, email_address_type: 'primary' },
+      {
+        email_address: contact.properties.email,
+        email_address_type: 'primary',
+      },
     ],
-    phone_numbers: [{ phone_number: contact.phone, phone_type: 'primary' }],
+    phone_numbers: [
+      { phone_number: '' /*contact.properties.*/, phone_type: 'primary' },
+    ],
   };
 }

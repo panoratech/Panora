@@ -15,13 +15,18 @@ export interface HubspotContactInput {
   jobtitle?: string;
 }
 
-export interface HubspotContactOutput {
-  company: string;
-  createdate: string; // Use 'Date' if you prefer a Date object
+type HubspotPropertiesOuput = {
+  createdate: string;
   email: string;
   firstname: string;
-  lastmodifieddate: string; // Use 'Date' if you prefer a Date object
+  hs_object_id: string;
+  lastmodifieddate: string;
   lastname: string;
-  phone: string;
-  website: string;
+};
+export interface HubspotContactOutput {
+  id: string;
+  properties: HubspotPropertiesOuput;
+  createdAt: string;
+  updatedAt: string;
+  archived: boolean;
 }

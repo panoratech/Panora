@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import config from 'src/@core/utils/config';
-import { Prisma } from '@prisma/client';
+import config from '@@core/utils/config';
 import { HubspotOAuthResponse } from '../../types';
-import { LoggerService } from 'src/@core/logger/logger.service';
+import { LoggerService } from '@@core/logger/logger.service';
 import {
   Action,
   NotUniqueRecord,
   handleServiceError,
-} from 'src/@core/utils/errors';
+} from '@@core/utils/errors';
+import { v4 as uuidv4 } from 'uuid';
+import { decrypt, encrypt } from '@@core/utils/crypto';
 
 @Injectable()
 export class HubspotConnectionService {
@@ -17,9 +18,8 @@ export class HubspotConnectionService {
     this.logger.setContext(HubspotConnectionService.name);
   }
   async addLinkedUserAndProjectTest() {
-    // Adding a new organization
     const newOrganization = {
-      id_organization: '1', //TODO
+      id_organization: uuidv4(),
       name: 'New Organization',
       stripe_customer_id: 'stripe-customer-123',
     };
@@ -31,9 +31,9 @@ export class HubspotConnectionService {
 
     // Example data for a new project
     const newProject = {
-      id_project: '1',
+      id_project: uuidv4(),
       name: 'New Project',
-      id_organization: '1',
+      id_organization: newOrganization.id_organization,
     };
     const data1 = await this.prisma.projects.create({
       data: newProject,
@@ -41,7 +41,7 @@ export class HubspotConnectionService {
     this.logger.log('Added new project ' + data1);
 
     const newLinkedUser = {
-      id_linked_user: '1',
+      id_linked_user: uuidv4(),
       linked_user_origin_id: '12345',
       alias: 'ACME COMPANY',
       status: 'Active',
@@ -59,6 +59,7 @@ export class HubspotConnectionService {
     code: string,
   ) {
     try {
+      this.logger.log('linkeduserid is ' + linkedUserId);
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -69,7 +70,20 @@ export class HubspotConnectionService {
           `A connection already exists for userId ${linkedUserId} and the provider hubspot`,
         );
       //TMP STEP = first create a linked_user and a project id
-      await this.addLinkedUserAndProjectTest();
+      //await this.addLinkedUserAndProjectTest();
+
+      /*const newLinkedUser = {
+        id_linked_user: linkedUserId,
+        linked_user_origin_id: '12345',
+        alias: 'APPLE COMPANY',
+        status: 'Active',
+        id_project: projectId,
+      };
+      const data_ = await this.prisma.linked_users.create({
+        data: newLinkedUser,
+      });
+      this.logger.log('Added new linked_user ' + data_);*/
+
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
       const formData = new URLSearchParams({
@@ -95,14 +109,15 @@ export class HubspotConnectionService {
       //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
-          id_connection: '1', //TODO
+          id_connection: uuidv4(),
           provider_slug: 'hubspot',
           token_type: 'oauth',
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
+          status: 'valid',
           created_at: new Date(),
           projects: {
             connect: { id_project: projectId },
@@ -123,13 +138,12 @@ export class HubspotConnectionService {
   async handleHubspotTokenRefresh(connectionId: string, refresh_token: string) {
     try {
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
-
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         client_id: config.HUBSPOT_CLIENT_ID,
         client_secret: config.HUBSPOT_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
-        refresh_token: refresh_token,
+        refresh_token: decrypt(refresh_token),
       });
       const res = await axios.post(
         'https://api.hubapi.com/oauth/v1/token',
@@ -146,8 +160,8 @@ export class HubspotConnectionService {
           id_connection: connectionId,
         },
         data: {
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),

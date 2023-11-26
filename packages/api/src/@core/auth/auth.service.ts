@@ -4,7 +4,8 @@ import { CreateUserDto, LoginCredentials } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { LoggerService } from '../logger/logger.service';
+import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '@@core/logger/logger.service';
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
@@ -15,6 +16,16 @@ export class AuthService {
     private logger: LoggerService,
   ) {}
 
+  async getUsers() {
+    const res = await this.prisma.users.findMany();
+    return res;
+  }
+
+  async getApiKeys() {
+    const res = await this.prisma.api_keys.findMany();
+    return res;
+  }
+
   async register(user: CreateUserDto) {
     try {
       // Generate a salt and hash the password
@@ -23,7 +34,7 @@ export class AuthService {
 
       const res = await this.prisma.users.create({
         data: {
-          id_user: '1', //todo
+          id_user: uuidv4(),
           email: user.email,
           password_hash: hashedPassword,
           first_name: user.first_name,
@@ -159,7 +170,7 @@ export class AuthService {
       console.log('hey2');
       const new_api_key = await this.prisma.api_keys.create({
         data: {
-          id_api_key: '1', //TODO
+          id_api_key: uuidv4(),
           api_key_hash: hashed_token,
           id_project: projectId as string,
           id_user: userId as string,
@@ -191,14 +202,14 @@ export class AuthService {
       if (!saved_api_key) {
         throw new UnauthorizedException('Failed to fetch API key from DB');
       }
-      if (Number(decoded.projectId) !== Number(saved_api_key.id_project)) {
+      if (String(decoded.projectId) !== String(saved_api_key.id_project)) {
         throw new UnauthorizedException(
           'Failed to validate API key: projectId invalid.',
         );
       }
 
       // Validate that the JWT payload matches the provided userId and projectId
-      if (Number(decoded.sub) !== Number(saved_api_key.id_user)) {
+      if (String(decoded.sub) !== String(saved_api_key.id_user)) {
         throw new UnauthorizedException(
           'Failed to validate API key: userId invalid.',
         );

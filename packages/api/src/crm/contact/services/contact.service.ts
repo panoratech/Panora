@@ -1,39 +1,28 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import {
-  ContactResponse,
-  UnifiedContactInput,
-  UnifiedContactOutput,
-} from '../dto/create-contact.dto';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
 import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
-import { ApiResponse, Email, Phone } from '../types';
-import { desunify } from 'src/@core/utils/unification/desunify';
+import { ApiResponse, ContactResponse, Email, Phone } from '../types';
+import { desunify } from '@@core/utils/unification/desunify';
 import {
   CrmObject,
   FreshsalesContactInput,
-  FreshsalesContactOutput,
   HubspotContactInput,
-  HubspotContactOutput,
   PipedriveContactInput,
-  PipedriveContactOutput,
   ZendeskContactInput,
-  ZendeskContactOutput,
   ZohoContactInput,
-  ZohoContactOutput,
 } from 'src/crm/@types';
-import { LoggerService } from 'src/@core/logger/logger.service';
-import { unify } from 'src/@core/utils/unification/unify';
-
-export type ContactOutput =
-  | FreshsalesContactOutput
-  | HubspotContactOutput
-  | ZohoContactOutput
-  | ZendeskContactOutput
-  | PipedriveContactOutput;
+import { LoggerService } from '@@core/logger/logger.service';
+import { unify } from '@@core/utils/unification/unify';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  UnifiedContactInput,
+  UnifiedContactOutput,
+} from '@contact/types/model.unified';
+import { OriginalContactOutput } from '@@core/utils/types';
 
 @Injectable()
 export class ContactService {
@@ -49,14 +38,14 @@ export class ContactService {
     this.logger.setContext(ContactService.name);
   }
 
-  //utils functions
+  /* utils functions */
   normalizeEmailsAndNumbers(email_addresses: Email[], phone_numbers: Phone[]) {
     const normalizedEmails = email_addresses.map((email) => ({
       ...email,
       owner_type: email.owner_type ? email.owner_type : '',
       created_at: new Date(),
       modified_at: new Date(),
-      id_crm_contact_email: '1', //TODO
+      id_crm_contact_email: uuidv4(),
       email_address_type:
         email.email_address_type === '' ? 'work' : email.email_address_type,
     }));
@@ -66,9 +55,9 @@ export class ContactService {
       owner_type: phone.owner_type ? phone.owner_type : '',
       created_at: new Date(),
       modified_at: new Date(),
-      id_crm_company: '1', //TODO
-      id_crm_contact: '1', //TODO
-      id_crm_contacts_phone_number: '1', //TODO
+      //id_crm_company: '1', //TODO
+      //id_crm_contact: '1', //TODO
+      id_crm_contacts_phone_number: uuidv4(),
       phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
     }));
 
@@ -85,7 +74,7 @@ export class ContactService {
 
     const resp = await this.prisma.crm_contacts.create({
       data: {
-        id_crm_contact: '1',
+        id_crm_contact: uuidv4(),
         created_at: new Date(),
         modified_at: new Date(),
         first_name: first_name,
@@ -93,7 +82,7 @@ export class ContactService {
         crm_contact_email_addresses: {
           create: normalizedEmails,
         },
-        crm_contacts_phone_numbers: {
+        crm_phone_numbers: {
           create: normalizedPhones,
         },
         id_job: job_id,
@@ -101,14 +90,33 @@ export class ContactService {
     });
   }
 
+  // Helper method to apply custom field mappings to the contact data
+  applyCustomFieldMappings(contactData, customFieldMappings) {
+    // Logic to transform the contactData by applying the customFieldMappings
+    // For each custom field mapping, replace or add the field in contactData
+    customFieldMappings.forEach((mapping) => {
+      // Assuming mapping has `unifiedFieldName` and `providerFieldName`
+      if (contactData.hasOwnProperty(mapping.unifiedFieldName)) {
+        contactData[mapping.providerFieldName] =
+          contactData[mapping.unifiedFieldName];
+        // Optionally remove the unified field if it should not be sent to the provider
+        // delete contactData[mapping.unifiedFieldName];
+      }
+    });
+    return contactData;
+  }
+
+  /* */
+
   async addContact(
     unifiedContactData: UnifiedContactInput,
     integrationId: string,
     linkedUserId: string,
-  ): Promise<ApiResponse<ContactOutput>> {
+    remote_data?: boolean,
+  ): Promise<ApiResponse<ContactResponse>> {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
-        id_job: '1', //TODO
+        id_job: uuidv4(),
         id_linked_user: linkedUserId,
         status: 'initialized',
       },
@@ -124,13 +132,28 @@ export class ContactService {
       },
     });
 
-    let resp: ApiResponse<ContactOutput>;
+    // TODO: check if for contact object and provider there is a field mapping
+    // Retrieve custom field mappings
+    /*const customFieldMappings =
+      await this.fieldMappingService.getCustomFieldMappings(
+        integrationId,
+        linkedUserId,
+      );*/
+
+    let resp: ApiResponse<OriginalContactOutput>;
     //desunify the data according to the target obj wanted
     const desunifiedObject = await desunify<UnifiedContactInput>({
       sourceObject: unifiedContactData,
       targetType: CrmObject.contact,
       providerName: integrationId,
     });
+
+    //TODO
+    /*desunifiedObject = this.applyCustomFieldMappings(
+      desunifiedObject,
+      customFieldMappings,
+    );*/
+
     switch (integrationId) {
       case 'freshsales':
         resp = await this.freshsales.addContact(
@@ -171,7 +194,23 @@ export class ContactService {
         break;
     }
 
-    //TODO: sanitize the resp to normalize it
+    //unify the data according to the target obj wanted
+    const unifiedObject = (await unify<OriginalContactOutput[]>({
+      sourceObject: [resp.data],
+      targetType: CrmObject.contact,
+      providerName: integrationId,
+    })) as UnifiedContactOutput[];
+
+    let res: ContactResponse = {
+      contacts: unifiedObject,
+    };
+
+    if (remote_data) {
+      res = {
+        ...res,
+        remote_data: [resp.data],
+      };
+    }
     const status_resp = resp.statusCode === HttpStatus.OK ? 'success' : 'fail';
     const job_resp = await this.prisma.jobs.update({
       where: {
@@ -181,7 +220,7 @@ export class ContactService {
         status: status_resp,
       },
     });
-    return resp;
+    return { ...resp, data: res };
   }
 
   async getContacts(
@@ -191,14 +230,14 @@ export class ContactService {
   ): Promise<ApiResponse<ContactResponse>> {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
-        id_job: '1', //TODO
+        id_job: uuidv4(),
         id_linked_user: linkedUserId,
         status: 'written',
       },
     });
     const job_id = job_resp_create.id_job;
 
-    let resp: ApiResponse<ContactOutput[]>;
+    let resp: ApiResponse<OriginalContactOutput[]>;
     switch (integrationId) {
       case 'freshsales':
         resp = await this.freshsales.getContacts(linkedUserId);
@@ -223,10 +262,9 @@ export class ContactService {
       default:
         break;
     }
-    const sourceObject: ContactOutput[] = resp.data;
-
+    const sourceObject: OriginalContactOutput[] = resp.data;
     //unify the data according to the target obj wanted
-    const unifiedObject = (await unify<ContactOutput[]>({
+    const unifiedObject = (await unify<OriginalContactOutput[]>({
       sourceObject,
       targetType: CrmObject.contact,
       providerName: integrationId,

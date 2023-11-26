@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { ZohoConnectionService } from './zoho/zoho.service';
-import { NotFoundError } from 'src/@core/utils/errors';
+import { NotFoundError } from '@@core/utils/errors';
 import { HubspotConnectionService } from './hubspot/hubspot.service';
 import { PipedriveConnectionService } from './pipedrive/pipedrive.service';
 import { ZendeskConnectionService } from './zendesk/zendesk.service';
 import { FreshsalesConnectionService } from './freshsales/freshsales.service';
-import { LoggerService } from 'src/@core/logger/logger.service';
+import { LoggerService } from '@@core/logger/logger.service';
 
 @Injectable()
 export class CrmConnectionsService {

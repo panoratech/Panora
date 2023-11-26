@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from '../../types';
+import { ApiResponse } from '@contact/types';
 import {
   CrmObject,
   HubspotContactInput,
   HubspotContactOutput,
 } from 'src/crm/@types';
 import axios from 'axios';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
-import { LoggerService } from 'src/@core/logger/logger.service';
-import { ActionType, handleServiceError } from 'src/@core/utils/errors';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/logger/logger.service';
+import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { decrypt } from '@@core/utils/crypto';
 
 @Injectable()
 export class HubspotService {
@@ -37,7 +38,7 @@ export class HubspotService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${connection.access_token}`,
+            Authorization: `Bearer ${decrypt(connection.access_token)}`,
           },
         },
       );
@@ -72,12 +73,12 @@ export class HubspotService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${connection.access_token}`,
+            Authorization: `Bearer ${decrypt(connection.access_token)}`,
           },
         },
       );
       return {
-        data: resp.data,
+        data: resp.data.results,
         message: 'Hubspot contacts retrieved',
         statusCode: 200,
       };

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from '../../types';
+import { ApiResponse } from '@contact/types';
 import { CrmObject, ZohoContactInput, ZohoContactOutput } from 'src/crm/@types';
 import axios from 'axios';
-import { Prisma } from '@prisma/client';
-import { LoggerService } from 'src/@core/logger/logger.service';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
-import { ActionType, handleServiceError } from 'src/@core/utils/errors';
+import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { decrypt } from '@@core/utils/crypto';
 
 @Injectable()
 export class ZohoService {
@@ -33,7 +33,9 @@ export class ZohoService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Zoho-oauthtoken ${connection.access_token}`,
+            Authorization: `Zoho-oauthtoken ${decrypt(
+              connection.access_token,
+            )}`,
           },
         },
       );
@@ -67,7 +69,7 @@ export class ZohoService {
       const resp = await axios.get(`https://www.zohoapis.com/crm/v3/Contacts`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${connection.access_token}`,
+          Authorization: `Bearer ${decrypt(connection.access_token)}`,
         },
       });
       return {

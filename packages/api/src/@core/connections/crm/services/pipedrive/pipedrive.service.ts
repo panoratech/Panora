@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import config from 'src/@core/utils/config';
+import config from '@@core/utils/config';
 import { PipeDriveOAuthResponse } from '../../types';
-import { Prisma } from '@prisma/client';
 import {
   Action,
   NotUniqueRecord,
   handleServiceError,
-} from 'src/@core/utils/errors';
-import { LoggerService } from 'src/@core/logger/logger.service';
+} from '@@core/utils/errors';
+import { LoggerService } from '@@core/logger/logger.service';
+import { v4 as uuidv4 } from 'uuid';
+import { decrypt, encrypt } from '@@core/utils/crypto';
 
 @Injectable()
 export class PipedriveConnectionService {
@@ -55,18 +56,17 @@ export class PipedriveConnectionService {
       //TODO: handle if res throws an error
       const data: PipeDriveOAuthResponse = res.data;
       console.log('OAuth credentials : pipedrive ', data);
-      // save tokens for this customer inside our db
-      //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
-          id_connection: '1', //TODO
+          id_connection: uuidv4(),
           provider_slug: 'pipedrive',
           token_type: 'oauth',
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
+          status: 'valid',
           created_at: new Date(),
           projects: {
             connect: { id_project: projectId },
@@ -91,7 +91,7 @@ export class PipedriveConnectionService {
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         redirect_uri: REDIRECT_URI,
-        refresh_token: refresh_token,
+        refresh_token: decrypt(refresh_token),
       });
       const res = await axios.post(
         'https://oauth.pipedrive.com/oauth/token',
@@ -111,8 +111,8 @@ export class PipedriveConnectionService {
           id_connection: connectionId,
         },
         data: {
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),

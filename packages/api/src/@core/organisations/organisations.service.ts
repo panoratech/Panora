@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class OrganisationsService {
@@ -12,8 +13,9 @@ export class OrganisationsService {
     const res = await this.prisma.organizations.create({
       data: {
         ...data,
-        id_organization: '1',
+        id_organization: uuidv4(),
       },
     });
+    return res;
   }
 }

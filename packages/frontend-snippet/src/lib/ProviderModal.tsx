@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
 import useOAuth from '../hooks/useOAuth';
 import { findProviderByName, providersArray } from '../helpers/utils';
+import { v4 as uuidv4 } from 'uuid';
 
 const categories = ['CRM', 'Ticketing', 'Marketing Automation','ATS', 'Accounting', 'File Storage', 'HR & Payroll'];
 
@@ -45,8 +46,8 @@ const ProviderModal = () => {
   const { open, isReady } = useOAuth({
     providerName: selectedProvider, // This will be set when a provider is clicked
     returnUrl: 'http://127.0.0.1:5173/', // Replace with the actual return URL
-    projectId: '1', // Replace with the actual project ID
-    linkedUserId: '1', // Replace with the actual user ID
+    projectId: 'b2705296-e07c-49d1-a1b4-edab94339823', // Replace with the actual project ID
+    linkedUserId: "806d3abd-b620-42b0-91ea-8cb467bc1e4c", //TODO: uuidv4(), // Replace with the actual user ID
     onSuccess: () => console.log('OAuth successful'),
   });
 

@@ -1,4 +1,4 @@
-import { CrmObject } from 'src/crm/@types';
+import { CrmObject } from '@crm/@types';
 import { desunifyHubspot, unifyHubspot } from './hubspot';
 import {
   CrmObjectInput,
@@ -10,7 +10,6 @@ import { desunifyPipedrive, unifyPipedrive } from './pipedrive';
 import { desunifyZoho, unifyZoho } from './zoho';
 import { desunifyZendesk, unifyZendesk } from './zendesk';
 import { desunifyFreshsales, unifyFreshsales } from './freshsales';
-import { UnifiedContactOutput } from 'src/crm/contact/dto/create-contact.dto';
 
 export async function desunifyCrm<T extends Unified>({
   sourceObject,
