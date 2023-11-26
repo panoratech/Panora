@@ -109,6 +109,9 @@ type Provider = {
 };
 
 export function providersArray(vertical: string): Provider[] {
+  if(!providersConfig[vertical]){
+    return [];
+  }
   return Object.entries(providersConfig[vertical]).map(([providerName, config]) => {
     return {
       name: providerName,
