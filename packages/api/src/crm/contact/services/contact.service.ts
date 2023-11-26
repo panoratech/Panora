@@ -1,12 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
 import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
 import { ApiResponse, ContactResponse, Email, Phone } from '../types';
-import { desunify } from 'src/@core/utils/unification/desunify';
+import { desunify } from '@@core/utils/unification/desunify';
 import {
   CrmObject,
   FreshsalesContactInput,
@@ -15,14 +15,14 @@ import {
   ZendeskContactInput,
   ZohoContactInput,
 } from 'src/crm/@types';
-import { LoggerService } from 'src/@core/logger/logger.service';
-import { unify } from 'src/@core/utils/unification/unify';
+import { LoggerService } from '@@core/logger/logger.service';
+import { unify } from '@@core/utils/unification/unify';
 import { v4 as uuidv4 } from 'uuid';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
-import { OriginalContactOutput } from 'src/@core/utils/types';
+import { OriginalContactOutput } from '@@core/utils/types';
 
 @Injectable()
 export class ContactService {

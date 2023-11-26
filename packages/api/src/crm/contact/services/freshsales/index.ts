@@ -7,9 +7,10 @@ import {
   FreshsalesContactInput,
   FreshsalesContactOutput,
 } from 'src/crm/@types';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
-import { LoggerService } from 'src/@core/logger/logger.service';
-import { ActionType, handleServiceError } from 'src/@core/utils/errors';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/logger/logger.service';
+import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { decrypt } from '@@core/utils/crypto';
 
 @Injectable()
 export class FreshSalesService {
@@ -37,7 +38,7 @@ export class FreshSalesService {
         JSON.stringify(dataBody),
         {
           headers: {
-            Authorization: `Token token=${connection.access_token}`,
+            Authorization: `Token token=${decrypt(connection.access_token)}`,
             'Content-Type': 'application/json',
           },
         },
@@ -73,7 +74,7 @@ export class FreshSalesService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${connection.access_token}`,
+            Authorization: `Bearer ${decrypt(connection.access_token)}`,
           },
         },
       );

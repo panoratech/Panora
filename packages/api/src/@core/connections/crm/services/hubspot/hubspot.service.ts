@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import config from 'src/@core/utils/config';
+import config from '@@core/utils/config';
 import { HubspotOAuthResponse } from '../../types';
-import { LoggerService } from 'src/@core/logger/logger.service';
+import { LoggerService } from '@@core/logger/logger.service';
 import {
   Action,
   NotUniqueRecord,
   handleServiceError,
-} from 'src/@core/utils/errors';
+} from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
+import { decrypt, encrypt } from '@@core/utils/crypto';
 
 @Injectable()
 export class HubspotConnectionService {
@@ -17,9 +18,8 @@ export class HubspotConnectionService {
     this.logger.setContext(HubspotConnectionService.name);
   }
   async addLinkedUserAndProjectTest() {
-    // Adding a new organization
     const newOrganization = {
-      id_organization: uuidv4(), //TODO
+      id_organization: uuidv4(),
       name: 'New Organization',
       stripe_customer_id: 'stripe-customer-123',
     };
@@ -98,8 +98,8 @@ export class HubspotConnectionService {
           id_connection: uuidv4(),
           provider_slug: 'hubspot',
           token_type: 'oauth',
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
@@ -123,13 +123,12 @@ export class HubspotConnectionService {
   async handleHubspotTokenRefresh(connectionId: string, refresh_token: string) {
     try {
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
-
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         client_id: config.HUBSPOT_CLIENT_ID,
         client_secret: config.HUBSPOT_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
-        refresh_token: refresh_token,
+        refresh_token: decrypt(refresh_token),
       });
       const res = await axios.post(
         'https://api.hubapi.com/oauth/v1/token',
@@ -146,8 +145,8 @@ export class HubspotConnectionService {
           id_connection: connectionId,
         },
         data: {
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),

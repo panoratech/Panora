@@ -11,6 +11,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
+      "@@core/*": ["src/@core/*"],
       "@contact/*": ["src/crm/contact/*"],
       "@deal/*": ["src/crm/deal/*"],
       "@crm/*": ["src/crm/*"],

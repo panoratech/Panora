@@ -4,8 +4,8 @@ import { CreateUserDto, LoginCredentials } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { LoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '@@core/logger/logger.service';
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()

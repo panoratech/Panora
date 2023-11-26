@@ -6,9 +6,10 @@ import {
   PipedriveContactOutput,
 } from 'src/crm/@types';
 import axios from 'axios';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
-import { LoggerService } from 'src/@core/logger/logger.service';
-import { ActionType, handleServiceError } from 'src/@core/utils/errors';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/logger/logger.service';
+import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { decrypt } from '@@core/utils/crypto';
 
 @Injectable()
 export class PipedriveService {
@@ -35,7 +36,7 @@ export class PipedriveService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${connection.access_token}`,
+            Authorization: `Bearer ${decrypt(connection.access_token)}`,
           },
         },
       );
@@ -69,7 +70,7 @@ export class PipedriveService {
       const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${connection.access_token}`,
+          Authorization: `Bearer ${decrypt(connection.access_token)}`,
         },
       });
       return {

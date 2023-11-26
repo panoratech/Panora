@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Query, Get } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
-import { LoggerService } from 'src/@core/logger/logger.service';
+import { LoggerService } from '@@core/logger/logger.service';
 import { UnifiedContactInput } from './types/model.unified';
 
 @Controller('crm/contact')

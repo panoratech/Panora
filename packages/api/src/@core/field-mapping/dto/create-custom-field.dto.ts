@@ -1,4 +1,4 @@
-import { StandardObject } from 'src/@core/utils/types';
+import { StandardObject } from '@@core/utils/types';
 
 export class CustomFieldCreateDto {}
 

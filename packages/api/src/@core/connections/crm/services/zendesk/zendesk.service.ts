@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import config from 'src/@core/utils/config';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
+import config from '@@core/utils/config';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import { ZendeskOAuthResponse } from '../../types';
 import {
   Action,
   NotUniqueRecord,
   handleServiceError,
-} from 'src/@core/utils/errors';
-import { LoggerService } from 'src/@core/logger/logger.service';
+} from '@@core/utils/errors';
+import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+import { decrypt, encrypt } from '@@core/utils/crypto';
 
 @Injectable()
 export class ZendeskConnectionService {
@@ -55,14 +56,13 @@ export class ZendeskConnectionService {
       const data: ZendeskOAuthResponse = res.data;
       console.log('OAuth credentials : zendesk ', data);
       // save tokens for this customer inside our db
-      //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
-          id_connection: uuidv4(), //TODO
+          id_connection: uuidv4(),
           provider_slug: 'zendesk',
           token_type: 'oauth',
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
@@ -83,7 +83,7 @@ export class ZendeskConnectionService {
     try {
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: refresh_token,
+        refresh_token: decrypt(refresh_token),
       });
       const res = await axios.post(
         'https://api.getbase.com/oauth2/token',
@@ -103,8 +103,8 @@ export class ZendeskConnectionService {
           id_connection: connectionId,
         },
         data: {
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),

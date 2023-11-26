@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Query } from '@nestjs/common';
-import { LoggerService } from 'src/@core/logger/logger.service';
+import { LoggerService } from '@@core/logger/logger.service';
 import { DealService } from './services/deal.service';
 
 @Controller('crm/deal')

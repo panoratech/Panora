@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { ContactController } from './contact.controller';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import { FreshSalesService } from './services/freshsales';
 import { ZendeskService } from './services/zendesk';
 import { ZohoService } from './services/zoho';
 import { PipedriveService } from './services/pipedrive';
 import { HubspotService } from './services/hubspot';
-import { LoggerService } from 'src/@core/logger/logger.service';
+import { LoggerService } from '@@core/logger/logger.service';
 
 @Module({
   controllers: [ContactController],

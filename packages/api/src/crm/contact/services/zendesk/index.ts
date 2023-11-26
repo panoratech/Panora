@@ -6,9 +6,10 @@ import {
   ZendeskContactOutput,
 } from 'src/crm/@types';
 import axios from 'axios';
-import { LoggerService } from 'src/@core/logger/logger.service';
-import { PrismaService } from 'src/@core/prisma/prisma.service';
-import { ActionType, handleServiceError } from 'src/@core/utils/errors';
+import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { decrypt } from '@@core/utils/crypto';
 @Injectable()
 export class ZendeskService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
@@ -34,7 +35,7 @@ export class ZendeskService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${connection.access_token}`,
+            Authorization: `Bearer ${decrypt(connection.access_token)}`,
           },
         },
       );
@@ -68,7 +69,7 @@ export class ZendeskService {
       const resp = await axios.get(`https://api.getbase.com/v2/contacts`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${connection.access_token}`,
+          Authorization: `Bearer ${decrypt(connection.access_token)}`,
         },
       });
       return {
