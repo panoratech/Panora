@@ -1,15 +1,11 @@
-import { Email, Phone } from '../types';
+import { Email, Phone } from '.';
 
 export class UnifiedContactInput {
   first_name: string;
   last_name: string;
   email_addresses: Email[];
   phone_numbers: Phone[];
+  field_mappings?: Record<string, any>[];
 }
 
 export class UnifiedContactOutput extends UnifiedContactInput {}
-
-export class ContactResponse {
-  contacts: UnifiedContactOutput[];
-  remote_data?: Record<string, any>[];
-}

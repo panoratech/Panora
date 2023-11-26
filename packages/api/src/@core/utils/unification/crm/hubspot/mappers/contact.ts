@@ -2,7 +2,7 @@ import { HubspotContactInput, HubspotContactOutput } from 'src/crm/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-} from 'src/crm/contact/dto/create-contact.dto';
+} from 'src/crm/contact/types/model.unified';
 
 export function mapToHubspotContact(
   source: UnifiedContactInput,

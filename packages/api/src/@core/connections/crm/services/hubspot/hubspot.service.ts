@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import axios from 'axios';
 import config from 'src/@core/utils/config';
-import { Prisma } from '@prisma/client';
 import { HubspotOAuthResponse } from '../../types';
 import { LoggerService } from 'src/@core/logger/logger.service';
 import {
@@ -10,6 +9,7 @@ import {
   NotUniqueRecord,
   handleServiceError,
 } from 'src/@core/utils/errors';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class HubspotConnectionService {
@@ -19,7 +19,7 @@ export class HubspotConnectionService {
   async addLinkedUserAndProjectTest() {
     // Adding a new organization
     const newOrganization = {
-      id_organization: '1', //TODO
+      id_organization: uuidv4(), //TODO
       name: 'New Organization',
       stripe_customer_id: 'stripe-customer-123',
     };
@@ -31,9 +31,9 @@ export class HubspotConnectionService {
 
     // Example data for a new project
     const newProject = {
-      id_project: '1',
+      id_project: uuidv4(),
       name: 'New Project',
-      id_organization: '1',
+      id_organization: newOrganization.id_organization,
     };
     const data1 = await this.prisma.projects.create({
       data: newProject,
@@ -41,7 +41,7 @@ export class HubspotConnectionService {
     this.logger.log('Added new project ' + data1);
 
     const newLinkedUser = {
-      id_linked_user: '1',
+      id_linked_user: uuidv4(),
       linked_user_origin_id: '12345',
       alias: 'ACME COMPANY',
       status: 'Active',
@@ -95,7 +95,7 @@ export class HubspotConnectionService {
       //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
-          id_connection: '1', //TODO
+          id_connection: uuidv4(),
           provider_slug: 'hubspot',
           token_type: 'oauth',
           access_token: data.access_token,

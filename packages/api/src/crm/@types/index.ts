@@ -1,7 +1,7 @@
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-} from '../contact/dto/create-contact.dto';
+} from '../contact/types/model.unified';
 import { UnifiedDealInput } from '../deal/dto/create-deal.dto';
 
 export enum CrmObject {

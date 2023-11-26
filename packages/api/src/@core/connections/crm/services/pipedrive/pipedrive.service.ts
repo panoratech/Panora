@@ -3,13 +3,13 @@ import { PrismaService } from 'src/@core/prisma/prisma.service';
 import axios from 'axios';
 import config from 'src/@core/utils/config';
 import { PipeDriveOAuthResponse } from '../../types';
-import { Prisma } from '@prisma/client';
 import {
   Action,
   NotUniqueRecord,
   handleServiceError,
 } from 'src/@core/utils/errors';
 import { LoggerService } from 'src/@core/logger/logger.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class PipedriveConnectionService {
@@ -59,7 +59,7 @@ export class PipedriveConnectionService {
       //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
-          id_connection: '1', //TODO
+          id_connection: uuidv4(), //TODO
           provider_slug: 'pipedrive',
           token_type: 'oauth',
           access_token: data.access_token,

@@ -5,7 +5,7 @@ import {
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-} from 'src/crm/contact/dto/create-contact.dto';
+} from 'src/crm/contact/types/model.unified';
 
 export function mapToFreshsalesContact(
   source: UnifiedContactInput,

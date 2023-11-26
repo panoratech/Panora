@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import config from 'src/@core/utils/config';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/@core/prisma/prisma.service';
 import { ZohoOAuthResponse } from '../../types';
 import { LoggerService } from 'src/@core/logger/logger.service';
@@ -10,6 +9,7 @@ import {
   NotUniqueRecord,
   handleServiceError,
 } from 'src/@core/utils/errors';
+import { v4 as uuidv4 } from 'uuid';
 
 const ZOHOLocations = {
   us: 'https://accounts.zoho.com',
@@ -64,7 +64,7 @@ export class ZohoConnectionService {
       //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
-          id_connection: '1', //TODO
+          id_connection: uuidv4(), //TODO
           provider_slug: 'zoho',
           token_type: 'oauth',
           access_token: data.access_token,

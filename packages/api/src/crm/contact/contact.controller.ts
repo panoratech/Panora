@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Query, Get } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
-import { UnifiedContactInput } from './dto/create-contact.dto';
 import { LoggerService } from 'src/@core/logger/logger.service';
+import { UnifiedContactInput } from './types/model.unified';
 
 @Controller('crm/contact')
 export class ContactController {
@@ -30,11 +30,13 @@ export class ContactController {
     @Body() unfiedContactData: UnifiedContactInput,
     @Query('integrationId') integrationId: string,
     @Query('linkedUserId') linkedUserId: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.contactService.addContact(
       unfiedContactData,
       integrationId,
       linkedUserId,
+      remote_data,
     );
   }
 }
