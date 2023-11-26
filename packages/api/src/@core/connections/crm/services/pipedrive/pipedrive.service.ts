@@ -59,6 +59,7 @@ export class PipedriveConnectionService {
       //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
+          id_connection: '1', //TODO
           provider_slug: 'pipedrive',
           token_type: 'oauth',
           access_token: data.access_token,

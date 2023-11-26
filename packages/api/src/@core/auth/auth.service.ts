@@ -23,6 +23,7 @@ export class AuthService {
 
       const res = await this.prisma.users.create({
         data: {
+          id_user: '1', //todo
           email: user.email,
           password_hash: hashedPassword,
           first_name: user.first_name,
@@ -158,6 +159,7 @@ export class AuthService {
       console.log('hey2');
       const new_api_key = await this.prisma.api_keys.create({
         data: {
+          id_api_key: '1', //TODO
           api_key_hash: hashed_token,
           id_project: projectId as string,
           id_user: userId as string,

@@ -10,7 +10,7 @@ import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
-import { ApiResponse, Email, NormalizedContactInfo, Phone } from '../types';
+import { ApiResponse, Email, Phone } from '../types';
 import { desunify } from 'src/@core/utils/unification/desunify';
 import {
   CrmObject,
@@ -50,18 +50,25 @@ export class ContactService {
   }
 
   //utils functions
-  normalizeEmailsAndNumbers(
-    email_addresses: Email[],
-    phone_numbers: Phone[],
-  ): NormalizedContactInfo {
+  normalizeEmailsAndNumbers(email_addresses: Email[], phone_numbers: Phone[]) {
     const normalizedEmails = email_addresses.map((email) => ({
       ...email,
+      owner_type: email.owner_type ? email.owner_type : '',
+      created_at: new Date(),
+      modified_at: new Date(),
+      id_crm_contact_email: '1', //TODO
       email_address_type:
         email.email_address_type === '' ? 'work' : email.email_address_type,
     }));
 
     const normalizedPhones = phone_numbers.map((phone) => ({
       ...phone,
+      owner_type: phone.owner_type ? phone.owner_type : '',
+      created_at: new Date(),
+      modified_at: new Date(),
+      id_crm_company: '1', //TODO
+      id_crm_contact: '1', //TODO
+      id_crm_contacts_phone_number: '1', //TODO
       phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
     }));
 
@@ -78,6 +85,9 @@ export class ContactService {
 
     const resp = await this.prisma.crm_contacts.create({
       data: {
+        id_crm_contact: '1',
+        created_at: new Date(),
+        modified_at: new Date(),
         first_name: first_name,
         last_name: last_name,
         crm_contact_email_addresses: {
@@ -98,6 +108,7 @@ export class ContactService {
   ): Promise<ApiResponse<ContactOutput>> {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
+        id_job: '1', //TODO
         id_linked_user: linkedUserId,
         status: 'initialized',
       },
@@ -180,6 +191,7 @@ export class ContactService {
   ): Promise<ApiResponse<ContactResponse>> {
     const job_resp_create = await this.prisma.jobs.create({
       data: {
+        id_job: '1', //TODO
         id_linked_user: linkedUserId,
         status: 'written',
       },

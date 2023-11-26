@@ -8,11 +8,13 @@ export class ApiResponse<T> {
 export type Email = {
   email_address: string;
   email_address_type: string;
+  owner_type?: string;
 };
 
 export type Phone = {
   phone_number: string;
   phone_type: string;
+  owner_type?: string;
 };
 
 export type NormalizedContactInfo = {

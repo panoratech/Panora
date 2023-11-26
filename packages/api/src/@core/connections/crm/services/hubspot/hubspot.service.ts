@@ -19,6 +19,7 @@ export class HubspotConnectionService {
   async addLinkedUserAndProjectTest() {
     // Adding a new organization
     const newOrganization = {
+      id_organization: '1', //TODO
       name: 'New Organization',
       stripe_customer_id: 'stripe-customer-123',
     };
@@ -30,8 +31,9 @@ export class HubspotConnectionService {
 
     // Example data for a new project
     const newProject = {
+      id_project: '1',
       name: 'New Project',
-      id_organization: 1n, // bigint value
+      id_organization: '1',
     };
     const data1 = await this.prisma.projects.create({
       data: newProject,
@@ -39,10 +41,11 @@ export class HubspotConnectionService {
     this.logger.log('Added new project ' + data1);
 
     const newLinkedUser = {
+      id_linked_user: '1',
       linked_user_origin_id: '12345',
       alias: 'ACME COMPANY',
       status: 'Active',
-      id_project: 1n, // bigint value
+      id_project: '1',
     };
     const data = await this.prisma.linked_users.create({
       data: newLinkedUser,
@@ -92,6 +95,7 @@ export class HubspotConnectionService {
       //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
+          id_connection: '1', //TODO
           provider_slug: 'hubspot',
           token_type: 'oauth',
           access_token: data.access_token,

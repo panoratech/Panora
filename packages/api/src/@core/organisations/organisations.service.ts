@@ -10,7 +10,10 @@ export class OrganisationsService {
   }
   async createOrganization(data: CreateOrganizationDto) {
     const res = await this.prisma.organizations.create({
-      data: data,
+      data: {
+        ...data,
+        id_organization: '1',
+      },
     });
   }
 }
