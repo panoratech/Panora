@@ -28,6 +28,16 @@ export class FieldMappingController {
     );
   }
 
+  @Get('attribute')
+  getAttributes() {
+    return this.fieldMappingService.getAttributes();
+  }
+
+  @Get('value')
+  getValues() {
+    return this.fieldMappingService.getValues();
+  }
+
   //define target field on our unified model
   @Post('define')
   defineTargetField(@Body() defineTargetFieldDto: DefineTargetFieldDto) {

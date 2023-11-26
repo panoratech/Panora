@@ -25,6 +25,14 @@ export class FieldMappingService {
     });
   }
 
+  async getAttributes() {
+    return await this.prisma.attribute.findMany();
+  }
+
+  async getValues() {
+    return await this.prisma.value.findMany();
+  }
+
   // and then retrieve them by their name
   async getEntityId(standardObject: StandardObject): Promise<string> {
     const res = await this.prisma.entity.findFirst({

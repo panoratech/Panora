@@ -9,7 +9,9 @@ export class LinkedUsersService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(LinkedUsersService.name);
   }
-
+  async getLinkedUsers() {
+    return await this.prisma.linked_users.findMany();
+  }
   async addLinkedUser(data: CreateLinkedUserDto) {
     const { id_project, ...rest } = data;
     const res = await this.prisma.linked_users.create({
@@ -17,9 +19,9 @@ export class LinkedUsersService {
         ...rest,
         id_linked_user: uuidv4(),
         id_project: id_project,
-        status: data.status || 'active',
       },
     });
+    return res;
     //this.logger.log('Added new linked_user ' + data);
   }
 }

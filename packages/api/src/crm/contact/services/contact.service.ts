@@ -55,8 +55,8 @@ export class ContactService {
       owner_type: phone.owner_type ? phone.owner_type : '',
       created_at: new Date(),
       modified_at: new Date(),
-      id_crm_company: '1', //TODO
-      id_crm_contact: '1', //TODO
+      //id_crm_company: '1', //TODO
+      //id_crm_contact: '1', //TODO
       id_crm_contacts_phone_number: uuidv4(),
       phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
     }));
@@ -74,7 +74,7 @@ export class ContactService {
 
     const resp = await this.prisma.crm_contacts.create({
       data: {
-        id_crm_contact: '1',
+        id_crm_contact: uuidv4(),
         created_at: new Date(),
         modified_at: new Date(),
         first_name: first_name,
@@ -82,7 +82,7 @@ export class ContactService {
         crm_contact_email_addresses: {
           create: normalizedEmails,
         },
-        crm_contacts_phone_numbers: {
+        crm_phone_numbers: {
           create: normalizedPhones,
         },
         id_job: job_id,
@@ -263,7 +263,6 @@ export class ContactService {
         break;
     }
     const sourceObject: OriginalContactOutput[] = resp.data;
-
     //unify the data according to the target obj wanted
     const unifiedObject = (await unify<OriginalContactOutput[]>({
       sourceObject,

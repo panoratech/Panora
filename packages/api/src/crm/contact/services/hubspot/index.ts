@@ -78,7 +78,7 @@ export class HubspotService {
         },
       );
       return {
-        data: resp.data,
+        data: resp.data.results,
         message: 'Hubspot contacts retrieved',
         statusCode: 200,
       };

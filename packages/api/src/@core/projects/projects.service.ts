@@ -18,5 +18,6 @@ export class ProjectsService {
         id_organization: id_organization,
       },
     });
+    return res;
   }
 }

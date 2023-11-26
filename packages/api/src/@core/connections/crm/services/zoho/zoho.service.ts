@@ -72,6 +72,7 @@ export class ZohoConnectionService {
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
+          status: 'valid',
           created_at: new Date(),
           projects: {
             connect: { id_project: projectId },

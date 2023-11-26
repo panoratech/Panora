@@ -40,6 +40,16 @@ export class AppController {
     return this.authService.login(user);
   }
 
+  @Get('auth')
+  async users() {
+    return this.authService.getUsers();
+  }
+
+  @Get('auth/api-keys')
+  async apiKeys() {
+    return this.authService.getApiKeys();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('generate-apikey')
   async generateApiKey(

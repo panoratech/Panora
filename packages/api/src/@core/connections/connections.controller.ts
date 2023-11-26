@@ -4,12 +4,14 @@ import { CrmConnectionsService } from './crm/services/crm-connection.service';
 import { ProviderVertical, getProviderVertical } from '@@core/utils/providers';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
+import { PrismaService } from '@@core/prisma/prisma.service';
 
 @Controller('connections')
 export class ConnectionsController {
   constructor(
     private readonly crmConnectionsService: CrmConnectionsService,
     private logger: LoggerService,
+    private prisma: PrismaService,
   ) {
     this.logger.setContext(ConnectionsController.name);
   }
@@ -58,5 +60,10 @@ export class ConnectionsController {
     } catch (error) {
       handleServiceError(error, this.logger);
     }
+  }
+
+  @Get()
+  async getConnections() {
+    return await this.prisma.connections.findMany();
   }
 }

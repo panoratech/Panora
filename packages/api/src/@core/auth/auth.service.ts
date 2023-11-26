@@ -16,6 +16,16 @@ export class AuthService {
     private logger: LoggerService,
   ) {}
 
+  async getUsers() {
+    const res = await this.prisma.users.findMany();
+    return res;
+  }
+
+  async getApiKeys() {
+    const res = await this.prisma.api_keys.findMany();
+    return res;
+  }
+
   async register(user: CreateUserDto) {
     try {
       // Generate a salt and hash the password
@@ -192,14 +202,14 @@ export class AuthService {
       if (!saved_api_key) {
         throw new UnauthorizedException('Failed to fetch API key from DB');
       }
-      if (Number(decoded.projectId) !== Number(saved_api_key.id_project)) {
+      if (String(decoded.projectId) !== String(saved_api_key.id_project)) {
         throw new UnauthorizedException(
           'Failed to validate API key: projectId invalid.',
         );
       }
 
       // Validate that the JWT payload matches the provided userId and projectId
-      if (Number(decoded.sub) !== Number(saved_api_key.id_user)) {
+      if (String(decoded.sub) !== String(saved_api_key.id_user)) {
         throw new UnauthorizedException(
           'Failed to validate API key: userId invalid.',
         );

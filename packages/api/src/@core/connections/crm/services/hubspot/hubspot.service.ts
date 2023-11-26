@@ -59,6 +59,7 @@ export class HubspotConnectionService {
     code: string,
   ) {
     try {
+      this.logger.log('linkeduserid is ' + linkedUserId);
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -69,7 +70,20 @@ export class HubspotConnectionService {
           `A connection already exists for userId ${linkedUserId} and the provider hubspot`,
         );
       //TMP STEP = first create a linked_user and a project id
-      await this.addLinkedUserAndProjectTest();
+      //await this.addLinkedUserAndProjectTest();
+
+      /*const newLinkedUser = {
+        id_linked_user: linkedUserId,
+        linked_user_origin_id: '12345',
+        alias: 'APPLE COMPANY',
+        status: 'Active',
+        id_project: projectId,
+      };
+      const data_ = await this.prisma.linked_users.create({
+        data: newLinkedUser,
+      });
+      this.logger.log('Added new linked_user ' + data_);*/
+
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
       const formData = new URLSearchParams({
@@ -103,6 +117,7 @@ export class HubspotConnectionService {
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
+          status: 'valid',
           created_at: new Date(),
           projects: {
             connect: { id_project: projectId },

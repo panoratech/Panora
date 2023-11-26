@@ -13,7 +13,7 @@ export class OrganisationsController {
   }
 
   @Post('create')
-  createProject(@Body() orgCreateDto: CreateOrganizationDto) {
+  createOrg(@Body() orgCreateDto: CreateOrganizationDto) {
     return this.organizationsService.createOrganization(orgCreateDto);
   }
 }
