@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-} from '../types/model.unified';
+} from '@contact/types/model.unified';
 import { OriginalContactOutput } from 'src/@core/utils/types';
 
 @Injectable()

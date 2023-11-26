@@ -1,10 +1,3 @@
-import {
-  FreshsalesContactOutput,
-  HubspotContactOutput,
-  PipedriveContactOutput,
-  ZendeskContactOutput,
-  ZohoContactOutput,
-} from 'src/crm/@types';
 import { UnifiedContactOutput } from './model.unified';
 
 export class ApiResponse<T> {

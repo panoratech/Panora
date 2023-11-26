@@ -1,7 +1,7 @@
 import { CrmObject, FreshsalesContactOutput } from 'src/crm/@types';
 import { CrmObjectInput, Unified, UnifySourceType } from '../../../types';
 import { mapToFreshsalesContact, mapToUnifiedContact } from './mappers/contact';
-import { UnifiedContactInput } from 'src/crm/contact/types/model.unified';
+import { UnifiedContactInput } from '@contact/types/model.unified';
 
 export async function desunifyFreshsales<T extends Unified>({
   sourceObject,

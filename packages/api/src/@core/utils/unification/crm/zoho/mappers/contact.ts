@@ -2,7 +2,7 @@ import { ZohoContactInput, ZohoContactOutput } from 'src/crm/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-} from 'src/crm/contact/types/model.unified';
+} from '@contact/types/model.unified';
 
 export function mapToZohoContact(
   source: UnifiedContactInput,

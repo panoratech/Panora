@@ -1,7 +1,7 @@
 import { CrmObject, ZohoContactOutput } from 'src/crm/@types';
 import { CrmObjectInput, Unified, UnifySourceType } from '../../../types';
 import { mapToUnifiedContact, mapToZohoContact } from './mappers/contact';
-import { UnifiedContactInput } from 'src/crm/contact/types/model.unified';
+import { UnifiedContactInput } from '@contact/types/model.unified';
 
 export async function desunifyZoho<T extends Unified>({
   sourceObject,

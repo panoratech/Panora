@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from '../../types';
+import { ApiResponse } from '@contact/types';
 import {
   CrmObject,
   ZendeskContactInput,

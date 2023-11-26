@@ -1,4 +1,4 @@
-import { CrmObject } from 'src/crm/@types';
+import { CrmObject } from '@crm/@types';
 import { desunifyHubspot, unifyHubspot } from './hubspot';
 import {
   CrmObjectInput,
