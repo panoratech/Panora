@@ -13,6 +13,7 @@ const config = {
   SENTRY_DSN: process.env.SENTRY_DSN,
   NODE_ENV: process.env.ENV,
   DISTRIBUTION: process.env.DISTRIBUTION,
+  ENCRYPT_CRYPTO_SECRET_KEY: process.env.ENCRYPT_CRYPTO_SECRET_KEY,
 };
 
 export default config;

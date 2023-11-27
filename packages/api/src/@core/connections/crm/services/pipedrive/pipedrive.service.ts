@@ -55,7 +55,7 @@ export class PipedriveConnectionService {
       );
       //TODO: handle if res throws an error
       const data: PipeDriveOAuthResponse = res.data;
-      console.log('OAuth credentials : pipedrive ', data);
+      this.logger.log('OAuth credentials : pipedrive ');
       const db_res = await this.prisma.connections.create({
         data: {
           id_connection: uuidv4(),
@@ -118,7 +118,7 @@ export class PipedriveConnectionService {
           ),
         },
       });
-      console.log('OAuth credentials updated : pipedrive ', data);
+      this.logger.log('OAuth credentials updated : pipedrive ');
     } catch (error) {
       handleServiceError(error, this.logger, 'pipedrive', Action.oauthRefresh);
     }

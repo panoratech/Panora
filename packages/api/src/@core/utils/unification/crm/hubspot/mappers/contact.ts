@@ -47,8 +47,6 @@ export function mapToUnifiedContact(
   if (!Array.isArray(source)) {
     return _mapSingleContact(source);
   }
-  console.log('hhddhdhdhdh');
-  console.log(JSON.stringify(customFieldMappings));
   // Handling array of HubspotContactOutput
   return source.map((contact) =>
     _mapSingleContact(contact, customFieldMappings),

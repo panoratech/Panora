@@ -83,7 +83,6 @@ export class AuthService {
   }
 
   hashApiKey(apiKey: string): string {
-    console.log('hey hashing...');
     return crypto.createHash('sha256').update(apiKey).digest('hex');
   }
 
@@ -119,7 +118,6 @@ export class AuthService {
     projectId: number | string,
     userId: number | string,
   ): Promise<{ access_token: string }> {
-    console.log("'ddddd");
     const jwtPayload = {
       sub: userId,
       projectId: projectId,
@@ -164,10 +162,8 @@ export class AuthService {
 
       // Generate a new API key (use a secure method for generation)
       const { access_token } = await this.generateApiKey(projectId, userId);
-      console.log('hey');
       // Store the API key in the database associated with the user
       const hashed_token = this.hashApiKey(access_token);
-      console.log('hey2');
       const new_api_key = await this.prisma.api_keys.create({
         data: {
           id_api_key: uuidv4(),
