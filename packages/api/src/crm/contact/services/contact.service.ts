@@ -100,6 +100,7 @@ export class ContactService {
       },
     });
 
+    //TODO: check why it doest iterate
     if (field_mappings && field_mappings.length > 0) {
       const entity = await this.prisma.entity.findFirst({
         where: { ressource_owner_id: 'contact' },

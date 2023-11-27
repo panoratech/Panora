@@ -1,57 +1,50 @@
-import {
-  FreshsalesContactInput,
-  FreshsalesContactOutput,
-} from 'src/crm/@types';
+import { ZendeskContactInput, ZendeskContactOutput } from 'src/crm/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
 
-export function mapToFreshsalesContact(
+export function mapToContact_Zendesk(
   source: UnifiedContactInput,
-): FreshsalesContactInput {
+): ZendeskContactInput {
   // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
   const primaryEmail = source.email_addresses?.[0]?.email_address;
   const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
   return {
+    name: `${source.first_name} ${source.last_name}`,
     first_name: source.first_name,
     last_name: source.last_name,
-    mobile_number: primaryPhone,
+    email: primaryEmail,
+    phone: primaryPhone,
   };
 }
 
-export function mapToUnifiedContact(
-  source: FreshsalesContactOutput | FreshsalesContactOutput[],
+export function mapToUnifiedContact_Zendesk(
+  source: ZendeskContactOutput | ZendeskContactOutput[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
-  // Handling single FreshsalesContactOutput
   if (!Array.isArray(source)) {
-    return _mapSingleFreshsalesContact(source);
+    return _mapSingleZendeskContact(source);
   }
 
-  // Handling array of FreshsalesContactOutput
-  return source.map(_mapSingleFreshsalesContact);
+  // Handling array of ZendeskContactOutput
+  return source.map(_mapSingleZendeskContact);
 }
 
-function _mapSingleFreshsalesContact(
-  contact: FreshsalesContactOutput,
+function _mapSingleZendeskContact(
+  contact: ZendeskContactOutput,
 ): UnifiedContactOutput {
-  // Map email and phone details
+  // Constructing the email and phone details
   const email_addresses = contact.email
     ? [{ email_address: contact.email, email_address_type: 'primary' }]
     : [];
   const phone_numbers = [];
-  if (contact.work_number) {
-    phone_numbers.push({
-      phone_number: contact.work_number,
-      phone_type: 'work',
-    });
+
+  if (contact.phone) {
+    phone_numbers.push({ phone_number: contact.phone, phone_type: 'work' });
   }
-  if (contact.mobile_number) {
-    phone_numbers.push({
-      phone_number: contact.mobile_number,
-      phone_type: 'mobile',
-    });
+  if (contact.mobile) {
+    phone_numbers.push({ phone_number: contact.mobile, phone_type: 'mobile' });
   }
 
   return {

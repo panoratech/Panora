@@ -4,7 +4,7 @@ import {
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
 
-export function mapToZohoContact(
+export function mapToContact_Zoho(
   source: UnifiedContactInput,
 ): ZohoContactInput {
   // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
@@ -22,7 +22,7 @@ export function mapToZohoContact(
   };*/
 }
 //TODO
-export function mapToUnifiedContact(
+export function mapToUnifiedContact_Zoho(
   source: ZohoContactOutput | ZohoContactOutput[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
   if (!Array.isArray(source)) {

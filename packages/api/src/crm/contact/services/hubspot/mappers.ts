@@ -1,10 +1,11 @@
-import { HubspotContactInput, HubspotContactOutput } from 'src/crm/@types';
+import { HubspotContactInput, HubspotContactOutput } from '@crm/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
+import { UnifySourceType } from '@@core/utils/types';
 
-export function mapToHubspotContact(
+export function mapToContact_Hubspot(
   source: UnifiedContactInput,
   customFieldMappings?: {
     slug: string;
@@ -37,18 +38,22 @@ export function mapToHubspotContact(
   return result;
 }
 
-export function mapToUnifiedContact(
-  source: HubspotContactOutput | HubspotContactOutput[],
+export function mapToUnifiedContact_Hubspot<
+  T extends UnifySourceType | UnifySourceType[],
+>(
+  source: T,
   customFieldMappings?: {
     slug: string;
     remote_id: string;
   }[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
-  if (!Array.isArray(source)) {
-    return _mapSingleContact(source);
+  const source_ = source as HubspotContactOutput | HubspotContactOutput[];
+
+  if (!Array.isArray(source_)) {
+    return _mapSingleContact(source_);
   }
   // Handling array of HubspotContactOutput
-  return source.map((contact) =>
+  return source_.map((contact) =>
     _mapSingleContact(contact, customFieldMappings),
   );
 }

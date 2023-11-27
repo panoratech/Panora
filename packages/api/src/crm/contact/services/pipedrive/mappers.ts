@@ -4,7 +4,7 @@ import {
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
 
-export function mapToPipedriveContact(
+export function mapToContact_Pipedrive(
   source: UnifiedContactInput,
 ): PipedriveContactInput {
   // Assuming 'email_addresses' and 'phone_numbers' arrays contain at least one entry
@@ -28,7 +28,7 @@ export function mapToPipedriveContact(
   };
 }
 
-export function mapToUnifiedContact(
+export function mapToUnifiedContact_Pipedrive(
   source: PipedriveContactOutput | PipedriveContactOutput[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
   if (!Array.isArray(source)) {
