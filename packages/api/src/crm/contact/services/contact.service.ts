@@ -164,6 +164,33 @@ export class ContactService {
     }
   }
 
+  async batchAddContacts(
+    unifiedContactData: UnifiedContactInput[],
+    integrationId: string,
+    linkedUserId: string,
+    remote_data?: boolean,
+  ): Promise<ApiResponse<ContactResponse>> {
+    const responses = await Promise.all(
+      unifiedContactData.map((unifiedData) =>
+        this.addContact(unifiedData, integrationId, linkedUserId, remote_data),
+      ),
+    );
+
+    const allContacts = responses.flatMap((response) => response.data.contacts);
+    const allRemoteData = responses.flatMap(
+      (response) => response.data.remote_data || [],
+    );
+
+    return {
+      data: {
+        contacts: allContacts,
+        remote_data: allRemoteData,
+      },
+      message: 'All contacts inserted successfully',
+      statusCode: 201,
+    };
+  }
+
   async addContact(
     unifiedContactData: UnifiedContactInput,
     integrationId: string,
@@ -368,5 +395,16 @@ export class ContactService {
       },
     });
     return { ...resp, data: res };
+  }
+
+  async updateContact(
+    id: string,
+    updateContactData: Partial<UnifiedContactInput>,
+  ): Promise<ApiResponse<ContactResponse>> {
+    // TODO: fetch the contact from the database using 'id'
+    // TODO: update the contact with 'updateContactData'
+    // TODO: save the updated contact back to the database
+    // TODO: return the updated contact
+    return;
   }
 }
