@@ -44,4 +44,8 @@ export class ContactController {
       remote_data,
     );
   }
+
+  //TODO: batch add Contact
+  // TODO: update contact
+  // TODO: delete a contact
 }

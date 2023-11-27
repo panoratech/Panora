@@ -1,8 +1,7 @@
 import * as crypto from 'crypto';
+import config from './config';
 
-// Secret key must be 32 bytes for aes-256-cbc
-const secretKey = '12345678901234567890123456789012'; // Replace with your actual secret key
-// IV should be 16 bytes
+const secretKey = config.ENCRYPT_CRYPTO_SECRET_KEY;
 const iv = crypto.randomBytes(16);
 
 export function encrypt(data: string): string {

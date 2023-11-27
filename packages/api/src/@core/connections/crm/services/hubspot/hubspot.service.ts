@@ -103,10 +103,7 @@ export class HubspotConnectionService {
         },
       );
       const data: HubspotOAuthResponse = res.data;
-      //console.log('OAuth credentials : hubspot ', data);
-      this.logger.log('OAuth credentials : hubspot ' + data);
       // save tokens for this customer inside our db
-      //TODO: encrypt the access token and refresh tokens
       const db_res = await this.prisma.connections.create({
         data: {
           id_connection: uuidv4(),
@@ -167,7 +164,7 @@ export class HubspotConnectionService {
           ),
         },
       });
-      console.log('OAuth credentials updated : hubspot ', data);
+      this.logger.log('OAuth credentials updated : hubspot ');
     } catch (error) {
       handleServiceError(error, this.logger, 'hubspot', Action.oauthRefresh);
     }

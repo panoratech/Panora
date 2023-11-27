@@ -61,7 +61,7 @@ export class ZohoConnectionService {
         },
       );
       const data: ZohoOAuthResponse = res.data;
-      console.log('OAuth credentials : zoho ', data);
+      this.logger.log('OAuth credentials : zoho ');
       const db_res = await this.prisma.connections.create({
         data: {
           id_connection: uuidv4(),
@@ -124,7 +124,7 @@ export class ZohoConnectionService {
           ),
         },
       });
-      console.log('OAuth credentials updated : zoho ', data);
+      this.logger.log('OAuth credentials updated : zoho ');
     } catch (error) {
       handleServiceError(error, this.logger, 'zoho', Action.oauthRefresh);
     }

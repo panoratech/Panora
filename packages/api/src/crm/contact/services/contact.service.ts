@@ -72,7 +72,13 @@ export class ContactService {
     };
   }
 
-  async addContactToDb(data: UnifiedContactInput, job_id: string) {
+  async addContactToDb(
+    data: UnifiedContactInput,
+    job_id: string,
+    integrationId: string,
+    linkedUserId: string,
+    field_mappings?: Record<string, any>[],
+  ) {
     const { first_name, last_name, email_addresses, phone_numbers } = data;
     const { normalizedEmails, normalizedPhones } =
       this.normalizeEmailsAndNumbers(email_addresses, phone_numbers);
@@ -93,22 +99,34 @@ export class ContactService {
         id_job: job_id,
       },
     });
-  }
 
-  // Helper method to apply custom field mappings to the contact data
-  applyCustomFieldMappings(contactData, customFieldMappings) {
-    // Logic to transform the contactData by applying the customFieldMappings
-    // For each custom field mapping, replace or add the field in contactData
-    customFieldMappings.forEach((mapping) => {
-      // Assuming mapping has `unifiedFieldName` and `providerFieldName`
-      if (contactData.hasOwnProperty(mapping.unifiedFieldName)) {
-        contactData[mapping.providerFieldName] =
-          contactData[mapping.unifiedFieldName];
-        // Optionally remove the unified field if it should not be sent to the provider
-        // delete contactData[mapping.unifiedFieldName];
+    if (field_mappings && field_mappings.length > 0) {
+      const entity = await this.prisma.entity.findFirst({
+        where: { ressource_owner_id: 'contact' },
+      });
+
+      for (const mapping of field_mappings) {
+        const attribute = await this.prisma.attribute.findFirst({
+          where: {
+            slug: Object.keys(mapping)[0],
+            source: integrationId,
+            id_consumer: linkedUserId,
+            id_entity: entity.id_entity,
+          },
+        });
+
+        if (attribute) {
+          await this.prisma.value.create({
+            data: {
+              id_value: uuidv4(),
+              data: Object.values(mapping)[0],
+              id_attribute: attribute.id_attribute,
+              id_entity: entity.id_entity,
+            },
+          });
+        }
       }
-    });
-    return contactData;
+    }
   }
 
   /* */
@@ -160,7 +178,13 @@ export class ContactService {
     });
     const job_id = job_resp_create.id_job;
     //TODO: add field mappings data too
-    await this.addContactToDb(unifiedContactData, job_id);
+    await this.addContactToDb(
+      unifiedContactData,
+      job_id,
+      integrationId,
+      linkedUserId,
+      unifiedContactData.field_mappings,
+    );
     const job_resp_update = await this.prisma.jobs.update({
       where: {
         id_job: job_id,

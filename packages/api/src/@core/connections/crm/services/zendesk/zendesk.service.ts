@@ -54,7 +54,7 @@ export class ZendeskConnectionService {
       );
       //TODO: handle if res throws an error
       const data: ZendeskOAuthResponse = res.data;
-      console.log('OAuth credentials : zendesk ', data);
+      this.logger.log('OAuth credentials : zendesk ');
       // save tokens for this customer inside our db
       const db_res = await this.prisma.connections.create({
         data: {
@@ -111,7 +111,7 @@ export class ZendeskConnectionService {
           ),
         },
       });
-      console.log('OAuth credentials updated : zendesk ', data);
+      this.logger.log('OAuth credentials updated : zendesk ');
     } catch (error) {
       handleServiceError(error, this.logger, 'zendesk', Action.oauthRefresh);
     }
