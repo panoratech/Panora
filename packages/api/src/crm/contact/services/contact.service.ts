@@ -23,6 +23,10 @@ import {
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
 import { OriginalContactOutput } from '@@core/utils/types';
+import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { decrypt } from '@@core/utils/crypto';
+import axios from 'axios';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 
 @Injectable()
 export class ContactService {
@@ -34,6 +38,7 @@ export class ContactService {
     private zendesk: ZendeskService,
     private pipedrive: PipedriveService,
     private logger: LoggerService,
+    private fieldMappingService: FieldMappingService,
   ) {
     this.logger.setContext(ContactService.name);
   }
@@ -108,6 +113,38 @@ export class ContactService {
 
   /* */
 
+  async getCustomProperties(linkedUserId: string) {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+        },
+      });
+      const resp = await axios.get(
+        `https://api.hubapi.com/properties/v1/contacts/properties`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${decrypt(connection.access_token)}`,
+          },
+        },
+      );
+      return {
+        data: resp.data,
+        message: 'Hubspot contact properties retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Hubspot',
+        CrmObject.contact,
+        ActionType.GET,
+      );
+    }
+  }
+
   async addContact(
     unifiedContactData: UnifiedContactInput,
     integrationId: string,
@@ -122,6 +159,7 @@ export class ContactService {
       },
     });
     const job_id = job_resp_create.id_job;
+    //TODO: add field mappings data too
     await this.addContactToDb(unifiedContactData, job_id);
     const job_resp_update = await this.prisma.jobs.update({
       where: {
@@ -132,27 +170,24 @@ export class ContactService {
       },
     });
 
-    // TODO: check if for contact object and provider there is a field mapping
     // Retrieve custom field mappings
-    /*const customFieldMappings =
+    // get potential fieldMappings and extract the original properties name
+    const customFieldMappings =
       await this.fieldMappingService.getCustomFieldMappings(
         integrationId,
         linkedUserId,
-      );*/
-
+        'contact',
+      );
     let resp: ApiResponse<OriginalContactOutput>;
     //desunify the data according to the target obj wanted
     const desunifiedObject = await desunify<UnifiedContactInput>({
       sourceObject: unifiedContactData,
       targetType: CrmObject.contact,
       providerName: integrationId,
+      customFieldMappings: unifiedContactData.field_mappings
+        ? customFieldMappings
+        : [],
     });
-
-    //TODO
-    /*desunifiedObject = this.applyCustomFieldMappings(
-      desunifiedObject,
-      customFieldMappings,
-    );*/
 
     switch (integrationId) {
       case 'freshsales':
@@ -193,12 +228,12 @@ export class ContactService {
       default:
         break;
     }
-
     //unify the data according to the target obj wanted
     const unifiedObject = (await unify<OriginalContactOutput[]>({
       sourceObject: [resp.data],
       targetType: CrmObject.contact,
       providerName: integrationId,
+      customFieldMappings: customFieldMappings,
     })) as UnifiedContactOutput[];
 
     let res: ContactResponse = {
@@ -223,6 +258,7 @@ export class ContactService {
     return { ...resp, data: res };
   }
 
+  //TODO: insert data in the db (would be used as data lake and webooks syncs later)
   async getContacts(
     integrationId: string,
     linkedUserId: string,
@@ -236,6 +272,17 @@ export class ContactService {
       },
     });
     const job_id = job_resp_create.id_job;
+
+    // get potential fieldMappings and extract the original properties name
+    const customFieldMappings =
+      await this.fieldMappingService.getCustomFieldMappings(
+        integrationId,
+        linkedUserId,
+        'contact',
+      );
+    const remoteProperties: string[] = customFieldMappings.map(
+      (mapping) => mapping.remote_id,
+    );
 
     let resp: ApiResponse<OriginalContactOutput[]>;
     switch (integrationId) {
@@ -252,7 +299,7 @@ export class ContactService {
         break;
 
       case 'hubspot':
-        resp = await this.hubspot.getContacts(linkedUserId);
+        resp = await this.hubspot.getContacts(linkedUserId, remoteProperties);
         break;
 
       case 'pipedrive':
@@ -262,12 +309,16 @@ export class ContactService {
       default:
         break;
     }
+
+    //TODO: insert the data in the DB with the fieldMappings (value table)
+
     const sourceObject: OriginalContactOutput[] = resp.data;
     //unify the data according to the target obj wanted
     const unifiedObject = (await unify<OriginalContactOutput[]>({
       sourceObject,
       targetType: CrmObject.contact,
       providerName: integrationId,
+      customFieldMappings,
     })) as UnifiedContactOutput[];
 
     let res: ContactResponse = {

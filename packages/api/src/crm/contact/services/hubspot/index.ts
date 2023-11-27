@@ -4,6 +4,7 @@ import {
   CrmObject,
   HubspotContactInput,
   HubspotContactOutput,
+  commonHubspotProperties,
 } from 'src/crm/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -60,6 +61,7 @@ export class HubspotService {
   }
   async getContacts(
     linkedUserId: string,
+    custom_properties?: string[],
   ): Promise<ApiResponse<HubspotContactOutput[]>> {
     try {
       //TODO: check required scope  => crm.objects.contacts.READ
@@ -68,15 +70,23 @@ export class HubspotService {
           id_linked_user: linkedUserId,
         },
       });
-      const resp = await axios.get(
-        `https://api.hubapi.com/crm/v3/objects/contacts/`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${decrypt(connection.access_token)}`,
-          },
+
+      const commonPropertyNames = Object.keys(commonHubspotProperties);
+      const allProperties = [...commonPropertyNames, ...custom_properties];
+      const baseURL = 'https://api.hubapi.com/crm/v3/objects/contacts/';
+
+      const queryString = allProperties
+        .map((prop) => `properties=${encodeURIComponent(prop)}`)
+        .join('&');
+
+      const url = `${baseURL}?${queryString}`;
+
+      const resp = await axios.get(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${decrypt(connection.access_token)}`,
         },
-      );
+      });
       return {
         data: resp.data.results,
         message: 'Hubspot contacts retrieved',

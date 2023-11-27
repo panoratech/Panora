@@ -14,5 +14,4 @@ export class MapFieldToProviderDto {
   source_custom_field_id: string;
   source_provider: string;
   linked_user_id: string;
-  data: any;
 }

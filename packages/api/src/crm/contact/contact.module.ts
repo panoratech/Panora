@@ -8,6 +8,7 @@ import { ZohoService } from './services/zoho';
 import { PipedriveService } from './services/pipedrive';
 import { HubspotService } from './services/hubspot';
 import { LoggerService } from '@@core/logger/logger.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 
 @Module({
   controllers: [ContactController],
@@ -20,6 +21,7 @@ import { LoggerService } from '@@core/logger/logger.service';
     PipedriveService,
     HubspotService,
     LoggerService,
+    FieldMappingService,
   ],
 })
 export class ContactModule {}

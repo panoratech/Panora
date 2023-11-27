@@ -15,14 +15,23 @@ export async function desunifyCrm<T extends Unified>({
   sourceObject,
   targetType_,
   providerName,
+  customFieldMappings,
 }: {
   sourceObject: T;
   targetType_: CrmObject;
   providerName: string;
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[];
 }): Promise<CrmObjectInput> {
   switch (providerName) {
     case 'hubspot':
-      return desunifyHubspot({ sourceObject, targetType_ });
+      return desunifyHubspot({
+        sourceObject,
+        targetType_,
+        customFieldMappings,
+      });
     case 'pipedrive':
       return desunifyPipedrive({ sourceObject, targetType_ });
     case 'zoho':
@@ -39,14 +48,19 @@ export async function unifyCrm<T extends UnifySourceType | UnifySourceType[]>({
   sourceObject,
   targetType_,
   providerName,
+  customFieldMappings,
 }: {
   sourceObject: T;
   targetType_: CrmObject;
   providerName: string;
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[];
 }): Promise<UnifyReturnType> {
   switch (providerName) {
     case 'hubspot':
-      return unifyHubspot({ sourceObject, targetType_ });
+      return unifyHubspot({ sourceObject, targetType_, customFieldMappings });
     case 'pipedrive':
       return unifyPipedrive({ sourceObject, targetType_ });
     case 'zoho':

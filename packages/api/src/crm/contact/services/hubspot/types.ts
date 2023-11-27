@@ -13,6 +13,7 @@ export interface HubspotContactInput {
   associatedcompanyid?: string;
   fax?: string;
   jobtitle?: string;
+  [key: string]: any;
 }
 
 type HubspotPropertiesOuput = {
@@ -22,6 +23,17 @@ type HubspotPropertiesOuput = {
   hs_object_id: string;
   lastmodifieddate: string;
   lastname: string;
+  [key: string]: string;
+};
+
+export const commonHubspotProperties = {
+  createdate: '',
+  email: '',
+  firstname: '',
+  hs_object_id: '',
+  lastmodifieddate: '',
+  lastname: '',
+  // Add any other common properties here
 };
 export interface HubspotContactOutput {
   id: string;

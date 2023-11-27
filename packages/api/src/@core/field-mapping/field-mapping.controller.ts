@@ -7,6 +7,9 @@ import {
 } from './dto/create-custom-field.dto';
 import { StandardObject } from '../utils/types';
 
+interface StandardObjectDto {
+  standardObjectName: string;
+}
 @Controller('field-mapping')
 export class FieldMappingController {
   constructor(
@@ -17,15 +20,22 @@ export class FieldMappingController {
   }
 
   @Post('addObjectEntity')
-  addStandardObjectEntity(@Body() standardObjectName: string) {
-    return this.fieldMappingService.addStandardObjectEntity(standardObjectName);
+  addStandardObjectEntity(@Body() dto: StandardObjectDto) {
+    return this.fieldMappingService.addStandardObjectEntity(
+      dto.standardObjectName,
+    );
   }
 
   @Get('getObjectEntity')
-  getStandardObjectEntity(@Query() standardObjectName: string) {
+  getStandardObjectEntity(@Query('object') standardObjectName: string) {
     return this.fieldMappingService.getEntityId(
       standardObjectName as StandardObject,
     );
+  }
+
+  @Get('entities')
+  getEntities() {
+    return this.fieldMappingService.getEntities();
   }
 
   @Get('attribute')
