@@ -12,6 +12,11 @@ export class ContactController {
     this.logger.setContext(ContactController.name);
   }
 
+  @Get('properties')
+  getCustomProperties(@Query('linkedUserId') linkedUserId: string) {
+    return this.contactService.getCustomProperties(linkedUserId);
+  }
+
   @Get()
   getContacts(
     @Query('integrationId') integrationId: string,

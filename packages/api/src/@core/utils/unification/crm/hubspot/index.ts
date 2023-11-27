@@ -6,13 +6,21 @@ import { UnifiedContactInput } from '@contact/types/model.unified';
 export async function desunifyHubspot<T extends Unified>({
   sourceObject,
   targetType_,
+  customFieldMappings,
 }: {
   sourceObject: T;
   targetType_: CrmObject;
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[];
 }): Promise<CrmObjectInput> {
   switch (targetType_) {
     case CrmObject.contact:
-      return mapToHubspotContact(sourceObject as UnifiedContactInput);
+      return mapToHubspotContact(
+        sourceObject as UnifiedContactInput,
+        customFieldMappings,
+      );
     case CrmObject.deal:
     //return mapToHubspotDeal(sourceObject);
     case CrmObject.company:
@@ -24,11 +32,23 @@ export async function desunifyHubspot<T extends Unified>({
 }
 export async function unifyHubspot<
   T extends UnifySourceType | UnifySourceType[],
->({ sourceObject, targetType_ }: { sourceObject: T; targetType_: CrmObject }) {
+>({
+  sourceObject,
+  targetType_,
+  customFieldMappings,
+}: {
+  sourceObject: T;
+  targetType_: CrmObject;
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[];
+}) {
   switch (targetType_) {
     case CrmObject.contact:
       return mapToUnifiedContact(
         sourceObject as HubspotContactOutput | HubspotContactOutput[],
+        customFieldMappings,
       );
     case CrmObject.deal:
     //return mapToHubspotDeal(sourceObject);

@@ -23,6 +23,7 @@ export class FieldMappingService {
         ressource_owner_id: standardObjectName,
       },
     });
+    return entity;
   }
 
   async getAttributes() {
@@ -33,8 +34,12 @@ export class FieldMappingService {
     return await this.prisma.value.findMany();
   }
 
+  async getEntities() {
+    return await this.prisma.entity.findMany();
+  }
+
   // and then retrieve them by their name
-  async getEntityId(standardObject: StandardObject): Promise<string> {
+  async getEntityId(standardObject: StandardObject) {
     const res = await this.prisma.entity.findFirst({
       where: {
         ressource_owner_id: standardObject as string,
@@ -43,9 +48,30 @@ export class FieldMappingService {
     return res.id_entity;
   }
 
+  async getCustomFieldMappings(
+    integrationId: string,
+    linkedUserId: string,
+    standard_object: string,
+  ) {
+    return await this.prisma.attribute.findMany({
+      where: {
+        source: integrationId,
+        id_consumer: linkedUserId,
+        entity: {
+          ressource_owner_id: standard_object,
+        },
+      },
+      select: {
+        remote_id: true,
+        slug: true,
+      },
+    });
+  }
+
   async defineTargetField(dto: DefineTargetFieldDto) {
     // Create a new attribute in your system representing the target field
     const id_entity = await this.getEntityId(dto.object_type_owner);
+    this.logger.log('id entity is ' + id_entity);
     const attribute = await this.prisma.attribute.create({
       data: {
         id_attribute: uuidv4(),
@@ -59,7 +85,7 @@ export class FieldMappingService {
         source: '',
         id_entity: id_entity,
         scope: 'user', // [user | org] wide
-        id_consumer: '',
+        id_consumer: '00000000-0000-0000-0000-000000000000', //default
       },
     });
 
@@ -80,9 +106,11 @@ export class FieldMappingService {
       },
     });
 
+    return updatedAttribute;
+
     //insert inside the table value
 
-    const valueInserted = await this.prisma.value.create({
+    /*const valueInserted = await this.prisma.value.create({
       data: {
         id_value: uuidv4(),
         data: dto.data,
@@ -91,6 +119,6 @@ export class FieldMappingService {
       },
     });
 
-    return updatedAttribute;
+    return updatedAttribute;*/
   }
 }

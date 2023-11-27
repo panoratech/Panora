@@ -13,15 +13,25 @@ export async function desunify<T extends Unified>({
   sourceObject,
   targetType,
   providerName,
+  customFieldMappings,
 }: {
   sourceObject: T;
   targetType: TargetObject;
   providerName: string;
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[];
 }): Promise<DesunifyReturnType> {
   switch (getProviderVertical(providerName)) {
     case ProviderVertical.CRM:
       const targetType_ = targetType as CrmObject;
-      return desunifyCrm({ sourceObject, targetType_, providerName });
+      return desunifyCrm({
+        sourceObject,
+        targetType_,
+        providerName,
+        customFieldMappings,
+      });
     case ProviderVertical.ATS:
       break;
     case ProviderVertical.Accounting:
