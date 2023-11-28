@@ -1,38 +1,73 @@
-import { cn } from "@/lib/utils"
+import { useState } from "react";
 
 export function MainNav({
+  onLinkClick,
   className,
   ...props
-}: React.HTMLAttributes<HTMLElement>) {
+}: {
+  onLinkClick: (name: string) => void;
+  className: string;
+}) {
+  const [selectedItem, setSelectedItem] = useState<string>("jobs");
+
+  const navItemClassName = (itemName: string) =>
+    `text-sm border-b font-medium w-full text-left px-4 py-2 hover:bg-gray-900 cursor-pointer ${
+      selectedItem === itemName ? "bg-gray-900" : "text-muted-foreground"
+    } transition-colors`;
+  
+  function click(name: string) {
+    setSelectedItem(name);
+    onLinkClick(name);
+  }
+
   return (
     <nav
-      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+      className={`flex flex-col items-start ${className}`}
       {...props}
     >
       <a
-        href="/examples/dashboard"
-        className="text-sm font-medium transition-colors hover:text-primary"
+        className={navItemClassName('jobs')}
+        onClick={() => click('jobs')}
       >
-        Dashboard
+        Jobs
       </a>
       <a
-        href="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        className={navItemClassName('connections')}
+        onClick={() => click('connections')}
+      >
+        Connections
+      </a>
+      <a
+        className={navItemClassName('integrations')}
+        onClick={() => click('integrations')}
+      >
+        Integrations
+      </a>
+      <a
+        className={navItemClassName('linked-accounts')}
+        onClick={() => click('linked-accounts')}
       >
         Linked Accounts
       </a>
       <a
-        href="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        className={navItemClassName('configuration')}
+        onClick={() => click('configuration')}
       >
         Configuration
       </a>
       <a
-        href="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        className={navItemClassName('api-keys')}
+        onClick={() => click('api-keys')}
+      >
+        API Keys
+      </a>
+      <a
+        className={navItemClassName('docs')}
+        onClick={() => click('docs')}
       >
         Docs
       </a>
+      {/* Add other nav items as needed */}
     </nav>
-  )
+  );
 }
