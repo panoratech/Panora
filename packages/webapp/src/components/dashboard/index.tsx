@@ -6,15 +6,17 @@ import JobsPage from "../jobs"
 import ConnectionsPage from "../connections"
 import MainPage from "../main-component"
 import ConfigurationPage from "../configuration"
-import IntegrationssPage from "../integrations"
 import ApiKeysPage from "../api-keys"
-import LinkedAccountsPage from "../linked-accounts"
+import QuickStartPage from "../quickstart"
 
 export default function DashboardPage() {
-  const [activePage, setActivePage] = useState('jobs');
+  const [activePage, setActivePage] = useState('dashboard');
 
   let ContentComponent;
   switch (activePage) {
+    case 'quickstart':
+      ContentComponent = QuickStartPage;
+      break;
     case 'jobs':
       ContentComponent = JobsPage;
       break;
@@ -24,15 +26,12 @@ export default function DashboardPage() {
     case 'configuration':
       ContentComponent = ConfigurationPage;
       break;
-    /*case 'integrations':
-      ContentComponent = IntegrationssPage;
-      break;*/
+    case 'dashboard':
+      ContentComponent = MainPage;
+      break;
     case 'api-keys':
-    ContentComponent = ApiKeysPage;
-    break;
-    case 'linked-accounts':
-    ContentComponent = LinkedAccountsPage;
-    break;
+      ContentComponent = ApiKeysPage;
+      break;
     default:
       ContentComponent = MainPage; // The default page content
   }

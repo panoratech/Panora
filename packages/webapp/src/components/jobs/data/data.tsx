@@ -11,16 +11,31 @@ import {
   
   export const labels = [
     {
-      value: "bug",
-      label: "Bug",
+      value: "/crm/task",
+      label: "/crm/task",
     },
     {
-      value: "feature",
-      label: "Feature",
+      value: "/crm/notes",
+      label: "/crm/notes",
     },
     {
-      value: "documentation",
-      label: "Documentation",
+      value: "/crm/contact",
+      label: "/crm/contact",
+    },
+  ]
+
+  export const labels2 = [
+    {
+      value: "GET",
+      label: "GET",
+    },
+    {
+      value: "POST",
+      label: "POST",
+    },
+    {
+      value: "GET",
+      label: "GET",
     },
   ]
   

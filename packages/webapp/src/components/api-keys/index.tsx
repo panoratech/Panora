@@ -33,14 +33,14 @@ export default function ApiKeysPage() {
     loadTasks();
   }, []);
     return (
-      <div>
-        <div className="flex items-center justify-between space-y-8">
-          <div className="flex items-start flex-col">
-            <h2 className="text-3xl font-bold tracking-tight mb-4">Api Keys</h2>
-            <h2 className="text-lg font-bold tracking-tight">Manage your api keys.</h2>
-          </div>
-        </div>
-        <div className="flex space-y-8 md:flex pb-4">
+
+<div className="flex items-center justify-between space-y-2">
+<div className="flex-1 space-y-4 p-8 pt-6">
+<div className="flex flex-col items-start justify-between space-y-2">
+  <h2 className="text-3xl font-bold tracking-tight">Api Keys</h2>
+  <h2 className="text-lg font-bold tracking-tight">Manage your api keys.</h2>
+</div>          
+<div className="flex space-y-8 md:flex pb-4">
           <div></div>
           <ChooseProjectSwitcher className="w-52 mr-4" />
           <Dialog>
@@ -69,7 +69,7 @@ export default function ApiKeysPage() {
           </DialogContent>
         </Dialog>
         </div>
-        {apiKeys && <DataTable data={apiKeys} columns={columns} />}
-      </div>
+        {apiKeys && <DataTable data={apiKeys} columns={columns} />}</div>
+</div>
     );
   }

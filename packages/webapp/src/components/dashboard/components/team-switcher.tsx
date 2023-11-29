@@ -49,15 +49,6 @@ import {
 
 const groups = [
   {
-    label: "Personal Account",
-    teams: [
-      {
-        label: "Kenza K.",
-        value: "personal",
-      },
-    ],
-  },
-  {
     label: "Teams",
     teams: [
       {

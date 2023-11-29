@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { labels, priorities, statuses } from "../data/data"
+import { labels, labels2, priorities, statuses } from "../data/data"
 import { Task } from "../data/schema"
 import { DataTableColumnHeader } from "./data-table-column-header"
 import { DataTableRowActions } from "./data-table-row-actions"
@@ -40,7 +40,15 @@ export const columns: ColumnDef<Task>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Method" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("Method")}</div>,
+    cell: ({ row }) =>{ 
+      const label = labels2.find((label) => label.value === row.original.method)
+
+      return (
+        <div className="w-[80px]">
+          {label && <Badge variant="outline">{label.label}</Badge>}
+        </div>
+      )
+    },
     enableSorting: false,
     enableHiding: false,
   },
@@ -55,9 +63,6 @@ export const columns: ColumnDef<Task>[] = [
       return (
         <div className="flex space-x-2">
           {label && <Badge variant="outline">{label.label}</Badge>}
-          {/*<span className="max-w-[500px] truncate font-medium">
-            {row.getValue("url")}
-          </span>*/}
         </div>
       )
     },
