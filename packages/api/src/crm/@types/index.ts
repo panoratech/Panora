@@ -1,4 +1,24 @@
 import {
+  mapToContact_Freshsales,
+  mapToUnifiedContact_Freshsales,
+} from '@contact/services/freshsales/mappers';
+import {
+  mapToContact_Hubspot,
+  mapToUnifiedContact_Hubspot,
+} from '@contact/services/hubspot/mappers';
+import {
+  mapToContact_Pipedrive,
+  mapToUnifiedContact_Pipedrive,
+} from '@contact/services/pipedrive/mappers';
+import {
+  mapToContact_Zendesk,
+  mapToUnifiedContact_Zendesk,
+} from '@contact/services/zendesk/mappers';
+import {
+  mapToContact_Zoho,
+  mapToUnifiedContact_Zoho,
+} from '@contact/services/zoho/mappers';
+import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
@@ -19,6 +39,41 @@ export type UnifiedCrm =
   | UnifiedContactInput
   | UnifiedContactOutput
   | UnifiedDealInput;
+
+export const providerUnificationMapping = {
+  hubspot: {
+    [CrmObject.contact]: {
+      unify: mapToUnifiedContact_Hubspot,
+      desunify: mapToContact_Hubspot,
+    },
+    //[CrmObject.deal]: ,
+    //[CrmObject.company]:,
+  },
+  pipedrive: {
+    [CrmObject.contact]: {
+      unify: mapToUnifiedContact_Pipedrive,
+      desunify: mapToContact_Pipedrive,
+    },
+  },
+  zoho: {
+    [CrmObject.contact]: {
+      unify: mapToUnifiedContact_Zoho,
+      desunify: mapToContact_Zoho,
+    },
+  },
+  zendesk: {
+    [CrmObject.contact]: {
+      unify: mapToUnifiedContact_Zendesk,
+      desunify: mapToContact_Zendesk,
+    },
+  },
+  freshsales: {
+    [CrmObject.contact]: {
+      unify: mapToUnifiedContact_Freshsales,
+      desunify: mapToContact_Freshsales,
+    },
+  },
+};
 
 export class PassThroughRequestDto {
   method: 'GET' | 'POST';

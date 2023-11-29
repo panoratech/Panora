@@ -7,8 +7,10 @@ import { ApiKeyStrategy } from './strategies/auth-header-api-key.strategy';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { LoggerService } from '@@core/logger/logger.service';
+import { AuthController } from './auth.controller';
 
 @Module({
+  controllers: [AuthController],
   providers: [
     AuthService,
     JwtStrategy,

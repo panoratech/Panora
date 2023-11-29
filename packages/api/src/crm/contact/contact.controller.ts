@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Query, Get } from '@nestjs/common';
+import { Controller, Post, Body, Query, Get, Patch } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { UnifiedContactInput } from './types/model.unified';
@@ -12,6 +12,7 @@ export class ContactController {
     this.logger.setContext(ContactController.name);
   }
 
+  //todo
   @Get('properties')
   getCustomProperties(@Query('linkedUserId') linkedUserId: string) {
     return this.contactService.getCustomProperties(linkedUserId);
@@ -31,13 +32,13 @@ export class ContactController {
   }
 
   @Post()
-  addContact(
-    @Body() unfiedContactData: UnifiedContactInput,
+  addContacts(
+    @Body() unfiedContactData: UnifiedContactInput[],
     @Query('integrationId') integrationId: string,
     @Query('linkedUserId') linkedUserId: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.addContact(
+    return this.contactService.batchAddContacts(
       unfiedContactData,
       integrationId,
       linkedUserId,
@@ -45,7 +46,13 @@ export class ContactController {
     );
   }
 
-  //TODO: batch add Contact
+  @Patch()
+  updateContact(
+    @Query('id') id: string,
+    @Body() updateContactData: Partial<UnifiedContactInput>,
+  ) {
+    return this.contactService.updateContact(id, updateContactData);
+  }
+
   // TODO: update contact
-  // TODO: delete a contact
 }
