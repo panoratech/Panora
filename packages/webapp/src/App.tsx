@@ -15,7 +15,6 @@ function App() {
           <Route path="/jobs" element={<JobsPage />} />
           <Route path="/tasks" element={<TaskPage />} />
           <Route path="/connections" element={<ConnectionsPage />} />
-          {/* ... other routes */}
         </Routes>
       </Router>
     </ThemeProvider>

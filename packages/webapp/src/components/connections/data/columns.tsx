@@ -6,11 +6,11 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { labels, priorities, statuses } from "../data/data"
-import { Task } from "../data/schema"
-import { DataTableColumnHeader } from "./data-table-column-header"
-import { DataTableRowActions } from "./data-table-row-actions"
+import { Connection } from "./schema"
+import { DataTableColumnHeader } from "./../../jobs/components/data-table-column-header"
+import { DataTableRowActions } from "./../../jobs/components/data-table-row-actions"
 
-export const columns: ColumnDef<Task>[] = [
+export const columns: ColumnDef<Connection>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -36,21 +36,21 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "Method",
+    accessorKey: "Organisation",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Method" />
+      <DataTableColumnHeader column={column} title="Organisation" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("Method")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("Organisation")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "url",
+    accessorKey: "app",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="URL" />
+      <DataTableColumnHeader column={column} title="App" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.url)
+      const label = labels.find((label) => label.value === row.original.app)
 
       return (
         <div className="flex space-x-2">
@@ -63,13 +63,13 @@ export const columns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "category",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="Category" />
     ),
     cell: ({ row }) => {
       const status = statuses.find(
-        (status) => status.value === row.getValue("status")
+        (status) => status.value === row.getValue("category")
       )
 
       if (!status) {
@@ -90,13 +90,13 @@ export const columns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "direction",
+    accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Direction" />
+      <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
       const direction = priorities.find(
-        (direction) => direction.value === row.getValue("direction")
+        (direction) => direction.value === row.getValue("status")
       )
 
       if (!direction) {
@@ -117,13 +117,13 @@ export const columns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "integration",
+    accessorKey: "linkedUser",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Integration" />
+      <DataTableColumnHeader column={column} title="Linked User" />
     ),
     cell: ({ row }) => {
       const status = statuses.find(
-        (status) => status.value === row.getValue("integration")
+        (status) => status.value === row.getValue("linkedUser")
       )
 
       if (!status) {
@@ -141,24 +141,6 @@ export const columns: ColumnDef<Task>[] = [
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
-    },
-  },
-  {
-    accessorKey: "organisation",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Organisation" />
-    ),
-    cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.organisation)
-
-      return (
-        <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("organisation")}
-          </span>
-        </div>
-      )
     },
   },
   {

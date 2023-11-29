@@ -37,12 +37,12 @@ export function MainNav({
       >
         Connections
       </a>
-      <a
+      {/*<a
         className={navItemClassName('integrations')}
         onClick={() => click('integrations')}
       >
         Integrations
-      </a>
+  </a>*/}
       <a
         className={navItemClassName('linked-accounts')}
         onClick={() => click('linked-accounts')}
@@ -63,7 +63,9 @@ export function MainNav({
       </a>
       <a
         className={navItemClassName('docs')}
-        onClick={() => click('docs')}
+        href="https://docs.panora.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         Docs
       </a>

@@ -24,9 +24,9 @@ export default function DashboardPage() {
     case 'configuration':
       ContentComponent = ConfigurationPage;
       break;
-      case 'integrations':
-    ContentComponent = IntegrationssPage;
-    break;
+    /*case 'integrations':
+      ContentComponent = IntegrationssPage;
+      break;*/
     case 'api-keys':
     ContentComponent = ApiKeysPage;
     break;
@@ -51,7 +51,6 @@ export default function DashboardPage() {
         </div>
         <div className="flex-1 space-y-4 pt-6 px-10 ml-[200px]">
           <ContentComponent/>
-          
         </div>
       </div>
     </>
