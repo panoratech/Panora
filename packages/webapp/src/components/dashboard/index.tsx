@@ -1,5 +1,5 @@
 import { MainNav } from "./components/main-nav"
-import TeamSwitcher from "./components/team-switcher"
+import TeamSwitcher from "../shared/team-switcher"
 import { UserNav } from "./components/user-nav"
 import { useState } from "react"
 import JobsPage from "../jobs"

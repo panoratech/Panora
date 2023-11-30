@@ -62,7 +62,7 @@ export default function ConfigurationPage() {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button className="col-span-3 outline">
+                    <Button variant="outline" className="col-span-3">
                         <PlusCircledIcon className="mr-2 h-4 w-4" />
                         Add Field Mapping
                     </Button>
