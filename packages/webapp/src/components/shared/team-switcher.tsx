@@ -39,13 +39,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
 const groups = [
   {
@@ -86,15 +79,27 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
 interface TeamSwitcherProps extends PopoverTriggerProps {}
 
+interface ModalObj {
+  open: boolean;
+  status?: number; // 0 for org, 1 for project
+}
+
 export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [open, setOpen] = React.useState(false)
-  const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false)
   const [selectedTeam, setSelectedTeam] = React.useState<Team>(
     groups[0].teams[0]
   )
 
+  const [showNewDialog, setShowNewDialog] = React.useState<ModalObj>({
+    open: false,
+  })
+
+  const handleOpenChange = (open: boolean) => {
+    setShowNewDialog(prevState => ({ ...prevState, open }));
+  };
+
   return (
-    <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
+    <Dialog open={showNewDialog.open} onOpenChange={handleOpenChange}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -154,18 +159,18 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   <CommandItem
                     onSelect={() => {
                       setOpen(false)
-                      setShowNewTeamDialog(true)
+                      setShowNewDialog({open: true, status: 0})
                     }}
                   >
                     <PlusCircledIcon className="mr-2 h-5 w-5" />
-                    Create Team
+                    Create Organisation
                   </CommandItem>
                 </DialogTrigger>
                 <DialogTrigger asChild>
                   <CommandItem
                     onSelect={() => {
                       setOpen(false)
-                      setShowNewTeamDialog(true)
+                      setShowNewDialog({open: true, status: 1})
                     }}
                   >
                     <PlusCircledIcon className="mr-2 h-5 w-5" />
@@ -178,48 +183,52 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
         </PopoverContent>
       </Popover>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create team</DialogTitle>
-          <DialogDescription>
-            Add a new team to manage products and customers.
-          </DialogDescription>
-        </DialogHeader>
-        <div>
-          <div className="space-y-4 py-2 pb-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Team name</Label>
-              <Input id="name" placeholder="Acme Inc." />
+        {showNewDialog.status == 0 ? 
+          <>
+            <DialogHeader>
+              <DialogTitle>Create organisation</DialogTitle>
+              <DialogDescription>
+                Add a new organisation to manage your integrations.
+              </DialogDescription>
+            </DialogHeader>
+            <div>
+              <div className="space-y-4 py-2 pb-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Organisation name</Label>
+                  <Input id="name" placeholder="Acme Inc." />
+                </div>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="plan">Subscription plan</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a plan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="free">
-                    <span className="font-medium">Free</span> -{" "}
-                    <span className="text-muted-foreground">
-                      Trial for two weeks
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="pro">
-                    <span className="font-medium">Pro</span> -{" "}
-                    <span className="text-muted-foreground">
-                      $9/month per user
-                    </span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowNewDialog({open:false})}>
+                Cancel
+              </Button>
+              <Button type="submit">Continue</Button>
+            </DialogFooter>
+          </> : 
+          <>
+            <DialogHeader>
+              <DialogTitle>Create project</DialogTitle>
+              <DialogDescription>
+                Add a new project to manage your integrations.
+              </DialogDescription>
+            </DialogHeader>
+            <div>
+              <div className="space-y-4 py-2 pb-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Project name</Label>
+                  <Input id="name" placeholder="Project Inc." />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setShowNewTeamDialog(false)}>
-            Cancel
-          </Button>
-          <Button type="submit">Continue</Button>
-        </DialogFooter>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowNewDialog({open:false})}>
+                Cancel
+              </Button>
+              <Button type="submit">Continue</Button>
+            </DialogFooter>
+          </>
+        }
       </DialogContent>
     </Dialog>
   )

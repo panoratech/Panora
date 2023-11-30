@@ -1,6 +1,5 @@
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
-import ChooseProjectSwitcher from "./components/choose-project";
 import { useEffect, useState } from "react";
 import { API_KEYS } from "./data/api-keys";
 import { columns } from "./data/columns";
@@ -41,7 +40,6 @@ export default function ApiKeysPage() {
         </div>          
         <div className="flex space-y-8 md:flex pb-4">
           <div></div>
-          <ChooseProjectSwitcher className="w-52 mr-4" />
           <Dialog>
             <DialogTrigger asChild>
               <Button>
