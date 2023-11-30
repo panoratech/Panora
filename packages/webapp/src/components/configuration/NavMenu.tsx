@@ -10,9 +10,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { Separator } from "../ui/separator"
 
 const components: { title: string; href: string; description: string }[] = [
   {

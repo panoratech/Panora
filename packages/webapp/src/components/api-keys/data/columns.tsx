@@ -2,7 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 
-import { Checkbox } from "@/components/ui/checkbox"
 
 import { ApiKey } from "./schema"
 import { DataTableColumnHeader } from "./../../jobs/components/data-table-column-header"
