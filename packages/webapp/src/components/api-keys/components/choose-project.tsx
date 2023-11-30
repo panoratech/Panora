@@ -4,7 +4,6 @@ import * as React from "react"
 import {
   CaretSortIcon,
   CheckIcon,
-  PlusCircledIcon,
 } from "@radix-ui/react-icons"
 
 import { cn } from "@/lib/utils"
@@ -30,7 +29,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -49,15 +47,15 @@ import {
 
 const groups = [
   {
-    label: "Teams",
+    label: "Projects",
     teams: [
       {
-        label: "Acme Inc.",
-        value: "acme-inc",
+        label: "Project 1",
+        value: "project1",
       },
       {
-        label: "Monsters Inc.",
-        value: "monsters",
+        label: "Project 2",
+        value: "project2",
       },
     ],
   },
@@ -84,7 +82,7 @@ export default function ChooseProjectSwitcher({ className }: TeamSwitcherProps) 
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            aria-label="Select a team"
+            aria-label="Select a project"
             className={cn("w-[200px] justify-between", className)}
           >
             <Avatar className="mr-2 h-3 w-3">
@@ -101,8 +99,8 @@ export default function ChooseProjectSwitcher({ className }: TeamSwitcherProps) 
         <PopoverContent className="w-[200px] p-0 ml-20">
           <Command>
             <CommandList>
-              <CommandInput placeholder="Search team..." />
-              <CommandEmpty>No team found.</CommandEmpty>
+              <CommandInput placeholder="Search project..." />
+              <CommandEmpty>No project found.</CommandEmpty>
               {groups.map((group) => (
                 <CommandGroup key={group.label} heading={group.label}>
                   {group.teams.map((team) => (
@@ -137,21 +135,7 @@ export default function ChooseProjectSwitcher({ className }: TeamSwitcherProps) 
               ))}
             </CommandList>
             <CommandSeparator />
-            <CommandList>
-              <CommandGroup>
-                <DialogTrigger asChild>
-                  <CommandItem
-                    onSelect={() => {
-                      setOpen(false)
-                      setShowNewTeamDialog(true)
-                    }}
-                  >
-                    <PlusCircledIcon className="mr-2 h-5 w-5" />
-                    Create Team
-                  </CommandItem>
-                </DialogTrigger>
-              </CommandGroup>
-            </CommandList>
+      
           </Command>
         </PopoverContent>
       </Popover>

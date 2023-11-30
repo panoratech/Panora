@@ -4,7 +4,7 @@ import DashboardPage from './components/dashboard'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import JobsPage from './components/jobs';
 import ConnectionsPage from './components/connections';
-import TaskPage from './components/jobs/Task';
+import TaskPage from './components/jobs/JobsTable';
 
 function App() {
   return (

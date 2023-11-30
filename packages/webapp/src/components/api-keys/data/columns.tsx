@@ -4,8 +4,8 @@ import { ColumnDef } from "@tanstack/react-table"
 
 
 import { ApiKey } from "./schema"
-import { DataTableColumnHeader } from "./../../jobs/components/data-table-column-header"
-import { DataTableRowActions } from "./../../jobs/components/data-table-row-actions"
+import { DataTableColumnHeader } from "../../shared/data-table-column-header"
+import { DataTableRowActions } from "../../shared/data-table-row-actions"
 
 export const columns: ColumnDef<ApiKey>[] = [
   {

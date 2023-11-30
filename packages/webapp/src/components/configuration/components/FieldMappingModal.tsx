@@ -88,7 +88,7 @@ export function FModal() {
           <CardFooter>
             <Button>Define Field</Button>
           </CardFooter>
-        </Card>
+        </Card> 
       </TabsContent>
       <TabsContent value="password">
         <Card>

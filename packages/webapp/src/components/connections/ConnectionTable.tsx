@@ -1,5 +1,5 @@
-import { columns } from "./data/columns"
-import { DataTable } from "./../jobs/components/data-table"
+import { columns } from "./components/columns"
+import { DataTable } from "../shared/data-table"
 import { useEffect, useState } from "react"
 import { CONNECTIONS } from "./data/connection";
 import {
@@ -23,15 +23,15 @@ export interface Connection {
 }
 
 export default function ConnectionTable() {
-  const [connections, setTasks] = useState<Connection[]>();
+  const [connections, setConnections] = useState<Connection[]>();
 
   useEffect(() => {
-    async function loadTasks() {
+    async function loadConnections() {
       //const fetchedTasks = await getTasks();
-      setTasks(CONNECTIONS);
+      setConnections(CONNECTIONS);
     }
 
-    loadTasks();
+    loadConnections();
   }, []);
   return (
     <>

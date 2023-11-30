@@ -5,29 +5,30 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-import { CONNECTIONS } from "@/components/connections/data/connection";
-import { columns } from "@/components/connections/data/columns";
-import { DataTable } from "@/components/jobs/components/data-table";
+import { DataTable } from "@/components/shared/data-table";
+import { MAPPINGS } from "../data/mappings";
+import { columns } from "./columns";
 
-export interface Connection {
-  organisation: string; 
-  app: string; 
-  status: string; 
+export interface Mapping {
+  standard_object: string; 
+  source_app: string; 
+  status: string;  
   category: string; 
-  linkedUser: string;
+  source_field: string;
+  destination_field: string;
+  data_type: string;
   date: string;
 }
 
 export default function FieldMappingsTable() {
-  const [connections, setTasks] = useState<Connection[]>();
+  const [mappings, setMappings] = useState<Mapping[]>();
 
   useEffect(() => {
-    async function loadTasks() {
-      //const fetchedTasks = await getTasks();
-      setTasks(CONNECTIONS);
+    async function loadMappings() {
+      setMappings(MAPPINGS);
     }
 
-    loadTasks();
+    loadMappings();
   }, []);
   return (
     <>
@@ -51,7 +52,7 @@ export default function FieldMappingsTable() {
             </CardContent>
         </Card>                  
         </div>
-        {connections && <DataTable data={connections} columns={columns} />}
+        {mappings && <DataTable data={mappings} columns={columns} />}
       </div>
     </>
   )
