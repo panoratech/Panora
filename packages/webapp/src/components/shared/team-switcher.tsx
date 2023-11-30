@@ -49,6 +49,23 @@ import {
 
 const groups = [
   {
+    label: "Projects",
+    teams: [
+      {
+        label: "Financial Project",
+        value: "personal",
+      },
+      {
+        label: "Data Project",
+        value: "personal1",
+      },
+      {
+        label: "Marketing Project",
+        value: "personal2",
+      },
+    ],
+  },
+  {
     label: "Teams",
     teams: [
       {
@@ -85,15 +102,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             role="combobox"
             aria-expanded={open}
             aria-label="Select a team"
-            className={cn("w-[200px] justify-between", className)}
+            className={cn("w-[250px] justify-between", className)}
           >
-            <Avatar className="mr-2 h-3 w-3">
-              <AvatarImage
-                src={`https://avatar.vercel.sh/${selectedTeam.value}.png`}
-                alt={selectedTeam.label}
-              />
-              <AvatarFallback>SC</AvatarFallback>
-            </Avatar>
+           
             {selectedTeam.label}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -148,6 +159,17 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   >
                     <PlusCircledIcon className="mr-2 h-5 w-5" />
                     Create Team
+                  </CommandItem>
+                </DialogTrigger>
+                <DialogTrigger asChild>
+                  <CommandItem
+                    onSelect={() => {
+                      setOpen(false)
+                      setShowNewTeamDialog(true)
+                    }}
+                  >
+                    <PlusCircledIcon className="mr-2 h-5 w-5" />
+                    Create Project
                   </CommandItem>
                 </DialogTrigger>
               </CommandGroup>

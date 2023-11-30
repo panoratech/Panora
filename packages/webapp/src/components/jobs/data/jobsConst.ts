@@ -1,4 +1,4 @@
-export const TASKS = [
+export const JOBS = [
     {
       "method": "GET",
       "integration": "You can't compress the program without quantifying the open-source SSD pixel!",

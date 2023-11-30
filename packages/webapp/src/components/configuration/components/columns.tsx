@@ -8,9 +8,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { labels, labels2, priorities, statuses } from "../../configuration/data/data"
 import { DataTableColumnHeader } from "../../shared/data-table-column-header"
 import { DataTableRowActions } from "../../shared/data-table-row-actions"
-import { Job } from "../data/schema"
+import { Mapping } from "../data/schema"
 
-export const columns: ColumnDef<Job>[] = [
+export const columns: ColumnDef<Mapping>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -36,12 +36,12 @@ export const columns: ColumnDef<Job>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "Method",
+    accessorKey: "standard_object",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Method" />
+      <DataTableColumnHeader column={column} title="Standard Object" />
     ),
     cell: ({ row }) =>{ 
-      const label = labels2.find((label) => label.value === row.original.method)
+      const label = labels2.find((label) => label.value === row.original.standard_object)
 
       return (
         <div className="w-[80px]">
@@ -53,12 +53,12 @@ export const columns: ColumnDef<Job>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "url",
+    accessorKey: "provider",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="URL" />
+      <DataTableColumnHeader column={column} title="Provider" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.url)
+      const label = labels.find((label) => label.value === row.original.source_app)
 
       return (
         <div className="flex space-x-2">
@@ -95,13 +95,13 @@ export const columns: ColumnDef<Job>[] = [
     },
   },
   {
-    accessorKey: "direction",
+    accessorKey: "category",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Direction" />
+      <DataTableColumnHeader column={column} title="Category" />
     ),
     cell: ({ row }) => {
       const direction = priorities.find(
-        (direction) => direction.value === row.getValue("direction")
+        (direction) => direction.value === row.getValue("category")
       )
 
       if (!direction) {
@@ -122,13 +122,13 @@ export const columns: ColumnDef<Job>[] = [
     },
   },
   {
-    accessorKey: "integration",
+    accessorKey: "source_field",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Integration" />
+      <DataTableColumnHeader column={column} title="Source Field" />
     ),
     cell: ({ row }) => {
       const status = statuses.find(
-        (status) => status.value === row.getValue("integration")
+        (status) => status.value === row.getValue("source_field")
       )
 
       if (!status) {
@@ -149,18 +149,36 @@ export const columns: ColumnDef<Job>[] = [
     },
   },
   {
-    accessorKey: "organisation",
+    accessorKey: "destination_field",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Organisation" />
+      <DataTableColumnHeader column={column} title="Destination Field" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.organisation)
+      const label = labels.find((label) => label.value === row.original.destination_field)
 
       return (
         <div className="flex space-x-2">
           {label && <Badge variant="outline">{label.label}</Badge>}
           <span className="max-w-[500px] truncate font-medium">
             {row.getValue("organisation")}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "data_type",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Data Type" />
+    ),
+    cell: ({ row }) => {
+      const label = labels.find((label) => label.value === row.original.data_type)
+
+      return (
+        <div className="flex space-x-2">
+          {label && <Badge variant="outline">{label.label}</Badge>}
+          <span className="max-w-[500px] truncate font-medium">
+            {row.getValue("date")}
           </span>
         </div>
       )

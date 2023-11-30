@@ -16,6 +16,16 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 export function FModal() {
   return (
     <Tabs defaultValue="account" className="w-[400px] mt-5">
@@ -26,46 +36,127 @@ export function FModal() {
       <TabsContent value="account">
         <Card>
           <CardHeader>
-            <CardTitle>Account</CardTitle>
+            <CardTitle>Define</CardTitle>
             <CardDescription>
-              Make changes to your account here. Click save when you're done.
+              Define a custom field you want to enable on unified models. It must be mapped to an existent custom field on your end-user's provider.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="space-y-1">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue="Pedro Duarte" />
+              <Label htmlFor="name">Standard Model</Label>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a model" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="apple">Contact</SelectItem>
+                    <SelectItem value="banana">Task</SelectItem>
+                    <SelectItem value="blueberry">Note</SelectItem>
+                    <SelectItem value="grapes">Company</SelectItem>
+                    <SelectItem value="pineapple">Ticket</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" defaultValue="@peduarte" />
+              <Label htmlFor="username">Name</Label>
+              <Input id="username" defaultValue="favorite_color" />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="username">Description</Label>
+              <Input id="username" defaultValue="favorite color" />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="username">Field Type</Label>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="apple">string</SelectItem>
+                    <SelectItem value="banana">int</SelectItem>
+                    <SelectItem value="blueberry">string[]</SelectItem>
+                    <SelectItem value="grapes">int[]</SelectItem>
+                    <SelectItem value="pineapple">Date</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
           <CardFooter>
-            <Button>Save changes</Button>
+            <Button>Define Field</Button>
           </CardFooter>
-        </Card>
+        </Card> 
       </TabsContent>
       <TabsContent value="password">
         <Card>
           <CardHeader>
-            <CardTitle>Password</CardTitle>
+            <CardTitle>Map</CardTitle>
             <CardDescription>
-              Change your password here. After saving, you'll be logged out.
+              Now that you defined your field, map it to an existent custom field on your end-user's tool.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="space-y-1">
-              <Label htmlFor="current">Current password</Label>
-              <Input id="current" type="password" />
+              <Label htmlFor="current">Field</Label>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a defined field" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="apple">fav_color</SelectItem>
+                    <SelectItem value="banana">fav_hair</SelectItem>
+                    <SelectItem value="blueberry">pet_number</SelectItem>
+                    <SelectItem value="grapes">is_admin</SelectItem>
+                    <SelectItem value="pineapple">players_status</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="new">New password</Label>
+              <Label htmlFor="current">Provider</Label>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a provider" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="apple">Hubspot</SelectItem>
+                    <SelectItem value="banana">Zendesk</SelectItem>
+                    <SelectItem value="blueberry">Slack</SelectItem>
+                    <SelectItem value="grapes">Asana</SelectItem>
+                    <SelectItem value="pineapple">Zoho</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="current">Origin Source Field</Label>
+              <Select>
+                <SelectTrigger className="w-[250px]">
+                  <SelectValue placeholder="Select an existent custom field" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="apple">fav_color</SelectItem>
+                    <SelectItem value="banana">fav_hair</SelectItem>
+                    <SelectItem value="blueberry">pet_number</SelectItem>
+                    <SelectItem value="grapes">is_admin</SelectItem>
+                    <SelectItem value="pineapple">players_status</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="new">Linked User Id</Label>
               <Input id="new" type="password" />
             </div>
           </CardContent>
           <CardFooter>
-            <Button>Save password</Button>
+            <Button>Map Field</Button>
           </CardFooter>
         </Card>
       </TabsContent>

@@ -1,4 +1,4 @@
-import ConnectionTable from "./Connection";
+import ConnectionTable from "./ConnectionTable";
 
 export default function ConnectionsPage() {
     return (

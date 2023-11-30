@@ -6,9 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { labels, priorities, statuses } from "../data/data"
-import { Connection } from "./schema"
-import { DataTableColumnHeader } from "./../../jobs/components/data-table-column-header"
-import { DataTableRowActions } from "./../../jobs/components/data-table-row-actions"
+import { Connection } from "../data/schema"
+import { DataTableColumnHeader } from "../../shared/data-table-column-header"
+import { DataTableRowActions } from "../../shared/data-table-row-actions"
 
 export const columns: ColumnDef<Connection>[] = [
   {

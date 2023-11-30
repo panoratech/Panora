@@ -1,4 +1,4 @@
-import TaskPage from "./Task";
+import JobsTable from "./JobsTable";
 
 export default function JobsPage() {
     return (
@@ -7,7 +7,7 @@ export default function JobsPage() {
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Jobs</h2>
         </div>          
-        <TaskPage/>
+        <JobsTable/>
         </div>
       </div>
     );
