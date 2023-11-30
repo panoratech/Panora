@@ -14,61 +14,76 @@ import { Badge } from "@/components/ui/badge"
             <AvatarFallback>OM</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">Olivia Martin</p>
-            <p className="text-sm text-muted-foreground">
+          <p className="text-sm font-medium text-left leading-none">user-origin-id-9c89</p>
+            <p className="text-sm text-left text-muted-foreground">
               @ACME.ORG
             </p>
           </div>
           <div className="ml-auto font-medium">
-            <Badge variant={"outline"}>user-123-iko</Badge>
+          <Badge variant={"outline"}>6dda265c-4bb7-4919-9c89-3b178069d0d1</Badge>
           </div>
         </div>
         <div className="flex items-center">
-          <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
+          <Avatar className="h-9 w-9">
             <AvatarImage src="/avatars/02.png" alt="Avatar" />
-            <AvatarFallback>JL</AvatarFallback>
+            <AvatarFallback>CP</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">Jackson Lee</p>
-            <p className="text-sm text-muted-foreground">@ACME.ORG</p>
+          <p className="text-sm font-medium text-left leading-none">user-origin-id-9c89</p>
+            <p className="text-sm text-left text-muted-foreground">
+              @ACME.ORG
+            </p>
           </div>
-          <Badge variant={"outline"}>user-123-iko</Badge>
+          <div className="ml-auto font-medium">
+          <Badge variant={"outline"}>6dda265c-4bb7-4919-9c89-3b178069d0d1</Badge>
+          </div>
         </div>
         <div className="flex items-center">
           <Avatar className="h-9 w-9">
             <AvatarImage src="/avatars/03.png" alt="Avatar" />
-            <AvatarFallback>IN</AvatarFallback>
+            <AvatarFallback>AK</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
-            <p className="text-sm text-muted-foreground">
-            @ACME.ORG
+          <p className="text-sm font-medium text-left leading-none">user-origin-id-9c89</p>
+            <p className="text-sm text-left text-muted-foreground">
+              @ACME.ORG
             </p>
           </div>
-          <Badge variant={"outline"}>user-123-iko</Badge>
+          <div className="ml-auto font-medium">
+          <Badge variant={"outline"}>6dda265c-4bb7-4919-9c89-3b178069d0d1</Badge>
+          </div>
         </div>
         <div className="flex items-center">
           <Avatar className="h-9 w-9">
             <AvatarImage src="/avatars/04.png" alt="Avatar" />
-            <AvatarFallback>WK</AvatarFallback>
+            <AvatarFallback>IN</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">William Kim</p>
-            <p className="text-sm text-muted-foreground">@ACME.ORG</p>
+          <p className="text-sm font-medium text-left leading-none">user-origin-id-9c89</p>
+            <p className="text-sm text-left text-muted-foreground">
+              @ACME.ORG
+            </p>
           </div>
-          <Badge variant={"outline"}>user-123-iko</Badge>
+          <div className="ml-auto font-medium">
+          <Badge variant={"outline"}>6dda265c-4bb7-4919-9c89-3b178069d0d1</Badge>
+          </div>
         </div>
         <div className="flex items-center">
           <Avatar className="h-9 w-9">
             <AvatarImage src="/avatars/05.png" alt="Avatar" />
-            <AvatarFallback>SD</AvatarFallback>
+            <AvatarFallback>HG</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">Sofia Davis</p>
-            <p className="text-sm text-muted-foreground">@ACME.ORG</p>
+            <p className="text-sm font-medium text-left leading-none">user-origin-id-9c89</p>
+            <p className="text-sm text-left text-muted-foreground">
+              @ACME.ORG
+            </p>
           </div>
-          <Badge variant={"outline"}>user-123-iko</Badge>
+          <div className="ml-auto font-medium">
+            <Badge variant={"outline"}>6dda265c-4bb7-4919-9c89-3b178069d0d1</Badge>
+          </div>
         </div>
+  
       </div>
     )
   }

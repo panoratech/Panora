@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { FModal } from "./components/FieldMappingModal"
 import { Separator } from "../ui/separator";
+import FieldMappingsTable from "./components/FieldMappingsTable";
 
 export default function ConfigurationPage() {
   /*const {getRootProps, getInputProps} = useDropzone({
@@ -94,8 +95,8 @@ export default function ConfigurationPage() {
                   
                   <Card className="col-span-12">
                   <CardHeader>
-                    <CardTitle>Your Linked Accounts</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-left">Your Linked Accounts</CardTitle>
+                    <CardDescription className="text-left">
                       You connected 1389 linked accounts.
                     </CardDescription>
                   </CardHeader>
@@ -153,14 +154,14 @@ export default function ConfigurationPage() {
                   
                   <Card className="col-span-12">
                   <CardHeader>
-                    <CardTitle>Your Fields Mapping</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-left">Your Fields Mapping</CardTitle>
+                    <CardDescription className="text-left">
                       You built 30 fields mapping.
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
                   <CardContent>
-                    <RecentSales />
+                  <FieldMappingsTable/>
                   </CardContent>
                 </Card>
                 </div>
