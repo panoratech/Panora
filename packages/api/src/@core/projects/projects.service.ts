@@ -9,6 +9,10 @@ export class ProjectsService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(ProjectsService.name);
   }
+
+  async getProjects() {
+    return await this.prisma.projects.findMany();
+  }
   async createProject(data: CreateProjectDto) {
     const { id_organization, ...rest } = data;
     const res = await this.prisma.projects.create({

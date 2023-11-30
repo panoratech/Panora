@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -10,6 +10,11 @@ export class ProjectsController {
     private logger: LoggerService,
   ) {
     this.logger.setContext(ProjectsController.name);
+  }
+
+  @Get()
+  getProjects() {
+    return this.projectsService.getProjects();
   }
 
   @Post('create')

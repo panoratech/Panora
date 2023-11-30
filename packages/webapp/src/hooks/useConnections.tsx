@@ -1,5 +1,7 @@
+
+import { HookBaseReturn } from '@/types';
 import config from '@/utils/config';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 
 //TODO: import from shared type 
@@ -13,31 +15,35 @@ export interface Job {
   date: string;
 }
 
-const useConnections = () => {
+export interface ConnectionsReturnType extends HookBaseReturn {
+  connections: Job[];
+  fetchConnections: () => Promise<void>;
+}
+
+type ConnectionsReturnFunction = () => ConnectionsReturnType;
+
+
+const useConnections: ConnectionsReturnFunction = () => {
   const [connections, setConnections] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    async function loadConnections() {
-      try {
-        const response = await fetch(`${config.API_URL}/connections`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setConnections(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
+  const fetchConnections = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${config.API_URL}/connections`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      const data = await response.json();
+      setConnections(data);
+    } catch (err) {
+      setError(err as Error);
     }
+    setIsLoading(false);
+  };
 
-    loadConnections();
-  }, []);
-
-  return { connections, isLoading, error };
+  return { connections, fetchConnections, isLoading, error };
 };
 
 export default useConnections;

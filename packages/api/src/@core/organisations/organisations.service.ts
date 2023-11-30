@@ -9,6 +9,10 @@ export class OrganisationsService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(OrganisationsService.name);
   }
+
+  async getOrganisations() {
+    return await this.prisma.organizations.findMany();
+  }
   async createOrganization(data: CreateOrganizationDto) {
     const res = await this.prisma.organizations.create({
       data: {

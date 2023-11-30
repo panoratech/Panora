@@ -1,5 +1,7 @@
+
+import { HookBaseReturn } from '@/types';
 import config from '@/utils/config';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 
 //TODO: import from shared type 
@@ -13,31 +15,35 @@ export interface Job {
   date: string;
 }
 
-const useProjects = () => {
+export interface ProjectsReturnType extends HookBaseReturn {
+  projects: Job[];
+  fetchProjects: () => Promise<void>;
+}
+
+type ProjectsReturnFunction = () => ProjectsReturnType;
+
+
+const useProjects: ProjectsReturnFunction = () => {
   const [projects, setProjects] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    async function loadProjects() {
-      try {
-        const response = await fetch(`${config.API_URL}/projects`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setProjects(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
+  const fetchProjects = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${config.API_URL}/projects`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      const data = await response.json();
+      setProjects(data);
+    } catch (err) {
+      setError(err as Error);
     }
+    setIsLoading(false);
+  };
 
-    loadProjects();
-  }, []);
-
-  return { projects, isLoading, error };
+  return { projects, fetchProjects, isLoading, error };
 };
 
 export default useProjects;

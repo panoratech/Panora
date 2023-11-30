@@ -1,5 +1,7 @@
+
+import { HookBaseReturn } from '@/types';
 import config from '@/utils/config';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 
 //TODO: import from shared type 
@@ -13,31 +15,35 @@ export interface Job {
   date: string;
 }
 
-const useOrganisations = () => {
+export interface OrganisationsReturnType extends HookBaseReturn {
+  organisations: Job[];
+  fetchOrganisations: () => Promise<void>;
+}
+
+type OrgansiationsReturnFunction = () => OrganisationsReturnType;
+
+
+const useOrganisations: OrgansiationsReturnFunction = () => {
   const [organisations, setOrganisations] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    async function loadOrganisations() {
-      try {
-        const response = await fetch(`${config.API_URL}/organisations`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setOrganisations(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
+  const fetchOrganisations = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${config.API_URL}/organisations`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      const data = await response.json();
+      setOrganisations(data);
+    } catch (err) {
+      setError(err as Error);
     }
+    setIsLoading(false);
+  };
 
-    loadOrganisations();
-  }, []);
-
-  return { organisations, isLoading, error };
+  return { organisations, fetchOrganisations, isLoading, error };
 };
 
 export default useOrganisations;

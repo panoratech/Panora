@@ -1,5 +1,6 @@
+import { HookBaseReturn } from '@/types';
 import config from '@/utils/config';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 
 //TODO: import from shared type 
@@ -12,32 +13,72 @@ export interface Job {
   organisation: string;
   date: string;
 }
+ 
+export interface FMReturnType extends HookBaseReturn {
+  mappings: Job[];
+  standardObjects: string[];
+  fetchMappings: () => Promise<void>;
+  fetchStandardObjects: () => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getMapping: (id: string) => Promise<any>;
+}
 
-const useFieldMappings = () => {
-  const [fieldMappings, setFieldMappings] = useState<Job[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+type FMReturnFunction = () => FMReturnType;
+
+
+const useFieldMappings: FMReturnFunction = () => {
+  const [mappings, setMappings] = useState<Job[]>([]);
+  const [standardObjects, setStandardObjects] = useState<string[]>([]);
+
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    async function loadFieldMappings() {
-      try {
-        const response = await fetch(`${config.API_URL}/fieldMappings`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setFieldMappings(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
+  const fetchMappings = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${config.API_URL}/field-mapping/attribute`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      const data = await response.json();
+      setMappings(data);
+    } catch (err) {
+      setError(err as Error);
     }
+    setIsLoading(false);
+  };
 
-    loadFieldMappings();
-  }, []);
+  const fetchStandardObjects = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${config.API_URL}/field-mapping/entities`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setStandardObjects(data);
+    } catch (err) {
+      setError(err as Error);
+    }
+    setIsLoading(false);
+  };
 
-  return { fieldMappings, isLoading, error };
+  //TODO
+  const getMapping = async (id: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${config.API_URL}/field-mapping/${id}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    } catch (err) {
+      setError(err as Error);
+    }
+    setIsLoading(false);
+  };
+
+  return { mappings, isLoading, error, fetchMappings, standardObjects, fetchStandardObjects, getMapping };
 };
 
 export default useFieldMappings;

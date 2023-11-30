@@ -1,6 +1,7 @@
 
+import { HookBaseReturn } from '@/types';
 import config from '@/utils/config';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 
 //TODO: import from shared type 
@@ -14,31 +15,35 @@ export interface Job {
   date: string;
 }
 
-const useLinkedUsers = () => {
-  const [linkedAccounts, setLinkedAccounts] = useState<Job[]>([]);
+export interface LUReturnType extends HookBaseReturn {
+  linkedUsers: Job[];
+  fetchLinkedUsers: () => Promise<void>;
+}
+
+type LUReturnFunction = () => LUReturnType;
+
+
+const useLinkedUsers: LUReturnFunction = () => {
+  const [linkedUsers, setLinkedUsers] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    async function loadConnections() {
-      try {
-        const response = await fetch(`${config.API_URL}/linkedUsers`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setLinkedAccounts(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
+  const fetchLinkedUsers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${config.API_URL}/linked-users`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      const data = await response.json();
+      setLinkedUsers(data);
+    } catch (err) {
+      setError(err as Error);
     }
+    setIsLoading(false);
+  };
 
-    loadConnections();
-  }, []);
-
-  return { linkedAccounts, isLoading, error };
+  return { linkedUsers, fetchLinkedUsers, isLoading, error };
 };
 
 export default useLinkedUsers;
