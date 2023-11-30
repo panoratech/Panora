@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const CopyLinkInput = () => {
-  const [value, setValue] = useState('https://magic-link/edfr-12h3KKHjdd-1.com');
+  const [value,] = useState('https://magic-link/edfr-12h3KKHjdd-1.com');
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {

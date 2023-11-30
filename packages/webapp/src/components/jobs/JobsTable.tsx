@@ -1,7 +1,7 @@
 import { columns } from "./components/columns"
 import { DataTable } from "../shared/data-table"
 import { useEffect, useState } from "react"
-import { JOBS } from "./data/JOBS";
+import {JOBS} from "./data/jobsConst";
 
 export interface Job {
   method: string; 
