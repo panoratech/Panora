@@ -23,11 +23,8 @@ const props: UploadProps = {
   },
 };
 
-const DragDrop = ({children}) => (
+const DragDrop = () => (
   <Dragger {...props}>
-    <p className="ant-upload-drag-icon">
-    </p>
-    {children}
   </Dragger>
 );
 
