@@ -1,7 +1,5 @@
-
-import { HookBaseReturn } from '@/types';
 import config from '@/utils/config';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 
 //TODO: import from shared type 
@@ -15,35 +13,17 @@ export interface Job {
   date: string;
 }
 
-export interface ConnectionsReturnType extends HookBaseReturn {
-  connections: Job[];
-  fetchConnections: () => Promise<void>;
-}
-
-type ConnectionsReturnFunction = () => ConnectionsReturnType;
-
-
-const useConnections: ConnectionsReturnFunction = () => {
-  const [connections, setConnections] = useState<Job[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchConnections = async () => {
-    setIsLoading(true);
-    try {
+const useConnections = () => {
+  return useQuery({
+    queryKey: ['jobs'], 
+    queryFn: async () => {
       const response = await fetch(`${config.API_URL}/connections`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setConnections(data);
-    } catch (err) {
-      setError(err as Error);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
     }
-    setIsLoading(false);
-  };
-
-  return { connections, fetchConnections, isLoading, error };
+  });
 };
 
 export default useConnections;
