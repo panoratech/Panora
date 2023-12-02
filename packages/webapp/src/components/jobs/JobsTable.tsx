@@ -1,7 +1,6 @@
 import { columns } from "./components/columns"
 import { DataTable } from "../shared/data-table"
-import { useEffect, useState } from "react"
-import {JOBS} from "./data/jobsConst";
+import useJobs from "@/hooks/useJobs";
 
 export interface Job {
   method: string; 
@@ -14,15 +13,14 @@ export interface Job {
 }
 
 export default function JobsTable() {
-  const [jobs, setJobs] = useState<Job[]>();
-
-  useEffect(() => {
-    async function loadJobs() {
-      setJobs(JOBS);
-    }
-
-    loadJobs();
-  }, []);
+  const { data: jobs, isLoading, error } = useJobs();
+  if(isLoading){
+    console.log("loading jobs..");
+  }
+  if(error){
+    console.log("error jobs..");
+  }
+  
   return (
     <>
       {jobs && <DataTable data={jobs} columns={columns} />}
