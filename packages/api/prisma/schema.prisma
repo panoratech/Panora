@@ -19,36 +19,20 @@ model api_keys {
   @@index([id_project], map: "fk_api_keys_projects")
 }
 
-model crm_contact_email_addresses {
-  id_crm_contact_email String         @id(map: "pk_crm_contact_email_addresses") @db.Uuid
-  email_address        String
-  email_address_type   String
-  owner_type           String
-  created_at           DateTime       @db.Timestamp(6)
-  modified_at          DateTime       @db.Timestamp(6)
-  id_crm_company       String?        @db.Uuid
-  id_crm_contact       String?        @db.Uuid
-  crm_companies        crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_16")
-  crm_contacts         crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_3")
-
-  @@index([id_crm_contact], map: "crm_contactid_crm_contact_email_address")
-  @@index([id_crm_company], map: "fk_contact_email_adress_companyid")
-}
-
 model crm_contacts {
-  id_crm_contact              String                        @id(map: "pk_crm_contacts") @db.Uuid
-  first_name                  String
-  last_name                   String
-  created_at                  DateTime                      @db.Timestamp(6)
-  modified_at                 DateTime                      @db.Timestamp(6)
-  id_job                      String                        @db.Uuid
-  id_crm_user                 String?                       @db.Uuid
-  crm_addresses               crm_addresses[]
-  crm_contact_email_addresses crm_contact_email_addresses[]
-  crm_users                   crm_users?                    @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_23")
-  jobs                        jobs                          @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "job_id_crm_contact")
-  crm_notes                   crm_notes[]
-  crm_phone_numbers           crm_phone_numbers[]
+  id_crm_contact      String                @id(map: "pk_crm_contacts") @db.Uuid
+  first_name          String
+  last_name           String
+  created_at          DateTime              @db.Timestamp(6)
+  modified_at         DateTime              @db.Timestamp(6)
+  id_job              String                @db.Uuid
+  id_crm_user         String?               @db.Uuid
+  crm_addresses       crm_addresses[]
+  crm_users           crm_users?            @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_23")
+  jobs                jobs                  @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "job_id_crm_contact")
+  crm_email_addresses crm_email_addresses[]
+  crm_notes           crm_notes[]
+  crm_phone_numbers   crm_phone_numbers[]
 
   @@index([id_job], map: "crm_contact_id_job")
   @@index([id_crm_user], map: "fk_crm_contact_userid")
@@ -185,22 +169,22 @@ model crm_addresses {
 }
 
 model crm_companies {
-  id_crm_company              String                        @id(map: "pk_crm_companies") @db.Uuid
-  name                        String?
-  industry                    String?
-  number_of_employees         BigInt?
-  created_at                  DateTime                      @db.Timestamp(6)
-  modified_at                 DateTime                      @db.Timestamp(6)
-  id_job                      String                        @db.Uuid
-  id_crm_user                 String?                       @db.Uuid
-  crm_addresses               crm_addresses[]
-  jobs                        jobs                          @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "fk_13")
-  crm_users                   crm_users?                    @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_24")
-  crm_contact_email_addresses crm_contact_email_addresses[]
-  crm_engagements             crm_engagements[]
-  crm_notes                   crm_notes[]
-  crm_phone_numbers           crm_phone_numbers[]
-  crm_tasks                   crm_tasks[]
+  id_crm_company      String                @id(map: "pk_crm_companies") @db.Uuid
+  name                String?
+  industry            String?
+  number_of_employees BigInt?
+  created_at          DateTime              @db.Timestamp(6)
+  modified_at         DateTime              @db.Timestamp(6)
+  id_job              String                @db.Uuid
+  id_crm_user         String?               @db.Uuid
+  crm_addresses       crm_addresses[]
+  jobs                jobs                  @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "fk_13")
+  crm_users           crm_users?            @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_24")
+  crm_email_addresses crm_email_addresses[]
+  crm_engagements     crm_engagements[]
+  crm_notes           crm_notes[]
+  crm_phone_numbers   crm_phone_numbers[]
+  crm_tasks           crm_tasks[]
 
   @@index([id_crm_user], map: "fk_crm_company_crm_userid")
   @@index([id_job], map: "fk_crm_company_jobid")
@@ -235,11 +219,11 @@ model crm_deals_stages {
 
 model crm_engagement_contacts {
   id_crm_engagement_contact String          @id(map: "pk_crm_engagement_contact") @db.Uuid
-  uuid_crm_engagement       String          @db.Uuid
   id_crm_contact            String?         @db.Uuid
-  crm_engagements           crm_engagements @relation(fields: [uuid_crm_engagement], references: [uuid_crm_engagement], onDelete: NoAction, onUpdate: NoAction, map: "fk_30")
+  id_crm_engagement         String          @db.Uuid
+  crm_engagements           crm_engagements @relation(fields: [id_crm_engagement], references: [id_crm_engagement], onDelete: NoAction, onUpdate: NoAction, map: "fk_30")
 
-  @@index([uuid_crm_engagement], map: "fk_crm_engagement_contacts_crmengagementid")
+  @@index([id_crm_engagement], map: "fk_crm_engagement_contacts_crmengagementid")
   @@index([id_crm_contact], map: "fk_engagement_contact_crmcontactid")
 }
 
@@ -255,7 +239,7 @@ model crm_engagement_types {
 }
 
 model crm_engagements {
-  uuid_crm_engagement     String                    @id(map: "pk_crm_engagement") @db.Uuid
+  id_crm_engagement       String                    @id(map: "pk_crm_engagement") @db.Uuid
   content                 String?
   direction               String?
   subject                 String?
@@ -324,7 +308,7 @@ model attribute {
   source               String
   id_entity            String  @db.Uuid
   scope                String
-  id_consumer          String  @db.Uuid
+  id_consumer          String? @db.Uuid
   entity               entity  @relation(fields: [id_entity], references: [id_entity], onDelete: NoAction, onUpdate: NoAction, map: "fk_32")
   value                value[]
 
@@ -354,17 +338,34 @@ model value {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model crm_phone_numbers {
-  id_crm_contacts_phone_number String         @id(map: "pk_crm_contacts_phone_numbers") @db.Uuid
-  phone_number                 String
-  phone_type                   String
-  owner_type                   String
-  created_at                   DateTime       @db.Timestamp(6)
-  modified_at                  DateTime       @db.Timestamp(6)
-  id_crm_company               String?        @db.Uuid
-  id_crm_contact               String?        @db.Uuid
-  crm_companies                crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_17")
-  crm_contacts                 crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_phonenumber_crm_contactid")
+  id_crm_phone_number String         @id(map: "pk_crm_contacts_phone_numbers") @db.Uuid
+  phone_number        String
+  phone_type          String
+  owner_type          String
+  created_at          DateTime       @db.Timestamp(6)
+  modified_at         DateTime       @db.Timestamp(6)
+  id_crm_company      String?        @db.Uuid
+  id_crm_contact      String?        @db.Uuid
+  crm_companies       crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_17")
+  crm_contacts        crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_phonenumber_crm_contactid")
 
   @@index([id_crm_contact], map: "crm_contactid_crm_contact_phone_number")
   @@index([id_crm_company], map: "fk_phone_number_companyid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model crm_email_addresses {
+  id_crm_email       String         @id(map: "pk_crm_contact_email_addresses") @db.Uuid
+  email_address      String
+  email_address_type String
+  owner_type         String
+  created_at         DateTime       @db.Timestamp(6)
+  modified_at        DateTime       @db.Timestamp(6)
+  id_crm_company     String?        @db.Uuid
+  id_crm_contact     String?        @db.Uuid
+  crm_companies      crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_16")
+  crm_contacts       crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_3")
+
+  @@index([id_crm_contact], map: "crm_contactid_crm_contact_email_address")
+  @@index([id_crm_company], map: "fk_contact_email_adress_companyid")
 }
