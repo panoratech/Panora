@@ -14,9 +14,11 @@ export interface Job {
 
 export default function JobsTable() {
   const { data: jobs, isLoading, error } = useJobs();
+  
   if(isLoading){
     console.log("loading jobs..");
   }
+
   if(error){
     console.log("error jobs..");
   }
