@@ -9,6 +9,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@api/*": [
+        "./../api/*"
       ]
     },
     /* Bundler mode */

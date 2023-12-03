@@ -50,7 +50,7 @@ export class ContactService {
       owner_type: email.owner_type ? email.owner_type : '',
       created_at: new Date(),
       modified_at: new Date(),
-      id_crm_contact_email: uuidv4(),
+      id_crm_email: uuidv4(), // This line is changed
       email_address_type:
         email.email_address_type === '' ? 'work' : email.email_address_type,
     }));
@@ -60,9 +60,7 @@ export class ContactService {
       owner_type: phone.owner_type ? phone.owner_type : '',
       created_at: new Date(),
       modified_at: new Date(),
-      //id_crm_company: '1', //TODO
-      //id_crm_contact: '1', //TODO
-      id_crm_contacts_phone_number: uuidv4(),
+      id_crm_phone_number: uuidv4(), // This line is changed
       phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
     }));
 
@@ -90,7 +88,7 @@ export class ContactService {
         modified_at: new Date(),
         first_name: first_name,
         last_name: last_name,
-        crm_contact_email_addresses: {
+        crm_email_addresses: {
           create: normalizedEmails,
         },
         crm_phone_numbers: {

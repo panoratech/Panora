@@ -14,16 +14,28 @@ export interface Job {
 
 export default function JobsTable() {
   const { data: jobs, isLoading, error } = useJobs();
+  
   if(isLoading){
     console.log("loading jobs..");
   }
+
   if(error){
     console.log("error jobs..");
   }
   
+  const transformedJobs = jobs?.map(job => ({
+    method: '', // replace with actual value
+    url: '', // replace with actual value
+    status: job.status,
+    direction: '', // replace with actual value
+    integration: '', // replace with actual value
+    organisation: '', // replace with actual value
+    date: job.timestamp.toString(), // convert Date to string
+  }));
+
   return (
     <>
-      {jobs && <DataTable data={jobs} columns={columns} />}
+      {transformedJobs && <DataTable data={transformedJobs} columns={columns} />}
     </>
   )
 }
