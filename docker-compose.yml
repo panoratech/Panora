@@ -27,3 +27,12 @@ services:
       - 3000:3000
     depends_on:
       - postgres
+  
+  webapp:
+    build: ./packages/webapp
+    restart:
+      unless-stopped
+    ports:
+      - 1312:8080
+    depends_on:
+      - postgres
