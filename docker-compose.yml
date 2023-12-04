@@ -33,6 +33,6 @@ services:
     restart:
       unless-stopped
     ports:
-      - 1312:8080
+      - 80:80
     depends_on:
       - postgres
