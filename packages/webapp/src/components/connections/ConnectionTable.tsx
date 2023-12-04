@@ -1,7 +1,5 @@
 import { columns } from "./components/columns"
 import { DataTable } from "../shared/data-table"
-import { useEffect, useState } from "react"
-import { CONNECTIONS } from "./data/connection";
 import {
     Card,
     CardContent,
@@ -12,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "../ui/button";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import CopyLinkInput from "./components/CopyLinkInput";
+import useConnections from "@/hooks/useConnections";
 
 export interface Connection {
   organisation: string; 
@@ -23,16 +22,25 @@ export interface Connection {
 }
 
 export default function ConnectionTable() {
-  const [connections, setConnections] = useState<Connection[]>();
+  const { data: connections, isLoading, error } = useConnections();
+  
+  if(isLoading){
+    console.log("loading connections..");
+  }
 
-  useEffect(() => {
-    async function loadConnections() {
-      //const fetchedTasks = await getTasks();
-      setConnections(CONNECTIONS);
-    }
+  if(error){
+    console.log("error connections..");
+  }
 
-    loadConnections();
-  }, []);
+  const ts = connections?.map(connection => ({
+    organisation: connection.id_project, // replace with actual mapping
+    app: connection.provider_slug, // replace with actual mapping
+    category: connection.token_type, // replace with actual mapping
+    status: connection.status,
+    linkedUser: connection.id_linked_user, // replace with actual mapping
+    date: new Date().toISOString(), // replace with actual mapping
+  }))
+  
   return (
     <>
       <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
@@ -90,7 +98,7 @@ export default function ConnectionTable() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        {connections && <DataTable data={connections} columns={columns} />}
+        {ts && <DataTable data={ts} columns={columns} />}
       </div>
     </>
   )

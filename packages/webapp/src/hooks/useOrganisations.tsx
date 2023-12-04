@@ -1,22 +1,11 @@
 import config from '@/utils/config';
 import { useQuery } from '@tanstack/react-query';
-
-
-//TODO: import from shared type 
-export interface Job {
-  method: string; 
-  url: string; 
-  status: string; 
-  direction: string; 
-  integration: string;
-  organisation: string;
-  date: string;
-}
+import {organizations as Organization} from "@api/exports";
 
 const useOrganisations = () => {
   return useQuery({
     queryKey: ['organisations'], 
-    queryFn: async () => {
+    queryFn: async (): Promise<Organization[]> => {
       const response = await fetch(`${config.API_URL}/organisations`);
         if (!response.ok) {
           throw new Error('Network response was not ok');

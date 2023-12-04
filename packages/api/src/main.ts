@@ -14,6 +14,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
   app.useLogger(app.get(Logger));
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
+  app.enableCors();
   await app.listen(3000);
 }
 bootstrap();

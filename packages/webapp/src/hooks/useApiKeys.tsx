@@ -1,21 +1,12 @@
 import config from '@/utils/config';
 import { useQuery } from '@tanstack/react-query';
+import {api_keys as ApiKey} from "@api/exports";
 
-//TODO: import from shared type 
-export interface Job {
-  method: string; 
-  url: string; 
-  status: string; 
-  direction: string; 
-  integration: string;
-  organisation: string;
-  date: string;
-}
 
 const useApiKeys = () => {
   return useQuery({
     queryKey: ['api-keys'], 
-    queryFn: async () => {
+    queryFn: async (): Promise<ApiKey[]> => {
       const response = await fetch(`${config.API_URL}/auth/api-keys`);
         if (!response.ok) {
           throw new Error('Network response was not ok');

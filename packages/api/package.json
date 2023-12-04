@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "ci": "pnpm run lint && pnpm run build",
-    "copy-types-to-shared": "cp ./exports.ts ../shared/index.ts"
+    "copy-types-to-shared": "cp ./exports.ts ../shared/index.ts",
+    "prisma:seed": "ts-node ./scripts/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

@@ -1,8 +1,9 @@
 import { columns } from "./components/columns"
 import { DataTable } from "../shared/data-table"
 import useJobs from "@/hooks/useJobs";
+import {jobs as Job} from "@api/exports";
 
-export interface Job {
+/*export interface Job {
   method: string; 
   url: string; 
   status: string; 
@@ -10,7 +11,7 @@ export interface Job {
   integration: string;
   organisation: string;
   date: string;
-}
+}*/
 
 export default function JobsTable() {
   const { data: jobs, isLoading, error } = useJobs();
@@ -24,7 +25,7 @@ export default function JobsTable() {
   }
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const transformedJobs = jobs?.map((job: any) => ({
+  const transformedJobs = jobs?.map((job: Job) => ({
     method: '', // replace with actual value
     url: '', // replace with actual value
     status: job.status,
