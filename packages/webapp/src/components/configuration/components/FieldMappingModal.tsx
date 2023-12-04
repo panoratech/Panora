@@ -57,7 +57,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
     }
   }, [sourceCustomFields, isLoading, error]);
 
-  const handleDefineSubmit = (e) => {
+  const handleDefineSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutateDefineField({
       object_type_owner: standardModel,
@@ -68,7 +68,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
     onClose();
   };
 
-  const handleMapSubmit = (e) => {
+  const handleMapSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutateMapField({
       attributeId: attributeId,

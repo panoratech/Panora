@@ -22,17 +22,16 @@ const useMapFieldMutation = () => {
     };
     return useMutation({
         mutationFn: mapField,
-        onMutate: (variables) => {
+        onMutate: () => {
             toast('Mapping field...');
         },
-        onError: (error, variables, context) => {
+        onError: (error) => {
             toast.error(`Error: ${error.message}`);
         },
-        onSuccess: (data, variables, context) => {
+        onSuccess: () => {
             toast.success('Field mapping mapped successfully!');
         },
-        onSettled: (data, error, variables, context) => {
-        // Clean up or refetch queries here
+        onSettled: () => {
         },
     });
 };

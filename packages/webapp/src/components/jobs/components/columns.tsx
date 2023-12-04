@@ -44,7 +44,9 @@ export const columns: ColumnDef<Job>[] = [
 
       return (
         <div className="w-[80px]">
-          <Badge variant="outline">{row.getValue("method")}</Badge>
+          {row.getValue("method") ? <Badge variant="outline">{row.getValue("method")}</Badge>
+          : <Badge variant="secondary">_null_</Badge>
+          }
         </div>
       )
     },
@@ -61,7 +63,9 @@ export const columns: ColumnDef<Job>[] = [
 
       return (
         <div className="flex space-x-2">
-          <Badge variant="outline">{row.getValue("url")}</Badge>
+          {row.getValue("url") ? <Badge variant="outline">{row.getValue("url")}</Badge>
+          : <Badge variant="secondary">_null_</Badge>
+          }        
         </div>
       )
     },
@@ -82,7 +86,9 @@ export const columns: ColumnDef<Job>[] = [
 
       return (
         <div className="flex w-[100px] items-center">
-          <Badge variant="outline">{row.getValue("status")}</Badge>
+          {row.getValue("status") ? <Badge variant="outline">{row.getValue("status")}</Badge>
+          : <Badge variant="secondary">_null_</Badge>
+          }        
         </div>
       )
     },
@@ -106,7 +112,9 @@ export const columns: ColumnDef<Job>[] = [
 
       return (
         <div className="flex items-center">
-          <Badge variant="outline">{row.getValue("direction")}</Badge>
+          {row.getValue("direction") ? <Badge variant="outline">{row.getValue("direction")}</Badge>
+          : <Badge variant="secondary">_null_</Badge>
+          }
         </div>
       )
     },
@@ -130,7 +138,9 @@ export const columns: ColumnDef<Job>[] = [
 
       return (
         <div className="flex w-[100px] items-center">
-          <Badge variant="outline">{row.getValue("integration")}</Badge>
+          {row.getValue("integration") ? <Badge variant="outline">{row.getValue("integration")}</Badge>
+          : <Badge variant="secondary">_null_</Badge>
+          }
         </div>
       )
     },
@@ -148,7 +158,9 @@ export const columns: ColumnDef<Job>[] = [
 
       return (
         <div className="flex space-x-2">
-          <Badge variant="outline">{row.getValue("oragnisation")}</Badge>
+          {row.getValue("organisation") ? <Badge variant="outline">{row.getValue("organisation")}</Badge>
+          : <Badge variant="secondary">_null_</Badge>
+          }
         </div>
       )
     },
@@ -163,7 +175,9 @@ export const columns: ColumnDef<Job>[] = [
 
       return (
         <div className="flex space-x-2">
-          <Badge variant="outline">{row.getValue("date")}</Badge>
+          {row.getValue("date") ? <Badge variant="outline">{row.getValue("date")}</Badge>
+          : <Badge variant="secondary">_null_</Badge>
+          }
         </div>
       )
     },

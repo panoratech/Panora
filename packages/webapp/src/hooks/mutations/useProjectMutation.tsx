@@ -1,11 +1,12 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
-import {DefineTargetFieldDto} from "@api/src/@core/field-mapping/dto/create-custom-field.dto"
+import {CreateProjectDto} from "@api/src/@core/projects/dto/create-project.dto"
 import toast from 'react-hot-toast';
 
-const useDefineFieldMutation = () => {
-    const defineField = async (data: DefineTargetFieldDto) => {
-        const response = await fetch(`${config.API_URL}/field-mapping/define`, {
+
+const useProjectMutation = () => {
+    const addProject = async (data: CreateProjectDto) => {
+        const response = await fetch(`${config.API_URL}/projects/create`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -14,25 +15,25 @@ const useDefineFieldMutation = () => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to define field mapping');
+            throw new Error('Failed to add project');
         }
         
         return response.json();
     };
     return useMutation({
-        mutationFn: defineField,
+        mutationFn: addProject,
         onMutate: () => {
-            toast('Defining field...');
+            toast('Adding project...');
         },
         onError: (error) => {
             toast.error(`Error: ${error.message}`);
         },
         onSuccess: () => {
-            toast.success('Field mapping defined successfully!');
+            toast.success('Project added successfully!');
         },
         onSettled: () => {
         },
     });
 };
 
-export default useDefineFieldMutation;
+export default useProjectMutation;

@@ -22,17 +22,16 @@ const useLinkedUserMutation = () => {
     };
     return useMutation({
         mutationFn: addLinkedUser,
-        onMutate: (variables) => {
+        onMutate: () => {
             toast('Adding linked user...');
         },
-        onError: (error, variables, context) => {
+        onError: (error) => {
             toast.error(`Error: ${error.message}`);
         },
-        onSuccess: (data, variables, context) => {
+        onSuccess: () => {
             toast.success('Linked user added successfully!');
         },
-        onSettled: (data, error, variables, context) => {
-        // Clean up or refetch queries here
+        onSettled: () => {
         },
     });
 };

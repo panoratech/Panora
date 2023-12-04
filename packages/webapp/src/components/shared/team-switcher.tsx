@@ -39,41 +39,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-
-const groups = [
-  {
-    label: "Projects",
-    teams: [
-      {
-        label: "Financial Project",
-        value: "personal",
-      },
-      {
-        label: "Data Project",
-        value: "personal1",
-      },
-      {
-        label: "Marketing Project",
-        value: "personal2",
-      },
-    ],
-  },
-  {
-    label: "Teams",
-    teams: [
-      {
-        label: "Acme Inc.",
-        value: "acme-inc",
-      },
-      {
-        label: "Monsters Inc.",
-        value: "monsters",
-      },
-    ],
-  },
-]
-
-type Team = (typeof groups)[number]["teams"][number]
+import useProjectMutation from "@/hooks/mutations/useProjectMutation"
+import useOrganisationMutation from "@/hooks/mutations/useOrganisationMutation"
+import { useState } from "react"
+import useProjectStore, { projects } from "@/state/projectStore"
+import useOrganisationStore, { organisations } from "@/state/organisationStore"
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
@@ -85,17 +55,43 @@ interface ModalObj {
 }
 
 export default function TeamSwitcher({ className }: TeamSwitcherProps) {
-  const [open, setOpen] = React.useState(false)
-  const [selectedTeam, setSelectedTeam] = React.useState<Team>(
-    groups[0].teams[0]
-  )
+  const [open, setOpen] = useState(false)
 
-  const [showNewDialog, setShowNewDialog] = React.useState<ModalObj>({
+  const [showNewDialog, setShowNewDialog] = useState<ModalObj>({
     open: false,
   })
 
+  const [orgName, setOrgName] = useState('');
+  const [projectName, setProjectName] = useState('');
+
+  const { selectedProject, setSelectedProject } = useProjectStore();
+  const { selectedOrganisation, setSelectedOrganisation } = useOrganisationStore();
+
+
+
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
+  };
+
+  const { mutate: mutateProject } = useProjectMutation();
+  const { mutate: mutateOrganisation } = useOrganisationMutation();
+
+  const handleOrgSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
+    mutateOrganisation({ 
+      name: orgName, 
+      stripe_customer_id: "stripe-customer-76",
+    });
+    setShowNewDialog({open: false})  
+  };
+
+  const handleProjectSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
+    mutateProject({ 
+      name: projectName, 
+      id_organization: "890e7d54-7620-43bc-9cdb-48a5fcd85bde", //TODO
+    });
+    setShowNewDialog({open: false})  
   };
 
   return (
@@ -110,39 +106,38 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             className={cn("w-[250px] justify-between", className)}
           >
            
-            {selectedTeam.label}
+            {selectedProject.label}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0 ml-20">
           <Command>
             <CommandList>
-              <CommandInput placeholder="Search team..." />
-              <CommandEmpty>No team found.</CommandEmpty>
-              {groups.map((group) => (
-                <CommandGroup key={group.label} heading={group.label}>
-                  {group.teams.map((team) => (
+              <CommandInput placeholder="Search..." />
+              <CommandEmpty>Not found.</CommandEmpty>
+                <CommandGroup key={"projects"} heading={"Projects"}>
+                  {projects.map((project) => (
                     <CommandItem
-                      key={team.value}
+                      key={project.value}
                       onSelect={() => {
-                        setSelectedTeam(team)
+                        setSelectedProject(project)
                         setOpen(false)
                       }}
                       className="text-sm"
                     >
                       <Avatar className="mr-2 h-5 w-5">
                         <AvatarImage
-                          src={`https://avatar.vercel.sh/${team.value}.png`}
-                          alt={team.label}
+                          src={`https://avatar.vercel.sh/${project.value}.png`}
+                          alt={project.label}
                           className="grayscale"
                         />
                         <AvatarFallback>SC</AvatarFallback>
                       </Avatar>
-                      {team.label}
+                      {project.label}
                       <CheckIcon
                         className={cn(
                           "ml-auto h-4 w-4",
-                          selectedTeam.value === team.value
+                          selectedProject.value === project.value
                             ? "opacity-100"
                             : "opacity-0"
                         )}
@@ -150,7 +145,37 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                     </CommandItem>
                   ))}
                 </CommandGroup>
-              ))}
+                <CommandGroup key={"organisations"} heading={"Organisations"}>
+                  {organisations.map((organisation) => (
+                    <CommandItem
+                      key={organisation.value}
+                      onSelect={() => {
+                        setSelectedOrganisation(organisation)
+                        setOpen(false)
+                      }}
+                      className="text-sm"
+                    >
+                      <Avatar className="mr-2 h-5 w-5">
+                        <AvatarImage
+                          src={`https://avatar.vercel.sh/${organisation.value}.png`}
+                          alt={organisation.label}
+                          className="grayscale"
+                        />
+                        <AvatarFallback>SC</AvatarFallback>
+                      </Avatar>
+                      {organisation.label}
+                      <CheckIcon
+                        className={cn(
+                          "ml-auto h-4 w-4",
+                          selectedOrganisation.value === organisation.value
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              
             </CommandList>
             <CommandSeparator />
             <CommandList>
@@ -185,6 +210,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
       <DialogContent>
         {showNewDialog.status == 0 ? 
           <>
+          <form onSubmit={handleOrgSubmit}>
             <DialogHeader>
               <DialogTitle>Create organisation</DialogTitle>
               <DialogDescription>
@@ -195,7 +221,12 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <div className="space-y-4 py-2 pb-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Organisation name</Label>
-                  <Input id="name" placeholder="Acme Inc." />
+                  <Input 
+                    id="name" 
+                    placeholder="Acme Inc." 
+                    value={orgName}
+                    onChange={(e) => setOrgName(e.target.value)}
+                  />
                 </div>
               </div>
             </div>
@@ -203,10 +234,12 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <Button variant="outline" onClick={() => setShowNewDialog({open:false})}>
                 Cancel
               </Button>
-              <Button type="submit">Continue</Button>
+              <Button type="submit">Create</Button>
             </DialogFooter>
+          </form>
           </> : 
           <>
+          <form onSubmit={handleProjectSubmit}>
             <DialogHeader>
               <DialogTitle>Create project</DialogTitle>
               <DialogDescription>
@@ -217,7 +250,12 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <div className="space-y-4 py-2 pb-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Project name</Label>
-                  <Input id="name" placeholder="Project Inc." />
+                  <Input 
+                    id="name" 
+                    placeholder="Project Inc." 
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                  />
                 </div>
               </div>
             </div>
@@ -225,8 +263,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <Button variant="outline" onClick={() => setShowNewDialog({open:false})}>
                 Cancel
               </Button>
-              <Button type="submit">Continue</Button>
+              <Button type="submit">Create</Button>
             </DialogFooter>
+          </form>
           </>
         }
       </DialogContent>

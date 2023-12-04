@@ -32,7 +32,6 @@ export default function ConfigurationPage() {
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
   const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
   const [open, setOpen] = useState(false);
-
   const handleClose = () => {
     setOpen(false);
   };

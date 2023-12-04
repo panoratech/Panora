@@ -39,13 +39,13 @@ const AddLinkedAccount = () => {
   })
   const [linkedUserIdentifier, setLinkedUserIdentifier] = useState('');
 
-  const { mutate, isLoading, isError, error, isSuccess } = useLinkedUserMutation();
+  const { mutate } = useLinkedUserMutation();
 
   const handleOpenChange = (open: boolean) => {
     setShowNewLinkedUserDialog(prevState => ({ ...prevState, open }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
     mutate({ 
       linked_user_origin_id: linkedUserIdentifier, 
