@@ -25,6 +25,7 @@ import FieldMappingsTable from "./components/FieldMappingsTable";
 import AddLinkedAccount from "./components/AddLinkedAccount";
 import useLinkedUsers from "@/hooks/useLinkedUsers";
 import useFieldMappings from "@/hooks/fieldMappings/useFieldMappings";
+import { Skeleton } from "../ui/skeleton";
 
 export default function ConfigurationPage() {
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
@@ -79,12 +80,12 @@ export default function ConfigurationPage() {
                   <CardHeader>
                     <CardTitle className="text-left">Your Linked Accounts</CardTitle>
                     <CardDescription className="text-left">
-                      You connected {linkedUsers?.length} linked accounts.
+                      You connected {linkedUsers ? linkedUsers.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} linked accounts.
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
                   <CardContent>
-                    <LinkedUsersPage linkedUsers={linkedUsers} />
+                    <LinkedUsersPage linkedUsers={linkedUsers} isLoading={isLoading} />
                   </CardContent>
                 </Card>
               </div>
@@ -106,12 +107,12 @@ export default function ConfigurationPage() {
                   <CardHeader>
                     <CardTitle className="text-left">Your Fields Mapping</CardTitle>
                     <CardDescription className="text-left">
-                      You built {mappings?.length} fields mapping.
+                      You built {mappings ? mappings.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} fields mapping.
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
                   <CardContent>
-                    <FieldMappingsTable mappings={mappingTs} />
+                    <FieldMappingsTable mappings={mappingTs} isLoading={isFieldMappingsLoading} />
                   </CardContent>
                 </Card>
               </div>

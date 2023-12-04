@@ -11,31 +11,21 @@ import { Button } from "../ui/button";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import CopyLinkInput from "./components/CopyLinkInput";
 import useConnections from "@/hooks/useConnections";
-import { Skeleton } from "@/components/ui/skeleton"
-
-export interface Connection {
-  organisation: string; 
-  app: string; 
-  status: string; 
-  category: string; 
-  linkedUser: string;
-  date: string;
-}
+import {connections as Connection} from "@api/exports";
+import { DataTableLoading } from "../shared/data-table-loading";
 
 export default function ConnectionTable() {
   const { data: connections, isLoading, error } = useConnections();
   
   if(isLoading){
-    return (
-      <Skeleton className="w-[400px] h-[30px] rounded-md" />
-    )
+    console.log("loading connections..");
   }
 
   if(error){
     console.log("error connections..");
   }
 
-  const ts = connections?.map(connection => ({
+  const ts = connections?.map((connection: Connection) => ({
     organisation: connection.id_project, // replace with actual mapping
     app: connection.provider_slug, // replace with actual mapping
     category: connection.token_type, // replace with actual mapping
@@ -101,6 +91,7 @@ export default function ConnectionTable() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        {isLoading && <DataTableLoading data={[]} columns={columns}/>}
         {ts && <DataTable data={ts} columns={columns} />}
       </div>
     </>

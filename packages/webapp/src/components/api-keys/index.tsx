@@ -15,6 +15,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import useApiKeys from "@/hooks/useApiKeys";
 import {api_keys as ApiKey} from "@api/exports";
+import { DataTableLoading } from "../shared/data-table-loading";
 
 export default function ApiKeysPage() {
   const { data: apiKeys, isLoading, error } = useApiKeys();
@@ -68,6 +69,7 @@ export default function ApiKeysPage() {
             </DialogContent>
           </Dialog>
         </div>
+        {isLoading && <DataTableLoading data={[]} columns={columns}/>}
         {tsApiKeys && <DataTable data={tsApiKeys} columns={columns} />}
       </div>
     </div>

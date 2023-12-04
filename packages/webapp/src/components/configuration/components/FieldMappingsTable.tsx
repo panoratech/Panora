@@ -6,6 +6,7 @@ import {
   } from "@/components/ui/card"
 import { DataTable } from "@/components/shared/data-table";
 import { columns } from "./columns";
+import { DataTableLoading } from "@/components/shared/data-table-loading";
 
 export interface Mapping {
   standard_object: string; 
@@ -18,8 +19,9 @@ export interface Mapping {
 }
 
 export default function FieldMappingsTable({
-  mappings
-}: { mappings: Mapping[] | undefined }) {
+  mappings,
+  isLoading
+}: { mappings: Mapping[] | undefined; isLoading: boolean }) {
 
   return (
     <>
@@ -43,6 +45,7 @@ export default function FieldMappingsTable({
             </CardContent>
         </Card>                  
         </div>
+        {isLoading && <DataTableLoading data={[]} columns={columns}/>}
         {mappings && <DataTable data={mappings} columns={columns} />}
       </div>
     </>

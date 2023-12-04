@@ -2,27 +2,10 @@ import { columns } from "./components/columns"
 import { DataTable } from "../shared/data-table"
 import useJobs from "@/hooks/useJobs";
 import {jobs as Job} from "@api/exports";
-
-/*export interface Job {
-  method: string; 
-  url: string; 
-  status: string; 
-  direction: string; 
-  integration: string;
-  organisation: string;
-  date: string;
-}*/
+import { DataTableLoading } from "../shared/data-table-loading";
 
 export default function JobsTable() {
   const { data: jobs, isLoading, error } = useJobs();
-  
-  if(isLoading){
-    console.log("loading jobs..");
-  }
-
-  if(error){
-    console.log("error jobs..");
-  }
   
   const transformedJobs = jobs?.map((job: Job) => ({
     method: '', // replace with actual value
@@ -33,10 +16,21 @@ export default function JobsTable() {
     organisation: '', // replace with actual value
     date: job.timestamp.toString(), // convert Date to string
   }));
+  
+  if(isLoading){
+    return (
+      <DataTableLoading data={[]} columns={columns}/>
+    )
+  }
+
+  if(error){
+    console.log("error jobs..");
+  }
+
 
   return (
     <>
-      {transformedJobs && <DataTable data={transformedJobs} columns={columns} />}
+      {transformedJobs && <DataTable data={transformedJobs} columns={columns}/>}
     </>
   )
 }
