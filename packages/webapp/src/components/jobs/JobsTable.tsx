@@ -24,7 +24,6 @@ export default function JobsTable() {
     console.log("error jobs..");
   }
   
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const transformedJobs = jobs?.map((job: Job) => ({
     method: '', // replace with actual value
     url: '', // replace with actual value
