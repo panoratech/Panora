@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import CopyLinkInput from "./components/CopyLinkInput";
 import useConnections from "@/hooks/useConnections";
+import { Skeleton } from "@/components/ui/skeleton"
 
 export interface Connection {
   organisation: string; 
@@ -25,7 +26,9 @@ export default function ConnectionTable() {
   const { data: connections, isLoading, error } = useConnections();
   
   if(isLoading){
-    console.log("loading connections..");
+    return (
+      <Skeleton className="w-[400px] h-[30px] rounded-md" />
+    )
   }
 
   if(error){

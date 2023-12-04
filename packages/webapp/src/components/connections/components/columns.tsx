@@ -5,10 +5,19 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { labels, priorities, statuses } from "../data/data"
 import { Connection } from "../data/schema"
 import { DataTableColumnHeader } from "../../shared/data-table-column-header"
 import { DataTableRowActions } from "../../shared/data-table-row-actions"
+
+function truncateMiddle(str: string, maxLength: number) {
+  if (str.length <= maxLength) {
+    return str;
+  }
+
+  const start = str.substring(0, maxLength / 2);
+  const end = str.substring(str.length - maxLength / 2);
+  return `${start}...${end}`;
+}
 
 export const columns: ColumnDef<Connection>[] = [
   {
@@ -36,11 +45,11 @@ export const columns: ColumnDef<Connection>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "Organisation",
+    accessorKey: "organisation",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Organisation" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("Organisation")}</div>,
+    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{truncateMiddle(row.getValue("organisation"), 10)}</Badge></div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -49,15 +58,10 @@ export const columns: ColumnDef<Connection>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="App" />
     ),
-    cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.app)
-
+    cell: ({ row }) => {      
       return (
         <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
-          {/*<span className="max-w-[500px] truncate font-medium">
-            {row.getValue("url")}
-          </span>*/}
+          <Badge variant="outline">{row.getValue("app")}</Badge>
         </div>
       )
     },
@@ -68,20 +72,12 @@ export const columns: ColumnDef<Connection>[] = [
       <DataTableColumnHeader column={column} title="Category" />
     ),
     cell: ({ row }) => {
-      const status = statuses.find(
-        (status) => status.value === row.getValue("category")
-      )
-
-      if (!status) {
-        return null
-      }
-
       return (
         <div className="flex w-[100px] items-center">
-          {status.icon && (
+          {/*status.icon && (
             <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{status.label}</span>
+          )*/}
+          <Badge variant="outline">{row.getValue("category")}</Badge>
         </div>
       )
     },
@@ -95,20 +91,17 @@ export const columns: ColumnDef<Connection>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const direction = priorities.find(
+      /*const direction = priorities.find(
         (direction) => direction.value === row.getValue("status")
       )
 
       if (!direction) {
         return null
-      }
+      }*/
 
       return (
         <div className="flex items-center">
-          {direction.icon && (
-            <direction.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{direction.label}</span>
+          <Badge variant="outline">{row.getValue("status")}</Badge>
         </div>
       )
     },
@@ -122,20 +115,17 @@ export const columns: ColumnDef<Connection>[] = [
       <DataTableColumnHeader column={column} title="Linked User" />
     ),
     cell: ({ row }) => {
-      const status = statuses.find(
+      /*const status = statuses.find(
         (status) => status.value === row.getValue("linkedUser")
       )
 
       if (!status) {
         return null
-      }
+      }*/
 
       return (
         <div className="flex w-[100px] items-center">
-          {status.icon && (
-            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{status.label}</span>
+          <Badge variant="outline">{truncateMiddle(row.getValue("linkedUser"), 10)}</Badge>
         </div>
       )
     },
@@ -149,14 +139,11 @@ export const columns: ColumnDef<Connection>[] = [
       <DataTableColumnHeader column={column} title="Date" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.date)
+      //const label = labels.find((label) => label.value === row.original.date)
 
       return (
         <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("date")}
-          </span>
+          <Badge variant="outline">{row.getValue("date")}</Badge>
         </div>
       )
     },

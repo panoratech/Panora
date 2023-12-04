@@ -21,9 +21,11 @@ import { LinkedUsersModule } from './@core/linked-users/linked-users.module';
 import { OrganisationsModule } from './@core/organisations/organisations.module';
 import { ProjectsModule } from './@core/projects/projects.module';
 import { FieldMappingModule } from './@core/field-mapping/field-mapping.module';
+import { JobsModule } from '@@core/jobs/jobs.module';
 
 @Module({
   imports: [
+    JobsModule,
     FieldMappingModule,
     LinkedUsersModule,
     OrganisationsModule,
@@ -60,6 +62,7 @@ import { FieldMappingModule } from './@core/field-mapping/field-mapping.module';
         },
       },
     }),
+    JobsModule,
   ],
   controllers: [AppController],
   providers: [
