@@ -24,13 +24,18 @@ import { Separator } from "../ui/separator";
 import FieldMappingsTable from "./components/FieldMappingsTable";
 import AddLinkedAccount from "./components/AddLinkedAccount";
 import useLinkedUsers from "@/hooks/useLinkedUsers";
-import useFieldMappings from "@/hooks/fieldMappings/useFieldMappings";
+import useFieldMappings from "@/hooks/useFieldMappings";
 import { Skeleton } from "../ui/skeleton";
+import { useState } from "react";
 
 export default function ConfigurationPage() {
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
-  const { mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
+  const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
+  const [open, setOpen] = useState(false);
 
+  const handleClose = () => {
+    setOpen(false);
+  };
   if(isLoading){
     console.log("loading linked users..");
   }
@@ -48,16 +53,17 @@ export default function ConfigurationPage() {
   }
 
   const mappingTs = mappings?.map(mapping => ({
-    standard_object: mapping.ressource_owner_type, // replace with appropriate mapping
-    source_app: mapping.source, // replace with appropriate mapping
+    standard_object: mapping.ressource_owner_type,
+    source_app: mapping.source,
     status: mapping.status,
-    category: mapping.ressource_owner_type, // replace with appropriate mapping
-    source_field: mapping.remote_id, // replace with appropriate mapping
-    destination_field: mapping.slug, // replace with appropriate mapping
+    category: mapping.ressource_owner_type, 
+    source_field: mapping.remote_id, 
+    destination_field: mapping.slug,
     data_type: mapping.data_type,
   }))
 
   return (
+    
     <div className="flex items-center justify-between space-y-2">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
@@ -92,7 +98,7 @@ export default function ConfigurationPage() {
             </TabsContent>
             <TabsContent value="field-mappings" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
-              <Dialog>
+              <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="col-span-3">
                       <PlusCircledIcon className="mr-2 h-4 w-4" />
@@ -100,7 +106,7 @@ export default function ConfigurationPage() {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:w-[450px]">
-                  <FModal/>
+                  <FModal onClose={handleClose}/>
                 </DialogContent>
               </Dialog>
                 <Card className="col-span-12">

@@ -6,6 +6,7 @@ import JobsPage from './components/jobs';
 import ConnectionsPage from './components/connections';
 import TaskPage from './components/jobs/JobsTable';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 
 const queryClient = new QueryClient();
 
@@ -13,6 +14,23 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <Toaster
+          position="bottom-right"
+          reverseOrder={false}
+          gutter={8}
+          containerClassName=""
+          containerStyle={{}}
+          toastOptions={{
+            // Define default options
+            className: '',
+            duration: 3000,
+            style: {
+              background: '#0A0A0B',
+              color: '#fff',
+              border: "0.03rem solid white"
+            },
+          }}
+        />
         <Router>
           <Routes>
             <Route path="/" element={<DashboardPage />} />

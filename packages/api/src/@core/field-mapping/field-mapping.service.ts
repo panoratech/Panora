@@ -85,7 +85,7 @@ export class FieldMappingService {
         source: '',
         id_entity: id_entity,
         scope: 'user', // [user | org] wide
-        id_consumer: '00000000-0000-0000-0000-000000000000', //default
+        //id_consumer: '00000000-0000-0000-0000-000000000000', //default
       },
     });
 

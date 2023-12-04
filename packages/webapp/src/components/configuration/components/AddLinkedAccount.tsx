@@ -23,7 +23,8 @@ import {
 } from "@/components/ui/popover"
 import { PlusCircledIcon } from "@radix-ui/react-icons"
 import { cn } from "@/lib/utils"
-import React from "react"
+import { useState } from "react"
+import useLinkedUserMutation from "@/hooks/mutations/useLinkedUserMutation"
 
 interface LinkedUserModalObj {
   open: boolean;
@@ -31,15 +32,30 @@ interface LinkedUserModalObj {
 }
 
 const AddLinkedAccount = () => {
-  const [open, setOpen] = React.useState(false)
-  const [showNewLinkedUserDialog, setShowNewLinkedUserDialog] = React.useState<LinkedUserModalObj>({
+  const [open, setOpen] = useState(false)
+  const [showNewLinkedUserDialog, setShowNewLinkedUserDialog] = useState<LinkedUserModalObj>({
     open: false,
     import: false
   })
+  const [linkedUserIdentifier, setLinkedUserIdentifier] = useState('');
+
+  const { mutate, isLoading, isError, error, isSuccess } = useLinkedUserMutation();
 
   const handleOpenChange = (open: boolean) => {
     setShowNewLinkedUserDialog(prevState => ({ ...prevState, open }));
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent default form submission
+    mutate({ 
+      linked_user_origin_id: linkedUserIdentifier, 
+      alias: "acme.org",
+      id_project: "43b9d010-367c-45fa-b270-e0cf105a057d"
+    });
+    setShowNewLinkedUserDialog({open: false})  
+  };
+
+
   
   return (
     <Dialog open={showNewLinkedUserDialog.open} onOpenChange={handleOpenChange}>
@@ -100,13 +116,19 @@ const AddLinkedAccount = () => {
             {showNewLinkedUserDialog.import ? "You can upload a sheet of your existing linked users" : "Add a new linked user to your project"}
           </DialogDescription>
         </DialogHeader>
+        <form onSubmit={handleSubmit}>
         <div>
           <div className="space-y-4 py-2 pb-4">
             {!showNewLinkedUserDialog.import ?
               ( <>
                   <div className="space-y-2">
                     <Label htmlFor="name">Linked User Origin Identifier</Label>
-                    <Input id="name" placeholder="acme-inc-user-123" />
+                    <Input 
+                      id="name" 
+                      placeholder="acme-inc-user-123" 
+                      value={linkedUserIdentifier}
+                      onChange={(e) => setLinkedUserIdentifier(e.target.value)}
+                    />
                   </div>
                 </>
               ) : 
@@ -125,6 +147,7 @@ const AddLinkedAccount = () => {
           </Button>
           <Button type="submit">{showNewLinkedUserDialog.import ? "Import" : "Create"}</Button>
         </DialogFooter>
+      </form>
       </DialogContent>
     </Dialog>    
   )

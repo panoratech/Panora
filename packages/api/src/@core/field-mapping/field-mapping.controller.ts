@@ -58,4 +58,5 @@ export class FieldMappingController {
   mapFieldToProvider(@Body() mapFieldToProviderDto: MapFieldToProviderDto) {
     return this.fieldMappingService.mapFieldToProvider(mapFieldToProviderDto);
   }
+  //TODO: /origin-custom-fields?provider=${provider}
 }

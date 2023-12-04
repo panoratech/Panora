@@ -107,7 +107,45 @@ async function main() {
       },
     ],
   });*/
+  const entitiesData = [
+    {
+      id_entity: uuidv4(),
+      ressource_owner_id: 'contact',
+    },
+    {
+      id_entity: uuidv4(),
+      ressource_owner_id: 'task',
+    },
+    {
+      id_entity: uuidv4(),
+      ressource_owner_id: 'company',
+    },
+    {
+      id_entity: uuidv4(),
+      ressource_owner_id: 'note',
+    },
+  ];
+  await prisma.entity.createMany({
+    data: entitiesData,
+  });
 
+  const attributesData = entitiesData.map((entity, index) => ({
+    id_attribute: uuidv4(),
+    status: 'defined',
+    ressource_owner_type: `contact`,
+    slug: `slug_${index + 1}`,
+    description: `Description for attribute ${index + 1}`,
+    data_type: `string`,
+    remote_id: ``,
+    source: ``,
+    id_entity: entity.id_entity,
+    scope: `user`,
+  }));
+
+  await prisma.attribute.createMany({
+    data: attributesData,
+  });
+  /*
   // Seed the `jobs` table with 20 jobs
   const apiKeysData = Array.from({ length: 4 }).map((_, index) => ({
     id_api_key: uuidv4(),
@@ -117,7 +155,7 @@ async function main() {
   }));
   await prisma.api_keys.createMany({
     data: apiKeysData,
-  });
+  });*/
 }
 
 main()
