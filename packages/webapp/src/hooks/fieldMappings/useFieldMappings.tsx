@@ -3,8 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import {attribute as Attribute} from "@api/exports";
 import {entity as Entity} from "@api/exports";
 
- 
-
 const useFieldMappings = () => {
   const {
     data: mappings,

@@ -1,6 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { Badge } from "@/components/ui/badge"
 
 
 import { ApiKey } from "./schema"
@@ -13,7 +14,7 @@ export const columns: ColumnDef<ApiKey>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("name")}</div>,
+    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{row.getValue("name")}</Badge></div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -22,7 +23,7 @@ export const columns: ColumnDef<ApiKey>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Token" />
     ),
-    cell: ({ row }) => <div>{row.getValue("token")}</div>,
+    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{row.getValue("token")}</Badge></div>,
 
   },
   {
@@ -30,7 +31,7 @@ export const columns: ColumnDef<ApiKey>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Created" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("created")}</div>,
+    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{row.getValue("created")}</Badge></div>,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },

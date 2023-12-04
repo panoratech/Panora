@@ -1,7 +1,5 @@
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
-import { API_KEYS } from "./data/api-keys";
 import { columns } from "./data/columns";
 import { DataTable } from "../shared/data-table";
 import {
@@ -15,21 +13,25 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-export interface ApiKey {
-  name: string; 
-  token: string; 
-  created: string; 
-}
+import useApiKeys from "@/hooks/useApiKeys";
+import {api_keys as ApiKey} from "@api/exports";
 
 export default function ApiKeysPage() {
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>();
+  const { data: apiKeys, isLoading, error } = useApiKeys();
+  
+  if(isLoading){
+    console.log("loading apiKeys..");
+  }
 
-  useEffect(() => {
-    async function loadApiKeys() {
-      setApiKeys(API_KEYS);
-    }
-    loadApiKeys();
-  }, []);
+  if(error){
+    console.log("error apiKeys..");
+  }
+
+  const tsApiKeys = apiKeys?.map((key: ApiKey) => ({
+    name: key.id_api_key, // or any other property that corresponds to 'name'
+    token: key.api_key_hash, // or any other property that corresponds to 'token'
+    created: new Date().toISOString() // or any other property that corresponds to 'created'
+  }))
 
   return (
     <div className="flex items-center justify-between space-y-2">
@@ -66,7 +68,7 @@ export default function ApiKeysPage() {
             </DialogContent>
           </Dialog>
         </div>
-        {apiKeys && <DataTable data={apiKeys} columns={columns} />}
+        {tsApiKeys && <DataTable data={tsApiKeys} columns={columns} />}
       </div>
     </div>
   );

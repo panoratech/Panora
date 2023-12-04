@@ -9,8 +9,7 @@ export const mappingSchema = z.object({
   category: z.string(),
   source_field: z.string(),
   destination_field: z.string(),
-  data_type: z.string(),
-  date: z.string()
+  data_type: z.string()
 })
 
 export type Mapping = z.infer<typeof mappingSchema>

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import config from '@/utils/config';
 import {attribute as Attribute} from "@api/exports";
 
-export const useFieldMappingQuery = (id: string) => {
+export const useFieldMapping = (id: string) => {
   return useQuery({
     queryKey: ['mapping', id],
     queryFn: async (): Promise<Attribute> => {

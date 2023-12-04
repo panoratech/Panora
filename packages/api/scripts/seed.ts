@@ -81,7 +81,7 @@ async function main() {
   });*/
 
   // Seed the `jobs` table with 20 jobs
-  const jobsData = Array.from({ length: 20 }).map((_, index) => ({
+  /*const jobsData = Array.from({ length: 20 }).map((_, index) => ({
     id_job: uuidv4(), // Generate a new UUID for each job
     status: 'active', // Use whatever status is appropriate
     timestamp: new Date(),
@@ -93,6 +93,30 @@ async function main() {
   const jobs = await prisma.jobs.createMany({
     data: jobsData,
     skipDuplicates: true, // Set to true to ignore conflicts (optional)
+  });
+  */
+
+  /*await prisma.users.createMany({
+    data: [
+      {
+        id_user: uuidv4(),
+        email: 'audrey@aubry.io',
+        password_hash: 'password_hashed_her',
+        first_name: 'audrey',
+        last_name: 'aubry',
+      },
+    ],
+  });*/
+
+  // Seed the `jobs` table with 20 jobs
+  const apiKeysData = Array.from({ length: 4 }).map((_, index) => ({
+    id_api_key: uuidv4(),
+    api_key_hash: `api_key_hashed_${index}`,
+    id_project: 'e7a741ef-6b5c-46f8-b9a1-55667f3a6c61',
+    id_user: 'd287cdda-28af-43a3-8d84-b5e22b584826',
+  }));
+  await prisma.api_keys.createMany({
+    data: apiKeysData,
   });
 }
 

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import {
     Card,
     CardContent,
@@ -6,7 +5,6 @@ import {
     CardTitle,
   } from "@/components/ui/card"
 import { DataTable } from "@/components/shared/data-table";
-import { MAPPINGS } from "../data/mappings";
 import { columns } from "./columns";
 
 export interface Mapping {
@@ -17,19 +15,12 @@ export interface Mapping {
   source_field: string;
   destination_field: string;
   data_type: string;
-  date: string;
 }
 
-export default function FieldMappingsTable() {
-  const [mappings, setMappings] = useState<Mapping[]>();
+export default function FieldMappingsTable({
+  mappings
+}: { mappings: Mapping[] | undefined }) {
 
-  useEffect(() => {
-    async function loadMappings() {
-      setMappings(MAPPINGS);
-    }
-
-    loadMappings();
-  }, []);
   return (
     <>
       <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
