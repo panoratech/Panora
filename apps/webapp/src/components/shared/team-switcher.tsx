@@ -43,10 +43,11 @@ import useProjectMutation from "@/hooks/mutations/useProjectMutation"
 import useOrganisationMutation from "@/hooks/mutations/useOrganisationMutation"
 import { useEffect, useState } from "react"
 import useProjectStore from "@/state/projectStore"
-import useOrganisationStore, { organisations } from "@/state/organisationStore"
+import useOrganisationStore from "@/state/organisationStore"
 import useProfileStore from "@/state/profileStore"
 import useProjects from "@/hooks/useProjects"
 import { Skeleton } from "../ui/skeleton"
+import useOrganisations from "@/hooks/useOrganisations"
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
@@ -67,6 +68,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [orgName, setOrgName] = useState('');
   const [projectName, setProjectName] = useState('');
 
+  //TODO: it loads endlessly
+  const { data : orgs, isLoading: isloadingOrganisations, error: isOrgErr } = useOrganisations();
   const { data : projects, isLoading: isloadingProjects } = useProjects();
 
 
@@ -74,14 +77,23 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const { selectedOrganisation, setSelectedOrganisation } = useOrganisationStore();
 
 
+  console.log("error is "+ isOrgErr);
+  console.log("loading is "+ isloadingOrganisations);
+  console.log("data is "+ orgs);
+
+  
   const { profile } = useProfileStore();
 
   useEffect(()=>{
     if(projects){
       setSelectedProject(projects[0]);
     }
-  },[projects, setSelectedProject])
-  
+    if(orgs){
+      console.log("dddd "+ orgs[0].id_organization);
+      setSelectedOrganisation(orgs[0]);
+    }
+  },[projects,orgs, setSelectedProject])
+
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
@@ -171,34 +183,41 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   }
                 </CommandGroup>
                 <CommandGroup key={"organisations"} heading={"Organisations"}>
-                  {organisations.map((organisation) => (
+                  {!isloadingOrganisations && orgs ? orgs.map((org) => (
                     <CommandItem
-                      key={organisation.value}
+                      key={org.id_organization}
                       onSelect={() => {
-                        setSelectedOrganisation(organisation)
+                        setSelectedOrganisation(org)
                         setOpen(false)
                       }}
                       className="text-sm"
                     >
                       <Avatar className="mr-2 h-5 w-5">
                         <AvatarImage
-                          src={`https://avatar.vercel.sh/${organisation.value}.png`}
-                          alt={organisation.label}
+                          src={`https://avatar.vercel.sh/${org.name}.png`}
+                          alt={org.name}
                           className="grayscale"
                         />
                         <AvatarFallback>SC</AvatarFallback>
                       </Avatar>
-                      {organisation.label}
+                      {org.name}
                       <CheckIcon
                         className={cn(
                           "ml-auto h-4 w-4",
-                          selectedOrganisation.value === organisation.value
+                          selectedOrganisation?.name === org.name
                             ? "opacity-100"
                             : "opacity-0"
                         )}
                       />
+                    </CommandItem>))
+                  : 
+                    <CommandItem
+                      key={"0"}
+                      className="text-sm"
+                    >
+                      <Skeleton className="w-[100px] h-[20px] rounded-md" />
                     </CommandItem>
-                  ))}
+                  }
                 </CommandGroup>
               
             </CommandList>

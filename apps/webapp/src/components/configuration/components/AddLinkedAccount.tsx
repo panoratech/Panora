@@ -52,10 +52,11 @@ const AddLinkedAccount = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
+    //console.log("submitting with project "+ selectedProject.id_project);
     mutate({ 
       linked_user_origin_id: linkedUserIdentifier, 
-      alias: selectedOrganisation.value,
-      id_project: selectedProject
+      alias: selectedOrganisation.id_organisation,
+      id_project: selectedProject.id_project
     });
     setShowNewLinkedUserDialog({open: false})  
   };
