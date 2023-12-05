@@ -13,8 +13,29 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+import useProfile from "@/hooks/useProfile";
+import useProfileStore from "@/state/profileStore";
+import { useEffect } from "react";
   
   export function UserNav() {
+    const {data} = useProfile();
+    if(!data) {
+      console.log("loading profiles");
+    }
+    const { profile, setProfile } = useProfileStore();
+
+    useEffect(()=> {
+      if(data){
+        setProfile({
+          id_user: data[0].id_user,
+          email: data[0].email,
+          first_name: data[0].first_name,
+          last_name: data[0].last_name,
+          id_organization: data[0].id_organization as string,
+        })
+      }
+    }, [data, setProfile]);
+
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -28,15 +49,16 @@ import {
         <DropdownMenuContent className="w-56 ml-10" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">shadcn</p>
+              <p className="text-sm font-medium leading-none">
+                {profile && profile.first_name}
+              </p>
               <p className="text-xs leading-none text-muted-foreground">
-                m@example.com
+                {profile && profile.email}
               </p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-           
             <DropdownMenuItem>
               Profile
             </DropdownMenuItem>

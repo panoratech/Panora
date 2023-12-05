@@ -41,9 +41,12 @@ import {
 } from "@/components/ui/popover"
 import useProjectMutation from "@/hooks/mutations/useProjectMutation"
 import useOrganisationMutation from "@/hooks/mutations/useOrganisationMutation"
-import { useState } from "react"
-import useProjectStore, { projects } from "@/state/projectStore"
+import { useEffect, useState } from "react"
+import useProjectStore from "@/state/projectStore"
 import useOrganisationStore, { organisations } from "@/state/organisationStore"
+import useProfileStore from "@/state/profileStore"
+import useProjects from "@/hooks/useProjects"
+import { Skeleton } from "../ui/skeleton"
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
@@ -64,10 +67,21 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [orgName, setOrgName] = useState('');
   const [projectName, setProjectName] = useState('');
 
+  const { data : projects, isLoading: isloadingProjects } = useProjects();
+
+
   const { selectedProject, setSelectedProject } = useProjectStore();
   const { selectedOrganisation, setSelectedOrganisation } = useOrganisationStore();
 
 
+  const { profile } = useProfileStore();
+
+  useEffect(()=>{
+    if(projects){
+      setSelectedProject(projects[0]);
+    }
+  },[projects, setSelectedProject])
+  
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
@@ -76,6 +90,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const { mutate: mutateProject } = useProjectMutation();
   const { mutate: mutateOrganisation } = useOrganisationMutation();
 
+  //TODO
   const handleOrgSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
     mutateOrganisation({ 
@@ -89,7 +104,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     e.preventDefault(); // Prevent default form submission
     mutateProject({ 
       name: projectName, 
-      id_organization: "890e7d54-7620-43bc-9cdb-48a5fcd85bde", //TODO
+      id_organization: profile!.id_organization,
     });
     setShowNewDialog({open: false})  
   };
@@ -106,7 +121,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             className={cn("w-[250px] justify-between", className)}
           >
            
-            {selectedProject.label}
+            {selectedProject?.name}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -116,34 +131,52 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CommandInput placeholder="Search..." />
               <CommandEmpty>Not found.</CommandEmpty>
                 <CommandGroup key={"projects"} heading={"Projects"}>
-                  {projects.map((project) => (
-                    <CommandItem
-                      key={project.value}
-                      onSelect={() => {
-                        setSelectedProject(project)
-                        setOpen(false)
-                      }}
-                      className="text-sm"
-                    >
-                      <Avatar className="mr-2 h-5 w-5">
-                        <AvatarImage
-                          src={`https://avatar.vercel.sh/${project.value}.png`}
-                          alt={project.label}
-                          className="grayscale"
+                  {
+                    !isloadingProjects && projects ? projects.map((project) => (
+                      <CommandItem
+                        key={project.id_project}
+                        onSelect={() => {
+                          setSelectedProject(project)
+                          setOpen(false)
+                        }}
+                        className="text-sm"
+                      >
+                        <Avatar className="mr-2 h-5 w-5">
+                          <AvatarImage
+                            src={`https://avatar.vercel.sh/${project.name}.png`}
+                            alt={project.name}
+                            className="grayscale"
+                          />
+                          <AvatarFallback>SC</AvatarFallback>
+                        </Avatar>
+                        {project.name}
+                        <CheckIcon
+                          className={cn(
+                            "ml-auto h-4 w-4",
+                            selectedProject?.name === project.name
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
                         />
-                        <AvatarFallback>SC</AvatarFallback>
-                      </Avatar>
-                      {project.label}
-                      <CheckIcon
-                        className={cn(
-                          "ml-auto h-4 w-4",
-                          selectedProject.value === project.value
-                            ? "opacity-100"
-                            : "opacity-0"
-                        )}
-                      />
-                    </CommandItem>
-                  ))}
+                      </CommandItem>
+                    )) : Array.from({ length: 6 }).map((_, index) => (
+                          <CommandItem
+                            key={index}
+                            className="text-sm"
+                          >
+                            <Avatar className="mr-2 h-5 w-5">
+                              <AvatarImage
+                                src={`https://avatar.vercel.sh/1.png`}
+                                alt={""}
+                                className="grayscale"
+                              />
+                              <AvatarFallback>SC</AvatarFallback>
+                            </Avatar>
+                            <Skeleton className="w-[100px] h-[20px] rounded-md" />
+                          </CommandItem>
+                        )
+                    )
+                  }
                 </CommandGroup>
                 <CommandGroup key={"organisations"} heading={"Organisations"}>
                   {organisations.map((organisation) => (

@@ -23,6 +23,9 @@ export default function FieldMappingsTable({
   isLoading
 }: { mappings: Mapping[] | undefined; isLoading: boolean }) {
 
+  const countDefined = mappings?.filter(mapping => mapping.status === "defined").length;
+  const countMapped = mappings?.filter(mapping => mapping.status === "mapped").length;
+
   return (
     <>
       <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
@@ -32,7 +35,7 @@ export default function FieldMappingsTable({
                 <CardTitle>Defined</CardTitle>
             </CardHeader>
             <CardContent>
-            <p className="text-4xl font-bold">0</p>
+            <p className="text-4xl font-bold">{countDefined}</p>
             </CardContent>
 
         </Card>
@@ -41,7 +44,7 @@ export default function FieldMappingsTable({
                 <CardTitle>Mapped</CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-4xl font-bold">3</p>
+                <p className="text-4xl font-bold">{countMapped}</p>
             </CardContent>
         </Card>                  
         </div>

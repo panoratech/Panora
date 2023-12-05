@@ -1,33 +1,14 @@
 import { create } from 'zustand';
-
-export const projects = [
-  {
-    label: "Financial Project",
-    value: "personal",
-  },
-  {
-    label: "Data Project",
-    value: "personal1",
-  },
-  {
-    label: "Marketing Project",
-    value: "personal2",
-  },
-];
-
-interface ProjectT {
-  label: string;
-  value: string;
-}
+import {projects as Project} from "@api/exports";
 
 interface ProjectState {
-  selectedProject: ProjectT;
-  setSelectedProject: (project: ProjectT) => void;
+  selectedProject: Project | null;
+  setSelectedProject: (project: Project) => void;
 }
 
 const useProjectStore = create<ProjectState>()((set) => ({
-  selectedProject: projects[0],
-  setSelectedProject: (project: ProjectT) => set({ selectedProject: project }),
+  selectedProject: null,
+  setSelectedProject: (project: Project) => set({ selectedProject: project }),
 }));
 
 export default useProjectStore;

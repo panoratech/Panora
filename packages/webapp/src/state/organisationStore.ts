@@ -4,11 +4,7 @@ export const organisations = [
   {
     label: "Acme Inc.",
     value: "acme-inc",
-  },
-  {
-    label: "Monsters Inc.",
-    value: "monsters",
-  },
+  }
 ];
 
 interface OrganisationT {
