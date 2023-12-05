@@ -49,6 +49,7 @@ const AddLinkedAccount = () => {
 
   const {selectedOrganisation} = useOrganisationStore();
   const {selectedProject} = useProjectStore();
+  console.log("submitting with org "+ selectedOrganisation.id_organization);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission

@@ -69,18 +69,11 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [projectName, setProjectName] = useState('');
 
   //TODO: it loads endlessly
-  const { data : orgs, isLoading: isloadingOrganisations, error: isOrgErr } = useOrganisations();
+  const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
   const { data : projects, isLoading: isloadingProjects } = useProjects();
-
 
   const { selectedProject, setSelectedProject } = useProjectStore();
   const { selectedOrganisation, setSelectedOrganisation } = useOrganisationStore();
-
-
-  console.log("error is "+ isOrgErr);
-  console.log("loading is "+ isloadingOrganisations);
-  console.log("data is "+ orgs);
-
   
   const { profile } = useProfileStore();
 
@@ -92,7 +85,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
       console.log("dddd "+ orgs[0].id_organization);
       setSelectedOrganisation(orgs[0]);
     }
-  },[projects,orgs, setSelectedProject])
+  },[projects, orgs, setSelectedProject, setSelectedOrganisation])
 
 
   const handleOpenChange = (open: boolean) => {
@@ -183,33 +176,33 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   }
                 </CommandGroup>
                 <CommandGroup key={"organisations"} heading={"Organisations"}>
-                  {!isloadingOrganisations && orgs ? orgs.map((org) => (
+                  {!isloadingOrganisations && orgs ? 
                     <CommandItem
-                      key={org.id_organization}
+                      key={orgs[0].id_organization}
                       onSelect={() => {
-                        setSelectedOrganisation(org)
+                        setSelectedOrganisation(orgs[0])
                         setOpen(false)
                       }}
                       className="text-sm"
                     >
                       <Avatar className="mr-2 h-5 w-5">
                         <AvatarImage
-                          src={`https://avatar.vercel.sh/${org.name}.png`}
-                          alt={org.name}
+                          src={`https://avatar.vercel.sh/${orgs[0].name}.png`}
+                          alt={orgs[0].name}
                           className="grayscale"
                         />
                         <AvatarFallback>SC</AvatarFallback>
                       </Avatar>
-                      {org.name}
+                      {orgs[0].name}
                       <CheckIcon
                         className={cn(
                           "ml-auto h-4 w-4",
-                          selectedOrganisation?.name === org.name
+                          selectedOrganisation?.name === orgs[0].name
                             ? "opacity-100"
                             : "opacity-0"
                         )}
                       />
-                    </CommandItem>))
+                    </CommandItem>
                   : 
                     <CommandItem
                       key={"0"}
