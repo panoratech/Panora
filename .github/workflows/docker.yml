@@ -1,0 +1,24 @@
+name: Docker Build - Backend
+
+on:
+  push:
+    paths:
+      - 'packages/api/**'  # Specify the path to your subfolder
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: docker/setup-docker@v2
+      with:
+        dockerfile: packages/api/Dockerfile  # Specify the path to your Dockerfile
+
+    - name: Build Docker image
+      run: docker build -t panora-backend-api:latest packages/api/
