@@ -1,3 +1,6 @@
+
+
+
 -- ************************************** organizations
 
 CREATE TABLE organizations
@@ -334,6 +337,30 @@ CREATE INDEX FK_linkeduserID_projectID ON jobs
 
 
 COMMENT ON COLUMN jobs.status IS 'pending,, retry_scheduled, failed, success';
+
+
+
+
+
+-- ************************************** invite_links
+
+CREATE TABLE invite_links
+(
+ id_invite_link uuid NOT NULL,
+ status         text NOT NULL,
+ email          text NULL,
+ id_linked_user uuid NOT NULL,
+ CONSTRAINT PK_invite_links PRIMARY KEY ( id_invite_link ),
+ CONSTRAINT FK_37 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
+);
+
+CREATE INDEX FK_invite_link_linkedUserID ON invite_links
+(
+ id_linked_user
+);
+
+
+
 
 
 
