@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { MapFieldToProviderDto } from 'api';
 
 
 const useMapFieldMutation = () => {
-    const mapField = async (data: any) => {
+    const mapField = async (data: MapFieldToProviderDto) => {
         const response = await fetch(`${config.API_URL}/field-mapping/map`, {
             method: 'POST',
             body: JSON.stringify(data),

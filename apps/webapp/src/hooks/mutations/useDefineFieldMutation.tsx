@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { DefineTargetFieldDto } from 'api';
 
 const useDefineFieldMutation = () => {
-    const defineField = async (data: any) => {
+    const defineField = async (data: DefineTargetFieldDto) => {
         const response = await fetch(`${config.API_URL}/field-mapping/define`, {
             method: 'POST',
             body: JSON.stringify(data),

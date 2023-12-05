@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { CreateProjectDto } from 'api';
 
 
 const useProjectMutation = () => {
-    const addProject = async (data: any) => {
+    const addProject = async (data: CreateProjectDto) => {
         const response = await fetch(`${config.API_URL}/projects/create`, {
             method: 'POST',
             body: JSON.stringify(data),

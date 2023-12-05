@@ -145,7 +145,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                           <AvatarImage
                             src={`https://avatar.vercel.sh/${project.name}.png`}
                             alt={project.name}
-                            className="grayscale"
+                            className=""
                           />
                           <AvatarFallback>SC</AvatarFallback>
                         </Avatar>
@@ -164,14 +164,6 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                             key={index}
                             className="text-sm"
                           >
-                            <Avatar className="mr-2 h-5 w-5">
-                              <AvatarImage
-                                src={`https://avatar.vercel.sh/1.png`}
-                                alt={""}
-                                className="grayscale"
-                              />
-                              <AvatarFallback>SC</AvatarFallback>
-                            </Avatar>
                             <Skeleton className="w-[100px] h-[20px] rounded-md" />
                           </CommandItem>
                         )

@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
 import useOAuth from '../hooks/useOAuth';
 import { findProviderByName, providersArray } from '../helpers/utils';
-import { v4 as uuidv4 } from 'uuid';
 
 const categories = ['CRM', 'Ticketing', 'Marketing Automation','ATS', 'Accounting', 'File Storage', 'HR & Payroll'];
 
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
-
     const provider = findProviderByName(providerName);
     return (
       <div className="fixed inset-0 flex justify-center items-center">
@@ -20,16 +18,16 @@ const LoadingOverlay = ({ providerName }: { providerName: string }) => {
           <h4 className="text-lg font-bold mb-2">Continue in {provider!.name}</h4>
           <p className="text-gray-400 mb-4">Accepting oAuth access to Panora</p>
           <div className='flex justify-center items-center'>
-          <TailSpin
-            height="40"
-            width="40"
-            color="white"
-            ariaLabel="tail-spin-loading"
-            radius="1"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-           />
+            <TailSpin
+              height="40"
+              width="40"
+              color="white"
+              ariaLabel="tail-spin-loading"
+              radius="1"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
            </div>
         </div>
       </div>
@@ -42,12 +40,29 @@ const ProviderModal = () => {
   const [loading, setLoading] = useState<{
     status: boolean; provider: string
   }>({status: false, provider: ''});
+  const [linkedUserId, setLinkedUserId] = useState('');
+  const [projectId, setProjectId] = useState('');
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const uniqueId = queryParams.get('unique-id');
+    if (uniqueId) {
+      setLinkedUserId(uniqueId);
+    }
+    const projectId = queryParams.get('project-id');
+    if (projectId) {
+      setProjectId(projectId);
+    }
+  }, []);
+
+  //console.log("user-id "+ linkedUserId);
+  //console.log("project-id "+ projectId);
 
   const { open, isReady } = useOAuth({
     providerName: selectedProvider, // This will be set when a provider is clicked
-    returnUrl: 'http://127.0.0.1:5173/', // Replace with the actual return URL
-    projectId: 'b2705296-e07c-49d1-a1b4-edab94339823', // Replace with the actual project ID
-    linkedUserId: "806d3abd-b620-42b0-91ea-8cb467bc1e4c", //TODO: uuidv4(), // Replace with the actual user ID
+    returnUrl: 'http://127.0.0.1:5174/', // Replace with the actual return URL
+    projectId: projectId, // Replace with the actual project ID
+    linkedUserId: linkedUserId, //TODO: uuidv4(), // Replace with the actual user ID
     onSuccess: () => console.log('OAuth successful'),
   });
 

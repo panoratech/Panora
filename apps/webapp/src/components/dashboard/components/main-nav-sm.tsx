@@ -35,10 +35,12 @@ export function SmallNav({
           <SheetTrigger asChild className=" ml-4 mt-4">
             <Button variant="outline" onClick={()=> setOpen(true)}><MenuIcon className="h-6 w-6" /></Button>
           </SheetTrigger>
-          <SheetContent side={"left"} className="p-0">
+          <SheetContent side={"left"} className="p-0  w-[200px]">
             <SheetHeader>
               <SheetTitle className="mx-4 my-4">
-                <img src="logo.png" className="w-16"/> <span className="font-bold">Panora.</span>
+                <div className="flex flex-row items-center">
+                  <img src="logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span>
+                </div>              
               </SheetTitle>
             </SheetHeader>
             <nav

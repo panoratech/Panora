@@ -54,9 +54,11 @@ export default function DashboardPage() {
       <div>
         { windowWidth < lgBreakpoint ? <SmallNav onLinkClick={setActivePage} /> : 
           <div className="items-center hidden lg:flex lg:flex-col border-r fixed left-0 bg-opacity-90 backdrop-filter backdrop-blur-lg w-[200px] h-screen">
-            <div className="flex lg:flex-col items-center py-4 space-y-4">
-              <img src="logo.png" className="w-16"/> <span className="font-bold">Panora.</span>
-              <TeamSwitcher className="w-40" />
+            <div className="flex lg:flex-col items-start py-4 space-y-4">
+              <div className="flex flex-row items-center ml-3">
+                <img src="logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span>
+              </div>
+              <TeamSwitcher className="w-40 ml-3" />
               <MainNav className="flex lg:flex-col mx-auto w-[200px] space-y-0" onLinkClick={setActivePage} />
               <div className="ml-auto flex lg:flex-col items-center space-x-4 w-full">
                 <UserNav />

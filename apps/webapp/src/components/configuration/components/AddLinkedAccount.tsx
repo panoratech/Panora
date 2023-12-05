@@ -25,6 +25,8 @@ import { PlusCircledIcon } from "@radix-ui/react-icons"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import useLinkedUserMutation from "@/hooks/mutations/useLinkedUserMutation"
+import useOrganisationStore from "@/state/organisationStore"
+import useProjectStore from "@/state/projectStore"
 
 interface LinkedUserModalObj {
   open: boolean;
@@ -45,12 +47,15 @@ const AddLinkedAccount = () => {
     setShowNewLinkedUserDialog(prevState => ({ ...prevState, open }));
   };
 
+  const {selectedOrganisation} = useOrganisationStore();
+  const {selectedProject} = useProjectStore();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
     mutate({ 
       linked_user_origin_id: linkedUserIdentifier, 
-      alias: "acme.org",
-      id_project: "43b9d010-367c-45fa-b270-e0cf105a057d"
+      alias: selectedOrganisation,
+      id_project: selectedProject
     });
     setShowNewLinkedUserDialog({open: false})  
   };

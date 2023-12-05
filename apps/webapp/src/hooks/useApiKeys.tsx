@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import config from '@/utils/config';
 import { useQuery } from '@tanstack/react-query';
-
+import { api_keys as ApiKey } from 'api';
 
 const useApiKeys = () => {
   return useQuery({
     queryKey: ['api-keys'], 
-    queryFn: async (): Promise<any[]> => {
+    queryFn: async (): Promise<ApiKey[]> => {
       const response = await fetch(`${config.API_URL}/auth/api-keys`);
         if (!response.ok) {
           throw new Error('Network response was not ok');

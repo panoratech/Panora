@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { CreateOrganizationDto } from 'api';
 
 
 const useOrganisationMutation = () => {
-    const addOrg = async (data: any) => {
+    const addOrg = async (data: CreateOrganizationDto) => {
         const response = await fetch(`${config.API_URL}/organisations/create`, {
             method: 'POST',
             body: JSON.stringify(data),

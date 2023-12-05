@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { CreateLinkedUserDto } from 'api';
 
 
 const useLinkedUserMutation = () => {
-    const addLinkedUser = async (linkedUserData: any) => {
+    const addLinkedUser = async (linkedUserData: CreateLinkedUserDto) => {
         const response = await fetch(`${config.API_URL}/linked-users/create`, {
             method: 'POST',
             body: JSON.stringify(linkedUserData),

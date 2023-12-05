@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import config from '@/utils/config';
 import { useQuery } from '@tanstack/react-query';
+import { jobs as Job } from 'api';
 
-const fetchJobs = async (): Promise<any[]> => {
+const fetchJobs = async (): Promise<Job[]> => {
   const response = await fetch(`${config.API_URL}/jobs`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
