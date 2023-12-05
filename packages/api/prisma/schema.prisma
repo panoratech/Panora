@@ -123,13 +123,14 @@ model connections {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model linked_users {
-  id_linked_user        String        @id(map: "key_id_linked_users") @db.Uuid
+  id_linked_user        String         @id(map: "key_id_linked_users") @db.Uuid
   linked_user_origin_id String
   alias                 String
-  id_project            String        @db.Uuid
+  id_project            String         @db.Uuid
   connections           connections[]
+  invite_links          invite_links[]
   jobs                  jobs[]
-  projects              projects      @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_10")
+  projects              projects       @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_10")
 
   @@index([id_project], map: "fk_proectid_linked_users")
 }
@@ -368,4 +369,14 @@ model crm_email_addresses {
 
   @@index([id_crm_contact], map: "crm_contactid_crm_contact_email_address")
   @@index([id_crm_company], map: "fk_contact_email_adress_companyid")
+}
+
+model invite_links {
+  id_invite_link String       @id(map: "pk_invite_links") @db.Uuid
+  status         String
+  email          String?
+  id_linked_user String       @db.Uuid
+  linked_users   linked_users @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_37")
+
+  @@index([id_linked_user], map: "fk_invite_link_linkeduserid")
 }

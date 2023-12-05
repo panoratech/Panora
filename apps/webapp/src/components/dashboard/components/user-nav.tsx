@@ -25,7 +25,7 @@ import { useEffect } from "react";
     const { profile, setProfile } = useProfileStore();
 
     useEffect(()=> {
-      if(data){
+      if(data && data.length > 0 ){
         setProfile({
           id_user: data[0].id_user,
           email: data[0].email,

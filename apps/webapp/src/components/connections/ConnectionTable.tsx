@@ -12,10 +12,13 @@ import { PlusCircledIcon } from "@radix-ui/react-icons";
 import CopyLinkInput from "./components/CopyLinkInput";
 import useConnections from "@/hooks/useConnections";
 import { DataTableLoading } from "../shared/data-table-loading";
+import { useState } from "react";
+import AddConnectionButton from "./components/AddConnectionButton";
 
 export default function ConnectionTable() {
   const { data: connections, isLoading, error } = useConnections();
-  
+  const [isGenerated, setIsGenerated] = useState(false);
+
   if(isLoading){
     console.log("loading connections..");
   }
@@ -32,7 +35,8 @@ export default function ConnectionTable() {
     linkedUser: connection.id_linked_user, // replace with actual mapping
     date: new Date().toISOString(), // replace with actual mapping
   }))
-  
+
+ 
   return (
     <>
       <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
@@ -66,7 +70,7 @@ export default function ConnectionTable() {
         
                     
         </div>
-        <Dialog>
+        {isGenerated ? <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" className="">
                 <PlusCircledIcon className="mr-2 h-4 w-4" />
@@ -86,10 +90,12 @@ export default function ConnectionTable() {
               </div>
             </div>
             <DialogFooter>
-              <Button type="submit">Share</Button>
+              <Button type="submit">Generate Link</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog> : 
+        <AddConnectionButton setIsGenerated={setIsGenerated}/>
+        }
         {isLoading && <DataTableLoading data={[]} columns={columns}/>}
         {ts && <DataTable data={ts} columns={columns} />}
       </div>

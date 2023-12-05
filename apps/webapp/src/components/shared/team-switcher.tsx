@@ -6,7 +6,6 @@ import {
   CheckIcon,
   PlusCircledIcon,
 } from "@radix-ui/react-icons"
-
 import { cn } from "@/lib/utils"
 import {
   Avatar,
@@ -68,7 +67,6 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [orgName, setOrgName] = useState('');
   const [projectName, setProjectName] = useState('');
 
-  //TODO: it loads endlessly
   const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
   const { data : projects, isLoading: isloadingProjects } = useProjects();
 
@@ -82,11 +80,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
       setSelectedProject(projects[0]);
     }
     if(orgs){
-      console.log("dddd "+ orgs[0].id_organization);
       setSelectedOrganisation(orgs[0]);
     }
   },[projects, orgs, setSelectedProject, setSelectedOrganisation])
-
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
@@ -114,6 +110,10 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     setShowNewDialog({open: false})  
   };
 
+  if(!orgs) {
+    return <>DHJSDHJ</>
+  }
+
   return (
     <Dialog open={showNewDialog.open} onOpenChange={handleOpenChange}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -125,8 +125,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             aria-label="Select a team"
             className={cn("w-[250px] justify-between", className)}
           >
-           
-            {selectedProject?.name}
+            {selectedProject ? selectedProject.name : "not found"}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -137,7 +136,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CommandEmpty>Not found.</CommandEmpty>
                 <CommandGroup key={"projects"} heading={"Projects"}>
                   {
-                    !isloadingProjects && projects ? projects.map((project) => (
+                    !isloadingProjects && projects && projects.length > 0 ? projects.map((project) => (
                       <CommandItem
                         key={project.id_project}
                         onSelect={() => {
@@ -158,7 +157,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                         <CheckIcon
                           className={cn(
                             "ml-auto h-4 w-4",
-                            selectedProject?.name === project.name
+                            selectedProject && selectedProject.name === project.name
                               ? "opacity-100"
                               : "opacity-0"
                           )}
@@ -176,7 +175,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   }
                 </CommandGroup>
                 <CommandGroup key={"organisations"} heading={"Organisations"}>
-                  {!isloadingOrganisations && orgs ? 
+                  {!isloadingOrganisations && orgs && orgs.length > 0 ? 
                     <CommandItem
                       key={orgs[0].id_organization}
                       onSelect={() => {
@@ -197,7 +196,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                       <CheckIcon
                         className={cn(
                           "ml-auto h-4 w-4",
-                          selectedOrganisation?.name === orgs[0].name
+                          selectedOrganisation && selectedOrganisation.name === orgs[0].name 
                             ? "opacity-100"
                             : "opacity-0"
                         )}

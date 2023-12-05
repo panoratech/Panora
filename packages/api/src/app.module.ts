@@ -22,9 +22,11 @@ import { OrganisationsModule } from './@core/organisations/organisations.module'
 import { ProjectsModule } from './@core/projects/projects.module';
 import { FieldMappingModule } from './@core/field-mapping/field-mapping.module';
 import { JobsModule } from '@@core/jobs/jobs.module';
+import { MagicLinkModule } from './@core/magic-link/magic-link.module';
 
 @Module({
   imports: [
+    MagicLinkModule,
     JobsModule,
     FieldMappingModule,
     LinkedUsersModule,
@@ -63,6 +65,7 @@ import { JobsModule } from '@@core/jobs/jobs.module';
       },
     }),
     JobsModule,
+    MagicLinkModule,
   ],
   controllers: [AppController],
   providers: [
