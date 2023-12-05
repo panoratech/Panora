@@ -1,11 +1,15 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { MapFieldToProviderDto } from 'api';
-
+interface IMapTargetFieldDto {
+  attributeId: string;
+  source_custom_field_id: string;
+  source_provider: string;
+  linked_user_id: string;
+}
 
 const useMapFieldMutation = () => {
-    const mapField = async (data: MapFieldToProviderDto) => {
+    const mapField = async (data: IMapTargetFieldDto) => {
         const response = await fetch(`${config.API_URL}/field-mapping/map`, {
             method: 'POST',
             body: JSON.stringify(data),

@@ -1,11 +1,13 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { CreateOrganizationDto } from 'api';
 
-
+interface IOrgDto {
+  name: string;
+  stripe_customer_id: string;
+}
 const useOrganisationMutation = () => {
-    const addOrg = async (data: CreateOrganizationDto) => {
+    const addOrg = async (data: IOrgDto) => {
         const response = await fetch(`${config.API_URL}/organisations/create`, {
             method: 'POST',
             body: JSON.stringify(data),

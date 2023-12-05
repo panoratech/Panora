@@ -1,10 +1,16 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { DefineTargetFieldDto } from 'api';
+
+interface IDefineTargetFieldDto{
+    object_type_owner: string;
+    name: string;
+    description: string;
+    data_type: string;
+}
 
 const useDefineFieldMutation = () => {
-    const defineField = async (data: DefineTargetFieldDto) => {
+    const defineField = async (data: IDefineTargetFieldDto) => {
         const response = await fetch(`${config.API_URL}/field-mapping/define`, {
             method: 'POST',
             body: JSON.stringify(data),

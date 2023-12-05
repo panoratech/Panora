@@ -54,7 +54,7 @@ const AddLinkedAccount = () => {
     e.preventDefault(); // Prevent default form submission
     mutate({ 
       linked_user_origin_id: linkedUserIdentifier, 
-      alias: selectedOrganisation,
+      alias: selectedOrganisation.value,
       id_project: selectedProject
     });
     setShowNewLinkedUserDialog({open: false})  
