@@ -26,5 +26,5 @@ RUN pnpm run build
 
 EXPOSE 3000
 
-# Start the server using the production build
+# Start the server
 CMD [ "node", "dist/src/main.js" ]
