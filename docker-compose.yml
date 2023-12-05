@@ -4,7 +4,7 @@ version: '3.8'
 services:
 
   postgres:
-    image: postgres:14.6
+    image: postgres:16.1
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
