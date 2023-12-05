@@ -1,4 +1,4 @@
 packages:
-  # all packages in direct subdirs of packages/
+  - "apps/*"
   - "packages/*"
   - "website-docs"
