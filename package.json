@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "turbo run build",
+    "lint": "turbo run lint",
     "test": "echo \"Error: no test specified\"",
     "prepare": "husky install",
     "version": "changeset version",
-    "release": "pnpm --recursive run lint && pnpm --recursive run build && changeset publish"
+    "release": "pnpm run lint && pnpm run build && changeset publish"
   },
   "keywords": [],
   "author": "",
@@ -25,7 +27,8 @@
   },
   "dependencies": {
     "@changesets/cli": "^2.26.2",
-    "gitmoji-cli": "^9.0.0"
+    "gitmoji-cli": "^9.0.0",
+    "turbo": "^1.10.16"
   },
   "private": true,
   "engines": {
