@@ -7,6 +7,7 @@ import { DataTableLoading } from "../shared/data-table-loading";
 export default function JobsTable() {
   const { data: jobs, isLoading, error } = useJobs();
   
+  //TODO
   const transformedJobs = jobs?.map((job: Job) => ({
     method: '', // replace with actual value
     url: '', // replace with actual value
