@@ -1,2 +1,8 @@
 pg_data/
 node_modules/
+
+apps/webapp/node_modules
+apps/webapp/dist
+
+packages/api/node_modules
+packages/api/dist
