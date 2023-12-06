@@ -25,6 +25,10 @@ RUN apk update
 # Set pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+
+ENV VITE_BACKEND_DOMAIN=$VITE_BACKEND_DOMAIN
+ENV VITE_BACKEND_DOMAIN=$VITE_BACKEND_DOMAIN
+
 RUN corepack enable
 
 WORKDIR /app
@@ -41,6 +45,9 @@ RUN pnpm turbo run build --filter=webapp...
 
 # ========================================================================
 FROM nginx:stable-alpine as runner
+
+ENV VITE_BACKEND_DOMAIN=$VITE_BACKEND_DOMAIN
+ENV VITE_BACKEND_DOMAIN=$VITE_BACKEND_DOMAIN
 
 COPY --from=installer ./app/apps/webapp/dist/ /usr/share/nginx/html
 
