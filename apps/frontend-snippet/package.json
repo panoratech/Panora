@@ -19,6 +19,7 @@
     "react-loader-spinner": "^5.4.5",
     "tailwind-scrollbar-hide": "^1.1.7",
     "uuid": "^9.0.1",
+    "api": "workspace:*",
     "shared-types": "workspace:*"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { LinkedUsersService } from './linked-users.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateLinkedUserDto } from './dto/create-linked-user.dto';
@@ -19,5 +19,9 @@ export class LinkedUsersController {
   @Get()
   getLinkedUsers() {
     return this.linkedUsersService.getLinkedUsers();
+  }
+  @Get()
+  getLinkedUser(@Query('id') id: string) {
+    return this.linkedUsersService.getLinkedUser(id);
   }
 }

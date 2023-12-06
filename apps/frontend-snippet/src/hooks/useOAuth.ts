@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { findProviderVertical, providersConfig } from '../helpers/utils';
+import { findProviderVertical, providersConfig } from '@/helpers/utils';
+import config from '@/helpers/config';
 
 type UseOAuthProps = {
   clientId?: string;
   providerName: string;           // Name of the OAuth provider
   returnUrl: string;              // Return URL after OAuth flow
-  projectId: string;              // Project ID
-  linkedUserId: string;           // Linked User ID
+  projectId: string | undefined;              // Project ID
+  linkedUserId: string | undefined;           // Linked User ID
   onSuccess: () => void;
 };
 
@@ -20,7 +21,7 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
   }, []);
 
   const constructAuthUrl = () => {
-    const encodedRedirectUrl = encodeURIComponent(`${import.meta.env.VITE_BACKEND_DOMAIN}/connections/oauth/callback`);
+    const encodedRedirectUrl = encodeURIComponent(`${config.API_URL}/connections/oauth/callback`);
     const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
 
     const vertical = findProviderVertical(providerName);
@@ -28,14 +29,14 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
       return null;
     }
 
-    const config = providersConfig[vertical][providerName];
-    if (!config) {
+    const config_ = providersConfig[vertical][providerName];
+    if (!config_) {
       throw new Error(`Unsupported provider: ${providerName}`);
     }
 
-    const { clientId, scopes } = config;
+    const { clientId, scopes } = config_;
 
-    const baseUrl = config.authBaseUrl;
+    const baseUrl = config_.authBaseUrl;
     if (!baseUrl) {
       throw new Error(`Unsupported provider: ${providerName}`);
     }

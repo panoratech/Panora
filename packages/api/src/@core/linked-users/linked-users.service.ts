@@ -12,6 +12,13 @@ export class LinkedUsersService {
   async getLinkedUsers() {
     return await this.prisma.linked_users.findMany();
   }
+  async getLinkedUser(id: string) {
+    return await this.prisma.linked_users.findFirst({
+      where: {
+        id_linked_user: id,
+      },
+    });
+  }
   async addLinkedUser(data: CreateLinkedUserDto) {
     const { id_project, ...rest } = data;
     const res = await this.prisma.linked_users.create({

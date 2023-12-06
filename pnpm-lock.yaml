@@ -26,6 +26,9 @@ importers:
 
   apps/frontend-snippet:
     dependencies:
+      api:
+        specifier: workspace:*
+        version: link:../../packages/api
       react:
         specifier: ^18.2.0
         version: 18.2.0
