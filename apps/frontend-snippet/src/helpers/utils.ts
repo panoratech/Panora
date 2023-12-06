@@ -1,19 +1,3 @@
-export enum CRM_PROVIDERS {
-  ZOHO = 'zoho',
-  ZENDESK = 'zendesk',
-  HUBSPOT = 'hubspot',
-  PIPEDRIVE = 'pipedrive',
-  FRESHSALES = 'freshsales',
-}
-
-export enum ACCOUNTING_PROVIDERS {
-  PENNYLANE = 'pennylane',
-  FRESHBOOKS = 'freshbooks',
-  CLEARBOOKS = 'clearbooks',
-  FREEAGENT = 'freeagent',
-  SAGE = 'sage',
-}
-
 type ProviderConfig = {
   clientId: string;
   scopes: string;

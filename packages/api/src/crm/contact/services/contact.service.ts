@@ -130,7 +130,8 @@ export class ContactService {
 
   /* */
 
-  async getCustomProperties(linkedUserId: string) {
+  //TODO: do it for all providers
+  async getCustomProperties(linkedUserId: string, providerId: string) {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {

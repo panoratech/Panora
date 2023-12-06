@@ -1,7 +1,7 @@
 import { CrmObject } from '@crm/@types';
-import { ProviderVertical, getProviderVertical } from '../providers';
 import { DesunifyReturnType, TargetObject, Unified } from '../types';
 import { desunifyCrm } from '@crm/@unification';
+import { ProviderVertical, getProviderVertical } from 'shared-types';
 
 /* to insert data
 

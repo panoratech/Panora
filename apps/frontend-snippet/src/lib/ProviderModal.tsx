@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
-import useOAuth from '../hooks/useOAuth';
-import { findProviderByName, providersArray } from '../helpers/utils';
-
-const categories = ['CRM', 'Ticketing', 'Marketing Automation','ATS', 'Accounting', 'File Storage', 'HR & Payroll'];
-
+import useOAuth from '@/hooks/useOAuth';
+import { findProviderByName, providersArray } from '@/helpers/utils';
+import {categoriesVerticals} from 'shared-types';
+import useLinkedUser from '@/hooks/queries/useLinkedUser';
+import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
     const provider = findProviderByName(providerName);
@@ -35,36 +35,36 @@ const LoadingOverlay = ({ providerName }: { providerName: string }) => {
 };
 
 const ProviderModal = () => {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]); // Default to the first category
+  const [selectedCategory, setSelectedCategory] = useState(categoriesVerticals[0] as string); // Default to the first category
   const [selectedProvider, setSelectedProvider] = useState('');
   const [loading, setLoading] = useState<{
     status: boolean; provider: string
   }>({status: false, provider: ''});
-  const [linkedUserId, setLinkedUserId] = useState('');
-  const [projectId, setProjectId] = useState('');
+  const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState('');
 
-  useEffect(() => {
+  useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
-    const uniqueId = queryParams.get('unique-id');
+    const uniqueId = queryParams.get('uniqueLink');
     if (uniqueId) {
-      setLinkedUserId(uniqueId);
-    }
-    const projectId = queryParams.get('project-id');
-    if (projectId) {
-      setProjectId(projectId);
+      setUniqueMagicLinkId(uniqueId);
     }
   }, []);
 
-  //console.log("user-id "+ linkedUserId);
-  //console.log("project-id "+ projectId);
 
+  const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
+  const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
+
+  //TODO: externalize that in the backend => from  
   const { open, isReady } = useOAuth({
     providerName: selectedProvider, // This will be set when a provider is clicked
     returnUrl: 'http://127.0.0.1:5174/', // Replace with the actual return URL
-    projectId: projectId, // Replace with the actual project ID
-    linkedUserId: linkedUserId, //TODO: uuidv4(), // Replace with the actual user ID
+    projectId: linkedUser?.id_project, // Replace with the actual project ID
+    linkedUserId: linkedUser?.id_linked_user, //TODO: uuidv4(), // Replace with the actual user ID
     onSuccess: () => console.log('OAuth successful'),
   });
+
+  
+
 
   const onWindowClose = () => {
     setSelectedProvider('');
@@ -104,7 +104,7 @@ const ProviderModal = () => {
         {!loading.status ? 
             <div className="p-4 max-h-[32rem] overflow-auto scrollbar-hide">
                 <div className="flex mb-4 outline-none flex-wrap">
-                    {categories.map((category, index) => (
+                    {categoriesVerticals.map((category, index) => (
                     <button
                         key={index}
                         className={`px-3 py-1 mb-2 mr-1 rounded-full text-xs font-medium transition duration-150 ${selectedCategory === category ? 'bg-indigo-600 hover:bg-indigo-500	' : 'bg-neutral-700 hover:bg-neutral-600'}`}

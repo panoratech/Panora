@@ -14,9 +14,12 @@
     "ci": "pnpm run lint && pnpm run build"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.12.2",
+    "api": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-loader-spinner": "^5.4.5",
+    "shared-types": "workspace:*",
     "tailwind-scrollbar-hide": "^1.1.7",
     "uuid": "^9.0.1"
   },

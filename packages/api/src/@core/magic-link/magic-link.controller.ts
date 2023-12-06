@@ -1,5 +1,5 @@
 import { LoggerService } from '@@core/logger/logger.service';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { MagicLinkService } from './magic-link.service';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';
 
@@ -15,5 +15,15 @@ export class MagicLinkController {
   @Post('create')
   createLink(@Body() data: CreateMagicLinkDto) {
     return this.magicLinkService.createUniqueLink(data);
+  }
+
+  @Get()
+  getMagicLinks() {
+    return this.magicLinkService.getMagicLinks();
+  }
+
+  @Get()
+  getMagicLink(@Query('id') id: string) {
+    return this.magicLinkService.getMagicLink(id);
   }
 }

@@ -45,7 +45,8 @@
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4",
     "zustand": "^4.4.7",
-    "api": "workspace:*"
+    "api": "workspace:*",
+    "shared-types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.3.1",

@@ -10,6 +10,18 @@ export class MagicLinkService {
     this.logger.setContext(MagicLinkService.name);
   }
 
+  async getMagicLinks() {
+    return await this.prisma.invite_links.findMany();
+  }
+
+  async getMagicLink(id: string) {
+    return await this.prisma.invite_links.findFirst({
+      where: {
+        id_invite_link: id,
+      },
+    });
+  }
+
   async createUniqueLink(data: CreateMagicLinkDto) {
     const checkDup = await this.prisma.linked_users.findFirst({
       where: {
