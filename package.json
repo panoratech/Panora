@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "packageManager": "pnpm@8.9.2",
   "scripts": {
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "echo \"Error: no test specified\"",
     "prepare": "husky install",
     "version": "changeset version",
-    "release": "pnpm run lint && pnpm run build && changeset publish"
+    "release": "pnpm run lint && pnpm run build && changeset publish",
+    "preinstall": "npx only-allow pnpm"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +34,6 @@
   },
   "private": true,
   "engines": {
-    "node": ">=16.14.2"
+    "node": "20.9.0"
   }
 }

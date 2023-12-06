@@ -1,16 +1,48 @@
-# build stage
-FROM node:20-alpine as build-stage
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+# run directly from the repo root directory
+# docker build -f ./apps/webapp/Dockerfile .
+FROM node:20-alpine AS base
+# =======================================================================
+FROM base AS builder
+RUN apk add --no-cache libc6-compat
+RUN apk update
 
-# production stage
-FROM nginx:stable-alpine as production-stage
-COPY --from=build-stage /app/dist/ /usr/share/nginx/html
-RUN ls -la /usr/share/nginx/html
-RUN ls -la /usr/share/nginx/html
+# Set pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+RUN pnpm add -g turbo
+COPY . .
+RUN turbo prune webapp --docker
+RUN ls -la ./out/full/apps/webapp
+
+# =======================================================================
+# Add lockfile and package.json's of isolated subworkspace
+FROM base AS installer
+RUN apk add --no-cache libc6-compat
+RUN apk update
+# Set pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+ 
+# First install the dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN pnpm install
+
+# Build the project
+COPY --from=builder ./app/out/full/ .
+RUN pnpm turbo run build --filter=webapp...
+
+# ========================================================================
+FROM nginx:stable-alpine as runner
+
+COPY --from=installer ./app/apps/webapp/dist/ /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
