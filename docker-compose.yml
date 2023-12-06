@@ -34,8 +34,10 @@ services:
     build:
       dockerfile: ./apps/webapp/Dockerfile
       context: ./
+      args:
+        VITE_BACKEND_DOMAIN: https://api-staging.panora.dev
     environment:
-      VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN} 
+      #VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN} 
       VITE_FRONTEND_DOMAIN: webapp
     restart:
       unless-stopped

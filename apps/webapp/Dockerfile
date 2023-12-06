@@ -26,13 +26,13 @@ RUN apk update
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
+ARG VITE_BACKEND_DOMAIN
 ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
 
 RUN corepack enable
 
 WORKDIR /app
- 
+
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
@@ -46,7 +46,7 @@ RUN pnpm turbo run build --filter=webapp...
 # ========================================================================
 FROM nginx:stable-alpine as runner
 
-ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
+ARG VITE_BACKEND_DOMAIN
 ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
 
 COPY --from=installer ./app/apps/webapp/dist/ /usr/share/nginx/html
