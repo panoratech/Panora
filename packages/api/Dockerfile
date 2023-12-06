@@ -1,30 +1,48 @@
-FROM node:16-alpine AS base
+# run directly from the repo root directory
+# docker build -f ./packages/api/Dockerfile .
+FROM node:20-alpine AS base
+# =======================================================================
+FROM base AS builder
+RUN apk add --no-cache libc6-compat
+RUN apk update
 
+# Set pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-ARG DATABASE_URL
-ENV DATABASE_URL "$DATABASE_URL"
-#ENV DATABASE_URL="${DATABASE_URL}"
-ENV JWT_SECRET="${JWT_SECRET}"
-
 RUN corepack enable
-COPY . /app
+
+WORKDIR /app
+RUN pnpm add -g turbo
+COPY . .
+RUN turbo prune api --docker
+
+# resulat: full/, json/ pnpm-lock.yaml , pnpm-workspace.yaml
+# =======================================================================
+# Add lockfile and package.json's of isolated subworkspace
+FROM base AS installer
+RUN apk add --no-cache libc6-compat
+RUN apk update
+# Set pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+ 
+# First install the dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN pnpm install
+
+# Build the project
+COPY --from=builder /app/out/full/ .
+RUN pnpm turbo run build --filter=api...
+
+# ========================================================================
+FROM base AS runner
 WORKDIR /app
 
-#FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --no-frozen-lockfile
+COPY --from=installer ./app .
 
-#FROM base AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile
-RUN pnpm run build
-
-#FROM base
-#COPY --from=prod-deps /app/node_modules /app/node_modules
-#COPY --from=build /app/dist /app/dist
-#COPY --from=build /app/prisma /app/prisma
-#RUN ls /app/prisma
-
-EXPOSE 3000
-
-# Start the server
-CMD [ "node", "dist/src/main.js" ]
+CMD node /app/packages/api/dist/src/main.js

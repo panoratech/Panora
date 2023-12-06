@@ -4,7 +4,7 @@ version: '3.8'
 services:
 
   postgres:
-    image: postgres:14.6
+    image: postgres:16.1
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -16,7 +16,9 @@ services:
       - ./packages/api/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   api:
-    build: ./packages/api
+    build:
+      context: ./
+      dockerfile: ./packages/api/Dockerfile
     environment: 
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
         DISTRIBUTION: ${DISTRIBUTION}
@@ -29,7 +31,9 @@ services:
       - postgres
   
   webapp:
-    build: ./packages/webapp
+    build:
+      dockerfile: ./apps/webapp/Dockerfile
+      context: ./
     restart:
       unless-stopped
     ports:
