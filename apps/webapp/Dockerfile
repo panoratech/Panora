@@ -27,8 +27,9 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
 ARG VITE_BACKEND_DOMAIN
+ARG VITE_FRONTEND_DOMAIN
 ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
-
+ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
 RUN corepack enable
 
 WORKDIR /app
@@ -46,9 +47,10 @@ RUN pnpm turbo run build --filter=webapp...
 # ========================================================================
 FROM nginx:stable-alpine as runner
 
-ARG VITE_BACKEND_DOMAIN
-ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
-
+#ARG VITE_BACKEND_DOMAIN
+#ARG VITE_FRONTEND_DOMAIN
+#ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
+#ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
 COPY --from=installer ./app/apps/webapp/dist/ /usr/share/nginx/html
 
 EXPOSE 80

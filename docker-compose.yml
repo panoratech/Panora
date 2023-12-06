@@ -1,8 +1,11 @@
 name: panora
 version: '3.8'
 
-services:
+networks:
+  frontend:
+  backend:
 
+services:
   postgres:
     image: postgres:16.1
     environment:
@@ -14,6 +17,8 @@ services:
     volumes:
       - ./pg_data:/var/lib/postgresql/data
       - ./packages/api/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend
 
   api:
     build:
@@ -29,19 +34,22 @@ services:
       - 3000:3000
     depends_on:
       - postgres
+    networks:
+      - backend
   
   webapp:
     build:
       dockerfile: ./apps/webapp/Dockerfile
       context: ./
       args:
-        VITE_BACKEND_DOMAIN: https://api-staging.panora.dev
-    environment:
-      #VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN} 
-      VITE_FRONTEND_DOMAIN: webapp
+        VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
+        VITE_FRONTEND_DOMAIN: ${VITE_FRONTEND_DOMAIN}
     restart:
       unless-stopped
     ports:
       - 80:80
     depends_on:
       - api
+    networks:
+      - backend
+      - frontend
