@@ -2,13 +2,13 @@
 import { create } from 'zustand';
 
 interface ProjectState {
-  selectedProject: any;
-  setSelectedProject: (project: any) => void;
+  idProject: string;
+  setIdProject: (id: string) => void;
 }
 
 const useProjectStore = create<ProjectState>()((set) => ({
-  selectedProject: null,
-  setSelectedProject: (project) => set({ selectedProject: project }),
+  idProject: "123",
+  setIdProject: (id) => set({ idProject: id }),
 }));
 
 export default useProjectStore;

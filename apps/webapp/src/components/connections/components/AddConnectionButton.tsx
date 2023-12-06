@@ -49,21 +49,25 @@ const AddConnectionButton = ({
     setShowNewLinkedUserDialog(prevState => ({ ...prevState, open }));
   };
 
-  const { mutate } = useMagicLinkMutation();
+  const { mutate, isError, error } = useMagicLinkMutation();
 
-  const {selectedOrganisation} = useOrganisationStore();
-  const {selectedProject} = useProjectStore();
-
+  const {nameOrg} = useOrganisationStore();
+  const {idProject} = useProjectStore();
+  
   const handleGenerate = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
     mutate({ 
       linked_user_origin_id: linkedUserIdentifier, 
       email: linkedUserMail,
-      alias: selectedOrganisation.id_organisation,
-      id_project: selectedProject.id_project
+      alias: nameOrg,
+      id_project: idProject
     });
-    //setUniqueLink(data);
+    if(isError) {
+      console.log(error);
+    }
+    
     setIsGenerated(true);
+  
   };
   
   
@@ -166,7 +170,7 @@ const AddConnectionButton = ({
           </Button>
           <Button type="submit">Generate</Button>
         </DialogFooter>
-      </form>
+        </form>
       </DialogContent>
     </Dialog>    
   )

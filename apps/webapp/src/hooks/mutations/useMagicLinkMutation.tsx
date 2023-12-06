@@ -1,3 +1,4 @@
+import useMagicLinkStore from '@/state/magicLinkStore';
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -8,6 +9,7 @@ interface ILinkDto {
     alias: string;
     id_project: string;
 }
+
 const useMagicLinkMutation = () => {
     const generateLink = async (data: ILinkDto) => {
         const response = await fetch(`${config.API_URL}/magic-link/create`, {
@@ -24,6 +26,8 @@ const useMagicLinkMutation = () => {
         
         return response.json();
     };
+    const {setUniqueLink} = useMagicLinkStore();
+
     return useMutation({
         mutationFn: generateLink,
         onMutate: () => {
@@ -32,7 +36,8 @@ const useMagicLinkMutation = () => {
         onError: (error) => {
             toast.error(`Error: ${error.message}`);
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            setUniqueLink(data.id_invite_link)
             toast.success('Magic Link Generated successfully!');
         },
         onSettled: () => {
