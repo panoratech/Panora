@@ -13,12 +13,13 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+import { Skeleton } from "@/components/ui/skeleton";
 import useProfile from "@/hooks/useProfile";
 import useProfileStore from "@/state/profileStore";
 import { useEffect } from "react";
   
   export function UserNav() {
-    const {data} = useProfile();
+    const {data, isLoading} = useProfile();
     if(!data) {
       console.log("loading profiles");
     }
@@ -50,10 +51,11 @@ import { useEffect } from "react";
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
-                {profile && profile.first_name}
+                {profile ? profile.first_name : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No profiles found"}
+                
               </p>
               <p className="text-xs leading-none text-muted-foreground">
-                {profile && profile.email}
+              {profile ? profile.email : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No mail found"}
               </p>
             </div>
           </DropdownMenuLabel>

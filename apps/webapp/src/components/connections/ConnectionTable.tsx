@@ -1,11 +1,11 @@
 import { columns } from "./components/columns"
 import { DataTable } from "../shared/data-table"
 import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card"
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
@@ -14,18 +14,26 @@ import useConnections from "@/hooks/useConnections";
 import { DataTableLoading } from "../shared/data-table-loading";
 import { useState } from "react";
 import AddConnectionButton from "./components/AddConnectionButton";
+import { Skeleton } from "../ui/skeleton";
 
 export default function ConnectionTable() {
   const { data: connections, isLoading, error } = useConnections();
   const [isGenerated, setIsGenerated] = useState(false);
 
-  if(isLoading){
+  if (isLoading) {
     console.log("loading connections..");
   }
 
-  if(error){
+  if (error) {
     console.log("error connections..");
   }
+  if (!connections) {
+    return <div className="flex flex-col items-center">
+      Connections not found....
+      <Skeleton className="w-[100px] h-[20px] rounded-md mt-10" />
+    </div>;
+  }
+  const linkedConnections = (filter: string) => connections.filter((connection) => connection.status == filter);
 
   const ts = connections?.map((connection) => ({
     organisation: connection.id_project, // replace with actual mapping
@@ -36,45 +44,45 @@ export default function ConnectionTable() {
     date: new Date().toISOString(), // replace with actual mapping
   }))
 
- 
+
   return (
     <>
       <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
         <div className="flex items-center space-x-4 justify-between flex-row">
           <Card className="w-1/3">
-              <CardHeader>
-                  <CardTitle>Linked</CardTitle>
-              </CardHeader>
-              <CardContent>
-              <p className="text-4xl font-bold">0</p>
-              </CardContent>
+            <CardHeader>
+              <CardTitle>Linked</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold">{linkedConnections("0").length}</p>
+            </CardContent>
 
           </Card>
           <Card className="w-1/3">
-              <CardHeader>
-                  <CardTitle>Incomplete Link</CardTitle>
-              </CardHeader>
-              <CardContent>
-                  <p className="text-4xl font-bold">3</p>
-              </CardContent>
+            <CardHeader>
+              <CardTitle>Incomplete Link</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold">{linkedConnections("1").length}</p>
+            </CardContent>
           </Card>
           <Card className="w-1/3">
-              <CardHeader>
-                  <CardTitle>Relink Needed</CardTitle>
-              </CardHeader>
-              <CardContent>
-              <p className="text-4xl font-bold">1</p>
-              </CardContent>
+            <CardHeader>
+              <CardTitle>Relink Needed</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold">{linkedConnections("2").length}</p>
+            </CardContent>
 
           </Card>
-        
-                    
+
+
         </div>
         {isGenerated ? <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" className="">
-                <PlusCircledIcon className="mr-2 h-4 w-4" />
-                Add New Connection
+              <PlusCircledIcon className="mr-2 h-4 w-4" />
+              Add New Connection
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:w-[450px]">
@@ -86,17 +94,17 @@ export default function ConnectionTable() {
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-              <CopyLinkInput/>
+                <CopyLinkInput />
               </div>
             </div>
             <DialogFooter>
               <Button type="submit">Generate Link</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog> : 
-        <AddConnectionButton setIsGenerated={setIsGenerated}/>
+        </Dialog> :
+          <AddConnectionButton setIsGenerated={setIsGenerated} />
         }
-        {isLoading && <DataTableLoading data={[]} columns={columns}/>}
+        {isLoading && <DataTableLoading data={[]} columns={columns} />}
         {ts && <DataTable data={ts} columns={columns} />}
       </div>
     </>

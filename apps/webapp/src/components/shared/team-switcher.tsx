@@ -110,10 +110,6 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     setShowNewDialog({open: false})  
   };
 
-  if(!orgs) {
-    return <>DHJSDHJ</>
-  }
-
   return (
     <Dialog open={showNewDialog.open} onOpenChange={handleOpenChange}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -125,7 +121,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             aria-label="Select a team"
             className={cn("w-[250px] justify-between", className)}
           >
-            {selectedProject ? selectedProject.name : "not found"}
+            {selectedProject ? selectedProject.name : isloadingProjects ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No projects found"}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
