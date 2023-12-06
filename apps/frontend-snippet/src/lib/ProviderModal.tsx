@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
 import useOAuth from '../hooks/useOAuth';
 import { findProviderByName, providersArray } from '../helpers/utils';
-
-const categories = ['CRM', 'Ticketing', 'Marketing Automation','ATS', 'Accounting', 'File Storage', 'HR & Payroll'];
-
+import {categoriesVerticals} from 'shared-types';
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
     const provider = findProviderByName(providerName);
@@ -35,7 +33,7 @@ const LoadingOverlay = ({ providerName }: { providerName: string }) => {
 };
 
 const ProviderModal = () => {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]); // Default to the first category
+  const [selectedCategory, setSelectedCategory] = useState(categoriesVerticals[0] as string); // Default to the first category
   const [selectedProvider, setSelectedProvider] = useState('');
   const [loading, setLoading] = useState<{
     status: boolean; provider: string
@@ -104,7 +102,7 @@ const ProviderModal = () => {
         {!loading.status ? 
             <div className="p-4 max-h-[32rem] overflow-auto scrollbar-hide">
                 <div className="flex mb-4 outline-none flex-wrap">
-                    {categories.map((category, index) => (
+                    {categoriesVerticals.map((category, index) => (
                     <button
                         key={index}
                         className={`px-3 py-1 mb-2 mr-1 rounded-full text-xs font-medium transition duration-150 ${selectedCategory === category ? 'bg-indigo-600 hover:bg-indigo-500	' : 'bg-neutral-700 hover:bg-neutral-600'}`}

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PassThroughRequestDto } from './dto/passthrough.dto';
-import { getProviderVertical } from '@@core/utils/providers';
 import { domains } from '@@core/utils/types';
 import { PassThroughResponse } from './types';
 import axios, { AxiosResponse } from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { decrypt } from '@@core/utils/crypto';
+import { getProviderVertical } from 'shared-types';
 
 @Injectable()
 export class PassthroughService {

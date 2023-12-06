@@ -18,7 +18,8 @@
     "react-dom": "^18.2.0",
     "react-loader-spinner": "^5.4.5",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "shared-types": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

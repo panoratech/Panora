@@ -1,11 +1,10 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm-connection.service';
-import { ProviderVertical, getProviderVertical } from '@@core/utils/providers';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
-
+import { ProviderVertical, getProviderVertical } from 'shared-types';
 @Controller('connections')
 export class ConnectionsController {
   constructor(
