@@ -36,7 +36,7 @@ services:
       context: ./
     environment:
       VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN} 
-      VITE_FRONTEND_DOMAIN: ${VITE_FRONTEND_DOMAIN}
+      VITE_FRONTEND_DOMAIN: webapp
     restart:
       unless-stopped
     ports:
