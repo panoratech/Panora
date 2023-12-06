@@ -29,8 +29,8 @@ import useDefineFieldMutation from "@/hooks/mutations/useDefineFieldMutation"
 import useMapFieldMutation from "@/hooks/mutations/useMapFieldMutation"
 import { useEffect, useState } from "react"
 import useFieldMappings from "@/hooks/useFieldMappings"
-import useSourceCustomFields from "@/hooks/useSourceCustomFields"
 import { useStandardObjects } from "@/hooks/useStandardObjects"
+import useProviderProperties from "@/hooks/useProviderProperties"
 
 export function FModal({ onClose }: {onClose: () => void}) {
   const [standardModel, setStandardModel] = useState('');
@@ -48,7 +48,8 @@ export function FModal({ onClose }: {onClose: () => void}) {
   const { data: mappings } = useFieldMappings();
   const { mutate: mutateDefineField } = useDefineFieldMutation();
   const { mutate: mutateMapField } = useMapFieldMutation();
-  const { data: sourceCustomFields, error, isLoading } = useSourceCustomFields(sourceProvider);
+  const { data: sourceCustomFields, error, isLoading } = useProviderProperties(linkedUserId,sourceProvider,standardModel);
+
   const { data: sObjects } = useStandardObjects();
 
   useEffect(() => {

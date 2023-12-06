@@ -23,9 +23,11 @@ import { ProjectsModule } from './@core/projects/projects.module';
 import { FieldMappingModule } from './@core/field-mapping/field-mapping.module';
 import { JobsModule } from '@@core/jobs/jobs.module';
 import { MagicLinkModule } from './@core/magic-link/magic-link.module';
+import { PassthroughModule } from '@@core/passthrough/passthrough.module';
 
 @Module({
   imports: [
+    PassthroughModule,
     MagicLinkModule,
     JobsModule,
     FieldMappingModule,

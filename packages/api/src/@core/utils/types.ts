@@ -131,3 +131,14 @@ export type UnifySourceType =
   | AccountingObjectOutput
   | FileStorageObjectOutput
   | HrisObjectOutput;
+
+//TODO
+export const domains = {
+  CRM: {
+    hubspot: 'https://api.hubapi.com/',
+    zoho: 'https://www.zohoapis.com/crm/v3/',
+    zendesk: '',
+    freshsales: '',
+    pipedrive: '',
+  },
+};
