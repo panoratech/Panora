@@ -12,6 +12,34 @@ We do so by providing a single API that abstracts similar tools your customer ma
 
 This way, you can write one code to push data anywhere!
 
+# 🚀 Roadmap
+
+CRMs:
+
+- [x] Hubspot
+- [x] Zoho CRM
+- [x] Pipedrive
+- [x] Salesforce
+- [x] Zendesk
+- [ ] Other CRMs such as Freshsales, MS 365...
+
+Ticketing:
+
+- [ ] Slack
+- [ ] Discord
+- [ ] Jira
+- [ ] Asana
+- [ ] Microsoft Teams
+
+Accounting:
+
+- [ ] Sage
+- [ ] Freshbooks
+- [ ] Clearbooks
+- [ ] FreeAgent
+
+...and more
+
 # ✨ Join The Pre-Alpha
 
 We're currently in a private pre-alpha. Click [here](https://form.typeform.com/to/KtthfECD) to get notified when we go public !
