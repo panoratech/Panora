@@ -6,7 +6,7 @@ const useLinkedUser = (id: string) => {
   return useQuery({
     queryKey: ['linked-users', id], 
     queryFn: async (): Promise<LinkedUser> => {
-      const response = await fetch(`${config.API_URL}/linked-users?id=${id}`);
+      const response = await fetch(`${config.API_URL}/linked-users/single?id=${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

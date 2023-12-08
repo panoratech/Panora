@@ -33,6 +33,19 @@ export class ContactController {
     );
   }
 
+  @Get('sync')
+  syncContacts(
+    @Query('integrationId') integrationId: string,
+    @Query('linkedUserId') linkedUserId: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    return this.contactService.syncContacts(
+      integrationId,
+      linkedUserId,
+      remote_data,
+    );
+  }
+
   @Post()
   addContacts(
     @Body() unfiedContactData: UnifiedContactInput[],

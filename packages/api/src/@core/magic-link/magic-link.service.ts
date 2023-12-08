@@ -15,11 +15,15 @@ export class MagicLinkService {
   }
 
   async getMagicLink(id: string) {
-    return await this.prisma.invite_links.findFirst({
-      where: {
-        id_invite_link: id,
-      },
-    });
+    try {
+      return await this.prisma.invite_links.findFirst({
+        where: {
+          id_invite_link: id,
+        },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async createUniqueLink(data: CreateMagicLinkDto) {

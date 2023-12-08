@@ -29,7 +29,6 @@ import useDefineFieldMutation from "@/hooks/mutations/useDefineFieldMutation"
 import useMapFieldMutation from "@/hooks/mutations/useMapFieldMutation"
 import { useEffect, useState } from "react"
 import useFieldMappings from "@/hooks/useFieldMappings"
-import { useStandardObjects } from "@/hooks/useStandardObjects"
 import useProviderProperties from "@/hooks/useProviderProperties"
 
 export function FModal({ onClose }: {onClose: () => void}) {
@@ -50,11 +49,18 @@ export function FModal({ onClose }: {onClose: () => void}) {
   const { mutate: mutateMapField } = useMapFieldMutation();
   const { data: sourceCustomFields, error, isLoading } = useProviderProperties(linkedUserId,sourceProvider,standardModel);
 
-  const { data: sObjects } = useStandardObjects();
-
+  //const { data: sObjects } = useStandardObjects();
+  //TODO: get this from shared types
+  const sObjects = [
+    'contact',
+    'note',
+    'task'
+  ]
   useEffect(() => {
-    if (sourceCustomFields && !isLoading && !error) {
-      setSourceCustomFieldsData(sourceCustomFields);
+    if (sourceCustomFields && sourceCustomFields.data.length > 0  && !isLoading && !error) {
+      console.log("inside custom fields properties ");
+      
+      setSourceCustomFieldsData(sourceCustomFields.data);
     }
   }, [sourceCustomFields, isLoading, error]);
 
@@ -72,7 +78,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
   const handleMapSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutateMapField({
-      attributeId: attributeId,
+      attributeId: attributeId.trim(),
       source_custom_field_id: sourceCustomFieldId,
       source_provider: sourceProvider,
       linked_user_id: linkedUserId,
@@ -109,7 +115,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                     <SelectGroup>
                     {sObjects && sObjects
                         .map(sObject => (
-                          <SelectItem key={sObject.id_entity} value={sObject.ressource_owner_id}>{sObject.ressource_owner_id}</SelectItem>
+                          <SelectItem key={sObject} value={sObject}>{sObject}</SelectItem>
                         ))
                     }
                     </SelectGroup>
@@ -225,7 +231,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                   <SelectContent>
                     <SelectGroup>
                     {sourceCustomFieldsData.map(field => (
-                      <SelectItem key={field.id} value={field.id}>{field.name}</SelectItem>
+                      <SelectItem key={field.name} value={field.name}>{field.name}</SelectItem>
                     ))}
                     </SelectGroup>
                   </SelectContent>

@@ -19,19 +19,19 @@ export class FieldMappingController {
     this.logger.setContext(FieldMappingController.name);
   }
 
-  @Post('addObjectEntity')
+  /*@Post('addObjectEntity')
   addStandardObjectEntity(@Body() dto: StandardObjectDto) {
     return this.fieldMappingService.addStandardObjectEntity(
       dto.standardObjectName,
     );
-  }
+  }*/
 
-  @Get('getObjectEntity')
+  /*@Get('getObjectEntity')
   getStandardObjectEntity(@Query('object') standardObjectName: string) {
     return this.fieldMappingService.getEntityId(
       standardObjectName as StandardObject,
     );
-  }
+  }*/
 
   @Get('entities')
   getEntities() {

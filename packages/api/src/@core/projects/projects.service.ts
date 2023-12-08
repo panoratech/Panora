@@ -18,6 +18,7 @@ export class ProjectsService {
     const res = await this.prisma.projects.create({
       data: {
         ...rest,
+        sync_mode: 'pool',
         id_project: uuidv4(),
         id_organization: id_organization,
       },

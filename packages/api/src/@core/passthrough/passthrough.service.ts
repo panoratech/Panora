@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PassThroughRequestDto } from './dto/passthrough.dto';
-import { domains } from '@@core/utils/types';
+import { domains, getProviderVertical } from '@@core/utils/types';
 import { PassThroughResponse } from './types';
 import axios, { AxiosResponse } from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { decrypt } from '@@core/utils/crypto';
-import { getProviderVertical } from 'shared-types';
 
 @Injectable()
 export class PassthroughService {
@@ -17,11 +16,14 @@ export class PassthroughService {
     integrationId: string,
     linkedUserId: string,
   ): Promise<PassThroughResponse> {
-    const job_resp_create = await this.prisma.jobs.create({
+    const job_resp_create = await this.prisma.events.create({
       data: {
-        id_job: uuidv4(),
+        id_event: uuidv4(), // Generate a new UUID for each job
+        status: 'initialized', // Use whatever status is appropriate
+        type: 'pull',
+        direction: '0',
+        timestamp: new Date(),
         id_linked_user: linkedUserId,
-        status: 'initialized',
       },
     });
     const { method, path, data, headers } = requestParams;
@@ -51,9 +53,9 @@ export class PassthroughService {
       console.error(error);
       throw error;
     }
-    const job_resp_update = await this.prisma.jobs.update({
+    const job_resp_update = await this.prisma.events.update({
       where: {
-        id_job: job_resp_create.id_job,
+        id_event: job_resp_create.id_event,
       },
       data: {
         status: 'written',

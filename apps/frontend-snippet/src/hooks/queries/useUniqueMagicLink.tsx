@@ -6,7 +6,7 @@ const useUniqueMagicLink = (id: string) => {
   return useQuery({
     queryKey: ['magic-link', id], 
     queryFn: async (): Promise<MagicLink> => {
-      const response = await fetch(`${config.API_URL}/magic-link?id=${id}`);
+      const response = await fetch(`${config.API_URL}/magic-link/single?id=${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

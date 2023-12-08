@@ -15,6 +15,6 @@ export class JobsController {
 
   @Get()
   async getJobs() {
-    return await this.prisma.jobs.findMany();
+    return await this.prisma.events.findMany();
   }
 }
