@@ -18,12 +18,12 @@
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "mailto:hi@panora.dev"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "name": "Home",
+    "url": "https://panora.dev"
   },
   "tabs": [
     {
@@ -39,13 +39,13 @@
     },
     {
       "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
+      "icon": "discord",
+      "url": "https://discord.gg/G7fr4HNyTb"
     },
     {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "Twitter",
+      "icon": "twitter",
+      "url": "https://twitter.com/panoradotdev"
     }
   ],
   "navigation": [
@@ -71,8 +71,9 @@
     }
   ],
   "footerSocials": {
-    "twitter": "https://twitter.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "twitter": "https://twitter.com/panoradotdev",
+    "github": "https://github.com/panoratech/Panora",
+    "discord": "https://discord.gg/G7fr4HNyTb",
+    "linkedin": "https://#"
   }
 }
