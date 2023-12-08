@@ -1,7 +1,5 @@
-# Panora Integration
+# Panora Integrations
 
-This subfolder contains Panora integrations with various CRM platforms, for the object "contact". 
-Below is a table showing the supported CRM platforms and their corresponding features.
 
 | Panora        | Unified Write | Passthrough Requests | Remote Data |
 | ------------- | ------------- | -------------------- | ----------- |
@@ -11,21 +9,17 @@ Below is a table showing the supported CRM platforms and their corresponding fea
 | Pipedrive     | ✔️             | ✔️                  | ✔️          |
 | Freshsales    | ✔️             | ✔️                  | ✔️          |
 
-## Features
+## Can't find your CRM?  
 
-### Unified Write
-- The Unified Write feature allows seamless data synchronization between Panora and the respective CRM platforms.
 
-### Passthrough Requests
-- Passthrough Requests enable efficient communication by passing requests directly between Panora and the CRM platforms.
+1. **Click [here](https://panora.canny.io/integration-requests) to ask the Panora community for this integration.**
+2. Browse existing requests to check if someone else has already suggested the CRM you have in mind. If so, you can upvote the existing request to show your support.
+3. If your desired CRM isn't already listed, click the "New Post" button to submit a new integration request. Provide as much detail as possible about the CRM and the reasons for integration.
 
-### Remote Data
-- Remote Data functionality allows Panora to retrieve and work with data stored remotely in the supported CRM systems.
+Thanks! 🙏
 
-## Getting Started
 
-Follow the instructions below to integrate Panora with your chosen CRM platform:
+## Want to add an integration?
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/your-username/panora-integration.git
+
+**Click [here](https://github.com/panoratech/Panora/blob/docs-crmcontact/CONTRIBUTING.md) to learn more!**
