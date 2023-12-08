@@ -1,0 +1,28 @@
+{
+  "unversionedId": "Start/getting-started",
+  "id": "Start/getting-started",
+  "title": "Getting Started",
+  "description": "There are three ways for you to get started with Panora:",
+  "source": "@site/docs/Start/getting-started.mdx",
+  "sourceDirName": "Start",
+  "slug": "/Start/getting-started",
+  "permalink": "/Start/getting-started",
+  "draft": false,
+  "editUrl": "https://github.com/panoratech/Panora/edit/main/docs/docs/Start/getting-started.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "title": "Getting Started",
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Welcome",
+    "permalink": "/"
+  },
+  "next": {
+    "title": "Self-Hosting",
+    "permalink": "/Start/self-hosted"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/",
+          "mainDocId": "homepage",
+          "docs": [
+            {
+              "id": "Contribute/local-setup",
+              "path": "/Contribute/local-setup",
+              "sidebar": "docs"
+            },
+            {
+              "id": "homepage",
+              "path": "/",
+              "sidebar": "docs"
+            },
+            {
+              "id": "Start/getting-started",
+              "path": "/Start/getting-started",
+              "sidebar": "docs"
+            },
+            {
+              "id": "Start/self-hosted",
+              "path": "/Start/self-hosted",
+              "sidebar": "docs"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "tutorialSidebar": {
+              "link": {
+                "path": "/",
+                "label": "homepage"
+              }
+            },
+            "docs": {
+              "link": {
+                "path": "/",
+                "label": "Welcome"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": false
+    }
+  }
+}

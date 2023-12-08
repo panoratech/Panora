@@ -1,0 +1,28 @@
+{
+  "unversionedId": "Start/self-hosted",
+  "id": "Start/self-hosted",
+  "title": "Self-Hosting",
+  "description": "Right now, Docker containers are the only hosting option we support.",
+  "source": "@site/docs/Start/self-hosted.mdx",
+  "sourceDirName": "Start",
+  "slug": "/Start/self-hosted",
+  "permalink": "/Start/self-hosted",
+  "draft": false,
+  "editUrl": "https://github.com/panoratech/Panora/edit/main/docs/docs/Start/self-hosted.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "title": "Self-Hosting",
+    "sidebar_position": 2
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Getting Started",
+    "permalink": "/Start/getting-started"
+  },
+  "next": {
+    "title": "Local Setup",
+    "permalink": "/Contribute/local-setup"
+  }
+}
