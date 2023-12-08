@@ -14,18 +14,6 @@ export class FieldMappingService {
     this.logger.setContext(FieldMappingService.name);
   }
 
-  /* UTILS */
-  // create a set of entities inside our db and save their entity id
-  async addStandardObjectEntity(standardObjectName: string) {
-    const entity = await this.prisma.entity.create({
-      data: {
-        id_entity: uuidv4(),
-        ressource_owner_id: standardObjectName,
-      },
-    });
-    return entity;
-  }
-
   async getAttributes() {
     return await this.prisma.attribute.findMany();
   }
@@ -39,14 +27,14 @@ export class FieldMappingService {
   }
 
   // and then retrieve them by their name
-  async getEntityId(standardObject: StandardObject) {
+  /*async getEntityId(standardObject: StandardObject) {
     const res = await this.prisma.entity.findFirst({
       where: {
         ressource_owner_id: standardObject as string,
       },
     });
     return res.id_entity;
-  }
+  }*/
 
   async getCustomFieldMappings(
     integrationId: string,
@@ -57,9 +45,7 @@ export class FieldMappingService {
       where: {
         source: integrationId,
         id_consumer: linkedUserId,
-        entity: {
-          ressource_owner_id: standard_object,
-        },
+        ressource_owner_type: standard_object,
       },
       select: {
         remote_id: true,
@@ -70,8 +56,8 @@ export class FieldMappingService {
 
   async defineTargetField(dto: DefineTargetFieldDto) {
     // Create a new attribute in your system representing the target field
-    const id_entity = await this.getEntityId(dto.object_type_owner);
-    this.logger.log('id entity is ' + id_entity);
+    //const id_entity = await this.getEntityId(dto.object_type_owner);
+    //this.logger.log('id entity is ' + id_entity);
     const attribute = await this.prisma.attribute.create({
       data: {
         id_attribute: uuidv4(),
@@ -83,9 +69,8 @@ export class FieldMappingService {
         // below is done in step 2
         remote_id: '',
         source: '',
-        id_entity: id_entity,
+        //id_entity: id_entity,
         scope: 'user', // [user | org] wide
-        //id_consumer: '00000000-0000-0000-0000-000000000000', //default
       },
     });
 
@@ -93,32 +78,22 @@ export class FieldMappingService {
   }
 
   async mapFieldToProvider(dto: MapFieldToProviderDto) {
-    // todo: include a value inside value table as mapping is done here
-    const updatedAttribute = await this.prisma.attribute.update({
-      where: {
-        id_attribute: dto.attributeId,
-      },
-      data: {
-        remote_id: dto.source_custom_field_id,
-        source: dto.source_provider,
-        id_consumer: dto.linked_user_id,
-        status: 'mapped',
-      },
-    });
+    try {
+      const updatedAttribute = await this.prisma.attribute.update({
+        where: {
+          id_attribute: dto.attributeId.trim(),
+        },
+        data: {
+          remote_id: dto.source_custom_field_id,
+          source: dto.source_provider,
+          id_consumer: dto.linked_user_id.trim(),
+          status: 'mapped',
+        },
+      });
 
-    return updatedAttribute;
-
-    //insert inside the table value
-
-    /*const valueInserted = await this.prisma.value.create({
-      data: {
-        id_value: uuidv4(),
-        data: dto.data,
-        id_entity: updatedAttribute.id_entity,
-        id_attribute: dto.attributeId,
-      },
-    });
-
-    return updatedAttribute;*/
+      return updatedAttribute;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

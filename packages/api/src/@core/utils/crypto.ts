@@ -8,7 +8,7 @@ export function encrypt(data: string): string {
   try {
     const cipher = crypto.createCipheriv(
       'aes-256-cbc',
-      Buffer.from(secretKey),
+      Buffer.from(secretKey, 'utf-8'),
       iv,
     );
     let encrypted = cipher.update(data, 'utf8', 'hex');

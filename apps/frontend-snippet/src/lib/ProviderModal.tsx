@@ -50,9 +50,11 @@ const ProviderModal = () => {
     }
   }, []);
 
-
+  
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
   const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
+
+
 
   //TODO: externalize that in the backend => from  
   const { open, isReady } = useOAuth({

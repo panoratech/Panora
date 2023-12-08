@@ -25,31 +25,19 @@ model crm_contacts {
   last_name           String
   created_at          DateTime              @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
-  id_job              String                @db.Uuid
+  origin              String
+  origin_id           String
   id_crm_user         String?               @db.Uuid
+  id_event            String                @db.Uuid
   crm_addresses       crm_addresses[]
   crm_users           crm_users?            @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_23")
-  jobs                jobs                  @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "job_id_crm_contact")
+  events              events                @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "job_id_crm_contact")
   crm_email_addresses crm_email_addresses[]
   crm_notes           crm_notes[]
   crm_phone_numbers   crm_phone_numbers[]
 
-  @@index([id_job], map: "crm_contact_id_job")
+  @@index([id_event], map: "crm_contact_id_job")
   @@index([id_crm_user], map: "fk_crm_contact_userid")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model jobs {
-  id_job              String                @id(map: "pk_jobs") @db.Uuid
-  status              String
-  timestamp           DateTime              @default(now()) @db.Timestamp(6)
-  id_linked_user      String                @db.Uuid
-  crm_companies       crm_companies[]
-  crm_contacts        crm_contacts[]
-  linked_users        linked_users          @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
-  jobs_status_history jobs_status_history[]
-
-  @@index([id_linked_user], map: "fk_linkeduserid_projectid")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -58,10 +46,10 @@ model jobs_status_history {
   timestamp              DateTime @default(now()) @db.Timestamp(6)
   previous_status        String
   new_status             String
-  id_job                 String   @db.Uuid
-  jobs                   jobs     @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "fk_4")
+  id_event               String   @db.Uuid
+  events                 events   @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_4")
 
-  @@index([id_job], map: "id_job_jobs_status_history")
+  @@index([id_event], map: "id_job_jobs_status_history")
 }
 
 model organizations {
@@ -76,6 +64,8 @@ model projects {
   id_project      String         @id(map: "pk_projects") @db.Uuid
   name            String
   id_organization String         @db.Uuid
+  sync_mode       String
+  pull_frequency  BigInt?
   api_keys        api_keys[]
   connections     connections[]
   linked_users    linked_users[]
@@ -128,8 +118,8 @@ model linked_users {
   alias                 String
   id_project            String         @db.Uuid
   connections           connections[]
+  events                events[]
   invite_links          invite_links[]
-  jobs                  jobs[]
   projects              projects       @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_10")
 
   @@index([id_project], map: "fk_proectid_linked_users")
@@ -176,10 +166,10 @@ model crm_companies {
   number_of_employees BigInt?
   created_at          DateTime              @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
-  id_job              String                @db.Uuid
   id_crm_user         String?               @db.Uuid
+  id_event            String                @db.Uuid
   crm_addresses       crm_addresses[]
-  jobs                jobs                  @relation(fields: [id_job], references: [id_job], onDelete: NoAction, onUpdate: NoAction, map: "fk_13")
+  events              events                @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_13")
   crm_users           crm_users?            @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_24")
   crm_email_addresses crm_email_addresses[]
   crm_engagements     crm_engagements[]
@@ -188,7 +178,7 @@ model crm_companies {
   crm_tasks           crm_tasks[]
 
   @@index([id_crm_user], map: "fk_crm_company_crm_userid")
-  @@index([id_job], map: "fk_crm_company_jobid")
+  @@index([id_event], map: "fk_crm_company_jobid")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -307,10 +297,10 @@ model attribute {
   data_type            String
   remote_id            String
   source               String
-  id_entity            String  @db.Uuid
+  id_entity            String? @db.Uuid
   scope                String
   id_consumer          String? @db.Uuid
-  entity               entity  @relation(fields: [id_entity], references: [id_entity], onDelete: NoAction, onUpdate: NoAction, map: "fk_32")
+  entity               entity? @relation(fields: [id_entity], references: [id_entity], onDelete: NoAction, onUpdate: NoAction, map: "fk_32")
   value                value[]
 
   @@index([id_entity], map: "fk_attribute_entityid")
@@ -319,7 +309,7 @@ model attribute {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model entity {
   id_entity          String      @id(map: "pk_entity") @db.Uuid
-  ressource_owner_id String
+  ressource_owner_id String      @db.Uuid
   attribute          attribute[]
   value              value[]
 }
@@ -379,4 +369,20 @@ model invite_links {
   linked_users   linked_users @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_37")
 
   @@index([id_linked_user], map: "fk_invite_link_linkeduserid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model events {
+  id_event            String                @id(map: "pk_jobs") @db.Uuid
+  status              String
+  type                String
+  direction           String
+  timestamp           DateTime              @default(now()) @db.Timestamp(6)
+  id_linked_user      String                @db.Uuid
+  crm_companies       crm_companies[]
+  crm_contacts        crm_contacts[]
+  linked_users        linked_users          @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
+  jobs_status_history jobs_status_history[]
+
+  @@index([id_linked_user], map: "fk_linkeduserid_projectid")
 }

@@ -17,7 +17,7 @@ export class HubspotConnectionService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(HubspotConnectionService.name);
   }
-  async addLinkedUserAndProjectTest() {
+  /*async addLinkedUserAndProjectTest() {
     const newOrganization = {
       id_organization: uuidv4(),
       name: 'New Organization',
@@ -34,6 +34,7 @@ export class HubspotConnectionService {
       id_project: uuidv4(),
       name: 'New Project',
       id_organization: newOrganization.id_organization,
+      sync_mode: 'pool',
     };
     const data1 = await this.prisma.projects.create({
       data: newProject,
@@ -51,7 +52,7 @@ export class HubspotConnectionService {
       data: newLinkedUser,
     });
     this.logger.log('Added new linked_user ' + data);
-  }
+  }*/
 
   async handleHubspotCallback(
     linkedUserId: string,

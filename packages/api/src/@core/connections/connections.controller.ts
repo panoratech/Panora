@@ -4,7 +4,7 @@ import { CrmConnectionsService } from './crm/services/crm-connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ProviderVertical, getProviderVertical } from 'shared-types';
+import { ProviderVertical, getProviderVertical } from '@@core/utils/types';
 @Controller('connections')
 export class ConnectionsController {
   constructor(

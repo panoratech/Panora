@@ -2,7 +2,7 @@ import { columns } from "./components/columns"
 import { DataTable } from "../shared/data-table"
 import useJobs from "@/hooks/useJobs";
 import { DataTableLoading } from "../shared/data-table-loading";
-import { jobs as Job } from "api";
+import { events as Job } from "api";
 
 export default function JobsTable() {
   const { data: jobs, isLoading, error } = useJobs();

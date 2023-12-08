@@ -27,6 +27,7 @@ async function main() {
     id_project: uuidv4(),
     name: `Project ${index + 1}`,
     id_organization: org.id_organization,
+    sync_mode: 'pool',
   }));
 
   await prisma.projects.createMany({
@@ -34,7 +35,7 @@ async function main() {
   });
 
   // Seed the `linked_users` table with 10 linked users
-  const linkedUsersData = Array.from({ length: 10 }).map((_, index) => ({
+  /*const linkedUsersData = Array.from({ length: 10 }).map((_, index) => ({
     id_linked_user: uuidv4(),
     linked_user_origin_id: `acme_origin_id_${uuidv4()}`,
     alias: `Acme Inc`,
@@ -186,13 +187,15 @@ async function main() {
 
   // Seed the `jobs` table with 20 jobs
   const jobsData = Array.from({ length: 10 }).map((_, index) => ({
-    id_job: uuidv4(), // Generate a new UUID for each job
+    id_event: uuidv4(), // Generate a new UUID for each job
     status: 'initialized', // Use whatever status is appropriate
+    type: 'pull',
+    direction: '0',
     timestamp: new Date(),
     id_linked_user: linkedUsersData[index].id_linked_user,
   }));
 
-  const jobs = await prisma.jobs.createMany({
+  const jobs = await prisma.events.createMany({
     data: jobsData,
     skipDuplicates: true, // Set to true to ignore conflicts (optional)
   });

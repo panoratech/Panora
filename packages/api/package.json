@@ -51,8 +51,7 @@
     "pino-pretty": "^10.2.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "uuid": "^9.0.1",
-    "shared-types": "workspace:*"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

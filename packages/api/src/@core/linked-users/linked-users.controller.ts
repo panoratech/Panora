@@ -20,7 +20,7 @@ export class LinkedUsersController {
   getLinkedUsers() {
     return this.linkedUsersService.getLinkedUsers();
   }
-  @Get()
+  @Get('single')
   getLinkedUser(@Query('id') id: string) {
     return this.linkedUsersService.getLinkedUser(id);
   }

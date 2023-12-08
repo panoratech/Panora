@@ -1,7 +1,12 @@
 import { CrmObject } from '@crm/@types';
-import { TargetObject, UnifyReturnType, UnifySourceType } from '../types';
+import {
+  ProviderVertical,
+  TargetObject,
+  UnifyReturnType,
+  UnifySourceType,
+  getProviderVertical,
+} from '../types';
 import { unifyCrm } from '@crm/@unification';
-import { ProviderVertical, getProviderVertical } from 'shared-types';
 
 /* to fetch data
 

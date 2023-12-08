@@ -22,7 +22,7 @@ export class MagicLinkController {
     return this.magicLinkService.getMagicLinks();
   }
 
-  @Get()
+  @Get('single')
   getMagicLink(@Query('id') id: string) {
     return this.magicLinkService.getMagicLink(id);
   }
