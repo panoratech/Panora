@@ -1,77 +1,49 @@
 ---
-title: 'Development'
-description: 'Learn how to preview changes locally'
+title: 'Quick Try'
+description: 'Try Self-hosted Panora and start shipping integrations in less than 5 minutes'
+
 ---
 
 <Info>
-  **Prerequisite** You should have installed Node.js (version 18.10.0 or
-  higher).
+  **Prerequisite:** You should have Git and Docker installed
 </Info>
 
-Step 1. Install Mintlify on your OS:
+Step 1. Open a terminal and download Panora:
 
-<CodeGroup>
-
-```bash npm
-npm i -g mintlify
+```bash bash
+git clone https://github.com/panoratech/Panora.git
 ```
 
-```bash yarn
-yarn global add mintlify
-```
-
-</CodeGroup>
-
-Step 2. Go to the docs are located (where you can find `mint.json`) and run the following command:
+Step 2. Run the following command to enter the folder:
 
 ```bash
-mintlify dev
+cd Panora
 ```
 
-The documentation website is now available at `http://localhost:3000`.
-
-### Custom Ports
-
-Mintlify uses port 3000 by default. You can use the `--port` flag to customize the port Mintlify runs on. For example, use this command to run in port 3333:
+Step 3. Run the following command to start Panora
 
 ```bash
-mintlify dev --port 3333
+docker compose --env-file ./.env.example up -d
 ```
 
-You will see an error like this if you try to run Mintlify in a port that's already taken:
-
-```md
-Error: listen EADDRINUSE: address already in use :::3000
-```
-
-## Mintlify Versions
-
-Each CLI is linked to a specific version of Mintlify. Please update the CLI if your local website looks different than production.
-
-<CodeGroup>
-
-```bash npm
-npm i -g mintlify@latest
-```
-
-```bash yarn
-yarn global upgrade mintlify
-```
-
-</CodeGroup>
-
-## Deployment
+Step 4. Wait for Panora to download and run
 
 <Tip>
-  Unlimited editors available under the [Startup
-  Plan](https://mintlify.com/pricing)
+  Use the following command to check progress. Look at services "Panora-api" and  "Panora-webapp" and check in column STATUS both are "UP"
+  ```bash
+docker ps
+```
+
 </Tip>
+After a few minutes Panora's dashboard will be available at `http://localhost`.
+The backend runs on `http://localhost:3000`
 
-You should see the following if the deploy successfully went through:
+### Congrats, Panora is now ready 🍾🔥
+### What's next? 
 
-<Frame>
-  <img src="/images/checks-passed.png" style={{ borderRadius: '0.5rem' }} />
-</Frame>
+Panora is now ready 🍾🔥
+
+You can invite users to connect with their CRM with a Magic Link (no code needed), or using the API 
 
 ## Troubleshooting
 
