@@ -13,7 +13,7 @@ export class PassthroughController {
     this.loggerSeervice.setContext(PassthroughController.name);
   }
 
-  @Post('passthrough')
+  @Post()
   async passthroughRequest(
     @Query('integrationId') integrationId: string,
     @Query('linkedUserId') linkedUserId: string,
