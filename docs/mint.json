@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Panora Documentation",
   "feedback.thumbsRating": true,
   "logo": {
     "dark": "/logo/dark.svg",
@@ -8,23 +8,23 @@
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#000000",
+    "light": "#ffffff",
+    "dark": "#000000",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#000000",
+      "to": "#000000"
     }
   },
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@panora.dev"
+      "url": "https://discord.gg/G7fr4HNyTb"
     }
   ],
   "topbarCtaButton": {
-    "name": "Home",
-    "url": "https://panora.dev"
+    "name": "Dashboard",
+    "url": "https://app.panora.dev"
   },
   "tabs": [
     {
@@ -39,7 +39,7 @@
       "url": "https://mintlify.com/docs"
     },
     {
-      "name": "Community",
+      "name": "Discord Community",
       "icon": "discord",
       "url": "https://discord.gg/G7fr4HNyTb"
     },
