@@ -37,6 +37,16 @@ services:
     networks:
       - backend
   
+
+  docs:
+    build:
+      context: ./
+      dockerfile: ./docs/Dockerfile
+    restart:
+      always
+    ports:
+      - 5000:3000
+  
   webapp:
     build:
       dockerfile: ./apps/webapp/Dockerfile
