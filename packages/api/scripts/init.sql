@@ -1,6 +1,4 @@
 
-
-
 -- ************************************** organizations
 
 CREATE TABLE organizations
@@ -23,7 +21,7 @@ CREATE TABLE organizations
 CREATE TABLE entity
 (
  id_entity          uuid NOT NULL,
- ressource_owner_id text NOT NULL,
+ ressource_owner_id uuid NOT NULL,
  CONSTRAINT PK_entity PRIMARY KEY ( id_entity )
 );
 
@@ -132,6 +130,8 @@ CREATE TABLE projects
  id_project      uuid NOT NULL,
  name            text NOT NULL,
  id_organization uuid NOT NULL,
+ sync_mode       text NOT NULL,
+ pull_frequency  bigint NULL,
  CONSTRAINT PK_projects PRIMARY KEY ( id_project ),
  CONSTRAINT FK_6 FOREIGN KEY ( id_organization ) REFERENCES organizations ( id_organization )
 );
@@ -143,6 +143,10 @@ CREATE INDEX FK_1_projects ON projects
 
 
 
+COMMENT ON COLUMN projects.sync_mode IS 'can be realtime or periodic_pull';
+COMMENT ON COLUMN projects.pull_frequency IS 'frequency in seconds for pulls
+
+ex 3600 for one hour';
 
 
 
@@ -317,31 +321,6 @@ CREATE INDEX FK_api_keys_projects ON api_keys
 
 
 
--- ************************************** jobs
-
-CREATE TABLE jobs
-(
- id_job         uuid NOT NULL,
- status         text NOT NULL,
- "timestamp"      timestamp NOT NULL DEFAULT NOW(),
- id_linked_user uuid NOT NULL,
- CONSTRAINT PK_jobs PRIMARY KEY ( id_job ),
- CONSTRAINT FK_12 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
-);
-
-CREATE INDEX FK_linkeduserID_projectID ON jobs
-(
- id_linked_user
-);
-
-
-
-COMMENT ON COLUMN jobs.status IS 'pending,, retry_scheduled, failed, success';
-
-
-
-
-
 -- ************************************** invite_links
 
 CREATE TABLE invite_links
@@ -361,6 +340,33 @@ CREATE INDEX FK_invite_link_linkedUserID ON invite_links
 
 
 
+
+
+
+
+
+-- ************************************** events
+
+CREATE TABLE events
+(
+ id_event       uuid NOT NULL,
+ status         text NOT NULL,
+ type           text NOT NULL,
+ direction      text NOT NULL,
+ "timestamp"      timestamp NOT NULL DEFAULT NOW(),
+ id_linked_user uuid NOT NULL,
+ CONSTRAINT PK_jobs PRIMARY KEY ( id_event ),
+ CONSTRAINT FK_12 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
+);
+
+CREATE INDEX FK_linkeduserID_projectID ON events
+(
+ id_linked_user
+);
+
+
+
+COMMENT ON COLUMN events.status IS 'pending,, retry_scheduled, failed, success';
 
 
 
@@ -414,14 +420,14 @@ CREATE TABLE jobs_status_history
  "timestamp"              timestamp NOT NULL DEFAULT NOW(),
  previous_status        text NOT NULL,
  new_status             text NOT NULL,
- id_job                 uuid NOT NULL,
+ id_event               uuid NOT NULL,
  CONSTRAINT PK_jobs_status_history PRIMARY KEY ( id_jobs_status_history ),
- CONSTRAINT FK_4 FOREIGN KEY ( id_job ) REFERENCES jobs ( id_job )
+ CONSTRAINT FK_4 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
 );
 
 CREATE INDEX id_job_jobs_status_history ON jobs_status_history
 (
- id_job
+ id_event
 );
 
 
@@ -442,16 +448,18 @@ CREATE TABLE crm_contacts
  last_name      text NOT NULL,
  created_at     timestamp NOT NULL,
  modified_at    timestamp NOT NULL,
- id_job         uuid NOT NULL,
+ origin         text NOT NULL,
+ origin_id      text NOT NULL,
  id_crm_user    uuid NULL,
+ id_event       uuid NOT NULL,
  CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
- CONSTRAINT job_id_crm_contact FOREIGN KEY ( id_job ) REFERENCES jobs ( id_job ),
+ CONSTRAINT job_id_crm_contact FOREIGN KEY ( id_event ) REFERENCES events ( id_event ),
  CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
 
 CREATE INDEX crm_contact_id_job ON crm_contacts
 (
- id_job
+ id_event
 );
 
 CREATE INDEX FK_crm_contact_userID ON crm_contacts
@@ -476,11 +484,11 @@ CREATE TABLE crm_companies
  number_of_employees bigint NULL,
  created_at          timestamp NOT NULL,
  modified_at         timestamp NOT NULL,
- id_job              uuid NOT NULL,
  id_crm_user         uuid NULL,
+ id_event            uuid NOT NULL,
  CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
  CONSTRAINT FK_24 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
- CONSTRAINT FK_13 FOREIGN KEY ( id_job ) REFERENCES jobs ( id_job )
+ CONSTRAINT FK_13 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
 );
 
 CREATE INDEX FK_crm_company_crm_userID ON crm_companies
@@ -490,7 +498,7 @@ CREATE INDEX FK_crm_company_crm_userID ON crm_companies
 
 CREATE INDEX FK_crm_company_jobID ON crm_companies
 (
- id_job
+ id_event
 );
 
 
