@@ -3,8 +3,8 @@
   "name": "Panora Documentation",
   "feedback.thumbsRating": true,
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/logo-panora-white.png",
+    "light": "/logo/logo-panora-white.png"
   },
   "favicon": "/favicon.svg",
   "colors": {
@@ -36,7 +36,7 @@
     {
       "name": "Documentation",
       "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "url": "https://docs.panora.dev"
     },
     {
       "name": "Discord Community",
