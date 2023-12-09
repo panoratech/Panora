@@ -43,6 +43,10 @@ This way, you can write one code to push data anywhere!
 You can now open your browser and go to <http://localhost> to connect to the application. Panora's API is exposed at <http://localhost:3000>.
 Read more on our [quickstart guide](https://docs.panora.dev/quickstart)
 
+<img width="1287" alt="Capture d’écran 2023-12-09 à 01 43 02" src="https://github.com/panoratech/Panora/assets/39710677/4f775221-014d-48fa-bbc2-ccdc7b93bd81">
+
+
+
 # ✨ Join The cloud Pre-Alpha
 
 We're launching our clourd version soon. Click [here](https://form.typeform.com/to/KtthfECD) to get notified when we go public!
