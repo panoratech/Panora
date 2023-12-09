@@ -7,39 +7,36 @@ description: 'Start shipping awesome integrations in 5 minutes'
   **Prerequisite:** You should have Git and Docker installed
 </Info>
 
-**Step 1.** Open a terminal and download Panora:
-
-```bash bash
+<Steps>
+  <Step title="Open a terminal and download Panora:">
+    ```bash bash
 git clone https://github.com/panoratech/Panora.git
 ```
+  </Step>
 
-**Step 2.** Run the following command to enter the folder:
-
-```bash
-cd Panora
+  <Step title="Run the following command:">
+    ```bash
+cd Panora && docker compose --env-file ./.env.example up -d
 ```
+  </Step>
 
-**Step 3.** Run the following command to start Panora
+  <Step title="Check Panora is Running">
 
-```bash
-docker compose --env-file ./.env.example up -d
-```
-
-Step 4. Wait for Panora to download and run
-
-<Tip>
+<Check>
   Use the following command to check progress. Look at services "Panora-api" and  "Panora-webapp" and check in column STATUS both are "UP"
   ```bash
 docker ps
 ```
-
-</Tip>
 After a few minutes Panora's dashboard will be available at `http://localhost`.
 The backend runs on `http://localhost:3000`
 
 **Congrats, Panora is now ready 🍾🔥**
 
-## What's next? Get connected to your customers
+</Check>
+  </Step>
+
+  <Step>
+## Last? Get connected to your customers
 
 Invite users to connect with their CRM with a Magic Link (no code needed), or using the API 
 
@@ -47,9 +44,9 @@ Invite users to connect with their CRM with a Magic Link (no code needed), or us
   <Card
     title="No Code: Magic links"
     icon="wand-magic-sparkles"
-    href="https://mintlify.com/docs/quickstart"
+    href="/concepts/magic-links"
   >
-    Ask your customers to give you access to their tools
+    Ask your customers to grant you access to their tools
   </Card>
   <Card
     title="Developer Guides"
@@ -60,13 +57,18 @@ Invite users to connect with their CRM with a Magic Link (no code needed), or us
   </Card>
 </CardGroup>
 
+  </Step>
+
+</Steps>
+
+
 ## Troubleshooting
 
 Here's how to solve some common problems when working with the CLI.
 
 <AccordionGroup>
-  <Accordion title="Mintlify is not loading">
-    Update to Node v18. Run `mintlify install` and try again.
+  <Accordion title="Docker is not working">
+    Update to the latest version. Run `docker version` to check.
   </Accordion>
   <Accordion title="No such file or directory on Windows">
 Go to the `C:/Users/Username/.mintlify/` directory and remove the `mint`
@@ -82,4 +84,4 @@ Repeat step 3.
   </Accordion>
 </AccordionGroup>
 
-Curious about what changed in a CLI version? [Check out the CLI changelog.](/changelog/command-line)
+Need more help? [Come chat on Discord!](https://discord.gg/G7fr4HNyTb)

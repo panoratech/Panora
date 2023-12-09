@@ -3,10 +3,19 @@
   "name": "Panora Documentation",
   "feedback.thumbsRating": true,
   "suggestEdit": true,
+  "primaryTab": {
+    "name": "Home"
+  },
   "raiseIssue": true,
+  "api": {
+    "baseUrl": "https://api.panora.dev",
+    "auth": {
+      "method": "key"
+    }
+  },
   "modeToggle": {
     "default": "light",
-    "isHidden": true
+    "isHidden": false
   },
   "logo": {
     "dark": "/logo/logo-panora-white.png",
@@ -24,13 +33,13 @@
   },
   "topbarLinks": [
     {
-      "name": "Support",
+      "name": "Join Community",
       "url": "https://discord.gg/G7fr4HNyTb"
     }
   ],
   "topbarCtaButton": {
-    "name": "Home",
-    "url": "https://panora.dev"
+    "name": "Try Self-Hosted",
+    "url": "https://github.com/panoratech/Panora"
   },
   "tabs": [
     {
@@ -42,48 +51,89 @@
       "url": "marketing_automation"
     },
     {
+      "name": "Ticketing",
+      "url": "ticketing"
+    },
+    {
       "name": "API Reference",
       "url": "api-reference"
+    },
+    {
+      "name": "API Reference",
+      "url": "api-reference-panora"
     },
     {
       "name": "Support",
       "url": "support"
     }
   ],
-  "anchors": [
-
-  ],
+  "anchors": [],
   "navigation": [
     {
       "group": "Documentation",
-      "pages": ["welcome", "quickstart"]
+      "pages": [
+        "welcome",
+        "quickstart"
+      ]
     },
     {
       "group": "CRM",
-      "pages": ["crm/introduction"]
+      "pages": [
+        "crm/introduction",
+        "crm/catalog",
+        {
+          "group": "Contacts",
+          "pages": [
+            "crm/contact/overview",
+            "crm/contact/api/create"
+          ]
+        }
+      ]
     },
     {
       "group": "Marketing Automation",
-      "pages": ["marketing_automation/introduction"]
+      "pages": [
+        "marketing_automation/introduction"
+      ]
     },
     {
-      "group": "Essentials",
-      "pages": ["essentials/markdown", "essentials/code", "essentials/images", "essentials/settings", "essentials/navigation"]
+      "group": "Ticketing",
+      "pages": [
+        "ticketing/introduction"
+      ]
+    },
+    {
+      "group": "Panora Concepts",
+      "pages": [
+        "concepts/magic-links",
+        "concepts/code",
+        "concepts/images",
+        "concepts/settings",
+        "concepts/navigation"
+      ]
     },
     {
       "group": "API Documentation",
-      "pages": ["api-reference/introduction"]
+      "pages": [
+        "api-reference/introduction"
+      ]
+    },
+    {
+      "group": "API Documentation - Panora",
+      "pages": [
+        "api-reference-panora/introduction",
+        "api-reference-panora/introduction"
+      ]
     },
     {
       "group": "Support",
-      "pages": ["support/get_help"]
+      "pages": [
+        "support/get_help"
+      ]
     },
     {
       "group": "Endpoint Examples",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
       ]
     }
   ],
