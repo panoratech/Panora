@@ -2,6 +2,12 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Panora Documentation",
   "feedback.thumbsRating": true,
+  "suggestEdit": true,
+  "raiseIssue": true,
+  "modeToggle": {
+    "default": "light",
+    "isHidden": true
+  },
   "logo": {
     "dark": "/logo/logo-panora-white.png",
     "light": "/logo/logo-panora-white.png"
@@ -23,36 +29,42 @@
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://app.panora.dev"
+    "name": "Home",
+    "url": "https://panora.dev"
   },
   "tabs": [
     {
+      "name": "CRM",
+      "url": "crm"
+    },
+    {
+      "name": "Marketing Automation",
+      "url": "marketing_automation"
+    },
+    {
       "name": "API Reference",
       "url": "api-reference"
+    },
+    {
+      "name": "Support",
+      "url": "support"
     }
   ],
   "anchors": [
-    {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://docs.panora.dev"
-    },
-    {
-      "name": "Discord Community",
-      "icon": "discord",
-      "url": "https://discord.gg/G7fr4HNyTb"
-    },
-    {
-      "name": "Twitter",
-      "icon": "twitter",
-      "url": "https://twitter.com/panoradotdev"
-    }
+
   ],
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "Documentation",
       "pages": ["welcome", "quickstart"]
+    },
+    {
+      "group": "CRM",
+      "pages": ["crm/introduction"]
+    },
+    {
+      "group": "Marketing Automation",
+      "pages": ["marketing_automation/introduction"]
     },
     {
       "group": "Essentials",
@@ -61,6 +73,10 @@
     {
       "group": "API Documentation",
       "pages": ["api-reference/introduction"]
+    },
+    {
+      "group": "Support",
+      "pages": ["support/get_help"]
     },
     {
       "group": "Endpoint Examples",
