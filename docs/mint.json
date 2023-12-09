@@ -29,8 +29,8 @@
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://app.panora.dev"
+    "name": "Home",
+    "url": "https://panora.dev"
   },
   "tabs": [
     {
@@ -44,6 +44,10 @@
     {
       "name": "API Reference",
       "url": "api-reference"
+    },
+    {
+      "name": "Support",
+      "url": "support"
     }
   ],
   "anchors": [
@@ -69,6 +73,10 @@
     {
       "group": "API Documentation",
       "pages": ["api-reference/introduction"]
+    },
+    {
+      "group": "Support",
+      "pages": ["support/get_help"]
     },
     {
       "group": "Endpoint Examples",
