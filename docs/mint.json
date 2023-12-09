@@ -2,13 +2,14 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Panora Documentation",
   "feedback.thumbsRating": true,
+  "openapi": ["/openapi.json"],
   "suggestEdit": true,
   "primaryTab": {
     "name": "Home"
   },
   "raiseIssue": true,
   "api": {
-    "baseUrl": "https://api.panora.dev",
+    "baseUrl": "https://api-dev.panora.dev",
     "auth": {
       "method": "key"
     }
@@ -55,14 +56,6 @@
       "url": "ticketing"
     },
     {
-      "name": "API Reference",
-      "url": "api-reference"
-    },
-    {
-      "name": "API Reference",
-      "url": "api-reference-panora"
-    },
-    {
       "name": "Support",
       "url": "support"
     }
@@ -85,6 +78,7 @@
           "group": "Contacts",
           "pages": [
             "crm/contact/overview",
+            "crm/contact/api/get",
             "crm/contact/api/create"
           ]
         }
@@ -106,25 +100,13 @@
       "group": "Panora Concepts",
       "pages": [
         "concepts/magic-links",
-        "concepts/code",
-        "concepts/images",
-        "concepts/settings",
+        "concepts/custom-fields",
+        "concepts/passthrough-requests",
+        "concepts/sync-settings",
         "concepts/navigation"
       ]
     },
-    {
-      "group": "API Documentation",
-      "pages": [
-        "api-reference/introduction"
-      ]
-    },
-    {
-      "group": "API Documentation - Panora",
-      "pages": [
-        "api-reference-panora/introduction",
-        "api-reference-panora/introduction"
-      ]
-    },
+   
     {
       "group": "Support",
       "pages": [
