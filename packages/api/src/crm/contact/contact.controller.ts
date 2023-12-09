@@ -2,7 +2,9 @@ import { Controller, Post, Body, Query, Get, Patch } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { UnifiedContactInput } from './types/model.unified';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('crm/contact')
 @Controller('crm/contact')
 export class ContactController {
   constructor(

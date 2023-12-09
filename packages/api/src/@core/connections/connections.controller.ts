@@ -5,6 +5,9 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ProviderVertical, getProviderVertical } from '@@core/utils/types';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('connections')
 @Controller('connections')
 export class ConnectionsController {
   constructor(
@@ -15,6 +18,10 @@ export class ConnectionsController {
     this.logger.setContext(ConnectionsController.name);
   }
 
+  @ApiQuery({ name: 'state', required: true, type: String })
+  @ApiQuery({ name: 'code', required: true, type: String })
+  @ApiQuery({ name: 'location', required: true, type: String })
+  @ApiResponse({ status: 200 })
   @Get('oauth/callback')
   handleCallback(
     @Res() res: Response,
@@ -61,6 +68,7 @@ export class ConnectionsController {
     }
   }
 
+  @ApiResponse({ status: 200 })
   @Get()
   async getConnections() {
     return await this.prisma.connections.findMany();

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { events as Job } from 'api';
 
 const fetchJobs = async (): Promise<Job[]> => {
-  const response = await fetch(`${config.API_URL}/jobs`);
+  const response = await fetch(`${config.API_URL}/events`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }

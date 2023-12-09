@@ -21,7 +21,7 @@ import { LinkedUsersModule } from './@core/linked-users/linked-users.module';
 import { OrganisationsModule } from './@core/organisations/organisations.module';
 import { ProjectsModule } from './@core/projects/projects.module';
 import { FieldMappingModule } from './@core/field-mapping/field-mapping.module';
-import { JobsModule } from '@@core/jobs/jobs.module';
+import { EventsModule } from '@@core/events/events.module';
 import { MagicLinkModule } from './@core/magic-link/magic-link.module';
 import { PassthroughModule } from '@@core/passthrough/passthrough.module';
 
@@ -29,7 +29,7 @@ import { PassthroughModule } from '@@core/passthrough/passthrough.module';
   imports: [
     PassthroughModule,
     MagicLinkModule,
-    JobsModule,
+    EventsModule,
     FieldMappingModule,
     LinkedUsersModule,
     OrganisationsModule,
@@ -66,7 +66,6 @@ import { PassthroughModule } from '@@core/passthrough/passthrough.module';
         },
       },
     }),
-    JobsModule,
     MagicLinkModule,
   ],
   controllers: [AppController],
