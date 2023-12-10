@@ -9,11 +9,11 @@ export default function EventsTable() {
   
   //TODO
   const transformedEvents = events?.map((event: Event) => ({
-    method: '', // replace with actual value
-    url: '', // replace with actual value
+    method: event.method, // replace with actual value
+    url: event.url, // replace with actual value
     status: event.status,
     direction: event.type, // replace with actual value
-    integration: 'Hubspot', // replace with actual value + logo
+    integration: event.provider, // replace with actual value + logo
     date: event.timestamp.toLocaleString(), // convert Date to string
   }));
 

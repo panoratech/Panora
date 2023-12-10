@@ -75,6 +75,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   
   const { profile } = useProfileStore();
 
+  
   useEffect(()=>{
     if(projects){      
       setIdProject(projects[0].id_project);
@@ -110,6 +111,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     });
     setShowNewDialog({open: false})  
   };
+
+  
 
   return (
     <Dialog open={showNewDialog.open} onOpenChange={handleOpenChange}>

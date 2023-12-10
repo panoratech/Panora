@@ -21,20 +21,21 @@ export class PassthroughService {
     linkedUserId: string,
   ): Promise<PassThroughResponse> {
     try {
+      const { method, path, data, headers } = requestParams;
+
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
           type: 'pull',
-          //method: method,
-          //url: '/pasthrough',
-          //provider: integrationId,
+          method: method,
+          url: '/pasthrough',
+          provider: integrationId,
           direction: '0',
           timestamp: new Date(),
           id_linked_user: linkedUserId,
         },
       });
-      const { method, path, data, headers } = requestParams;
       const intId = integrationId.toLowerCase();
       const URL = `${domains[getProviderVertical(intId)][intId]}${path}`;
 

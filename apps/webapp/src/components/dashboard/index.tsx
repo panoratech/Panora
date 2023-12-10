@@ -11,7 +11,7 @@ import QuickStartPage from "../quickstart"
 import { SmallNav } from "./components/main-nav-sm"
 
 export default function DashboardPage() {
-  const [activePage, setActivePage] = useState('dashboard');
+  const [activePage, setActivePage] = useState('quickstart');
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function DashboardPage() {
       ContentComponent = ApiKeysPage;
       break;
     default:
-      ContentComponent = MainPage; // The default page content
+      ContentComponent = QuickStartPage; // The default page content
   }
   return (
     <>

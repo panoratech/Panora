@@ -378,6 +378,9 @@ model events {
   type                String
   direction           String
   timestamp           DateTime              @default(now()) @db.Timestamp(6)
+  method              String
+  url                 String
+  provider            String
   id_linked_user      String                @db.Uuid
   crm_companies       crm_companies[]
   crm_contacts        crm_contacts[]
