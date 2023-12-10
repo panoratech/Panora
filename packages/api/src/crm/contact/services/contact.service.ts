@@ -69,38 +69,6 @@ export class ContactService {
       normalizedPhones,
     };
   }
-  //TODO: do it for all providers
-  async getCustomProperties(linkedUserId: string, providerId: string) {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
-      const resp = await axios.get(
-        `https://api.hubapi.com/properties/v1/contacts/properties`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${decrypt(connection.access_token)}`,
-          },
-        },
-      );
-      return {
-        data: resp.data,
-        message: 'Hubspot contact properties retrieved',
-        statusCode: 200,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.contact,
-        ActionType.GET,
-      );
-    }
-  }
 
   async batchAddContacts(
     unifiedContactData: UnifiedContactInput[],
@@ -393,7 +361,6 @@ export class ContactService {
     return 200;
   }
 
-  //TODO; field mappings check
   async saveContactsInDb(
     linkedUserId: string,
     contacts: UnifiedContactOutput[],
@@ -479,7 +446,6 @@ export class ContactService {
         unique_crm_contact_id = res.id_crm_contact;
       }
 
-      //TODO: map the fields mapping to the contact
       // check duplicate or existing values
       if (contact.field_mappings && contact.field_mappings.length > 0) {
         const entity = await this.prisma.entity.create({

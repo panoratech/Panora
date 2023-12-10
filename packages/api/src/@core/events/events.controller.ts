@@ -9,7 +9,6 @@ export class EventsController {
   constructor(
     private readonly eventsService: EventsService,
     private logger: LoggerService,
-    private prisma: PrismaService,
   ) {
     this.logger.setContext(EventsController.name);
   }
@@ -17,6 +16,6 @@ export class EventsController {
   @ApiResponse({ status: 200 })
   @Get()
   async getEvents() {
-    return await this.prisma.events.findMany();
+    return await this.eventsService.findEvents();
   }
 }

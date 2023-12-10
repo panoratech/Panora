@@ -15,8 +15,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-
-
 import {
   Select,
   SelectContent,
@@ -30,6 +28,7 @@ import useMapFieldMutation from "@/hooks/mutations/useMapFieldMutation"
 import { useEffect, useState } from "react"
 import useFieldMappings from "@/hooks/useFieldMappings"
 import useProviderProperties from "@/hooks/useProviderProperties"
+import { standardOjects } from "shared-types"
 
 export function FModal({ onClose }: {onClose: () => void}) {
   const [standardModel, setStandardModel] = useState('');
@@ -48,14 +47,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
   const { mutate: mutateDefineField } = useDefineFieldMutation();
   const { mutate: mutateMapField } = useMapFieldMutation();
   const { data: sourceCustomFields, error, isLoading } = useProviderProperties(linkedUserId,sourceProvider,standardModel);
-
-  //const { data: sObjects } = useStandardObjects();
-  //TODO: get this from shared types
-  const sObjects = [
-    'contact',
-    'note',
-    'task'
-  ]
+  
   useEffect(() => {
     if (sourceCustomFields && sourceCustomFields.data.length > 0  && !isLoading && !error) {
       console.log("inside custom fields properties ");
@@ -113,7 +105,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                    {sObjects && sObjects
+                    {standardOjects && standardOjects
                         .map(sObject => (
                           <SelectItem key={sObject} value={sObject}>{sObject}</SelectItem>
                         ))

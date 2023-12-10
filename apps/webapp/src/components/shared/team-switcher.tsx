@@ -83,7 +83,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
       setOrganisationName(orgs[0].name);
       setIdOrg(orgs[0].id_organization);
     }
-  },[projects, orgs, setIdProject, setIdOrg])
+  },[projects, orgs, setIdProject, setIdOrg, setOrganisationName])
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));

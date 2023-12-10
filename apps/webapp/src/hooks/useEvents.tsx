@@ -1,8 +1,8 @@
 import config from '@/utils/config';
 import { useQuery } from '@tanstack/react-query';
-import { events as Job } from 'api';
+import { events as Event } from 'api';
 
-const fetchJobs = async (): Promise<Job[]> => {
+const fetchEvents = async (): Promise<Event[]> => {
   const response = await fetch(`${config.API_URL}/events`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
@@ -10,11 +10,11 @@ const fetchJobs = async (): Promise<Job[]> => {
   return response.json();
 }
 
-const useJobs = () => {
+const useEvents = () => {
   return useQuery({
-    queryKey: ['jobs'], 
-    queryFn: fetchJobs
+    queryKey: ['events'], 
+    queryFn: fetchEvents
   });
 };
 
-export default useJobs;
+export default useEvents;

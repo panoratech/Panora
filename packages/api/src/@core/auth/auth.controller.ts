@@ -18,7 +18,9 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.logger.setContext(AuthController.name);
+  }
 
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201 })
@@ -56,6 +58,6 @@ export class AuthController {
   ): Promise<{ api_key: string }> {
     const userId = req.user.userId;
     this.logger.log('user id is ' + userId);
-    return await this.authService.generateApiKeyForUser(userId, data.projectId);
+    return this.authService.generateApiKeyForUser(userId, data.projectId);
   }
 }

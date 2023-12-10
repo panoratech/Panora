@@ -225,6 +225,37 @@
         ]
       }
     },
+    "/field-mapping/properties": {
+      "get": {
+        "operationId": "FieldMappingController_getCustomProperties",
+        "parameters": [
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mapping"
+        ]
+      }
+    },
     "/linked-users/create": {
       "post": {
         "operationId": "LinkedUsersController_addLinkedUser",
@@ -359,37 +390,6 @@
         },
         "tags": [
           "projects"
-        ]
-      }
-    },
-    "/crm/contact/properties": {
-      "get": {
-        "operationId": "ContactController_getCustomProperties",
-        "parameters": [
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "providerId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "crm/contact"
         ]
       }
     },

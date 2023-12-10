@@ -7,9 +7,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 import { DataTableColumnHeader } from "../../shared/data-table-column-header"
 import { DataTableRowActions } from "../../shared/data-table-row-actions"
-import { Job } from "../data/schema"
+import { Event } from "../data/schema"
 
-export const columns: ColumnDef<Job>[] = [
+export const columns: ColumnDef<Event>[] = [
   {
     id: "select",
     header: ({ table }) => (

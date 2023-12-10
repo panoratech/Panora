@@ -49,4 +49,16 @@ export class FieldMappingController {
   mapFieldToProvider(@Body() mapFieldToProviderDto: MapFieldToProviderDto) {
     return this.fieldMappingService.mapFieldToProvider(mapFieldToProviderDto);
   }
+
+  @ApiResponse({ status: 200 })
+  @Get('properties')
+  getCustomProperties(
+    @Query('linkedUserId') linkedUserId: string,
+    @Query('providerId') providerId: string,
+  ) {
+    return this.fieldMappingService.getCustomProperties(
+      linkedUserId,
+      providerId,
+    );
+  }
 }

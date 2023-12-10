@@ -65,7 +65,6 @@ function _mapSingleContact(
     remote_id: string;
   }[],
 ): UnifiedContactOutput {
-  //TODO: check for field mappings
   const field_mappings = customFieldMappings.map((mapping) => ({
     [mapping.slug]: contact.properties[mapping.remote_id],
   }));

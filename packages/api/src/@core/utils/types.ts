@@ -132,14 +132,23 @@ export type UnifySourceType =
   | FileStorageObjectOutput
   | HrisObjectOutput;
 
-//TODO
 export const domains = {
   CRM: {
     hubspot: 'https://api.hubapi.com/',
     zoho: 'https://www.zohoapis.com/crm/v3/',
-    zendesk: '',
+    zendesk: '', // TODO
     freshsales: '',
     pipedrive: '',
+  },
+};
+
+export const customPropertiesUrls = {
+  CRM: {
+    hubspot: `${domains['CRM']['hubspot']}/properties/v1/contacts/properties`,
+    zoho: `${domains['CRM']['zoho']}`, // TODO
+    zendesk: `${domains['CRM']['zendesk']}`,
+    freshsales: `${domains['CRM']['freshsales']}`,
+    pipedrive: `${domains['CRM']['pipedrive']}`,
   },
 };
 

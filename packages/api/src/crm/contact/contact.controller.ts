@@ -14,14 +14,6 @@ export class ContactController {
     this.logger.setContext(ContactController.name);
   }
 
-  @Get('properties')
-  getCustomProperties(
-    @Query('linkedUserId') linkedUserId: string,
-    @Query('providerId') providerId: string,
-  ) {
-    return this.contactService.getCustomProperties(linkedUserId, providerId);
-  }
-
   @Get()
   getContacts(
     @Query('integrationId') integrationId: string,
@@ -70,6 +62,4 @@ export class ContactController {
   ) {
     return this.contactService.updateContact(id, updateContactData);
   }
-
-  // TODO: update contact
 }

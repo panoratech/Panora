@@ -1,21 +1,21 @@
 import { columns } from "./components/columns"
 import { DataTable } from "../shared/data-table"
-import useJobs from "@/hooks/useJobs";
+import useEvents from "@/hooks/useEvents";
 import { DataTableLoading } from "../shared/data-table-loading";
-import { events as Job } from "api";
+import { events as Event } from "api";
 
-export default function JobsTable() {
-  const { data: jobs, isLoading, error } = useJobs();
+export default function EventsTable() {
+  const { data: events, isLoading, error } = useEvents();
   
   //TODO
-  const transformedJobs = jobs?.map((job: Job) => ({
+  const transformedEvents = events?.map((event: Event) => ({
     method: '', // replace with actual value
     url: '', // replace with actual value
-    status: job.status,
+    status: event.status,
     direction: '', // replace with actual value
     integration: '', // replace with actual value
     organisation: '', // replace with actual value
-    date: job.timestamp.toString(), // convert Date to string
+    date: event.timestamp.toString(), // convert Date to string
   }));
   
   if(isLoading){
@@ -25,13 +25,13 @@ export default function JobsTable() {
   }
 
   if(error){
-    console.log("error jobs..");
+    console.log("error events..");
   }
 
 
   return (
     <>
-      {transformedJobs && <DataTable data={transformedJobs} columns={columns}/>}
+      {transformedEvents && <DataTable data={transformedEvents} columns={columns}/>}
     </>
   )
 }

@@ -6,7 +6,11 @@ import {
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { StandardObject } from '../utils/types';
+import { customPropertiesUrls, getProviderVertical } from '../utils/types';
+import axios from 'axios';
+import { decrypt } from '@@core/utils/crypto';
+import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { CrmObject } from '@crm/@types';
 
 @Injectable()
 export class FieldMappingService {
@@ -15,66 +19,77 @@ export class FieldMappingService {
   }
 
   async getAttributes() {
-    return await this.prisma.attribute.findMany();
+    try {
+      return await this.prisma.attribute.findMany();
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
   async getValues() {
+    try {
+      return await this.prisma.value.findMany();
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
     return await this.prisma.value.findMany();
   }
 
   async getEntities() {
-    return await this.prisma.entity.findMany();
+    try {
+      return await this.prisma.entity.findMany();
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
-
-  // and then retrieve them by their name
-  /*async getEntityId(standardObject: StandardObject) {
-    const res = await this.prisma.entity.findFirst({
-      where: {
-        ressource_owner_id: standardObject as string,
-      },
-    });
-    return res.id_entity;
-  }*/
 
   async getCustomFieldMappings(
     integrationId: string,
     linkedUserId: string,
     standard_object: string,
   ) {
-    return await this.prisma.attribute.findMany({
-      where: {
-        source: integrationId,
-        id_consumer: linkedUserId,
-        ressource_owner_type: standard_object,
-      },
-      select: {
-        remote_id: true,
-        slug: true,
-      },
-    });
+    try {
+      return await this.prisma.attribute.findMany({
+        where: {
+          source: integrationId,
+          id_consumer: linkedUserId,
+          ressource_owner_type: standard_object,
+        },
+        select: {
+          remote_id: true,
+          slug: true,
+        },
+      });
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
   async defineTargetField(dto: DefineTargetFieldDto) {
     // Create a new attribute in your system representing the target field
     //const id_entity = await this.getEntityId(dto.object_type_owner);
     //this.logger.log('id entity is ' + id_entity);
-    const attribute = await this.prisma.attribute.create({
-      data: {
-        id_attribute: uuidv4(),
-        ressource_owner_type: dto.object_type_owner as string,
-        slug: dto.name,
-        description: dto.description,
-        data_type: dto.data_type,
-        status: 'defined', // [defined | mapped]
-        // below is done in step 2
-        remote_id: '',
-        source: '',
-        //id_entity: id_entity,
-        scope: 'user', // [user | org] wide
-      },
-    });
+    try {
+      const attribute = await this.prisma.attribute.create({
+        data: {
+          id_attribute: uuidv4(),
+          ressource_owner_type: dto.object_type_owner as string,
+          slug: dto.name,
+          description: dto.description,
+          data_type: dto.data_type,
+          status: 'defined', // [defined | mapped]
+          // below is done in step 2
+          remote_id: '',
+          source: '',
+          //id_entity: id_entity,
+          scope: 'user', // [user | org] wide
+        },
+      });
 
-    return attribute;
+      return attribute;
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
   async mapFieldToProvider(dto: MapFieldToProviderDto) {
@@ -93,7 +108,40 @@ export class FieldMappingService {
 
       return updatedAttribute;
     } catch (error) {
-      throw new Error(error);
+      handleServiceError(error, this.logger);
+    }
+  }
+
+  async getCustomProperties(linkedUserId: string, providerId: string) {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      const resp = await axios.get(
+        customPropertiesUrls[getProviderVertical(providerId)][providerId],
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${decrypt(connection.access_token)}`,
+          },
+        },
+      );
+      return {
+        data: resp.data,
+        message: `${providerId} contact properties retrieved`,
+        statusCode: 200,
+      };
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        providerId,
+        CrmObject.contact,
+        ActionType.GET,
+      );
     }
   }
 }
