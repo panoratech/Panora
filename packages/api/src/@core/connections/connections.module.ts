@@ -8,5 +8,6 @@ import { PrismaService } from '@@core/prisma/prisma.service';
   controllers: [ConnectionsController],
   imports: [CrmConnectionModule],
   providers: [LoggerService, PrismaService],
+  exports: [CrmConnectionModule],
 })
 export class ConnectionsModule {}

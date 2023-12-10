@@ -41,7 +41,6 @@ export class ConnectionsController {
 
       const stateData = JSON.parse(decodeURIComponent(state));
       const { projectId, linkedUserId, providerName, returnUrl } = stateData;
-      //TODO; ADD VERIFICATION OF PARAMS
       switch (getProviderVertical(providerName.toLowerCase())) {
         case ProviderVertical.CRM:
           const zohoLocation_ = zohoLocation ? zohoLocation : '';

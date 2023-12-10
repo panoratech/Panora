@@ -6,5 +6,6 @@ import { DealModule } from './deal/deal.module';
   imports: [ContactModule, DealModule],
   providers: [],
   controllers: [],
+  exports: [ContactModule],
 })
 export class CrmModule {}

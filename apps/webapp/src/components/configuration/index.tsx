@@ -36,7 +36,7 @@ export default function ConfigurationPage() {
     setOpen(false);
   };
   if(isLoading){
-    console.log("loading linked users..");
+    return <p>Loading....</p>
   }
 
   if(error){

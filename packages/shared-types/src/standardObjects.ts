@@ -23,10 +23,10 @@ export enum TicketingObject {}
 
 export const standardOjects = [
     ...Object.values(CrmObject),
-    ...Object.values(HrisObject),
+    /*...Object.values(HrisObject),
     ...Object.values(AtsObject),
     ...Object.values(AccountingObject),
     ...Object.values(FileStorageObject),
     ...Object.values(MarketingAutomationObject),
-    ...Object.values(TicketingObject),
+    ...Object.values(TicketingObject),*/
 ];
