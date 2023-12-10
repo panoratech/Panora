@@ -27,6 +27,7 @@ import useLinkedUsers from "@/hooks/useLinkedUsers";
 import useFieldMappings from "@/hooks/useFieldMappings";
 import { Skeleton } from "../ui/skeleton";
 import { useState } from "react";
+import { LoadingSpinner } from "../connections/components/LoadingSpinner";
 
 export default function ConfigurationPage() {
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
@@ -36,7 +37,7 @@ export default function ConfigurationPage() {
     setOpen(false);
   };
   if(isLoading){
-    return <p>Loading....</p>
+    return <LoadingSpinner className=""/>
   }
 
   if(error){

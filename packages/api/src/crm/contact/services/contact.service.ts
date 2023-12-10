@@ -90,7 +90,10 @@ export class ContactService {
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'push',
+          type: 'push', //sync, push or pull
+          //method: 'POST',
+          //url: '/crm/contact',
+          //provider: integrationId,
           direction: '0',
           timestamp: new Date(),
           id_linked_user: linkedUserId,
@@ -174,8 +177,7 @@ export class ContactService {
           remote_data: [resp.data],
         };
       }
-      const status_resp =
-        resp.statusCode === HttpStatus.OK ? 'success' : 'fail';
+      const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       await this.prisma.events.update({
         where: {
           id_event: job_id,
@@ -198,6 +200,20 @@ export class ContactService {
     try {
       // handle case for remote data too
       //TODO: handle case where data is not there (not synced) or old synced
+      const job_resp_create = await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'initialized',
+          type: 'pull',
+          //method: 'GET',
+          //url: '/crm/contact',
+          //provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
+      const job_id = job_resp_create.id_event;
       const contacts = await this.prisma.crm_contacts.findMany({
         where: {
           origin: integrationId.toLowerCase(),
@@ -259,11 +275,19 @@ export class ContactService {
       };
 
       /*if (remote_data) {
-      res = {
-        ...res,
-        remote_data: [resp.data],
-      };
-    }*/
+        res = {
+          ...res,
+          remote_data: [resp.data],
+        };
+      }*/
+      await this.prisma.events.update({
+        where: {
+          id_event: job_id,
+        },
+        data: {
+          status: 'success',
+        },
+      });
 
       return {
         data: res,

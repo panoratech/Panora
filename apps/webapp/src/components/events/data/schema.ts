@@ -8,7 +8,6 @@ export const eventSchema = z.object({
   status: z.string(),
   direction: z.string(),
   integration: z.string(),
-  organisation: z.string(),
   date: z.string()
 })
 

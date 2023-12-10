@@ -26,6 +26,9 @@ export class PassthroughService {
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
           type: 'pull',
+          //method: method,
+          //url: '/pasthrough',
+          //provider: integrationId,
           direction: '0',
           timestamp: new Date(),
           id_linked_user: linkedUserId,
@@ -52,12 +55,23 @@ export class PassthroughService {
         },
       });
 
+      const status_resp =
+        method == 'GET'
+          ? response.status === 200
+            ? 'success'
+            : 'fail'
+          : 'POST'
+          ? response.status === 200
+            ? 'success'
+            : 'fail'
+          : 'success';
+
       await this.prisma.events.update({
         where: {
           id_event: job_resp_create.id_event,
         },
         data: {
-          status: 'written',
+          status: status_resp,
         },
       });
 

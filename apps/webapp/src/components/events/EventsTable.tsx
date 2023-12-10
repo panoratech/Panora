@@ -12,11 +12,13 @@ export default function EventsTable() {
     method: '', // replace with actual value
     url: '', // replace with actual value
     status: event.status,
-    direction: '', // replace with actual value
-    integration: '', // replace with actual value
-    organisation: '', // replace with actual value
-    date: event.timestamp.toString(), // convert Date to string
+    direction: event.type, // replace with actual value
+    integration: 'Hubspot', // replace with actual value + logo
+    date: event.timestamp.toLocaleString(), // convert Date to string
   }));
+
+  const sortedTransformedEvents = transformedEvents?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   
   if(isLoading){
     return (
@@ -31,7 +33,7 @@ export default function EventsTable() {
 
   return (
     <>
-      {transformedEvents && <DataTable data={transformedEvents} columns={columns}/>}
+      {sortedTransformedEvents && <DataTable data={sortedTransformedEvents} columns={columns}/>}
     </>
   )
 }

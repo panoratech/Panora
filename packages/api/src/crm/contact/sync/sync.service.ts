@@ -215,8 +215,8 @@ export class SyncContactsService implements OnModuleInit {
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
-          status: 'initialized', // Use whatever status is appropriate
-          type: 'pull',
+          status: 'initialized',
+          type: 'sync',
           direction: '0',
           timestamp: new Date(),
           id_linked_user: linkedUserId,
@@ -287,6 +287,14 @@ export class SyncContactsService implements OnModuleInit {
         integrationId,
         job_id,
       );
+      await this.prisma.events.update({
+        where: {
+          id_event: job_id,
+        },
+        data: {
+          status: 'success',
+        },
+      });
     } catch (error) {
       handleServiceError(error, this.logger);
     }
