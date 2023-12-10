@@ -199,7 +199,7 @@ CREATE TABLE attribute
  data_type            text NOT NULL,
  remote_id            text NOT NULL,
  "source"               text NOT NULL,
- id_entity            uuid NOT NULL,
+ id_entity            uuid NULL,
  "scope"                text NOT NULL,
  id_consumer          uuid NULL,
  CONSTRAINT PK_attribute PRIMARY KEY ( id_attribute ),
@@ -354,6 +354,9 @@ CREATE TABLE events
  type           text NOT NULL,
  direction      text NOT NULL,
  "timestamp"      timestamp NOT NULL DEFAULT NOW(),
+ method         text NOT NULL,
+ url            text NOT NULL,
+ provider       text NOT NULL,
  id_linked_user uuid NOT NULL,
  CONSTRAINT PK_jobs PRIMARY KEY ( id_event ),
  CONSTRAINT FK_12 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
