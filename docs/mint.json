@@ -62,39 +62,30 @@
       "url": "support"
     }
   ],
-  "anchors": [],
+  "anchors": [
+
+
+  ],
   "navigation": [
     {
       "group": "Documentation",
       "pages": [
         "welcome",
-        {
-          "group": "Get Started",
-          "pages": [
-            "basics"
-          ]
-        }
+        "quick-start"
       ]
     },
     {
       "group": "CRM",
       "pages": [
-        "crm/introduction",
         "crm/quick-start",
         "crm/catalog",
         {
           "group": "Contacts",
-          "pages": [
-            "crm/contacts/overview",
-            "crm/contacts/api/get",
-            "crm/contacts/api/create"
-          ]
+          "pages": [ "crm/contacts/overview", "crm/contacts/api/get", "crm/contacts/api/create" ]
         },
         {
           "group": "Deals",
-          "pages": [
-            "crm/deals/overview"
-          ]
+          "pages": [ "crm/deals/overview" ]
         }
       ]
     },
@@ -113,11 +104,12 @@
     {
       "group": "Panora Features",
       "pages": [
-        "concepts/self-host-guide",
-        "concepts/magic-links",
-        "concepts/custom-fields",
-        "concepts/passthrough-requests",
-        "concepts/sync-settings"
+        "features/self-host-guide",
+        "features/magic-links",
+        "features/custom-fields",
+        "features/passthrough-requests",
+        "features/sync-settings",
+        "features/webhooks"
       ]
     },
     {
