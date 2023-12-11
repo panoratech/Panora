@@ -45,4 +45,6 @@ WORKDIR /app
 
 COPY --from=installer ./app .
 
-CMD node /app/packages/api/dist/src/main.js
+# Launching the backend 
+# Maintain the root api folder as context (Breaking)
+CMD cd /app/packages/api && node dist/src/main.js
