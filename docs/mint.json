@@ -2,7 +2,9 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Panora Documentation",
   "feedback.thumbsRating": true,
-  "openapi": ["/openapi.json"],
+  "openapi": [
+    "/openapi.json"
+  ],
   "suggestEdit": true,
   "primaryTab": {
     "name": "Home"
@@ -68,8 +70,9 @@
         "welcome",
         {
           "group": "Get Started",
-          "pages" : [        "quickstart",
-          "basics"]
+          "pages": [
+            "basics"
+          ]
         }
       ]
     },
@@ -77,13 +80,20 @@
       "group": "CRM",
       "pages": [
         "crm/introduction",
+        "crm/quick-start",
         "crm/catalog",
         {
           "group": "Contacts",
           "pages": [
-            "crm/contact/overview",
-            "crm/contact/api/get",
-            "crm/contact/api/create"
+            "crm/contacts/overview",
+            "crm/contacts/api/get",
+            "crm/contacts/api/create"
+          ]
+        },
+        {
+          "group": "Deals",
+          "pages": [
+            "crm/deals/overview"
           ]
         }
       ]
@@ -101,15 +111,15 @@
       ]
     },
     {
-      "group": "Panora Concepts",
+      "group": "Panora Features",
       "pages": [
+        "concepts/self-host-guide",
         "concepts/magic-links",
         "concepts/custom-fields",
         "concepts/passthrough-requests",
         "concepts/sync-settings"
       ]
     },
-   
     {
       "group": "Support",
       "pages": [
