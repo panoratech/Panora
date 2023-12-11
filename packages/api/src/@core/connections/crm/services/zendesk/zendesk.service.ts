@@ -36,17 +36,17 @@ export class ZendeskConnectionService {
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
-        client_id: config.ZENDESK_CLIENT_ID,
-        client_secret: config.ZENDESK_CLIENT_SECRET,
         code: code,
-        scoe: 'read write',
       });
       const res = await axios.post(
-        'https://panorahelp.zendesk.com/oauth/tokens',
+        'https://api.getbase.com/oauth2/token',
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic ${Buffer.from(
+              `${config.ZENDESK_CLIENT_ID}:${config.ZENDESK_CLIENT_SECRET}`,
+            ).toString('base64')}`,
           },
         },
       );

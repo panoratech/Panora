@@ -58,7 +58,6 @@ export class ZohoConnectionService {
           },
         },
       );
-      // TODO : no refreshtoken found
       const data: ZohoOAuthResponse = res.data;
       this.logger.log('OAuth credentials : zoho ' + JSON.stringify(data));
       const db_res = await this.prisma.connections.upsert({
@@ -130,7 +129,6 @@ export class ZohoConnectionService {
         },
         data: {
           access_token: encrypt(data.access_token),
-          refresh_token: encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
