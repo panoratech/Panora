@@ -43,9 +43,9 @@ export const providersConfig: ProvidersConfig = {
     },
     //TODO
     'zendesk': {
-      clientId: 'panora-zendesk',
-      scopes: 'Pipedrive_Scope',
-      authBaseUrl: 'https://api.getbase.com/oauth2/authorize',
+      clientId: 'panora',
+      scopes: 'read write',
+      authBaseUrl: 'https://panorahelp.zendesk.com/oauth/authorizations/new',//'https://api.getbase.com/oauth2/authorize',
       logoPath: 'assets/crm/zendesk_logo.png',
     },
 

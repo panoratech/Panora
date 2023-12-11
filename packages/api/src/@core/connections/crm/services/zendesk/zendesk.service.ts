@@ -26,46 +26,48 @@ export class ZendeskConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'zendesk',
         },
       });
-      if (isNotUnique)
-        throw new NotUniqueRecord(
-          `A connection already exists for userId ${linkedUserId} and the provider zendesk`,
-        );
+
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
+        client_id: config.ZENDESK_CLIENT_ID,
+        client_secret: config.ZENDESK_CLIENT_SECRET,
         code: code,
+        scoe: 'read write',
       });
       const res = await axios.post(
-        'https://api.getbase.com/oauth2/token',
+        'https://panorahelp.zendesk.com/oauth/tokens',
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${config.ZENDESK_CLIENT_ID}:${config.ZENDESK_CLIENT_SECRET}`,
-            ).toString('base64')}`,
           },
         },
       );
       //TODO: handle if res throws an error
       const data: ZendeskOAuthResponse = res.data;
-      this.logger.log('OAuth credentials : zendesk ');
+      this.logger.log('OAuth credentials : zendesk ' + JSON.stringify(data));
+      //todo: refresh token + expiration timestamp
       // save tokens for this customer inside our db
-      const db_res = await this.prisma.connections.create({
-        data: {
+      const db_res = await this.prisma.connections.upsert({
+        where: {
+          id_connection: isNotUnique.id_connection,
+        },
+        create: {
           id_connection: uuidv4(),
           provider_slug: 'zendesk',
           token_type: 'oauth',
           access_token: encrypt(data.access_token),
-          refresh_token: encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + data.expires_in * 1000,
-          ),
+          refresh_token: data.refresh_token ? encrypt(data.refresh_token) : '',
+          expiration_timestamp: data.expires_in
+            ? new Date(new Date().getTime() + data.expires_in * 1000)
+            : new Date(),
           status: 'valid',
           created_at: new Date(),
           projects: {
@@ -74,6 +76,15 @@ export class ZendeskConnectionService {
           linked_users: {
             connect: { id_linked_user: linkedUserId },
           },
+        },
+        update: {
+          access_token: encrypt(data.access_token),
+          refresh_token: data.refresh_token ? encrypt(data.refresh_token) : '',
+          expiration_timestamp: data.expires_in
+            ? new Date(new Date().getTime() + data.expires_in * 1000)
+            : new Date(),
+          status: 'valid',
+          created_at: new Date(),
         },
       });
     } catch (error) {

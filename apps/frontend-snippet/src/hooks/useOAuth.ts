@@ -44,6 +44,8 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
     let finalAuth = '';
     if ( providerName == 'zoho' ) {
       finalAuth = `${baseUrl}?response_type=code&client_id=${encodeURIComponent(clientId)}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodedRedirectUrl}&state=${state}`
+      console.log(finalAuth);
+      
     } else if(providerName == "zendesk"){
       finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&state=${state}`
     } else {

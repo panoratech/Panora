@@ -32,7 +32,7 @@ export const columns: ColumnDef<Connection>[] = [
         aria-label="Select all"
         className="translate-y-[2px]"
       />
-    ),
+    ), 
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -59,9 +59,19 @@ export const columns: ColumnDef<Connection>[] = [
       <DataTableColumnHeader column={column} title="App" />
     ),
     cell: ({ row }) => {      
+      const provider = (row.getValue("app") as string).toLowerCase();
       return (
         <div className="flex space-x-2">
-          <Badge variant="outline">{row.getValue("app")}</Badge>
+          <Badge variant={"outline"} className="bg-neutral-950 p-1 pr-2">
+              <img src={
+                provider == "hubspot" ?
+                `/providers/crm/${provider}.jpg` : 
+                provider == "zoho" ? 
+                `/providers/crm/${provider}.webp`
+                : `/providers/crm/${provider}.png`
+              } className="w-5 h-5 rounded-sm mr-2" />
+              {provider}
+            </Badge>
         </div>
       )
     },

@@ -34,12 +34,10 @@ export class ZohoConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'zoho',
         },
       });
-      if (isNotUnique)
-        throw new NotUniqueRecord(
-          `A connection already exists for userId ${linkedUserId} and the provider zoho`,
-        );
+
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
@@ -60,15 +58,19 @@ export class ZohoConnectionService {
           },
         },
       );
+      // TODO : no refreshtoken found
       const data: ZohoOAuthResponse = res.data;
-      this.logger.log('OAuth credentials : zoho ');
-      const db_res = await this.prisma.connections.create({
-        data: {
+      this.logger.log('OAuth credentials : zoho ' + JSON.stringify(data));
+      const db_res = await this.prisma.connections.upsert({
+        where: {
+          id_connection: isNotUnique.id_connection,
+        },
+        create: {
           id_connection: uuidv4(),
           provider_slug: 'zoho',
           token_type: 'oauth',
           access_token: encrypt(data.access_token),
-          refresh_token: encrypt(data.refresh_token),
+          refresh_token: data.refresh_token ? encrypt(data.refresh_token) : '',
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
@@ -80,6 +82,16 @@ export class ZohoConnectionService {
           linked_users: {
             connect: { id_linked_user: linkedUserId },
           },
+          account_url: domain,
+        },
+        update: {
+          access_token: encrypt(data.access_token),
+          refresh_token: data.refresh_token ? encrypt(data.refresh_token) : '',
+          expiration_timestamp: new Date(
+            new Date().getTime() + data.expires_in * 1000,
+          ),
+          status: 'valid',
+          created_at: new Date(),
           account_url: domain,
         },
       });

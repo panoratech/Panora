@@ -27,12 +27,10 @@ export class PipedriveConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'pipedrive',
         },
       });
-      if (isNotUnique)
-        throw new NotUniqueRecord(
-          `A connection already exists for userId ${linkedUserId} and the provider pipedrive`,
-        );
+
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
 
@@ -56,8 +54,11 @@ export class PipedriveConnectionService {
       //TODO: handle if res throws an error
       const data: PipeDriveOAuthResponse = res.data;
       this.logger.log('OAuth credentials : pipedrive ');
-      const db_res = await this.prisma.connections.create({
-        data: {
+      const db_res = await this.prisma.connections.upsert({
+        where: {
+          id_connection: isNotUnique.id_connection,
+        },
+        create: {
           id_connection: uuidv4(),
           provider_slug: 'pipedrive',
           token_type: 'oauth',
@@ -74,6 +75,15 @@ export class PipedriveConnectionService {
           linked_users: {
             connect: { id_linked_user: linkedUserId },
           },
+        },
+        update: {
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
+          expiration_timestamp: new Date(
+            new Date().getTime() + data.expires_in * 1000,
+          ),
+          status: 'valid',
+          created_at: new Date(),
         },
       });
     } catch (error) {
