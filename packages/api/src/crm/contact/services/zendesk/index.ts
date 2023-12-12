@@ -60,7 +60,7 @@ export class ZendeskService {
     return;
   }
 
-  async getContacts(
+  async syncContacts(
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {

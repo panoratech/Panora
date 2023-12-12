@@ -61,7 +61,7 @@ export class HubspotService {
     return;
   }
 
-  async getContacts(
+  async syncContacts(
     linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotContactOutput[]>> {

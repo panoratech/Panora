@@ -274,7 +274,10 @@ export class ContactService {
         contacts: unifiedContacts,
       };
 
+      //TODO
       /*if (remote_data) {
+        const resp = await this.prisma.remote_data
+      
         res = {
           ...res,
           remote_data: [resp.data],

@@ -6,12 +6,15 @@ import {
 
 export function mapToContact_Pipedrive(
   source: UnifiedContactInput,
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): PipedriveContactInput {
   // Assuming 'email_addresses' and 'phone_numbers' arrays contain at least one entry
   const primaryEmail = source.email_addresses?.[0]?.email_address;
   const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
-  // Convert to Pipedrive format if needed
   const emailObject = primaryEmail
     ? [{ value: primaryEmail, primary: true, label: '' }]
     : [];
@@ -19,11 +22,25 @@ export function mapToContact_Pipedrive(
     ? [{ value: primaryPhone, primary: true, label: '' }]
     : [];
 
-  return {
+  const result: PipedriveContactInput = {
     name: `${source.first_name} ${source.last_name}`,
     email: emailObject,
     phone: phoneObject,
   };
+
+  if (customFieldMappings && source.field_mappings) {
+    for (const fieldMapping of source.field_mappings) {
+      for (const key in fieldMapping) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === key,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = fieldMapping[key];
+        }
+      }
+    }
+  }
+  return result;
 }
 
 export function mapToUnifiedContact_Pipedrive(

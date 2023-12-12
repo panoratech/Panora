@@ -57,7 +57,7 @@ export class ZohoService {
     return;
   }
 
-  async getContacts(
+  async syncContacts(
     linkedUserId: string,
   ): Promise<ApiResponse<ZohoContactOutput[]>> {
     try {

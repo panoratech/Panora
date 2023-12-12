@@ -51,7 +51,6 @@ export class PipedriveConnectionService {
           },
         },
       );
-      //TODO: handle if res throws an error
       const data: PipeDriveOAuthResponse = res.data;
       this.logger.log('OAuth credentials : pipedrive ');
       const db_res = await this.prisma.connections.upsert({

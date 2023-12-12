@@ -46,6 +46,7 @@ export class SyncContactsService implements OnModuleInit {
     originIds: string[],
     originSource: string,
     jobId: string,
+    remote_data: Record<string, any>[],
   ) {
     try {
       for (let i = 0; i < contacts.length; i++) {
@@ -178,6 +179,21 @@ export class SyncContactsService implements OnModuleInit {
             }
           }
         }
+
+        //TODO: insert remote_data in db
+        /*await this.prisma.remote_data.upsert({
+          where: {
+            id_crm_contact: unique_crm_contact_id,
+          },
+          create: {
+            id_remote_data: uuidv4(),
+            id_crm_contact: unique_crm_contact_id,
+            data: remote_data,
+          },
+          update: {
+            data: remote_data,
+          },
+        });*/
       }
     } catch (error) {
       handleServiceError(error, this.logger);
@@ -191,7 +207,6 @@ export class SyncContactsService implements OnModuleInit {
   async syncContacts() {
     try {
       this.logger.log(`Syncing contacts....`);
-      //TODO: by default only sync linked_users for the default org for Project 1 for hubspot !
       const defaultOrg = await this.prisma.organizations.findFirst({
         where: {
           name: 'Acme Inc',
@@ -211,7 +226,7 @@ export class SyncContactsService implements OnModuleInit {
       });
       linkedUsers.map(async (linkedUser) => {
         try {
-          /*await this.syncContactsForLinkedUser(
+          await this.syncContactsForLinkedUser(
             'hubspot',
             linkedUser.id_linked_user,
           );
@@ -222,7 +237,7 @@ export class SyncContactsService implements OnModuleInit {
           await this.syncContactsForLinkedUser(
             'zendesk',
             linkedUser.id_linked_user,
-          );*/
+          );
           await this.syncContactsForLinkedUser(
             'zoho',
             linkedUser.id_linked_user,
@@ -237,11 +252,7 @@ export class SyncContactsService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncContactsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ) {
+  async syncContactsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} contacts for linkedUser ${linkedUserId}`,
@@ -283,23 +294,26 @@ export class SyncContactsService implements OnModuleInit {
       let resp: ApiResponse<OriginalContactOutput[]>;
       switch (integrationId) {
         case 'freshsales':
-          resp = await this.freshsales.getContacts(linkedUserId);
+          resp = await this.freshsales.syncContacts(linkedUserId);
           break;
 
         case 'zoho':
-          resp = await this.zoho.getContacts(linkedUserId);
+          resp = await this.zoho.syncContacts(linkedUserId);
           break;
 
         case 'zendesk':
-          resp = await this.zendesk.getContacts(linkedUserId);
+          resp = await this.zendesk.syncContacts(linkedUserId);
           break;
 
         case 'hubspot':
-          resp = await this.hubspot.getContacts(linkedUserId, remoteProperties);
+          resp = await this.hubspot.syncContacts(
+            linkedUserId,
+            remoteProperties,
+          );
           break;
 
         case 'pipedrive':
-          resp = await this.pipedrive.getContacts(linkedUserId);
+          resp = await this.pipedrive.syncContacts(linkedUserId);
           break;
 
         default:
@@ -331,6 +345,7 @@ export class SyncContactsService implements OnModuleInit {
         contactIds,
         integrationId,
         job_id,
+        sourceObject,
       );
       await this.prisma.events.update({
         where: {

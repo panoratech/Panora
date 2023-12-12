@@ -6,17 +6,36 @@ import {
 
 export function mapToContact_Zoho(
   source: UnifiedContactInput,
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): ZohoContactInput {
   // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
   const primaryEmail = source.email_addresses?.[0]?.email_address;
   const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
-  return {
+  const result: ZohoContactInput = {
     First_Name: source.first_name,
     Last_Name: source.last_name,
     Email: primaryEmail,
     Phone: primaryPhone,
   };
+
+  if (customFieldMappings && source.field_mappings) {
+    for (const fieldMapping of source.field_mappings) {
+      for (const key in fieldMapping) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === key,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = fieldMapping[key];
+        }
+      }
+    }
+  }
+
+  return result;
 }
 
 export function mapToUnifiedContact_Zoho(
