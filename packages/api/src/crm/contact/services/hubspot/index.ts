@@ -28,6 +28,7 @@ export class HubspotService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'hubspot',
         },
       });
       const dataBody = {
@@ -59,6 +60,7 @@ export class HubspotService {
     }
     return;
   }
+
   async getContacts(
     linkedUserId: string,
     custom_properties?: string[],
@@ -68,6 +70,7 @@ export class HubspotService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'hubspot',
         },
       });
 

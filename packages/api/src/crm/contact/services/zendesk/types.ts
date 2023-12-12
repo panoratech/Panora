@@ -1,60 +1,66 @@
-export interface ZendeskContactInput {
-  contact_id?: number;
-  name: string;
-  first_name: string;
-  last_name: string;
-  title?: string;
-  description?: string;
-  industry?: string;
-  website?: string;
-  email?: string;
-  phone?: string;
-  mobile?: string;
-  fax?: string;
-  twitter?: string;
-  facebook?: string;
-  linkedin?: string;
-  skype?: string;
-  address?: Address;
-  tags?: string[];
-  custom_fields?: CustomFields;
-  // Include any additional fields specific to Zendesk if needed
-}
-export interface ZendeskContactOutput {
-  id: number;
-  creator_id: number;
+export interface ZendeskContact {
   owner_id: number;
-  is_organization: boolean;
-  contact_id: number;
-  parent_organization_id: number | null;
-  name: string;
-  first_name: string;
-  last_name: string;
-  customer_status: string;
-  prospect_status: string;
+  created_at: string;
+  description: string | null;
+  industry: string | null;
+  billing_address: string | null;
+  linkedin: string | null;
   title: string;
-  description: string;
-  industry: string;
-  website: string;
+  contact_id: number;
+  skype: string | null;
+  twitter: string | null;
+  shipping_address: string | null;
+  id: number;
+  fax: string | null;
+  is_organization: boolean;
+  first_name: string;
   email: string;
-  phone: string;
+  prospect_status: string;
+  website: string | null;
+  address: Address;
+  facebook: string | null;
   mobile: string;
-  fax: string;
-  twitter: string;
-  facebook: string;
-  linkedin: string;
-  skype: string;
-  address: Address | null;
-  billing_address: Address | null;
-  shipping_address: Address | null;
-  created_at: string; // or Date if you convert the string to a Date object
-  updated_at: string; // or Date
+  last_name: string;
+  tags: Tag[];
+  custom_field_values: CustomFieldValue[];
+  phone: string;
+  customer_status: string;
+  name: string;
+  creator_id: number;
   meta: Meta;
 }
 
-interface Meta {
+export type ZendeskContactInput = Partial<ZendeskContact>;
+export type ZendeskContactOutput = ZendeskContactInput;
+
+type TagData = {
+  name: string;
+  resource_type: string;
+  id: number;
+};
+
+type TagMeta = {
   type: string;
-}
+};
+
+type Tag = {
+  data: TagData;
+  meta: TagMeta;
+};
+
+type PreviousEvent = {
+  title: string;
+};
+
+type Meta = {
+  event_id: string;
+  event_cause: string;
+  sequence: number;
+  event_time: string;
+  event_type: string;
+  previous: PreviousEvent;
+  type: string;
+};
 
 interface Address {
   line1: string;
@@ -64,7 +70,21 @@ interface Address {
   country: string;
 }
 
-interface CustomFields {
-  referral_website: string;
-  // Include any other custom fields as needed
-}
+type CustomFieldData = {
+  name: string;
+  resource_type: string;
+  id: number;
+  type: string;
+};
+
+type CustomFieldMeta = {
+  type: string;
+};
+
+type CustomFieldValue = {
+  value: boolean;
+  custom_field: {
+    data: CustomFieldData;
+    meta: CustomFieldMeta;
+  };
+};

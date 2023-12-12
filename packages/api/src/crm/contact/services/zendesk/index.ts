@@ -64,16 +64,23 @@ export class ZendeskService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'zendesk',
         },
       });
-      const resp = await axios.get(`https://api.getbase.com/v2/contacts`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${decrypt(connection.access_token)}`,
+      const resp = await axios.get(
+        `https://api.getbase.com/v3/contacts/stream`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${decrypt(connection.access_token)}`,
+          },
         },
-      });
+      );
+      this.logger.log(
+        'zendesk contacts are ' + JSON.stringify(resp.data.items),
+      );
       return {
-        data: resp.data,
+        data: resp.data.items,
         message: 'Zendesk contacts retrieved',
         statusCode: 200,
       };

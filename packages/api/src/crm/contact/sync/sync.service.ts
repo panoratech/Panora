@@ -18,7 +18,7 @@ import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class SyncContactsService implements OnModuleInit {
+export class SyncContactsService {
   constructor(
     private prisma: PrismaService,
     private freshsales: FreshSalesService,
@@ -32,9 +32,14 @@ export class SyncContactsService implements OnModuleInit {
     this.logger.setContext(SyncContactsService.name);
   }
 
-  onModuleInit() {
-    this.syncContacts();
-  }
+  /*async onModuleInit() {
+    try {
+      this.logger.log('éuyhsqdbs');
+      await this.syncContacts();
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }*/
 
   async saveContactsInDb(
     linkedUserId: string,
@@ -78,8 +83,8 @@ export class SyncContactsService implements OnModuleInit {
               id_crm_contact: existingContact.id_crm_contact,
             },
             data: {
-              first_name: contact.first_name,
-              last_name: contact.last_name,
+              first_name: contact.first_name ? contact.first_name : '',
+              last_name: contact.last_name ? contact.last_name : '',
               modified_at: new Date(),
               crm_email_addresses: {
                 update: normalizedEmails.map((email, index) => ({
@@ -106,24 +111,49 @@ export class SyncContactsService implements OnModuleInit {
         } else {
           // Create a new contact
           this.logger.log('not existing contact ' + contact.first_name);
+          const data = {
+            id_crm_contact: uuidv4(),
+            first_name: contact.first_name ? contact.first_name : '',
+            last_name: contact.last_name ? contact.last_name : '',
+            created_at: new Date(),
+            modified_at: new Date(),
+            id_event: jobId,
+            origin_id: originId,
+            origin: originSource,
+          };
+
+          if (normalizedEmails) {
+            data['crm_email_addresses'] = {
+              create: normalizedEmails,
+            };
+          }
+
+          if (normalizedPhones) {
+            data['crm_phone_numbers'] = {
+              create: normalizedPhones,
+            };
+          }
           const res = await this.prisma.crm_contacts.create({
+            data: data,
+          });
+          /*const res = await this.prisma.crm_contacts.create({
             data: {
               id_crm_contact: uuidv4(),
-              first_name: contact.first_name,
-              last_name: contact.last_name,
+              first_name: contact.first_name ? contact.first_name : '',
+              last_name: contact.last_name ? contact.last_name : '',
               created_at: new Date(),
               modified_at: new Date(),
               id_event: jobId,
               origin_id: originId,
               origin: originSource,
               crm_email_addresses: {
-                create: normalizedEmails,
+                create: normalizedEmails ? normalizedEmails : [],
               },
               crm_phone_numbers: {
-                create: normalizedPhones,
+                create: normalizedPhones ? normalizedPhones : [],
               },
             },
-          });
+          });*/
           unique_crm_contact_id = res.id_crm_contact;
         }
 
@@ -178,28 +208,49 @@ export class SyncContactsService implements OnModuleInit {
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
   //TODO: find a way to save all remote data for each contact somowhere in our db so our GET action know where to fetch it
   async syncContacts() {
-    this.logger.log(`Syncing contacts....`);
-    //TODO: by default only sync linked_users for the default org for Project 1 for hubspot !
-    const defaultOrg = await this.prisma.organizations.findFirst({
-      where: {
-        name: 'Acme Inc',
-      },
-    });
+    try {
+      this.logger.log(`Syncing contacts....`);
+      //TODO: by default only sync linked_users for the default org for Project 1 for hubspot !
+      const defaultOrg = await this.prisma.organizations.findFirst({
+        where: {
+          name: 'Acme Inc',
+        },
+      });
 
-    const defaultProject = await this.prisma.projects.findFirst({
-      where: {
-        id_organization: defaultOrg.id_organization,
-        name: 'Project 1',
-      },
-    });
-    const linkedUsers = await this.prisma.linked_users.findMany({
-      where: {
-        id_project: defaultProject.id_project,
-      },
-    });
-    linkedUsers.map((linkedUser) => {
-      this.syncContactsForLinkedUser('hubspot', linkedUser.id_linked_user);
-    });
+      const defaultProject = await this.prisma.projects.findFirst({
+        where: {
+          id_organization: defaultOrg.id_organization,
+          name: 'Project 1',
+        },
+      });
+      const linkedUsers = await this.prisma.linked_users.findMany({
+        where: {
+          id_project: defaultProject.id_project,
+        },
+      });
+      this.logger.log('fdhgdfshdsqhjsd');
+      /*linkedUsers.map(async (linkedUser) => {
+        try {
+          await this.syncContactsForLinkedUser(
+            'hubspot',
+            linkedUser.id_linked_user,
+          );
+          await this.syncContactsForLinkedUser(
+            'pipedrive',
+            linkedUser.id_linked_user,
+          );
+          await this.syncContactsForLinkedUser(
+            'zendesk',
+            linkedUser.id_linked_user,
+          );
+        } catch (error) {
+          handleServiceError(error, this.logger);
+        }
+      });*/
+    } catch (error) {
+      this.logger.debug('HEYEHEHEHYdd');
+      handleServiceError(error, this.logger);
+    }
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
@@ -212,6 +263,14 @@ export class SyncContactsService implements OnModuleInit {
       this.logger.log(
         `Syncing ${integrationId} contacts for linkedUser ${linkedUserId}`,
       );
+      // check if linkedUser has a connection if not just stop sync
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: integrationId,
+        },
+      });
+      if (!connection) return;
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
@@ -276,7 +335,7 @@ export class SyncContactsService implements OnModuleInit {
 
       const contactIds = sourceObject.map((contact) =>
         'id' in contact
-          ? (contact.id as string)
+          ? String(contact.id)
           : 'contact_id' in contact
           ? String(contact.contact_id)
           : undefined,

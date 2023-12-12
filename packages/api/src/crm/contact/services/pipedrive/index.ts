@@ -28,6 +28,7 @@ export class PipedriveService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'pipedrive',
         },
       });
       const resp = await axios.post(
@@ -41,7 +42,7 @@ export class PipedriveService {
         },
       );
       return {
-        data: resp.data,
+        data: resp.data.data,
         message: 'Pipedrive contact created',
         statusCode: 201,
       };
@@ -65,6 +66,7 @@ export class PipedriveService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'pipedrive',
         },
       });
       const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
@@ -73,8 +75,9 @@ export class PipedriveService {
           Authorization: `Bearer ${decrypt(connection.access_token)}`,
         },
       });
+
       return {
-        data: resp.data,
+        data: resp.data.data,
         message: 'Pipedrive contacts retrieved',
         statusCode: 200,
       };
