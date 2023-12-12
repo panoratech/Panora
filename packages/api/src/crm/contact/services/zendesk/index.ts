@@ -27,11 +27,14 @@ export class ZendeskService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'zendesk',
         },
       });
       const resp = await axios.post(
         `https://api.getbase.com/v2/contacts`,
-        JSON.stringify(contactData),
+        {
+          data: contactData,
+        },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -39,8 +42,9 @@ export class ZendeskService {
           },
         },
       );
+
       return {
-        data: resp.data,
+        data: resp.data.data,
         message: 'Zendesk contact created',
         statusCode: 201,
       };
@@ -64,6 +68,7 @@ export class ZendeskService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'zendesk',
         },
       });
       const resp = await axios.get(`https://api.getbase.com/v2/contacts`, {
@@ -72,8 +77,11 @@ export class ZendeskService {
           Authorization: `Bearer ${decrypt(connection.access_token)}`,
         },
       });
+      const finalData = resp.data.items.map((item) => {
+        return item.data;
+      });
       return {
-        data: resp.data,
+        data: finalData,
         message: 'Zendesk contacts retrieved',
         statusCode: 200,
       };

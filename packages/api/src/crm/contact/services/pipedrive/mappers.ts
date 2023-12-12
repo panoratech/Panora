@@ -13,18 +13,16 @@ export function mapToContact_Pipedrive(
 
   // Convert to Pipedrive format if needed
   const emailObject = primaryEmail
-    ? [{ value: primaryEmail, primary: true }]
+    ? [{ value: primaryEmail, primary: true, label: '' }]
     : [];
   const phoneObject = primaryPhone
-    ? [{ value: primaryPhone, primary: true }]
+    ? [{ value: primaryPhone, primary: true, label: '' }]
     : [];
 
   return {
     name: `${source.first_name} ${source.last_name}`,
     email: emailObject,
     phone: phoneObject,
-    // Map other optional fields as needed
-    // label, visible_to, marketing_status, add_time, etc.
   };
 }
 
@@ -47,11 +45,11 @@ function _mapSinglePipedriveContact(
     last_name: contact.last_name,
     email_addresses: contact.email.map((e) => ({
       email_address: e.value,
-      email_address_type: e.label,
+      email_address_type: e.label ? e.label : '',
     })), // Map each email
     phone_numbers: contact.phone.map((p) => ({
       phone_number: p.value,
-      phone_type: p.label,
+      phone_type: p.label ? p.label : '',
     })), // Map each phone number
   };
 }
