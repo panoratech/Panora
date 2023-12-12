@@ -57,6 +57,10 @@
       "name": "Ticketing",
       "url": "ticketing"
     },
+        {
+      "name": "Contribute",
+      "url": "contribute"
+    },
     {
       "name": "Support",
       "url": "support"
@@ -107,6 +111,13 @@
         "ticketing/introduction"
       ]
     },
+    {
+      "group": "Contribute",
+      "pages": [
+        "contribute/overview"
+      ]
+    },
+
     {
       "group": "Panora Features",
       "pages": [
