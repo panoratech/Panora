@@ -21,7 +21,6 @@ export function mapToContact_Pipedrive(
   const phoneObject = primaryPhone
     ? [{ value: primaryPhone, primary: true, label: '' }]
     : [];
-
   const result: PipedriveContactInput = {
     name: `${source.first_name} ${source.last_name}`,
     email: emailObject,
