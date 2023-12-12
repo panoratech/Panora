@@ -80,6 +80,8 @@ export class ZendeskService {
       const finalData = resp.data.items.map((item) => {
         return item.data;
       });
+      this.logger.log(`Synced zendesk contacts !`);
+
       return {
         data: finalData,
         message: 'Zendesk contacts retrieved',

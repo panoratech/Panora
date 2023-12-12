@@ -90,6 +90,8 @@ export class HubspotService {
           Authorization: `Bearer ${decrypt(connection.access_token)}`,
         },
       });
+      this.logger.log(`Synced hubspot contacts !`);
+
       return {
         data: resp.data.results,
         message: 'Hubspot contacts retrieved',
