@@ -389,3 +389,12 @@ model events {
 
   @@index([id_linked_user], map: "fk_linkeduserid_projectid")
 }
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model remote_data {
+  id_remote_data     String    @id(map: "pk_remote_data") @db.Uuid
+  ressource_owner_id String?   @unique(map: "force_unique_ressourceownerid") @db.Uuid
+  format             String?
+  data               String?
+  created_at         DateTime? @db.Timestamp(6)
+}

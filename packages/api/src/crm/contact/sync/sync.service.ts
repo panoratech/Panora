@@ -180,20 +180,23 @@ export class SyncContactsService implements OnModuleInit {
           }
         }
 
-        //TODO: insert remote_data in db
-        /*await this.prisma.remote_data.upsert({
+        //insert remote_data in db
+        await this.prisma.remote_data.upsert({
           where: {
-            id_crm_contact: unique_crm_contact_id,
+            ressource_owner_id: unique_crm_contact_id,
           },
           create: {
             id_remote_data: uuidv4(),
-            id_crm_contact: unique_crm_contact_id,
-            data: remote_data,
+            ressource_owner_id: unique_crm_contact_id,
+            format: 'json',
+            data: JSON.stringify(remote_data[i]),
+            created_at: new Date(),
           },
           update: {
-            data: remote_data,
+            data: JSON.stringify(remote_data[i]),
+            created_at: new Date(),
           },
-        });*/
+        });
       }
     } catch (error) {
       handleServiceError(error, this.logger);

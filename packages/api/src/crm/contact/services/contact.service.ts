@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { FreshSalesService } from './freshsales';
 import { HubspotService } from './hubspot';
@@ -198,7 +198,6 @@ export class ContactService {
     remote_data?: boolean,
   ): Promise<ApiResponse<ContactResponse>> {
     try {
-      // handle case for remote data too
       //TODO: handle case where data is not there (not synced) or old synced
       const job_resp_create = await this.prisma.events.create({
         data: {
@@ -270,19 +269,28 @@ export class ContactService {
         }),
       );
 
-      const res: ContactResponse = {
+      let res: ContactResponse = {
         contacts: unifiedContacts,
       };
 
-      //TODO
-      /*if (remote_data) {
-        const resp = await this.prisma.remote_data
-      
+      if (remote_data) {
+        const remote_array_data: Record<string, any>[] = await Promise.all(
+          contacts.map(async (contact) => {
+            const resp = await this.prisma.remote_data.findFirst({
+              where: {
+                ressource_owner_id: contact.id_crm_contact,
+              },
+            });
+            const remote_data = JSON.parse(resp.data);
+            return remote_data;
+          }),
+        );
+
         res = {
           ...res,
-          remote_data: [resp.data],
+          remote_data: remote_array_data,
         };
-      }*/
+      }
       await this.prisma.events.update({
         where: {
           id_event: job_id,
