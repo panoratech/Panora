@@ -5,7 +5,6 @@ import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import * as fs from 'fs';
 
 async function bootstrap() {
-  console.log('ddd');
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
     .setTitle('Unified Panora API')

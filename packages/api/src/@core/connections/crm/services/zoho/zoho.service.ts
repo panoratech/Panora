@@ -48,6 +48,7 @@ export class ZohoConnectionService {
         redirect_uri: REDIRECT_URI,
         code: code,
       });
+      //no refresh token
       const domain = ZOHOLocations[zohoLocation];
       const res = await axios.post(
         `${domain}/oauth/v2/token`,
@@ -105,14 +106,14 @@ export class ZohoConnectionService {
   ) {
     try {
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
-
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
-        client_id: config.HUBSPOT_CLIENT_ID,
-        client_secret: config.HUBSPOT_CLIENT_SECRET,
+        client_id: config.ZOHOCRM_CLIENT_ID,
+        client_secret: config.ZOHOCRM_CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         refresh_token: decrypt(refresh_token),
       });
+
       const res = await axios.post(
         `${domain}/oauth/v2/token`,
         formData.toString(),

@@ -18,7 +18,7 @@ import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class SyncContactsService {
+export class SyncContactsService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private freshsales: FreshSalesService,
@@ -32,14 +32,13 @@ export class SyncContactsService {
     this.logger.setContext(SyncContactsService.name);
   }
 
-  /*async onModuleInit() {
+  async onModuleInit() {
     try {
-      this.logger.log('éuyhsqdbs');
       await this.syncContacts();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
-  }*/
+  }
 
   async saveContactsInDb(
     linkedUserId: string,
@@ -136,24 +135,6 @@ export class SyncContactsService {
           const res = await this.prisma.crm_contacts.create({
             data: data,
           });
-          /*const res = await this.prisma.crm_contacts.create({
-            data: {
-              id_crm_contact: uuidv4(),
-              first_name: contact.first_name ? contact.first_name : '',
-              last_name: contact.last_name ? contact.last_name : '',
-              created_at: new Date(),
-              modified_at: new Date(),
-              id_event: jobId,
-              origin_id: originId,
-              origin: originSource,
-              crm_email_addresses: {
-                create: normalizedEmails ? normalizedEmails : [],
-              },
-              crm_phone_numbers: {
-                create: normalizedPhones ? normalizedPhones : [],
-              },
-            },
-          });*/
           unique_crm_contact_id = res.id_crm_contact;
         }
 
@@ -228,10 +209,9 @@ export class SyncContactsService {
           id_project: defaultProject.id_project,
         },
       });
-      this.logger.log('fdhgdfshdsqhjsd');
-      /*linkedUsers.map(async (linkedUser) => {
+      linkedUsers.map(async (linkedUser) => {
         try {
-          await this.syncContactsForLinkedUser(
+          /*await this.syncContactsForLinkedUser(
             'hubspot',
             linkedUser.id_linked_user,
           );
@@ -242,13 +222,16 @@ export class SyncContactsService {
           await this.syncContactsForLinkedUser(
             'zendesk',
             linkedUser.id_linked_user,
+          );*/
+          await this.syncContactsForLinkedUser(
+            'zoho',
+            linkedUser.id_linked_user,
           );
         } catch (error) {
           handleServiceError(error, this.logger);
         }
-      });*/
+      });
     } catch (error) {
-      this.logger.debug('HEYEHEHEHYdd');
       handleServiceError(error, this.logger);
     }
   }

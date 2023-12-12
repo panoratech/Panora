@@ -24,7 +24,7 @@ export const providersConfig: ProvidersConfig = {
     },
     'zoho': {
       clientId: '1000.CWBWAO0XK6QNROXMA2Y0RUZYMGJIGT',
-      scopes: 'AaaServer.profile.Read', //todo
+      scopes: 'ZohoCRM.modules.ALL',
       authBaseUrl: 'https://accounts.zoho.eu/oauth/v2/auth',
       logoPath: 'assets/crm/zoho_logo.png',
     },
