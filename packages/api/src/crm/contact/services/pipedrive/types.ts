@@ -72,6 +72,7 @@ export interface PipedriveContact {
   org_name: string;
   owner_name: string;
   cc_email: string;
+  [key: string]: any;
 }
 
 export type PipedriveContactInput = Partial<PipedriveContact>;

@@ -117,6 +117,7 @@ export class FieldMappingService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: providerId.toLowerCase(),
         },
       });
 

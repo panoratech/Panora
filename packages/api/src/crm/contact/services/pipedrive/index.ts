@@ -58,7 +58,7 @@ export class PipedriveService {
     return;
   }
 
-  async getContacts(
+  async syncContacts(
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveContactOutput[]>> {
     try {

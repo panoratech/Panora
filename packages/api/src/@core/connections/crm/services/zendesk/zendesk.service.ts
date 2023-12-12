@@ -50,11 +50,9 @@ export class ZendeskConnectionService {
           },
         },
       );
-      //TODO: handle if res throws an error
       const data: ZendeskOAuthResponse = res.data;
       this.logger.log('OAuth credentials : zendesk ' + JSON.stringify(data));
-      //todo: refresh token + expiration timestamp
-      // save tokens for this customer inside our db
+
       const db_res = await this.prisma.connections.upsert({
         where: {
           id_connection: isNotUnique.id_connection,

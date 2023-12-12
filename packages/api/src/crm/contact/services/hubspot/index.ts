@@ -61,7 +61,7 @@ export class HubspotService {
     return;
   }
 
-  async getContacts(
+  async syncContacts(
     linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotContactOutput[]>> {
@@ -90,6 +90,8 @@ export class HubspotService {
           Authorization: `Bearer ${decrypt(connection.access_token)}`,
         },
       });
+      this.logger.log(`Synced hubspot contacts !`);
+
       return {
         data: resp.data.results,
         message: 'Hubspot contacts retrieved',

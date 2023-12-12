@@ -57,7 +57,7 @@ export class ZohoService {
     return;
   }
 
-  async getContacts(
+  async syncContacts(
     linkedUserId: string,
   ): Promise<ApiResponse<ZohoContactOutput[]>> {
     try {
@@ -81,7 +81,8 @@ export class ZohoService {
           },
         },
       );
-      this.logger.log('CONTACTS ZOHO ' + JSON.stringify(resp.data.data));
+      //this.logger.log('CONTACTS ZOHO ' + JSON.stringify(resp.data.data));
+      this.logger.log(`Synced zoho contacts !`);
       return {
         data: resp.data.data,
         message: 'Zoho contacts retrieved',

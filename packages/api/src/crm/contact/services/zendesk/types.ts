@@ -28,6 +28,7 @@ export interface ZendeskContact {
   name: string;
   creator_id: number;
   meta: Meta;
+  custom_fields: Record<string, any>;
 }
 
 export type ZendeskContactInput = Partial<ZendeskContact>;

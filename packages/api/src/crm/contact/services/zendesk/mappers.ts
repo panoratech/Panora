@@ -6,18 +6,37 @@ import {
 
 export function mapToContact_Zendesk(
   source: UnifiedContactInput,
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): ZendeskContactInput {
   // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
   const primaryEmail = source.email_addresses?.[0]?.email_address;
   const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
-  return {
+  const result: ZendeskContactInput = {
     name: `${source.first_name} ${source.last_name}`,
     first_name: source.first_name,
     last_name: source.last_name,
     email: primaryEmail,
     phone: primaryPhone,
   };
+
+  if (customFieldMappings && source.field_mappings) {
+    for (const fieldMapping of source.field_mappings) {
+      for (const key in fieldMapping) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === key,
+        );
+        if (mapping) {
+          result.custom_fields[mapping.remote_id] = fieldMapping[key];
+        }
+      }
+    }
+  }
+
+  return result;
 }
 
 export function mapToUnifiedContact_Zendesk(

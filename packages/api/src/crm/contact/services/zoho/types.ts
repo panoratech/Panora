@@ -43,6 +43,7 @@ export interface ZohoContact {
   Other_Country: string;
   Description: string;
   Record_Image: string;
+  [key: string]: any;
 }
 
 export type ZohoContactInput = Partial<ZohoContact>;
