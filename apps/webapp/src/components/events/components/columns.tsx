@@ -134,13 +134,21 @@ export const columns: ColumnDef<Event>[] = [
       if (!status) {
         return null
       }*/
+      const provider = (row.getValue("integration") as string).toLowerCase();
 
       return (
         <div className="flex w-[100px] items-center">
           {row.getValue("integration") ? 
             <Badge variant={"outline"} className="bg-neutral-950 p-1 pr-2">
-              <img src="/providers/crm/hubspot.jpg" className="w-5 h-5 rounded-sm mr-2" />
-              {row.getValue("integration")}
+              <img src={
+                provider == "hubspot" ?
+                `/providers/crm/${provider}.jpg` : 
+                provider == "zoho" ? 
+                `/providers/crm/${provider}.webp`
+                : `/providers/crm/${provider}.png`
+                } className="w-5 h-5 rounded-sm mr-2" 
+              />
+              {provider}
             </Badge>
           : <Badge variant="secondary">_null_</Badge>
           }

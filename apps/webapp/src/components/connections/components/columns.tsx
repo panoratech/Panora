@@ -69,9 +69,10 @@ export const columns: ColumnDef<Connection>[] = [
                 provider == "zoho" ? 
                 `/providers/crm/${provider}.webp`
                 : `/providers/crm/${provider}.png`
-              } className="w-5 h-5 rounded-sm mr-2" />
+                } className="w-5 h-5 rounded-sm mr-2" 
+              />
               {provider}
-            </Badge>
+          </Badge>
         </div>
       )
     },
