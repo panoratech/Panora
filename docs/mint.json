@@ -58,20 +58,20 @@
       "url": "ticketing"
     },
     {
+      "name": "Webhooks",
+      "url": "webhooks"
+    },
+    {
+      "name": "Contribute",
+      "url": "contribute"
+    },
+    {
       "name": "Support",
       "url": "support"
     }
   ],
   "anchors": [
-    {
-      "name": "Questions? Ask community",
-      "icon": "discord",
-      "url": "https://discord.gg/G7fr4HNyTb"
-  },{
-      "name": "Watch Tutorials",
-      "icon": "youtube",
-      "url": "https://youtube.com/"
-  }],
+   ],
   "navigation": [
     {
       "group": "Documentation",
@@ -107,6 +107,20 @@
         "ticketing/introduction"
       ]
     },
+    {
+      "group": "Webhooks",
+      "pages": [
+        "webhooks/event-types"
+      ]
+    }
+    ,
+    {
+      "group": "Contribute",
+      "pages": [
+        "contribute/overview"
+      ]
+    },
+
     {
       "group": "Panora Features",
       "pages": [
