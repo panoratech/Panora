@@ -3,18 +3,13 @@ title: 'Event Types'
 description: '.'
 icon: 'wand-magic-sparkles'
 ---
-
-Types of events
 This is a list of all the types of events we currently send. We may add more at any time, so in developing and maintaining your code, you should not assume that only these types exist.
 
 You’ll notice that these events follow a pattern: resource.event. Our goal is to design a consistent system that makes things easier to anticipate and code against. Events that occur on subresources like customer.subscription do not trigger the parent’s update event.
 
-Events marked as Selection required are only created when a webhook has been configured to listen for that type of event specifically. A webhook set to listen to all events will not receive an event requiring explicit selection.
-
-
 | Events                                                                              |
 |--------------------------------------------------------------------------------------|
-| `crm.contact.created`  <br></br> Occurs whenever a new contact was created in a CRM. Sent only if the contact wasn't created using Panora. The `data` field is a `CRM` `Contact` object|
-| `crm.contact.updated`  <br></br> Occurs whenever a new contact was updated in a CRM. Sent only if the contact wasn't created using Panora. The `data` field is a `CRM` `Contact` object |
-| `crm.contact.deleted`  <br></br> Occurs whenever a new contact was deleted in a CRM. Sent only if the contact wasn't created using Panora. The `data` field is a `CRM` `Contact` object |
-| `magic_link.connected`  <br></br> Occurs when a new connection was created through a Magic Link. | 
+| **crm.contact.created**  <br></br> Occurs whenever a new contactclear was created in a CRM. The `data` field is a `CRM` `Contact` object|
+| **crm.contact.updated**  <br></br> Occurs whenever a new contact was updated in a CRM. The `data` field is a `CRM` `Contact` object |
+| **crm.contact.deleted**  <br></br> Occurs whenever a new contact was deleted in a CRM. The `data` field is a `CRM` `Contact` object  |
+| **magic_link.connected**  <br></br> Occurs when a new connection was created through a Magic Link. | 
