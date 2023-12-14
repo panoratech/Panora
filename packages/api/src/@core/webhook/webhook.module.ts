@@ -11,6 +11,11 @@ import { WebhookProcessor } from './webhook.processor';
       name: 'webhookDelivery',
     }),
   ],
+  exports: [
+    BullModule.registerQueue({
+      name: 'webhookDelivery',
+    }),
+  ],
   providers: [WebhookService, PrismaService, LoggerService, WebhookProcessor],
 })
 export class WebhookModule {}

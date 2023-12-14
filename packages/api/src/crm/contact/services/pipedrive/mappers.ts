@@ -44,18 +44,31 @@ export function mapToContact_Pipedrive(
 
 export function mapToUnifiedContact_Pipedrive(
   source: PipedriveContactOutput | PipedriveContactOutput[],
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
   if (!Array.isArray(source)) {
-    return _mapSinglePipedriveContact(source);
+    return _mapSinglePipedriveContact(source, customFieldMappings);
   }
 
-  // Handling array of PipedriveContactOutput
-  return source.map(_mapSinglePipedriveContact);
+  // Handling array of HubspotContactOutput
+  return source.map((contact) =>
+    _mapSinglePipedriveContact(contact, customFieldMappings),
+  );
 }
 
 function _mapSinglePipedriveContact(
   contact: PipedriveContactOutput,
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): UnifiedContactOutput {
+  const field_mappings = customFieldMappings.map((mapping) => ({
+    [mapping.slug]: contact[mapping.remote_id],
+  }));
   return {
     first_name: contact.first_name,
     last_name: contact.last_name,
@@ -66,6 +79,7 @@ function _mapSinglePipedriveContact(
     phone_numbers: contact.phone.map((p) => ({
       phone_number: p.value,
       phone_type: p.label ? p.label : '',
-    })), // Map each phone number
+    })), // Map each phone number,
+    field_mappings,
   };
 }

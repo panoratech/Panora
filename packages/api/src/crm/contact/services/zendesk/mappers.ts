@@ -41,18 +41,31 @@ export function mapToContact_Zendesk(
 
 export function mapToUnifiedContact_Zendesk(
   source: ZendeskContactOutput | ZendeskContactOutput[],
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
   if (!Array.isArray(source)) {
-    return _mapSingleZendeskContact(source);
+    return _mapSingleZendeskContact(source, customFieldMappings);
   }
 
-  // Handling array of ZendeskContactOutput
-  return source.map(_mapSingleZendeskContact);
+  // Handling array of HubspotContactOutput
+  return source.map((contact) =>
+    _mapSingleZendeskContact(contact, customFieldMappings),
+  );
 }
 
 function _mapSingleZendeskContact(
   contact: ZendeskContactOutput,
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): UnifiedContactOutput {
+  const field_mappings = customFieldMappings.map((mapping) => ({
+    [mapping.slug]: contact.custom_fields[mapping.remote_id],
+  }));
   // Constructing the email and phone details
   const email_addresses = contact.email
     ? [{ email_address: contact.email, email_address_type: 'primary' }]
@@ -71,5 +84,6 @@ function _mapSingleZendeskContact(
     last_name: contact.last_name,
     email_addresses,
     phone_numbers,
+    field_mappings,
   };
 }

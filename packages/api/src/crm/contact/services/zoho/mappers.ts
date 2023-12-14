@@ -40,18 +40,31 @@ export function mapToContact_Zoho(
 
 export function mapToUnifiedContact_Zoho(
   source: ZohoContactOutput | ZohoContactOutput[],
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
   if (!Array.isArray(source)) {
-    return _mapSingleZohoContact(source);
+    return _mapSingleZohoContact(source, customFieldMappings);
   }
 
-  // Handling array of ZohoContactOutput
-  return source.map(_mapSingleZohoContact);
+  // Handling array of HubspotContactOutput
+  return source.map((contact) =>
+    _mapSingleZohoContact(contact, customFieldMappings),
+  );
 }
 
 function _mapSingleZohoContact(
   contact: ZohoContactOutput,
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): UnifiedContactOutput {
+  const field_mappings = customFieldMappings.map((mapping) => ({
+    [mapping.slug]: contact[mapping.remote_id],
+  }));
   // Constructing email and phone details
   const email_addresses =
     contact && contact.Email
@@ -90,5 +103,6 @@ function _mapSingleZohoContact(
     last_name: contact.Last_Name ? contact.Last_Name : '',
     email_addresses,
     phone_numbers,
+    field_mappings,
   };
 }

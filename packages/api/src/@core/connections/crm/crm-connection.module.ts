@@ -7,8 +7,11 @@ import { PipedriveConnectionService } from './services/pipedrive/pipedrive.servi
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
 import { ZohoConnectionService } from './services/zoho/zoho.service';
 import { LoggerService } from '@@core/logger/logger.service';
+import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookModule } from '@@core/webhook/webhook.module';
 
 @Module({
+  imports: [WebhookModule],
   providers: [
     CrmConnectionsService,
     PrismaService,
@@ -18,6 +21,7 @@ import { LoggerService } from '@@core/logger/logger.service';
     ZendeskConnectionService,
     ZohoConnectionService,
     LoggerService,
+    WebhookService,
   ],
   exports: [CrmConnectionsService],
 })

@@ -50,7 +50,7 @@ export function mapToUnifiedContact_Hubspot<
   const source_ = source as HubspotContactOutput | HubspotContactOutput[];
 
   if (!Array.isArray(source_)) {
-    return _mapSingleContact(source_);
+    return _mapSingleContact(source_, customFieldMappings);
   }
   // Handling array of HubspotContactOutput
   return source_.map((contact) =>
@@ -80,6 +80,6 @@ function _mapSingleContact(
     phone_numbers: [
       { phone_number: '' /*contact.properties.*/, phone_type: 'primary' },
     ],
-    field_mappings: field_mappings,
+    field_mappings,
   };
 }

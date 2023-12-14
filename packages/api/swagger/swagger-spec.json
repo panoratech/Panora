@@ -655,6 +655,29 @@
           "crm/contact"
         ]
       }
+    },
+    "/crm/contact/{id}": {
+      "get": {
+        "operationId": "ContactController_getContact",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/contact"
+        ]
+      }
     }
   },
   "info": {
