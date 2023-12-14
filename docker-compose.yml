@@ -28,6 +28,7 @@ services:
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
         DISTRIBUTION: ${DISTRIBUTION}
         JWT_SECRET: ${JWT_SECRET}
+        REDIS_URL: redis://${REDIS_PASSWORD}@redis:6379
     restart:
       unless-stopped
     ports:
@@ -37,6 +38,14 @@ services:
     networks:
       - backend
   
+  redis:
+    image: "redis:7.2.3-alpine"
+    container_name: "Redis"
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - ./redis-data:/data
 
   docs:
     build:

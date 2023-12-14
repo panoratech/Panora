@@ -126,10 +126,7 @@
       "pages": [
         "features/self-host-guide",
         "features/magic-links",
-        "features/custom-fields",
-        "features/passthrough-requests",
-        "features/sync-settings",
-        "features/webhooks"
+        "features/custom-fields"
       ]
     },
     {
