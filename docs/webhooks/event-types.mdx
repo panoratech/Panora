@@ -1,9 +1,15 @@
 ---
 title: 'Events Overview'
-description: 'Panora webhooks are useful to notify your backend when the state of an object has changed.'
+description: 'Panora can send notifcations to your backend when the state of an object has changed. We use the concept of `events` to represent state changes in any object.'
 icon: 'wand-magic-sparkles'
 ---
 
+
+`Events` are our way of letting you know when something interesting happens in your projects. When an interesting event occurs, we create a new Event object. For example, when a contact is created in a crm, we create a `crm.contact.created` event, and when a contact is updated, we create an `crm.contact.updated` event. Certain API requests might create multiple events. For example, after we pull data from a CRM plaftorm you may receive both a `crm.contact.pulled` event and some `crm.contact.created` events.
+
+Events occur when the state of another API resource changes. The event’s data field embeds the resource’s state at the time of the change. For example, a `crm.contact.updated` event contains a `CRM Contact`, as the state of the contact is after the update.
+
+When creating webhook endpoints to retrieve events from Panora, you have the flexibilty to only retrieve some events, for each endpoint. We also have a separate webhooks system for sending the Event objects directly to an endpoint on your server. You can manage webhooks in your account settings. Learn how to listen for events so that your integration can automatically trigger reactions.
 
 ## The *event* Object
 The `event` object is used to represent an existing change to an object.
@@ -46,7 +52,7 @@ The typical implementation consists in listening for events and triggering workl
 
 </RequestExample>
 
-<ResponseField name="contact" type="Contact Object">
+<ResponseField name="event" type="Event Object">
   <Expandable title="properties" defaultOpen="true">
 
     <ResponseField name="id_event" type="uuid">
@@ -69,11 +75,10 @@ The typical implementation consists in listening for events and triggering workl
 ## Securing your webhooks 
 We use secrets to make sure your endpoints do not receive data from third-parties usurpating Panora.
 
-## Event Type List
+## List of Event Types
 This is a list of all the types of events we currently send. We may add more at any time, so in developing and maintaining your code, you should not assume that only these types exist.
 
-You’ll notice that these events follow a pattern: resource.event. Our goal is to design a consistent system that makes things easier to anticipate and code against. Events that occur on subresources like customer.subscription do not trigger the parent’s update event.
-
+You’ll notice that these events follow a pattern: resource.event. Our goal is to design a consistent system that makes things easier to anticipate and code against. 
 
 <ResponseField name="Event Types List">
   <Expandable title="properties" defaultOpen="true">
@@ -90,9 +95,10 @@ You’ll notice that these events follow a pattern: resource.event. Our goal is 
         Occurs whenever a new contact was deleted in a CRM. The **data** field is a [`CRM Contact`](/crm/contacts/overview)     
     </ResponseField>
 
-    <ResponseField name="magic_link.connected">
-       Occurs when a new connection was created through a Magic Link.
+    <ResponseField name="connection.created">
+       Occurs when a new connection was created. The **data** field is a `Connection` object.
     </ResponseField>
+
 
   </Expandable>
 </ResponseField>
