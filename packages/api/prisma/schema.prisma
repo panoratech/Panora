@@ -373,19 +373,20 @@ model invite_links {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model events {
-  id_event            String                @id(map: "pk_jobs") @db.Uuid
-  status              String
-  type                String
-  direction           String
-  timestamp           DateTime              @default(now()) @db.Timestamp(6)
-  method              String
-  url                 String
-  provider            String
-  id_linked_user      String                @db.Uuid
-  crm_companies       crm_companies[]
-  crm_contacts        crm_contacts[]
-  linked_users        linked_users          @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
-  jobs_status_history jobs_status_history[]
+  id_event                  String                      @id(map: "pk_jobs") @db.Uuid
+  status                    String
+  type                      String
+  direction                 String
+  timestamp                 DateTime                    @default(now()) @db.Timestamp(6)
+  method                    String
+  url                       String
+  provider                  String
+  id_linked_user            String                      @db.Uuid
+  crm_companies             crm_companies[]
+  crm_contacts              crm_contacts[]
+  linked_users              linked_users                @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
+  jobs_status_history       jobs_status_history[]
+  webhook_delivery_attempts webhook_delivery_attempts[]
 
   @@index([id_linked_user], map: "fk_linkeduserid_projectid")
 }
@@ -397,4 +398,69 @@ model remote_data {
   format             String?
   data               String?
   created_at         DateTime? @db.Timestamp(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model webhook_endpoints {
+  id_webhook_endpoint       String                      @id(map: "pk_webhook_endpoint") @db.Uuid
+  endpoint_description      String?
+  url                       String
+  secret                    String
+  active                    Boolean
+  created_at                DateTime                    @db.Timestamp(6)
+  id_project                String                      @db.Uuid
+  scope                     String
+  last_update               DateTime?                   @db.Timestamp(6)
+  id_webhook_scope          String?                     @db.Uuid
+  webhook_delivery_attempts webhook_delivery_attempts[]
+  webhook_scope             webhook_scope?              @relation(fields: [id_webhook_scope], references: [id_webhook_scope], onDelete: NoAction, onUpdate: NoAction, map: "fk_38")
+
+  @@index([id_webhook_scope], map: "fk_we_webhook_scope_id")
+}
+
+model webhook_scope {
+  id_webhook_scope    String              @id(map: "pk_webhook_scope") @db.Uuid
+  last_update         DateTime?           @db.Timestamp(6)
+  crm_contact_created Boolean             @map("crm.contact.created")
+  crm_contact_updated Boolean             @map("crm.contact.updated")
+  crm_contact_removed Boolean             @map("crm.contact.removed")
+  crm_contact_pulled  Boolean             @map("crm.contact.pulled")
+  connection_created  Boolean             @map("connection.created")
+  connection_deleted  Boolean             @map("connection.deleted")
+  webhook_endpoints   webhook_endpoints[]
+}
+
+model webhooks_payloads {
+  id_webhooks_payload       String                      @id(map: "pk_webhooks_payload") @db.Uuid
+  data                      Json                        @db.Json
+  webhook_delivery_attempts webhook_delivery_attempts[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model webhook_delivery_attempts {
+  id_webhook_delivery_attempt String             @id(map: "pk_webhook_event") @db.Uuid
+  timestamp                   DateTime           @db.Timestamp(6)
+  status                      String
+  next_retry                  DateTime?          @db.Timestamp(6)
+  id_webhooks_payload         String?            @db.Uuid
+  id_webhook_endpoint         String?            @db.Uuid
+  id_event                    String?            @db.Uuid
+  id_webhooks_reponse         String?            @db.Uuid
+  webhooks_payloads           webhooks_payloads? @relation(fields: [id_webhooks_payload], references: [id_webhooks_payload], onDelete: NoAction, onUpdate: NoAction, map: "fk_38_1")
+  webhook_endpoints           webhook_endpoints? @relation(fields: [id_webhook_endpoint], references: [id_webhook_endpoint], onDelete: NoAction, onUpdate: NoAction, map: "fk_38_2")
+  events                      events?            @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_39")
+  webhooks_reponses           webhooks_reponses? @relation(fields: [id_webhooks_reponse], references: [id_webhooks_reponse], onDelete: NoAction, onUpdate: NoAction, map: "fk_40")
+
+  @@index([id_webhooks_payload], map: "fk_we_payload_webhookid")
+  @@index([id_webhook_endpoint], map: "fk_we_webhookendpointid")
+  @@index([id_event], map: "fk_webhook_delivery_attempt_eventid")
+  @@index([id_webhooks_reponse], map: "fk_webhook_delivery_attempt_webhook_responseid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model webhooks_reponses {
+  id_webhooks_reponse       String                      @id(map: "pk_webhooks_reponse") @db.Uuid
+  http_response_data        String
+  http_status_code          String
+  webhook_delivery_attempts webhook_delivery_attempts[]
 }

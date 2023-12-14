@@ -8,6 +8,7 @@ import { FieldMappingModule } from './field-mapping/field-mapping.module';
 import { EventsModule } from './events/events.module';
 import { MagicLinkModule } from './magic-link/magic-link.module';
 import { PassthroughModule } from './passthrough/passthrough.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PassthroughModule } from './passthrough/passthrough.module';
     EventsModule,
     MagicLinkModule,
     PassthroughModule,
+    WebhookModule,
   ],
   exports: [
     AuthModule,
@@ -31,6 +33,7 @@ import { PassthroughModule } from './passthrough/passthrough.module';
     EventsModule,
     MagicLinkModule,
     PassthroughModule,
+    WebhookModule,
   ],
 })
 export class CoreModule {}

@@ -4,6 +4,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { OriginalContactOutput } from '@@core/utils/types';
 import { unify } from '@@core/utils/unification/unify';
+import { WebhookService } from '@@core/webhook/webhook.service';
 import { FreshSalesService } from '@contact/services/freshsales';
 import { HubspotService } from '@contact/services/hubspot';
 import { PipedriveService } from '@contact/services/pipedrive';
@@ -16,6 +17,7 @@ import { CrmObject } from '@crm/@types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
+import { crm_contacts as CrmContact } from '@prisma/client';
 
 @Injectable()
 export class SyncContactsService implements OnModuleInit {
@@ -28,6 +30,7 @@ export class SyncContactsService implements OnModuleInit {
     private pipedrive: PipedriveService,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
+    private webhook: WebhookService,
   ) {
     this.logger.setContext(SyncContactsService.name);
   }
@@ -40,6 +43,62 @@ export class SyncContactsService implements OnModuleInit {
     }
   }
 
+  @Cron('*/2 * * * *')
+  //function used by sync worker which populate our crm_contacts table
+  //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
+  //TODO: find a way to save all remote data for each contact somowhere in our db so our GET action know where to fetch it
+  async syncContacts() {
+    try {
+      this.logger.log(`Syncing contacts....`);
+      const defaultOrg = await this.prisma.organizations.findFirst({
+        where: {
+          name: 'Acme Inc',
+        },
+      });
+
+      const defaultProject = await this.prisma.projects.findFirst({
+        where: {
+          id_organization: defaultOrg.id_organization,
+          name: 'Project 1',
+        },
+      });
+      const id_project = defaultProject.id_project;
+      const linkedUsers = await this.prisma.linked_users.findMany({
+        where: {
+          id_project: id_project,
+        },
+      });
+      linkedUsers.map(async (linkedUser) => {
+        try {
+          await this.syncContactsForLinkedUser(
+            'hubspot',
+            linkedUser.id_linked_user,
+            id_project,
+          );
+          await this.syncContactsForLinkedUser(
+            'pipedrive',
+            linkedUser.id_linked_user,
+            id_project,
+          );
+          await this.syncContactsForLinkedUser(
+            'zendesk',
+            linkedUser.id_linked_user,
+            id_project,
+          );
+          await this.syncContactsForLinkedUser(
+            'zoho',
+            linkedUser.id_linked_user,
+            id_project,
+          );
+        } catch (error) {
+          handleServiceError(error, this.logger);
+        }
+      });
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
   async saveContactsInDb(
     linkedUserId: string,
     contacts: UnifiedContactOutput[],
@@ -47,8 +106,9 @@ export class SyncContactsService implements OnModuleInit {
     originSource: string,
     jobId: string,
     remote_data: Record<string, any>[],
-  ) {
+  ): Promise<CrmContact[]> {
     try {
+      let contacts_results: CrmContact[] = [];
       for (let i = 0; i < contacts.length; i++) {
         const contact = contacts[i];
         const originId = originIds[i];
@@ -107,6 +167,8 @@ export class SyncContactsService implements OnModuleInit {
               },
             },
           });
+          //this.logger.log(`logging contact ${res.id_crm_contact} before push`);
+          contacts_results = [...contacts_results, res];
           unique_crm_contact_id = res.id_crm_contact;
         } else {
           // Create a new contact
@@ -136,6 +198,7 @@ export class SyncContactsService implements OnModuleInit {
           const res = await this.prisma.crm_contacts.create({
             data: data,
           });
+          contacts_results = [...contacts_results, res];
           unique_crm_contact_id = res.id_crm_contact;
         }
 
@@ -198,64 +261,18 @@ export class SyncContactsService implements OnModuleInit {
           },
         });
       }
-    } catch (error) {
-      handleServiceError(error, this.logger);
-    }
-  }
-
-  @Cron('*/2 * * * *')
-  //function used by sync worker which populate our crm_contacts table
-  //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
-  //TODO: find a way to save all remote data for each contact somowhere in our db so our GET action know where to fetch it
-  async syncContacts() {
-    try {
-      this.logger.log(`Syncing contacts....`);
-      const defaultOrg = await this.prisma.organizations.findFirst({
-        where: {
-          name: 'Acme Inc',
-        },
-      });
-
-      const defaultProject = await this.prisma.projects.findFirst({
-        where: {
-          id_organization: defaultOrg.id_organization,
-          name: 'Project 1',
-        },
-      });
-      const linkedUsers = await this.prisma.linked_users.findMany({
-        where: {
-          id_project: defaultProject.id_project,
-        },
-      });
-      linkedUsers.map(async (linkedUser) => {
-        try {
-          await this.syncContactsForLinkedUser(
-            'hubspot',
-            linkedUser.id_linked_user,
-          );
-          await this.syncContactsForLinkedUser(
-            'pipedrive',
-            linkedUser.id_linked_user,
-          );
-          await this.syncContactsForLinkedUser(
-            'zendesk',
-            linkedUser.id_linked_user,
-          );
-          await this.syncContactsForLinkedUser(
-            'zoho',
-            linkedUser.id_linked_user,
-          );
-        } catch (error) {
-          handleServiceError(error, this.logger);
-        }
-      });
+      return contacts_results;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncContactsForLinkedUser(integrationId: string, linkedUserId: string) {
+  async syncContactsForLinkedUser(
+    integrationId: string,
+    linkedUserId: string,
+    id_project: string,
+  ) {
     try {
       this.logger.log(
         `Syncing ${integrationId} contacts for linkedUser ${linkedUserId}`,
@@ -272,7 +289,7 @@ export class SyncContactsService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'sync',
+          type: 'crm.contact.synced',
           method: 'SYNC',
           url: '/sync',
           provider: integrationId,
@@ -342,7 +359,7 @@ export class SyncContactsService implements OnModuleInit {
       );
 
       //insert the data in the DB with the fieldMappings (value table)
-      await this.saveContactsInDb(
+      const contacts_data = await this.saveContactsInDb(
         linkedUserId,
         unifiedObject,
         contactIds,
@@ -358,6 +375,13 @@ export class SyncContactsService implements OnModuleInit {
           status: 'success',
         },
       });
+
+      await this.webhook.handleWebhook(
+        contacts_data,
+        'crm.contact.synced',
+        id_project,
+        job_id,
+      );
     } catch (error) {
       handleServiceError(error, this.logger);
     }

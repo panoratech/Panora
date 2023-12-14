@@ -254,6 +254,7 @@ export class ContactService {
 
           // Transform to UnifiedContactInput format
           return {
+            id: contact.id_crm_contact,
             first_name: contact.first_name,
             last_name: contact.last_name,
             email_addresses: contact.crm_email_addresses.map((email) => ({

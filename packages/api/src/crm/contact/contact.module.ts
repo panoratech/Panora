@@ -10,8 +10,15 @@ import { HubspotService } from './services/hubspot';
 import { LoggerService } from '@@core/logger/logger.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { SyncContactsService } from './sync/sync.service';
+import { WebhookService } from '@@core/webhook/webhook.service';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'webhookDelivery',
+    }),
+  ],
   controllers: [ContactController],
   providers: [
     ContactService,
@@ -24,6 +31,7 @@ import { SyncContactsService } from './sync/sync.service';
     LoggerService,
     FieldMappingService,
     SyncContactsService,
+    WebhookService,
   ],
   exports: [SyncContactsService],
 })
