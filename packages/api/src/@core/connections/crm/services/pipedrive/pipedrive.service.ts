@@ -85,6 +85,7 @@ export class PipedriveConnectionService {
           created_at: new Date(),
         },
       });
+      return db_res;
     } catch (error) {
       handleServiceError(error, this.logger, 'pipedrive', Action.oauthCallback);
     }

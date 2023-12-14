@@ -85,6 +85,7 @@ export class ZendeskConnectionService {
           created_at: new Date(),
         },
       });
+      return db_res;
     } catch (error) {
       handleServiceError(error, this.logger, 'zendesk', Action.oauthCallback);
     }

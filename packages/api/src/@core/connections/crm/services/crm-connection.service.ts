@@ -6,6 +6,10 @@ import { PipedriveConnectionService } from './pipedrive/pipedrive.service';
 import { ZendeskConnectionService } from './zendesk/zendesk.service';
 import { FreshsalesConnectionService } from './freshsales/freshsales.service';
 import { LoggerService } from '@@core/logger/logger.service';
+import { WebhookService } from '@@core/webhook/webhook.service';
+import { connections as Connection } from '@prisma/client';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class CrmConnectionsService {
@@ -15,7 +19,9 @@ export class CrmConnectionsService {
     private pipedriveConnectionService: PipedriveConnectionService,
     private zendeskConnectionService: ZendeskConnectionService,
     private freshsalesConnectionService: FreshsalesConnectionService,
+    private webhook: WebhookService,
     private logger: LoggerService,
+    private prisma: PrismaService,
   ) {
     this.logger.setContext(CrmConnectionsService.name);
   }
@@ -41,12 +47,26 @@ export class CrmConnectionsService {
     zohoLocation?: string,
   ) {
     try {
+      let data: Connection;
+      const job_resp_create = await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'initialized',
+          type: 'connection.created',
+          method: 'GET',
+          url: '/oauth/callback',
+          provider: providerName.toLowerCase(),
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
       switch (providerName.toLowerCase()) {
         case 'hubspot':
           if (!code) {
             throw new NotFoundError(`no hubspot code found, found ${code}`);
           }
-          return this.hubspotConnectionService.handleHubspotCallback(
+          data = await this.hubspotConnectionService.handleHubspotCallback(
             linkedUserId,
             projectId,
             code,
@@ -58,7 +78,7 @@ export class CrmConnectionsService {
           if (!zohoLocation) {
             throw new NotFoundError(`no zoho location, found ${code}`);
           }
-          return this.zohoConnectionService.handleZohoCallback(
+          data = await this.zohoConnectionService.handleZohoCallback(
             linkedUserId,
             projectId,
             code,
@@ -68,7 +88,7 @@ export class CrmConnectionsService {
           if (!code) {
             throw new NotFoundError(`no pipedrive code found, found ${code}`);
           }
-          return this.pipedriveConnectionService.handlePipedriveCallback(
+          data = await this.pipedriveConnectionService.handlePipedriveCallback(
             linkedUserId,
             projectId,
             code,
@@ -80,7 +100,7 @@ export class CrmConnectionsService {
           if (!code) {
             throw new NotFoundError(`no zendesk code found, found ${code}`);
           }
-          return this.zendeskConnectionService.handleZendeskCallback(
+          data = await this.zendeskConnectionService.handleZendeskCallback(
             linkedUserId,
             projectId,
             code,
@@ -88,6 +108,20 @@ export class CrmConnectionsService {
         default:
           throw new NotFoundError(`Unknown provider, found ${providerName}`);
       }
+      await this.prisma.events.update({
+        where: {
+          id_event: job_resp_create.id_event,
+        },
+        data: {
+          status: 'success',
+        },
+      });
+      await this.webhook.handleWebhook(
+        data,
+        'crm.contact.pulled',
+        projectId,
+        job_resp_create.id_event,
+      );
     } catch (error) {
       handleServiceError(error, this.logger);
     }

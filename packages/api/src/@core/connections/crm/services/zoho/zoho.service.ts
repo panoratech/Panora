@@ -95,6 +95,7 @@ export class ZohoConnectionService {
           account_url: domain,
         },
       });
+      return db_res;
     } catch (error) {
       handleServiceError(error, this.logger, 'zoho', Action.oauthCallback);
     }

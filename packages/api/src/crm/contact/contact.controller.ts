@@ -1,8 +1,22 @@
-import { Controller, Post, Body, Query, Get, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Query,
+  Get,
+  Patch,
+  Param,
+} from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { UnifiedContactInput } from './types/model.unified';
-import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('crm/contact')
 @Controller('crm/contact')
@@ -29,6 +43,13 @@ export class ContactController {
       linkedUserId,
       remote_data,
     );
+  }
+
+  @ApiParam({ name: 'id', required: true, type: String })
+  @ApiResponse({ status: 200 })
+  @Get(':id')
+  getContact(@Param('id') id: string) {
+    return this.contactService.getContact(id);
   }
 
   @ApiQuery({ name: 'integrationId', required: true, type: String })

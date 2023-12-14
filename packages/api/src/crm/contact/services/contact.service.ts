@@ -25,6 +25,7 @@ import {
 import { OriginalContactOutput } from '@@core/utils/types';
 import { handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { WebhookService } from '@@core/webhook/webhook.service';
 
 @Injectable()
 export class ContactService {
@@ -37,6 +38,7 @@ export class ContactService {
     private pipedrive: PipedriveService,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
+    private webhook: WebhookService,
   ) {
     this.logger.setContext(ContactService.name);
   }
@@ -167,6 +169,13 @@ export class ContactService {
         customFieldMappings: customFieldMappings,
       })) as UnifiedContactOutput[];
 
+      //TODO : add the contact inside our db
+      /*const new_contact_added = await this.prisma.crm_contacts.create({
+        data: {
+          
+        }
+      })*/
+
       let res: ContactResponse = {
         contacts: unifiedObject,
       };
@@ -192,6 +201,14 @@ export class ContactService {
     }
   }
 
+  async getContact(id_crm_contact: string) {
+    return await this.prisma.crm_contacts.findUnique({
+      where: {
+        id_crm_contact: id_crm_contact,
+      },
+    });
+  }
+
   async getContacts(
     integrationId: string,
     linkedUserId: string,
@@ -203,7 +220,7 @@ export class ContactService {
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'pull',
+          type: 'crm.contact.pull',
           method: 'GET',
           url: '/crm/contact',
           provider: integrationId,

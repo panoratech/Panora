@@ -73,8 +73,6 @@ export class HubspotConnectionService {
           linked_users: {
             connect: { id_linked_user: linkedUserId },
           },
-          //id of the end-customer defined in the company application, this is how requests could be made on behlaf of the user
-          // without it, we cant retrieve the right row in our db
         },
         update: {
           access_token: encrypt(data.access_token),
@@ -87,6 +85,7 @@ export class HubspotConnectionService {
         },
       });
       this.logger.log('Successfully added tokens inside DB ' + db_res);
+      return db_res;
     } catch (error) {
       handleServiceError(error, this.logger, 'hubspot', Action.oauthCallback);
     }

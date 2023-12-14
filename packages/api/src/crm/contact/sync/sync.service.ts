@@ -167,7 +167,6 @@ export class SyncContactsService implements OnModuleInit {
               },
             },
           });
-          //this.logger.log(`logging contact ${res.id_crm_contact} before push`);
           contacts_results = [...contacts_results, res];
           unique_crm_contact_id = res.id_crm_contact;
         } else {
