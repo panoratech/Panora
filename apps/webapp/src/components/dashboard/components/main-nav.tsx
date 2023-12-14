@@ -8,7 +8,7 @@ export function MainNav({
   onLinkClick: (name: string) => void;
   className: string;
 }) {
-  const [selectedItem, setSelectedItem] = useState<string>("dashboard");
+  const [selectedItem, setSelectedItem] = useState<string>("quickstart");
 
   const navItemClassName = (itemName: string) =>
     `text-sm border-b font-medium w-full text-left px-4 py-2 hover:bg-gray-900 cursor-pointer ${

@@ -59,7 +59,7 @@ export class FreshSalesService {
     }
   }
 
-  async getContacts(
+  async syncContacts(
     linkedUserId: string,
   ): Promise<ApiResponse<FreshsalesContactOutput[]>> {
     try {

@@ -55,18 +55,13 @@ const ProviderModal = () => {
   const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
 
 
-
-  //TODO: externalize that in the backend => from  
   const { open, isReady } = useOAuth({
-    providerName: selectedProvider, // This will be set when a provider is clicked
+    providerName: selectedProvider,
     returnUrl: 'http://127.0.0.1:5174/', // Replace with the actual return URL
-    projectId: linkedUser?.id_project, // Replace with the actual project ID
-    linkedUserId: linkedUser?.id_linked_user, //TODO: uuidv4(), // Replace with the actual user ID
+    projectId: linkedUser?.id_project,
+    linkedUserId: linkedUser?.id_linked_user,
     onSuccess: () => console.log('OAuth successful'),
   });
-
-  
-
 
   const onWindowClose = () => {
     setSelectedProvider('');

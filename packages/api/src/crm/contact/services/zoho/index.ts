@@ -24,12 +24,12 @@ export class ZohoService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'zoho',
         },
       });
       const resp = await axios.post(
-        //TODO
-        `https://www.zohoapis.com/crm/v3/Contacts`,
-        JSON.stringify(contactData),
+        `https://www.zohoapis.eu/crm/v3/Contacts`,
+        { data: [contactData] },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -39,8 +39,9 @@ export class ZohoService {
           },
         },
       );
+      //this.logger.log('zoho resp is ' + JSON.stringify(resp));
       return {
-        data: resp.data,
+        data: resp.data.data,
         message: 'Zoho contact created',
         statusCode: 201,
       };
@@ -56,7 +57,7 @@ export class ZohoService {
     return;
   }
 
-  async getContacts(
+  async syncContacts(
     linkedUserId: string,
   ): Promise<ApiResponse<ZohoContactOutput[]>> {
     try {
@@ -64,16 +65,26 @@ export class ZohoService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'zoho',
         },
       });
-      const resp = await axios.get(`https://www.zohoapis.com/crm/v3/Contacts`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${decrypt(connection.access_token)}`,
+      //TODO: handle fields
+      const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
+      const resp = await axios.get(
+        `https://www.zohoapis.eu/crm/v3/Contacts?fields=${fields}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Zoho-oauthtoken ${decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
+      //this.logger.log('CONTACTS ZOHO ' + JSON.stringify(resp.data.data));
+      this.logger.log(`Synced zoho contacts !`);
       return {
-        data: resp.data,
+        data: resp.data.data,
         message: 'Zoho contacts retrieved',
         statusCode: 200,
       };

@@ -1,4 +1,4 @@
-import JobsTable from "./JobsTable";
+import JobsTable from "./EventsTable";
 
 export default function JobsPage() {
     return (

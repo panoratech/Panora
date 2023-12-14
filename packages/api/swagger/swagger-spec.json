@@ -1,0 +1,881 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_registerUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginCredentials"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/users": {
+      "get": {
+        "operationId": "AuthController_users",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/api-keys": {
+      "get": {
+        "operationId": "AuthController_apiKeys",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/generate-apikey": {
+      "post": {
+        "operationId": "AuthController_generateApiKey",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/connections/oauth/callback": {
+      "get": {
+        "operationId": "ConnectionsController_handleCallback",
+        "parameters": [
+          {
+            "name": "state",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "location",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections"
+        ]
+      }
+    },
+    "/connections": {
+      "get": {
+        "operationId": "ConnectionsController_getConnections",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections"
+        ]
+      }
+    },
+    "/linked-users/create": {
+      "post": {
+        "operationId": "LinkedUsersController_addLinkedUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLinkedUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
+    "/linked-users": {
+      "get": {
+        "operationId": "LinkedUsersController_getLinkedUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
+    "/linked-users/single": {
+      "get": {
+        "operationId": "LinkedUsersController_getLinkedUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
+    "/organisations": {
+      "get": {
+        "operationId": "OrganisationsController_getOragnisations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "organisations"
+        ]
+      }
+    },
+    "/organisations/create": {
+      "post": {
+        "operationId": "OrganisationsController_createOrg",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "organisations"
+        ]
+      }
+    },
+    "/projects": {
+      "get": {
+        "operationId": "ProjectsController_getProjects",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/projects/create": {
+      "post": {
+        "operationId": "ProjectsController_createProject",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/field-mapping/entities": {
+      "get": {
+        "operationId": "FieldMappingController_getEntities",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mapping"
+        ]
+      }
+    },
+    "/field-mapping/attribute": {
+      "get": {
+        "operationId": "FieldMappingController_getAttributes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mapping"
+        ]
+      }
+    },
+    "/field-mapping/value": {
+      "get": {
+        "operationId": "FieldMappingController_getValues",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mapping"
+        ]
+      }
+    },
+    "/field-mapping/define": {
+      "post": {
+        "operationId": "FieldMappingController_defineTargetField",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefineTargetFieldDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mapping"
+        ]
+      }
+    },
+    "/field-mapping/map": {
+      "post": {
+        "operationId": "FieldMappingController_mapFieldToProvider",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MapFieldToProviderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mapping"
+        ]
+      }
+    },
+    "/field-mapping/properties": {
+      "get": {
+        "operationId": "FieldMappingController_getCustomProperties",
+        "parameters": [
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mapping"
+        ]
+      }
+    },
+    "/events": {
+      "get": {
+        "operationId": "EventsController_getEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/magic-link/create": {
+      "post": {
+        "operationId": "MagicLinkController_createLink",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMagicLinkDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "magic-link"
+        ]
+      }
+    },
+    "/magic-link": {
+      "get": {
+        "operationId": "MagicLinkController_getMagicLinks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "magic-link"
+        ]
+      }
+    },
+    "/magic-link/single": {
+      "get": {
+        "operationId": "MagicLinkController_getMagicLink",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "magic-link"
+        ]
+      }
+    },
+    "/passthrough": {
+      "post": {
+        "operationId": "PassthroughController_passthroughRequest",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PassThroughRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassThroughResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "passthrough"
+        ]
+      }
+    },
+    "/crm/contact": {
+      "get": {
+        "operationId": "ContactController_getContacts",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/contact"
+        ]
+      },
+      "post": {
+        "operationId": "ContactController_addContacts",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedContactInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/contact"
+        ]
+      },
+      "patch": {
+        "operationId": "ContactController_updateContact",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/contact"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Unified Panora API",
+    "description": "The Panora API description",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password_hash": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "email",
+          "password_hash"
+        ]
+      },
+      "LoginCredentials": {
+        "type": "object",
+        "properties": {
+          "id_user": {
+            "type": "number"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password_hash": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password_hash"
+        ]
+      },
+      "CreateLinkedUserDto": {
+        "type": "object",
+        "properties": {
+          "linked_user_origin_id": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "id_project": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "linked_user_origin_id",
+          "alias",
+          "id_project"
+        ]
+      },
+      "CreateOrganizationDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "stripe_customer_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "stripe_customer_id"
+        ]
+      },
+      "CreateProjectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id_organization": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "id_organization"
+        ]
+      },
+      "DefineTargetFieldDto": {
+        "type": "object",
+        "properties": {
+          "object_type_owner": {
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "data_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_type_owner",
+          "name",
+          "description",
+          "data_type"
+        ]
+      },
+      "MapFieldToProviderDto": {
+        "type": "object",
+        "properties": {
+          "attributeId": {
+            "type": "string"
+          },
+          "source_custom_field_id": {
+            "type": "string"
+          },
+          "source_provider": {
+            "type": "string"
+          },
+          "linked_user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "attributeId",
+          "source_custom_field_id",
+          "source_provider",
+          "linked_user_id"
+        ]
+      },
+      "CreateMagicLinkDto": {
+        "type": "object",
+        "properties": {
+          "linked_user_origin_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "id_project": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "linked_user_origin_id",
+          "email",
+          "alias",
+          "id_project"
+        ]
+      },
+      "PassThroughRequestDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "enum": [
+              "GET",
+              "POST",
+              "PATCH",
+              "DELETE",
+              "PUT"
+            ],
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          },
+          "headers": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "method",
+          "path"
+        ]
+      },
+      "PassThroughResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "status": {
+            "type": "number"
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "url",
+          "status",
+          "data"
+        ]
+      },
+      "UnifiedContactInput": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  }
+}

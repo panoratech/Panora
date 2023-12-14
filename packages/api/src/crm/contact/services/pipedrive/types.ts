@@ -1,97 +1,79 @@
-export interface PipedriveContactInput {
-  name: string;
-  owner_id?: number;
-  org_id?: number;
-  email: string | EmailObject[];
-  phone: string | PhoneObject[];
-  label?: number;
-  visible_to?: VisibleTo;
-  marketing_status?: MarketingStatus;
-  add_time?: string;
-}
-
-export interface PipedriveContactOutput {
-  id: number;
+export interface PipedriveContact {
+  id: string;
   company_id: number;
-  owner_id: User;
-  org_id: OrgId;
+  owner_id: {
+    id: number;
+    name: string;
+    email: string;
+    has_pic: number;
+    pic_hash: string;
+    active_flag: boolean;
+    value: number;
+  };
+  org_id: {
+    name: string;
+    people_count: number;
+    owner_id: number;
+    address: string;
+    active_flag: boolean;
+    cc_email: string;
+    value: number;
+  };
   name: string;
   first_name: string;
   last_name: string;
-  // ... other properties
-  phone: Phone[];
-  email: Email[];
+  open_deals_count: number;
+  related_open_deals_count: number;
+  closed_deals_count: number;
+  related_closed_deals_count: number;
+  participant_open_deals_count: number;
+  participant_closed_deals_count: number;
+  email_messages_count: number;
+  activities_count: number;
+  done_activities_count: number;
+  undone_activities_count: number;
+  files_count: number;
+  notes_count: number;
+  followers_count: number;
+  won_deals_count: number;
+  related_won_deals_count: number;
+  lost_deals_count: number;
+  related_lost_deals_count: number;
+  active_flag: boolean;
+  phone: { value: string; primary: boolean; label: string }[];
+  email: { value: string; primary: boolean; label: string }[];
   primary_email: string;
-  // ... other properties
-  picture_id: PictureId;
-  // ... other properties
+  first_char: string;
+  update_time: Date;
+  add_time: Date;
+  visible_to: string;
+  marketing_status: string;
+  picture_id: {
+    item_type: string;
+    item_id: number;
+    active_flag: boolean;
+    add_time: string;
+    update_time: string;
+    added_by_user_id: number;
+    pictures: {
+      '128': string;
+      '512': string;
+    };
+    value: number;
+  };
+  next_activity_date: string;
+  next_activity_time: string;
+  next_activity_id: number;
+  last_activity_id: number;
+  last_activity_date: string;
+  last_incoming_mail_time: string;
+  last_outgoing_mail_time: string;
   label: number;
   org_name: string;
   owner_name: string;
   cc_email: string;
+  [key: string]: any;
 }
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  has_pic: number;
-  pic_hash: string;
-  active_flag: boolean;
-}
-
-interface OrgId {
-  name: string;
-  people_count: number;
-  owner_id: number;
-  address: string;
-  active_flag: boolean;
-  cc_email: string;
-  value: number;
-}
-
-//OUTPUT
-interface Phone {
-  value: string;
-  primary: boolean;
-  label: string;
-}
-
-//OUTPUT
-interface Email {
-  value: string;
-  primary: boolean;
-  label: string;
-}
-
-//OUTPUT
-interface PictureId {
-  item_type: string;
-  item_id: number;
-  active_flag: boolean;
-  add_time: string;
-  update_time: string;
-  added_by_user_id: number;
-  pictures: Record<string, string>;
-  value: number;
-}
-
-//INPUT
-interface EmailObject {
-  value: string;
-  primary?: boolean;
-  label?: string;
-}
-
-//INPUT
-type PhoneObject = EmailObject;
-
-//INPUT
-type MarketingStatus =
-  | 'no_consent'
-  | 'unsubscribed'
-  | 'subscribed'
-  | 'archived';
-
-//INPUT
-type VisibleTo = 1 | 3 | 5 | 7;
+export type PipedriveContactInput = Partial<PipedriveContact>;
+export type PipedriveContactOutput = PipedriveContactInput;

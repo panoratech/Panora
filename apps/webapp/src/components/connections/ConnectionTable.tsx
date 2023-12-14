@@ -14,9 +14,9 @@ import useConnections from "@/hooks/useConnections";
 import { DataTableLoading } from "../shared/data-table-loading";
 import { useState } from "react";
 import AddConnectionButton from "./components/AddConnectionButton";
-import { Skeleton } from "../ui/skeleton";
 import config from "@/utils/config";
 import useMagicLinkStore from "@/state/magicLinkStore";
+import { LoadingSpinner } from "./components/LoadingSpinner";
 
 export default function ConnectionTable() {
   const { data: connections, isLoading, error } = useConnections();
@@ -25,10 +25,7 @@ export default function ConnectionTable() {
   const {uniqueLink} = useMagicLinkStore();
 
   if (isLoading) {
-    return <div className="flex flex-col items-center">
-      Connections not found....
-      <Skeleton className="w-[100px] h-[20px] rounded-md mt-10" />
-    </div>;
+    return <LoadingSpinner className=""/>
   }
 
   if (error) {

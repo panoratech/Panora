@@ -6,22 +6,38 @@ import {
 
 export function mapToContact_Zoho(
   source: UnifiedContactInput,
+  customFieldMappings?: {
+    slug: string;
+    remote_id: string;
+  }[],
 ): ZohoContactInput {
   // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
   const primaryEmail = source.email_addresses?.[0]?.email_address;
   const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
-  //TODO zoho input weird ???
-  return; /*{
-    firstname: source_.first_name,
-    lastname: source_.last_name,
-    email: primaryEmail,
-    phone: primaryPhone,
-    // Map other fields as needed
-    // If there are fields such as city, country, etc., in your UnifiedContactInput, map them here
-  };*/
+  const result: ZohoContactInput = {
+    First_Name: source.first_name,
+    Last_Name: source.last_name,
+    Email: primaryEmail,
+    Phone: primaryPhone,
+  };
+
+  if (customFieldMappings && source.field_mappings) {
+    for (const fieldMapping of source.field_mappings) {
+      for (const key in fieldMapping) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === key,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = fieldMapping[key];
+        }
+      }
+    }
+  }
+
+  return result;
 }
-//TODO
+
 export function mapToUnifiedContact_Zoho(
   source: ZohoContactOutput | ZohoContactOutput[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
@@ -36,34 +52,42 @@ export function mapToUnifiedContact_Zoho(
 function _mapSingleZohoContact(
   contact: ZohoContactOutput,
 ): UnifiedContactOutput {
-  // Finding the primary contact person
-  const primaryContact = contact.contact_persons.find(
-    (p) => p.is_primary_contact,
-  );
-
   // Constructing email and phone details
   const email_addresses =
-    primaryContact && primaryContact.email
-      ? [{ email_address: primaryContact.email, email_address_type: 'primary' }]
+    contact && contact.Email
+      ? [{ email_address: contact.Email, email_address_type: 'primary' }]
       : [];
+
   const phone_numbers = [];
 
-  if (primaryContact && primaryContact.phone) {
+  if (contact && contact.Phone) {
     phone_numbers.push({
-      phone_number: primaryContact.phone,
+      phone_number: contact.Phone,
       phone_type: 'work',
     });
   }
-  if (primaryContact && primaryContact.mobile) {
+  if (contact && contact.Mobile) {
     phone_numbers.push({
-      phone_number: primaryContact.mobile,
+      phone_number: contact.Mobile,
       phone_type: 'mobile',
+    });
+  }
+  if (contact && contact.Fax) {
+    phone_numbers.push({
+      phone_number: contact.Fax,
+      phone_type: 'fax',
+    });
+  }
+  if (contact && contact.Home_Phone) {
+    phone_numbers.push({
+      phone_number: contact.Home_Phone,
+      phone_type: 'home',
     });
   }
 
   return {
-    first_name: primaryContact ? primaryContact.first_name : '',
-    last_name: primaryContact ? primaryContact.last_name : '',
+    first_name: contact.First_Name ? contact.First_Name : '',
+    last_name: contact.Last_Name ? contact.Last_Name : '',
     email_addresses,
     phone_numbers,
   };

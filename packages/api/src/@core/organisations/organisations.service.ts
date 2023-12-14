@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { handleServiceError } from '@@core/utils/errors';
 
 @Injectable()
 export class OrganisationsService {
@@ -11,15 +12,23 @@ export class OrganisationsService {
   }
 
   async getOrganisations() {
-    return await this.prisma.organizations.findMany();
+    try {
+      return await this.prisma.organizations.findMany();
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
   async createOrganization(data: CreateOrganizationDto) {
-    const res = await this.prisma.organizations.create({
-      data: {
-        ...data,
-        id_organization: uuidv4(),
-      },
-    });
-    return res;
+    try {
+      const res = await this.prisma.organizations.create({
+        data: {
+          ...data,
+          id_organization: uuidv4(),
+        },
+      });
+      return res;
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 }

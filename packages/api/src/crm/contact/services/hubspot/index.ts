@@ -28,6 +28,7 @@ export class HubspotService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'hubspot',
         },
       });
       const dataBody = {
@@ -59,7 +60,8 @@ export class HubspotService {
     }
     return;
   }
-  async getContacts(
+
+  async syncContacts(
     linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotContactOutput[]>> {
@@ -68,6 +70,7 @@ export class HubspotService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'hubspot',
         },
       });
 
@@ -87,6 +90,8 @@ export class HubspotService {
           Authorization: `Bearer ${decrypt(connection.access_token)}`,
         },
       });
+      this.logger.log(`Synced hubspot contacts !`);
+
       return {
         data: resp.data.results,
         message: 'Hubspot contacts retrieved',

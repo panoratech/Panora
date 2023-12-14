@@ -17,42 +17,6 @@ export class HubspotConnectionService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(HubspotConnectionService.name);
   }
-  /*async addLinkedUserAndProjectTest() {
-    const newOrganization = {
-      id_organization: uuidv4(),
-      name: 'New Organization',
-      stripe_customer_id: 'stripe-customer-123',
-    };
-
-    const org = await this.prisma.organizations.create({
-      data: newOrganization,
-    });
-    this.logger.log('Added new organisation ' + org);
-
-    // Example data for a new project
-    const newProject = {
-      id_project: uuidv4(),
-      name: 'New Project',
-      id_organization: newOrganization.id_organization,
-      sync_mode: 'pool',
-    };
-    const data1 = await this.prisma.projects.create({
-      data: newProject,
-    });
-    this.logger.log('Added new project ' + data1);
-
-    const newLinkedUser = {
-      id_linked_user: uuidv4(),
-      linked_user_origin_id: '12345',
-      alias: 'ACME COMPANY',
-      status: 'Active',
-      id_project: '1',
-    };
-    const data = await this.prisma.linked_users.create({
-      data: newLinkedUser,
-    });
-    this.logger.log('Added new linked_user ' + data);
-  }*/
 
   async handleHubspotCallback(
     linkedUserId: string,
@@ -64,29 +28,12 @@ export class HubspotConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
+          provider_slug: 'hubspot',
         },
       });
-      if (isNotUnique)
-        throw new NotUniqueRecord(
-          `A connection already exists for userId ${linkedUserId} and the provider hubspot`,
-        );
-      //TMP STEP = first create a linked_user and a project id
-      //await this.addLinkedUserAndProjectTest();
-
-      /*const newLinkedUser = {
-        id_linked_user: linkedUserId,
-        linked_user_origin_id: '12345',
-        alias: 'APPLE COMPANY',
-        status: 'Active',
-        id_project: projectId,
-      };
-      const data_ = await this.prisma.linked_users.create({
-        data: newLinkedUser,
-      });
-      this.logger.log('Added new linked_user ' + data_);*/
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`; //tocheck
+      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: config.HUBSPOT_CLIENT_ID,
@@ -105,8 +52,11 @@ export class HubspotConnectionService {
       );
       const data: HubspotOAuthResponse = res.data;
       // save tokens for this customer inside our db
-      const db_res = await this.prisma.connections.create({
-        data: {
+      const db_res = await this.prisma.connections.upsert({
+        where: {
+          id_connection: isNotUnique.id_connection,
+        },
+        create: {
           id_connection: uuidv4(),
           provider_slug: 'hubspot',
           token_type: 'oauth',
@@ -125,6 +75,15 @@ export class HubspotConnectionService {
           },
           //id of the end-customer defined in the company application, this is how requests could be made on behlaf of the user
           // without it, we cant retrieve the right row in our db
+        },
+        update: {
+          access_token: encrypt(data.access_token),
+          refresh_token: encrypt(data.refresh_token),
+          expiration_timestamp: new Date(
+            new Date().getTime() + data.expires_in * 1000,
+          ),
+          status: 'valid',
+          created_at: new Date(),
         },
       });
       this.logger.log('Successfully added tokens inside DB ' + db_res);
