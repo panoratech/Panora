@@ -1,26 +1,66 @@
-# **Panora**
+<div align="center">
+
+<h1> 🌼 Welcome on Panora </h1>
+
+  <h3>Panora puts your customer facing integration on autopilot</h3>
+  <h3>Ship dozens of integrations without losing sleep</h3>
+  
+</br>
+  <img alt="Discord" src="https://img.shields.io/discord/1038131193067077642"></img>
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/panoratech/panora?logo=github"> </img>
+  <img alt="GitHub License" src="https://img.shields.io/github/license/panoratech/Panora"></img>
+  <img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/panoradotdev"></img>
+  <img src="https://snyk.io/test/github/panoratech/Panora/badge.svg" alt="Known Vulnerabilities"></img>
+  </br>
+  
+  <p>
+  <a href="https://panora.dev">Website 🌎</a> - <a href="https://docs.panora.dev">Documentation 📖</a> - <a href="https://status.panora.dev">Status 🟢</a> 
+  </p>
+
+</div>
+
+
+<div align="center">
+
+
+</div>
+
 
 ![Group 1_updated](https://github.com/panoratech/Panora/assets/39710677/c9a35848-7b48-43af-bd6c-6a5257e19bea)
 
-<div style="text-align:center">
-  <img src="https://snyk.io/test/github/panoratech/Panora/badge.svg" alt="Known Vulnerabilities">
-</div>
+### Have you met anyone who loves developing integrations? *No.* That’s why we designed an easy developer experience that you’ll enjoy.
 
-Our product makes it quick and easy for SaaS teams to ship customer-facing integrations between their product and others.
+- **Simple developer experience:** easy to self-host, uses industry-standard data models, and is extensible
+- **Builder-friendly terms:** Panora is open-source, and offers generous tips for contributors
 
-We do so by providing a single API that abstracts similar tools your customer may use along your product behind a common data model.
+### More than a devtool: Panora helps you put your product at the core of your customer's daily workflows
 
-This way, you can write one code to push data anywhere!
+Your customers expect all of their tools to work well together. Panora avoids your team spending hundreds of hours building and maintaining integrations instead of your core product.
 
-# 💻  Try Self-hosted
 
-## Requirements
+## 🔮 Core Features  
 
- 1. Install Docker on your machine.
- 2. Make sure Docker Compose is installed and available (it should be the case if you have chosen to install Docker via Docker Desktop).
- 3. Make sure Git is installed on your machine.
+|                    |
+|---------------------------|
+| **Magic Links:** Let your users grant you access to their data. Without writing code.              |
+| **Custom Fields:** Reflect in Panora the specific data points that matter to your users            |
+| **Passthrough Requests:** Interact with other software platforms in their native format.      | 
+| **Flexible Sync Settings:** Businesses that need real-time update can configure Panora accordingly    |
+| **Webhooks:** Listen to one webhook to receive normalized data from various software platforms                  |
 
-## Run the app
+
+## 🤝 Core Values
+
+|                                           |
+|-------------------------------------------|
+| 💻 Easy Developer Experience               |
+| 🫡 Fair Value Share: Contributors are valuable, so we've decided to let our community tip our heroes |
+
+
+## 🕹️ Play with the Self-hosted version
+
+- Prerequisite: You should have Git and Docker installed
+
 
  1. Get the code
 
@@ -40,46 +80,14 @@ This way, you can write one code to push data anywhere!
   docker compose --env-file ./.env.example up
  ```
 
-You can now open your browser and go to <http://localhost> to connect to the application. Panora's API is exposed at <http://localhost:3000>.
-Read more on our [quickstart guide](https://docs.panora.dev/quickstart)
+You can now open your browser and go to <http://localhost> to connect to the application.
+Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product
 
-# ✨ Join The cloud Pre-Alpha
-
-We're launching our clourd version soon. Click [here](https://form.typeform.com/to/KtthfECD) to get notified when we go public!
-
-# 🚀 Roadmap
-
-CRMs:
-
-- [x] Hubspot
-- [x] Zoho CRM
-- [x] Pipedrive
-- [x] Salesforce
-- [x] Zendesk
-- [ ] Other CRMs such as Freshsales, MS 365...
-
-Ticketing:
-
-- [ ] Slack
-- [ ] Discord
-- [ ] Jira
-- [ ] Asana
-- [ ] Microsoft Teams
-
-Accounting:
-
-- [ ] Sage
-- [ ] Freshbooks
-- [ ] Clearbooks
-- [ ] FreeAgent
-
-...and more
+## 🤔 Have questions? Ask the core team
+<a href="https://cal.com/rflih/30?utm_source=github&utm_campaign=readme"><img alt="Book us with Cal.com" src="https://cal.com/book-with-cal-dark.svg" /></a>
 
 
-# 🚀 Contributions
-
+## 🚀 Contributions
 This guide is intended for people willing to contribute to Panora.
-
 You can follow this guide to set up a Panora development environment on your machine.
-
 You can contribute by following our [guidelines.](https://github.com/panoratech/Panora/blob/main/CONTRIBUTING.md)
