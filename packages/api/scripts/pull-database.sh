@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # SCRIPT TO USE IF YOU WANT TO UPDATE YOUR PRISMA MODEL BASED ON YOUR DB 
 # it pulls changes from your database to your Prisma schema 
 # DB => PRISMA MODEL 
