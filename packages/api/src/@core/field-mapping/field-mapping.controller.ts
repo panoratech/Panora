@@ -5,11 +5,9 @@ import {
   DefineTargetFieldDto,
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
-import { StandardObject } from '../utils/types';
+import { ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 
-interface StandardObjectDto {
-  standardObjectName: string;
-}
+@ApiTags('field-mapping')
 @Controller('field-mapping')
 export class FieldMappingController {
   constructor(
@@ -19,43 +17,48 @@ export class FieldMappingController {
     this.logger.setContext(FieldMappingController.name);
   }
 
-  /*@Post('addObjectEntity')
-  addStandardObjectEntity(@Body() dto: StandardObjectDto) {
-    return this.fieldMappingService.addStandardObjectEntity(
-      dto.standardObjectName,
-    );
-  }*/
-
-  /*@Get('getObjectEntity')
-  getStandardObjectEntity(@Query('object') standardObjectName: string) {
-    return this.fieldMappingService.getEntityId(
-      standardObjectName as StandardObject,
-    );
-  }*/
-
+  @ApiResponse({ status: 200 })
   @Get('entities')
   getEntities() {
     return this.fieldMappingService.getEntities();
   }
 
+  @ApiResponse({ status: 200 })
   @Get('attribute')
   getAttributes() {
     return this.fieldMappingService.getAttributes();
   }
 
+  @ApiResponse({ status: 200 })
   @Get('value')
   getValues() {
     return this.fieldMappingService.getValues();
   }
 
+  @ApiBody({ type: DefineTargetFieldDto })
+  @ApiResponse({ status: 201 })
   //define target field on our unified model
   @Post('define')
   defineTargetField(@Body() defineTargetFieldDto: DefineTargetFieldDto) {
     return this.fieldMappingService.defineTargetField(defineTargetFieldDto);
   }
 
+  @ApiBody({ type: MapFieldToProviderDto })
+  @ApiResponse({ status: 201 })
   @Post('map')
   mapFieldToProvider(@Body() mapFieldToProviderDto: MapFieldToProviderDto) {
     return this.fieldMappingService.mapFieldToProvider(mapFieldToProviderDto);
+  }
+
+  @ApiResponse({ status: 200 })
+  @Get('properties')
+  getCustomProperties(
+    @Query('linkedUserId') linkedUserId: string,
+    @Query('providerId') providerId: string,
+  ) {
+    return this.fieldMappingService.getCustomProperties(
+      linkedUserId,
+      providerId,
+    );
   }
 }

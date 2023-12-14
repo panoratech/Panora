@@ -27,6 +27,7 @@ import useLinkedUsers from "@/hooks/useLinkedUsers";
 import useFieldMappings from "@/hooks/useFieldMappings";
 import { Skeleton } from "../ui/skeleton";
 import { useState } from "react";
+import { LoadingSpinner } from "../connections/components/LoadingSpinner";
 
 export default function ConfigurationPage() {
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
@@ -35,9 +36,7 @@ export default function ConfigurationPage() {
   const handleClose = () => {
     setOpen(false);
   };
-  if(isLoading){
-    console.log("loading linked users..");
-  }
+
 
   if(error){
     console.log("error linked users..");
@@ -68,7 +67,8 @@ export default function ConfigurationPage() {
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Configuration</h2>
           </div>
-          <Tabs defaultValue="linked-accounts" className="space-y-4">
+          {isLoading ? <LoadingSpinner className=""/>
+           : <Tabs defaultValue="linked-accounts" className="space-y-4">
             <TabsList>
               <TabsTrigger value="linked-accounts">Linked Accounts</TabsTrigger>
               <TabsTrigger value="field-mappings">
@@ -122,7 +122,7 @@ export default function ConfigurationPage() {
                 </Card>
               </div>
             </TabsContent>
-          </Tabs>
+          </Tabs>}
         </div>
 
       </div>

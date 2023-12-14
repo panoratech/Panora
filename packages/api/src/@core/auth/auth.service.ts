@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
+import { handleServiceError } from '@@core/utils/errors';
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
@@ -14,16 +15,24 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.logger.setContext(AuthService.name);
+  }
 
   async getUsers() {
-    const res = await this.prisma.users.findMany();
-    return res;
+    try {
+      return await this.prisma.users.findMany();
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
   async getApiKeys() {
-    const res = await this.prisma.api_keys.findMany();
-    return res;
+    try {
+      return await this.prisma.api_keys.findMany();
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
   async register(user: CreateUserDto) {
@@ -47,7 +56,7 @@ export class AuthService {
       const { password_hash, ...resp_user } = res;
       return resp_user;
     } catch (error) {
-      console.log(error);
+      handleServiceError(error, this.logger);
     }
   }
 
@@ -66,6 +75,8 @@ export class AuthService {
         if (!result) {
           throw new UnauthorizedException('Invalid credentials.');
         }
+      } else {
+        throw new Error('User not found.');
       }
       const payload = {
         email: foundUser.email,
@@ -78,7 +89,7 @@ export class AuthService {
         }), // token used to generate api keys
       };
     } catch (error) {
-      console.log(error);
+      handleServiceError(error, this.logger);
     }
   }
 
@@ -118,16 +129,20 @@ export class AuthService {
     projectId: number | string,
     userId: number | string,
   ): Promise<{ access_token: string }> {
-    const jwtPayload = {
-      sub: userId,
-      projectId: projectId,
-    };
-    return {
-      access_token: this.jwtService.sign(jwtPayload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: '1y',
-      }),
-    };
+    try {
+      const jwtPayload = {
+        sub: userId,
+        projectId: projectId,
+      };
+      return {
+        access_token: this.jwtService.sign(jwtPayload, {
+          secret: process.env.JWT_SECRET,
+          expiresIn: '1y',
+        }),
+      };
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
   async generateApiKeyForUser(
@@ -135,19 +150,6 @@ export class AuthService {
     projectId: number | string,
   ): Promise<{ api_key: string }> {
     try {
-      //tmp create first these 2 :
-      /*const resp = await this.prisma.organizations.create({
-        data: {
-          name: 'org1',
-          stripe_customer_id: 'oneone',
-        },
-      });
-      await this.prisma.projects.create({
-        data: {
-          name: 'proj',
-          id_organization: resp.id_organization,
-        },
-      });*/
       //TODO: CHECK IF PROJECT_ID IS EXISTENT
       //fetch user_id
       const foundUser = await this.prisma.users.findUnique({
@@ -178,7 +180,7 @@ export class AuthService {
 
       return { api_key: access_token };
     } catch (error) {
-      console.log(error);
+      handleServiceError(error, this.logger);
     }
   }
 
@@ -212,8 +214,7 @@ export class AuthService {
       }
       return true;
     } catch (error) {
-      console.error('validateApiKey error:', error);
-      throw new UnauthorizedException('Failed to validate API key.');
+      handleServiceError(error, this.logger);
     }
   }
 }

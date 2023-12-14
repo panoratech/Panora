@@ -2,9 +2,12 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm-connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { handleServiceError } from '@@core/utils/errors';
+import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ProviderVertical, getProviderVertical } from '@@core/utils/types';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('connections')
 @Controller('connections')
 export class ConnectionsController {
   constructor(
@@ -15,6 +18,10 @@ export class ConnectionsController {
     this.logger.setContext(ConnectionsController.name);
   }
 
+  @ApiQuery({ name: 'state', required: true, type: String })
+  @ApiQuery({ name: 'code', required: true, type: String })
+  @ApiQuery({ name: 'location', required: true, type: String })
+  @ApiResponse({ status: 200 })
   @Get('oauth/callback')
   handleCallback(
     @Res() res: Response,
@@ -23,13 +30,18 @@ export class ConnectionsController {
     @Query('location') zohoLocation?: string,
   ) {
     try {
-      if (!state) throw new Error('No Callback Params found for state');
-      if (!code) throw new Error('No Callback Params found for code');
+      if (!state)
+        throw new NotFoundError(
+          `No Callback Params found for state, found ${state}`,
+        );
+      if (!code)
+        throw new NotFoundError(
+          `No Callback Params found for code, found ${code}`,
+        );
 
       const stateData = JSON.parse(decodeURIComponent(state));
       const { projectId, linkedUserId, providerName, returnUrl } = stateData;
-      //TODO; ADD VERIFICATION OF PARAMS
-      switch (getProviderVertical(providerName)) {
+      switch (getProviderVertical(providerName.toLowerCase())) {
         case ProviderVertical.CRM:
           const zohoLocation_ = zohoLocation ? zohoLocation : '';
           this.crmConnectionsService.handleCRMCallBack(
@@ -61,6 +73,7 @@ export class ConnectionsController {
     }
   }
 
+  @ApiResponse({ status: 200 })
   @Get()
   async getConnections() {
     return await this.prisma.connections.findMany();

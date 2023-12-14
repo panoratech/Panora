@@ -6,10 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { DataTableColumnHeader } from "../../shared/data-table-column-header"
-import { DataTableRowActions } from "../../shared/data-table-row-actions"
-import { Job } from "../data/schema"
+import { Event } from "../data/schema"
 
-export const columns: ColumnDef<Job>[] = [
+export const columns: ColumnDef<Event>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -135,10 +134,22 @@ export const columns: ColumnDef<Job>[] = [
       if (!status) {
         return null
       }*/
+      const provider = (row.getValue("integration") as string).toLowerCase();
 
       return (
         <div className="flex w-[100px] items-center">
-          {row.getValue("integration") ? <Badge variant="outline">{row.getValue("integration")}</Badge>
+          {row.getValue("integration") ? 
+            <Badge variant={"outline"} className="bg-neutral-950 p-1 pr-2">
+              <img src={
+                provider == "hubspot" ?
+                `/providers/crm/${provider}.jpg` : 
+                provider == "zoho" ? 
+                `/providers/crm/${provider}.webp`
+                : `/providers/crm/${provider}.png`
+                } className="w-5 h-5 rounded-sm mr-2" 
+              />
+              {provider}
+            </Badge>
           : <Badge variant="secondary">_null_</Badge>
           }
         </div>
@@ -146,23 +157,6 @@ export const columns: ColumnDef<Job>[] = [
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
-    },
-  },
-  {
-    accessorKey: "organisation",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Organisation" />
-    ),
-    cell: ({ row }) => {
-      //const label = labels.find((label) => label.value === row.original.organisation)
-
-      return (
-        <div className="flex space-x-2">
-          {row.getValue("organisation") ? <Badge variant="outline">{row.getValue("organisation")}</Badge>
-          : <Badge variant="secondary">_null_</Badge>
-          }
-        </div>
-      )
     },
   },
   {
@@ -181,9 +175,5 @@ export const columns: ColumnDef<Job>[] = [
         </div>
       )
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
-  },
+  }
 ]

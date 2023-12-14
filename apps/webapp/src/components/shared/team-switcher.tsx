@@ -75,6 +75,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   
   const { profile } = useProfileStore();
 
+  
   useEffect(()=>{
     if(projects){      
       setIdProject(projects[0].id_project);
@@ -83,7 +84,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
       setOrganisationName(orgs[0].name);
       setIdOrg(orgs[0].id_organization);
     }
-  },[projects, orgs, setIdProject, setIdOrg])
+  },[projects, orgs, setIdProject, setIdOrg, setOrganisationName])
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
@@ -110,6 +111,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     });
     setShowNewDialog({open: false})  
   };
+
+  
 
   return (
     <Dialog open={showNewDialog.open} onOpenChange={handleOpenChange}>

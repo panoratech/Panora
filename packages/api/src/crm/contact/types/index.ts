@@ -2,6 +2,7 @@ import { UnifiedContactOutput } from './model.unified';
 
 export class ApiResponse<T> {
   data: T;
+  remote_data?: Record<string, any>;
   message?: string;
   error?: string;
   statusCode: number;

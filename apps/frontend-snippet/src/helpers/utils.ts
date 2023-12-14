@@ -24,7 +24,7 @@ export const providersConfig: ProvidersConfig = {
     },
     'zoho': {
       clientId: '1000.CWBWAO0XK6QNROXMA2Y0RUZYMGJIGT',
-      scopes: 'AaaServer.profile.Read', //todo
+      scopes: 'ZohoCRM.modules.ALL',
       authBaseUrl: 'https://accounts.zoho.eu/oauth/v2/auth',
       logoPath: 'assets/crm/zoho_logo.png',
     },
@@ -41,10 +41,9 @@ export const providersConfig: ProvidersConfig = {
       authBaseUrl: '',
       logoPath: 'assets/crm/freshsales_logo.webp',
     },
-    //TODO
     'zendesk': {
-      clientId: 'panora-zendesk',
-      scopes: 'Pipedrive_Scope',
+      clientId: '26cd23a81a8fefc134edec2c533a1cb1761d359cfcf438fc159543931e92fc93',
+      scopes: 'read write',
       authBaseUrl: 'https://api.getbase.com/oauth2/authorize',
       logoPath: 'assets/crm/zendesk_logo.png',
     },

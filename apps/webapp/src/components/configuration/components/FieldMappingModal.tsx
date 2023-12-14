@@ -15,8 +15,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-
-
 import {
   Select,
   SelectContent,
@@ -30,6 +28,9 @@ import useMapFieldMutation from "@/hooks/mutations/useMapFieldMutation"
 import { useEffect, useState } from "react"
 import useFieldMappings from "@/hooks/useFieldMappings"
 import useProviderProperties from "@/hooks/useProviderProperties"
+import { standardOjects } from "shared-types"
+import useProjectStore from "@/state/projectStore"
+import useLinkedUsers from "@/hooks/useLinkedUsers"
 
 export function FModal({ onClose }: {onClose: () => void}) {
   const [standardModel, setStandardModel] = useState('');
@@ -44,22 +45,17 @@ export function FModal({ onClose }: {onClose: () => void}) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [sourceCustomFieldsData, setSourceCustomFieldsData] = useState<Record<string, any>[]>([]);
 
+  const {idProject} = useProjectStore();
+
   const { data: mappings } = useFieldMappings();
   const { mutate: mutateDefineField } = useDefineFieldMutation();
   const { mutate: mutateMapField } = useMapFieldMutation();
-  const { data: sourceCustomFields, error, isLoading } = useProviderProperties(linkedUserId,sourceProvider,standardModel);
-
-  //const { data: sObjects } = useStandardObjects();
-  //TODO: get this from shared types
-  const sObjects = [
-    'contact',
-    'note',
-    'task'
-  ]
+  const { data: linkedUsers } = useLinkedUsers();
+  const { data: sourceCustomFields, error, isLoading } = useProviderProperties(linkedUserId,sourceProvider);
+  
   useEffect(() => {
     if (sourceCustomFields && sourceCustomFields.data.length > 0  && !isLoading && !error) {
       console.log("inside custom fields properties ");
-      
       setSourceCustomFieldsData(sourceCustomFields.data);
     }
   }, [sourceCustomFields, isLoading, error]);
@@ -113,7 +109,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                    {sObjects && sObjects
+                    {standardOjects && standardOjects
                         .map(sObject => (
                           <SelectItem key={sObject} value={sObject}>{sObject}</SelectItem>
                         ))
@@ -219,6 +215,28 @@ export function FModal({ onClose }: {onClose: () => void}) {
                 </Select>
               </div>
               <div className="space-y-1">
+                <Label htmlFor="new">Linked User Id</Label>
+                <Select 
+                  value={linkedUserId}
+                  onValueChange={setLinkedUserId}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a linked user" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                    {linkedUsers && linkedUsers.length > 0 && 
+                      linkedUsers
+                        .filter((linkedUser) => linkedUser.id_project === idProject)
+                        .map(linkedUser => (
+                          <SelectItem key={linkedUser.id_linked_user} value={linkedUser.id_linked_user}>{linkedUser.linked_user_origin_id}</SelectItem>
+                        ))
+                    }
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
                 <Label htmlFor="current">Origin Source Field</Label>
                 <Select
                   value={sourceCustomFieldId}
@@ -236,14 +254,6 @@ export function FModal({ onClose }: {onClose: () => void}) {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="new">Linked User Id</Label>
-                <Input 
-                  id="new" 
-                  value={linkedUserId}
-                  onChange={(e) => setLinkedUserId(e.target.value)} 
-                />
               </div>
             </CardContent>
             <CardFooter>

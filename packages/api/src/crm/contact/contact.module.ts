@@ -9,6 +9,7 @@ import { PipedriveService } from './services/pipedrive';
 import { HubspotService } from './services/hubspot';
 import { LoggerService } from '@@core/logger/logger.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { SyncContactsService } from './sync/sync.service';
 
 @Module({
   controllers: [ContactController],
@@ -22,6 +23,8 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
     HubspotService,
     LoggerService,
     FieldMappingService,
+    SyncContactsService,
   ],
+  exports: [SyncContactsService],
 })
 export class ContactModule {}

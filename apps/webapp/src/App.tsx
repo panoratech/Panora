@@ -2,9 +2,9 @@ import './App.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import DashboardPage from './components/dashboard'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import JobsPage from './components/jobs';
+import JobsPage from './components/events';
 import ConnectionsPage from './components/connections';
-import TaskPage from './components/jobs/JobsTable';
+import TaskPage from './components/events/EventsTable';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 
