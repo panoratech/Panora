@@ -37,7 +37,9 @@ RUN pnpm install
 
 # Build the project
 COPY --from=builder /app/out/full/ .
-RUN pnpm turbo run build --filter=api...
+#RUN pnpm turbo run build --filter=api...
+#avoid pulling from db
+RUN pnpm run build 
 
 # ========================================================================
 FROM base AS runner
