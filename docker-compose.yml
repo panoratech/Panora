@@ -34,7 +34,6 @@ services:
         DISTRIBUTION: ${DISTRIBUTION}
         JWT_SECRET: ${JWT_SECRET}
         REDIS_HOST: redis
-        REDIS_URL: 
     restart:
       unless-stopped
     ports:
@@ -53,6 +52,8 @@ services:
       - "6379:6379"
     volumes:
       - ./redis-data:/data
+    networks:
+      - backend
   
   webapp:
     build:
