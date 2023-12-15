@@ -34,11 +34,12 @@ services:
         DISTRIBUTION: ${DISTRIBUTION}
         JWT_SECRET: ${JWT_SECRET}
         REDIS_HOST: redis
+        REDIS_URL: 
     restart:
       unless-stopped
     ports:
-      - 3000:3000
-    command: sh -c "/app/packages/api/scripts/pull-database.sh && pnpm run build && node dist/src/main.js"    
+      - 30003000
+    #command: cd /app/packages/api && node dist/src/main.js   
     depends_on:
         postgres:
           condition: service_healthy
