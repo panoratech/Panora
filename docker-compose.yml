@@ -37,8 +37,8 @@ services:
     restart:
       unless-stopped
     ports:
-      - 3000:3000
-    command: sh -c "/app/packages/api/scripts/pull-database.sh && pnpm run build && node dist/src/main.js"    
+      - 30003000
+    #command: cd /app/packages/api && node dist/src/main.js   
     depends_on:
         postgres:
           condition: service_healthy
@@ -52,6 +52,8 @@ services:
       - "6379:6379"
     volumes:
       - ./redis-data:/data
+    networks:
+      - backend
   
   webapp:
     build:
