@@ -24,6 +24,7 @@ export class WebhookService {
   ) {
     try {
       //this.logger.log('data any type is ' + data);
+      this.logger.log('handling webhook....');
       //just create an entry in webhook
       //search if an endpoint webhook exists for such a projectId and such a scope
       const webhook = await this.prisma.webhook_endpoints.findFirst({
@@ -35,12 +36,15 @@ export class WebhookService {
       });
       if (!webhook) return;
 
+      this.logger.log('handling webhook payload....');
+
       const w_payload = await this.prisma.webhooks_payloads.create({
         data: {
           id_webhooks_payload: uuidv4(),
           data: JSON.stringify(data),
         },
       });
+      this.logger.log('handling webhook delivery....');
 
       const w_delivery = await this.prisma.webhook_delivery_attempts.create({
         data: {
@@ -52,7 +56,7 @@ export class WebhookService {
           id_webhooks_payload: w_payload.id_webhooks_payload,
         },
       });
-
+      this.logger.log('adding webhook to the queue ');
       // we send the delivery webhook to the queue so it can be processed by our dispatcher worker
       const job = await this.queue.add({
         webhook_delivery_id: w_delivery.id_webhook_delivery_attempt,

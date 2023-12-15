@@ -118,7 +118,7 @@ export class CrmConnectionsService {
       });
       await this.webhook.handleWebhook(
         data,
-        'crm.contact.pulled',
+        'connection.created',
         projectId,
         job_resp_create.id_event,
       );

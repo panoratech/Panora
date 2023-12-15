@@ -48,13 +48,11 @@ import { BullModule } from '@nestjs/bull';
         },
       },
     }),
-    BullModule.forRootAsync({
-      useFactory: () => ({
-        redis: {
-          host: process.env.REDIS_HOST,
-          port: 6379,
-        },
-      }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: 6379,
+      },
     }),
   ],
   controllers: [AppController],

@@ -288,9 +288,9 @@ export class SyncContactsService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'crm.contact.synced',
-          method: 'SYNC',
-          url: '/sync',
+          type: 'crm.contact.pulled',
+          method: 'PULL',
+          url: '/pull',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -374,10 +374,9 @@ export class SyncContactsService implements OnModuleInit {
           status: 'success',
         },
       });
-
       await this.webhook.handleWebhook(
         contacts_data,
-        'crm.contact.synced',
+        'crm.contact.pulled',
         id_project,
         job_id,
       );
