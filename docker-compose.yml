@@ -14,6 +14,11 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - ./pg_data:/var/lib/postgresql/data
       - ./packages/api/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -28,13 +33,15 @@ services:
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
         DISTRIBUTION: ${DISTRIBUTION}
         JWT_SECRET: ${JWT_SECRET}
-        REDIS_URL: redis://${REDIS_PASSWORD}@redis:6379
+        REDIS_HOST: redis
     restart:
       unless-stopped
     ports:
       - 3000:3000
+    command: sh -c "/app/packages/api/scripts/pull-database.sh && pnpm run build && node dist/src/main.js"    
     depends_on:
-      - postgres
+        postgres:
+          condition: service_healthy
     networks:
       - backend
   
@@ -43,18 +50,8 @@ services:
     container_name: "Redis"
     ports:
       - "6379:6379"
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     volumes:
       - ./redis-data:/data
-
-  docs:
-    build:
-      context: ./
-      dockerfile: ./docs/Dockerfile
-    restart:
-      always
-    ports:
-      - 5000:3000
   
   webapp:
     build:
