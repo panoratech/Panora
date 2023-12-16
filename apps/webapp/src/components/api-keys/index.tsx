@@ -14,12 +14,18 @@ import {
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import useApiKeys from "@/hooks/useApiKeys";
-import { DataTableLoading } from "../shared/data-table-loading";
+import useProjectStore from "@/state/projectStore";
+import useApiKeyMutation from "@/hooks/mutations/useApiKeyMutation";
+import useProfileStore from "@/state/profileStore";
+import { useState } from "react";
 
 export default function ApiKeysPage() {
+  const [keyName, setKeyName] = useState('');
+
   const { data: apiKeys, isLoading, error } = useApiKeys();
-  
-  if(isLoading){
+  const { mutate } = useApiKeyMutation();
+
+  if(isLoading){ 
     console.log("loading apiKeys..");
   }
 
@@ -27,8 +33,21 @@ export default function ApiKeysPage() {
     console.log("error apiKeys..");
   }
 
+  const {idProject} = useProjectStore();
+  const {profile} = useProfileStore();
+  const handleSubmit = (e: React.FormEvent) => {
+    console.log("ddd")
+    e.preventDefault(); // Prevent default form submission
+    //console.log("submitting with project "+ selectedProject.id_project);
+    mutate({ 
+      userId: profile!.id_user,
+      projectId: idProject
+      //keyName: keyName
+    });
+  };
+
   const tsApiKeys = apiKeys?.map((key) => ({
-    name: key.id_api_key, // or any other property that corresponds to 'name'
+    name: key.id_api_key,// key.name
     token: key.api_key_hash, // or any other property that corresponds to 'token'
     created: new Date().toISOString() // or any other property that corresponds to 'created'
   }))
@@ -58,17 +77,21 @@ export default function ApiKeysPage() {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="url">Name</Label>
-                  <Input id="url" placeholder="My Best Key For Finance Data" />
+                  <Label htmlFor="keyName">Name</Label>
+                  <Input 
+                    id="keyName" placeholder="My Best Key For Finance Data" 
+                    value={keyName}
+                    onChange={(e) => setKeyName(e.target.value)}
+                  />
                 </div>
               </div>
               <DialogFooter>
-                <Button>Create</Button>
+                <Button onClick={handleSubmit}>Create</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
-        {isLoading && <DataTableLoading data={[]} columns={columns}/>}
+        {/*isLoading && <DataTableLoading data={[]} columns={columns}/>*/}
         {tsApiKeys && <DataTable data={tsApiKeys} columns={columns} />}
       </div>
     </div>

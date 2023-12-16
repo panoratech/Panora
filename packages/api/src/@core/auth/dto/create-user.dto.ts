@@ -12,7 +12,7 @@ export class CreateUserDto {
 }
 
 export class LoginCredentials {
-  id_user?: number;
+  id_user?: string;
   email?: string;
   password_hash: string;
 }

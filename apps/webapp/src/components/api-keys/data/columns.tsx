@@ -14,7 +14,7 @@ export const columns: ColumnDef<ApiKey>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{row.getValue("name")}</Badge></div>,
+    cell: ({ row }) => <div className="w-[60px]"><Badge variant="outline">{row.getValue("name")}</Badge></div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -23,7 +23,7 @@ export const columns: ColumnDef<ApiKey>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Token" />
     ),
-    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{row.getValue("token")}</Badge></div>,
+    cell: ({ row }) => <div className="w-[200px]"><Badge variant="outline">{row.getValue("token")}</Badge></div>,
 
   },
   {

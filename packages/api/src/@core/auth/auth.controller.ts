@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Request,
-  Post,
-  Body,
-  Get,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { CreateUserDto, LoginCredentials } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -53,11 +46,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('generate-apikey')
   async generateApiKey(
-    @Request() req,
-    @Body() data: { projectId: number },
+    @Body() data: { projectId: string; userId: string; keyName?: string },
   ): Promise<{ api_key: string }> {
-    const userId = req.user.userId;
-    this.logger.log('user id is ' + userId);
-    return this.authService.generateApiKeyForUser(userId, data.projectId);
+    return this.authService.generateApiKeyForUser(
+      data.userId,
+      data.projectId,
+      data.keyName,
+    );
   }
 }

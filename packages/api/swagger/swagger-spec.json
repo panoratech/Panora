@@ -784,7 +784,7 @@
         "type": "object",
         "properties": {
           "id_user": {
-            "type": "number"
+            "type": "string"
           },
           "email": {
             "type": "string"

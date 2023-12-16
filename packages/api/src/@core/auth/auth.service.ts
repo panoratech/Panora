@@ -63,12 +63,13 @@ export class AuthService {
   async login(user: LoginCredentials): Promise<{ access_token: string }> {
     try {
       const foundUser = await this.prisma.users.findUnique({
-        where: { id_user: String(user.id_user) },
+        where: { id_user: user.id_user },
       });
       //TODO: if not founder
       if (
         foundUser &&
-        (await bcrypt.compare(user.password_hash, foundUser.password_hash))
+        user.password_hash == foundUser.password_hash
+        //TODO tmp:(await bcrypt.compare(user.password_hash, foundUser.password_hash))
       ) {
         const { password_hash, ...result } = user;
 
@@ -146,8 +147,9 @@ export class AuthService {
   }
 
   async generateApiKeyForUser(
-    userId: number | string,
-    projectId: number | string,
+    userId: string,
+    projectId: string,
+    keyName?: string,
   ): Promise<{ api_key: string }> {
     try {
       //TODO: CHECK IF PROJECT_ID IS EXISTENT
@@ -170,6 +172,7 @@ export class AuthService {
         data: {
           id_api_key: uuidv4(),
           api_key_hash: hashed_token,
+          //name: keyName,
           id_project: projectId as string,
           id_user: userId as string,
         },
