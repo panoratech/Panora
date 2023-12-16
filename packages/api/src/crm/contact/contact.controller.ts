@@ -59,9 +59,29 @@ export class ContactController {
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
-  @ApiBody({ type: UnifiedContactInput, isArray: true })
+  @ApiBody({ type: UnifiedContactInput })
   @ApiResponse({ status: 201 })
   @Post()
+  addContact(
+    @Body() unfiedContactData: UnifiedContactInput,
+    @Query('integrationId') integrationId: string,
+    @Query('linkedUserId') linkedUserId: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    return this.contactService.addContact(
+      unfiedContactData,
+      integrationId,
+      linkedUserId,
+      remote_data,
+    );
+  }
+
+  @ApiQuery({ name: 'integrationId', required: true, type: String })
+  @ApiQuery({ name: 'linkedUserId', required: true, type: String })
+  @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
+  @ApiBody({ type: UnifiedContactInput, isArray: true })
+  @ApiResponse({ status: 201 })
+  @Post('batch')
   addContacts(
     @Body() unfiedContactData: UnifiedContactInput[],
     @Query('integrationId') integrationId: string,

@@ -18,6 +18,7 @@ import useProjectStore from "@/state/projectStore";
 import useApiKeyMutation from "@/hooks/mutations/useApiKeyMutation";
 import useProfileStore from "@/state/profileStore";
 import { useState } from "react";
+import { LoadingSpinner } from "../connections/components/LoadingSpinner";
 
 export default function ApiKeysPage() {
   const [keyName, setKeyName] = useState('');
@@ -25,16 +26,17 @@ export default function ApiKeysPage() {
   const { data: apiKeys, isLoading, error } = useApiKeys();
   const { mutate } = useApiKeyMutation();
 
+  const {idProject} = useProjectStore();
+  const {profile} = useProfileStore();
+  
   if(isLoading){ 
-    console.log("loading apiKeys..");
+    return <LoadingSpinner className=""/>
   }
 
   if(error){
     console.log("error apiKeys..");
   }
 
-  const {idProject} = useProjectStore();
-  const {profile} = useProfileStore();
   const handleSubmit = (e: React.FormEvent) => {
     console.log("ddd")
     e.preventDefault(); // Prevent default form submission
