@@ -24,7 +24,7 @@
     "dark": "/logo/logo-panora-white.png",
     "light": "/logo/logo-panora-white.png"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "logo/favicon.png",
   "colors": {
     "primary": "#000000",
     "light": "#ffffff",
