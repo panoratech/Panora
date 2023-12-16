@@ -5,3 +5,5 @@ pg_data/
 .turbo
 build/**
 dist/**
+redis-data
+redis_data

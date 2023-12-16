@@ -14,21 +14,18 @@
   </br>
   
   <p>
-  <a href="https://panora.dev">Website 🌎</a> - <a href="https://docs.panora.dev">Documentation 📖</a> - <a href="https://status.panora.dev">Status 🟢</a> 
+  <a href="https://panora.dev">Website 🌎</a> - <a href="https://docs.panora.dev">Documentation 📖</a> - <a href="https://status.panora.dev">Status 🟢</a>
   </p>
 
 </div>
 
-
 <div align="center">
-
 
 </div>
 
-
 ![Group 1_updated](https://github.com/panoratech/Panora/assets/39710677/c9a35848-7b48-43af-bd6c-6a5257e19bea)
 
-### Have you met anyone who loves developing integrations? *No.* That’s why we designed an easy developer experience that you’ll enjoy.
+### Have you met anyone who loves developing integrations? *No.* That’s why we designed an easy developer experience that you’ll enjoy
 
 - **Simple developer experience:** easy to self-host, uses industry-standard data models, and is extensible
 - **Builder-friendly terms:** Panora is open-source, and offers generous tips for contributors
@@ -37,17 +34,15 @@
 
 Your customers expect all of their tools to work well together. Panora avoids your team spending hundreds of hours building and maintaining integrations instead of your core product.
 
-
 ## 🔮 Core Features  
 
 |                    |
 |---------------------------|
 | **Magic Links:** Let your users grant you access to their data. Without writing code.              |
 | **Custom Fields:** Reflect in Panora the specific data points that matter to your users            |
-| **Passthrough Requests:** Interact with other software platforms in their native format.      | 
+| **Passthrough Requests:** Interact with other software platforms in their native format.      |
 | **Flexible Sync Settings:** Businesses that need real-time update can configure Panora accordingly    |
 | **Webhooks:** Listen to one webhook to receive normalized data from various software platforms                  |
-
 
 ## 🤝 Core Values
 
@@ -56,11 +51,9 @@ Your customers expect all of their tools to work well together. Panora avoids yo
 | 💻 Easy Developer Experience               |
 | 🫡 Fair Value Share: Contributors are valuable, so we've decided to let our community tip our heroes |
 
-
 ## 🕹️ Play with the Self-hosted version
 
 - Prerequisite: You should have Git and Docker installed
-
 
  1. Get the code
 
@@ -71,23 +64,24 @@ Your customers expect all of their tools to work well together. Panora avoids yo
  2. Go to Panora folder
 
 ```
-  cd panora
+  cd Panora && cp .env.example .env
   ```
 
  3. Start
 
 ```
-  docker compose --env-file ./.env.example up
+  docker compose up
  ```
 
 You can now open your browser and go to <http://localhost> to connect to the application.
 Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product
 
 ## 🤔 Have questions? Ask the core team
+
 <a href="https://cal.com/rflih/30?utm_source=github&utm_campaign=readme"><img alt="Book us with Cal.com" src="https://cal.com/book-with-cal-dark.svg" /></a>
 
-
 ## 🚀 Contributions
+
 This guide is intended for people willing to contribute to Panora.
 You can follow this guide to set up a Panora development environment on your machine.
 You can contribute by following our [guidelines.](https://github.com/panoratech/Panora/blob/main/CONTRIBUTING.md)
