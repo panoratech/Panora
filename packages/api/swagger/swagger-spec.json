@@ -165,6 +165,65 @@
         ]
       }
     },
+    "/webhook": {
+      "get": {
+        "operationId": "WebhookController_getWebhooks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "webhook"
+        ]
+      },
+      "post": {
+        "operationId": "WebhookController_addWebhook",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "webhook"
+        ]
+      }
+    },
+    "/webhook/{id}": {
+      "put": {
+        "operationId": "WebhookController_updateWebhookStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "webhook"
+        ]
+      }
+    },
     "/linked-users/create": {
       "post": {
         "operationId": "LinkedUsersController_addLinkedUser",
@@ -728,6 +787,32 @@
         },
         "required": [
           "password_hash"
+        ]
+      },
+      "WebhookDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          },
+          "id_project": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "secret",
+          "id_project",
+          "scope"
         ]
       },
       "CreateLinkedUserDto": {

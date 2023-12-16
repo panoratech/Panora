@@ -24,11 +24,13 @@
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tanstack/react-query": "^5.12.2",
     "@tanstack/react-table": "^8.10.7",
     "antd": "^5.11.5",
+    "api": "workspace:*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
@@ -41,12 +43,11 @@
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.20.0",
     "recharts": "^2.10.1",
+    "shared-types": "workspace:*",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4",
-    "zustand": "^4.4.7",
-    "api": "workspace:*",
-    "shared-types": "workspace:*"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@types/node": "^20.3.1",

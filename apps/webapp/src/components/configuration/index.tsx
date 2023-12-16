@@ -28,9 +28,15 @@ import useFieldMappings from "@/hooks/useFieldMappings";
 import { Skeleton } from "../ui/skeleton";
 import { useState } from "react";
 import { LoadingSpinner } from "../connections/components/LoadingSpinner";
+import AddWebhook from "./components/AddWebhook";
+import { cn } from "@/lib/utils";
+import { WebhooksPage } from "./components/WebhooksPage";
+import useWebhooks from "@/hooks/useWebhooks";
 
 export default function ConfigurationPage() {
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
+  const { data: webhooks, isLoading: isWebhooksLoading, error: isWebhooksError } = useWebhooks();
+
   const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
   const [open, setOpen] = useState(false);
   const handleClose = () => {
@@ -48,6 +54,14 @@ export default function ConfigurationPage() {
 
   if(isFieldMappingsError){
     console.log("error isFieldMappingsError..");
+  }
+
+  if(isWebhooksLoading){
+    console.log("loading webhooks..");
+  }
+
+  if(isWebhooksError){
+    console.log("error fetching webhooks..");
   }
 
   const mappingTs = mappings?.map(mapping => ({
@@ -74,8 +88,8 @@ export default function ConfigurationPage() {
               <TabsTrigger value="field-mappings">
                 Field Mapping
               </TabsTrigger>
-              <TabsTrigger value="oauth">
-                oAuth
+              <TabsTrigger value="webhooks">
+                Webhooks
               </TabsTrigger>
             </TabsList>
             <TabsContent value="linked-accounts" className="space-y-4">
@@ -99,9 +113,14 @@ export default function ConfigurationPage() {
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="col-span-3">
-                      <PlusCircledIcon className="mr-2 h-4 w-4" />
-                      Add Field Mapping
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className={cn("w-[200px] justify-between")}
+                  >
+                    <PlusCircledIcon className="mr-2 h-5 w-5" />
+                    Add Field Mappings
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:w-[450px]">
@@ -118,6 +137,24 @@ export default function ConfigurationPage() {
                   <Separator className="mb-10"/>
                   <CardContent>
                     <FieldMappingsTable mappings={mappingTs} isLoading={isFieldMappingsLoading} />
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="webhooks" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
+                <AddWebhook/>
+                <Card className="col-span-12">
+                  <CardHeader>
+                    <CardTitle className="text-left">Your Webhooks</CardTitle>
+                    <CardDescription className="text-left">
+                      You enabled {webhooks ? webhooks.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} webhooks.
+                    </CardDescription>
+                  </CardHeader>
+                  <Separator className="mb-10"/>
+                  <CardContent>
+                    <WebhooksPage webhooks={webhooks} isLoading={isWebhooksLoading} />
                   </CardContent>
                 </Card>
               </div>

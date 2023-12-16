@@ -4,6 +4,7 @@ import { WebhookService } from './webhook.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookProcessor } from './webhook.processor';
+import { WebhookController } from './webhook.controller';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { WebhookProcessor } from './webhook.processor';
       name: 'webhookDelivery',
     }),
   ],
+  controllers: [WebhookController],
   exports: [
     BullModule.registerQueue({
       name: 'webhookDelivery',

@@ -5,6 +5,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
+import { WebhookDto } from './dto/webhook.dto';
 
 @Injectable()
 export class WebhookService {
@@ -14,6 +15,43 @@ export class WebhookService {
     private logger: LoggerService,
   ) {
     this.logger.setContext(WebhookService.name);
+  }
+
+  async getWebhookEndpoints() {
+    try {
+      return await this.prisma.webhook_endpoints.findMany();
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+  async updateStatusWebhookEndpoint(id: string, active: boolean) {
+    try {
+      return await this.prisma.webhook_endpoints.update({
+        where: { id_webhook_endpoint: id },
+        data: { active: active },
+      });
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
+  async createWebhookEndpoint(data: WebhookDto) {
+    try {
+      return await this.prisma.webhook_endpoints.create({
+        data: {
+          id_webhook_endpoint: uuidv4(),
+          url: data.url,
+          endpoint_description: data.description ? data.description : '',
+          secret: data.secret,
+          active: true,
+          created_at: new Date(),
+          id_project: data.id_project,
+          scope: data.scope,
+        },
+      });
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
   async handleWebhook(

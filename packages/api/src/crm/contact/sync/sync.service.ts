@@ -43,7 +43,7 @@ export class SyncContactsService implements OnModuleInit {
     }
   }
 
-  @Cron('*/2 * * * *')
+  @Cron('*/20 * * * *')
   //function used by sync worker which populate our crm_contacts table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
   //TODO: find a way to save all remote data for each contact somowhere in our db so our GET action know where to fetch it
