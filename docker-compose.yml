@@ -72,3 +72,18 @@ services:
     networks:
       - backend
       - frontend
+  magic-link-frontend:
+    build:
+      dockerfile: ./apps/frontend-snippet/Dockerfile
+      context: ./
+      args:
+        VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
+    restart:
+      always
+    ports:
+      - 81:80
+    depends_on:
+      - api
+    networks:
+      - backend
+      - frontend
