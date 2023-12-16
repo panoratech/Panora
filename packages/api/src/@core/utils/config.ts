@@ -14,6 +14,7 @@ const config = {
   NODE_ENV: process.env.ENV,
   DISTRIBUTION: process.env.DISTRIBUTION,
   ENCRYPT_CRYPTO_SECRET_KEY: process.env.ENCRYPT_CRYPTO_SECRET_KEY,
+  REDIS_HOST: process.env.REDIS_HOST,
 };
 
 export default config;
