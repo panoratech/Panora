@@ -89,6 +89,11 @@ export class ContactService {
     remote_data?: boolean,
   ): Promise<ApiResponse<ContactResponse>> {
     try {
+      const linkedUser = await this.prisma.linked_users.findUnique({
+        where: {
+          id_linked_user: linkedUserId,
+        },
+      });
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
@@ -343,6 +348,12 @@ export class ContactService {
           status: status_resp,
         },
       });
+      await this.webhook.handleWebhook(
+        result_contact.data.contacts,
+        'crm.contact.created',
+        linkedUser.id_project,
+        job_id,
+      );
       return { ...resp, data: result_contact.data };
     } catch (error) {
       handleServiceError(error, this.logger);
