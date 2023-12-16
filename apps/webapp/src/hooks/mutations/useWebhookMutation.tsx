@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 interface IWebhookDto {
     url: string;
     description?: string;
-    secret: string;
     id_project: string;
     scope: string;
 }

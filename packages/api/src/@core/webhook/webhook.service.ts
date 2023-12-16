@@ -42,7 +42,7 @@ export class WebhookService {
           id_webhook_endpoint: uuidv4(),
           url: data.url,
           endpoint_description: data.description ? data.description : '',
-          secret: data.secret,
+          secret: uuidv4(),
           active: true,
           created_at: new Date(),
           id_project: data.id_project,

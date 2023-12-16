@@ -36,7 +36,7 @@ const AddWebhook = () => {
     };
     const [url, setUrl] = useState('');
     const [scope, setScope] = useState('');
-    const [secret, setSecret] = useState('');
+    //const [secret, setSecret] = useState('');
     const [description, setDescription] = useState('');
 
     const {idProject} = useProjectStore();
@@ -49,7 +49,6 @@ const AddWebhook = () => {
         mutate({ 
             url: url,
             description: description,
-            secret: secret,
             id_project: idProject,
             scope: scope,
         });
@@ -120,17 +119,9 @@ const AddWebhook = () => {
                         onChange={(e) => setDescription(e.target.value)}
                     />
                     </div>
-                    <div className="grid gap-2">
-                    <Label htmlFor="secret">Secret</Label>
-                    <Input id="secret" placeholder="sk_secret152363282" 
-                        value={secret}
-                        onChange={(e) => setSecret(e.target.value)}
-                    />
-                    </div>
                 </CardContent>
                 <CardFooter className="justify-between space-x-2">
-                    <Button variant="ghost">Cancel</Button>
-                    <Button>Submit</Button>
+                    <Button type="submit">Submit</Button>
                 </CardFooter>
             </form>
         </DialogContent>

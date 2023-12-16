@@ -54,6 +54,11 @@ export class WebhookProcessor {
             id_event: deliveryAttempt.id_event,
             data: deliveryAttempt.webhooks_payloads.data,
           },
+          {
+            headers: {
+              'Panora-Signature': deliveryAttempt.webhook_endpoints.secret,
+            },
+          },
         );
 
         // Populate the webhooks_responses table

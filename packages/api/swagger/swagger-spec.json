@@ -806,9 +806,6 @@
           "description": {
             "type": "string"
           },
-          "secret": {
-            "type": "string"
-          },
           "id_project": {
             "type": "string"
           },
@@ -818,7 +815,6 @@
         },
         "required": [
           "url",
-          "secret",
           "id_project",
           "scope"
         ]
