@@ -726,6 +726,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {

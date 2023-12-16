@@ -26,6 +26,7 @@ import { OriginalContactOutput } from '@@core/utils/types';
 import { handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
+import { normalizeEmailsAndNumbers } from '@contact/utils';
 
 @Injectable()
 export class ContactService {
@@ -92,7 +93,7 @@ export class ContactService {
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'push', //sync, push or pull
+          type: 'crm.contact.created', //sync, push or pull
           method: 'POST',
           url: '/crm/contact',
           provider: integrationId,
@@ -169,23 +170,170 @@ export class ContactService {
         customFieldMappings: customFieldMappings,
       })) as UnifiedContactOutput[];
 
-      //TODO : add the contact inside our db
-      /*const new_contact_added = await this.prisma.crm_contacts.create({
-        data: {
-          
-        }
-      })*/
+      // add the contact inside our db
+      const source_contact = resp.data;
+      const target_contact = unifiedObject[0];
+      const originId =
+        'id' in source_contact
+          ? String(source_contact.id)
+          : 'contact_id' in source_contact
+          ? String(source_contact.contact_id)
+          : undefined;
 
-      let res: ContactResponse = {
-        contacts: unifiedObject,
-      };
+      const existingContact = await this.prisma.crm_contacts.findFirst({
+        where: {
+          origin_id: originId,
+          origin: integrationId,
+          events: {
+            id_linked_user: linkedUserId,
+          },
+        },
+        include: { crm_email_addresses: true, crm_phone_numbers: true },
+      });
 
-      if (remote_data) {
-        res = {
-          ...res,
-          remote_data: [resp.data],
+      const { normalizedEmails, normalizedPhones } = normalizeEmailsAndNumbers(
+        target_contact.email_addresses,
+        target_contact.phone_numbers,
+      );
+
+      let unique_crm_contact_id: string;
+
+      if (existingContact) {
+        // Update the existing contact
+        const res = await this.prisma.crm_contacts.update({
+          where: {
+            id_crm_contact: existingContact.id_crm_contact,
+          },
+          data: {
+            first_name: target_contact.first_name
+              ? target_contact.first_name
+              : '',
+            last_name: target_contact.last_name ? target_contact.last_name : '',
+            modified_at: new Date(),
+            crm_email_addresses: {
+              update: normalizedEmails.map((email, index) => ({
+                where: {
+                  id_crm_email:
+                    existingContact.crm_email_addresses[index].id_crm_email,
+                },
+                data: email,
+              })),
+            },
+            crm_phone_numbers: {
+              update: normalizedPhones.map((phone, index) => ({
+                where: {
+                  id_crm_phone_number:
+                    existingContact.crm_phone_numbers[index]
+                      .id_crm_phone_number,
+                },
+                data: phone,
+              })),
+            },
+          },
+        });
+        unique_crm_contact_id = res.id_crm_contact;
+      } else {
+        // Create a new contact
+        this.logger.log('not existing contact ' + target_contact.first_name);
+        const data = {
+          id_crm_contact: uuidv4(),
+          first_name: target_contact.first_name
+            ? target_contact.first_name
+            : '',
+          last_name: target_contact.last_name ? target_contact.last_name : '',
+          created_at: new Date(),
+          modified_at: new Date(),
+          id_event: job_id,
+          origin_id: originId,
+          origin: integrationId,
         };
+
+        if (normalizedEmails) {
+          data['crm_email_addresses'] = {
+            create: normalizedEmails,
+          };
+        }
+
+        if (normalizedPhones) {
+          data['crm_phone_numbers'] = {
+            create: normalizedPhones,
+          };
+        }
+        const res = await this.prisma.crm_contacts.create({
+          data: data,
+        });
+        unique_crm_contact_id = res.id_crm_contact;
       }
+
+      // check duplicate or existing values
+      if (
+        target_contact.field_mappings &&
+        target_contact.field_mappings.length > 0
+      ) {
+        const entity = await this.prisma.entity.create({
+          data: {
+            id_entity: uuidv4(),
+            ressource_owner_id: unique_crm_contact_id,
+          },
+        });
+
+        for (const mapping of target_contact.field_mappings) {
+          const attribute = await this.prisma.attribute.findFirst({
+            where: {
+              slug: Object.keys(mapping)[0],
+              source: integrationId,
+              id_consumer: linkedUserId,
+            },
+          });
+
+          if (attribute) {
+            await this.prisma.value.create({
+              data: {
+                id_value: uuidv4(),
+                data: Object.values(mapping)[0]
+                  ? Object.values(mapping)[0]
+                  : 'null',
+                attribute: {
+                  connect: {
+                    id_attribute: attribute.id_attribute,
+                  },
+                },
+                entity: {
+                  connect: {
+                    id_entity: entity.id_entity,
+                  },
+                },
+              },
+            });
+          }
+        }
+      }
+      if (remote_data) {
+        //insert remote_data in db
+        await this.prisma.remote_data.upsert({
+          where: {
+            ressource_owner_id: unique_crm_contact_id,
+          },
+          create: {
+            id_remote_data: uuidv4(),
+            ressource_owner_id: unique_crm_contact_id,
+            format: 'json',
+            data: JSON.stringify(source_contact),
+            created_at: new Date(),
+          },
+          update: {
+            data: JSON.stringify(source_contact),
+            created_at: new Date(),
+          },
+        });
+      }
+
+      /////
+      const result_contact = await this.getContact(
+        unique_crm_contact_id,
+        remote_data,
+      );
+
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       await this.prisma.events.update({
         where: {
@@ -195,18 +343,92 @@ export class ContactService {
           status: status_resp,
         },
       });
-      return { ...resp, data: res };
+      return { ...resp, data: result_contact.data };
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
-  async getContact(id_crm_contact: string) {
-    return await this.prisma.crm_contacts.findUnique({
-      where: {
-        id_crm_contact: id_crm_contact,
-      },
-    });
+  async getContact(
+    id_crm_contact: string,
+    remote_data?: boolean,
+  ): Promise<ApiResponse<ContactResponse>> {
+    try {
+      const contact = await this.prisma.crm_contacts.findUnique({
+        where: {
+          id_crm_contact: id_crm_contact,
+        },
+        include: {
+          crm_email_addresses: true,
+          crm_phone_numbers: true,
+        },
+      });
+
+      // Fetch field mappings for the contact
+      const values = await this.prisma.value.findMany({
+        where: {
+          entity: {
+            ressource_owner_id: contact.id_crm_contact,
+          },
+        },
+        include: {
+          attribute: true,
+        },
+      });
+
+      // Create a map to store unique field mappings
+      const fieldMappingsMap = new Map();
+
+      values.forEach((value) => {
+        fieldMappingsMap.set(value.attribute.slug, value.data);
+      });
+
+      // Convert the map to an array of objects
+      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
+        [key]: value,
+      }));
+
+      // Transform to UnifiedContactInput format
+      const unifiedContact: UnifiedContactOutput = {
+        id: contact.id_crm_contact,
+        first_name: contact.first_name,
+        last_name: contact.last_name,
+        email_addresses: contact.crm_email_addresses.map((email) => ({
+          email_address: email.email_address,
+          email_address_type: email.email_address_type,
+        })),
+        phone_numbers: contact.crm_phone_numbers.map((phone) => ({
+          phone_number: phone.phone_number,
+          phone_type: phone.phone_type,
+        })),
+        field_mappings: field_mappings,
+      };
+
+      let res: ContactResponse = {
+        contacts: [unifiedContact],
+      };
+
+      if (remote_data) {
+        const resp = await this.prisma.remote_data.findFirst({
+          where: {
+            ressource_owner_id: contact.id_crm_contact,
+          },
+        });
+        const remote_data = JSON.parse(resp.data);
+
+        res = {
+          ...res,
+          remote_data: [remote_data],
+        };
+      }
+
+      return {
+        data: res,
+        statusCode: 200,
+      };
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
   async getContacts(

@@ -46,10 +46,14 @@ export class ContactController {
   }
 
   @ApiParam({ name: 'id', required: true, type: String })
+  @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
   @ApiResponse({ status: 200 })
   @Get(':id')
-  getContact(@Param('id') id: string) {
-    return this.contactService.getContact(id);
+  getContact(
+    @Param('id') id: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    return this.contactService.getContact(id, remote_data);
   }
 
   @ApiQuery({ name: 'integrationId', required: true, type: String })
