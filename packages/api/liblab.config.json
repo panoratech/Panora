@@ -4,10 +4,7 @@
   "specFilePath": "https://raw.githubusercontent.com/panoratech/Panora/main/packages/api/swagger/swagger-spec.json",
   "languages": [
     "typescript",
-    "python",
-    "go",
-    "java",
-    "csharp"
+    "python"
   ],
   "createDocs": false,
   "auth": [
@@ -49,27 +46,6 @@
       "pypiPackageName": "",
       "alwaysInitializeOptionals": false,
       "githubRepoName": "python-sdk",
-      "sdkVersion": "1.0.0",
-      "ignoreFiles": []
-    },
-    "java": {
-      "pypiPackageName": "",
-      "alwaysInitializeOptionals": false,
-      "githubRepoName": "java-sdk",
-      "sdkVersion": "1.0.0",
-      "ignoreFiles": []
-    },
-    "go": {
-      "pypiPackageName": "",
-      "alwaysInitializeOptionals": false,
-      "githubRepoName": "go-sdk",
-      "sdkVersion": "1.0.0",
-      "ignoreFiles": []
-    },
-    "csharp": {
-      "pypiPackageName": "",
-      "alwaysInitializeOptionals": false,
-      "githubRepoName": "csharp-sdk",
       "sdkVersion": "1.0.0",
       "ignoreFiles": []
     }
