@@ -42,7 +42,7 @@ export type NormalizedContactInfo = {
 };
 
 export class ContactResponse {
-  @ApiProperty({ type: UnifiedContactOutput, isArray: true })
+  @ApiProperty({ type: [UnifiedContactOutput] })
   contacts: UnifiedContactOutput[];
   @ApiPropertyOptional({ type: [{}] })
   remote_data?: Record<string, any>[]; //data in original format
