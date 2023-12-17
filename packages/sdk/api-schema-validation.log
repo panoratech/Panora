@@ -12,402 +12,402 @@
 
 3. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..auth.register.post
-    Line: 15 - 36,
+    Line: 15 - 37,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 4. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..auth.register.post.tags.{0}
-    Line: 34,
+    Line: 35,
     Char: 10 - 16
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 5. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..auth.login.post
-    Line: 39 - 60,
+    Line: 40 - 62,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 6. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..auth.login.post.tags.{0}
-    Line: 58,
+    Line: 60,
     Char: 10 - 16
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 7. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..auth.users.get
-    Line: 63 - 74,
+    Line: 65 - 77,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 8. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..auth.users.get.tags.{0}
-    Line: 72,
+    Line: 75,
     Char: 10 - 16
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 9. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..auth.api-keys.get
-    Line: 77 - 88,
+    Line: 80 - 92,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 10. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..auth.api-keys.get.tags.{0}
-    Line: 86,
+    Line: 90,
     Char: 10 - 16
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 11. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..auth.generate-apikey.post
-    Line: 91 - 112,
+    Line: 95 - 117,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 12. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..auth.generate-apikey.post.tags.{0}
-    Line: 110,
+    Line: 115,
     Char: 10 - 16
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 13. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..connections.oauth.callback.get
-    Line: 115 - 151,
+    Line: 120 - 157,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 14. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..connections.oauth.callback.get.tags.{0}
-    Line: 149,
+    Line: 155,
     Char: 10 - 23
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 15. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..connections.get
-    Line: 154 - 165,
+    Line: 160 - 172,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 16. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..connections.get.tags.{0}
-    Line: 163,
+    Line: 170,
     Char: 10 - 23
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 17. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..webhook.get
-    Line: 168 - 179,
+    Line: 175 - 187,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 18. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..webhook.get.tags.{0}
-    Line: 177,
+    Line: 185,
     Char: 10 - 19
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 19. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..webhook.post
-    Line: 180 - 201,
+    Line: 188 - 210,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 20. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..webhook.post.tags.{0}
-    Line: 199,
+    Line: 208,
     Char: 10 - 19
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 21. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..webhook.{id}.put
-    Line: 204 - 224,
+    Line: 213 - 234,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 22. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..webhook.{id}.put.tags.{0}
-    Line: 222,
+    Line: 232,
     Char: 10 - 19
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 23. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..linked-users.create.post
-    Line: 227 - 248,
+    Line: 237 - 259,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 24. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..linked-users.create.post.tags.{0}
-    Line: 246,
+    Line: 257,
     Char: 10 - 24
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 25. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..linked-users.get
-    Line: 251 - 262,
+    Line: 262 - 274,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 26. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..linked-users.get.tags.{0}
-    Line: 260,
+    Line: 272,
     Char: 10 - 24
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 27. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..linked-users.single.get
-    Line: 265 - 285,
+    Line: 277 - 298,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 28. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..linked-users.single.get.tags.{0}
-    Line: 283,
+    Line: 296,
     Char: 10 - 24
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 29. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..organisations.get
-    Line: 288 - 299,
+    Line: 301 - 313,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 30. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..organisations.get.tags.{0}
-    Line: 297,
+    Line: 311,
     Char: 10 - 25
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 31. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..organisations.create.post
-    Line: 302 - 323,
+    Line: 316 - 338,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 32. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..organisations.create.post.tags.{0}
-    Line: 321,
+    Line: 336,
     Char: 10 - 25
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 33. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..projects.get
-    Line: 326 - 337,
+    Line: 341 - 353,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 34. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..projects.get.tags.{0}
-    Line: 335,
+    Line: 351,
     Char: 10 - 20
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 35. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..projects.create.post
-    Line: 340 - 361,
+    Line: 356 - 378,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 36. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..projects.create.post.tags.{0}
-    Line: 359,
+    Line: 376,
     Char: 10 - 20
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 37. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..field-mapping.entities.get
-    Line: 364 - 375,
+    Line: 381 - 393,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 38. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..field-mapping.entities.get.tags.{0}
-    Line: 373,
+    Line: 391,
     Char: 10 - 25
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 39. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..field-mapping.attribute.get
-    Line: 378 - 389,
+    Line: 396 - 408,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 40. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..field-mapping.attribute.get.tags.{0}
-    Line: 387,
+    Line: 406,
     Char: 10 - 25
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 41. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..field-mapping.value.get
-    Line: 392 - 403,
+    Line: 411 - 423,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 42. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..field-mapping.value.get.tags.{0}
-    Line: 401,
+    Line: 421,
     Char: 10 - 25
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 43. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..field-mapping.define.post
-    Line: 406 - 427,
+    Line: 426 - 448,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 44. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..field-mapping.define.post.tags.{0}
-    Line: 425,
+    Line: 446,
     Char: 10 - 25
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 45. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..field-mapping.map.post
-    Line: 430 - 451,
+    Line: 451 - 473,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 46. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..field-mapping.map.post.tags.{0}
-    Line: 449,
+    Line: 471,
     Char: 10 - 25
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 47. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..field-mapping.properties.get
-    Line: 454 - 482,
+    Line: 476 - 505,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 48. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..field-mapping.properties.get.tags.{0}
-    Line: 480,
+    Line: 503,
     Char: 10 - 25
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 49. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..events.get
-    Line: 485 - 496,
+    Line: 508 - 520,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 50. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..events.get.tags.{0}
-    Line: 494,
+    Line: 518,
     Char: 10 - 18
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 51. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..magic-link.create.post
-    Line: 499 - 520,
+    Line: 523 - 545,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 52. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..magic-link.create.post.tags.{0}
-    Line: 518,
+    Line: 543,
     Char: 10 - 22
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 53. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..magic-link.get
-    Line: 523 - 534,
+    Line: 548 - 560,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 54. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..magic-link.get.tags.{0}
-    Line: 532,
+    Line: 558,
     Char: 10 - 22
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 55. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..magic-link.single.get
-    Line: 537 - 557,
+    Line: 563 - 584,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 56. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..magic-link.single.get.tags.{0}
-    Line: 555,
+    Line: 582,
     Char: 10 - 22
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 57. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..passthrough.post
-    Line: 560 - 605,
+    Line: 587 - 633,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 58. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..passthrough.post.tags.{0}
-    Line: 603,
+    Line: 631,
     Char: 10 - 23
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 59. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..crm.contact.get
-    Line: 608 - 662,
+    Line: 636 - 691,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 60. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..crm.contact.get.tags.{0}
-    Line: 660,
+    Line: 689,
     Char: 10 - 23
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 61. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..crm.contact.post
-    Line: 663 - 727,
+    Line: 692 - 757,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 62. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..crm.contact.post.tags.{0}
-    Line: 725,
+    Line: 755,
     Char: 10 - 23
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 63. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..crm.contact.patch
-    Line: 728 - 748,
+    Line: 758 - 779,
     Char: 15 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 64. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..crm.contact.patch.tags.{0}
-    Line: 746,
+    Line: 777,
     Char: 10 - 23
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 65. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..crm.contact.{id}.get
-    Line: 751 - 797,
+    Line: 782 - 829,
     Char: 13 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 66. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..crm.contact.{id}.get.tags.{0}
-    Line: 795,
+    Line: 827,
     Char: 10 - 23
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 67. [Warning] Operation "description" must be present and non-empty string.
     Object Path: paths..crm.contact.batch.post
-    Line: 800 - 867,
+    Line: 832 - 900,
     Char: 14 - 7
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-description
 
 68. [Warning] Operation tags must be defined in global tags.
     Object Path: paths..crm.contact.batch.post.tags.{0}
-    Line: 865,
+    Line: 898,
     Char: 10 - 23
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#operation-tag-defined
 
 69. [Error] OpenAPI "servers" must be present and non-empty array.
     Object Path: servers
-    Line: 877,
+    Line: 910,
     Char: 13 - 15
     Documentation: https://docs.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#oas3-api-servers
