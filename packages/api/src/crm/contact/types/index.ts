@@ -28,7 +28,9 @@ export class Email {
 }
 
 export class Phone {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'The phone number of a contact',
+  })
   phone_number: string;
   @ApiProperty()
   phone_type: string;
