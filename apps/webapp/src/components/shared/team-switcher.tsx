@@ -77,10 +77,10 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 
   
   useEffect(()=>{
-    if(projects){      
+    if(projects && projects[0]){      
       setIdProject(projects[0].id_project);
     }
-    if(orgs){
+    if(orgs && orgs[0]){
       setOrganisationName(orgs[0].name);
       setIdOrg(orgs[0].id_organization);
     }
@@ -177,9 +177,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                 <CommandGroup key={"organisations"} heading={"Organisations"}>
                   {!isloadingOrganisations && orgs && orgs.length > 0 ? 
                     <CommandItem
-                      key={orgs[0].id_organization}
+                      key={orgs[0] ? orgs[0].id_organization: ""}
                       onSelect={() => {
-                        setIdOrg(orgs[0].id_organization)
+                        setIdOrg(orgs[0] ? orgs[0].id_organization : "")
                         setOpen(false)
                       }}
                       className="text-sm"
@@ -196,7 +196,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                       <CheckIcon
                         className={cn(
                           "ml-auto h-4 w-4",
-                          orgs && orgs.length > 0 && idOrg === orgs[0].id_organization 
+                          orgs && orgs.length > 0 && orgs[0] && idOrg === orgs[0].id_organization 
                             ? "opacity-100"
                             : "opacity-0"
                         )}

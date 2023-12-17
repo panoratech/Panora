@@ -28,9 +28,9 @@ export default function DashboardPage() {
 
   let ContentComponent;
   switch (activePage) {
-    case 'quickstart':
+    /*case 'quickstart':
       ContentComponent = QuickStartPage;
-      break;
+      break;*/
     case 'jobs':
       ContentComponent = JobsPage;
       break;
