@@ -23,7 +23,9 @@ export class Email {
     description: 'The email address of a contact',
   })
   email_address: string;
-  @ApiProperty()
+  @ApiProperty({
+    description: 'The email address type of a contact',
+  })
   email_address_type: string;
   @ApiPropertyOptional()
   owner_type?: string;
