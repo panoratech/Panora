@@ -1,8 +1,8 @@
 import unittest
 import responses
-from src.testsdk.net.http_client import HTTPClient
+from src.panorasdk.net.http_client import HTTPClient
 from http_exceptions import ClientException
-from src.testsdk.services.field_mapping import FieldMapping
+from src.panorasdk.services.field_mapping import FieldMapping
 
 
 class TestFieldMapping_(unittest.TestCase):

@@ -1,6 +1,6 @@
 import nock from 'nock';
 
-import { Testsdk } from '../../../src';
+import { PanoraSDK } from '../../../src';
 
 import { CrmContactService } from '../../../src/services/crmContact/CrmContact';
 
@@ -14,7 +14,7 @@ describe('test CrmContact', () => {
   let sdk: any;
 
   beforeEach(() => {
-    sdk = new Testsdk({});
+    sdk = new PanoraSDK({});
 
     nock.cleanAll();
   });
@@ -22,16 +22,16 @@ describe('test CrmContact', () => {
   describe('test contactControllerGetCustomProperties', () => {
     test('test api call', () => {
       const scope = nock('http://api.example.com')
-        .get('/crm/contact/properties?linkedUserId=aliquid&providerId=4231725949')
+        .get('/crm/contact/properties?linkedUserId=provident&providerId=7519604779')
         .reply(200, { data: {} });
       return sdk.crmContact
-        .contactControllerGetCustomProperties('aliquid', '4231725949')
+        .contactControllerGetCustomProperties('provident', '7519604779')
         .then((r: any) => expect(r.data).toEqual({}));
     });
 
     test('test will throw error if required fields missing', () => {
       const scope = nock('http://api.example.com')
-        .get('/crm/contact/properties?linkedUserId=illo&providerId=7134117784')
+        .get('/crm/contact/properties?linkedUserId=et&providerId=3455852347')
         .reply(200, { data: {} });
       return expect(
         async () => await sdk.crmContact.contactControllerGetCustomProperties(),
@@ -40,11 +40,11 @@ describe('test CrmContact', () => {
 
     test('test will throw error on a non-200 response', () => {
       const scope = nock('http://api.example.com')
-        .get('/crm/contact/properties?linkedUserId=neque&providerId=8317378491')
+        .get('/crm/contact/properties?linkedUserId=excepturi&providerId=6794351074')
         .reply(404, { data: {} });
       return expect(
         async () =>
-          await sdk.crmContact.contactControllerGetCustomProperties('neque', '8317378491'),
+          await sdk.crmContact.contactControllerGetCustomProperties('excepturi', '6794351074'),
       ).rejects.toThrow();
     });
   });
@@ -52,16 +52,16 @@ describe('test CrmContact', () => {
   describe('test contactControllerGetContacts', () => {
     test('test api call', () => {
       const scope = nock('http://api.example.com')
-        .get('/crm/contact?integrationId=sequi&linkedUserId=optio&remote_data=true')
+        .get('/crm/contact?integrationId=voluptatum&linkedUserId=nihil&remote_data=true')
         .reply(200, { data: {} });
       return sdk.crmContact
-        .contactControllerGetContacts('sequi', 'optio', true)
+        .contactControllerGetContacts('voluptatum', 'nihil', true)
         .then((r: any) => expect(r.data).toEqual({}));
     });
 
     test('test will throw error if required fields missing', () => {
       const scope = nock('http://api.example.com')
-        .get('/crm/contact?integrationId=eaque&linkedUserId=libero&remote_data=true')
+        .get('/crm/contact?integrationId=possimus&linkedUserId=facilis&remote_data=true')
         .reply(200, { data: {} });
       return expect(
         async () => await sdk.crmContact.contactControllerGetContacts(),
@@ -70,10 +70,10 @@ describe('test CrmContact', () => {
 
     test('test will throw error on a non-200 response', () => {
       const scope = nock('http://api.example.com')
-        .get('/crm/contact?integrationId=nostrum&linkedUserId=harum&remote_data=true')
+        .get('/crm/contact?integrationId=fugit&linkedUserId=facere&remote_data=true')
         .reply(404, { data: {} });
       return expect(
-        async () => await sdk.crmContact.contactControllerGetContacts('nostrum', 'harum', true),
+        async () => await sdk.crmContact.contactControllerGetContacts('fugit', 'facere', true),
       ).rejects.toThrow();
     });
   });
@@ -81,16 +81,16 @@ describe('test CrmContact', () => {
   describe('test contactControllerAddContacts', () => {
     test('test api call', () => {
       const scope = nock('http://api.example.com')
-        .post('/crm/contact?integrationId=accusamus&linkedUserId=possimus&remote_data=true')
+        .post('/crm/contact?integrationId=vitae&linkedUserId=et&remote_data=true')
         .reply(200, { data: {} });
       return sdk.crmContact
-        .contactControllerAddContacts({}, 'accusamus', 'possimus', true)
+        .contactControllerAddContacts({}, 'vitae', 'et', true)
         .then((r: any) => expect(r.data).toEqual({}));
     });
 
     test('test will throw error if required fields missing', () => {
       const scope = nock('http://api.example.com')
-        .post('/crm/contact?integrationId=sunt&linkedUserId=nobis&remote_data=true')
+        .post('/crm/contact?integrationId=nihil&linkedUserId=rerum&remote_data=true')
         .reply(200, { data: {} });
       return expect(
         async () => await sdk.crmContact.contactControllerAddContacts(),
@@ -99,10 +99,11 @@ describe('test CrmContact', () => {
 
     test('test will throw error on a non-200 response', () => {
       const scope = nock('http://api.example.com')
-        .post('/crm/contact?integrationId=minima&linkedUserId=eos&remote_data=true')
+        .post('/crm/contact?integrationId=laboriosam&linkedUserId=maiores&remote_data=true')
         .reply(404, { data: {} });
       return expect(
-        async () => await sdk.crmContact.contactControllerAddContacts({}, 'minima', 'eos', true),
+        async () =>
+          await sdk.crmContact.contactControllerAddContacts({}, 'laboriosam', 'maiores', true),
       ).rejects.toThrow();
     });
   });
@@ -110,16 +111,16 @@ describe('test CrmContact', () => {
   describe('test contactControllerUpdateContact', () => {
     test('test api call', () => {
       const scope = nock('http://api.example.com')
-        .patch('/crm/contact?id=1075761720')
+        .patch('/crm/contact?id=8366315562')
         .reply(200, { data: {} });
       return sdk.crmContact
-        .contactControllerUpdateContact('1075761720')
+        .contactControllerUpdateContact('8366315562')
         .then((r: any) => expect(r.data).toEqual({}));
     });
 
     test('test will throw error if required fields missing', () => {
       const scope = nock('http://api.example.com')
-        .patch('/crm/contact?id=7731434860')
+        .patch('/crm/contact?id=9485117236')
         .reply(200, { data: {} });
       return expect(
         async () => await sdk.crmContact.contactControllerUpdateContact(),
@@ -128,10 +129,10 @@ describe('test CrmContact', () => {
 
     test('test will throw error on a non-200 response', () => {
       const scope = nock('http://api.example.com')
-        .patch('/crm/contact?id=6738263734')
+        .patch('/crm/contact?id=2096113866')
         .reply(404, { data: {} });
       return expect(
-        async () => await sdk.crmContact.contactControllerUpdateContact('6738263734'),
+        async () => await sdk.crmContact.contactControllerUpdateContact('2096113866'),
       ).rejects.toThrow();
     });
   });
@@ -139,16 +140,16 @@ describe('test CrmContact', () => {
   describe('test contactControllerSyncContacts', () => {
     test('test api call', () => {
       const scope = nock('http://api.example.com')
-        .get('/crm/contact/sync?integrationId=neque&linkedUserId=assumenda&remote_data=true')
+        .get('/crm/contact/sync?integrationId=soluta&linkedUserId=dolorum&remote_data=true')
         .reply(200, { data: {} });
       return sdk.crmContact
-        .contactControllerSyncContacts('neque', 'assumenda', true)
+        .contactControllerSyncContacts('soluta', 'dolorum', true)
         .then((r: any) => expect(r.data).toEqual({}));
     });
 
     test('test will throw error if required fields missing', () => {
       const scope = nock('http://api.example.com')
-        .get('/crm/contact/sync?integrationId=nisi&linkedUserId=eum&remote_data=true')
+        .get('/crm/contact/sync?integrationId=laborum&linkedUserId=amet&remote_data=true')
         .reply(200, { data: {} });
       return expect(
         async () => await sdk.crmContact.contactControllerSyncContacts(),
@@ -157,10 +158,10 @@ describe('test CrmContact', () => {
 
     test('test will throw error on a non-200 response', () => {
       const scope = nock('http://api.example.com')
-        .get('/crm/contact/sync?integrationId=dicta&linkedUserId=animi&remote_data=true')
+        .get('/crm/contact/sync?integrationId=rem&linkedUserId=repellat&remote_data=true')
         .reply(404, { data: {} });
       return expect(
-        async () => await sdk.crmContact.contactControllerSyncContacts('dicta', 'animi', true),
+        async () => await sdk.crmContact.contactControllerSyncContacts('rem', 'repellat', true),
       ).rejects.toThrow();
     });
   });

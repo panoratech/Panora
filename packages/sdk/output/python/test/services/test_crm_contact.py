@@ -1,8 +1,8 @@
 import unittest
 import responses
-from src.testsdk.net.http_client import HTTPClient
+from src.panorasdk.net.http_client import HTTPClient
 from http_exceptions import ClientException
-from src.testsdk.services.crm_contact import CrmContact
+from src.panorasdk.services.crm_contact import CrmContact
 
 
 class TestCrmContact_(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestCrmContact_(unittest.TestCase):
         # call the method to test
         test_service = CrmContact("testkey")
         response = test_service.contact_controller_get_custom_properties(
-            "5555572723", "6823460501"
+            "8159227516", "6958991998"
         )
         self.assertEqual(response, {})
         responses.reset(),
@@ -43,7 +43,7 @@ class TestCrmContact_(unittest.TestCase):
         with self.assertRaises(ClientException):
             test_service = CrmContact("testkey")
             test_service.contact_controller_get_custom_properties(
-                "9707143631", "1194469616"
+                "8270896883", "3309094878"
             )
         responses.reset()
 
@@ -54,7 +54,7 @@ class TestCrmContact_(unittest.TestCase):
         # call the method to test
         test_service = CrmContact("testkey")
         response = test_service.contact_controller_get_contacts(
-            True, "3066342183", "7184697355"
+            True, "5909535309", "8339740290"
         )
         self.assertEqual(response, {})
         responses.reset(),
@@ -75,7 +75,7 @@ class TestCrmContact_(unittest.TestCase):
         with self.assertRaises(ClientException):
             test_service = CrmContact("testkey")
             test_service.contact_controller_get_contacts(
-                True, "9648602073", "4277432604"
+                True, "9531487091", "6240163368"
             )
         responses.reset()
 
@@ -86,7 +86,7 @@ class TestCrmContact_(unittest.TestCase):
         # call the method to test
         test_service = CrmContact("testkey")
         response = test_service.contact_controller_add_contacts(
-            {}, True, "5501601678", "2348685774"
+            {}, True, "1753590633", "6414798099"
         )
         self.assertEqual(response, {})
         responses.reset(),
@@ -107,7 +107,7 @@ class TestCrmContact_(unittest.TestCase):
         with self.assertRaises(ClientException):
             test_service = CrmContact("testkey")
             test_service.contact_controller_add_contacts(
-                {}, True, "6498176790", "3838905845"
+                {}, True, "8873156615", "7956796564"
             )
         responses.reset()
 
@@ -117,7 +117,7 @@ class TestCrmContact_(unittest.TestCase):
         responses.patch("http://api.example.com/crm/contact", json={}, status=200)
         # call the method to test
         test_service = CrmContact("testkey")
-        response = test_service.contact_controller_update_contact("3990911059")
+        response = test_service.contact_controller_update_contact("2334343188")
         self.assertEqual(response, {})
         responses.reset(),
 
@@ -136,7 +136,7 @@ class TestCrmContact_(unittest.TestCase):
         responses.patch("http://api.example.com/crm/contact", json={}, status=404)
         with self.assertRaises(ClientException):
             test_service = CrmContact("testkey")
-            test_service.contact_controller_update_contact("8975318338")
+            test_service.contact_controller_update_contact("5676611675")
         responses.reset()
 
     @responses.activate
@@ -146,7 +146,7 @@ class TestCrmContact_(unittest.TestCase):
         # call the method to test
         test_service = CrmContact("testkey")
         response = test_service.contact_controller_sync_contacts(
-            True, "6783269660", "6506193189"
+            True, "2089808435", "1762838672"
         )
         self.assertEqual(response, {})
         responses.reset(),
@@ -167,7 +167,7 @@ class TestCrmContact_(unittest.TestCase):
         with self.assertRaises(ClientException):
             test_service = CrmContact("testkey")
             test_service.contact_controller_sync_contacts(
-                True, "7954320135", "3946917380"
+                True, "6460226027", "9492580645"
             )
         responses.reset()
 

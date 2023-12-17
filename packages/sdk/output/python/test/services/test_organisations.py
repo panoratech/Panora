@@ -1,8 +1,8 @@
 import unittest
 import responses
-from src.testsdk.net.http_client import HTTPClient
+from src.panorasdk.net.http_client import HTTPClient
 from http_exceptions import ClientException
-from src.testsdk.services.organisations import Organisations
+from src.panorasdk.services.organisations import Organisations
 
 
 class TestOrganisations_(unittest.TestCase):

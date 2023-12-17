@@ -1,14 +1,14 @@
-# testsdk-example
-A basic example of how to use the testsdk package.
+# panorasdk-example
+A basic example of how to use the panorasdk package.
 
 ## Installation
 
-If `testsdk` is published to pypi:
+If `panorasdk` is published to pypi:
 ```sh
-pip install testsdk==1.0.0
+pip install panorasdk==1.0.0
 ```
 
-In the event `testsdk` is not published to pypi, you can install it locally by running the following command in the example folder:
+In the event `panorasdk` is not published to pypi, you can install it locally by running the following command in the example folder:
 ```sh
 . ./install.sh
 ```

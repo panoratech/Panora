@@ -1,7 +1,7 @@
 import unittest
 import responses
 from http import HTTPStatus
-from src.testsdk.models.base import BaseModel
+from src.panorasdk.models.base import BaseModel
 from http_exceptions import ClientException
 
 

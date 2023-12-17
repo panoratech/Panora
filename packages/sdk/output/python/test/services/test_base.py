@@ -1,7 +1,7 @@
 import unittest
 import responses
 from http import HTTPStatus
-from src.testsdk.services.base import BaseService
+from src.panorasdk.services.base import BaseService
 from http_exceptions import ClientException
 
 

@@ -1,4 +1,4 @@
-# Testsdk Models
+# PanoraSDK Models
 
 A list of all models.
 - [PassThroughRequestDto](#passthroughrequestdto)

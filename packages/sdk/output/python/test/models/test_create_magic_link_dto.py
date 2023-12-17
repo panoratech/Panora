@@ -1,5 +1,5 @@
 import unittest
-from src.testsdk.models.CreateMagicLinkDto import CreateMagicLinkDto
+from src.panorasdk.models.CreateMagicLinkDto import CreateMagicLinkDto
 
 
 class TestCreateMagicLinkDtoModel(unittest.TestCase):
@@ -9,14 +9,14 @@ class TestCreateMagicLinkDtoModel(unittest.TestCase):
     def test_create_magic_link_dto(self):
         # Create CreateMagicLinkDto class instance
         test_model = CreateMagicLinkDto(
-            id_project="quis",
-            alias="et",
-            email="pariatur",
+            id_project="reprehenderit",
+            alias="quo",
+            email="sapiente",
             linked_user_origin_id="quia",
         )
-        self.assertEqual(test_model.id_project, "quis")
-        self.assertEqual(test_model.alias, "et")
-        self.assertEqual(test_model.email, "pariatur")
+        self.assertEqual(test_model.id_project, "reprehenderit")
+        self.assertEqual(test_model.alias, "quo")
+        self.assertEqual(test_model.email, "sapiente")
         self.assertEqual(test_model.linked_user_origin_id, "quia")
 
     def test_create_magic_link_dto_required_fields_missing(self):

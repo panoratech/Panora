@@ -1,6 +1,6 @@
 import nock from 'nock';
 
-import { Testsdk } from '../../../src';
+import { PanoraSDK } from '../../../src';
 
 import { ConnectionsService } from '../../../src/services/connections/Connections';
 
@@ -14,7 +14,7 @@ describe('test Connections', () => {
   let sdk: any;
 
   beforeEach(() => {
-    sdk = new Testsdk({});
+    sdk = new PanoraSDK({});
 
     nock.cleanAll();
   });
@@ -22,16 +22,16 @@ describe('test Connections', () => {
   describe('test connectionsControllerHandleCallback', () => {
     test('test api call', () => {
       const scope = nock('http://api.example.com')
-        .get('/connections/oauth/callback?state=repellat&code=et&location=optio')
+        .get('/connections/oauth/callback?state=quaerat&code=iure&location=optio')
         .reply(200, { data: {} });
       return sdk.connections
-        .connectionsControllerHandleCallback('repellat', 'et', 'optio')
+        .connectionsControllerHandleCallback('quaerat', 'iure', 'optio')
         .then((r: any) => expect(r.data).toEqual({}));
     });
 
     test('test will throw error if required fields missing', () => {
       const scope = nock('http://api.example.com')
-        .get('/connections/oauth/callback?state=aperiam&code=in&location=amet')
+        .get('/connections/oauth/callback?state=quia&code=inventore&location=eos')
         .reply(200, { data: {} });
       return expect(
         async () => await sdk.connections.connectionsControllerHandleCallback(),
@@ -40,14 +40,14 @@ describe('test Connections', () => {
 
     test('test will throw error on a non-200 response', () => {
       const scope = nock('http://api.example.com')
-        .get('/connections/oauth/callback?state=aliquam&code=doloribus&location=distinctio')
+        .get('/connections/oauth/callback?state=repudiandae&code=ducimus&location=illo')
         .reply(404, { data: {} });
       return expect(
         async () =>
           await sdk.connections.connectionsControllerHandleCallback(
-            'aliquam',
-            'doloribus',
-            'distinctio',
+            'repudiandae',
+            'ducimus',
+            'illo',
           ),
       ).rejects.toThrow();
     });

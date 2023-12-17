@@ -1,6 +1,6 @@
 import nock from 'nock';
 
-import { Testsdk } from '../../../src';
+import { PanoraSDK } from '../../../src';
 
 import { EventsService } from '../../../src/services/events/Events';
 
@@ -14,7 +14,7 @@ describe('test Events', () => {
   let sdk: any;
 
   beforeEach(() => {
-    sdk = new Testsdk({});
+    sdk = new PanoraSDK({});
 
     nock.cleanAll();
   });

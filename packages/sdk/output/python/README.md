@@ -1,5 +1,5 @@
-# Testsdk Python SDK 1.0.0
-A Python SDK for Testsdk.
+# PanoraSDK Python SDK 1.0.0
+A Python SDK for PanoraSDK.
 
 The Panora API description
 
@@ -17,12 +17,12 @@ The Panora API description
 - [Testing](#testing)
 - [Configuration](#configuration)
 - [Sample Usage](#sample-usage)
-- [Testsdk Services](#testsdk-services)
+- [PanoraSDK Services](#panorasdk-services)
 - [License](#license)
 
 ## Installation
 ```bash
-pip install testsdk
+pip install panorasdk
 ```
 
 ### Dependencies
@@ -38,21 +38,21 @@ This SDK uses the following dependencies:
 To see whether an endpoint needs a specific type of authentication check the endpoint's documentation.
 
 ### Access Token Authentication
-The Testsdk API uses bearer tokens as a form of authentication.You can set the bearer token when initializing the SDK through the constructor: 
+The PanoraSDK API uses bearer tokens as a form of authentication.You can set the bearer token when initializing the SDK through the constructor: 
 
 ```py
-sdk = Testsdk('YOUR_BEARER_TOKEN')
+sdk = PanoraSDK('YOUR_BEARER_TOKEN')
 ```
 
 Or through the `set_access_token` method:
 ```py
-sdk = Testsdk()
+sdk = PanoraSDK()
 sdk.set_access_token('YOUR_BEARER_TOKEN')
 ```
 
 You can also set it for each service individually:
 ```py
-sdk = Testsdk()
+sdk = PanoraSDK()
 sdk.main.set_access_token('YOUR_BEARER_TOKEN')
 ```
 
@@ -77,7 +77,7 @@ Click the service name for a full list of the service methods.
 |[Connections](./services/README.md#connections)|
 
 ## API Models
-[A list documenting all API models for this SDK](./models/README.md#testsdk-models).
+[A list documenting all API models for this SDK](./models/README.md#panorasdk-models).
 
 ## Testing
 
@@ -92,10 +92,10 @@ python -m unittest discover -p "test*.py"
 ```py
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
+from panorasdk import PanoraSDK
 
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 
 results = sdk.main.app_controller_get_hello()
 
@@ -103,7 +103,7 @@ pprint(vars(results))
 ```
 
 
-# Testsdk Services
+# PanoraSDK Services
 A list of all services and services methods.
 - Services
 
@@ -249,9 +249,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.main.app_controller_get_hello()
 
 pprint(vars(results))
@@ -269,23 +269,23 @@ pprint(vars(results))
 | :-------- | :----------| :----------| :----------| 
 | integration_id | str | Required |  |
 | linked_user_id | str | Required |  |
-| request_input | [PassThroughRequestDto](/src/testsdk/models/README.md#passthroughrequestdto) | Required | Request body. |
+| request_input | [PassThroughRequestDto](/src/panorasdk/models/README.md#passthroughrequestdto) | Required | Request body. |
 
 **Return Type**
 
-[PassThroughResponse](/src/testsdk/models/README.md#passthroughresponse) 
+[PassThroughResponse](/src/panorasdk/models/README.md#passthroughresponse) 
 
 **Example Usage Code Snippet**
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {
 	'data': {},
 	'headers_': {},
-	'method': 'PUT',
+	'method': 'PATCH',
 	'path': 'path'
 }
 results = sdk.passthrough.passthrough_controller_passthrough_request(
@@ -307,7 +307,7 @@ pprint(vars(results))
 **Parameters**
 | Name    | Type| Required | Description |
 | :-------- | :----------| :----------| :----------| 
-| request_input | [CreateMagicLinkDto](/src/testsdk/models/README.md#createmagiclinkdto) | Required | Request body. |
+| request_input | [CreateMagicLinkDto](/src/panorasdk/models/README.md#createmagiclinkdto) | Required | Request body. |
 
 **Return Type**
 
@@ -317,9 +317,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {
 	'alias': 'alias',
 	'email': 'email',
@@ -349,9 +349,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.magic_link.magic_link_controller_get_magic_links()
 
 pprint(vars(results))
@@ -376,9 +376,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.magic_link.magic_link_controller_get_magic_link(id = 'id')
 
 pprint(vars(results))
@@ -403,9 +403,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.events.events_controller_get_events()
 
 pprint(vars(results))
@@ -430,9 +430,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.field_mapping.field_mapping_controller_get_entities()
 
 pprint(vars(results))
@@ -456,9 +456,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.field_mapping.field_mapping_controller_get_attributes()
 
 pprint(vars(results))
@@ -482,9 +482,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.field_mapping.field_mapping_controller_get_values()
 
 pprint(vars(results))
@@ -499,7 +499,7 @@ pprint(vars(results))
 **Parameters**
 | Name    | Type| Required | Description |
 | :-------- | :----------| :----------| :----------| 
-| request_input | [DefineTargetFieldDto](/src/testsdk/models/README.md#definetargetfielddto) | Required | Request body. |
+| request_input | [DefineTargetFieldDto](/src/panorasdk/models/README.md#definetargetfielddto) | Required | Request body. |
 
 **Return Type**
 
@@ -509,9 +509,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {
 	'data_type': 'data_type',
 	'description': 'description',
@@ -532,7 +532,7 @@ pprint(vars(results))
 **Parameters**
 | Name    | Type| Required | Description |
 | :-------- | :----------| :----------| :----------| 
-| request_input | [MapFieldToProviderDto](/src/testsdk/models/README.md#mapfieldtoproviderdto) | Required | Request body. |
+| request_input | [MapFieldToProviderDto](/src/panorasdk/models/README.md#mapfieldtoproviderdto) | Required | Request body. |
 
 **Return Type**
 
@@ -542,9 +542,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {
 	'attributeId': 'attributeId',
 	'linked_user_id': 'linked_user_id',
@@ -566,7 +566,7 @@ pprint(vars(results))
 **Parameters**
 | Name    | Type| Required | Description |
 | :-------- | :----------| :----------| :----------| 
-| request_input | [CreateLinkedUserDto](/src/testsdk/models/README.md#createlinkeduserdto) | Required | Request body. |
+| request_input | [CreateLinkedUserDto](/src/panorasdk/models/README.md#createlinkeduserdto) | Required | Request body. |
 
 **Return Type**
 
@@ -576,9 +576,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {
 	'alias': 'alias',
 	'id_project': 'id_project',
@@ -607,9 +607,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.linked_users.linked_users_controller_get_linked_users()
 
 pprint(vars(results))
@@ -634,9 +634,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.linked_users.linked_users_controller_get_linked_user(id = 'id')
 
 pprint(vars(results))
@@ -661,9 +661,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.organisations.organisations_controller_get_oragnisations()
 
 pprint(vars(results))
@@ -678,7 +678,7 @@ pprint(vars(results))
 **Parameters**
 | Name    | Type| Required | Description |
 | :-------- | :----------| :----------| :----------| 
-| request_input | [CreateOrganizationDto](/src/testsdk/models/README.md#createorganizationdto) | Required | Request body. |
+| request_input | [CreateOrganizationDto](/src/panorasdk/models/README.md#createorganizationdto) | Required | Request body. |
 
 **Return Type**
 
@@ -688,9 +688,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {
 	'name': 'name',
 	'stripe_customer_id': 'stripe_customer_id'
@@ -719,9 +719,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.projects.projects_controller_get_projects()
 
 pprint(vars(results))
@@ -736,7 +736,7 @@ pprint(vars(results))
 **Parameters**
 | Name    | Type| Required | Description |
 | :-------- | :----------| :----------| :----------| 
-| request_input | [CreateProjectDto](/src/testsdk/models/README.md#createprojectdto) | Required | Request body. |
+| request_input | [CreateProjectDto](/src/panorasdk/models/README.md#createprojectdto) | Required | Request body. |
 
 **Return Type**
 
@@ -746,9 +746,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {
 	'id_organization': 'id_organization',
 	'name': 'name'
@@ -779,9 +779,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.crm_contact.contact_controller_get_custom_properties(
 	linked_user_id = 'linkedUserId',
 	provider_id = 'providerId'
@@ -812,9 +812,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {}
 results = sdk.crm_contact.contact_controller_add_contacts(
 	request_input = request_body,
@@ -847,9 +847,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.crm_contact.contact_controller_get_contacts(
 	integration_id = 'integrationId',
 	linked_user_id = 'linkedUserId',
@@ -878,9 +878,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.crm_contact.contact_controller_update_contact(id = 'id')
 
 pprint(vars(results))
@@ -907,9 +907,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.crm_contact.contact_controller_sync_contacts(
 	integration_id = 'integrationId',
 	linked_user_id = 'linkedUserId',
@@ -929,7 +929,7 @@ pprint(vars(results))
 **Parameters**
 | Name    | Type| Required | Description |
 | :-------- | :----------| :----------| :----------| 
-| request_input | [CreateUserDto](/src/testsdk/models/README.md#createuserdto) | Required | Request body. |
+| request_input | [CreateUserDto](/src/panorasdk/models/README.md#createuserdto) | Required | Request body. |
 
 **Return Type**
 
@@ -939,9 +939,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {
 	'email': 'email',
 	'first_name': 'first_name',
@@ -962,7 +962,7 @@ pprint(vars(results))
 **Parameters**
 | Name    | Type| Required | Description |
 | :-------- | :----------| :----------| :----------| 
-| request_input | [LoginCredentials](/src/testsdk/models/README.md#logincredentials) | Required | Request body. |
+| request_input | [LoginCredentials](/src/panorasdk/models/README.md#logincredentials) | Required | Request body. |
 
 **Return Type**
 
@@ -972,12 +972,12 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {
 	'email': 'email',
-	'id_user': 48509401.28675595,
+	'id_user': -67107713.79519822,
 	'password_hash': 'password_hash'
 }
 results = sdk.auth.auth_controller_login(request_input = request_body)
@@ -1003,9 +1003,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.auth.auth_controller_users()
 
 pprint(vars(results))
@@ -1029,9 +1029,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.auth.auth_controller_api_keys()
 
 pprint(vars(results))
@@ -1056,9 +1056,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 request_body = {}
 results = sdk.auth.auth_controller_generate_api_key(request_input = request_body)
 
@@ -1087,9 +1087,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.connections.connections_controller_handle_callback(
 	state = 'state',
 	code = 'code',
@@ -1117,9 +1117,9 @@ Returns a dict object.
 ```Python
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+from panorasdk import PanoraSDK
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 results = sdk.connections.connections_controller_get_connections()
 
 pprint(vars(results))

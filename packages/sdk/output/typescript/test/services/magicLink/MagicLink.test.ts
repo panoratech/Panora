@@ -1,6 +1,6 @@
 import nock from 'nock';
 
-import { Testsdk } from '../../../src';
+import { PanoraSDK } from '../../../src';
 
 import { MagicLinkService } from '../../../src/services/magicLink/MagicLink';
 
@@ -14,7 +14,7 @@ describe('test MagicLink', () => {
   let sdk: any;
 
   beforeEach(() => {
-    sdk = new Testsdk({});
+    sdk = new PanoraSDK({});
 
     nock.cleanAll();
   });
@@ -42,16 +42,16 @@ describe('test MagicLink', () => {
   describe('test magicLinkControllerGetMagicLink', () => {
     test('test api call', () => {
       const scope = nock('http://api.example.com')
-        .get('/magic-link/single?id=4311768664')
+        .get('/magic-link/single?id=2267534632')
         .reply(200, { data: {} });
       return sdk.magicLink
-        .magicLinkControllerGetMagicLink('4311768664')
+        .magicLinkControllerGetMagicLink('2267534632')
         .then((r: any) => expect(r.data).toEqual({}));
     });
 
     test('test will throw error if required fields missing', () => {
       const scope = nock('http://api.example.com')
-        .get('/magic-link/single?id=4569626549')
+        .get('/magic-link/single?id=6551760261')
         .reply(200, { data: {} });
       return expect(
         async () => await sdk.magicLink.magicLinkControllerGetMagicLink(),
@@ -60,10 +60,10 @@ describe('test MagicLink', () => {
 
     test('test will throw error on a non-200 response', () => {
       const scope = nock('http://api.example.com')
-        .get('/magic-link/single?id=3696517865')
+        .get('/magic-link/single?id=2180410218')
         .reply(404, { data: {} });
       return expect(
-        async () => await sdk.magicLink.magicLinkControllerGetMagicLink('3696517865'),
+        async () => await sdk.magicLink.magicLinkControllerGetMagicLink('2180410218'),
       ).rejects.toThrow();
     });
   });

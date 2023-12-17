@@ -1,5 +1,5 @@
 import unittest
-from src.testsdk.models.PassThroughRequestDto import PassThroughRequestDto
+from src.panorasdk.models.PassThroughRequestDto import PassThroughRequestDto
 
 
 class TestPassThroughRequestDtoModel(unittest.TestCase):
@@ -9,12 +9,12 @@ class TestPassThroughRequestDtoModel(unittest.TestCase):
     def test_pass_through_request_dto(self):
         # Create PassThroughRequestDto class instance
         test_model = PassThroughRequestDto(
-            path="cum", method="GET", data={"sunt": 1}, headers_={"dignissimos": 2}
+            path="autem", method="GET", data={"illo": 3}, headers_={"voluptas": 2}
         )
-        self.assertEqual(test_model.path, "cum")
+        self.assertEqual(test_model.path, "autem")
         self.assertEqual(test_model.method, "GET")
-        self.assertEqual(test_model.data, {"sunt": 1})
-        self.assertEqual(test_model.headers_, {"dignissimos": 2})
+        self.assertEqual(test_model.data, {"illo": 3})
+        self.assertEqual(test_model.headers_, {"voluptas": 2})
 
     def test_pass_through_request_dto_required_fields_missing(self):
         # Assert PassThroughRequestDto class generation fails without required fields

@@ -1,9 +1,9 @@
 """
-Creates a Testsdk class.
+Creates a PanoraSDK class.
 Generates the main SDK with all available queries as attributes.
 
 Class:
-    Testsdk
+    PanoraSDK
 """
 from .net.environment import Environment
 
@@ -20,9 +20,9 @@ from .services.passthrough import Passthrough
 from .services.projects import Projects
 
 
-class Testsdk:
+class PanoraSDK:
     """
-    A class representing the full Testsdk SDK
+    A class representing the full PanoraSDK SDK
 
     Attributes
     ----------
@@ -48,7 +48,7 @@ class Testsdk:
 
     def __init__(self, access_token="", environment=Environment.DEFAULT) -> None:
         """
-        Initializes the Testsdk SDK class.
+        Initializes the PanoraSDK SDK class.
         Parameters
         ----------
         environment: str

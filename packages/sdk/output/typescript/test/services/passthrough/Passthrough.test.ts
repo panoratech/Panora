@@ -1,6 +1,6 @@
 import nock from 'nock';
 
-import { Testsdk } from '../../../src';
+import { PanoraSDK } from '../../../src';
 
 import { PassthroughService } from '../../../src/services/passthrough/Passthrough';
 
@@ -14,7 +14,7 @@ describe('test Passthrough', () => {
   let sdk: any;
 
   beforeEach(() => {
-    sdk = new Testsdk({});
+    sdk = new PanoraSDK({});
 
     nock.cleanAll();
   });
@@ -22,16 +22,16 @@ describe('test Passthrough', () => {
   describe('test passthroughControllerPassthroughRequest', () => {
     test('test api call', () => {
       const scope = nock('http://api.example.com')
-        .post('/passthrough?integrationId=reprehenderit&linkedUserId=rerum')
+        .post('/passthrough?integrationId=ex&linkedUserId=deleniti')
         .reply(200, { data: {} });
       return sdk.passthrough
-        .passthroughControllerPassthroughRequest({}, 'reprehenderit', 'rerum')
+        .passthroughControllerPassthroughRequest({}, 'ex', 'deleniti')
         .then((r: any) => expect(r.data).toEqual({}));
     });
 
     test('test will throw error if required fields missing', () => {
       const scope = nock('http://api.example.com')
-        .post('/passthrough?integrationId=quos&linkedUserId=laudantium')
+        .post('/passthrough?integrationId=quibusdam&linkedUserId=dolores')
         .reply(200, { data: {} });
       return expect(
         async () => await sdk.passthrough.passthroughControllerPassthroughRequest(),
@@ -40,11 +40,11 @@ describe('test Passthrough', () => {
 
     test('test will throw error on a non-200 response', () => {
       const scope = nock('http://api.example.com')
-        .post('/passthrough?integrationId=cupiditate&linkedUserId=nobis')
+        .post('/passthrough?integrationId=tenetur&linkedUserId=porro')
         .reply(404, { data: {} });
       return expect(
         async () =>
-          await sdk.passthrough.passthroughControllerPassthroughRequest({}, 'cupiditate', 'nobis'),
+          await sdk.passthrough.passthroughControllerPassthroughRequest({}, 'tenetur', 'porro'),
       ).rejects.toThrow();
     });
   });

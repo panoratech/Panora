@@ -1,11 +1,11 @@
 {
-  "sdkName": "test-sdk",
+  "sdkName": "Panora-SDK",
   "specFilePath": "https://raw.githubusercontent.com/panoratech/Panora/main/docs/openapi.json",
   "languages": [
     "python",
     "typescript"
   ],
-  "createDocs": false,
+  "createDocs": true,
   "auth": [
     "bearer"
   ],

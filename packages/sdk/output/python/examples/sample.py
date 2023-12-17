@@ -1,9 +1,9 @@
 from os import getenv
 from pprint import pprint
-from testsdk import Testsdk
+from panorasdk import PanoraSDK
 
-sdk = Testsdk()
-sdk.set_access_token(getenv("TESTSDK_ACCESS_TOKEN"))
+sdk = PanoraSDK()
+sdk.set_access_token(getenv("PANORASDK_ACCESS_TOKEN"))
 
 results = sdk.main.app_controller_get_hello()
 

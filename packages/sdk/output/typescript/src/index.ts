@@ -29,7 +29,7 @@ export * from './http/errors';
 /**
  * The Panora API description
  */
-export class Testsdk {
+export class PanoraSDK {
   public auth: AuthService;
   public connections: ConnectionsService;
   public crmContact: CrmContactService;

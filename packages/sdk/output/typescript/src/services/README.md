@@ -1,4 +1,4 @@
-# Testsdk Services
+# PanoraSDK Services
 A list of all services and services methods.
 - Services
 
@@ -141,9 +141,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.main.appControllerGetHello();
@@ -174,12 +174,12 @@ PassThroughResponse
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
-  const input = { data: {}, headers_: {}, method: 'GET', path: 'path' };
+  const input = { data: {}, headers_: {}, method: 'PUT', path: 'path' };
   const result = await sdk.passthrough.passthroughControllerPassthroughRequest(
     input,
     'integrationId',
@@ -208,9 +208,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const input = {
@@ -239,9 +239,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.magicLink.magicLinkControllerGetMagicLinks();
@@ -269,9 +269,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.magicLink.magicLinkControllerGetMagicLink('id');
@@ -295,9 +295,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.events.eventsControllerGetEvents();
@@ -321,9 +321,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.fieldMapping.fieldMappingControllerGetEntities();
@@ -346,9 +346,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.fieldMapping.fieldMappingControllerGetAttributes();
@@ -371,9 +371,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.fieldMapping.fieldMappingControllerGetValues();
@@ -399,9 +399,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const input = {
@@ -433,9 +433,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const input = {
@@ -468,9 +468,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const input = {
@@ -498,9 +498,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.linkedUsers.linkedUsersControllerGetLinkedUsers();
@@ -528,9 +528,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.linkedUsers.linkedUsersControllerGetLinkedUser('id');
@@ -554,9 +554,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.organisations.organisationsControllerGetOragnisations();
@@ -582,9 +582,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const input = { name: 'name', stripe_customer_id: 'stripe_customer_id' };
@@ -609,9 +609,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.projects.projectsControllerGetProjects();
@@ -637,9 +637,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const input = { id_organization: 'id_organization', name: 'name' };
@@ -670,9 +670,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.crmContact.contactControllerGetCustomProperties(
@@ -706,9 +706,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const input = {};
@@ -744,9 +744,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.crmContact.contactControllerGetContacts(
@@ -778,9 +778,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.crmContact.contactControllerUpdateContact('id');
@@ -810,9 +810,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.crmContact.contactControllerSyncContacts(
@@ -843,9 +843,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const input = {
@@ -877,12 +877,12 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
-  const input = { email: 'email', id_user: 58728004.68921766, password_hash: 'password_hash' };
+  const input = { email: 'email', id_user: -96727653.21295467, password_hash: 'password_hash' };
   const result = await sdk.auth.authControllerLogin(input);
   console.log(result);
 })();
@@ -903,9 +903,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.auth.authControllerUsers();
@@ -928,9 +928,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.auth.authControllerApiKeys();
@@ -956,9 +956,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const input = {};
@@ -990,9 +990,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.connections.connectionsControllerHandleCallback(
@@ -1019,9 +1019,9 @@ Returns a dict object.
 
 **Example Usage Code Snippet**
 ```Typescript
-import { Testsdk } from './src';
+import { PanoraSDK } from './src';
 
-const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
+const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.connections.connectionsControllerGetConnections();
