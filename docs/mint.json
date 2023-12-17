@@ -117,9 +117,10 @@
       "group": "API Reference",
       "pages":
       [ 
-        "api-reference/get-",
-        "api-reference/webhook/post-webhook",
-        "api-reference/webhook/get-webhook",
+      "api-reference/introduction",
+      "api-reference/get-",
+      "api-reference/webhook/post-webhook",
+      "api-reference/webhook/get-webhook",
         "api-reference/webhook/put-webhook",
         "api-reference/linked-users/get-linked-userssingle",
         "api-reference/linked-users/post-linked-userscreate",
@@ -154,7 +155,6 @@
         "api-reference/projects/post-projectscreate"
       ]
     }
-
     ,
     {
       "group": "Contribute",
@@ -167,8 +167,7 @@
       "pages": [
         "features/self-host-guide",
         "features/magic-links",
-        "features/custom-fields",
-        "features/SDK"
+        "features/custom-fields"
       ]
     },
     {
