@@ -124,6 +124,7 @@
     {
       "group": "Panora Features",
       "pages": [
+        "features/sdk",
         "features/self-host-guide",
         "features/magic-links",
         "features/custom-fields"
