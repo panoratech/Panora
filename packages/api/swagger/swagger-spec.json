@@ -45,7 +45,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginCredentials"
+                "$ref": "#/components/schemas/LoginDto"
               }
             }
           }
@@ -97,7 +97,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "string"
+                "$ref": "#/components/schemas/ApiKeyDto"
               }
             }
           }
@@ -636,7 +636,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ContactResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -644,7 +662,7 @@
         ]
       },
       "post": {
-        "operationId": "ContactController_addContacts",
+        "operationId": "ContactController_addContact",
         "parameters": [
           {
             "name": "integrationId",
@@ -676,17 +694,32 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/UnifiedContactInput"
-                }
+                "$ref": "#/components/schemas/UnifiedContactInput"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ContactResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -738,7 +771,95 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ContactResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/contact"
+        ]
+      }
+    },
+    "/crm/contact/batch": {
+      "post": {
+        "operationId": "ContactController_addContacts",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedContactInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ContactResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -780,7 +901,7 @@
           "password_hash"
         ]
       },
-      "LoginCredentials": {
+      "LoginDto": {
         "type": "object",
         "properties": {
           "id_user": {
@@ -795,6 +916,24 @@
         },
         "required": [
           "password_hash"
+        ]
+      },
+      "ApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "keyName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "userId"
         ]
       },
       "WebhookDto": {
@@ -872,7 +1011,7 @@
         "type": "object",
         "properties": {
           "object_type_owner": {
-            "type": "object"
+            "type": "string"
           },
           "name": {
             "type": "string"
@@ -984,9 +1123,111 @@
           "data"
         ]
       },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "statusCode"
+        ]
+      },
+      "ContactResponse": {
+        "type": "object",
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "contacts",
+          "remote_data"
+        ]
+      },
+      "Email": {
+        "type": "object",
+        "properties": {
+          "email_address": {
+            "type": "string"
+          },
+          "email_address_type": {
+            "type": "string"
+          },
+          "owner_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email_address",
+          "email_address_type"
+        ]
+      },
+      "Phone": {
+        "type": "object",
+        "properties": {
+          "phone_number": {
+            "type": "string"
+          },
+          "phone_type": {
+            "type": "string"
+          },
+          "owner_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone_number",
+          "phone_type"
+        ]
+      },
       "UnifiedContactInput": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "email_addresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Email"
+            }
+          },
+          "phone_numbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Phone"
+            }
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "email_addresses",
+          "phone_numbers",
+          "field_mappings"
+        ]
       }
     }
   }

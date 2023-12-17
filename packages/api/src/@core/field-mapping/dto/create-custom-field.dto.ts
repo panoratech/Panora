@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CustomFieldCreateDto {}
 
 export class DefineTargetFieldDto {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   object_type_owner: StandardObject;
   @ApiProperty()
   name: string;

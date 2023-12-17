@@ -1,12 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto, LoginCredentials } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
+import { LoginDto } from './dto/login.dto';
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
@@ -60,7 +61,7 @@ export class AuthService {
     }
   }
 
-  async login(user: LoginCredentials): Promise<{ access_token: string }> {
+  async login(user: LoginDto): Promise<{ access_token: string }> {
     try {
       const foundUser = await this.prisma.users.findUnique({
         where: { id_user: user.id_user },

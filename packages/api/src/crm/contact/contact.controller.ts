@@ -10,14 +10,8 @@ import {
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { UnifiedContactInput } from './types/model.unified';
-import {
-  ApiBody,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-
+import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ContactResponse, ApiCustomResponse } from './types';
 @ApiTags('crm/contact')
 @Controller('crm/contact')
 export class ContactController {
@@ -31,7 +25,7 @@ export class ContactController {
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
-  @ApiResponse({ status: 200 })
+  @ApiCustomResponse(ContactResponse)
   @Get()
   getContacts(
     @Query('integrationId') integrationId: string,
@@ -47,7 +41,7 @@ export class ContactController {
 
   @ApiParam({ name: 'id', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
-  @ApiResponse({ status: 200 })
+  @ApiCustomResponse(ContactResponse)
   @Get(':id')
   getContact(
     @Param('id') id: string,
@@ -60,7 +54,7 @@ export class ContactController {
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
   @ApiBody({ type: UnifiedContactInput })
-  @ApiResponse({ status: 201 })
+  @ApiCustomResponse(ContactResponse)
   @Post()
   addContact(
     @Body() unfiedContactData: UnifiedContactInput,
@@ -80,7 +74,7 @@ export class ContactController {
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
   @ApiBody({ type: UnifiedContactInput, isArray: true })
-  @ApiResponse({ status: 201 })
+  @ApiCustomResponse(ContactResponse)
   @Post('batch')
   addContacts(
     @Body() unfiedContactData: UnifiedContactInput[],

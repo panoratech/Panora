@@ -3,7 +3,7 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { MagicLinkService } from './magic-link.service';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';
 import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-
+import { invite_links as MagicLink } from '@prisma/client';
 @ApiTags('magic-link')
 @Controller('magic-link')
 export class MagicLinkController {
