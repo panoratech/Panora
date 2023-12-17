@@ -1,0 +1,46 @@
+name: Generate SDKs using liblab
+
+on:
+  push:
+    paths:
+      - "packages/api/swagger/swagger-spec.json"
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build-and-pr:
+    name: Generate SDKs and create PRs
+    runs-on: ubuntu-latest
+    env:
+      LIBLAB_TOKEN: ${{ secrets.LIBLAB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.LIBLAB_GITHUB_TOKEN }}
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.32.2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install liblab
+        run: pnpm install -g liblab
+
+      - name: Start Build
+        run: liblab build --skip-validation
+        working-directory: packages/api
+
+      - name: Create PRs to GitHub repos
+        run: liblab pr
+        working-directory: packages/api
