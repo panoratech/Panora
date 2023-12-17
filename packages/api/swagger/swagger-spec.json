@@ -1200,8 +1200,7 @@
             "description": "The email address of a contact"
           },
           "email_address_type": {
-            "type": "string",
-            "description": "The email address type of a contact"
+            "type": "string"
           },
           "owner_type": {
             "type": "string"

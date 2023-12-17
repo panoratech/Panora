@@ -5,8 +5,7 @@
   "languages": [
     "typescript",
     "python",
-    "java",
-    "go"
+    "java"
   ],
   "createDocs": false,
   "auth": [
@@ -53,10 +52,6 @@
     },
     "java": {
       "githubRepoName": "java-sdk",
-      "sdkVersion": "1.0.0"
-    },
-    "go": {
-      "githubRepoName": "go-sdk",
       "sdkVersion": "1.0.0"
     }
   },
