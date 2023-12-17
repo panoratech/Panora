@@ -32,7 +32,9 @@ export class Phone {
     description: 'The phone number of a contact',
   })
   phone_number: string;
-  @ApiProperty()
+  @ApiProperty({
+    description: 'The phone type of a contact',
+  })
   phone_type: string;
   @ApiPropertyOptional()
   owner_type?: string;
