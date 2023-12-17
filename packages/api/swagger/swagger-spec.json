@@ -1218,7 +1218,8 @@
             "description": "The phone number of a contact"
           },
           "phone_type": {
-            "type": "string"
+            "type": "string",
+            "description": "The phone type of a contact"
           },
           "owner_type": {
             "type": "string"
