@@ -1196,7 +1196,8 @@
         "type": "object",
         "properties": {
           "email_address": {
-            "type": "string"
+            "type": "string",
+            "description": "The email address of a contact"
           },
           "email_address_type": {
             "type": "string"

@@ -19,7 +19,9 @@ export class ApiResponse<T> {
 }
 
 export class Email {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'The email address of a contact',
+  })
   email_address: string;
   @ApiProperty()
   email_address_type: string;
