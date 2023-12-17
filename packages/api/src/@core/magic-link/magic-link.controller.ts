@@ -2,7 +2,13 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { MagicLinkService } from './magic-link.service';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';
-import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { invite_links as MagicLink } from '@prisma/client';
 @ApiTags('magic-link')
 @Controller('magic-link')
@@ -14,6 +20,7 @@ export class MagicLinkController {
     this.logger.setContext(MagicLinkController.name);
   }
 
+  @ApiOperation({ operationId: 'createMagicLink' })
   @ApiBody({ type: CreateMagicLinkDto })
   @ApiResponse({ status: 201 })
   @Post('create')
@@ -21,12 +28,14 @@ export class MagicLinkController {
     return this.magicLinkService.createUniqueLink(data);
   }
 
+  @ApiOperation({ operationId: 'getMagicLinks' })
   @ApiResponse({ status: 200 })
   @Get()
   getMagicLinks() {
     return this.magicLinkService.getMagicLinks();
   }
 
+  @ApiOperation({ operationId: 'getMagicLink' })
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiResponse({ status: 200 })
   @Get('single')

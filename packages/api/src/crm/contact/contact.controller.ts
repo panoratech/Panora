@@ -10,7 +10,13 @@ import {
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { UnifiedContactInput } from './types/model.unified';
-import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ContactResponse, ApiCustomResponse } from './types';
 @ApiTags('crm/contact')
 @Controller('crm/contact')
@@ -22,6 +28,7 @@ export class ContactController {
     this.logger.setContext(ContactController.name);
   }
 
+  @ApiOperation({ operationId: 'getContacts' })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
@@ -39,6 +46,7 @@ export class ContactController {
     );
   }
 
+  @ApiOperation({ operationId: 'getContact' })
   @ApiParam({ name: 'id', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
   @ApiCustomResponse(ContactResponse)
@@ -50,6 +58,7 @@ export class ContactController {
     return this.contactService.getContact(id, remote_data);
   }
 
+  @ApiOperation({ operationId: 'addContact' })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
@@ -70,6 +79,7 @@ export class ContactController {
     );
   }
 
+  @ApiOperation({ operationId: 'addContacts' })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
@@ -90,6 +100,7 @@ export class ContactController {
     );
   }
 
+  @ApiOperation({ operationId: 'updateContact' })
   @Patch()
   updateContact(
     @Query('id') id: string,

@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @ApiTags('events')
 @Controller('events')
 export class EventsController {
@@ -13,6 +13,7 @@ export class EventsController {
     this.logger.setContext(EventsController.name);
   }
 
+  @ApiOperation({ operationId: 'getEvents' })
   @ApiResponse({ status: 200 })
   @Get()
   async getEvents() {

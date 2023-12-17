@@ -2,10 +2,9 @@
   "sdkName": "panora-sdk",
   "specFilePath": "https://raw.githubusercontent.com/panoratech/Panora/main/packages/api/swagger/swagger-spec.json",
   "languages": [
-    "python",
     "typescript"
   ],
-  "createDocs": true,
+  "createDocs": false,
   "auth": [
     "bearer"
   ],

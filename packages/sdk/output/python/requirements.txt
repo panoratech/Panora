@@ -1,4 +1,0 @@
-requests
-http-exceptions
-pytest
-responses

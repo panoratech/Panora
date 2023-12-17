@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -14,12 +14,14 @@ export class ProjectsController {
     this.logger.setContext(ProjectsController.name);
   }
 
+  @ApiOperation({ operationId: 'getProjects' })
   @ApiResponse({ status: 200 })
   @Get()
   getProjects() {
     return this.projectsService.getProjects();
   }
 
+  @ApiOperation({ operationId: 'createProject' })
   @ApiBody({ type: CreateProjectDto })
   @ApiResponse({ status: 201 })
   @Post('create')

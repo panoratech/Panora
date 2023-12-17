@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiKeyDto } from './dto/api-key.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -17,6 +17,7 @@ export class AuthController {
     this.logger.setContext(AuthController.name);
   }
 
+  @ApiOperation({ operationId: 'signUp' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201 })
   @Post('register')
@@ -24,6 +25,7 @@ export class AuthController {
     return this.authService.register(user);
   }
 
+  @ApiOperation({ operationId: 'signIn' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 201 })
   @Post('login')
@@ -31,18 +33,21 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  @ApiOperation({ operationId: 'getUsers' })
   @ApiResponse({ status: 200 })
   @Get('users')
   async users() {
     return this.authService.getUsers();
   }
 
+  @ApiOperation({ operationId: 'getApiKeys' })
   @ApiResponse({ status: 200 })
   @Get('api-keys')
   async apiKeys() {
     return this.authService.getApiKeys();
   }
 
+  @ApiOperation({ operationId: 'generateApiKey' })
   @ApiBody({ type: ApiKeyDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)

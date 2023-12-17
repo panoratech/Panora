@@ -14,7 +14,8 @@
     },
     "/auth/register": {
       "post": {
-        "operationId": "AuthController_registerUser",
+        "operationId": "signUp",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -38,7 +39,8 @@
     },
     "/auth/login": {
       "post": {
-        "operationId": "AuthController_login",
+        "operationId": "signIn",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -62,7 +64,8 @@
     },
     "/auth/users": {
       "get": {
-        "operationId": "AuthController_users",
+        "operationId": "getUsers",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -76,7 +79,8 @@
     },
     "/auth/api-keys": {
       "get": {
-        "operationId": "AuthController_apiKeys",
+        "operationId": "getApiKeys",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -90,7 +94,8 @@
     },
     "/auth/generate-apikey": {
       "post": {
-        "operationId": "AuthController_generateApiKey",
+        "operationId": "generateApiKey",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -114,7 +119,8 @@
     },
     "/connections/oauth/callback": {
       "get": {
-        "operationId": "ConnectionsController_handleCallback",
+        "operationId": "handleOAuthCallback",
+        "summary": "",
         "parameters": [
           {
             "name": "state",
@@ -153,7 +159,8 @@
     },
     "/connections": {
       "get": {
-        "operationId": "ConnectionsController_getConnections",
+        "operationId": "getConnections",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -167,7 +174,8 @@
     },
     "/webhook": {
       "get": {
-        "operationId": "WebhookController_getWebhooks",
+        "operationId": "getWebhooksMetadata",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -179,7 +187,8 @@
         ]
       },
       "post": {
-        "operationId": "WebhookController_addWebhook",
+        "operationId": "createWebhookMetadata",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -203,7 +212,8 @@
     },
     "/webhook/{id}": {
       "put": {
-        "operationId": "WebhookController_updateWebhookStatus",
+        "operationId": "updateWebhookStatus",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -226,7 +236,8 @@
     },
     "/linked-users/create": {
       "post": {
-        "operationId": "LinkedUsersController_addLinkedUser",
+        "operationId": "addLinkedUser",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -250,7 +261,8 @@
     },
     "/linked-users": {
       "get": {
-        "operationId": "LinkedUsersController_getLinkedUsers",
+        "operationId": "getLinkedUsers",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -264,7 +276,8 @@
     },
     "/linked-users/single": {
       "get": {
-        "operationId": "LinkedUsersController_getLinkedUser",
+        "operationId": "getLinkedUser",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -287,7 +300,8 @@
     },
     "/organisations": {
       "get": {
-        "operationId": "OrganisationsController_getOragnisations",
+        "operationId": "getOrganisations",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -301,7 +315,8 @@
     },
     "/organisations/create": {
       "post": {
-        "operationId": "OrganisationsController_createOrg",
+        "operationId": "createOrganisation",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -325,7 +340,8 @@
     },
     "/projects": {
       "get": {
-        "operationId": "ProjectsController_getProjects",
+        "operationId": "getProjects",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -339,7 +355,8 @@
     },
     "/projects/create": {
       "post": {
-        "operationId": "ProjectsController_createProject",
+        "operationId": "createProject",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -363,7 +380,8 @@
     },
     "/field-mapping/entities": {
       "get": {
-        "operationId": "FieldMappingController_getEntities",
+        "operationId": "getFieldMappingsEntities",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -377,7 +395,8 @@
     },
     "/field-mapping/attribute": {
       "get": {
-        "operationId": "FieldMappingController_getAttributes",
+        "operationId": "getFieldMappings",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -391,7 +410,8 @@
     },
     "/field-mapping/value": {
       "get": {
-        "operationId": "FieldMappingController_getValues",
+        "operationId": "getFieldMappingValues",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -405,7 +425,8 @@
     },
     "/field-mapping/define": {
       "post": {
-        "operationId": "FieldMappingController_defineTargetField",
+        "operationId": "defineTargetField",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -429,7 +450,8 @@
     },
     "/field-mapping/map": {
       "post": {
-        "operationId": "FieldMappingController_mapFieldToProvider",
+        "operationId": "mapField",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -453,7 +475,8 @@
     },
     "/field-mapping/properties": {
       "get": {
-        "operationId": "FieldMappingController_getCustomProperties",
+        "operationId": "getCustomProviderProperties",
+        "summary": "",
         "parameters": [
           {
             "name": "linkedUserId",
@@ -484,7 +507,8 @@
     },
     "/events": {
       "get": {
-        "operationId": "EventsController_getEvents",
+        "operationId": "getEvents",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -498,7 +522,8 @@
     },
     "/magic-link/create": {
       "post": {
-        "operationId": "MagicLinkController_createLink",
+        "operationId": "createMagicLink",
+        "summary": "",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -522,7 +547,8 @@
     },
     "/magic-link": {
       "get": {
-        "operationId": "MagicLinkController_getMagicLinks",
+        "operationId": "getMagicLinks",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -536,7 +562,8 @@
     },
     "/magic-link/single": {
       "get": {
-        "operationId": "MagicLinkController_getMagicLink",
+        "operationId": "getMagicLink",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -559,7 +586,8 @@
     },
     "/passthrough": {
       "post": {
-        "operationId": "PassthroughController_passthroughRequest",
+        "operationId": "passthroughRequest",
+        "summary": "",
         "parameters": [
           {
             "name": "integrationId",
@@ -607,7 +635,8 @@
     },
     "/crm/contact": {
       "get": {
-        "operationId": "ContactController_getContacts",
+        "operationId": "getContacts",
+        "summary": "",
         "parameters": [
           {
             "name": "integrationId",
@@ -662,7 +691,8 @@
         ]
       },
       "post": {
-        "operationId": "ContactController_addContact",
+        "operationId": "addContact",
+        "summary": "",
         "parameters": [
           {
             "name": "integrationId",
@@ -727,7 +757,8 @@
         ]
       },
       "patch": {
-        "operationId": "ContactController_updateContact",
+        "operationId": "updateContact",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -750,7 +781,8 @@
     },
     "/crm/contact/{id}": {
       "get": {
-        "operationId": "ContactController_getContact",
+        "operationId": "getContact",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -799,7 +831,8 @@
     },
     "/crm/contact/batch": {
       "post": {
-        "operationId": "ContactController_addContacts",
+        "operationId": "addContacts",
+        "summary": "",
         "parameters": [
           {
             "name": "integrationId",
