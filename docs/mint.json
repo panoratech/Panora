@@ -58,6 +58,14 @@
       "url": "webhooks"
     },
     {
+      "name": "API Reference",
+      "url": "api-reference"
+    },
+    {
+      "name": "SDK",
+      "url": "sdk"
+    },
+    {
       "name": "Contribute",
       "url": "contribute"
     },
@@ -108,7 +116,49 @@
       "pages": [
         "webhooks/event-types"
       ]
+    },
+    {
+      "group": "API Reference",
+      "pages":
+      [ 
+        "api-reference/get-",
+        "api-reference/webhook/post-webhook",
+        "api-reference/webhook/get-webhook",
+        "api-reference/webhook/put-webhook",
+        "api-reference/linked-users/get-linked-userssingle",
+        "api-reference/linked-users/post-linked-userscreate",
+        "api-reference/linked-users/get-linked-users",
+        "api-reference/auth/get-authusers",
+        "api-reference/auth/post-authlogin",
+        "api-reference/auth/get-authapi-keys",
+        "api-reference/auth/post-authregister",
+        "api-reference/auth/post-authgenerate-apikey",
+        "api-reference/connections/get-connectionsoauthcallback",
+        "api-reference/connections/get-connections",
+        "api-reference/organisations/post-organisationscreate",
+        "api-reference/organisations/get-organisations",
+        "api-reference/crmcontact/patch-crmcontact",
+        "api-reference/crmcontact/retrive-a-crm-contact",
+        "api-reference/crmcontact/get-crmcontact",
+        "api-reference/crmcontact/post-crmcontactbatch",
+        "api-reference/crmcontact/create-crm-contact",
+        "api-reference/introduction",
+        "api-reference/magic-link/get-magic-linksingle",
+        "api-reference/magic-link/get-magic-link",
+        "api-reference/magic-link/post-magic-linkcreate",
+        "api-reference/field-mapping/get-field-mappingentities",
+        "api-reference/field-mapping/get-field-mappingvalue",
+        "api-reference/field-mapping/post-field-mappingmap",
+        "api-reference/field-mapping/get-field-mappingproperties",
+        "api-reference/field-mapping/post-field-mappingdefine",
+        "api-reference/field-mapping/get-field-mappingattribute",
+        "api-reference/events/get-events",
+        "api-reference/passthrough/post-passthrough",
+        "api-reference/projects/get-projects",
+        "api-reference/projects/post-projectscreate"
+      ]
     }
+
     ,
     {
       "group": "Contribute",
@@ -116,14 +166,13 @@
         "contribute/overview"
       ]
     },
-
     {
       "group": "Panora Features",
       "pages": [
-        "features/sdk",
         "features/self-host-guide",
         "features/magic-links",
-        "features/custom-fields"
+        "features/custom-fields",
+        "features/SDK"
       ]
     },
     {
