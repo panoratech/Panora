@@ -46,7 +46,7 @@ export class ContactController {
     );
   }
 
-  @ApiOperation({ operationId: 'getContact' })
+  @ApiOperation({ operationId: 'getContact', summary: 'Retrive a CRM Contact', description: 'Retrive a contact in any supported CRM' })
   @ApiParam({ name: 'id', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
   @ApiCustomResponse(ContactResponse)
@@ -58,7 +58,7 @@ export class ContactController {
     return this.contactService.getContact(id, remote_data);
   }
 
-  @ApiOperation({ operationId: 'addContact' })
+  @ApiOperation({ operationId: 'addContact', summary: 'Create CRM Contact', description: 'Create a contact in any supported CRM' })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })

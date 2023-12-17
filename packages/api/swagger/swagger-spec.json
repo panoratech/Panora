@@ -692,7 +692,8 @@
       },
       "post": {
         "operationId": "addContact",
-        "summary": "",
+        "summary": "Create CRM Contact",
+        "description": "Create a contact in any supported CRM",
         "parameters": [
           {
             "name": "integrationId",
@@ -782,7 +783,8 @@
     "/crm/contact/{id}": {
       "get": {
         "operationId": "getContact",
-        "summary": "",
+        "summary": "Retrive a CRM Contact",
+        "description": "Retrive a contact in any supported CRM",
         "parameters": [
           {
             "name": "id",
