@@ -1,0 +1,55 @@
+{
+  "sdkName": "panora-sdk",
+  "specFilePath": "https://raw.githubusercontent.com/panoratech/Panora/main/packages/api/swagger/swagger-spec.json",
+  "languages": [
+    "python",
+    "typescript"
+  ],
+  "createDocs": true,
+  "auth": [
+    "bearer"
+  ],
+  "customizations": {
+    "authentication": {
+      "access": {
+        "prefix": "Bearer"
+      }
+    },
+    "generateEnv": true,
+    "devContainer": false,
+    "license": {
+      "type": "MIT"
+    },
+    "retry": {
+      "enabled": true,
+      "retryDelay": 150,
+      "maxAttempts": 3
+    },
+    "injectedModels": [],
+    "inferServiceNames": false,
+    "responseHeaders": false
+  },
+  "languageOptions": {
+    "typescript": {
+      "npmName": "",
+      "npmOrg": "",
+      "httpClient": "axios",
+      "bundle": false,
+      "exportClassDefault": false,
+      "githubRepoName": "",
+      "sdkVersion": "1.0.0",
+      "ignoreFiles": [],
+      "denoteCommon": false
+    },
+    "python": {
+      "pypiPackageName": "",
+      "alwaysInitializeOptionals": false,
+      "githubRepoName": "",
+      "sdkVersion": "1.0.0",
+      "ignoreFiles": []
+    }
+  },
+  "publishing": {
+    "githubOrg": ""
+  }
+}

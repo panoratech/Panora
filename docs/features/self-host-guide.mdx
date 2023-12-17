@@ -9,15 +9,21 @@ icon: 'house-laptop'
 </Info>
 
 <Steps>
-  <Step title="Open a terminal and download Panora:">
+  <Step title="Open a terminal and type this to download Panora:">
     ```bash bash
 git clone https://github.com/panoratech/Panora.git
 ```
   </Step>
 
-  <Step title="Run the following command:">
+  <Step title="Prepare the installation:">
     ```bash
-cd Panora && docker compose --env-file ./.env.example up -d
+cd Panora && cp .env.example .env
+```
+  </Step>
+
+  <Step title="Start Panora:">
+    ```bash
+ docker compose up -d
 ```
   </Step>
 
@@ -71,17 +77,9 @@ Here's how to solve some common problems when working with the CLI.
   <Accordion title="Docker is not working">
     Update to the latest version. Run `docker version` to check.
   </Accordion>
-  <Accordion title="No such file or directory on Windows">
-Go to the `C:/Users/Username/.mintlify/` directory and remove the `mint`
-folder. Then Open the Git Bash in this location and run `git clone
-https://github.com/mintlify/mint.git`.
-
-Repeat step 3.
-
-  </Accordion>
-  <Accordion title="Getting an unknown error">
-    Try navigating to the root of your device and delete the ~/.mintlify folder.
-    Then run `mintlify dev` again.
+ 
+  <Accordion title="Getting another error">
+   [Come chat on Discord!](https://discord.gg/G7fr4HNyTb)
   </Accordion>
 </AccordionGroup>
 
