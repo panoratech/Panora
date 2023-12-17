@@ -1,6 +1,6 @@
 import nock from 'nock';
 
-import { PanoraSDK } from '../../../src';
+import { Testsdk } from '../../../src';
 
 import { FieldMappingService } from '../../../src/services/fieldMapping/FieldMapping';
 
@@ -14,7 +14,7 @@ describe('test FieldMapping', () => {
   let sdk: any;
 
   beforeEach(() => {
-    sdk = new PanoraSDK({});
+    sdk = new Testsdk({});
 
     nock.cleanAll();
   });
@@ -71,6 +71,36 @@ describe('test FieldMapping', () => {
       return sdk.fieldMapping
         .fieldMappingControllerMapFieldToProvider({})
         .then((r: any) => expect(r.data).toEqual({}));
+    });
+  });
+
+  describe('test fieldMappingControllerGetCustomProperties', () => {
+    test('test api call', () => {
+      const scope = nock('http://api.example.com')
+        .get('/field-mapping/properties?linkedUserId=sapiente&providerId=1519266763')
+        .reply(200, { data: {} });
+      return sdk.fieldMapping
+        .fieldMappingControllerGetCustomProperties('sapiente', '1519266763')
+        .then((r: any) => expect(r.data).toEqual({}));
+    });
+
+    test('test will throw error if required fields missing', () => {
+      const scope = nock('http://api.example.com')
+        .get('/field-mapping/properties?linkedUserId=distinctio&providerId=9158364132')
+        .reply(200, { data: {} });
+      return expect(
+        async () => await sdk.fieldMapping.fieldMappingControllerGetCustomProperties(),
+      ).rejects.toThrow();
+    });
+
+    test('test will throw error on a non-200 response', () => {
+      const scope = nock('http://api.example.com')
+        .get('/field-mapping/properties?linkedUserId=et&providerId=9578828306')
+        .reply(404, { data: {} });
+      return expect(
+        async () =>
+          await sdk.fieldMapping.fieldMappingControllerGetCustomProperties('et', '9578828306'),
+      ).rejects.toThrow();
     });
   });
 });

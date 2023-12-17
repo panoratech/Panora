@@ -1,46 +1,19 @@
 import BaseService from '../../BaseService';
 
-import { serializeQuery } from '../../http/QuerySerializer';
+import { ContactControllerAddContactsRequest } from './models/ContactControllerAddContactsRequest';
+
+import { serializeQuery, serializePath } from '../../http/QuerySerializer';
 
 export class CrmContactService extends BaseService {
-  async contactControllerGetCustomProperties(
-    linkedUserId: string,
-    providerId: string,
-  ): Promise<any> {
-    if (linkedUserId === undefined || providerId === undefined) {
-      throw new Error(
-        'The following are required parameters: linkedUserId,providerId, cannot be empty or blank',
-      );
-    }
-    const queryParams: string[] = [];
-    if (linkedUserId) {
-      queryParams.push(serializeQuery('form', true, 'linkedUserId', linkedUserId));
-    }
-    if (providerId) {
-      queryParams.push(serializeQuery('form', true, 'providerId', providerId));
-    }
-    const urlEndpoint = '/crm/contact/properties';
-    const finalUrl = encodeURI(`${this.baseUrl + urlEndpoint}?${queryParams.join('&')}`);
-    const response: any = await this.httpClient.get(
-      finalUrl,
-      {},
-      {
-        ...this.getAuthorizationHeader(),
-      },
-      true,
-    );
-    const responseModel = response.data;
-    return responseModel;
-  }
-
   async contactControllerGetContacts(
     integrationId: string,
     linkedUserId: string,
-    remoteData: boolean,
+    optionalParams: { remoteData?: boolean } = {},
   ): Promise<any> {
-    if (integrationId === undefined || linkedUserId === undefined || remoteData === undefined) {
+    const { remoteData } = optionalParams;
+    if (integrationId === undefined || linkedUserId === undefined) {
       throw new Error(
-        'The following are required parameters: integrationId,linkedUserId,remoteData, cannot be empty or blank',
+        'The following are required parameters: integrationId,linkedUserId, cannot be empty or blank',
       );
     }
     const queryParams: string[] = [];
@@ -54,7 +27,8 @@ export class CrmContactService extends BaseService {
       queryParams.push(serializeQuery('form', true, 'remote_data', remoteData));
     }
     const urlEndpoint = '/crm/contact';
-    const finalUrl = encodeURI(`${this.baseUrl + urlEndpoint}?${queryParams.join('&')}`);
+    const urlParams = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+    const finalUrl = encodeURI(`${this.baseUrl + urlEndpoint}${urlParams}`);
     const response: any = await this.httpClient.get(
       finalUrl,
       {},
@@ -68,14 +42,15 @@ export class CrmContactService extends BaseService {
   }
 
   async contactControllerAddContacts(
-    input: any,
+    input: ContactControllerAddContactsRequest,
     integrationId: string,
     linkedUserId: string,
-    remoteData: boolean,
+    optionalParams: { remoteData?: boolean } = {},
   ): Promise<any> {
-    if (integrationId === undefined || linkedUserId === undefined || remoteData === undefined) {
+    const { remoteData } = optionalParams;
+    if (integrationId === undefined || linkedUserId === undefined) {
       throw new Error(
-        'The following are required parameters: integrationId,linkedUserId,remoteData, cannot be empty or blank',
+        'The following are required parameters: integrationId,linkedUserId, cannot be empty or blank',
       );
     }
     const queryParams: string[] = [];
@@ -90,7 +65,8 @@ export class CrmContactService extends BaseService {
       queryParams.push(serializeQuery('form', true, 'remote_data', remoteData));
     }
     const urlEndpoint = '/crm/contact';
-    const finalUrl = encodeURI(`${this.baseUrl + urlEndpoint}?${queryParams.join('&')}`);
+    const urlParams = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+    const finalUrl = encodeURI(`${this.baseUrl + urlEndpoint}${urlParams}`);
     const response: any = await this.httpClient.post(
       finalUrl,
       input,
@@ -126,28 +102,22 @@ export class CrmContactService extends BaseService {
     return responseModel;
   }
 
-  async contactControllerSyncContacts(
-    integrationId: string,
-    linkedUserId: string,
-    remoteData: boolean,
+  async contactControllerGetContact(
+    id: string,
+    optionalParams: { remoteData?: boolean } = {},
   ): Promise<any> {
-    if (integrationId === undefined || linkedUserId === undefined || remoteData === undefined) {
-      throw new Error(
-        'The following are required parameters: integrationId,linkedUserId,remoteData, cannot be empty or blank',
-      );
+    const { remoteData } = optionalParams;
+    if (id === undefined) {
+      throw new Error('The following parameter is required: id, cannot be empty or blank');
     }
     const queryParams: string[] = [];
-    if (integrationId) {
-      queryParams.push(serializeQuery('form', true, 'integrationId', integrationId));
-    }
-    if (linkedUserId) {
-      queryParams.push(serializeQuery('form', true, 'linkedUserId', linkedUserId));
-    }
+    let urlEndpoint = '/crm/contact/{id}';
+    urlEndpoint = urlEndpoint.replace('{id}', serializePath('simple', false, id, undefined));
     if (remoteData) {
       queryParams.push(serializeQuery('form', true, 'remote_data', remoteData));
     }
-    const urlEndpoint = '/crm/contact/sync';
-    const finalUrl = encodeURI(`${this.baseUrl + urlEndpoint}?${queryParams.join('&')}`);
+    const urlParams = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+    const finalUrl = encodeURI(`${this.baseUrl + urlEndpoint}${urlParams}`);
     const response: any = await this.httpClient.get(
       finalUrl,
       {},

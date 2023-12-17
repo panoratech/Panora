@@ -1,8 +1,8 @@
 import unittest
 import responses
-from src.panorasdk.net.http_client import HTTPClient
+from src.testsdk.net.http_client import HTTPClient
 from http_exceptions import ClientException
-from src.panorasdk.services.events import Events
+from src.testsdk.services.events import Events
 
 
 class TestEvents_(unittest.TestCase):

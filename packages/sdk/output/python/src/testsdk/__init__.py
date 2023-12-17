@@ -1,2 +1,2 @@
-from .sdk import PanoraSDK
+from .sdk import Testsdk
 from .net.environment import Environment

@@ -3,7 +3,7 @@
   "name": "Panora Documentation",
   "feedback.thumbsRating": true,
   "openapi": [
-    "/openapi.json"
+    "https://raw.githubusercontent.com/panoratech/Panora/main/packages/api/swagger/swagger-spec.json"
   ],
   "suggestEdit": true,
   "primaryTab": {

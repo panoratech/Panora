@@ -1,8 +1,8 @@
 import unittest
 import responses
-from src.panorasdk.net.http_client import HTTPClient
+from src.testsdk.net.http_client import HTTPClient
 from http_exceptions import ClientException
-from src.panorasdk.services.linked_users import LinkedUsers
+from src.testsdk.services.linked_users import LinkedUsers
 
 
 class TestLinkedUsers_(unittest.TestCase):
@@ -57,7 +57,7 @@ class TestLinkedUsers_(unittest.TestCase):
         responses.get("http://api.example.com/linked-users/single", json={}, status=200)
         # call the method to test
         test_service = LinkedUsers("testkey")
-        response = test_service.linked_users_controller_get_linked_user("1777149721")
+        response = test_service.linked_users_controller_get_linked_user("4717047622")
         self.assertEqual(response, {})
         responses.reset(),
 
@@ -76,7 +76,7 @@ class TestLinkedUsers_(unittest.TestCase):
         responses.get("http://api.example.com/linked-users/single", json={}, status=404)
         with self.assertRaises(ClientException):
             test_service = LinkedUsers("testkey")
-            test_service.linked_users_controller_get_linked_user("2970566083")
+            test_service.linked_users_controller_get_linked_user("6478475263")
         responses.reset()
 
 

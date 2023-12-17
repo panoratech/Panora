@@ -1,5 +1,5 @@
 import unittest
-from src.panorasdk.models.CreateUserDto import CreateUserDto
+from src.testsdk.models.CreateUserDto import CreateUserDto
 
 
 class TestCreateUserDtoModel(unittest.TestCase):
@@ -9,12 +9,12 @@ class TestCreateUserDtoModel(unittest.TestCase):
     def test_create_user_dto(self):
         # Create CreateUserDto class instance
         test_model = CreateUserDto(
-            password_hash="eveniet", email="sed", last_name="magnam", first_name="sed"
+            password_hash="unde", email="eius", last_name="saepe", first_name="itaque"
         )
-        self.assertEqual(test_model.password_hash, "eveniet")
-        self.assertEqual(test_model.email, "sed")
-        self.assertEqual(test_model.last_name, "magnam")
-        self.assertEqual(test_model.first_name, "sed")
+        self.assertEqual(test_model.password_hash, "unde")
+        self.assertEqual(test_model.email, "eius")
+        self.assertEqual(test_model.last_name, "saepe")
+        self.assertEqual(test_model.first_name, "itaque")
 
     def test_create_user_dto_required_fields_missing(self):
         # Assert CreateUserDto class generation fails without required fields

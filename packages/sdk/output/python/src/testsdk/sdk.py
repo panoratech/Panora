@@ -1,9 +1,9 @@
 """
-Creates a PanoraSDK class.
+Creates a Testsdk class.
 Generates the main SDK with all available queries as attributes.
 
 Class:
-    PanoraSDK
+    Testsdk
 """
 from .net.environment import Environment
 
@@ -18,11 +18,12 @@ from .services.main import Main
 from .services.organisations import Organisations
 from .services.passthrough import Passthrough
 from .services.projects import Projects
+from .services.webhook import Webhook
 
 
-class PanoraSDK:
+class Testsdk:
     """
-    A class representing the full PanoraSDK SDK
+    A class representing the full Testsdk SDK
 
     Attributes
     ----------
@@ -37,6 +38,7 @@ class PanoraSDK:
     organisations : Organisations
     passthrough : Passthrough
     projects : Projects
+    webhook : Webhook
 
     Methods
     -------
@@ -48,7 +50,7 @@ class PanoraSDK:
 
     def __init__(self, access_token="", environment=Environment.DEFAULT) -> None:
         """
-        Initializes the PanoraSDK SDK class.
+        Initializes the Testsdk SDK class.
         Parameters
         ----------
         environment: str
@@ -67,6 +69,7 @@ class PanoraSDK:
         self.organisations = Organisations(access_token)
         self.passthrough = Passthrough(access_token)
         self.projects = Projects(access_token)
+        self.webhook = Webhook(access_token)
 
         self.set_base_url(environment.value)
 
@@ -90,6 +93,7 @@ class PanoraSDK:
         self.organisations.set_base_url(url)
         self.passthrough.set_base_url(url)
         self.projects.set_base_url(url)
+        self.webhook.set_base_url(url)
 
     def set_access_token(self, token: str) -> None:
         """
@@ -111,3 +115,4 @@ class PanoraSDK:
         self.organisations.set_access_token(token)
         self.passthrough.set_access_token(token)
         self.projects.set_access_token(token)
+        self.webhook.set_access_token(token)

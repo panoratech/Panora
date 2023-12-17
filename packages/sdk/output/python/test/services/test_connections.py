@@ -1,8 +1,8 @@
 import unittest
 import responses
-from src.panorasdk.net.http_client import HTTPClient
+from src.testsdk.net.http_client import HTTPClient
 from http_exceptions import ClientException
-from src.panorasdk.services.connections import Connections
+from src.testsdk.services.connections import Connections
 
 
 class TestConnections_(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestConnections_(unittest.TestCase):
         # call the method to test
         test_service = Connections("testkey")
         response = test_service.connections_controller_handle_callback(
-            "dolores", "similique", "voluptatum"
+            "explicabo", "magnam", "rem"
         )
         self.assertEqual(response, {})
         responses.reset(),
@@ -42,7 +42,9 @@ class TestConnections_(unittest.TestCase):
         )
         with self.assertRaises(ClientException):
             test_service = Connections("testkey")
-            test_service.connections_controller_handle_callback("saepe", "facere", "in")
+            test_service.connections_controller_handle_callback(
+                "inventore", "deleniti", "soluta"
+            )
         responses.reset()
 
     @responses.activate

@@ -1,9 +1,9 @@
 {
-  "name": "panorasdk-example",
+  "name": "testsdk-example",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "panorasdk": "file:../"
+    "testsdk": "file:../"
   },
   "scripts": {
     "setup": "npm --prefix ../ install && npm --prefix ../ run build && npm install",

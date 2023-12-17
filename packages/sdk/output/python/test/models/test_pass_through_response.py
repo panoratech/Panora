@@ -1,5 +1,5 @@
 import unittest
-from src.panorasdk.models.PassThroughResponse import PassThroughResponse
+from src.testsdk.models.PassThroughResponse import PassThroughResponse
 
 
 class TestPassThroughResponseModel(unittest.TestCase):
@@ -8,10 +8,12 @@ class TestPassThroughResponseModel(unittest.TestCase):
 
     def test_pass_through_response(self):
         # Create PassThroughResponse class instance
-        test_model = PassThroughResponse(data={"non": 2}, status=3, url="cumque")
-        self.assertEqual(test_model.data, {"non": 2})
-        self.assertEqual(test_model.status, 3)
-        self.assertEqual(test_model.url, "cumque")
+        test_model = PassThroughResponse(
+            data={"pariatur": 1}, status=4, url="praesentium"
+        )
+        self.assertEqual(test_model.data, {"pariatur": 1})
+        self.assertEqual(test_model.status, 4)
+        self.assertEqual(test_model.url, "praesentium")
 
     def test_pass_through_response_required_fields_missing(self):
         # Assert PassThroughResponse class generation fails without required fields

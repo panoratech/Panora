@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="PanoraSDK",
+    name="Testsdk",
     version="1.0.0",
     description="""The Panora API description""",
     license="MIT",

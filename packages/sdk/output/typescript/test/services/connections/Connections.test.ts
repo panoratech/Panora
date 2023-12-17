@@ -1,6 +1,6 @@
 import nock from 'nock';
 
-import { PanoraSDK } from '../../../src';
+import { Testsdk } from '../../../src';
 
 import { ConnectionsService } from '../../../src/services/connections/Connections';
 
@@ -14,7 +14,7 @@ describe('test Connections', () => {
   let sdk: any;
 
   beforeEach(() => {
-    sdk = new PanoraSDK({});
+    sdk = new Testsdk({});
 
     nock.cleanAll();
   });
@@ -22,16 +22,16 @@ describe('test Connections', () => {
   describe('test connectionsControllerHandleCallback', () => {
     test('test api call', () => {
       const scope = nock('http://api.example.com')
-        .get('/connections/oauth/callback?state=quaerat&code=iure&location=optio')
+        .get('/connections/oauth/callback?state=omnis&code=accusantium&location=a')
         .reply(200, { data: {} });
       return sdk.connections
-        .connectionsControllerHandleCallback('quaerat', 'iure', 'optio')
+        .connectionsControllerHandleCallback('omnis', 'accusantium', 'a')
         .then((r: any) => expect(r.data).toEqual({}));
     });
 
     test('test will throw error if required fields missing', () => {
       const scope = nock('http://api.example.com')
-        .get('/connections/oauth/callback?state=quia&code=inventore&location=eos')
+        .get('/connections/oauth/callback?state=facilis&code=unde&location=fugiat')
         .reply(200, { data: {} });
       return expect(
         async () => await sdk.connections.connectionsControllerHandleCallback(),
@@ -40,14 +40,14 @@ describe('test Connections', () => {
 
     test('test will throw error on a non-200 response', () => {
       const scope = nock('http://api.example.com')
-        .get('/connections/oauth/callback?state=repudiandae&code=ducimus&location=illo')
+        .get('/connections/oauth/callback?state=nemo&code=illum&location=perspiciatis')
         .reply(404, { data: {} });
       return expect(
         async () =>
           await sdk.connections.connectionsControllerHandleCallback(
-            'repudiandae',
-            'ducimus',
-            'illo',
+            'nemo',
+            'illum',
+            'perspiciatis',
           ),
       ).rejects.toThrow();
     });

@@ -46,10 +46,10 @@
     "version": "tsc --version",
     "prepublishOnly": "npm run build"
   },
-  "name": "panorasdk",
-  "description": "PanoraSDK - The Panora API description",
+  "name": "testsdk",
+  "description": "Testsdk - The Panora API description",
   "version": "1.0.0",
-  "author": "PanoraSDK",
+  "author": "Testsdk",
   "dependencies": {
     "axios": "^1.5.1"
   },

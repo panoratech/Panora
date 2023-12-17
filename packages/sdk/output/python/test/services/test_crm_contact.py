@@ -1,51 +1,13 @@
 import unittest
 import responses
-from src.panorasdk.net.http_client import HTTPClient
+from src.testsdk.net.http_client import HTTPClient
 from http_exceptions import ClientException
-from src.panorasdk.services.crm_contact import CrmContact
+from src.testsdk.services.crm_contact import CrmContact
 
 
 class TestCrmContact_(unittest.TestCase):
     def test_true(self):
         self.assertTrue(True)
-
-    @responses.activate
-    def test_contact_controller_get_custom_properties(self):
-        # Mock the API response
-        responses.get(
-            "http://api.example.com/crm/contact/properties", json={}, status=200
-        )
-        # call the method to test
-        test_service = CrmContact("testkey")
-        response = test_service.contact_controller_get_custom_properties(
-            "8159227516", "6958991998"
-        )
-        self.assertEqual(response, {})
-        responses.reset(),
-
-    @responses.activate
-    def test_contact_controller_get_custom_properties_required_fields_missing(self):
-        # Mock the API response
-        responses.get(
-            "http://api.example.com/crm/contact/properties", json={}, status=202
-        )
-        with self.assertRaises(TypeError):
-            test_service = CrmContact("testkey")
-            test_service.contact_controller_get_custom_properties()
-        responses.reset(),
-
-    @responses.activate
-    def test_contact_controller_get_custom_properties_error_on_non_200(self):
-        # Mock the API response
-        responses.get(
-            "http://api.example.com/crm/contact/properties", json={}, status=404
-        )
-        with self.assertRaises(ClientException):
-            test_service = CrmContact("testkey")
-            test_service.contact_controller_get_custom_properties(
-                "8270896883", "3309094878"
-            )
-        responses.reset()
 
     @responses.activate
     def test_contact_controller_get_contacts(self):
@@ -54,7 +16,7 @@ class TestCrmContact_(unittest.TestCase):
         # call the method to test
         test_service = CrmContact("testkey")
         response = test_service.contact_controller_get_contacts(
-            True, "5909535309", "8339740290"
+            "8370091872", "4831362244", True
         )
         self.assertEqual(response, {})
         responses.reset(),
@@ -75,7 +37,7 @@ class TestCrmContact_(unittest.TestCase):
         with self.assertRaises(ClientException):
             test_service = CrmContact("testkey")
             test_service.contact_controller_get_contacts(
-                True, "9531487091", "6240163368"
+                "7513499459", "1366154757", True
             )
         responses.reset()
 
@@ -86,7 +48,7 @@ class TestCrmContact_(unittest.TestCase):
         # call the method to test
         test_service = CrmContact("testkey")
         response = test_service.contact_controller_add_contacts(
-            {}, True, "1753590633", "6414798099"
+            {}, "2764670262", "1885567456", True
         )
         self.assertEqual(response, {})
         responses.reset(),
@@ -107,7 +69,7 @@ class TestCrmContact_(unittest.TestCase):
         with self.assertRaises(ClientException):
             test_service = CrmContact("testkey")
             test_service.contact_controller_add_contacts(
-                {}, True, "8873156615", "7956796564"
+                {}, "7661519231", "7475748474", True
             )
         responses.reset()
 
@@ -117,7 +79,7 @@ class TestCrmContact_(unittest.TestCase):
         responses.patch("http://api.example.com/crm/contact", json={}, status=200)
         # call the method to test
         test_service = CrmContact("testkey")
-        response = test_service.contact_controller_update_contact("2334343188")
+        response = test_service.contact_controller_update_contact("3314436272")
         self.assertEqual(response, {})
         responses.reset(),
 
@@ -136,39 +98,41 @@ class TestCrmContact_(unittest.TestCase):
         responses.patch("http://api.example.com/crm/contact", json={}, status=404)
         with self.assertRaises(ClientException):
             test_service = CrmContact("testkey")
-            test_service.contact_controller_update_contact("5676611675")
+            test_service.contact_controller_update_contact("5838330951")
         responses.reset()
 
     @responses.activate
-    def test_contact_controller_sync_contacts(self):
+    def test_contact_controller_get_contact(self):
         # Mock the API response
-        responses.get("http://api.example.com/crm/contact/sync", json={}, status=200)
+        responses.get(
+            "http://api.example.com/crm/contact/4658895433", json={}, status=200
+        )
         # call the method to test
         test_service = CrmContact("testkey")
-        response = test_service.contact_controller_sync_contacts(
-            True, "2089808435", "1762838672"
-        )
+        response = test_service.contact_controller_get_contact("4658895433", True)
         self.assertEqual(response, {})
         responses.reset(),
 
     @responses.activate
-    def test_contact_controller_sync_contacts_required_fields_missing(self):
+    def test_contact_controller_get_contact_required_fields_missing(self):
         # Mock the API response
-        responses.get("http://api.example.com/crm/contact/sync", json={}, status=202)
+        responses.get(
+            "http://api.example.com/crm/contact/3207892354", json={}, status=202
+        )
         with self.assertRaises(TypeError):
             test_service = CrmContact("testkey")
-            test_service.contact_controller_sync_contacts()
+            test_service.contact_controller_get_contact()
         responses.reset(),
 
     @responses.activate
-    def test_contact_controller_sync_contacts_error_on_non_200(self):
+    def test_contact_controller_get_contact_error_on_non_200(self):
         # Mock the API response
-        responses.get("http://api.example.com/crm/contact/sync", json={}, status=404)
+        responses.get(
+            "http://api.example.com/crm/contact/1238718850", json={}, status=404
+        )
         with self.assertRaises(ClientException):
             test_service = CrmContact("testkey")
-            test_service.contact_controller_sync_contacts(
-                True, "6460226027", "9492580645"
-            )
+            test_service.contact_controller_get_contact("1238718850", True)
         responses.reset()
 
 

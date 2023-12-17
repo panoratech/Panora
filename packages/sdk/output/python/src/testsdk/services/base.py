@@ -93,6 +93,6 @@ class BaseService:
         headers: dict
             Headers dict to add auth headers to
         """
-        headers["User-Agent"] = "liblab/0.1.28 PanoraSDK/1.0.0 python/2.7"
+        headers["User-Agent"] = "liblab/0.1.28 Testsdk/1.0.0 python/2.7"
         headers["Authorization"] = f"Bearer {self._access_token}"
         return headers

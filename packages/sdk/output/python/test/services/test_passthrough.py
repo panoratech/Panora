@@ -1,8 +1,8 @@
 import unittest
 import responses
-from src.panorasdk.net.http_client import HTTPClient
+from src.testsdk.net.http_client import HTTPClient
 from http_exceptions import ClientException
-from src.panorasdk.services.passthrough import Passthrough
+from src.testsdk.services.passthrough import Passthrough
 
 
 class TestPassthrough_(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestPassthrough_(unittest.TestCase):
         # call the method to test
         test_service = Passthrough("testkey")
         response = test_service.passthrough_controller_passthrough_request(
-            {}, "3489969353", "4813789499"
+            {}, "8534536748", "3306308170"
         )
         self.assertEqual(response, {})
         responses.reset(),
@@ -37,7 +37,7 @@ class TestPassthrough_(unittest.TestCase):
         with self.assertRaises(ClientException):
             test_service = Passthrough("testkey")
             test_service.passthrough_controller_passthrough_request(
-                {}, "6729873310", "4090646714"
+                {}, "6889035785", "8275637669"
             )
         responses.reset()
 

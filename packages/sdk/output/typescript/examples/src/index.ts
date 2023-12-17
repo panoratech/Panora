@@ -1,6 +1,6 @@
-import { PanoraSDK } from 'panorasdk';
+import { Testsdk } from 'testsdk';
 
-const sdk = new PanoraSDK({ accessToken: process.env.PANORASDK_ACCESS_TOKEN });
+const sdk = new Testsdk({ accessToken: process.env.TESTSDK_ACCESS_TOKEN });
 
 (async () => {
   const result = await sdk.main.appControllerGetHello();

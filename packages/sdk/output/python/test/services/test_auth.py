@@ -1,8 +1,8 @@
 import unittest
 import responses
-from src.panorasdk.net.http_client import HTTPClient
+from src.testsdk.net.http_client import HTTPClient
 from http_exceptions import ClientException
-from src.panorasdk.services.auth import Auth
+from src.testsdk.services.auth import Auth
 
 
 class TestAuth_(unittest.TestCase):

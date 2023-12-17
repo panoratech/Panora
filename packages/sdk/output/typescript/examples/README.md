@@ -1,9 +1,9 @@
-# panorasdk-example
-A basic example of how to use the panorasdk package.
+# testsdk-example
+A basic example of how to use the testsdk package.
 
 ## Installation
 
-In the event `panorasdk` is not published to npm, you can install it locally by running the following command in the examples folder:
+In the event `testsdk` is not published to npm, you can install it locally by running the following command in the examples folder:
 ```sh
 npm run setup
 ```
@@ -12,7 +12,7 @@ This will rebuild the parent package and install it locally.
 
 Otherwise you can install it from npm:
 ```sh
-npm install panorasdk
+npm install testsdk
 ```
 
 ## Usage

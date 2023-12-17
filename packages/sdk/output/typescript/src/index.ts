@@ -9,16 +9,19 @@ import { MainService } from './services/main/Main';
 import { OrganisationsService } from './services/organisations/Organisations';
 import { PassthroughService } from './services/passthrough/Passthrough';
 import { ProjectsService } from './services/projects/Projects';
+import { WebhookService } from './services/webhook/Webhook';
 
 export * from './models';
 
 export * as AuthModels from './services/auth';
+export * as CrmContactModels from './services/crmContact';
 export * as FieldMappingModels from './services/fieldMapping';
 export * as LinkedUsersModels from './services/linkedUsers';
 export * as MagicLinkModels from './services/magicLink';
 export * as OrganisationsModels from './services/organisations';
 export * as PassthroughModels from './services/passthrough';
 export * as ProjectsModels from './services/projects';
+export * as WebhookModels from './services/webhook';
 
 type Config = {
   accessToken?: string;
@@ -29,7 +32,7 @@ export * from './http/errors';
 /**
  * The Panora API description
  */
-export class PanoraSDK {
+export class Testsdk {
   public auth: AuthService;
   public connections: ConnectionsService;
   public crmContact: CrmContactService;
@@ -41,6 +44,7 @@ export class PanoraSDK {
   public organisations: OrganisationsService;
   public passthrough: PassthroughService;
   public projects: ProjectsService;
+  public webhook: WebhookService;
 
   constructor({ accessToken = '' }: Config) {
     this.auth = new AuthService(accessToken);
@@ -54,6 +58,7 @@ export class PanoraSDK {
     this.organisations = new OrganisationsService(accessToken);
     this.passthrough = new PassthroughService(accessToken);
     this.projects = new ProjectsService(accessToken);
+    this.webhook = new WebhookService(accessToken);
   }
 
   /**
@@ -72,6 +77,7 @@ export class PanoraSDK {
     this.organisations.setBaseUrl(url);
     this.passthrough.setBaseUrl(url);
     this.projects.setBaseUrl(url);
+    this.webhook.setBaseUrl(url);
   }
 
   /**
@@ -90,5 +96,6 @@ export class PanoraSDK {
     this.organisations.setAccessToken(accessToken);
     this.passthrough.setAccessToken(accessToken);
     this.projects.setAccessToken(accessToken);
+    this.webhook.setAccessToken(accessToken);
   }
 }

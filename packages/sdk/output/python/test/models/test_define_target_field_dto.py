@@ -1,5 +1,5 @@
 import unittest
-from src.panorasdk.models.DefineTargetFieldDto import DefineTargetFieldDto
+from src.testsdk.models.DefineTargetFieldDto import DefineTargetFieldDto
 
 
 class TestDefineTargetFieldDtoModel(unittest.TestCase):
@@ -9,15 +9,15 @@ class TestDefineTargetFieldDtoModel(unittest.TestCase):
     def test_define_target_field_dto(self):
         # Create DefineTargetFieldDto class instance
         test_model = DefineTargetFieldDto(
-            data_type="cumque",
-            description="esse",
-            name="reprehenderit",
-            object_type_owner={"adipisci": 6},
+            data_type="quas",
+            description="consectetur",
+            name="asperiores",
+            object_type_owner={"ex": 9},
         )
-        self.assertEqual(test_model.data_type, "cumque")
-        self.assertEqual(test_model.description, "esse")
-        self.assertEqual(test_model.name, "reprehenderit")
-        self.assertEqual(test_model.object_type_owner, {"adipisci": 6})
+        self.assertEqual(test_model.data_type, "quas")
+        self.assertEqual(test_model.description, "consectetur")
+        self.assertEqual(test_model.name, "asperiores")
+        self.assertEqual(test_model.object_type_owner, {"ex": 9})
 
     def test_define_target_field_dto_required_fields_missing(self):
         # Assert DefineTargetFieldDto class generation fails without required fields
