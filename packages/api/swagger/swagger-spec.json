@@ -1206,7 +1206,8 @@
             "description": "The email address type of a contact"
           },
           "owner_type": {
-            "type": "string"
+            "type": "string",
+            "description": "The owner type of a the email tied to the contact"
           }
         },
         "required": [
