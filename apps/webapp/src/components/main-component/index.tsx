@@ -49,7 +49,7 @@ export default function MainPage() {
                     <CardHeader>
                       <CardTitle>Total Connections</CardTitle>
                       <CardDescription>
-                        +37 from last month
+                        +38 from last month
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
