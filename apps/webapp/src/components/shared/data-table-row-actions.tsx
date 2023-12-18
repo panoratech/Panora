@@ -25,7 +25,7 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   //const task = taskSchema.parse(row.original)
-  console.log(row);
+  //console.log(row);
   
   return (
     <DropdownMenu>

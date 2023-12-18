@@ -6,7 +6,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { PlusCircledIcon } from "@radix-ui/react-icons"
 import { useState } from "react"
 import useProjectStore from "@/state/projectStore"
@@ -19,6 +18,15 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -27,33 +35,51 @@ import {
 } from "@/components/ui/select"
 import { scopes } from "shared-types"
 import { cn } from "@/lib/utils"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 
+
+const formSchema = z.object({
+    description: z.string().min(2, {
+      message: "description must be at least 2 characters.",
+    }),
+    url: z.string().min(2, {
+        message: "url must be at least 2 characters.",
+    }),
+    event: z.string(),
+})
 
 const AddWebhook = () => {
     const [open, setOpen] = useState(false);
     const handleClose = () => {
       setOpen(false);
     };
-    const [url, setUrl] = useState('');
-    const [scope, setScope] = useState('');
     //const [secret, setSecret] = useState('');
-    const [description, setDescription] = useState('');
 
     const {idProject} = useProjectStore();
 
     const { mutate } = useWebhookMutation();
 
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault(); // Prevent default form submission
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+          description: "",
+          url: "",
+          event: scopes[0]
+        },
+      })
+    
+      function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log(values)
         mutate({ 
-            url: url,
-            description: description,
+            url: values.url,
+            description: values.description,
             id_project: idProject,
-            scope: scope,
+            scope: values.event,
         });
         handleClose();  
-    };
+      }
   
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -69,7 +95,9 @@ const AddWebhook = () => {
         </Button>
         </DialogTrigger>
         <DialogContent className="sm:w-[450px]">
-            <form onSubmit={handleSubmit}>
+        <Form {...form}>
+
+            <form onSubmit={form.handleSubmit(onSubmit)}>
                 <CardHeader>
                     <CardTitle>Define your webhook</CardTitle>
                     <CardDescription>
@@ -78,52 +106,83 @@ const AddWebhook = () => {
                 </CardHeader>
                 <CardContent className="grid gap-6">
                     <div className="grid gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="event">Event</Label>
-                        <Select 
-                            defaultValue={scopes[0]}
-                            value={scope}
-                            onValueChange={setScope}
-                        >
-                        <SelectTrigger id="event">
-                            <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {
-                                scopes.map((scope)=> {
-                                    return (
-                                        <SelectItem value={scope}>{scope}</SelectItem>
-                                    )
-                                })
-                            }
-                        </SelectContent>
-                        </Select>
+                        <div className="grid gap-2">
+                            <FormField
+                                control={form.control}
+                                name="event"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="event">Event</FormLabel>
+                                        <FormControl>
+                                            <Select 
+                                                onValueChange={field.onChange} defaultValue={field.value}
+                                            >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {
+                                                scopes.map((scope) => {
+                                                    return (
+                                                    <SelectItem key={scope} value={scope}>{scope}</SelectItem>
+                                                    )
+                                                })
+                                                }
+                                            </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </div>
-            
+                    <div className="grid gap-2">
+                        <FormField
+                            control={form.control}
+                            name="url"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Destination URL</FormLabel>
+                                <FormControl>
+                                <Input 
+                                    placeholder="https://localhost/my-endpoint/webhook" {...field} 
+                                />
+                                </FormControl>
+                                <FormDescription>
+                                This is the endpoint where the webhook will send requests to.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
                     </div>
                     <div className="grid gap-2">
-                    <Label htmlFor="url">Destination Url</Label>
-                    <Input
-                        id="url"
-                        placeholder="https://localhost/my-endpoint/webhook"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                    />
-                    </div>
-                    <div className="grid gap-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Input
-                        id="description"
-                        placeholder="Please include a description of your endpoint."
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                <Input 
+                                    placeholder="Please include a description of your endpoint." {...field} 
+                                />
+                                </FormControl>
+                                <FormDescription>
+                                This is the description of your webhook.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
                     </div>
                 </CardContent>
                 <CardFooter className="justify-between space-x-2">
                     <Button type="submit">Submit</Button>
                 </CardFooter>
             </form>
+            </Form>
         </DialogContent>
     </Dialog>   
   )

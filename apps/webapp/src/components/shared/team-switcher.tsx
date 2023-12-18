@@ -32,12 +32,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import useProjectMutation from "@/hooks/mutations/useProjectMutation"
 import useOrganisationMutation from "@/hooks/mutations/useOrganisationMutation"
 import { useEffect, useState } from "react"
@@ -47,6 +55,21 @@ import useProfileStore from "@/state/profileStore"
 import useProjects from "@/hooks/useProjects"
 import { Skeleton } from "../ui/skeleton"
 import useOrganisations from "@/hooks/useOrganisations"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+
+const orgFormSchema = z.object({
+  organisationName: z.string().min(2, {
+    message: "organisationName must be at least 2 characters.",
+  })
+})
+
+const projectFormSchema = z.object({
+  projectName: z.string().min(2, {
+    message: "projectName must be at least 2 characters.",
+  })
+})
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
@@ -63,9 +86,6 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [showNewDialog, setShowNewDialog] = useState<ModalObj>({
     open: false,
   })
-
-  const [orgName, setOrgName] = useState('');
-  const [projectName, setProjectName] = useState('');
 
   const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
   const { data : projects, isLoading: isloadingProjects } = useProjects();
@@ -93,25 +113,38 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const { mutate: mutateProject } = useProjectMutation();
   const { mutate: mutateOrganisation } = useOrganisationMutation();
 
-  //TODO
-  const handleOrgSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission
+  const orgForm = useForm<z.infer<typeof orgFormSchema>>({
+    resolver: zodResolver(orgFormSchema),
+    defaultValues: {
+      organisationName: "",
+    },
+  })
+
+  const projectForm = useForm<z.infer<typeof projectFormSchema>>({
+    resolver: zodResolver(projectFormSchema),
+    defaultValues: {
+      projectName: "",
+    },
+  })
+
+
+  function onOrgSubmit(values: z.infer<typeof orgFormSchema>) {
+    console.log(values)
     mutateOrganisation({ 
-      name: orgName, 
+      name: values.organisationName, 
       stripe_customer_id: "stripe-customer-76",
     });
-    setShowNewDialog({open: false})  
-  };
+    setShowNewDialog({open: false})
+  }
 
-  const handleProjectSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission
+  function onProjectSubmit(values: z.infer<typeof projectFormSchema>) {
+    console.log(values)
     mutateProject({ 
-      name: projectName, 
+      name: values.projectName, 
       id_organization: profile!.id_organization,
     });
     setShowNewDialog({open: false})  
-  };
-
+  }
   
 
   return (
@@ -246,7 +279,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
       <DialogContent>
         {showNewDialog.status == 0 ? 
           <>
-          <form onSubmit={handleOrgSubmit}>
+          <Form {...orgForm}>
+          <form onSubmit={orgForm.handleSubmit(onOrgSubmit)}>
             <DialogHeader>
               <DialogTitle>Create organisation</DialogTitle>
               <DialogDescription>
@@ -256,13 +290,24 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             <div>
               <div className="space-y-4 py-2 pb-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Organisation name</Label>
-                  <Input 
-                    id="name" 
-                    placeholder="Acme Inc." 
-                    value={orgName}
-                    onChange={(e) => setOrgName(e.target.value)}
-                  />
+                  <FormField
+                        control={orgForm.control}
+                        name="organisationName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Organisation Name</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="Acme Inc." {...field} 
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              This is the id of the user in your system.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                    />
                 </div>
               </div>
             </div>
@@ -273,9 +318,12 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <Button type="submit">Create</Button>
             </DialogFooter>
           </form>
+          </Form>    
+
           </> : 
           <>
-          <form onSubmit={handleProjectSubmit}>
+          <Form {...projectForm}>
+          <form onSubmit={projectForm.handleSubmit(onProjectSubmit)} >
             <DialogHeader>
               <DialogTitle>Create project</DialogTitle>
               <DialogDescription>
@@ -285,12 +333,23 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             <div>
               <div className="space-y-4 py-2 pb-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Project name</Label>
-                  <Input 
-                    id="name" 
-                    placeholder="Project Inc." 
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
+                  <FormField
+                      control={projectForm.control}
+                      name="projectName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Project Name</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Project Inc." {...field} 
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            This is the id of the user in your system.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                   />
                 </div>
               </div>
@@ -302,6 +361,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <Button type="submit">Create</Button>
             </DialogFooter>
           </form>
+          </Form>
           </>
         }
       </DialogContent>

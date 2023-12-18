@@ -13,7 +13,7 @@ export function LinkedUsersPage({
 }: { linkedUsers: Record<string, any>[] | undefined; isLoading: boolean }) {
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" key={""}>
       {linkedUsers && linkedUsers.map((linkedUser)=>{
         return (
         <div className="flex items-center">
