@@ -1,75 +1,89 @@
-import { MainNav } from "./components/main-nav"
-import TeamSwitcher from "../shared/team-switcher"
-import { UserNav } from "./components/user-nav"
-import { useEffect, useState } from "react"
-import JobsPage from "../events"
-import ConnectionsPage from "../connections"
-import MainPage from "../main-component"
-import ConfigurationPage from "../configuration"
-import ApiKeysPage from "../api-keys"
-//import QuickStartPage from "../quickstart"
-import { SmallNav } from "./components/main-nav-sm"
+import { Line, LineChart, ResponsiveContainer} from "recharts";
+import { Overview } from "../homepage/components/overview";
+import { Button } from "../ui/button";
+import { CalendarDateRangePicker } from "../homepage/components/date-range-picker"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Tabs,
+  TabsContent,
+} from "@/components/ui/tabs"
 
 export default function DashboardPage() {
-  const [activePage, setActivePage] = useState('quickstart');
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-
-    window.addEventListener('resize', handleResize);
-    
-    // Clean up the event listener when the component unmounts
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const lgBreakpoint = 1024; // Tailwind's 'lg' breakpoint
-
-
-  let ContentComponent;
-  switch (activePage) {
-    /*case 'quickstart':
-      ContentComponent = QuickStartPage;
-      break;*/
-    case 'jobs':
-      ContentComponent = JobsPage;
-      break;
-    case 'connections':
-      ContentComponent = ConnectionsPage;
-      break;
-    case 'configuration':
-      ContentComponent = ConfigurationPage;
-      break;
-    case 'dashboard':
-      ContentComponent = MainPage;
-      break;
-    case 'api-keys':
-      ContentComponent = ApiKeysPage;
-      break;
-    default:
-      ContentComponent = MainPage; //QuickStartPage; // The default page content
-  }
-  return (
-    <>
-      <div>
-        { windowWidth < lgBreakpoint ? <SmallNav onLinkClick={setActivePage} /> : 
-          <div className="items-center hidden lg:flex lg:flex-col border-r fixed left-0 bg-opacity-90 backdrop-filter backdrop-blur-lg w-[200px] h-screen">
-            <div className="flex lg:flex-col items-start py-4 space-y-4">
-              <div className="flex flex-row items-center ml-3">
-                <img src="logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span>
-              </div>
-              <TeamSwitcher className="w-40 ml-3" />
-              <MainNav className="flex lg:flex-col mx-auto w-[200px] space-y-0" onLinkClick={setActivePage} />
-              <div className="ml-auto flex lg:flex-col items-center space-x-4 w-full">
-                <UserNav />
+  const data = [
+    { name: 'Jan', revenue: 15000 },
+    { name: 'Feb', revenue: 21000 },
+    { name: 'Mar', revenue: 18000 },
+    { name: 'Apr', revenue: 25000 },
+    { name: 'May', revenue: 27000 },
+  ];
+  
+    return (
+        <div className="flex items-center justify-between space-y-2">
+          <div className="flex-1 space-y-4 p-8 pt-6">
+            <div className="flex items-center justify-between space-y-2">
+              <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+              <div className="flex items-center space-x-2">
+                <CalendarDateRangePicker />
+                <Button>Download</Button>
               </div>
             </div>
+            <Tabs defaultValue="overview" className="space-y-4">
+              <TabsContent value="overview" className="space-y-4">
+                <div className="grid gap-4 pt-10 md:grid-cols-2 lg:grid-cols-7">
+                  <Card className="col-span-4">
+                    <CardHeader>
+                      <CardTitle>Total API Requests</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pl-2">
+                      <Overview/>
+                    </CardContent>
+                  </Card>
+                  <div className="col-span-3">
+                  <Card className="h-[48%] mb-3">
+                    <CardHeader>
+                      <CardTitle>Total Connections</CardTitle>
+                      <CardDescription>
+                        +39 from last month
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width='100%' height={163}>
+                        <LineChart data={data}>
+                          <Line type="monotone" dataKey="revenue" stroke="#adfa1d" strokeWidth={2}/>
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="h-[49%]">
+                    <CardHeader>
+                      <CardTitle>Linked Accounts</CardTitle>
+                      <CardDescription>
+                        +78% from last month 
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                    <ResponsiveContainer width='100%' height={40}>
+                        <LineChart data={data}>
+                          <Line type="monotone" dataKey="revenue" stroke="#adfa1d" strokeWidth={2}/>
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                  </div>
+                 
+                  </div>
+              </TabsContent>
+            </Tabs>
           </div>
-        }
-        <div className="flex-1 space-y-4 pt-6 px-10 lg:ml-[200px]">
-          <ContentComponent/>
+
         </div>
-      </div>
-    </>
-  )
-}
+    );
+  }

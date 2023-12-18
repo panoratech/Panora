@@ -1,6 +1,6 @@
 import './App.css'
 import { ThemeProvider } from '@/components/theme-provider'
-import DashboardPage from './components/dashboard'
+import DashboardPage from './components/homepage'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import JobsPage from './components/events';
 import ConnectionsPage from './components/connections';
