@@ -5,7 +5,6 @@
   "primaryTab": {
     "name": "Home"
   },
-  "raiseIssue": true,
   "api": {
     "baseUrl": "https://api-demo.panora.dev",
     "auth": {
