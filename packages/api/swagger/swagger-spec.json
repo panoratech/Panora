@@ -636,7 +636,7 @@
     "/crm/contact": {
       "get": {
         "operationId": "getContacts",
-        "summary": "Retrieve a batch of CRM Contacts",
+        "summary": "List a batch of CRM Contacts",
         "parameters": [
           {
             "name": "integrationId",

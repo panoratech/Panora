@@ -30,7 +30,7 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'getContacts',
-    summary: 'Retrieve a batch of CRM Contacts',
+    summary: 'List a batch of CRM Contacts',
   })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
