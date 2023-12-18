@@ -79,7 +79,7 @@ export class ConnectionsController {
 
   @ApiOperation({
     operationId: 'getConnections',
-    summary: 'Retrieve Connections',
+    summary: 'List Connections',
   })
   @ApiResponse({ status: 200 })
   @Get()

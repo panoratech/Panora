@@ -160,7 +160,7 @@
     "/connections": {
       "get": {
         "operationId": "getConnections",
-        "summary": "Retrieve Connections",
+        "summary": "List Connections",
         "parameters": [],
         "responses": {
           "200": {
