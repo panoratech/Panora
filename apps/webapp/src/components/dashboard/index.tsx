@@ -7,7 +7,7 @@ import ConnectionsPage from "../connections"
 import MainPage from "../main-component"
 import ConfigurationPage from "../configuration"
 import ApiKeysPage from "../api-keys"
-import QuickStartPage from "../quickstart"
+//import QuickStartPage from "../quickstart"
 import { SmallNav } from "./components/main-nav-sm"
 
 export default function DashboardPage() {
@@ -47,7 +47,7 @@ export default function DashboardPage() {
       ContentComponent = ApiKeysPage;
       break;
     default:
-      ContentComponent = QuickStartPage; // The default page content
+      ContentComponent = MainPage; //QuickStartPage; // The default page content
   }
   return (
     <>
