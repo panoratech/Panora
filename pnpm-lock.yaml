@@ -26,6 +26,9 @@ importers:
 
   apps/frontend-snippet:
     dependencies:
+      '@panora/typescript-sdk':
+        specifier: ^1.0.3
+        version: 1.0.3
       '@tanstack/react-query':
         specifier: ^5.12.2
         version: 5.12.2(react@18.2.0)
@@ -2490,6 +2493,14 @@ packages:
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
+
+  /@panora/typescript-sdk@1.0.3:
+    resolution: {integrity: sha512-Iqw3d4bXm034jwffY1Rj/Z/zBOgqZCKldM5eBD1ASIZJEuMqWKF2uMx7b3l8G5AJlsca0qc7yU89ju5+3lQ/Bg==}
+    dependencies:
+      axios: 1.5.1
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /@pnpm/config.env-replace@1.1.0:
     resolution: {integrity: sha512-htyl8TWnKL7K/ESFa1oW2UB5lVDxuF5DpM7tBi6Hu2LNL3mWkIzNLG6N4zoCUP1lCKNxWy/3iu8mS8MvToGd6w==}
