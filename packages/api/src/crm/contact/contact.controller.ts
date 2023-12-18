@@ -28,7 +28,10 @@ export class ContactController {
     this.logger.setContext(ContactController.name);
   }
 
-  @ApiOperation({ operationId: 'getContacts' })
+  @ApiOperation({
+    operationId: 'getContacts',
+    summary: 'Retrieve a batch of CRM Contacts',
+  })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
@@ -46,7 +49,11 @@ export class ContactController {
     );
   }
 
-  @ApiOperation({ operationId: 'getContact', summary: 'Retrive a CRM Contact', description: 'Retrive a contact in any supported CRM' })
+  @ApiOperation({
+    operationId: 'getContact',
+    summary: 'Retrieve a CRM Contact',
+    description: 'Retrive a contact in any supported CRM',
+  })
   @ApiParam({ name: 'id', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
   @ApiCustomResponse(ContactResponse)
@@ -58,7 +65,11 @@ export class ContactController {
     return this.contactService.getContact(id, remote_data);
   }
 
-  @ApiOperation({ operationId: 'addContact', summary: 'Create CRM Contact', description: 'Create a contact in any supported CRM' })
+  @ApiOperation({
+    operationId: 'addContact',
+    summary: 'Create CRM Contact',
+    description: 'Create a contact in any supported CRM',
+  })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
@@ -79,7 +90,10 @@ export class ContactController {
     );
   }
 
-  @ApiOperation({ operationId: 'addContacts' })
+  @ApiOperation({
+    operationId: 'addContacts',
+    summary: 'Add a batch of CRM Contacts',
+  })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
@@ -100,7 +114,10 @@ export class ContactController {
     );
   }
 
-  @ApiOperation({ operationId: 'updateContact' })
+  @ApiOperation({
+    operationId: 'updateContact',
+    summary: 'Update a CRM Contact',
+  })
   @Patch()
   updateContact(
     @Query('id') id: string,
