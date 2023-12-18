@@ -1,0 +1,25 @@
+name: Publish Panora Releases on GitHub
+
+on:
+  push:
+    tags:
+      - "v*"
+
+  workflow_dispatch:
+
+jobs:
+  build-release:
+    name: Release to Github
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
