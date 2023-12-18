@@ -178,7 +178,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                         </Select>
                         </FormControl>
                         <FormDescription>
-                          This is the id of the user in your system.
+                          This is the common unified model (Contact, Company, Ticket...)
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -198,7 +198,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                           />
                         </FormControl>
                         <FormDescription>
-                          This is the id of the user in your system.
+                          This is the custom name of the field.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -218,7 +218,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                           />
                         </FormControl>
                         <FormDescription>
-                          This is the id of the user in your system.
+                          This is the description of the field.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -251,7 +251,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                         </Select>
                         </FormControl>
                         <FormDescription>
-                          This is the id of the user in your system.
+                          This is the type of the field.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -305,7 +305,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                         </Select>
                         </FormControl>
                         <FormDescription>
-                          This is the id of the user in your system.
+                          This is the field name that you defined.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -338,7 +338,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                         </Select>
                         </FormControl>
                         <FormDescription>
-                          This is the id of the user in your system.
+                          This is the source provider where the field exists.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -404,7 +404,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                         </Select>
                         </FormControl>
                         <FormDescription>
-                          This is the id of the user in your system.
+                          This is the source provider's field name.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

@@ -302,7 +302,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                               />
                             </FormControl>
                             <FormDescription>
-                              This is the id of the user in your system.
+                              This is your organisaton name.
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -345,7 +345,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                             />
                           </FormControl>
                           <FormDescription>
-                            This is the id of the user in your system.
+                            This is your project name.
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
