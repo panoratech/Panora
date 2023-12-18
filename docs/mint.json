@@ -5,7 +5,6 @@
   "primaryTab": {
     "name": "Home"
   },
-  "raiseIssue": true,
   "api": {
     "baseUrl": "https://api-demo.panora.dev",
     "auth": {
@@ -118,41 +117,94 @@
       "pages":
       [ 
       "api-reference/introduction",
-      "api-reference/get-",
-      "api-reference/webhook/post-webhook",
-      "api-reference/webhook/get-webhook",
-        "api-reference/webhook/put-webhook",
-        "api-reference/linked-users/get-linked-userssingle",
-        "api-reference/linked-users/post-linked-userscreate",
-        "api-reference/linked-users/get-linked-users",
-        "api-reference/auth/get-authusers",
-        "api-reference/auth/post-authlogin",
-        "api-reference/auth/get-authapi-keys",
-        "api-reference/auth/post-authregister",
-        "api-reference/auth/post-authgenerate-apikey",
-        "api-reference/connections/get-connectionsoauthcallback",
-        "api-reference/connections/get-connections",
-        "api-reference/organisations/post-organisationscreate",
-        "api-reference/organisations/get-organisations",
-        "api-reference/crmcontact/patch-crmcontact",
-        "api-reference/crmcontact/retrive-a-crm-contact",
-        "api-reference/crmcontact/get-crmcontact",
-        "api-reference/crmcontact/post-crmcontactbatch",
-        "api-reference/crmcontact/create-crm-contact",
-        "api-reference/introduction",
-        "api-reference/magic-link/get-magic-linksingle",
-        "api-reference/magic-link/get-magic-link",
-        "api-reference/magic-link/post-magic-linkcreate",
-        "api-reference/field-mapping/get-field-mappingentities",
-        "api-reference/field-mapping/get-field-mappingvalue",
-        "api-reference/field-mapping/post-field-mappingmap",
-        "api-reference/field-mapping/get-field-mappingproperties",
-        "api-reference/field-mapping/post-field-mappingdefine",
-        "api-reference/field-mapping/get-field-mappingattribute",
-        "api-reference/events/get-events",
-        "api-reference/passthrough/post-passthrough",
-        "api-reference/projects/get-projects",
-        "api-reference/projects/post-projectscreate"
+      {
+        "group": "auth",
+        "pages": [
+          "api-reference/auth/register",
+          "api-reference/auth/log-in",
+          "api-reference/auth/get-users",
+          "api-reference/auth/retrieve-api-keys",
+          "api-reference/auth/create-api-key"
+        ]
+      },
+      {
+        "group": "connections",
+        "pages": [
+          "api-reference/connections/capture-oauth-callback",
+          "api-reference/connections/retrieve-connections"
+        ]
+      },
+      {
+        "group": "webhook",
+        "pages": [
+          "api-reference/webhook/retrieve-webhooks-metadata",
+          "api-reference/webhook/add-webhook-metadata",
+          "api-reference/webhook/update-webhook-status"
+        ]
+      },
+      {
+        "group": "linked-users",
+        "pages": [
+          "api-reference/linked-users/add-linked-user",
+          "api-reference/linked-users/retrieve-linked-users",
+          "api-reference/linked-users/retrieve-a-linked-user"
+        ]
+      },
+      {
+        "group": "organisations",
+        "pages": [
+          "api-reference/organisations/retrieve-organisations",
+          "api-reference/organisations/create-an-organisation"
+        ]
+      },
+      {
+        "group": "projects",
+        "pages": [
+          "api-reference/projects/retrieve-projects",
+          "api-reference/projects/create-a-project"
+        ]
+      },
+      {
+        "group": "field-mapping",
+        "pages": [
+          "api-reference/field-mapping/retrieve-field-mapping-entities",
+          "api-reference/field-mapping/retrieve-field-mappings",
+          "api-reference/field-mapping/retrieve-field-mappings-values",
+          "api-reference/field-mapping/define-target-field",
+          "api-reference/field-mapping/map-custom-field",
+          "api-reference/field-mapping/retrieve-custom-properties"
+        ]
+      },
+      {
+        "group": "events",
+        "pages": [
+          "api-reference/events/retrieve-events"
+        ]
+      },
+      {
+        "group": "magic-link",
+        "pages": [
+          "api-reference/magic-link/create-a-magic-link",
+          "api-reference/magic-link/retrieve-magic-links",
+          "api-reference/magic-link/retrieve-a-magic-link"
+        ]
+      },
+      {
+        "group": "passthrough",
+        "pages": [
+          "api-reference/passthrough/make-a-passthrough-request"
+        ]
+      },
+      {
+        "group": "crm/contact",
+        "pages": [
+          "api-reference/crmcontact/retrieve-a-batch-of-crm-contacts",
+          "api-reference/crmcontact/create-crm-contact",
+          "api-reference/crmcontact/update-a-crm-contact",
+          "api-reference/crmcontact/retrieve-a-crm-contact",
+          "api-reference/crmcontact/add-a-batch-of-crm-contacts"
+        ]
+      }
       ]
     }
     ,
