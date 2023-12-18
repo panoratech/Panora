@@ -20,7 +20,7 @@ export class LinkedUsersController {
     this.logger.setContext(LinkedUsersController.name);
   }
 
-  @ApiOperation({ operationId: 'addLinkedUser' })
+  @ApiOperation({ operationId: 'addLinkedUser', summary: 'Add Linked User' })
   @ApiBody({ type: CreateLinkedUserDto })
   @ApiResponse({ status: 201 })
   @Post('create')
@@ -28,14 +28,20 @@ export class LinkedUsersController {
     return this.linkedUsersService.addLinkedUser(linkedUserCreateDto);
   }
 
-  @ApiOperation({ operationId: 'getLinkedUsers' })
+  @ApiOperation({
+    operationId: 'getLinkedUsers',
+    summary: 'Retrieve Linked Users',
+  })
   @ApiResponse({ status: 200 })
   @Get()
   getLinkedUsers() {
     return this.linkedUsersService.getLinkedUsers();
   }
 
-  @ApiOperation({ operationId: 'getLinkedUser' })
+  @ApiOperation({
+    operationId: 'getLinkedUser',
+    summary: 'Retrieve a Linked User',
+  })
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiResponse({ status: 200 })
   @Get('single')

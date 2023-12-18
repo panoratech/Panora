@@ -18,7 +18,10 @@ export class ConnectionsController {
     this.logger.setContext(ConnectionsController.name);
   }
 
-  @ApiOperation({ operationId: 'handleOAuthCallback' })
+  @ApiOperation({
+    operationId: 'handleOAuthCallback',
+    summary: 'Capture oAuth Callback',
+  })
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiQuery({ name: 'code', required: true, type: String })
   @ApiQuery({ name: 'location', required: true, type: String })
@@ -74,7 +77,10 @@ export class ConnectionsController {
     }
   }
 
-  @ApiOperation({ operationId: 'getConnections' })
+  @ApiOperation({
+    operationId: 'getConnections',
+    summary: 'Retrieve Connections',
+  })
   @ApiResponse({ status: 200 })
   @Get()
   async getConnections() {

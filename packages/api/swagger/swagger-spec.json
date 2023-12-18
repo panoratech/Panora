@@ -15,7 +15,7 @@
     "/auth/register": {
       "post": {
         "operationId": "signUp",
-        "summary": "",
+        "summary": "Register",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -40,7 +40,7 @@
     "/auth/login": {
       "post": {
         "operationId": "signIn",
-        "summary": "",
+        "summary": "Log In",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -65,7 +65,7 @@
     "/auth/users": {
       "get": {
         "operationId": "getUsers",
-        "summary": "",
+        "summary": "Get users",
         "parameters": [],
         "responses": {
           "200": {
@@ -80,7 +80,7 @@
     "/auth/api-keys": {
       "get": {
         "operationId": "getApiKeys",
-        "summary": "",
+        "summary": "Retrieve API Keys",
         "parameters": [],
         "responses": {
           "200": {
@@ -95,7 +95,7 @@
     "/auth/generate-apikey": {
       "post": {
         "operationId": "generateApiKey",
-        "summary": "",
+        "summary": "Create API Key",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -120,7 +120,7 @@
     "/connections/oauth/callback": {
       "get": {
         "operationId": "handleOAuthCallback",
-        "summary": "",
+        "summary": "Capture oAuth Callback",
         "parameters": [
           {
             "name": "state",
@@ -160,7 +160,7 @@
     "/connections": {
       "get": {
         "operationId": "getConnections",
-        "summary": "",
+        "summary": "Retrieve Connections",
         "parameters": [],
         "responses": {
           "200": {
@@ -175,7 +175,7 @@
     "/webhook": {
       "get": {
         "operationId": "getWebhooksMetadata",
-        "summary": "",
+        "summary": "Retrieve webhooks metadata ",
         "parameters": [],
         "responses": {
           "200": {
@@ -188,7 +188,7 @@
       },
       "post": {
         "operationId": "createWebhookMetadata",
-        "summary": "",
+        "summary": "Add webhook metadata",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -213,7 +213,7 @@
     "/webhook/{id}": {
       "put": {
         "operationId": "updateWebhookStatus",
-        "summary": "",
+        "summary": "Update webhook status",
         "parameters": [
           {
             "name": "id",
@@ -237,7 +237,7 @@
     "/linked-users/create": {
       "post": {
         "operationId": "addLinkedUser",
-        "summary": "",
+        "summary": "Add Linked User",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -262,7 +262,7 @@
     "/linked-users": {
       "get": {
         "operationId": "getLinkedUsers",
-        "summary": "",
+        "summary": "Retrieve Linked Users",
         "parameters": [],
         "responses": {
           "200": {
@@ -277,7 +277,7 @@
     "/linked-users/single": {
       "get": {
         "operationId": "getLinkedUser",
-        "summary": "",
+        "summary": "Retrieve a Linked User",
         "parameters": [
           {
             "name": "id",
@@ -301,7 +301,7 @@
     "/organisations": {
       "get": {
         "operationId": "getOrganisations",
-        "summary": "",
+        "summary": "Retrieve Organisations",
         "parameters": [],
         "responses": {
           "200": {
@@ -316,7 +316,7 @@
     "/organisations/create": {
       "post": {
         "operationId": "createOrganisation",
-        "summary": "",
+        "summary": "Create an Organisation",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -341,7 +341,7 @@
     "/projects": {
       "get": {
         "operationId": "getProjects",
-        "summary": "",
+        "summary": "Retrieve projects",
         "parameters": [],
         "responses": {
           "200": {
@@ -356,7 +356,7 @@
     "/projects/create": {
       "post": {
         "operationId": "createProject",
-        "summary": "",
+        "summary": "Create a project",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -381,7 +381,7 @@
     "/field-mapping/entities": {
       "get": {
         "operationId": "getFieldMappingsEntities",
-        "summary": "",
+        "summary": "Retrieve field mapping entities",
         "parameters": [],
         "responses": {
           "200": {
@@ -396,7 +396,7 @@
     "/field-mapping/attribute": {
       "get": {
         "operationId": "getFieldMappings",
-        "summary": "",
+        "summary": "Retrieve field mappings",
         "parameters": [],
         "responses": {
           "200": {
@@ -411,7 +411,7 @@
     "/field-mapping/value": {
       "get": {
         "operationId": "getFieldMappingValues",
-        "summary": "",
+        "summary": "Retrieve field mappings values",
         "parameters": [],
         "responses": {
           "200": {
@@ -426,7 +426,7 @@
     "/field-mapping/define": {
       "post": {
         "operationId": "defineTargetField",
-        "summary": "",
+        "summary": "Define target Field",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -451,7 +451,7 @@
     "/field-mapping/map": {
       "post": {
         "operationId": "mapField",
-        "summary": "",
+        "summary": "Map Custom Field",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -476,7 +476,7 @@
     "/field-mapping/properties": {
       "get": {
         "operationId": "getCustomProviderProperties",
-        "summary": "",
+        "summary": "Retrieve Custom Properties",
         "parameters": [
           {
             "name": "linkedUserId",
@@ -508,7 +508,7 @@
     "/events": {
       "get": {
         "operationId": "getEvents",
-        "summary": "",
+        "summary": "Retrieve Events",
         "parameters": [],
         "responses": {
           "200": {
@@ -523,7 +523,7 @@
     "/magic-link/create": {
       "post": {
         "operationId": "createMagicLink",
-        "summary": "",
+        "summary": "Create a Magic Link",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -548,7 +548,7 @@
     "/magic-link": {
       "get": {
         "operationId": "getMagicLinks",
-        "summary": "",
+        "summary": "Retrieve Magic Links",
         "parameters": [],
         "responses": {
           "200": {
@@ -563,7 +563,7 @@
     "/magic-link/single": {
       "get": {
         "operationId": "getMagicLink",
-        "summary": "",
+        "summary": "Retrieve a Magic Link",
         "parameters": [
           {
             "name": "id",
@@ -587,7 +587,7 @@
     "/passthrough": {
       "post": {
         "operationId": "passthroughRequest",
-        "summary": "",
+        "summary": "Make a passthrough request",
         "parameters": [
           {
             "name": "integrationId",
@@ -636,7 +636,7 @@
     "/crm/contact": {
       "get": {
         "operationId": "getContacts",
-        "summary": "",
+        "summary": "Retrieve a batch of CRM Contacts",
         "parameters": [
           {
             "name": "integrationId",
@@ -759,7 +759,7 @@
       },
       "patch": {
         "operationId": "updateContact",
-        "summary": "",
+        "summary": "Update a CRM Contact",
         "parameters": [
           {
             "name": "id",
@@ -783,7 +783,7 @@
     "/crm/contact/{id}": {
       "get": {
         "operationId": "getContact",
-        "summary": "Retrive a CRM Contact",
+        "summary": "Retrieve a CRM Contact",
         "description": "Retrive a contact in any supported CRM",
         "parameters": [
           {
@@ -834,7 +834,7 @@
     "/crm/contact/batch": {
       "post": {
         "operationId": "addContacts",
-        "summary": "",
+        "summary": "Add a batch of CRM Contacts",
         "parameters": [
           {
             "name": "integrationId",

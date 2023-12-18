@@ -17,7 +17,7 @@ export class AuthController {
     this.logger.setContext(AuthController.name);
   }
 
-  @ApiOperation({ operationId: 'signUp' })
+  @ApiOperation({ operationId: 'signUp', summary: 'Register' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201 })
   @Post('register')
@@ -25,7 +25,7 @@ export class AuthController {
     return this.authService.register(user);
   }
 
-  @ApiOperation({ operationId: 'signIn' })
+  @ApiOperation({ operationId: 'signIn', summary: 'Log In' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 201 })
   @Post('login')
@@ -33,21 +33,21 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @ApiOperation({ operationId: 'getUsers' })
+  @ApiOperation({ operationId: 'getUsers', summary: 'Get users' })
   @ApiResponse({ status: 200 })
   @Get('users')
   async users() {
     return this.authService.getUsers();
   }
 
-  @ApiOperation({ operationId: 'getApiKeys' })
+  @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
   @ApiResponse({ status: 200 })
   @Get('api-keys')
   async apiKeys() {
     return this.authService.getApiKeys();
   }
 
-  @ApiOperation({ operationId: 'generateApiKey' })
+  @ApiOperation({ operationId: 'generateApiKey', summary: 'Create API Key' })
   @ApiBody({ type: ApiKeyDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)

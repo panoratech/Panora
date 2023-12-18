@@ -13,7 +13,7 @@ export class EventsController {
     this.logger.setContext(EventsController.name);
   }
 
-  @ApiOperation({ operationId: 'getEvents' })
+  @ApiOperation({ operationId: 'getEvents', summary: 'Retrieve Events' })
   @ApiResponse({ status: 200 })
   @Get()
   async getEvents() {

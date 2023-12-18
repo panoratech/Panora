@@ -21,7 +21,10 @@ export class PassthroughController {
     this.loggerSeervice.setContext(PassthroughController.name);
   }
 
-  @ApiOperation({ operationId: 'passthroughRequest' })
+  @ApiOperation({
+    operationId: 'passthroughRequest',
+    summary: 'Make a passthrough request',
+  })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiBody({ type: PassThroughRequestDto })

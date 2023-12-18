@@ -14,14 +14,20 @@ export class WebhookController {
     this.loggerSeervice.setContext(WebhookController.name);
   }
 
-  @ApiOperation({ operationId: 'getWebhooksMetadata' })
+  @ApiOperation({
+    operationId: 'getWebhooksMetadata',
+    summary: 'Retrieve webhooks metadata ',
+  })
   @ApiResponse({ status: 200 })
   @Get()
   getWebhooks() {
     return this.webhookService.getWebhookEndpoints();
   }
 
-  @ApiOperation({ operationId: 'updateWebhookStatus' })
+  @ApiOperation({
+    operationId: 'updateWebhookStatus',
+    summary: 'Update webhook status',
+  })
   @Put(':id')
   async updateWebhookStatus(
     @Param('id') id: string,
@@ -30,7 +36,10 @@ export class WebhookController {
     return this.webhookService.updateStatusWebhookEndpoint(id, active);
   }
 
-  @ApiOperation({ operationId: 'createWebhookMetadata' })
+  @ApiOperation({
+    operationId: 'createWebhookMetadata',
+    summary: 'Add webhook metadata',
+  })
   @ApiBody({ type: WebhookDto })
   @ApiResponse({ status: 201 })
   @Post()

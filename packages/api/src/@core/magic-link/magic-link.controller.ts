@@ -20,7 +20,10 @@ export class MagicLinkController {
     this.logger.setContext(MagicLinkController.name);
   }
 
-  @ApiOperation({ operationId: 'createMagicLink' })
+  @ApiOperation({
+    operationId: 'createMagicLink',
+    summary: 'Create a Magic Link',
+  })
   @ApiBody({ type: CreateMagicLinkDto })
   @ApiResponse({ status: 201 })
   @Post('create')
@@ -28,14 +31,20 @@ export class MagicLinkController {
     return this.magicLinkService.createUniqueLink(data);
   }
 
-  @ApiOperation({ operationId: 'getMagicLinks' })
+  @ApiOperation({
+    operationId: 'getMagicLinks',
+    summary: 'Retrieve Magic Links',
+  })
   @ApiResponse({ status: 200 })
   @Get()
   getMagicLinks() {
     return this.magicLinkService.getMagicLinks();
   }
 
-  @ApiOperation({ operationId: 'getMagicLink' })
+  @ApiOperation({
+    operationId: 'getMagicLink',
+    summary: 'Retrieve a Magic Link',
+  })
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiResponse({ status: 200 })
   @Get('single')

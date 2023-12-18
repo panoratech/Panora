@@ -14,13 +14,19 @@ export class OrganisationsController {
     this.logger.setContext(OrganisationsController.name);
   }
 
-  @ApiOperation({ operationId: 'getOrganisations' })
+  @ApiOperation({
+    operationId: 'getOrganisations',
+    summary: 'Retrieve Organisations',
+  })
   @Get()
   getOragnisations() {
     return this.organizationsService.getOrganisations();
   }
 
-  @ApiOperation({ operationId: 'createOrganisation' })
+  @ApiOperation({
+    operationId: 'createOrganisation',
+    summary: 'Create an Organisation',
+  })
   @ApiBody({ type: CreateOrganizationDto })
   @ApiResponse({ status: 201 })
   @Post('create')

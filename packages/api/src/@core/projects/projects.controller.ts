@@ -14,14 +14,14 @@ export class ProjectsController {
     this.logger.setContext(ProjectsController.name);
   }
 
-  @ApiOperation({ operationId: 'getProjects' })
+  @ApiOperation({ operationId: 'getProjects', summary: 'Retrieve projects' })
   @ApiResponse({ status: 200 })
   @Get()
   getProjects() {
     return this.projectsService.getProjects();
   }
 
-  @ApiOperation({ operationId: 'createProject' })
+  @ApiOperation({ operationId: 'createProject', summary: 'Create a project' })
   @ApiBody({ type: CreateProjectDto })
   @ApiResponse({ status: 201 })
   @Post('create')

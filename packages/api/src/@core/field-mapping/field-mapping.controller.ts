@@ -17,28 +17,40 @@ export class FieldMappingController {
     this.logger.setContext(FieldMappingController.name);
   }
 
-  @ApiOperation({ operationId: 'getFieldMappingsEntities' })
+  @ApiOperation({
+    operationId: 'getFieldMappingsEntities',
+    summary: 'Retrieve field mapping entities',
+  })
   @ApiResponse({ status: 200 })
   @Get('entities')
   getEntities() {
     return this.fieldMappingService.getEntities();
   }
 
-  @ApiOperation({ operationId: 'getFieldMappings' })
+  @ApiOperation({
+    operationId: 'getFieldMappings',
+    summary: 'Retrieve field mappings',
+  })
   @ApiResponse({ status: 200 })
   @Get('attribute')
   getAttributes() {
     return this.fieldMappingService.getAttributes();
   }
 
-  @ApiOperation({ operationId: 'getFieldMappingValues' })
+  @ApiOperation({
+    operationId: 'getFieldMappingValues',
+    summary: 'Retrieve field mappings values',
+  })
   @ApiResponse({ status: 200 })
   @Get('value')
   getValues() {
     return this.fieldMappingService.getValues();
   }
 
-  @ApiOperation({ operationId: 'defineTargetField' })
+  @ApiOperation({
+    operationId: 'defineTargetField',
+    summary: 'Define target Field',
+  })
   @ApiBody({ type: DefineTargetFieldDto })
   @ApiResponse({ status: 201 })
   //define target field on our unified model
@@ -47,7 +59,7 @@ export class FieldMappingController {
     return this.fieldMappingService.defineTargetField(defineTargetFieldDto);
   }
 
-  @ApiOperation({ operationId: 'mapField' })
+  @ApiOperation({ operationId: 'mapField', summary: 'Map Custom Field' })
   @ApiBody({ type: MapFieldToProviderDto })
   @ApiResponse({ status: 201 })
   @Post('map')
@@ -55,7 +67,10 @@ export class FieldMappingController {
     return this.fieldMappingService.mapFieldToProvider(mapFieldToProviderDto);
   }
 
-  @ApiOperation({ operationId: 'getCustomProviderProperties' })
+  @ApiOperation({
+    operationId: 'getCustomProviderProperties',
+    summary: 'Retrieve Custom Properties',
+  })
   @ApiResponse({ status: 200 })
   @Get('properties')
   getCustomProperties(
