@@ -71,6 +71,7 @@ export class CrmConnectionsService {
             projectId,
             code,
           );
+          break;
         case 'zoho':
           if (!code) {
             throw new NotFoundError(`no zoho code, found ${code}`);
@@ -84,6 +85,7 @@ export class CrmConnectionsService {
             code,
             zohoLocation,
           );
+          break;
         case 'pipedrive':
           if (!code) {
             throw new NotFoundError(`no pipedrive code found, found ${code}`);
@@ -93,6 +95,7 @@ export class CrmConnectionsService {
             projectId,
             code,
           );
+          break;
         case 'freshsales':
           //todo: LATER
           break;
@@ -105,6 +108,7 @@ export class CrmConnectionsService {
             projectId,
             code,
           );
+          break;
         default:
           throw new NotFoundError(`Unknown provider, found ${providerName}`);
       }

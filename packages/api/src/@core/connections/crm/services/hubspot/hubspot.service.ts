@@ -24,13 +24,16 @@ export class HubspotConnectionService {
     code: string,
   ) {
     try {
-      this.logger.log('linkeduserid is ' + linkedUserId);
+      this.logger.log(
+        'linkeduserid is ' + linkedUserId + ' inside callback hubspot',
+      );
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
         },
       });
+      if (isNotUnique) return;
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
@@ -52,38 +55,46 @@ export class HubspotConnectionService {
       );
       const data: HubspotOAuthResponse = res.data;
       // save tokens for this customer inside our db
-      const db_res = await this.prisma.connections.upsert({
-        where: {
-          id_connection: isNotUnique.id_connection,
-        },
-        create: {
-          id_connection: uuidv4(),
-          provider_slug: 'hubspot',
-          token_type: 'oauth',
-          access_token: encrypt(data.access_token),
-          refresh_token: encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + data.expires_in * 1000,
-          ),
-          status: 'valid',
-          created_at: new Date(),
-          projects: {
-            connect: { id_project: projectId },
+      let db_res;
+      if (isNotUnique) {
+        // Update existing connection
+        db_res = await this.prisma.connections.update({
+          where: {
+            id_connection: isNotUnique.id_connection,
           },
-          linked_users: {
-            connect: { id_linked_user: linkedUserId },
+          data: {
+            access_token: encrypt(data.access_token),
+            refresh_token: encrypt(data.refresh_token),
+            expiration_timestamp: new Date(
+              new Date().getTime() + data.expires_in * 1000,
+            ),
+            status: 'valid',
+            created_at: new Date(),
           },
-        },
-        update: {
-          access_token: encrypt(data.access_token),
-          refresh_token: encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + data.expires_in * 1000,
-          ),
-          status: 'valid',
-          created_at: new Date(),
-        },
-      });
+        });
+      } else {
+        // Create new connection
+        db_res = await this.prisma.connections.create({
+          data: {
+            id_connection: uuidv4(),
+            provider_slug: 'hubspot',
+            token_type: 'oauth',
+            access_token: encrypt(data.access_token),
+            refresh_token: encrypt(data.refresh_token),
+            expiration_timestamp: new Date(
+              new Date().getTime() + data.expires_in * 1000,
+            ),
+            status: 'valid',
+            created_at: new Date(),
+            projects: {
+              connect: { id_project: projectId },
+            },
+            linked_users: {
+              connect: { id_linked_user: linkedUserId },
+            },
+          },
+        });
+      }
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {

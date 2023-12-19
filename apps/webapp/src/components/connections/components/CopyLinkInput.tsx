@@ -13,7 +13,7 @@ const CopyLinkInput = () => {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(`${config.FRONT_DOMAIN}/uniqueLink=${uniqueLink}`);
+      await navigator.clipboard.writeText(`${config.FRONT_DOMAIN}/?uniqueLink=${uniqueLink}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset copied state after 2 seconds
     } catch (err) {
@@ -26,7 +26,7 @@ const CopyLinkInput = () => {
       {uniqueLink !== 'https://' ? 
       <>
         <Input
-          defaultValue={`${config.FRONT_DOMAIN}/uniqueLink=${uniqueLink}`}
+          defaultValue={`${config.FRONT_DOMAIN}/?uniqueLink=${uniqueLink}`}
           readOnly
           className="col-span-3"
         /> 

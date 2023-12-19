@@ -55,6 +55,7 @@ export class ConnectionsController {
             code,
             zohoLocation_,
           );
+          break;
         case ProviderVertical.ATS:
           break;
         case ProviderVertical.Accounting:
