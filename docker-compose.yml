@@ -35,6 +35,16 @@ services:
         DISTRIBUTION: ${DISTRIBUTION}
         JWT_SECRET: ${JWT_SECRET}
         REDIS_HOST: redis
+        HUBSPOT_CLIENT_ID: ${HUBSPOT_CLIENT_ID}
+        HUBSPOT_CLIENT_SECRET: ${HUBSPOT_CLIENT_SECRET}
+        ZOHOCRM_CLIENT_ID: ${ZOHOCRM_CLIENT_ID}
+        ZOHOCRM_CLIENT_SECRET: ${ZOHOCRM_CLIENT_SECRET}
+        PIPEDRIVE_CLIENT_ID: ${PIPEDRIVE_CLIENT_ID}
+        PIPEDRIVE_CLIENT_SECRET: ${PIPEDRIVE_CLIENT_SECRET}
+        ZENDESK_CLIENT_ID: ${ZENDESK_CLIENT_ID}
+        ZENDESK_CLIENT_SECRET: ${ZENDESK_CLIENT_SECRET}
+
+
     restart:
       unless-stopped
     ports:
@@ -72,12 +82,15 @@ services:
     networks:
       - backend
       - frontend
+  
   magic-link-frontend:
     build:
       dockerfile: ./apps/frontend-snippet/Dockerfile
       context: ./
       args:
         VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
+        VITE_ML_FRONTEND_URL: ${VITE_FRONTEND_DOMAIN}
+
     restart:
       always
     ports:
