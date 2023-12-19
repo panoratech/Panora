@@ -76,7 +76,7 @@ const AddWebhook = () => {
             url: values.url,
             description: values.description,
             id_project: idProject,
-            scope: values.event,
+            scope: [values.event],
         });
         handleClose();  
       }

@@ -408,26 +408,10 @@ model webhook_endpoints {
   secret                    String
   active                    Boolean
   created_at                DateTime                    @db.Timestamp(6)
+  scope                     String?
   id_project                String                      @db.Uuid
-  scope                     String
   last_update               DateTime?                   @db.Timestamp(6)
-  id_webhook_scope          String?                     @db.Uuid
   webhook_delivery_attempts webhook_delivery_attempts[]
-  webhook_scope             webhook_scope?              @relation(fields: [id_webhook_scope], references: [id_webhook_scope], onDelete: NoAction, onUpdate: NoAction, map: "fk_38")
-
-  @@index([id_webhook_scope], map: "fk_we_webhook_scope_id")
-}
-
-model webhook_scope {
-  id_webhook_scope    String              @id(map: "pk_webhook_scope") @db.Uuid
-  last_update         DateTime?           @db.Timestamp(6)
-  crm_contact_created Boolean             @map("crm.contact.created")
-  crm_contact_updated Boolean             @map("crm.contact.updated")
-  crm_contact_removed Boolean             @map("crm.contact.removed")
-  crm_contact_pulled  Boolean             @map("crm.contact.pulled")
-  connection_created  Boolean             @map("connection.created")
-  connection_deleted  Boolean             @map("connection.deleted")
-  webhook_endpoints   webhook_endpoints[]
 }
 
 model webhooks_payloads {
@@ -442,6 +426,7 @@ model webhook_delivery_attempts {
   timestamp                   DateTime           @db.Timestamp(6)
   status                      String
   next_retry                  DateTime?          @db.Timestamp(6)
+  attempt_count               BigInt
   id_webhooks_payload         String?            @db.Uuid
   id_webhook_endpoint         String?            @db.Uuid
   id_event                    String?            @db.Uuid

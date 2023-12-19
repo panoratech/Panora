@@ -46,7 +46,7 @@ export class WebhookService {
           active: true,
           created_at: new Date(),
           id_project: data.id_project,
-          scope: data.scope,
+          scope: JSON.stringify(data.scope),
         },
       });
     } catch (error) {
@@ -61,17 +61,22 @@ export class WebhookService {
     eventId: string,
   ) {
     try {
-      //this.logger.log('data any type is ' + data);
       this.logger.log('handling webhook....');
       //just create an entry in webhook
       //search if an endpoint webhook exists for such a projectId and such a scope
-      const webhook = await this.prisma.webhook_endpoints.findFirst({
+      const webhooks = await this.prisma.webhook_endpoints.findMany({
         where: {
           id_project: projectId,
           active: true,
-          scope: eventType, //todo
         },
       });
+      if (!webhooks) return;
+
+      const webhook = webhooks.find((wh) => {
+        const scopes = JSON.parse(wh.scope);
+        return scopes.includes(eventType);
+      });
+
       if (!webhook) return;
 
       this.logger.log('handling webhook payload....');
@@ -92,6 +97,7 @@ export class WebhookService {
           id_webhook_endpoint: webhook.id_webhook_endpoint,
           status: 'queued', // queued | processed | failed | success
           id_webhooks_payload: w_payload.id_webhooks_payload,
+          attempt_count: 0, //TODO
         },
       });
       this.logger.log('adding webhook to the queue ');

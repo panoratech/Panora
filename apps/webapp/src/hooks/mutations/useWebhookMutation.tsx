@@ -6,7 +6,7 @@ interface IWebhookDto {
     url: string;
     description?: string;
     id_project: string;
-    scope: string;
+    scope: string[];
 }
 const useWebhookMutation = () => {
     const addWebhookEndpoint = async (data: IWebhookDto) => {
