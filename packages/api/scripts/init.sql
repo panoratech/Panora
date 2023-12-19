@@ -1,4 +1,82 @@
 
+-- ************************************** webhooks_reponses
+
+CREATE TABLE webhooks_reponses
+(
+ id_webhooks_reponse uuid NOT NULL,
+ http_response_data  text NOT NULL,
+ http_status_code    text NOT NULL,
+ CONSTRAINT PK_webhooks_reponse PRIMARY KEY ( id_webhooks_reponse )
+);
+
+
+
+COMMENT ON COLUMN webhooks_reponses.http_status_code IS 'anything that is not 2xx is failed, and leads to retry';
+
+
+
+
+
+-- ************************************** webhooks_payloads
+
+CREATE TABLE webhooks_payloads
+(
+ id_webhooks_payload uuid NOT NULL,
+ data                json NOT NULL,
+ CONSTRAINT PK_webhooks_payload PRIMARY KEY ( id_webhooks_payload )
+);
+
+
+
+
+
+
+
+
+-- ************************************** webhook_scope
+
+CREATE TABLE webhook_scope
+(
+ id_webhook_scope    uuid NOT NULL,
+ last_update         timestamp NULL,
+ "crm.contact.created" boolean NOT NULL,
+ "crm.contact.updated" boolean NOT NULL,
+ "crm.contact.removed" boolean NOT NULL,
+ "crm.contact.pulled"  boolean NOT NULL,
+ "connection.created"  boolean NOT NULL,
+ "connection.deleted"  boolean NOT NULL,
+ CONSTRAINT PK_webhook_scope PRIMARY KEY ( id_webhook_scope )
+);
+
+
+
+
+
+
+
+
+-- ************************************** remote_data
+
+CREATE TABLE remote_data
+(
+ id_remote_data     uuid NOT NULL,
+ ressource_owner_id uuid NULL,
+ "format"             text NULL,
+ data               text NULL,
+ created_at         timestamp NULL,
+ CONSTRAINT PK_remote_data PRIMARY KEY ( id_remote_data ),
+ CONSTRAINT Force_Unique_ressourceOwnerId UNIQUE ( ressource_owner_id )
+);
+
+
+
+COMMENT ON COLUMN remote_data.ressource_owner_id IS 'uuid of the unified object that owns this remote data. UUID of the contact, or deal , etc...';
+COMMENT ON COLUMN remote_data."format" IS 'can be json, xml';
+
+
+
+
+
 -- ************************************** organizations
 
 CREATE TABLE organizations
@@ -89,6 +167,38 @@ CREATE TABLE crm_deals_stages
 
 
 
+
+
+
+
+
+-- ************************************** webhook_endpoints
+
+CREATE TABLE webhook_endpoints
+(
+ id_webhook_endpoint  uuid NOT NULL,
+ endpoint_description text NULL,
+ url                  text NOT NULL,
+ secret               text NOT NULL,
+ active               boolean NOT NULL,
+ created_at           timestamp NOT NULL,
+ id_project           uuid NOT NULL,
+ last_update          timestamp NULL,
+ id_webhook_scope     uuid NULL,
+ CONSTRAINT PK_webhook_endpoint PRIMARY KEY ( id_webhook_endpoint ),
+ CONSTRAINT FK_38 FOREIGN KEY ( id_webhook_scope ) REFERENCES webhook_scope ( id_webhook_scope )
+);
+
+CREATE INDEX FK_we_webhook_scope_ID ON webhook_endpoints
+(
+ id_webhook_scope
+);
+
+
+
+COMMENT ON COLUMN webhook_endpoints.endpoint_description IS 'An optional description of what the webhook is used for';
+COMMENT ON COLUMN webhook_endpoints.secret IS 'a shared secret for secure communication';
+COMMENT ON COLUMN webhook_endpoints.active IS 'a flag indicating whether the webhook is active or not';
 
 
 
@@ -370,6 +480,7 @@ CREATE INDEX FK_linkeduserID_projectID ON events
 
 
 COMMENT ON COLUMN events.status IS 'pending,, retry_scheduled, failed, success';
+COMMENT ON COLUMN events.type IS 'example crm_contact.created crm_contact.deleted';
 
 
 
@@ -410,6 +521,61 @@ CREATE INDEX FK_connections_to_LinkedUsersID ON connections
 
 COMMENT ON COLUMN connections.status IS 'ONLY FOR INVITE LINK';
 COMMENT ON COLUMN connections.token_type IS 'The type of the token, such as "Bearer," "JWT," or any other supported type.';
+
+
+
+
+
+-- ************************************** webhook_delivery_attempts
+
+CREATE TABLE webhook_delivery_attempts
+(
+ id_webhook_delivery_attempt uuid NOT NULL,
+ "timestamp"                   timestamp NOT NULL,
+ status                      text NOT NULL,
+ next_retry                  timestamp NULL,
+ attempt_count               bigint NOT NULL,
+ id_webhooks_payload         uuid NULL,
+ id_webhook_endpoint         uuid NULL,
+ id_event                    uuid NULL,
+ id_webhooks_reponse         uuid NULL,
+ CONSTRAINT PK_webhook_event PRIMARY KEY ( id_webhook_delivery_attempt ),
+ CONSTRAINT FK_38_1 FOREIGN KEY ( id_webhooks_payload ) REFERENCES webhooks_payloads ( id_webhooks_payload ),
+ CONSTRAINT FK_38_2 FOREIGN KEY ( id_webhook_endpoint ) REFERENCES webhook_endpoints ( id_webhook_endpoint ),
+ CONSTRAINT FK_39 FOREIGN KEY ( id_event ) REFERENCES events ( id_event ),
+ CONSTRAINT FK_40 FOREIGN KEY ( id_webhooks_reponse ) REFERENCES webhooks_reponses ( id_webhooks_reponse )
+);
+
+CREATE INDEX FK_we_payload_webhookID ON webhook_delivery_attempts
+(
+ id_webhooks_payload
+);
+
+CREATE INDEX FK_we_webhookEndpointID ON webhook_delivery_attempts
+(
+ id_webhook_endpoint
+);
+
+CREATE INDEX FK_webhook_delivery_attempt_eventID ON webhook_delivery_attempts
+(
+ id_event
+);
+
+CREATE INDEX FK_webhook_delivery_attempt_webhook_responseID ON webhook_delivery_attempts
+(
+ id_webhooks_reponse
+);
+
+
+
+COMMENT ON COLUMN webhook_delivery_attempts."timestamp" IS 'timestamp of the delivery attempt';
+COMMENT ON COLUMN webhook_delivery_attempts.status IS 'status of the delivery attempt
+
+can be success, retry, failure';
+COMMENT ON COLUMN webhook_delivery_attempts.next_retry IS 'if null no next retry';
+COMMENT ON COLUMN webhook_delivery_attempts.attempt_count IS 'Number of attempt
+
+can be 0 1 2 3 4 5 6';
 
 
 
@@ -763,6 +929,8 @@ CREATE INDEX FK_engagement_contact_crmContactID ON crm_engagement_contacts
 (
  id_crm_contact
 );
+
+
 
 
 

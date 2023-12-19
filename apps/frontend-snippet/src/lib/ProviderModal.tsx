@@ -5,6 +5,7 @@ import { findProviderByName, providersArray } from '@/helpers/utils';
 import {categoriesVerticals} from 'shared-types';
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
+import config from '@/helpers/config';
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
     const provider = findProviderByName(providerName);
@@ -57,7 +58,7 @@ const ProviderModal = () => {
 
   const { open, isReady } = useOAuth({
     providerName: selectedProvider,
-    returnUrl: 'http://127.0.0.1:5174/', // Replace with the actual return URL
+    returnUrl: config.ML_FRONTEND_URL, // TODO: Replace with the actual return URL
     projectId: linkedUser?.id_project,
     linkedUserId: linkedUser?.id_linked_user,
     onSuccess: () => console.log('OAuth successful'),
