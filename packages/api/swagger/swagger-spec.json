@@ -699,6 +699,8 @@
             "name": "integrationId",
             "required": true,
             "in": "query",
+            "description": "The integration ID",
+            "example": "6aa2acf3-c244-4f85-848b-13a57e7abf55",
             "schema": {
               "type": "string"
             }
@@ -707,6 +709,8 @@
             "name": "linkedUserId",
             "required": true,
             "in": "query",
+            "description": "The linked user ID",
+            "example": "b008e199-eda9-4629-bd41-a01b6195864a",
             "schema": {
               "type": "string"
             }
@@ -715,6 +719,7 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
+            "description": "Set to true to include data from the original CRM software.",
             "schema": {
               "type": "boolean"
             }
@@ -984,7 +989,10 @@
             "type": "string"
           },
           "scope": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -1239,10 +1247,12 @@
         "type": "object",
         "properties": {
           "first_name": {
-            "type": "string"
+            "type": "string",
+            "description": "The first name of the contact"
           },
           "last_name": {
-            "type": "string"
+            "type": "string",
+            "description": "The last name of the contact"
           },
           "email_addresses": {
             "type": "array",
