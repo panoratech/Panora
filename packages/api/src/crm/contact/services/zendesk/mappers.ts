@@ -4,7 +4,7 @@ import {
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
 
-export function mapToContact_Zendesk(
+export function convertUnifiedContactToZendesk(
   source: UnifiedContactInput,
   customFieldMappings?: {
     slug: string;
@@ -39,7 +39,7 @@ export function mapToContact_Zendesk(
   return result;
 }
 
-export function mapToUnifiedContact_Zendesk(
+export function convertZendeskContactToUnified(
   source: ZendeskContactOutput | ZendeskContactOutput[],
   customFieldMappings?: {
     slug: string;
@@ -47,16 +47,16 @@ export function mapToUnifiedContact_Zendesk(
   }[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
   if (!Array.isArray(source)) {
-    return _mapSingleZendeskContact(source, customFieldMappings);
+    return mapSingleZendeskContactToUnified(source, customFieldMappings);
   }
 
   // Handling array of HubspotContactOutput
   return source.map((contact) =>
-    _mapSingleZendeskContact(contact, customFieldMappings),
+    mapSingleZendeskContactToUnified(contact, customFieldMappings),
   );
 }
 
-function _mapSingleZendeskContact(
+function mapSingleZendeskContactToUnified(
   contact: ZendeskContactOutput,
   customFieldMappings?: {
     slug: string;

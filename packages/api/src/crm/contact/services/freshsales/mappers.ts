@@ -7,7 +7,7 @@ import {
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
 
-export function mapToContact_Freshsales(
+export function convertUnifiedContactToFreshsales(
   source: UnifiedContactInput,
 ): FreshsalesContactInput {
   // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
@@ -21,19 +21,19 @@ export function mapToContact_Freshsales(
   };
 }
 
-export function mapToUnifiedContact_Freshsales(
+export function convertFreshsalesContactToUnified(
   source: FreshsalesContactOutput | FreshsalesContactOutput[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
   // Handling single FreshsalesContactOutput
   if (!Array.isArray(source)) {
-    return _mapSingleFreshsalesContact(source);
+    return mapSingleFreshsalesContactToUnified(source);
   }
 
   // Handling array of FreshsalesContactOutput
-  return source.map(_mapSingleFreshsalesContact);
+  return source.map(mapSingleFreshsalesContactToUnified);
 }
 
-function _mapSingleFreshsalesContact(
+function mapSingleFreshsalesContactToUnified(
   contact: FreshsalesContactOutput,
 ): UnifiedContactOutput {
   // Map email and phone details

@@ -5,7 +5,7 @@ import {
 } from '@contact/types/model.unified';
 import { UnifySourceType } from '@@core/utils/types';
 
-export function mapToContact_Hubspot(
+export function convertUnifiedContactToHubspot(
   source: UnifiedContactInput,
   customFieldMappings?: {
     slug: string;
@@ -38,7 +38,7 @@ export function mapToContact_Hubspot(
   return result;
 }
 
-export function mapToUnifiedContact_Hubspot<
+export function convertHubspotContactToUnified<
   T extends UnifySourceType | UnifySourceType[],
 >(
   source: T,
@@ -50,15 +50,15 @@ export function mapToUnifiedContact_Hubspot<
   const source_ = source as HubspotContactOutput | HubspotContactOutput[];
 
   if (!Array.isArray(source_)) {
-    return _mapSingleContact(source_, customFieldMappings);
+    return mapSingleHubspotContactToUnified(source_, customFieldMappings);
   }
   // Handling array of HubspotContactOutput
   return source_.map((contact) =>
-    _mapSingleContact(contact, customFieldMappings),
+    mapSingleHubspotContactToUnified(contact, customFieldMappings),
   );
 }
 
-function _mapSingleContact(
+function mapSingleHubspotContactToUnified(
   contact: HubspotContactOutput,
   customFieldMappings?: {
     slug: string;

@@ -4,7 +4,7 @@ import {
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
 
-export function mapToContact_Pipedrive(
+export function convertUnifiedContactToPipedrive(
   source: UnifiedContactInput,
   customFieldMappings?: {
     slug: string;
@@ -42,7 +42,7 @@ export function mapToContact_Pipedrive(
   return result;
 }
 
-export function mapToUnifiedContact_Pipedrive(
+export function convertPipedriveContactToUnified(
   source: PipedriveContactOutput | PipedriveContactOutput[],
   customFieldMappings?: {
     slug: string;
@@ -50,16 +50,16 @@ export function mapToUnifiedContact_Pipedrive(
   }[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
   if (!Array.isArray(source)) {
-    return _mapSinglePipedriveContact(source, customFieldMappings);
+    return mapSinglePipedriveContactToUnified(source, customFieldMappings);
   }
 
   // Handling array of HubspotContactOutput
   return source.map((contact) =>
-    _mapSinglePipedriveContact(contact, customFieldMappings),
+    mapSinglePipedriveContactToUnified(contact, customFieldMappings),
   );
 }
 
-function _mapSinglePipedriveContact(
+function mapSinglePipedriveContactToUnified(
   contact: PipedriveContactOutput,
   customFieldMappings?: {
     slug: string;

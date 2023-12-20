@@ -1,22 +1,22 @@
 import {
-  mapToContact_Freshsales,
-  mapToUnifiedContact_Freshsales,
+  convertUnifiedContactToFreshsales,
+  convertFreshsalesContactToUnified,
 } from '@contact/services/freshsales/mappers';
 import {
-  mapToContact_Hubspot,
-  mapToUnifiedContact_Hubspot,
+  convertUnifiedContactToHubspot,
+  convertHubspotContactToUnified,
 } from '@contact/services/hubspot/mappers';
 import {
-  mapToContact_Pipedrive,
-  mapToUnifiedContact_Pipedrive,
+  convertUnifiedContactToPipedrive,
+  convertPipedriveContactToUnified,
 } from '@contact/services/pipedrive/mappers';
 import {
-  mapToContact_Zendesk,
-  mapToUnifiedContact_Zendesk,
+  convertUnifiedContactToZendesk,
+  convertZendeskContactToUnified,
 } from '@contact/services/zendesk/mappers';
 import {
-  mapToContact_Zoho,
-  mapToUnifiedContact_Zoho,
+  convertUnifiedContactToZoho,
+  convertZohoContactToUnified,
 } from '@contact/services/zoho/mappers';
 import {
   UnifiedContactInput,
@@ -43,34 +43,34 @@ export type UnifiedCrm =
 export const providerUnificationMapping = {
   hubspot: {
     [CrmObject.contact]: {
-      unify: mapToUnifiedContact_Hubspot,
-      desunify: mapToContact_Hubspot,
+      unify: convertHubspotContactToUnified,
+      desunify: convertUnifiedContactToHubspot,
     },
     //[CrmObject.deal]: ,
     //[CrmObject.company]:,
   },
   pipedrive: {
     [CrmObject.contact]: {
-      unify: mapToUnifiedContact_Pipedrive,
-      desunify: mapToContact_Pipedrive,
+      unify: convertPipedriveContactToUnified,
+      desunify: convertUnifiedContactToPipedrive,
     },
   },
   zoho: {
     [CrmObject.contact]: {
-      unify: mapToUnifiedContact_Zoho,
-      desunify: mapToContact_Zoho,
+      unify: convertZohoContactToUnified,
+      desunify: convertUnifiedContactToZoho,
     },
   },
   zendesk: {
     [CrmObject.contact]: {
-      unify: mapToUnifiedContact_Zendesk,
-      desunify: mapToContact_Zendesk,
+      unify: convertZendeskContactToUnified,
+      desunify: convertUnifiedContactToZendesk,
     },
   },
   freshsales: {
     [CrmObject.contact]: {
-      unify: mapToUnifiedContact_Freshsales,
-      desunify: mapToContact_Freshsales,
+      unify: convertFreshsalesContactToUnified,
+      desunify: convertUnifiedContactToFreshsales,
     },
   },
 };

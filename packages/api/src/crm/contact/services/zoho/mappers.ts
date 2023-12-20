@@ -4,7 +4,7 @@ import {
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
 
-export function mapToContact_Zoho(
+export function convertUnifiedContactToZoho(
   source: UnifiedContactInput,
   customFieldMappings?: {
     slug: string;
@@ -38,7 +38,7 @@ export function mapToContact_Zoho(
   return result;
 }
 
-export function mapToUnifiedContact_Zoho(
+export function convertZohoContactToUnified(
   source: ZohoContactOutput | ZohoContactOutput[],
   customFieldMappings?: {
     slug: string;
@@ -46,16 +46,16 @@ export function mapToUnifiedContact_Zoho(
   }[],
 ): UnifiedContactOutput | UnifiedContactOutput[] {
   if (!Array.isArray(source)) {
-    return _mapSingleZohoContact(source, customFieldMappings);
+    return mapSingleZohoContactToUnified(source, customFieldMappings);
   }
 
   // Handling array of HubspotContactOutput
   return source.map((contact) =>
-    _mapSingleZohoContact(contact, customFieldMappings),
+    mapSingleZohoContactToUnified(contact, customFieldMappings),
   );
 }
 
-function _mapSingleZohoContact(
+function mapSingleZohoContactToUnified(
   contact: ZohoContactOutput,
   customFieldMappings?: {
     slug: string;

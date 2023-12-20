@@ -69,6 +69,7 @@ export class SyncContactsService implements OnModuleInit {
         },
       });
       linkedUsers.map(async (linkedUser) => {
+        //TODO: loop through all providers
         try {
           await this.syncContactsForLinkedUser(
             'hubspot',
