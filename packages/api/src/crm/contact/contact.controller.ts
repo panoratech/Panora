@@ -34,7 +34,7 @@ export class ContactController {
   })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
-  @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
+  @ApiQuery({ name: 'remote_data', required: false, type: Boolean, description: 'Set to true to include data from the original CRM software.' })
   @ApiCustomResponse(ContactResponse)
   @Get()
   getContacts(
@@ -55,7 +55,7 @@ export class ContactController {
     description: 'Retrive a contact in any supported CRM',
   })
   @ApiParam({ name: 'id', required: true, type: String })
-  @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
+  @ApiQuery({ name: 'remote_data', required: false, type: Boolean, description: 'Set to true to include data from the original CRM software.' })
   @ApiCustomResponse(ContactResponse)
   @Get(':id')
   getContact(
@@ -96,7 +96,7 @@ export class ContactController {
   })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
-  @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
+  @ApiQuery({ name: 'remote_data', required: false, type: Boolean, description: 'Set to true to include data from the original CRM software.' })
   @ApiBody({ type: UnifiedContactInput, isArray: true })
   @ApiCustomResponse(ContactResponse)
   @Post('batch')

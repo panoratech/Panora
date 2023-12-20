@@ -658,6 +658,7 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
+            "description": "Set to true to include data from the original CRM software.",
             "schema": {
               "type": "boolean"
             }
@@ -803,6 +804,7 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
+            "description": "Set to true to include data from the original CRM software.",
             "schema": {
               "type": "boolean"
             }
@@ -861,6 +863,7 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
+            "description": "Set to true to include data from the original CRM software.",
             "schema": {
               "type": "boolean"
             }
