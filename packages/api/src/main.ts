@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import * as fs from 'fs';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,9 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
   SwaggerModule.setup('docs', app, document);
   //fs.writeFileSync('./swagger/swagger-spec.yaml', yaml.dump(document));
   fs.writeFileSync(

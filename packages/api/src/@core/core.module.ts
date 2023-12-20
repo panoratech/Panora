@@ -9,6 +9,8 @@ import { EventsModule } from './events/events.module';
 import { MagicLinkModule } from './magic-link/magic-link.module';
 import { PassthroughModule } from './passthrough/passthrough.module';
 import { WebhookModule } from './webhook/webhook.module';
+import { EnvironmentModule } from './environment/environment.module';
+import { EncryptionService } from './encryption/encryption.service';
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { WebhookModule } from './webhook/webhook.module';
     MagicLinkModule,
     PassthroughModule,
     WebhookModule,
+    EnvironmentModule,
   ],
   exports: [
     AuthModule,
@@ -34,6 +37,8 @@ import { WebhookModule } from './webhook/webhook.module';
     MagicLinkModule,
     PassthroughModule,
     WebhookModule,
+    EnvironmentModule,
   ],
+  providers: [EncryptionService],
 })
 export class CoreModule {}

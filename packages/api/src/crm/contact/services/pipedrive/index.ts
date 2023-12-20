@@ -9,11 +9,15 @@ import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { decrypt } from '@@core/utils/crypto';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
 export class PipedriveService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+  ) {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + PipedriveService.name,
     );
@@ -37,7 +41,9 @@ export class PipedriveService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${decrypt(connection.access_token)}`,
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
           },
         },
       );
@@ -72,7 +78,9 @@ export class PipedriveService {
       const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${decrypt(connection.access_token)}`,
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
       });
 

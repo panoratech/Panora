@@ -5,11 +5,15 @@ import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { decrypt } from '@@core/utils/crypto';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
 export class ZohoService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+  ) {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + ZohoService.name,
     );
@@ -33,7 +37,7 @@ export class ZohoService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Zoho-oauthtoken ${decrypt(
+            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
               connection.access_token,
             )}`,
           },
@@ -75,7 +79,7 @@ export class ZohoService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Zoho-oauthtoken ${decrypt(
+            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
               connection.access_token,
             )}`,
           },

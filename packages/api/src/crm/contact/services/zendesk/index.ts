@@ -9,10 +9,14 @@ import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { decrypt } from '@@core/utils/crypto';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 @Injectable()
 export class ZendeskService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+  ) {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + ZendeskService.name,
     );
@@ -38,7 +42,9 @@ export class ZendeskService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${decrypt(connection.access_token)}`,
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
           },
         },
       );
@@ -74,7 +80,9 @@ export class ZendeskService {
       const resp = await axios.get(`https://api.getbase.com/v2/contacts`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${decrypt(connection.access_token)}`,
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
       });
       const finalData = resp.data.items.map((item) => {

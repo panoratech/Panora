@@ -9,6 +9,8 @@ import { ZohoConnectionService } from './services/zoho/zoho.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { WebhookModule } from '@@core/webhook/webhook.module';
+import { EnvironmentService } from '@@core/environment/environment.service';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Module({
   imports: [WebhookModule],
@@ -22,6 +24,8 @@ import { WebhookModule } from '@@core/webhook/webhook.module';
     ZohoConnectionService,
     LoggerService,
     WebhookService,
+    EnvironmentService,
+    EncryptionService,
   ],
   exports: [CrmConnectionsService],
 })

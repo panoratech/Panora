@@ -8,13 +8,17 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { customPropertiesUrls, getProviderVertical } from '../utils/types';
 import axios from 'axios';
-import { decrypt } from '@@core/utils/crypto';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { CrmObject } from '@crm/@types';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
 export class FieldMappingService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+  ) {
     this.logger.setContext(FieldMappingService.name);
   }
 
@@ -126,7 +130,9 @@ export class FieldMappingService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${decrypt(connection.access_token)}`,
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
           },
         },
       );

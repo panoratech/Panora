@@ -16,7 +16,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerService } from '@@core/logger/logger.service';
 import { CoreModule } from '@@core/core.module';
 import { BullModule } from '@nestjs/bull';
-import config from '@@core/utils/config';
 
 @Module({
   imports: [
@@ -28,10 +27,10 @@ import config from '@@core/utils/config';
     FileStorageModule,
     CrmModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    ...(config.DISTRIBUTION === 'managed'
+    ...(process.env.DISTRIBUTION === 'managed'
       ? [
           SentryModule.forRoot({
-            dsn: config.SENTRY_DSN,
+            dsn: process.env.SENTRY_DSN,
             debug: true,
             environment: 'dev',
             release: 'some_release',
@@ -55,7 +54,7 @@ import config from '@@core/utils/config';
     }),
     BullModule.forRoot({
       redis: {
-        host: config.REDIS_HOST,
+        host: process.env.REDIS_HOST,
         port: 6379,
       },
     }),

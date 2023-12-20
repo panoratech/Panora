@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import config from '@@core/utils/config';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ZendeskOAuthResponse } from '../../types';
-import {
-  Action,
-  NotUniqueRecord,
-  handleServiceError,
-} from '@@core/utils/errors';
+import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { decrypt, encrypt } from '@@core/utils/crypto';
+import { EnvironmentService } from '@@core/environment/environment.service';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
 export class ZendeskConnectionService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private env: EnvironmentService,
+    private cryptoService: EncryptionService,
+  ) {
     this.logger.setContext(ZendeskConnectionService.name);
   }
   async handleZendeskCallback(
@@ -31,7 +32,7 @@ export class ZendeskConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
@@ -45,7 +46,9 @@ export class ZendeskConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${config.ZENDESK_CLIENT_ID}:${config.ZENDESK_CLIENT_SECRET}`,
+              `${this.env.getZendeskSecret().CLIENT_ID}:${
+                this.env.getZendeskSecret().CLIENT_SECRET
+              }`,
             ).toString('base64')}`,
           },
         },
@@ -61,8 +64,10 @@ export class ZendeskConnectionService {
           id_connection: uuidv4(),
           provider_slug: 'zendesk',
           token_type: 'oauth',
-          access_token: encrypt(data.access_token),
-          refresh_token: data.refresh_token ? encrypt(data.refresh_token) : '',
+          access_token: this.cryptoService.encrypt(data.access_token),
+          refresh_token: data.refresh_token
+            ? this.cryptoService.encrypt(data.refresh_token)
+            : '',
           expiration_timestamp: data.expires_in
             ? new Date(new Date().getTime() + data.expires_in * 1000)
             : new Date(),
@@ -76,8 +81,10 @@ export class ZendeskConnectionService {
           },
         },
         update: {
-          access_token: encrypt(data.access_token),
-          refresh_token: data.refresh_token ? encrypt(data.refresh_token) : '',
+          access_token: this.cryptoService.encrypt(data.access_token),
+          refresh_token: data.refresh_token
+            ? this.cryptoService.encrypt(data.refresh_token)
+            : '',
           expiration_timestamp: data.expires_in
             ? new Date(new Date().getTime() + data.expires_in * 1000)
             : new Date(),
@@ -94,7 +101,7 @@ export class ZendeskConnectionService {
     try {
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: decrypt(refresh_token),
+        refresh_token: this.cryptoService.decrypt(refresh_token),
       });
       const res = await axios.post(
         'https://api.getbase.com/oauth2/token',
@@ -103,7 +110,9 @@ export class ZendeskConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${config.ZENDESK_CLIENT_ID}:${config.ZENDESK_CLIENT_SECRET}`,
+              `${this.env.getZendeskSecret().CLIENT_ID}:${
+                this.env.getZendeskSecret().CLIENT_SECRET
+              }`,
             ).toString('base64')}`,
           },
         },
@@ -114,8 +123,8 @@ export class ZendeskConnectionService {
           id_connection: connectionId,
         },
         data: {
-          access_token: encrypt(data.access_token),
-          refresh_token: encrypt(data.refresh_token),
+          access_token: this.cryptoService.encrypt(data.access_token),
+          refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),

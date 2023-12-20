@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import config from '@@core/utils/config';
 import { PipeDriveOAuthResponse } from '../../types';
-import {
-  Action,
-  NotUniqueRecord,
-  handleServiceError,
-} from '@@core/utils/errors';
+import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { decrypt, encrypt } from '@@core/utils/crypto';
+import { EnvironmentService } from '@@core/environment/environment.service';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
 export class PipedriveConnectionService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private env: EnvironmentService,
+    private cryptoService: EncryptionService,
+  ) {
     this.logger.setContext(PipedriveConnectionService.name);
   }
 
@@ -32,7 +33,7 @@ export class PipedriveConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
@@ -46,7 +47,9 @@ export class PipedriveConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${config.PIPEDRIVE_CLIENT_ID}:${config.PIPEDRIVE_CLIENT_SECRET}`,
+              `${this.env.getPipedriveSecret().CLIENT_ID}:${
+                this.env.getPipedriveSecret().CLIENT_SECRET
+              }`,
             ).toString('base64')}`,
           },
         },
@@ -61,8 +64,8 @@ export class PipedriveConnectionService {
           id_connection: uuidv4(),
           provider_slug: 'pipedrive',
           token_type: 'oauth',
-          access_token: encrypt(data.access_token),
-          refresh_token: encrypt(data.refresh_token),
+          access_token: this.cryptoService.encrypt(data.access_token),
+          refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
@@ -76,8 +79,8 @@ export class PipedriveConnectionService {
           },
         },
         update: {
-          access_token: encrypt(data.access_token),
-          refresh_token: encrypt(data.refresh_token),
+          access_token: this.cryptoService.encrypt(data.access_token),
+          refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),
@@ -96,12 +99,12 @@ export class PipedriveConnectionService {
     refresh_token: string,
   ) {
     try {
-      const REDIRECT_URI = `${config.OAUTH_REDIRECT_BASE}/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
 
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         redirect_uri: REDIRECT_URI,
-        refresh_token: decrypt(refresh_token),
+        refresh_token: this.cryptoService.decrypt(refresh_token),
       });
       const res = await axios.post(
         'https://oauth.pipedrive.com/oauth/token',
@@ -110,7 +113,9 @@ export class PipedriveConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${config.PIPEDRIVE_CLIENT_ID}:${config.PIPEDRIVE_CLIENT_SECRET}`,
+              `${this.env.getPipedriveSecret().CLIENT_ID}:${
+                this.env.getPipedriveSecret().CLIENT_SECRET
+              }`,
             ).toString('base64')}`,
           },
         },
@@ -121,8 +126,8 @@ export class PipedriveConnectionService {
           id_connection: connectionId,
         },
         data: {
-          access_token: encrypt(data.access_token),
-          refresh_token: encrypt(data.refresh_token),
+          access_token: this.cryptoService.encrypt(data.access_token),
+          refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
             new Date().getTime() + data.expires_in * 1000,
           ),

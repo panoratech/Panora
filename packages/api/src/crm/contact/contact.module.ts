@@ -12,6 +12,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { SyncContactsService } from './sync/sync.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { BullModule } from '@nestjs/bull';
     FieldMappingService,
     SyncContactsService,
     WebhookService,
+    EncryptionService,
   ],
   exports: [SyncContactsService],
 })

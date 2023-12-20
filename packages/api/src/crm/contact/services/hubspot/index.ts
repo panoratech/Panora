@@ -10,11 +10,15 @@ import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { decrypt } from '@@core/utils/crypto';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
 export class HubspotService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+  ) {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + HubspotService.name,
     );
@@ -40,7 +44,9 @@ export class HubspotService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${decrypt(connection.access_token)}`,
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
           },
         },
       );
@@ -87,7 +93,9 @@ export class HubspotService {
       const resp = await axios.get(url, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${decrypt(connection.access_token)}`,
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
       });
       this.logger.log(`Synced hubspot contacts !`);

@@ -1,0 +1,72 @@
+import { plainToClass } from 'class-transformer';
+import { IsOptional, IsString, validateSync } from 'class-validator';
+
+export class EnvVars {
+  @IsString()
+  @IsOptional()
+  ENV?: string;
+
+  @IsString()
+  @IsOptional()
+  DISTRIBUTION?: string;
+
+  @IsString()
+  DATABASE_URL: string;
+
+  @IsString()
+  JWT_SECRET: string;
+
+  @IsString()
+  @IsOptional()
+  SENTRY_DSN?: string;
+
+  //CRM
+  @IsString()
+  HUBSPOT_CLIENT_ID: string;
+
+  @IsString()
+  HUBSPOT_CLIENT_SECRET: string;
+
+  @IsString()
+  ZOHOCRM_CLIENT_ID: string;
+
+  @IsString()
+  ZOHOCRM_CLIENT_SECRET: string;
+
+  @IsString()
+  PIPEDRIVE_CLIENT_ID: string;
+
+  @IsString()
+  PIPEDRIVE_CLIENT_SECRET: string;
+
+  @IsString()
+  FRESHSALES_CLIENT_ID: string;
+
+  @IsString()
+  FRESHSALES_CLIENT_SECRET: string;
+
+  @IsString()
+  ZENDESK_CLIENT_ID: string;
+
+  @IsString()
+  ZENDESK_CLIENT_SECRET: string;
+
+  @IsString()
+  OAUTH_REDIRECT_BASE: string;
+
+  @IsString()
+  ENCRYPT_CRYPTO_SECRET_KEY: string;
+
+  @IsString()
+  REDIS_HOST: string;
+}
+
+export const validate = (config: Record<string, unknown>) => {
+  const validatedConfig = plainToClass(EnvVars, config);
+
+  const errors = validateSync(validatedConfig);
+
+  if (errors.length) throw new Error(errors.toString());
+
+  return validatedConfig;
+};

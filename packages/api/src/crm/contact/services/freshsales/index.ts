@@ -10,11 +10,15 @@ import {
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { decrypt } from '@@core/utils/crypto';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
 export class FreshSalesService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+  ) {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + FreshSalesService.name,
     );
@@ -38,7 +42,9 @@ export class FreshSalesService {
         JSON.stringify(dataBody),
         {
           headers: {
-            Authorization: `Token token=${decrypt(connection.access_token)}`,
+            Authorization: `Token token=${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
             'Content-Type': 'application/json',
           },
         },
@@ -74,7 +80,9 @@ export class FreshSalesService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${decrypt(connection.access_token)}`,
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
           },
         },
       );

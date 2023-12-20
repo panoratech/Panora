@@ -5,13 +5,17 @@ import { PassThroughResponse } from './types';
 import axios, { AxiosResponse } from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { decrypt } from '@@core/utils/crypto';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
 export class PassthroughService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+  ) {
     this.logger.setContext(PassthroughService.name);
   }
 
@@ -52,7 +56,9 @@ export class PassthroughService {
         headers: {
           ...headers,
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${decrypt(connection.access_token)}`,
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
       });
 

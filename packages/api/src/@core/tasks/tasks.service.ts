@@ -3,12 +3,14 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrmConnectionsService } from '../connections/crm/services/crm-connection.service';
+import { LoggerService } from '@@core/logger/logger.service';
 
 @Injectable()
 export class TasksService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private crmConnectionsService: CrmConnectionsService,
+    private logger: LoggerService,
   ) {}
 
   onModuleInit() {
@@ -17,6 +19,7 @@ export class TasksService implements OnModuleInit {
 
   @Cron(CronExpression.EVERY_HOUR)
   async handleCron() {
+    this.logger.log('decrypting ??????');
     // refresh all tokens that expire in less than 10 hours
     const tenHoursFromNow = new Date();
     tenHoursFromNow.setHours(tenHoursFromNow.getHours() + 10);
