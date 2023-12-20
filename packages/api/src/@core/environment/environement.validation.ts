@@ -40,10 +40,12 @@ export class EnvVars {
   PIPEDRIVE_CLIENT_SECRET: string;
 
   @IsString()
-  FRESHSALES_CLIENT_ID: string;
+  @IsOptional()
+  FRESHSALES_CLIENT_ID?: string;
 
   @IsString()
-  FRESHSALES_CLIENT_SECRET: string;
+  @IsOptional()
+  FRESHSALES_CLIENT_SECRET?: string;
 
   @IsString()
   ZENDESK_CLIENT_ID: string;
