@@ -86,7 +86,7 @@
         "crm/catalog",
         {
           "group": "Contacts",
-          "pages": [ "crm/contacts/overview", "crm/contacts/api/get", "crm/contacts/api/create" ]
+          "pages": [ "crm/contacts/overview", "crm/contacts/api/list", "crm/contacts/api/get", "crm/contacts/api/create", "crm/contacts/api/update" ]
         },
         {
           "group": "Deals",
@@ -234,5 +234,4 @@
     "github": "https://github.com/panoratech/Panora",
     "discord": "https://discord.gg/G7fr4HNyTb"
   }
-  
 }
