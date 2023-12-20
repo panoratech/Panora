@@ -70,9 +70,9 @@ export class ContactController {
     summary: 'Create CRM Contact',
     description: 'Create a contact in any supported CRM',
   })
-  @ApiQuery({ name: 'integrationId', required: true, type: String })
-  @ApiQuery({ name: 'linkedUserId', required: true, type: String })
-  @ApiQuery({ name: 'remote_data', required: false, type: Boolean })
+  @ApiQuery({ name: 'integrationId', required: true, type: String, description: 'The integration ID', example: '6aa2acf3-c244-4f85-848b-13a57e7abf55' })
+  @ApiQuery({ name: 'linkedUserId', required: true, type: String, description: 'The linked user ID', example: 'b008e199-eda9-4629-bd41-a01b6195864a' })
+  @ApiQuery({ name: 'remote_data', required: false, type: Boolean, description: 'Set to true to include data from the original CRM software.' })
   @ApiBody({ type: UnifiedContactInput })
   @ApiCustomResponse(ContactResponse)
   @Post()

@@ -39,3 +39,24 @@ export function decrypt(encryptedData: string): string {
     throw new Error('Decrypting error... ' + error);
   }
 }
+
+export function decryptTwo(encryptedData: Buffer): string {
+  try {
+    const dataString = encryptedData.toString('utf-8');
+    const textParts = dataString.split(':');
+    // Extract the IV from the first half of the value
+    const ivFromText = Buffer.from(textParts.shift() as string, 'hex');
+    // Extract the encrypted text without the IV
+    const encryptedText = textParts.join(':');
+    const decipher = crypto.createDecipheriv(
+      'aes-256-cbc',
+      Buffer.from(secretKey),
+      ivFromText,
+    );
+    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  } catch (error) {
+    throw new Error('Decrypting error... ' + error);
+  }
+}
