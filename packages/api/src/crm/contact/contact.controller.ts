@@ -52,9 +52,9 @@ export class ContactController {
   @ApiOperation({
     operationId: 'getContact',
     summary: 'Retrieve a CRM Contact',
-    description: 'Retrive a contact in any supported CRM',
+    description: 'Retrieve a contact from any connected CRM',
   })
-  @ApiParam({ name: 'id', required: true, type: String })
+  @ApiParam({ name: 'id', required: true, type: String, description: "id of the `contact` you want to retrive." })
   @ApiQuery({ name: 'remote_data', required: false, type: Boolean, description: 'Set to true to include data from the original CRM software.' })
   @ApiCustomResponse(ContactResponse)
   @Get(':id')

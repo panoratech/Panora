@@ -790,12 +790,13 @@
       "get": {
         "operationId": "getContact",
         "summary": "Retrieve a CRM Contact",
-        "description": "Retrive a contact in any supported CRM",
+        "description": "Retrieve a contact from any connected CRM",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "id of the `contact` you want to retrive.",
             "schema": {
               "type": "string"
             }
