@@ -33,23 +33,28 @@ CREATE TABLE webhooks_payloads
 
 
 
--- ************************************** webhook_scope
+-- ************************************** webhook_endpoints
 
-CREATE TABLE webhook_scope
+CREATE TABLE webhook_endpoints
 (
- id_webhook_scope    uuid NOT NULL,
- last_update         timestamp NULL,
- "crm.contact.created" boolean NOT NULL,
- "crm.contact.updated" boolean NOT NULL,
- "crm.contact.removed" boolean NOT NULL,
- "crm.contact.pulled"  boolean NOT NULL,
- "connection.created"  boolean NOT NULL,
- "connection.deleted"  boolean NOT NULL,
- CONSTRAINT PK_webhook_scope PRIMARY KEY ( id_webhook_scope )
+ id_webhook_endpoint  uuid NOT NULL,
+ endpoint_description text NULL,
+ url                  text NOT NULL,
+ secret               text NOT NULL,
+ active               boolean NOT NULL,
+ created_at           timestamp NOT NULL,
+ "scope"                text NULL,
+ id_project           uuid NOT NULL,
+ last_update          timestamp NULL,
+ CONSTRAINT PK_webhook_endpoint PRIMARY KEY ( id_webhook_endpoint )
 );
 
 
 
+COMMENT ON COLUMN webhook_endpoints.endpoint_description IS 'An optional description of what the webhook is used for';
+COMMENT ON COLUMN webhook_endpoints.secret IS 'a shared secret for secure communication';
+COMMENT ON COLUMN webhook_endpoints.active IS 'a flag indicating whether the webhook is active or not';
+COMMENT ON COLUMN webhook_endpoints."scope" IS 'stringified array with events,';
 
 
 
@@ -167,38 +172,6 @@ CREATE TABLE crm_deals_stages
 
 
 
-
-
-
-
-
--- ************************************** webhook_endpoints
-
-CREATE TABLE webhook_endpoints
-(
- id_webhook_endpoint  uuid NOT NULL,
- endpoint_description text NULL,
- url                  text NOT NULL,
- secret               text NOT NULL,
- active               boolean NOT NULL,
- created_at           timestamp NOT NULL,
- id_project           uuid NOT NULL,
- last_update          timestamp NULL,
- id_webhook_scope     uuid NULL,
- CONSTRAINT PK_webhook_endpoint PRIMARY KEY ( id_webhook_endpoint ),
- CONSTRAINT FK_38 FOREIGN KEY ( id_webhook_scope ) REFERENCES webhook_scope ( id_webhook_scope )
-);
-
-CREATE INDEX FK_we_webhook_scope_ID ON webhook_endpoints
-(
- id_webhook_scope
-);
-
-
-
-COMMENT ON COLUMN webhook_endpoints.endpoint_description IS 'An optional description of what the webhook is used for';
-COMMENT ON COLUMN webhook_endpoints.secret IS 'a shared secret for secure communication';
-COMMENT ON COLUMN webhook_endpoints.active IS 'a flag indicating whether the webhook is active or not';
 
 
 

@@ -1,4 +1,3 @@
-import { EnvironmentService } from '@@core/environment/environment.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

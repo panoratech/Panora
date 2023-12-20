@@ -2,9 +2,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Email, Phone } from '.';
 
 export class UnifiedContactInput {
-  @ApiProperty()
+  @ApiProperty({ description: 'The first name of the contact' })
   first_name: string;
-  @ApiProperty()
+  @ApiProperty({ description: 'The last name of the contact' })
   last_name: string;
   @ApiProperty({ type: [Email] })
   email_addresses: Email[];
