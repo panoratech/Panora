@@ -56,42 +56,49 @@ export class ZendeskConnectionService {
       const data: ZendeskOAuthResponse = res.data;
       this.logger.log('OAuth credentials : zendesk ' + JSON.stringify(data));
 
-      const db_res = await this.prisma.connections.upsert({
-        where: {
-          id_connection: isNotUnique.id_connection,
-        },
-        create: {
-          id_connection: uuidv4(),
-          provider_slug: 'zendesk',
-          token_type: 'oauth',
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: data.refresh_token
-            ? this.cryptoService.encrypt(data.refresh_token)
-            : '',
-          expiration_timestamp: data.expires_in
-            ? new Date(new Date().getTime() + data.expires_in * 1000)
-            : new Date(),
-          status: 'valid',
-          created_at: new Date(),
-          projects: {
-            connect: { id_project: projectId },
+      let db_res;
+
+      if (isNotUnique) {
+        db_res = await this.prisma.connections.update({
+          where: {
+            id_connection: isNotUnique.id_connection,
           },
-          linked_users: {
-            connect: { id_linked_user: linkedUserId },
+          data: {
+            access_token: this.cryptoService.encrypt(data.access_token),
+            refresh_token: data.refresh_token
+              ? this.cryptoService.encrypt(data.refresh_token)
+              : '',
+            expiration_timestamp: data.expires_in
+              ? new Date(new Date().getTime() + data.expires_in * 1000)
+              : new Date(),
+            status: 'valid',
+            created_at: new Date(),
           },
-        },
-        update: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: data.refresh_token
-            ? this.cryptoService.encrypt(data.refresh_token)
-            : '',
-          expiration_timestamp: data.expires_in
-            ? new Date(new Date().getTime() + data.expires_in * 1000)
-            : new Date(),
-          status: 'valid',
-          created_at: new Date(),
-        },
-      });
+        });
+      } else {
+        db_res = await this.prisma.connections.create({
+          data: {
+            id_connection: uuidv4(),
+            provider_slug: 'zendesk',
+            token_type: 'oauth',
+            access_token: this.cryptoService.encrypt(data.access_token),
+            refresh_token: data.refresh_token
+              ? this.cryptoService.encrypt(data.refresh_token)
+              : '',
+            expiration_timestamp: data.expires_in
+              ? new Date(new Date().getTime() + data.expires_in * 1000)
+              : new Date(),
+            status: 'valid',
+            created_at: new Date(),
+            projects: {
+              connect: { id_project: projectId },
+            },
+            linked_users: {
+              connect: { id_linked_user: linkedUserId },
+            },
+          },
+        });
+      }
       return db_res;
     } catch (error) {
       handleServiceError(error, this.logger, 'zendesk', Action.oauthCallback);

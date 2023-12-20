@@ -62,44 +62,52 @@ export class ZohoConnectionService {
       );
       const data: ZohoOAuthResponse = res.data;
       this.logger.log('OAuth credentials : zoho ' + JSON.stringify(data));
-      const db_res = await this.prisma.connections.upsert({
-        where: {
-          id_connection: isNotUnique.id_connection,
-        },
-        create: {
-          id_connection: uuidv4(),
-          provider_slug: 'zoho',
-          token_type: 'oauth',
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: data.refresh_token
-            ? this.cryptoService.encrypt(data.refresh_token)
-            : '',
-          expiration_timestamp: new Date(
-            new Date().getTime() + data.expires_in * 1000,
-          ),
-          status: 'valid',
-          created_at: new Date(),
-          projects: {
-            connect: { id_project: projectId },
+      let db_res;
+
+      if (isNotUnique) {
+        db_res = await this.prisma.connections.update({
+          where: {
+            id_connection: isNotUnique.id_connection,
           },
-          linked_users: {
-            connect: { id_linked_user: linkedUserId },
+          data: {
+            access_token: this.cryptoService.encrypt(data.access_token),
+            refresh_token: data.refresh_token
+              ? this.cryptoService.encrypt(data.refresh_token)
+              : '',
+            expiration_timestamp: new Date(
+              new Date().getTime() + data.expires_in * 1000,
+            ),
+            status: 'valid',
+            created_at: new Date(),
+            account_url: domain,
           },
-          account_url: domain,
-        },
-        update: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: data.refresh_token
-            ? this.cryptoService.encrypt(data.refresh_token)
-            : '',
-          expiration_timestamp: new Date(
-            new Date().getTime() + data.expires_in * 1000,
-          ),
-          status: 'valid',
-          created_at: new Date(),
-          account_url: domain,
-        },
-      });
+        });
+      } else {
+        db_res = await this.prisma.connections.create({
+          data: {
+            id_connection: uuidv4(),
+            provider_slug: 'zoho',
+            token_type: 'oauth',
+            access_token: this.cryptoService.encrypt(data.access_token),
+            refresh_token: data.refresh_token
+              ? this.cryptoService.encrypt(data.refresh_token)
+              : '',
+            expiration_timestamp: new Date(
+              new Date().getTime() + data.expires_in * 1000,
+            ),
+            status: 'valid',
+            created_at: new Date(),
+            projects: {
+              connect: { id_project: projectId },
+            },
+            linked_users: {
+              connect: { id_linked_user: linkedUserId },
+            },
+            account_url: domain,
+          },
+        });
+      }
+      
       return db_res;
     } catch (error) {
       handleServiceError(error, this.logger, 'zoho', Action.oauthCallback);
