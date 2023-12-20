@@ -4,6 +4,8 @@ node_modules/
 apps/webapp/node_modules
 apps/webapp/dist
 
+apps/frontend-snippet/node_modules
+apps/frontend-snippet/dist
+
 packages/api/node_modules
 packages/api/dist
-
