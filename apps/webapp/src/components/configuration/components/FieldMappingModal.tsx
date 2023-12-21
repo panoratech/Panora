@@ -140,7 +140,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
   return (
     <Tabs defaultValue="define" className="w-[400px] mt-5">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="define">Define Fields</TabsTrigger>
+        <TabsTrigger value="define">Define Panora Custom Fields</TabsTrigger>
         <TabsTrigger value="map">Map Fields</TabsTrigger>
       </TabsList>
       <TabsContent value="define">
@@ -148,9 +148,9 @@ export function FModal({ onClose }: {onClose: () => void}) {
         <Form {...defineForm}>
           <form onSubmit={defineForm.handleSubmit(onDefineSubmit)}>
             <CardHeader>
-              <CardTitle>Define</CardTitle>
+              <CardTitle>Define Panora Field</CardTitle>
               <CardDescription>
-                Define a custom field you want to enable on unified models. It must be mapped to an existent custom field on your end-user's provider.
+                Define a Panora custom field to extend a unified model. Once done, you can map it to an existing field in your end-user's software.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -160,11 +160,11 @@ export function FModal({ onClose }: {onClose: () => void}) {
                     name="standardModel"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Standard Model</FormLabel>
+                        <FormLabel>Standard Object</FormLabel>
                         <FormControl>
                         <Select onValueChange={field.onChange} defaultValue={field.value} >
                           <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select a model" />
+                            <SelectValue placeholder="Select an object" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
@@ -198,7 +198,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                           />
                         </FormControl>
                         <FormDescription>
-                          This is the custom name of the field.
+                          This will be the name of the field on Panora's side.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -211,14 +211,14 @@ export function FModal({ onClose }: {onClose: () => void}) {
                     name="fieldDescription"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>Short Description</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="favorite color" {...field} 
+                            placeholder="My customer's favorite color" {...field} 
                           />
                         </FormControl>
                         <FormDescription>
-                          This is the description of the field.
+                          A quick description of the field to remind you its context.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -274,7 +274,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
             <CardHeader>
               <CardTitle>Map</CardTitle>
               <CardDescription>
-                Now that you defined your field, map it to an existent custom field on your end-user's tool.
+                After you defined a Panora custom field, you can map it to an existent custom field on your end-user's software.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -284,7 +284,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                     name="attributeId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Field</FormLabel>
+                        <FormLabel>Panora Field</FormLabel>
                         <FormControl>
                         <Select 
                           onValueChange={field.onChange} defaultValue={field.value}
@@ -404,7 +404,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                         </Select>
                         </FormControl>
                         <FormDescription>
-                          This is the source provider's field name.
+                          These are all the fields we found in your customer's software.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

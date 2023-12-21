@@ -61,6 +61,12 @@
       "name": "Webhooks",
       "url": "webhooks"
     },
+
+    {
+      "name": "SDKs",
+      "url": "backend-sdk"
+    }
+    ,
     {
       "name": "API Reference",
       "url": "api-reference"
@@ -219,6 +225,15 @@
         ]
       }
       ]
+    },
+
+    {
+      "group": "Backend SDKs",
+      "pages": [
+        "backend-sdk/typescript",
+        "backend-sdk/python",
+        "backend-sdk/java"
+      ]
     }
     ,
     {
@@ -233,14 +248,6 @@
         "features/self-host-guide",
         "features/magic-links",
         "features/custom-fields"
-      ]
-    },
-    {
-      "group": "Backend SDKs",
-      "pages": [
-        "backend-sdk/typescript",
-        "backend-sdk/python",
-        "backend-sdk/java"
       ]
     }
     ,
