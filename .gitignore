@@ -8,3 +8,4 @@ dist/**
 redis-data
 redis_data
 .env
+.DS_Store
