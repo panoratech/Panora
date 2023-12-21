@@ -2,7 +2,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-import { OriginalContactOutput } from '@@core/utils/types';
+import { CRM_PROVIDERS, OriginalContactOutput } from '@@core/utils/types';
 import { unify } from '@@core/utils/unification/unify';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { FreshSalesService } from '@contact/services/freshsales';
@@ -46,7 +46,6 @@ export class SyncContactsService implements OnModuleInit {
   @Cron('*/20 * * * *')
   //function used by sync worker which populate our crm_contacts table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
-  //TODO: find a way to save all remote data for each contact somowhere in our db so our GET action know where to fetch it
   async syncContacts() {
     try {
       this.logger.log(`Syncing contacts....`);
@@ -69,28 +68,21 @@ export class SyncContactsService implements OnModuleInit {
         },
       });
       linkedUsers.map(async (linkedUser) => {
-        //TODO: loop through all providers
         try {
-          await this.syncContactsForLinkedUser(
-            'hubspot',
-            linkedUser.id_linked_user,
-            id_project,
+          const providers = CRM_PROVIDERS.filter(
+            (provider) => provider !== 'zoho' && provider !== 'freshsales',
           );
-          await this.syncContactsForLinkedUser(
-            'pipedrive',
-            linkedUser.id_linked_user,
-            id_project,
-          );
-          await this.syncContactsForLinkedUser(
-            'zendesk',
-            linkedUser.id_linked_user,
-            id_project,
-          );
-          await this.syncContactsForLinkedUser(
-            'zoho',
-            linkedUser.id_linked_user,
-            id_project,
-          );
+          for (const provider of providers) {
+            try {
+              await this.syncContactsForLinkedUser(
+                provider,
+                linkedUser.id_linked_user,
+                id_project,
+              );
+            } catch (error) {
+              handleServiceError(error, this.logger);
+            }
+          }
         } catch (error) {
           handleServiceError(error, this.logger);
         }

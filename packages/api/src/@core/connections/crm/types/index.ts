@@ -20,7 +20,7 @@ export interface PipeDriveOAuthResponse {
   api_domain: string;
 }
 
-export interface ZendeskOAuthResponse {
+export interface ZendeskSellOAuthResponse {
   access_token: string;
   token_type: string;
   refresh_token: string;

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskSellOAuthResponse } from '../../types';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { ZendeskTicketingOAuthResponse } from '../../types';
 
 @Injectable()
 export class ZendeskConnectionService {
@@ -38,22 +38,20 @@ export class ZendeskConnectionService {
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
         code: code,
+        client_id: this.env.getZendeskTicketingSecret().CLIENT_ID,
+        client_secret: this.env.getZendeskTicketingSecret().CLIENT_SECRET,
+        scope: 'read',
       });
       const res = await axios.post(
-        'https://api.getbase.com/oauth2/token',
+        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/oauth/tokens`,
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${this.env.getZendeskSellSecret().CLIENT_ID}:${
-                this.env.getZendeskSellSecret().CLIENT_SECRET
-              }`,
-            ).toString('base64')}`,
           },
         },
       );
-      const data: ZendeskSellOAuthResponse = res.data;
+      const data: ZendeskTicketingOAuthResponse = res.data;
       this.logger.log('OAuth credentials : zendesk ' + JSON.stringify(data));
 
       let db_res;
@@ -65,12 +63,8 @@ export class ZendeskConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: data.refresh_token
-              ? this.cryptoService.encrypt(data.refresh_token)
-              : '',
-            expiration_timestamp: data.expires_in
-              ? new Date(new Date().getTime() + data.expires_in * 1000)
-              : new Date(),
+            refresh_token: '',
+            expiration_timestamp: new Date(), //TODO
             status: 'valid',
             created_at: new Date(),
           },
@@ -82,12 +76,8 @@ export class ZendeskConnectionService {
             provider_slug: 'zendesk',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: data.refresh_token
-              ? this.cryptoService.encrypt(data.refresh_token)
-              : '',
-            expiration_timestamp: data.expires_in
-              ? new Date(new Date().getTime() + data.expires_in * 1000)
-              : new Date(),
+            refresh_token: '',
+            expiration_timestamp: new Date(), //TODO
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -102,44 +92,6 @@ export class ZendeskConnectionService {
       return db_res;
     } catch (error) {
       handleServiceError(error, this.logger, 'zendesk', Action.oauthCallback);
-    }
-  }
-  async handleZendeskTokenRefresh(connectionId: string, refresh_token: string) {
-    try {
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refresh_token),
-      });
-      const res = await axios.post(
-        'https://api.getbase.com/oauth2/token',
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${this.env.getZendeskSellSecret().CLIENT_ID}:${
-                this.env.getZendeskSellSecret().CLIENT_SECRET
-              }`,
-            ).toString('base64')}`,
-          },
-        },
-      );
-      const data: ZendeskSellOAuthResponse = res.data;
-      await this.prisma.connections.update({
-        where: {
-          id_connection: connectionId,
-        },
-        data: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + data.expires_in * 1000,
-          ),
-        },
-      });
-      this.logger.log('OAuth credentials updated : zendesk ');
-    } catch (error) {
-      handleServiceError(error, this.logger, 'zendesk', Action.oauthRefresh);
     }
   }
 }
