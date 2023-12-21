@@ -40,6 +40,11 @@
     "url": "https://github.com/panoratech/Panora"
   },
   "tabs": [
+
+    {
+      "name": "Connections",
+      "url": "connections"
+    },
     {
       "name": "CRM",
       "url": "crm"
@@ -79,6 +84,14 @@
         "quick-start"
       ]
     },
+    {
+      "group": "Connections",
+      "pages": [
+        "connections/overview",
+        "connections/api/list"
+    ]
+    }
+    ,
     {
       "group": "CRM",
       "pages": [
@@ -222,6 +235,15 @@
         "features/custom-fields"
       ]
     },
+    {
+      "group": "Backend SDKs",
+      "pages": [
+        "backend-sdk/typescript",
+        "backend-sdk/python",
+        "backend-sdk/java"
+      ]
+    }
+    ,
     {
       "group": "Support",
       "pages": [
