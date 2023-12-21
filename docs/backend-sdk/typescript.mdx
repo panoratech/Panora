@@ -1,10 +1,10 @@
 ---
-title: 'TypeScript SDK'
+title: 'TypeScript'
 description: 'Introduction to our Typescript SDK'
 ---
 
 
-# Installing & instantiating the Typescript SDK
+## Installing & instantiating the Typescript SDK
 Install it with your favorite package manager, e.g.:
 
 ```bash
@@ -12,6 +12,9 @@ npm i @panora/typescript-sdk
 ```
 
 Instantiate the SDK:
+<Tip>
+Go to your dashboard to get your API Key
+</Tip>
 
 ```javascript
 import { PanoraSDK } from '@panora/typescript-sdk';
@@ -19,16 +22,12 @@ import { PanoraSDK } from '@panora/typescript-sdk';
 const sdk = new PanoraSDK('YOUR_API_KEY');
 ```
 
-<Tip>
-Visit your dashboard to create an API Key
-</Tip>
-
-###  List all connections to your app
+### List all connections to your app
 
 ```javascript
 import { PanoraSDK } from '@panora/typescript-sdk';
 
-const sdk = new PanoraSDK('process.env.PANORA_API_KEY');
+const sdk = new PanoraSDK('YOUR_API_KEY');
 
 (async () => {
   const result = await sdk.connections.getConnections();
@@ -36,7 +35,7 @@ const sdk = new PanoraSDK('process.env.PANORA_API_KEY');
 })();
 ```
 
-This will list all the connections available, across all users.
+This will list all the connections available, across all users. You should get an object similar to this one below. [Read more about the `connection` object.](/connections/overview)
 ```json
 {
         "id_connection": "6cd057cb-39df-44ce-9be8-ax9d167c3940",
@@ -52,3 +51,5 @@ This will list all the connections available, across all users.
         "id_linked_user": "d7a0af02-0f9b-40a6-86a9-612dcfe341fe"
 }
 ```
+
+
