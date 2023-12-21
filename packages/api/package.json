@@ -49,7 +49,7 @@
     "install": "^0.13.0",
     "js-yaml": "^4.1.0",
     "nestjs-pino": "^3.5.0",
-    "passport": "^0.6.0",
+    "passport": "^0.7.0",
     "passport-headerapikey": "^1.2.2",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
