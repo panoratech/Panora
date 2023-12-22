@@ -19,6 +19,14 @@ import { AccountingObject } from '@accounting/@types';
 import { MarketingAutomationObject } from '@marketing-automation/@types';
 import { TicketingObject } from '@ticketing/@types';
 import { FileStorageObject } from '@file-storage/@types';
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
+import { Type, applyDecorators } from '@nestjs/common';
 
 export type Unified = UnifiedCrm | UnifiedAts;
 
@@ -222,3 +230,34 @@ export function getProviderVertical(providerName: string): ProviderVertical {
   }
   return ProviderVertical.Unknown;
 }
+
+//API RESPONSE
+
+export class ApiResponse<T> {
+  data: T;
+  @ApiPropertyOptional()
+  message?: string;
+  @ApiPropertyOptional()
+  error?: string;
+  @ApiProperty({ type: Number })
+  statusCode: number;
+}
+
+export const ApiCustomResponse = <DataDto extends Type<unknown>>(
+  dataDto: DataDto,
+) =>
+  applyDecorators(
+    ApiExtraModels(ApiResponse, dataDto),
+    ApiOkResponse({
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(ApiResponse) },
+          {
+            properties: {
+              data: { $ref: getSchemaPath(dataDto) },
+            },
+          },
+        ],
+      },
+    }),
+  );

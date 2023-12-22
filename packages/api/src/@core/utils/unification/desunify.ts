@@ -7,6 +7,8 @@ import {
   getProviderVertical,
 } from '../types';
 import { desunifyCrm } from '@crm/@unification';
+import { TicketingObject } from '@ticketing/@types';
+import { desunifyTicketing } from '@ticketing/@unification';
 
 /* to insert data
 
@@ -28,9 +30,10 @@ export async function desunify<T extends Unified>({
     remote_id: string;
   }[];
 }): Promise<DesunifyReturnType> {
+  let targetType_;
   switch (getProviderVertical(providerName)) {
     case ProviderVertical.CRM:
-      const targetType_ = targetType as CrmObject;
+      targetType_ = targetType as CrmObject;
       return desunifyCrm({
         sourceObject,
         targetType_,
@@ -48,6 +51,13 @@ export async function desunify<T extends Unified>({
     case ProviderVertical.MarketingAutomation:
       break;
     case ProviderVertical.Ticketing:
+      targetType_ = targetType as TicketingObject;
+      return desunifyTicketing({
+        sourceObject,
+        targetType_,
+        providerName,
+        customFieldMappings,
+      });
       break;
     case ProviderVertical.Unknown:
       break;

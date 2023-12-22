@@ -7,6 +7,8 @@ import {
   getProviderVertical,
 } from '../types';
 import { unifyCrm } from '@crm/@unification';
+import { TicketingObject } from '@ticketing/@types';
+import { unifyTicketing } from '@ticketing/@unification';
 
 /* to fetch data
 
@@ -29,9 +31,10 @@ export async function unify<T extends UnifySourceType | UnifySourceType[]>({
   }[];
 }): Promise<UnifyReturnType> {
   if (sourceObject == null) return [];
+  let targetType_;
   switch (getProviderVertical(providerName)) {
     case ProviderVertical.CRM:
-      const targetType_ = targetType as CrmObject;
+      targetType_ = targetType as CrmObject;
       return unifyCrm({
         sourceObject,
         targetType_,
@@ -49,7 +52,13 @@ export async function unify<T extends UnifySourceType | UnifySourceType[]>({
     case ProviderVertical.MarketingAutomation:
       break;
     case ProviderVertical.Ticketing:
-      break;
+      targetType_ = targetType as TicketingObject;
+      return unifyTicketing({
+        sourceObject,
+        targetType_,
+        providerName,
+        customFieldMappings,
+      });
     case ProviderVertical.Unknown:
       break;
   }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from '@contact/types';
+import { ApiResponse } from '@@core/utils/types';
 import { CrmObject, ZohoContactInput, ZohoContactOutput } from 'src/crm/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';

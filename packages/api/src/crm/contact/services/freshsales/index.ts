@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from '@contact/types';
+import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import {
   CrmObject,

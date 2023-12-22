@@ -7,9 +7,7 @@ import {
   Patch,
   Param,
 } from '@nestjs/common';
-import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { UnifiedContactInput } from './types/model.unified';
 import {
   ApiBody,
   ApiOperation,
@@ -17,21 +15,24 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { ContactResponse } from './types';
 import { ApiCustomResponse } from '@@core/utils/types';
-@ApiTags('crm/contact')
-@Controller('crm/contact')
-export class ContactController {
+import { TicketService } from './services/ticket.service';
+import { TicketResponse } from './types';
+import { UnifiedTicketInput } from './types/model.unified';
+
+@ApiTags('ticketing/ticket')
+@Controller('ticketing/ticket')
+export class TicketController {
   constructor(
-    private readonly contactService: ContactService,
+    private readonly ticketService: TicketService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(ContactController.name);
+    this.logger.setContext(TicketController.name);
   }
 
   @ApiOperation({
-    operationId: 'getContacts',
-    summary: 'List a batch of CRM Contacts',
+    operationId: 'getTickets',
+    summary: 'List a batch of Tickets',
   })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
@@ -39,16 +40,17 @@ export class ContactController {
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description: 'Set to true to include data from the original CRM software.',
+    description:
+      'Set to true to include data from the original Ticketing software.',
   })
-  @ApiCustomResponse(ContactResponse)
+  @ApiCustomResponse(TicketResponse)
   @Get()
-  getContacts(
+  getTickets(
     @Query('integrationId') integrationId: string,
     @Query('linkedUserId') linkedUserId: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.getContacts(
+    return this.ticketService.getTickets(
       integrationId,
       linkedUserId,
       remote_data,
@@ -56,35 +58,36 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContact',
-    summary: 'Retrieve a CRM Contact',
-    description: 'Retrieve a contact from any connected CRM',
+    operationId: 'getTicket',
+    summary: 'Retrieve a Ticket',
+    description: 'Retrieve a ticket from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
-    description: 'id of the `contact` you want to retrive.',
+    description: 'id of the `ticket` you want to retrive.',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description: 'Set to true to include data from the original CRM software.',
+    description:
+      'Set to true to include data from the original Ticketing software.',
   })
-  @ApiCustomResponse(ContactResponse)
+  @ApiCustomResponse(TicketResponse)
   @Get(':id')
-  getContact(
+  getTicket(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.getContact(id, remote_data);
+    return this.ticketService.getTicket(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addContact',
-    summary: 'Create CRM Contact',
-    description: 'Create a contact in any supported CRM',
+    operationId: 'addTicket',
+    summary: 'Create a Ticket',
+    description: 'Create a ticket in any supported Ticketing software',
   })
   @ApiQuery({
     name: 'integrationId',
@@ -104,18 +107,19 @@ export class ContactController {
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description: 'Set to true to include data from the original CRM software.',
+    description:
+      'Set to true to include data from the original Ticketing software.',
   })
-  @ApiBody({ type: UnifiedContactInput })
-  @ApiCustomResponse(ContactResponse)
+  @ApiBody({ type: UnifiedTicketInput })
+  @ApiCustomResponse(TicketResponse)
   @Post()
-  addContact(
-    @Body() unfiedContactData: UnifiedContactInput,
+  addTicket(
+    @Body() unfiedContactData: UnifiedTicketInput,
     @Query('integrationId') integrationId: string,
     @Query('linkedUserId') linkedUserId: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.addContact(
+    return this.ticketService.addTicket(
       unfiedContactData,
       integrationId,
       linkedUserId,
@@ -124,8 +128,8 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addContacts',
-    summary: 'Add a batch of CRM Contacts',
+    operationId: 'addTickets',
+    summary: 'Add a batch of Tickets',
   })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
@@ -133,18 +137,19 @@ export class ContactController {
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description: 'Set to true to include data from the original CRM software.',
+    description:
+      'Set to true to include data from the original Ticketing software.',
   })
-  @ApiBody({ type: UnifiedContactInput, isArray: true })
-  @ApiCustomResponse(ContactResponse)
+  @ApiBody({ type: UnifiedTicketInput, isArray: true })
+  @ApiCustomResponse(TicketResponse)
   @Post('batch')
-  addContacts(
-    @Body() unfiedContactData: UnifiedContactInput[],
+  addTickets(
+    @Body() unfiedContactData: UnifiedTicketInput[],
     @Query('integrationId') integrationId: string,
     @Query('linkedUserId') linkedUserId: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.batchAddContacts(
+    return this.ticketService.batchAddTickets(
       unfiedContactData,
       integrationId,
       linkedUserId,
@@ -153,14 +158,14 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'updateContact',
-    summary: 'Update a CRM Contact',
+    operationId: 'updateTicket',
+    summary: 'Update a Ticket',
   })
   @Patch()
-  updateContact(
+  updateTicket(
     @Query('id') id: string,
-    @Body() updateContactData: Partial<UnifiedContactInput>,
+    @Body() updateContactData: Partial<UnifiedTicketInput>,
   ) {
-    return this.contactService.updateContact(id, updateContactData);
+    return this.ticketService.updateTicket(id, updateContactData);
   }
 }

@@ -56,7 +56,9 @@ export class TicketingConnectionsService {
       switch (providerName.toLowerCase()) {
         case 'zendesk':
           if (!code) {
-            throw new NotFoundError(`no zendesk code found, found ${code}`);
+            throw new NotFoundError(
+              `no zendesk ticketing code found, found ${code}`,
+            );
           }
           data = await this.zendeskConnectionService.handleZendeskCallback(
             linkedUserId,

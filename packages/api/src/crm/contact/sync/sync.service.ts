@@ -2,7 +2,11 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-import { CRM_PROVIDERS, OriginalContactOutput } from '@@core/utils/types';
+import {
+  ApiResponse,
+  CRM_PROVIDERS,
+  OriginalContactOutput,
+} from '@@core/utils/types';
 import { unify } from '@@core/utils/unification/unify';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { FreshSalesService } from '@contact/services/freshsales';
@@ -10,7 +14,6 @@ import { HubspotService } from '@contact/services/hubspot';
 import { PipedriveService } from '@contact/services/pipedrive';
 import { ZendeskService } from '@contact/services/zendesk';
 import { ZohoService } from '@contact/services/zoho';
-import { ApiResponse } from '@contact/types';
 import { UnifiedContactOutput } from '@contact/types/model.unified';
 import { normalizeEmailsAndNumbers } from '@contact/utils';
 import { CrmObject } from '@crm/@types';

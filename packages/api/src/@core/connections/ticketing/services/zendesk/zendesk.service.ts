@@ -27,7 +27,7 @@ export class ZendeskConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
+          provider_slug: 'zendesk', //TODO
         },
       });
 
@@ -52,7 +52,9 @@ export class ZendeskConnectionService {
         },
       );
       const data: ZendeskTicketingOAuthResponse = res.data;
-      this.logger.log('OAuth credentials : zendesk ' + JSON.stringify(data));
+      this.logger.log(
+        'OAuth credentials : zendesk ticketing ' + JSON.stringify(data),
+      );
 
       let db_res;
 

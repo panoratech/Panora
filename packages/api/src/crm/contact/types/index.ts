@@ -1,22 +1,5 @@
-import {
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiProperty,
-  ApiPropertyOptional,
-  getSchemaPath,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UnifiedContactOutput } from './model.unified';
-import { Type, applyDecorators } from '@nestjs/common';
-
-export class ApiResponse<T> {
-  data: T;
-  @ApiPropertyOptional()
-  message?: string;
-  @ApiPropertyOptional()
-  error?: string;
-  @ApiProperty({ type: Number })
-  statusCode: number;
-}
 
 export class Email {
   @ApiProperty({
@@ -57,22 +40,3 @@ export class ContactResponse {
   @ApiPropertyOptional({ type: [{}] })
   remote_data?: Record<string, any>[]; //data in original format
 }
-
-export const ApiCustomResponse = <DataDto extends Type<unknown>>(
-  dataDto: DataDto,
-) =>
-  applyDecorators(
-    ApiExtraModels(ApiResponse, dataDto),
-    ApiOkResponse({
-      schema: {
-        allOf: [
-          { $ref: getSchemaPath(ApiResponse) },
-          {
-            properties: {
-              data: { $ref: getSchemaPath(dataDto) },
-            },
-          },
-        ],
-      },
-    }),
-  );

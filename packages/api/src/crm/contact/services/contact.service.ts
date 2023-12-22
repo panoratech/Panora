@@ -5,7 +5,7 @@ import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
-import { ApiResponse, ContactResponse } from '../types';
+import { ContactResponse } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import {
   CrmObject,
@@ -22,7 +22,7 @@ import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@contact/types/model.unified';
-import { OriginalContactOutput } from '@@core/utils/types';
+import { ApiResponse, OriginalContactOutput } from '@@core/utils/types';
 import { handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
