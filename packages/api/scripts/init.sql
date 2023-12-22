@@ -1,4 +1,5 @@
 
+
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -55,6 +56,82 @@ COMMENT ON COLUMN webhook_endpoints.endpoint_description IS 'An optional descrip
 COMMENT ON COLUMN webhook_endpoints.secret IS 'a shared secret for secure communication';
 COMMENT ON COLUMN webhook_endpoints.active IS 'a flag indicating whether the webhook is active or not';
 COMMENT ON COLUMN webhook_endpoints."scope" IS 'stringified array with events,';
+
+
+
+
+
+-- ************************************** tcg_users
+
+CREATE TABLE tcg_users
+(
+ id_tcg_user   uuid NOT NULL,
+ remote_id     text NULL,
+ name          text NULL,
+ email_address text NULL,
+ created_at    timestamp NULL,
+ modified_at   timestamp NULL,
+ CONSTRAINT PK_tcg_users PRIMARY KEY ( id_tcg_user )
+);
+
+COMMENT ON TABLE tcg_users IS 'The User object is used to represent an employee within a company.';
+
+
+
+
+
+
+-- ************************************** tcg_tickets
+
+CREATE TABLE tcg_tickets
+(
+ id_tcg_ticket uuid NOT NULL,
+ remote_id     text NULL,
+ name          text NULL,
+ status        text NULL,
+ description   text NULL,
+ due_date      timestamp NULL,
+ ticket_type   text NULL,
+ parent_ticket uuid NULL,
+ tags          text NULL,
+ completed_at  timestamp NULL,
+ priority      text NULL,
+ created_at    timestamp NOT NULL,
+ modified_at   timestamp NOT NULL,
+ assigned_to   text[] NULL,
+ CONSTRAINT PK_tcg_tickets PRIMARY KEY ( id_tcg_ticket )
+);
+
+
+
+COMMENT ON COLUMN tcg_tickets.name IS 'Name of the ticket. Usually very short.';
+COMMENT ON COLUMN tcg_tickets.status IS 'OPEN, CLOSED, IN_PROGRESS, ON_HOLD';
+COMMENT ON COLUMN tcg_tickets.tags IS 'array of tags';
+COMMENT ON COLUMN tcg_tickets.assigned_to IS 'Employees assigned to this ticket.
+
+It is a stringified array containing tcg_users';
+
+
+
+
+
+-- ************************************** tcg_contacts
+
+CREATE TABLE tcg_contacts
+(
+ id_tcg_contact uuid NOT NULL,
+ remote_id      text NULL,
+ name           text NULL,
+ email_address  text NULL,
+ phone_number   text NULL,
+ details        text NULL,
+ created_at     timestamp NULL,
+ modified_at    timestamp NULL,
+ CONSTRAINT PK_tcg_contact PRIMARY KEY ( id_tcg_contact )
+);
+
+
+
 
 
 
@@ -201,6 +278,41 @@ CREATE INDEX FK_1_users ON users
 
 
 COMMENT ON COLUMN users.created_at IS 'DEFAULT NOW() to automatically insert a value if nothing supplied';
+
+
+
+
+
+-- ************************************** tcg_comments
+
+CREATE TABLE tcg_comments
+(
+ id_tcg_comment uuid NOT NULL,
+ remote_id      text NULL,
+ body           text NULL,
+ html_body      text NULL,
+ is_private     boolean NULL,
+ created_at     timestamp NULL,
+ modified_at    timestamp NULL,
+ id_tcg_ticket  uuid NULL,
+ id_tcg_contact uuid NULL,
+ CONSTRAINT PK_tcg_comments PRIMARY KEY ( id_tcg_comment ),
+ CONSTRAINT FK_41 FOREIGN KEY ( id_tcg_contact ) REFERENCES tcg_contacts ( id_tcg_contact ),
+ CONSTRAINT FK_40_1 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
+);
+
+CREATE INDEX FK_tcg_comment_tcg_contact ON tcg_comments
+(
+ id_tcg_contact
+);
+
+CREATE INDEX FK_tcg_comment_tcg_ticket ON tcg_comments
+(
+ id_tcg_ticket
+);
+
+COMMENT ON TABLE tcg_comments IS 'The tcg_comment object represents a comment on a ticket.';
+
 
 
 
