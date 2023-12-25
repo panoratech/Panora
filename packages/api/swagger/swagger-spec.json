@@ -12,6 +12,17 @@
         }
       }
     },
+    "/protected": {
+      "get": {
+        "operationId": "AppController_getHello2",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/auth/register": {
       "post": {
         "operationId": "signUp",
@@ -936,6 +947,9 @@
           },
           "password_hash": {
             "type": "string"
+          },
+          "id_organisation": {
+            "type": "string"
           }
         },
         "required": [
@@ -977,7 +991,8 @@
         },
         "required": [
           "projectId",
-          "userId"
+          "userId",
+          "keyName"
         ]
       },
       "WebhookDto": {

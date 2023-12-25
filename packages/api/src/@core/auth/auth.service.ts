@@ -49,6 +49,7 @@ export class AuthService {
           password_hash: hashedPassword,
           first_name: user.first_name,
           last_name: user.last_name,
+          id_organization: user.id_organisation || null,
         },
       });
       if (!res) {
@@ -124,7 +125,7 @@ export class AuthService {
   async generateApiKeyForUser(
     userId: string,
     projectId: string,
-    keyName?: string,
+    keyName: string,
   ): Promise<{ api_key: string }> {
     try {
       const foundProject = await this.prisma.projects.findUnique({
@@ -150,12 +151,12 @@ export class AuthService {
       // Generate a new API key (use a secure method for generation)
       const { access_token } = await this.generateApiKey(projectId, userId);
       // Store the API key in the database associated with the user
-      const hashed_token = this.hashApiKey(access_token);
+      //const hashed_token = this.hashApiKey(access_token);
       const new_api_key = await this.prisma.api_keys.create({
         data: {
           id_api_key: uuidv4(),
-          api_key_hash: hashed_token,
-          //name: keyName,
+          api_key_hash: access_token,
+          name: keyName,
           id_project: projectId as string,
           id_user: userId as string,
         },
@@ -177,10 +178,10 @@ export class AuthService {
         secret: process.env.JWT_SECRET,
       });
 
-      const hashed_api_key = this.hashApiKey(apiKey);
+      //const hashed_api_key = this.hashApiKey(apiKey);
       const saved_api_key = await this.prisma.api_keys.findUnique({
         where: {
-          api_key_hash: hashed_api_key,
+          api_key_hash: apiKey,
         },
       });
       if (!saved_api_key) {

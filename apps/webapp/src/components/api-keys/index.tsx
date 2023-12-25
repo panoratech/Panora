@@ -38,20 +38,18 @@ export default function ApiKeysPage() {
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    console.log("ddd")
     e.preventDefault(); // Prevent default form submission
-    //console.log("submitting with project "+ selectedProject.id_project);
     mutate({ 
       userId: profile!.id_user,
-      projectId: idProject
-      //keyName: keyName
+      projectId: idProject,
+      keyName: keyName
     });
   };
 
   const tsApiKeys = apiKeys?.map((key) => ({
-    name: key.id_api_key,// key.name
-    token: key.api_key_hash, // or any other property that corresponds to 'token'
-    created: new Date().toISOString() // or any other property that corresponds to 'created'
+    name: key.name || "",
+    token: key.api_key_hash,
+    created: new Date().toISOString()
   }))
 
   return (
@@ -93,7 +91,6 @@ export default function ApiKeysPage() {
             </DialogContent>
           </Dialog>
         </div>
-        {/*isLoading && <DataTableLoading data={[]} columns={columns}/>*/}
         {tsApiKeys && <DataTable data={tsApiKeys} columns={columns} />}
       </div>
     </div>
