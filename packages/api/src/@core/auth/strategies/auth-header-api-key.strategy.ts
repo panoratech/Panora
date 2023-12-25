@@ -10,7 +10,7 @@ export class ApiKeyStrategy extends PassportStrategy(
 ) {
   constructor(private authService: AuthService) {
     super(
-      { header: 'Authorization', prefix: '' },
+      { header: 'Authorization', prefix: 'Bearer ' },
       true,
       async (apikey: string, done, req) => {
         try {

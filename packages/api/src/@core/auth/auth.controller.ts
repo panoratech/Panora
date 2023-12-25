@@ -6,6 +6,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiKeyDto } from './dto/api-key.dto';
 import { LoginDto } from './dto/login.dto';
+import { ApiKeyAuthGuard } from './guards/api-key.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -42,6 +43,7 @@ export class AuthController {
 
   @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
   @ApiResponse({ status: 200 })
+  @UseGuards(ApiKeyAuthGuard)
   @Get('api-keys')
   async apiKeys() {
     return this.authService.getApiKeys();

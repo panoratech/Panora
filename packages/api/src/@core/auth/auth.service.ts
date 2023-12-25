@@ -66,11 +66,12 @@ export class AuthService {
       const foundUser = await this.prisma.users.findUnique({
         where: { id_user: user.id_user },
       });
-      //TODO: if not founder
+      if (!foundUser) {
+        throw new UnauthorizedException('user not found inside login function');
+      }
       if (
         foundUser &&
-        user.password_hash == foundUser.password_hash
-        //TODO tmp:(await bcrypt.compare(user.password_hash, foundUser.password_hash))
+        (await bcrypt.compare(user.password_hash, foundUser.password_hash))
       ) {
         const { password_hash, ...result } = user;
 
@@ -99,33 +100,6 @@ export class AuthService {
     return crypto.createHash('sha256').update(apiKey).digest('hex');
   }
 
-  /*hashApiKey(apiKey: string): string {
-    return crypto.createHash('sha256').update(apiKey).digest('hex');
-  }
-
-  async generateApiKey1(projectId: number): Promise<string> {
-    const api_key = 'PROD_' + crypto.randomUUID();
-
-    // Store the API key in the database associated with the user
-    const new_api_key = await this.prisma.api_keys.create({
-      data: {
-        api_key_hash: this.hashApiKey(api_key),
-        id_project: projectId,
-      },
-    });
-    return api_key;
-  }
-
-  async validateApiKey1(apiKey: string): Promise<boolean> {
-    const hash = this.hashApiKey(apiKey);
-    const api_key = await this.prisma.api_keys.findUnique({
-      where: {
-        api_key_hash: hash,
-      },
-    });
-    return Boolean(api_key);
-  }*/
-
   //must be called only if user is logged in
   async generateApiKey(
     projectId: number | string,
@@ -153,18 +127,26 @@ export class AuthService {
     keyName?: string,
   ): Promise<{ api_key: string }> {
     try {
-      //TODO: CHECK IF PROJECT_ID IS EXISTENT
-      //fetch user_id
+      const foundProject = await this.prisma.projects.findUnique({
+        where: { id_project: projectId },
+      });
+      if (!foundProject) {
+        throw new UnauthorizedException(
+          'project not found inside api key function generation',
+        );
+      }
       const foundUser = await this.prisma.users.findUnique({
-        where: { id_user: userId as string },
+        where: { id_user: userId },
       });
       if (!foundUser) {
         throw new UnauthorizedException(
           'user not found inside api key function generation',
         );
       }
-      //TODO: check if user is indeed inside the project
 
+      if (foundProject.id_organization !== foundUser.id_organization) {
+        throw new Error('User is not inside the project');
+      }
       // Generate a new API key (use a secure method for generation)
       const { access_token } = await this.generateApiKey(projectId, userId);
       // Store the API key in the database associated with the user
