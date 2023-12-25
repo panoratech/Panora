@@ -2,7 +2,7 @@ INSERT INTO organizations (id_organization, name, stripe_customer_id) VALUES
 ('55222419-795d-4183-8478-361626363e58', 'Acme Inc', 'cust_stripe_acme_56604f75-7bf8-4541-9ab4-5928aade4bb8' );
 
 INSERT INTO users (id_user, email, password_hash, first_name, last_name, id_organization) VALUES
-('0ce39030-2901-4c56-8db0-5e326182ec6b', 'audrey@aubry.io', 'password_hashed_here', 'Audrey', 'Aubry', 
+('0ce39030-2901-4c56-8db0-5e326182ec6b', 'audrey@aubry.io', 'pwd_audrey123', 'Audrey', 'Aubry', 
 (SELECT id_organization FROM organizations WHERE name = 'Acme Inc'));
 
 DO $$

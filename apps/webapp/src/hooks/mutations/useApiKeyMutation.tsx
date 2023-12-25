@@ -13,7 +13,7 @@ const useApiKeyMutation = () => {
         // Fetch the token
         const loginResponse = await fetch(`${config.API_URL}/auth/login`, {
             method: 'POST',
-            body: JSON.stringify({ id_user: data.userId.trim(), password_hash: 'password_hashed_her' }),
+            body: JSON.stringify({ id_user: data.userId.trim(), password_hash: 'pwd_audrey123' }),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -22,7 +22,7 @@ const useApiKeyMutation = () => {
         if (!loginResponse.ok) {
             throw new Error('Failed to login');
         }
-        const {access_token} = await loginResponse.json();
+        const { access_token } = await loginResponse.json();
         //console.log("token is "+ access_token)
 
         const response = await fetch(`${config.API_URL}/auth/generate-apikey`, {
