@@ -140,7 +140,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
   return (
     <Tabs defaultValue="define" className="w-[400px] mt-5">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="define">Define Panora Custom Fields</TabsTrigger>
+        <TabsTrigger value="define">Define Field</TabsTrigger>
         <TabsTrigger value="map">Map Fields</TabsTrigger>
       </TabsList>
       <TabsContent value="define">

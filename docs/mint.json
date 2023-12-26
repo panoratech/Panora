@@ -12,11 +12,11 @@
     }
   },
   "modeToggle": {
-    "default": "light",
+    "default": "dark",
     "isHidden": true
   },
   "logo": {
-    "dark": "/logo/logo-panora-white.png",
+    "dark": "/logo/logo-panora-white-hq.png",
     "light": "/logo/logo-panora-white.png"
   },
   "favicon": "logo/favicon.png",
@@ -31,8 +31,12 @@
   },
   "topbarLinks": [
     {
-      "name": "Join Community",
-      "url": "https://discord.gg/G7fr4HNyTb"
+      "name": "Home",
+      "url": "https://panora.dev"
+    },
+    {
+      "name": "Blog",
+      "url": "https://panora.dev/blog"
     }
   ],
   "topbarCtaButton": {
