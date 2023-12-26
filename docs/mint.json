@@ -13,7 +13,7 @@
   },
   "modeToggle": {
     "default": "dark",
-    "isHidden": true
+    "isHidden": false
   },
   "logo": {
     "dark": "/logo/logo-panora-white-hq.png",
@@ -91,7 +91,11 @@
       "group": "Documentation",
       "pages": [
         "welcome",
-        "quick-start"
+        "quick-start",
+        {
+          "group": "Tutorials",
+          "pages": [ "crm/tutorials/create-contacts" ]
+        }
       ]
     },
     {
