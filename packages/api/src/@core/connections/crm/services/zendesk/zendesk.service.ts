@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskOAuthResponse } from '../../types';
+import { CallbackParams, ICrmConnectionService, RefreshParams, ZendeskOAuthResponse } from '../../types';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,7 +9,7 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
-export class ZendeskConnectionService {
+export class ZendeskConnectionService implements ICrmConnectionService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -18,12 +18,11 @@ export class ZendeskConnectionService {
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
   }
-  async handleZendeskCallback(
-    linkedUserId: string,
-    projectId: string,
-    code: string,
+  async handleCallback(
+    opts: CallbackParams
   ) {
     try {
+      const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -104,11 +103,12 @@ export class ZendeskConnectionService {
       handleServiceError(error, this.logger, 'zendesk', Action.oauthCallback);
     }
   }
-  async handleZendeskTokenRefresh(connectionId: string, refresh_token: string) {
+  async handleTokenRefresh(opts: RefreshParams) {
     try {
+      const {connectionId, refreshToken} = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refresh_token),
+        refresh_token: this.cryptoService.decrypt(refreshToken),
       });
       const res = await axios.post(
         'https://api.getbase.com/oauth2/token',

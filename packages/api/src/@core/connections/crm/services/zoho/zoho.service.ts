@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZohoOAuthResponse } from '../../types';
+import { CallbackParams, ICrmConnectionService, RefreshParams, ZohoOAuthResponse } from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import { Action, NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
@@ -16,7 +16,7 @@ const ZOHOLocations = {
   jp: 'https://accounts.zoho.jp',
 };
 @Injectable()
-export class ZohoConnectionService {
+export class ZohoConnectionService implements ICrmConnectionService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -25,13 +25,14 @@ export class ZohoConnectionService {
   ) {
     this.logger.setContext(ZohoConnectionService.name);
   }
-  async handleZohoCallback(
-    linkedUserId: string,
-    projectId: string,
-    code: string,
-    zohoLocation: string,
+  async handleCallback(
+    opts: CallbackParams
   ) {
     try {
+      const { linkedUserId, projectId, code, location } = opts;
+      if (!location) {
+        throw new NotFoundError(`no zoho location, found ${location}`);
+      }
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -50,7 +51,7 @@ export class ZohoConnectionService {
         code: code,
       });
       //no refresh token
-      const domain = ZOHOLocations[zohoLocation];
+      const domain = ZOHOLocations[location];
       const res = await axios.post(
         `${domain}/oauth/v2/token`,
         formData.toString(),
@@ -113,23 +114,20 @@ export class ZohoConnectionService {
       handleServiceError(error, this.logger, 'zoho', Action.oauthCallback);
     }
   }
-  async handleZohoTokenRefresh(
-    connectionId: string,
-    refresh_token: string,
-    domain: string,
-  ) {
+  async handleTokenRefresh(opts: RefreshParams) {
     try {
+      const {connectionId, refreshToken, account_url} = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         client_id: this.env.getZohoSecret().CLIENT_ID,
         client_secret: this.env.getZohoSecret().CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
-        refresh_token: this.cryptoService.decrypt(refresh_token),
+        refresh_token: this.cryptoService.decrypt(refreshToken),
       });
 
       const res = await axios.post(
-        `${domain}/oauth/v2/token`,
+        `${account_url}/oauth/v2/token`,
         formData.toString(),
         {
           headers: {

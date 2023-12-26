@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import { HubspotOAuthResponse } from '../../types';
+import { CallbackParams, HubspotOAuthResponse, ICrmConnectionService, RefreshParams } from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,7 +9,7 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
-export class HubspotConnectionService {
+export class HubspotConnectionService implements ICrmConnectionService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -19,12 +19,11 @@ export class HubspotConnectionService {
     this.logger.setContext(HubspotConnectionService.name);
   }
 
-  async handleHubspotCallback(
-    linkedUserId: string,
-    projectId: string,
-    code: string,
+  async handleCallback(
+    opts: CallbackParams
   ) {
     try {
+      const { linkedUserId, projectId, code } = opts;
       this.logger.log(
         'linkeduserid is ' + linkedUserId + ' inside callback hubspot',
       );
@@ -103,15 +102,16 @@ export class HubspotConnectionService {
     }
   }
 
-  async handleHubspotTokenRefresh(connectionId: string, refresh_token: string) {
+  async handleTokenRefresh(opts: RefreshParams) {
     try {
+      const {connectionId, refreshToken} = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`; //tocheck
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         client_id: this.env.getHubspotAuth().CLIENT_ID,
         client_secret: this.env.getHubspotAuth().CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
-        refresh_token: this.cryptoService.decrypt(refresh_token),
+        refresh_token: this.cryptoService.decrypt(refreshToken),
       });
       const res = await axios.post(
         'https://api.hubapi.com/oauth/v1/token',

@@ -10,6 +10,7 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
+import { CallbackParams, ICrmConnectionService, RefreshParams } from '../types';
 
 @Injectable()
 export class CrmConnectionsService {
@@ -25,6 +26,15 @@ export class CrmConnectionsService {
   ) {
     this.logger.setContext(CrmConnectionsService.name);
   }
+
+  private serviceMapping: { [key: string]: ICrmConnectionService } = {
+    hubspot: this.hubspotConnectionService,
+    zoho: this.zohoConnectionService,
+    zendesk: this.zendeskConnectionService,
+    //'freshsales': this.freshsalesConnectionService,
+    pipedrive: this.pipedriveConnectionService,
+  };
+
   //STEP 1:[FRONTEND STEP]
   //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click
   // on it to grant access => they grant US the access and then when confirmed
@@ -47,7 +57,6 @@ export class CrmConnectionsService {
     zohoLocation?: string,
   ) {
     try {
-      let data: Connection;
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
@@ -61,57 +70,23 @@ export class CrmConnectionsService {
           id_linked_user: linkedUserId,
         },
       });
-      switch (providerName.toLowerCase()) {
-        case 'hubspot':
-          if (!code) {
-            throw new NotFoundError(`no hubspot code found, found ${code}`);
-          }
-          data = await this.hubspotConnectionService.handleHubspotCallback(
-            linkedUserId,
-            projectId,
-            code,
-          );
-          break;
-        case 'zoho':
-          if (!code) {
-            throw new NotFoundError(`no zoho code, found ${code}`);
-          }
-          if (!zohoLocation) {
-            throw new NotFoundError(`no zoho location, found ${code}`);
-          }
-          data = await this.zohoConnectionService.handleZohoCallback(
-            linkedUserId,
-            projectId,
-            code,
-            zohoLocation,
-          );
-          break;
-        case 'pipedrive':
-          if (!code) {
-            throw new NotFoundError(`no pipedrive code found, found ${code}`);
-          }
-          data = await this.pipedriveConnectionService.handlePipedriveCallback(
-            linkedUserId,
-            projectId,
-            code,
-          );
-          break;
-        case 'freshsales':
-          //todo: LATER
-          break;
-        case 'zendesk':
-          if (!code) {
-            throw new NotFoundError(`no zendesk code found, found ${code}`);
-          }
-          data = await this.zendeskConnectionService.handleZendeskCallback(
-            linkedUserId,
-            projectId,
-            code,
-          );
-          break;
-        default:
-          throw new NotFoundError(`Unknown provider, found ${providerName}`);
+      if (!code) {
+        throw new NotFoundError(`no ${providerName} code found, found ${code}`);
       }
+
+      const serviceName = providerName.toLowerCase();
+      const service = this.serviceMapping[serviceName];
+      if (!service) {
+        throw new NotFoundError(`Unknown provider, found ${providerName}`);
+      }
+      const callbackOpts: CallbackParams = {
+        linkedUserId: linkedUserId,
+        projectId: projectId,
+        code: code,
+        location: zohoLocation || null,
+      };
+      const data: Connection = await service.handleCallback(callbackOpts);
+
       await this.prisma.events.update({
         where: {
           id_event: job_resp_create.id_event,
@@ -133,39 +108,22 @@ export class CrmConnectionsService {
 
   async handleCRMTokensRefresh(
     connectionId: string,
-    providerId: string,
+    providerName: string,
     refresh_token: string,
     account_url?: string,
   ) {
     try {
-      switch (providerId.toLowerCase()) {
-        case 'hubspot':
-          return this.hubspotConnectionService.handleHubspotTokenRefresh(
-            connectionId,
-            refresh_token,
-          );
-        case 'zoho':
-          return this.zohoConnectionService.handleZohoTokenRefresh(
-            connectionId,
-            refresh_token,
-            account_url,
-          );
-        case 'pipedrive':
-          return this.pipedriveConnectionService.handlePipedriveTokenRefresh(
-            connectionId,
-            refresh_token,
-          );
-        case 'freshsales':
-          //todo: LATER
-          break;
-        case 'zendesk':
-          return this.zendeskConnectionService.handleZendeskTokenRefresh(
-            connectionId,
-            refresh_token,
-          );
-        default:
-          throw new NotFoundError(`Unknown provider, found ${providerId}`);
+      const serviceName = providerName.toLowerCase();
+      const service = this.serviceMapping[serviceName];
+      if (!service) {
+        throw new NotFoundError(`Unknown provider, found ${providerName}`);
       }
+      const refreshOpts: RefreshParams = {
+        connectionId: connectionId,
+        refreshToken: refresh_token,
+        account_url: account_url,
+      };
+      const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
       handleServiceError(error, this.logger);
     }

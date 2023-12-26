@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import {
+  CallbackParams,
+  ICrmConnectionService,
+  RefreshParams,
+} from '../../types';
+import { connections as Connection } from '@prisma/client';
 
 @Injectable()
-export class FreshsalesConnectionService {
+export class FreshsalesConnectionService implements ICrmConnectionService {
   //TODO: later
-  async handleFreshsalesCallback() {
+  async handleCallback(opts: CallbackParams): Promise<Connection> {
     return;
   }
-  async handleFreshsalesTokenRefresh() {
+  async handleTokenRefresh(opts: RefreshParams) {
     return;
   }
 }

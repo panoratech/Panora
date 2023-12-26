@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import { PipeDriveOAuthResponse } from '../../types';
+import { CallbackParams, ICrmConnectionService, PipeDriveOAuthResponse, RefreshParams } from '../../types';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,7 +9,7 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
-export class PipedriveConnectionService {
+export class PipedriveConnectionService implements ICrmConnectionService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -19,12 +19,11 @@ export class PipedriveConnectionService {
     this.logger.setContext(PipedriveConnectionService.name);
   }
 
-  async handlePipedriveCallback(
-    linkedUserId: string,
-    projectId: string,
-    code: string,
+  async handleCallback(
+    opts: CallbackParams
   ) {
     try {
+      const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -101,17 +100,15 @@ export class PipedriveConnectionService {
     }
   }
 
-  async handlePipedriveTokenRefresh(
-    connectionId: string,
-    refresh_token: string,
-  ) {
+  async handleTokenRefresh(opts: RefreshParams) {
     try {
+      const {connectionId, refreshToken} = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
 
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         redirect_uri: REDIRECT_URI,
-        refresh_token: this.cryptoService.decrypt(refresh_token),
+        refresh_token: this.cryptoService.decrypt(refreshToken),
       });
       const res = await axios.post(
         'https://oauth.pipedrive.com/oauth/token',
