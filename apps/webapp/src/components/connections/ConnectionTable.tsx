@@ -17,12 +17,14 @@ import AddConnectionButton from "./components/AddConnectionButton";
 import config from "@/utils/config";
 import useMagicLinkStore from "@/state/magicLinkStore";
 import { LoadingSpinner } from "./components/LoadingSpinner";
+import useOrganisationStore from "@/state/organisationStore";
 
 export default function ConnectionTable() {
   const { data: connections, isLoading, error } = useConnections();
   const [isGenerated, setIsGenerated] = useState(false);
   
   const {uniqueLink} = useMagicLinkStore();
+  const {nameOrg} = useOrganisationStore();
 
   if (isLoading) {
     return <LoadingSpinner className=""/>
@@ -35,12 +37,12 @@ export default function ConnectionTable() {
   const linkedConnections = (filter: string) => connections?.filter((connection) => connection.status == filter);
 
   const ts = connections?.map((connection) => ({
-    organisation: connection.id_project, // replace with actual mapping
-    app: connection.provider_slug, // replace with actual mapping
-    category: connection.token_type, // replace with actual mapping
+    organisation: nameOrg, 
+    app: connection.provider_slug,
+    category: connection.token_type, 
     status: connection.status,
-    linkedUser: connection.id_linked_user, // replace with actual mapping
-    date: new Date().toISOString(), // replace with actual mapping
+    linkedUser: connection.alias, 
+    date: new Date().toISOString(), 
   }))
 
 

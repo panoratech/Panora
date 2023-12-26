@@ -49,7 +49,7 @@ export const columns: ColumnDef<Connection>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Organisation" />
     ),
-    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{truncateMiddle(row.getValue("organisation"), 10)}</Badge></div>,
+    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{row.getValue("organisation") as string}</Badge></div>,
     enableSorting: false,
     enableHiding: false,
   },
