@@ -1,4 +1,4 @@
-import { Email, Phone } from '@contact/types';
+import { Email, Phone } from '@crm/contact/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export function normalizeEmailsAndNumbers(

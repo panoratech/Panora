@@ -19,7 +19,6 @@ export class TasksService implements OnModuleInit {
 
   @Cron(CronExpression.EVERY_HOUR)
   async handleCron() {
-    this.logger.log('decrypting ??????');
     // refresh all tokens that expire in less than 10 hours
     const tenHoursFromNow = new Date();
     tenHoursFromNow.setHours(tenHoursFromNow.getHours() + 10);

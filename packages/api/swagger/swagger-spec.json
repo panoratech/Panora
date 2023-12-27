@@ -677,25 +677,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/ContactResponse"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -748,26 +730,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/ContactResponse"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+          "201": {
+            "description": ""
           }
         },
         "tags": [
@@ -824,25 +788,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/ContactResponse"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -895,30 +841,218 @@
           }
         },
         "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/contact"
+        ]
+      }
+    },
+    "/ticketing/ticket": {
+      "get": {
+        "operationId": "getTickets",
+        "summary": "List a batch of Tickets",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/ContactResponse"
-                        }
-                      }
-                    }
-                  ]
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/ticket"
+        ]
+      },
+      "post": {
+        "operationId": "addTicket",
+        "summary": "Create a Ticket",
+        "description": "Create a ticket in any supported Ticketing software",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "query",
+            "description": "The integration ID",
+            "example": "6aa2acf3-c244-4f85-848b-13a57e7abf55",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "description": "The linked user ID",
+            "example": "b008e199-eda9-4629-bd41-a01b6195864a",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedTicketInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/ticket"
+        ]
+      },
+      "patch": {
+        "operationId": "updateTicket",
+        "summary": "Update a Ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/ticket"
+        ]
+      }
+    },
+    "/ticketing/ticket/{id}": {
+      "get": {
+        "operationId": "getTicket",
+        "summary": "Retrieve a Ticket",
+        "description": "Retrieve a ticket from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the `ticket` you want to retrive.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/ticket"
+        ]
+      }
+    },
+    "/ticketing/ticket/batch": {
+      "post": {
+        "operationId": "addTickets",
+        "summary": "Add a batch of Tickets",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedTicketInput"
                 }
               }
             }
           }
         },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
         "tags": [
-          "crm/contact"
+          "ticketing/ticket"
         ]
       }
     }
@@ -1185,42 +1319,6 @@
           "data"
         ]
       },
-      "ApiResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "error": {
-            "type": "string"
-          },
-          "statusCode": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "statusCode"
-        ]
-      },
-      "ContactResponse": {
-        "type": "object",
-        "properties": {
-          "contacts": {
-            "type": "array",
-            "items": {
-              "type": "array"
-            }
-          },
-          "remote_data": {
-            "type": "object",
-            "properties": {}
-          }
-        },
-        "required": [
-          "contacts",
-          "remote_data"
-        ]
-      },
       "Email": {
         "type": "object",
         "properties": {
@@ -1297,6 +1395,10 @@
           "phone_numbers",
           "field_mappings"
         ]
+      },
+      "UnifiedTicketInput": {
+        "type": "object",
+        "properties": {}
       }
     }
   }

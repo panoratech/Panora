@@ -44,12 +44,28 @@ export class EnvironmentService {
       CLIENT_SECRET: this.configService.get<string>('ZOHO_CLIENT_SECRET'),
     };
   }
-  getZendeskSecret(): OAuth {
+  getZendeskSellSecret(): OAuth {
     return {
-      CLIENT_ID: this.configService.get<string>('ZENDESK_CLIENT_ID'),
-      CLIENT_SECRET: this.configService.get<string>('ZENDESK_CLIENT_SECRET'),
+      CLIENT_ID: this.configService.get<string>('ZENDESK_SELL_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>(
+        'ZENDESK_SELL_CLIENT_SECRET',
+      ),
     };
   }
+
+  getZendeskTicketingSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('ZENDESK_TICKETING_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>(
+        'ZENDESK_TICKETING_CLIENT_SECRET',
+      ),
+    };
+  }
+
+  getZendeskTicketingSubdomain(): string {
+    return this.configService.get<string>('ZENDESK_TICKETING_SUBDOMAIN');
+  }
+
   getFreshsalesSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('FRESHSALES_CLIENT_ID'),

@@ -54,6 +54,15 @@ export class EnvVars {
   ZENDESK_CLIENT_SECRET: string;
 
   @IsString()
+  ZENDESK_TICKETING_SUBDOMAIN: string;
+
+  @IsString()
+  ZENDESK_TICKETING_CLIENT_ID: string;
+
+  @IsString()
+  ZENDESK_TICKETING_CLIENT_SECRET: string;
+
+  @IsString()
   OAUTH_REDIRECT_BASE: string;
 
   @IsString()

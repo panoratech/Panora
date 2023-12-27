@@ -1,10 +1,7 @@
 import { CrmObject, unificationMapping } from '@crm/@types';
-import {
-  CrmObjectInput,
-  Unified,
-  UnifyReturnType,
-  UnifySourceType,
-} from '@@core/utils/types';
+import { Unified, UnifyReturnType } from '@@core/utils/types';
+import { CrmObjectInput } from '@@core/utils/types/original.input';
+import { UnifySourceType } from '@@core/utils/types/unfify.output';
 
 export async function desunifyCrm<T extends Unified>({
   sourceObject,

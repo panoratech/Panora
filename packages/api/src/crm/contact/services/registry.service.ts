@@ -4,7 +4,7 @@ import { HubspotService } from './hubspot';
 import { ZohoService } from './zoho';
 import { ZendeskService } from './zendesk';
 import { PipedriveService } from './pipedrive';
-import { IContactService } from '@contact/types';
+import { IContactService } from '@crm/contact/types';
 
 @Injectable()
 export class ServiceRegistry {

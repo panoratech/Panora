@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { ContactResponse, ApiCustomResponse } from './types';
+
 @ApiTags('crm/contact')
 @Controller('crm/contact')
 export class ContactController {
@@ -40,7 +40,7 @@ export class ContactController {
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
   })
-  @ApiCustomResponse(ContactResponse)
+  //@ApiCustomResponse(ContactResponse)
   @Get()
   getContacts(
     @Query('integrationId') integrationId: string,
@@ -71,7 +71,7 @@ export class ContactController {
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
   })
-  @ApiCustomResponse(ContactResponse)
+  //@ApiCustomResponse(ContactResponse)
   @Get(':id')
   getContact(
     @Param('id') id: string,
@@ -106,7 +106,7 @@ export class ContactController {
     description: 'Set to true to include data from the original CRM software.',
   })
   @ApiBody({ type: UnifiedContactInput })
-  @ApiCustomResponse(ContactResponse)
+  //@ApiCustomResponse(ContactResponse)
   @Post()
   addContact(
     @Body() unfiedContactData: UnifiedContactInput,
@@ -135,7 +135,7 @@ export class ContactController {
     description: 'Set to true to include data from the original CRM software.',
   })
   @ApiBody({ type: UnifiedContactInput, isArray: true })
-  @ApiCustomResponse(ContactResponse)
+  //@ApiCustomResponse(ContactResponse)
   @Post('batch')
   addContacts(
     @Body() unfiedContactData: UnifiedContactInput[],

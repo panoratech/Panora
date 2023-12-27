@@ -2,8 +2,8 @@ import { PipedriveContactInput, PipedriveContactOutput } from 'src/crm/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-} from '@contact/types/model.unified';
-import { IContactMapper } from '@contact/types';
+} from '@crm/contact/types/model.unified';
+import { IContactMapper } from '@crm/contact/types';
 
 export class PipedriveContactMapper implements IContactMapper {
   desunify(

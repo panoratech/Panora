@@ -16,6 +16,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerService } from '@@core/logger/logger.service';
 import { CoreModule } from '@@core/core.module';
 import { BullModule } from '@nestjs/bull';
+import { TicketingModule } from '@ticketing/ticketing.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { BullModule } from '@nestjs/bull';
     AccountingModule,
     FileStorageModule,
     CrmModule,
+    TicketingModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ...(process.env.DISTRIBUTION === 'managed'
       ? [

@@ -38,7 +38,8 @@ export interface PipeDriveOAuthResponse {
   api_domain: string;
 }
 
-export interface ZendeskOAuthResponse {
+//Sell is the Zendesk CRM name
+export interface ZendeskSellOAuthResponse {
   access_token: string;
   token_type: string;
   refresh_token: string;

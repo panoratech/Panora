@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
-import { ApiResponse, IContactService } from '@contact/types';
 import axios from 'axios';
 import {
   CrmObject,
@@ -11,6 +10,8 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { ApiResponse } from '@@core/utils/types';
+import { IContactService } from '@crm/contact/types';
 
 @Injectable()
 export class FreshSalesService implements IContactService {

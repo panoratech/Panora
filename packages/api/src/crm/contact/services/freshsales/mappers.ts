@@ -1,12 +1,12 @@
+import { IContactMapper } from '@crm/contact/types';
+import {
+  UnifiedContactInput,
+  UnifiedContactOutput,
+} from '@crm/contact/types/model.unified';
 import {
   FreshsalesContactInput,
   FreshsalesContactOutput,
 } from 'src/crm/@types';
-import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
-} from '@contact/types/model.unified';
-import { IContactMapper } from '@contact/types';
 
 //TODO
 export class FreshsalesContactMapper implements IContactMapper {

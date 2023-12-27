@@ -1,8 +1,8 @@
-import { FreshsalesContactMapper } from '@contact/services/freshsales/mappers';
-import { HubspotContactMapper } from '@contact/services/hubspot/mappers';
-import { PipedriveContactMapper } from '@contact/services/pipedrive/mappers';
-import { ZendeskContactMapper } from '@contact/services/zendesk/mappers';
-import { ZohoContactMapper } from '@contact/services/zoho/mappers';
+import { FreshsalesContactMapper } from '@crm/contact/services/freshsales/mappers';
+import { HubspotContactMapper } from '@crm/contact/services/hubspot/mappers';
+import { PipedriveContactMapper } from '@crm/contact/services/pipedrive/mappers';
+import { ZendeskContactMapper } from '@crm/contact/services/zendesk/mappers';
+import { ZohoContactMapper } from '@crm/contact/services/zoho/mappers';
 
 const hubspotContactMapper = new HubspotContactMapper();
 const zendeskContactMapper = new ZendeskContactMapper();

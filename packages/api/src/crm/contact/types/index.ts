@@ -1,13 +1,8 @@
-import {
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiProperty,
-  ApiPropertyOptional,
-  getSchemaPath,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
-import { Type, applyDecorators } from '@nestjs/common';
-import { DesunifyReturnType, OriginalContactOutput } from '@@core/utils/types';
+import { ApiResponse } from '@@core/utils/types';
+import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
+import { OriginalContactOutput } from '@@core/utils/types/original.output';
 export interface IContactService {
   addContact(
     contactData: DesunifyReturnType,
@@ -36,18 +31,6 @@ export interface IContactMapper {
       remote_id: string;
     }[],
   ): UnifiedContactOutput | UnifiedContactOutput[];
-}
-
-// Export other necessary types and functions specific to contacts
-
-export class ApiResponse<T> {
-  data: T;
-  @ApiPropertyOptional()
-  message?: string;
-  @ApiPropertyOptional()
-  error?: string;
-  @ApiProperty({ type: Number })
-  statusCode: number;
 }
 
 export class Email {
@@ -89,22 +72,3 @@ export class ContactResponse {
   @ApiPropertyOptional({ type: [{}] })
   remote_data?: Record<string, any>[]; //data in original format
 }
-
-export const ApiCustomResponse = <DataDto extends Type<unknown>>(
-  dataDto: DataDto,
-) =>
-  applyDecorators(
-    ApiExtraModels(ApiResponse, dataDto),
-    ApiOkResponse({
-      schema: {
-        allOf: [
-          { $ref: getSchemaPath(ApiResponse) },
-          {
-            properties: {
-              data: { $ref: getSchemaPath(dataDto) },
-            },
-          },
-        ],
-      },
-    }),
-  );

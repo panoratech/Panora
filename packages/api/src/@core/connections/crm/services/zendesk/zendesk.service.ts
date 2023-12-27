@@ -5,8 +5,8 @@ import {
   CallbackParams,
   ICrmConnectionService,
   RefreshParams,
-  ZendeskOAuthResponse,
 } from '../../types';
+import { ZendeskSellOAuthResponse } from '../../types';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -48,14 +48,14 @@ export class ZendeskConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getZendeskSecret().CLIENT_ID}:${
-                this.env.getZendeskSecret().CLIENT_SECRET
+              `${this.env.getZendeskSellSecret().CLIENT_ID}:${
+                this.env.getZendeskSellSecret().CLIENT_SECRET
               }`,
             ).toString('base64')}`,
           },
         },
       );
-      const data: ZendeskOAuthResponse = res.data;
+      const data: ZendeskSellOAuthResponse = res.data;
       this.logger.log('OAuth credentials : zendesk ' + JSON.stringify(data));
 
       let db_res;
@@ -120,14 +120,14 @@ export class ZendeskConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getZendeskSecret().CLIENT_ID}:${
-                this.env.getZendeskSecret().CLIENT_SECRET
+              `${this.env.getZendeskSellSecret().CLIENT_ID}:${
+                this.env.getZendeskSellSecret().CLIENT_SECRET
               }`,
             ).toString('base64')}`,
           },
         },
       );
-      const data: ZendeskOAuthResponse = res.data;
+      const data: ZendeskSellOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ApiResponse, ContactResponse } from '../types';
+import { ContactResponse } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { CrmObject } from 'src/crm/@types';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -9,13 +9,14 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-} from '@contact/types/model.unified';
-import { OriginalContactOutput } from '@@core/utils/types';
+} from '@crm/contact/types/model.unified';
+import { ApiResponse } from '@@core/utils/types';
 import { handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { normalizeEmailsAndNumbers } from '@contact/utils';
+import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
 import { ServiceRegistry } from './registry.service';
+import { OriginalContactOutput } from '@@core/utils/types/original.output';
 
 @Injectable()
 export class ContactService {

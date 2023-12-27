@@ -1,11 +1,9 @@
-import { contactUnificationMapping } from '@contact/types/mappingsTypes';
-import { dealUnificationMapping } from '@deal/types/mappingsTypes';
-
+import { contactUnificationMapping } from '@crm/contact/types/mappingsTypes';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-} from '@contact/types/model.unified';
-import { UnifiedDealInput } from '@deal/dto/create-deal.dto';
+} from '@crm/contact/types/model.unified';
+import { UnifiedDealInput } from '@crm/deal/dto/create-deal.dto';
 
 export enum CrmObject {
   company = 'company',
@@ -25,8 +23,7 @@ export type UnifiedCrm =
 
 export const unificationMapping = {
   [CrmObject.contact]: contactUnificationMapping,
-  [CrmObject.deal]: dealUnificationMapping,
-  // Add other CRM object types here...
+  [CrmObject.deal]: '',
 };
 export * from '../contact/services/freshsales/types';
 export * from '../contact/services/zendesk/types';
