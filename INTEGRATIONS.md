@@ -30,7 +30,7 @@ Create a new file containing the core logic of your service.
 
 It must implement the `ICrmConnectionService` interface.
 
-```
+```ts
 export interface ICrmConnectionService {
   handleCallback(opts: CallbackParams): Promise<Connection>;
   handleTokenRefresh(opts: RefreshParams): Promise<any>;
@@ -50,7 +50,7 @@ export type RefreshParams = {
 }
 ```
 
-```
+```ts
 import { Injectable } from '@nestjs/common';
 import { CallbackParams, ICrmConnectionService, RefreshParams } from '../../types';
 
@@ -75,7 +75,7 @@ Now that you have the structure, check other 3rd parties implementations under `
 
 Add your new 3rd party service to the `serviceMapping` object.
 
-```
+```ts
 private serviceMapping: { [key: string]: ICrmConnectionService } = {
     "hubspot": this.hubspotConnectionService,
     "zoho": this.zohoConnectionService,
@@ -89,13 +89,13 @@ private serviceMapping: { [key: string]: ICrmConnectionService } = {
 
 Don't forget to add your service you've defined at step 1 inside the constructor.
 
-```
+```ts
 constructor(private my3rdPartyConnectionService: My3rdPartyConnectionService)
 ```
 
 Finally, don't forget to add your newly created service inside CrmConnectionModule under `/@core/connections/crm/crm-connection.module.ts`
 
-```
+```ts
 @Module({
   imports: [WebhookModule],
   providers: [
@@ -135,7 +135,7 @@ You'll now create 3 files.
 
 It must implement the `IContactService` interface.
 
-```
+```ts
 export interface IContactService {
   addContact(
     contactData: DesunifyReturnType,
@@ -148,7 +148,7 @@ export interface IContactService {
 }
 ```
 
-```
+```ts
 @Injectable()
 export class My3rdPartyService implements IContactService {
   constructor(
@@ -179,7 +179,7 @@ This is where `types.ts` comes in:
 
 Go to the 3rd party API and insert the correct types asked by the API.
 
-```
+```ts
 export interface 3rdPartyContact {
     //INSERT THE CORRECT TYPE HERE
 }
@@ -191,7 +191,7 @@ Last but not least, inside `mappers.ts` you have to build the mappings between o
 
 It must implement `IContactMapper` interface.
 
-```
+```ts
 export interface IContactMapper {
   desunify(
     source: UnifiedContactInput,
@@ -211,7 +211,7 @@ export interface IContactMapper {
 }
 ```
 
-```
+```ts
 export class My3rdPartyMapper implements IContactMapper {
   desunify(
     source: UnifiedContactInput,
@@ -239,7 +239,7 @@ Check other implementations under `/crm/contact/services` to fill the core funct
 
 Add your new 3rd party service to the `contactUnificationMapping` object.
 
-```
+```ts
 // ADD YOUR IMPORT HERE
 import { My3rdPartyContactMapper } from '@contact/services/my3rdParty/mappers';
 
@@ -277,7 +277,7 @@ export const contactUnificationMapping = {
 
 Don't forget to add your service you've defined at step 1 inside the Registry under `/crm/contact/services/registry.service.ts`.
 
-```
+```ts
 @Injectable()
 export class ServiceRegistry {
   private serviceMap: Map<string, IContactService>;
@@ -300,6 +300,7 @@ export class ServiceRegistry {
     // ADD YOUR 3RD PARTY HERE
     this.serviceMap.set('my3rdParty', my3rdParty);
   }
+}
 ```
 
 ### Congrats Hero ! 🦸‍♀️
