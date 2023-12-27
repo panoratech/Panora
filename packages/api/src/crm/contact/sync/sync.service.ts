@@ -5,11 +5,6 @@ import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { OriginalContactOutput } from '@@core/utils/types';
 import { unify } from '@@core/utils/unification/unify';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { FreshSalesService } from '@contact/services/freshsales';
-import { HubspotService } from '@contact/services/hubspot';
-import { PipedriveService } from '@contact/services/pipedrive';
-import { ZendeskService } from '@contact/services/zendesk';
-import { ZohoService } from '@contact/services/zoho';
 import { ApiResponse } from '@contact/types';
 import { UnifiedContactOutput } from '@contact/types/model.unified';
 import { normalizeEmailsAndNumbers } from '@contact/utils';
@@ -18,19 +13,16 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 import { crm_contacts as CrmContact } from '@prisma/client';
+import { ServiceRegistry } from '@contact/services/registry.service';
 
 @Injectable()
 export class SyncContactsService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
-    private freshsales: FreshSalesService,
-    private hubspot: HubspotService,
-    private zoho: ZohoService,
-    private zendesk: ZendeskService,
-    private pipedrive: PipedriveService,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
+    private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(SyncContactsService.name);
   }
@@ -311,34 +303,9 @@ export class SyncContactsService implements OnModuleInit {
         (mapping) => mapping.remote_id,
       );
 
-      let resp: ApiResponse<OriginalContactOutput[]>;
-      switch (integrationId) {
-        case 'freshsales':
-          resp = await this.freshsales.syncContacts(linkedUserId);
-          break;
-
-        case 'zoho':
-          resp = await this.zoho.syncContacts(linkedUserId);
-          break;
-
-        case 'zendesk':
-          resp = await this.zendesk.syncContacts(linkedUserId);
-          break;
-
-        case 'hubspot':
-          resp = await this.hubspot.syncContacts(
-            linkedUserId,
-            remoteProperties,
-          );
-          break;
-
-        case 'pipedrive':
-          resp = await this.pipedrive.syncContacts(linkedUserId);
-          break;
-
-        default:
-          break;
-      }
+      const service = this.serviceRegistry.getService(integrationId);
+      const resp: ApiResponse<OriginalContactOutput[]> =
+        await service.syncContacts(linkedUserId, remoteProperties);
 
       const sourceObject: OriginalContactOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));

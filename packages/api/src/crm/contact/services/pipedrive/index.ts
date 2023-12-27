@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from '@contact/types';
+import { ApiResponse, IContactService } from '@contact/types';
 import {
   CrmObject,
   PipedriveContactInput,
@@ -12,7 +12,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
-export class PipedriveService {
+export class PipedriveService implements IContactService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,

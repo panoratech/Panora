@@ -5,8 +5,40 @@ import {
   ApiPropertyOptional,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { UnifiedContactOutput } from './model.unified';
+import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
 import { Type, applyDecorators } from '@nestjs/common';
+import { DesunifyReturnType, OriginalContactOutput } from '@@core/utils/types';
+export interface IContactService {
+  addContact(
+    contactData: DesunifyReturnType,
+    linkedUserId: string,
+  ): Promise<ApiResponse<OriginalContactOutput>>;
+
+  syncContacts(
+    linkedUserId: string,
+    custom_properties?: string[],
+  ): Promise<ApiResponse<OriginalContactOutput[]>>;
+}
+
+export interface IContactMapper {
+  desunify(
+    source: UnifiedContactInput,
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+  ): DesunifyReturnType;
+
+  unify(
+    source: OriginalContactOutput | OriginalContactOutput[],
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+  ): UnifiedContactOutput | UnifiedContactOutput[];
+}
+
+// Export other necessary types and functions specific to contacts
 
 export class ApiResponse<T> {
   data: T;

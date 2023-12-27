@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from '@contact/types';
+import { ApiResponse, IContactService } from '@contact/types';
 import {
   CrmObject,
   ZendeskContactInput,
@@ -11,7 +11,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 @Injectable()
-export class ZendeskService {
+export class ZendeskService implements IContactService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,

@@ -1,23 +1,6 @@
-import {
-  convertUnifiedContactToFreshsales,
-  convertFreshsalesContactToUnified,
-} from '@contact/services/freshsales/mappers';
-import {
-  convertUnifiedContactToHubspot,
-  convertHubspotContactToUnified,
-} from '@contact/services/hubspot/mappers';
-import {
-  convertUnifiedContactToPipedrive,
-  convertPipedriveContactToUnified,
-} from '@contact/services/pipedrive/mappers';
-import {
-  convertUnifiedContactToZendesk,
-  convertZendeskContactToUnified,
-} from '@contact/services/zendesk/mappers';
-import {
-  convertUnifiedContactToZoho,
-  convertZohoContactToUnified,
-} from '@contact/services/zoho/mappers';
+import { contactUnificationMapping } from '@contact/types/mappingsTypes';
+import { dealUnificationMapping } from '@deal/types/mappingsTypes';
+
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
@@ -40,41 +23,11 @@ export type UnifiedCrm =
   | UnifiedContactOutput
   | UnifiedDealInput;
 
-export const providerUnificationMapping = {
-  hubspot: {
-    [CrmObject.contact]: {
-      unify: convertHubspotContactToUnified,
-      desunify: convertUnifiedContactToHubspot,
-    },
-    //[CrmObject.deal]: ,
-    //[CrmObject.company]:,
-  },
-  pipedrive: {
-    [CrmObject.contact]: {
-      unify: convertPipedriveContactToUnified,
-      desunify: convertUnifiedContactToPipedrive,
-    },
-  },
-  zoho: {
-    [CrmObject.contact]: {
-      unify: convertZohoContactToUnified,
-      desunify: convertUnifiedContactToZoho,
-    },
-  },
-  zendesk: {
-    [CrmObject.contact]: {
-      unify: convertZendeskContactToUnified,
-      desunify: convertUnifiedContactToZendesk,
-    },
-  },
-  freshsales: {
-    [CrmObject.contact]: {
-      unify: convertFreshsalesContactToUnified,
-      desunify: convertUnifiedContactToFreshsales,
-    },
-  },
+export const unificationMapping = {
+  [CrmObject.contact]: contactUnificationMapping,
+  [CrmObject.deal]: dealUnificationMapping,
+  // Add other CRM object types here...
 };
-
 export * from '../contact/services/freshsales/types';
 export * from '../contact/services/zendesk/types';
 export * from '../contact/services/hubspot/types';

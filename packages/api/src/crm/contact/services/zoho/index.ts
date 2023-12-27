@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from '@contact/types';
+import { ApiResponse, IContactService } from '@contact/types';
 import { CrmObject, ZohoContactInput, ZohoContactOutput } from 'src/crm/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -8,7 +8,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
-export class ZohoService {
+export class ZohoService implements IContactService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,

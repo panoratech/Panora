@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from '@contact/types';
+import { ApiResponse, IContactService } from '@contact/types';
 import {
   CrmObject,
   HubspotContactInput,
@@ -13,7 +13,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()
-export class HubspotService {
+export class HubspotService implements IContactService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,

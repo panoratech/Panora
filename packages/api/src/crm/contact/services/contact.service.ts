@@ -1,20 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { FreshSalesService } from './freshsales';
-import { HubspotService } from './hubspot';
-import { ZohoService } from './zoho';
-import { ZendeskService } from './zendesk';
-import { PipedriveService } from './pipedrive';
 import { ApiResponse, ContactResponse } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
-import {
-  CrmObject,
-  FreshsalesContactInput,
-  HubspotContactInput,
-  PipedriveContactInput,
-  ZendeskContactInput,
-  ZohoContactInput,
-} from 'src/crm/@types';
+import { CrmObject } from 'src/crm/@types';
 import { LoggerService } from '@@core/logger/logger.service';
 import { unify } from '@@core/utils/unification/unify';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,19 +15,16 @@ import { handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { normalizeEmailsAndNumbers } from '@contact/utils';
+import { ServiceRegistry } from './registry.service';
 
 @Injectable()
 export class ContactService {
   constructor(
     private prisma: PrismaService,
-    private freshsales: FreshSalesService,
-    private hubspot: HubspotService,
-    private zoho: ZohoService,
-    private zendesk: ZendeskService,
-    private pipedrive: PipedriveService,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
+    private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(ContactService.name);
   }
@@ -117,7 +102,6 @@ export class ContactService {
           linkedUserId,
           'contact',
         );
-      let resp: ApiResponse<OriginalContactOutput>;
       //desunify the data according to the target obj wanted
       const desunifiedObject = await desunify<UnifiedContactInput>({
         sourceObject: unifiedContactData,
@@ -128,45 +112,12 @@ export class ContactService {
           : [],
       });
 
-      switch (integrationId) {
-        case 'freshsales':
-          resp = await this.freshsales.addContact(
-            desunifiedObject as FreshsalesContactInput,
-            linkedUserId,
-          );
-          break;
+      const service = this.serviceRegistry.getService(integrationId);
+      const resp: ApiResponse<OriginalContactOutput> = await service.addContact(
+        desunifiedObject,
+        linkedUserId,
+      );
 
-        case 'zoho':
-          resp = await this.zoho.addContact(
-            desunifiedObject as ZohoContactInput,
-            linkedUserId,
-          );
-          break;
-
-        case 'zendesk':
-          resp = await this.zendesk.addContact(
-            desunifiedObject as ZendeskContactInput,
-            linkedUserId,
-          );
-          break;
-
-        case 'hubspot':
-          resp = await this.hubspot.addContact(
-            desunifiedObject as HubspotContactInput,
-            linkedUserId,
-          );
-          break;
-
-        case 'pipedrive':
-          resp = await this.pipedrive.addContact(
-            desunifiedObject as PipedriveContactInput,
-            linkedUserId,
-          );
-          break;
-
-        default:
-          break;
-      }
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalContactOutput[]>({
         sourceObject: [resp.data],
