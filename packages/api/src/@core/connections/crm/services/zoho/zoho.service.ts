@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { CallbackParams, ICrmConnectionService, RefreshParams, ZohoOAuthResponse } from '../../types';
+import {
+  CallbackParams,
+  ICrmConnectionService,
+  RefreshParams,
+  ZohoOAuthResponse,
+} from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
 import { Action, NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,9 +30,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(ZohoConnectionService.name);
   }
-  async handleCallback(
-    opts: CallbackParams
-  ) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code, location } = opts;
       if (!location) {
@@ -108,7 +111,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
           },
         });
       }
-      
+
       return db_res;
     } catch (error) {
       handleServiceError(error, this.logger, 'zoho', Action.oauthCallback);
@@ -116,7 +119,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
   }
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const {connectionId, refreshToken, account_url} = opts;
+      const { connectionId, refreshToken, account_url } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',

@@ -1,6 +1,6 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { CrmConnectionsService } from './crm/services/crm-connection.service';
+import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';

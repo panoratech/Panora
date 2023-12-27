@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import { CallbackParams, ICrmConnectionService, PipeDriveOAuthResponse, RefreshParams } from '../../types';
+import {
+  CallbackParams,
+  ICrmConnectionService,
+  PipeDriveOAuthResponse,
+  RefreshParams,
+} from '../../types';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,9 +24,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
     this.logger.setContext(PipedriveConnectionService.name);
   }
 
-  async handleCallback(
-    opts: CallbackParams
-  ) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -102,7 +105,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const {connectionId, refreshToken} = opts;
+      const { connectionId, refreshToken } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
 
       const formData = new URLSearchParams({

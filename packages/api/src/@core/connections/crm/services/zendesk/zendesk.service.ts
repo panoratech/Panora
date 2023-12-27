@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { CallbackParams, ICrmConnectionService, RefreshParams, ZendeskOAuthResponse } from '../../types';
+import {
+  CallbackParams,
+  ICrmConnectionService,
+  RefreshParams,
+  ZendeskOAuthResponse,
+} from '../../types';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,9 +23,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
   }
-  async handleCallback(
-    opts: CallbackParams
-  ) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -105,7 +108,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
   }
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const {connectionId, refreshToken} = opts;
+      const { connectionId, refreshToken } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),

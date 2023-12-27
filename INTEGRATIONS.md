@@ -18,7 +18,7 @@ First choose wisely which vertical the 3rd party belongs to among these:
 
 For the sake of the guide, now on we'll consider adding a 3rd party belonging to the `crm` vertical.
 
-## 1. Add a new service for your 3rd Party
+## 1. Add a new connection service for your 3rd Party
 
 Create a new folder with the name of your 3rd party. Let's call it *my3rdParty*.
 
@@ -69,31 +69,40 @@ export class My3rdPartyConnectionService implements ICrmConnectionService {
 
 Now that you have the structure, check other 3rd parties implementations under `/@core/connections/crm/services` to build your functions.
 
-## 2. Add a new connection to handle oAuth granting access
+## 2. Enable your connection service to handle oAuth granting access
 
-`cd @core/connections/crm/services/crm-connection.service.ts`
+`cd @core/connections/crm/services/registry.service.ts`
 
-Add your new 3rd party service to the `serviceMapping` object.
-
-```ts
-private serviceMapping: { [key: string]: ICrmConnectionService } = {
-    "hubspot": this.hubspotConnectionService,
-    "zoho": this.zohoConnectionService,
-    "zendesk": this.zendeskConnectionService,
-    "freshsales": this.freshsalesConnectionService,
-    "pipedrive": this.pipedriveConnectionService,
-    // INSERT BELOW YOUR 3rd PARTY HERE
-    "my_3rd_party": this.my3rdPartyConnectionService
-};
-```
-
-Don't forget to add your service you've defined at step 1 inside the constructor.
+Add your new 3rd party service to the `registry` service.
 
 ```ts
-constructor(private my3rdPartyConnectionService: My3rdPartyConnectionService)
+//ADD YOUR IMPORT 
+import { My3rdPartyConnectionService } from './my3rdParty/my3rdParty.service';
+
+@Injectable()
+export class ServiceConnectionRegistry {
+  private serviceMap: Map<string, ICrmConnectionService>;
+
+  constructor(
+    freshsales: FreshsalesConnectionService,
+    hubspot: HubspotConnectionService,
+    zoho: ZohoConnectionService,
+    zendesk: ZendeskConnectionService,
+    pipedrive: PipedriveConnectionService,
+  ) {
+    this.serviceMap = new Map<string, ICrmConnectionService>();
+    this.serviceMap.set('freshsales', freshsales);
+    this.serviceMap.set('hubspot', hubspot);
+    this.serviceMap.set('zoho', zoho);
+    this.serviceMap.set('zendesk', zendesk);
+    this.serviceMap.set('pipedrive', pipedrive);
+    //ADD YOUR SERVICE
+    this.serviceMap.set('my3rdParty', my3rdParty);
+  }
+}
 ```
 
-Finally, don't forget to add your newly created service inside CrmConnectionModule under `/@core/connections/crm/crm-connection.module.ts`
+Don't forget to ddd your service to the `CrmConnectionModule` module !
 
 ```ts
 @Module({
@@ -101,20 +110,22 @@ Finally, don't forget to add your newly created service inside CrmConnectionModu
   providers: [
     CrmConnectionsService,
     PrismaService,
-    FreshsalesConnectionService,
-    HubspotConnectionService,
-    PipedriveConnectionService,
-    ZendeskConnectionService,
-    ZohoConnectionService,
+    ServiceConnectionRegistry,
     LoggerService,
     WebhookService,
     EnvironmentService,
     EncryptionService,
-    //INSERT BELOW YOUR SERVICE
+    FreshsalesConnectionService,
+    HubspotConnectionService,
+    ZohoConnectionService,
+    ZendeskConnectionService,
+    PipedriveConnectionService,
+    //INSERT YOUR SERVICE HERE
     My3rdPartyConnectionService
   ],
   exports: [CrmConnectionsService],
 })
+export class CrmConnectionModule {}
 ```
 
 # You want to map a common object to your new 3rd Party ? 👩‍🎤
@@ -301,6 +312,39 @@ export class ServiceRegistry {
     this.serviceMap.set('my3rdParty', my3rdParty);
   }
 }
+```
+
+Finally, add it under the `ContactModule` module !
+
+```ts
+@Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'webhookDelivery',
+    }),
+  ],
+  controllers: [ContactController],
+  providers: [
+    ContactService,
+    PrismaService,
+    FreshSalesService,
+    ZendeskService,
+    ZohoService,
+    PipedriveService,
+    HubspotService,
+    LoggerService,
+    FieldMappingService,
+    SyncContactsService,
+    WebhookService,
+    EncryptionService,
+    ServiceRegistry,
+    //INSERT YOUR SERVICE HERE
+    My3rdPartyService
+  ],
+  exports: [SyncContactsService],
+})
+export class ContactModule {}
+
 ```
 
 ### Congrats Hero ! 🦸‍♀️

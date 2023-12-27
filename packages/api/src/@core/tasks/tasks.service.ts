@@ -2,7 +2,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
-import { CrmConnectionsService } from '../connections/crm/services/crm-connection.service';
+import { CrmConnectionsService } from '../connections/crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
 
 @Injectable()

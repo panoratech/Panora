@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import { CallbackParams, HubspotOAuthResponse, ICrmConnectionService, RefreshParams } from '../../types';
+import {
+  CallbackParams,
+  HubspotOAuthResponse,
+  ICrmConnectionService,
+  RefreshParams,
+} from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,9 +24,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
     this.logger.setContext(HubspotConnectionService.name);
   }
 
-  async handleCallback(
-    opts: CallbackParams
-  ) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       this.logger.log(
@@ -104,7 +107,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const {connectionId, refreshToken} = opts;
+      const { connectionId, refreshToken } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`; //tocheck
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',

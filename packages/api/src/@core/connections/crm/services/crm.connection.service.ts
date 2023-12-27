@@ -1,39 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { ZohoConnectionService } from './zoho/zoho.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-import { HubspotConnectionService } from './hubspot/hubspot.service';
-import { PipedriveConnectionService } from './pipedrive/pipedrive.service';
-import { ZendeskConnectionService } from './zendesk/zendesk.service';
-import { FreshsalesConnectionService } from './freshsales/freshsales.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { CallbackParams, ICrmConnectionService, RefreshParams } from '../types';
+import { CallbackParams, RefreshParams } from '../types';
+import { ServiceConnectionRegistry } from './registry.service';
 
 @Injectable()
 export class CrmConnectionsService {
   constructor(
-    private zohoConnectionService: ZohoConnectionService,
-    private hubspotConnectionService: HubspotConnectionService,
-    private pipedriveConnectionService: PipedriveConnectionService,
-    private zendeskConnectionService: ZendeskConnectionService,
-    private freshsalesConnectionService: FreshsalesConnectionService,
+    private serviceRegistry: ServiceConnectionRegistry,
     private webhook: WebhookService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
     this.logger.setContext(CrmConnectionsService.name);
   }
-
-  private serviceMapping: { [key: string]: ICrmConnectionService } = {
-    hubspot: this.hubspotConnectionService,
-    zoho: this.zohoConnectionService,
-    zendesk: this.zendeskConnectionService,
-    //'freshsales': this.freshsalesConnectionService,
-    pipedrive: this.pipedriveConnectionService,
-  };
 
   //STEP 1:[FRONTEND STEP]
   //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click
@@ -75,7 +59,8 @@ export class CrmConnectionsService {
       }
 
       const serviceName = providerName.toLowerCase();
-      const service = this.serviceMapping[serviceName];
+      const service = this.serviceRegistry.getService(serviceName);
+
       if (!service) {
         throw new NotFoundError(`Unknown provider, found ${providerName}`);
       }
@@ -114,7 +99,7 @@ export class CrmConnectionsService {
   ) {
     try {
       const serviceName = providerName.toLowerCase();
-      const service = this.serviceMapping[serviceName];
+      const service = this.serviceRegistry.getService(serviceName);
       if (!service) {
         throw new NotFoundError(`Unknown provider, found ${providerName}`);
       }
