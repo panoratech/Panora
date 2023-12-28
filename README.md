@@ -1,29 +1,22 @@
 <div align="center">
+  <h1> Welcome on Panora </h1>
+</div>
 
-<h1> 🌼 Welcome on Panora </h1>
+![Hero](https://panora.dev/wp-content/uploads/2023/12/github-banner.png)
 
-  <h3>Panora puts your customer facing integration on autopilot</h3>
-  <h3>Ship dozens of integrations without losing sleep</h3>
-  
-</br>
-  <img alt="Discord" src="https://img.shields.io/discord/1038131193067077642"></img>
-  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/panoratech/panora?logo=github"> </img>
-  <img alt="GitHub License" src="https://img.shields.io/github/license/panoratech/Panora"></img>
-  <img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/panoradotdev"></img>
-  <img src="https://snyk.io/test/github/panoratech/Panora/badge.svg" alt="Known Vulnerabilities"></img>
+<div align="center">
+  </br>
+    <img alt="Discord" src="https://img.shields.io/discord/1038131193067077642"></img>
+    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/panoratech/panora?logo=github"> </img>
+    <img alt="GitHub License" src="https://img.shields.io/github/license/panoratech/Panora"></img>
+    <img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/panoradotdev"></img>
+    <img src="https://snyk.io/test/github/panoratech/Panora/badge.svg" alt="Known Vulnerabilities"></img>
   </br>
   
   <p>
-  <a href="https://panora.dev">Website 🌎</a> - <a href="https://docs.panora.dev">Documentation 📖</a> - <a href="https://status.panora.dev">Status 🟢</a>
+    <a href="https://panora.dev">Website 🌎</a> - <a href="https://docs.panora.dev">Documentation 📖</a> - <a href="https://status.panora.dev">Status 🟢</a>
   </p>
-
 </div>
-
-<div align="center">
-
-</div>
-
-![Group 1_updated](https://github.com/panoratech/Panora/assets/39710677/c9a35848-7b48-43af-bd6c-6a5257e19bea)
 
 ### Have you met anyone who loves developing integrations? *No.* That’s why we designed an easy developer experience that you’ll enjoy
 
