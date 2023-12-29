@@ -858,7 +858,7 @@
           {
             "name": "integrationId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -866,13 +866,13 @@
           {
             "name": "linkedUserId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "remote_data",
+            "name": "remoteData",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -898,9 +898,8 @@
           {
             "name": "integrationId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "description": "The integration ID",
-            "example": "6aa2acf3-c244-4f85-848b-13a57e7abf55",
             "schema": {
               "type": "string"
             }
@@ -908,15 +907,14 @@
           {
             "name": "linkedUserId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "description": "The linked user ID",
-            "example": "b008e199-eda9-4629-bd41-a01b6195864a",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "remote_data",
+            "name": "remoteData",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -983,7 +981,7 @@
             }
           },
           {
-            "name": "remote_data",
+            "name": "remoteData",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1010,7 +1008,7 @@
           {
             "name": "integrationId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -1018,13 +1016,13 @@
           {
             "name": "linkedUserId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "remote_data",
+            "name": "remoteData",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1053,6 +1051,210 @@
         },
         "tags": [
           "ticketing/ticket"
+        ]
+      }
+    },
+    "/ticketing/comment": {
+      "get": {
+        "operationId": "getComments",
+        "summary": "List a batch of Comments",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/comment"
+        ]
+      },
+      "post": {
+        "operationId": "addComment",
+        "summary": "Create a Comment",
+        "description": "Create a ticket in any supported Ticketing software",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "description": "The integration ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "description": "The linked user ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedCommentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/comment"
+        ]
+      },
+      "patch": {
+        "operationId": "updateComment",
+        "summary": "Update a Comment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/comment"
+        ]
+      }
+    },
+    "/ticketing/comment/{id}": {
+      "get": {
+        "operationId": "getComment",
+        "summary": "Retrieve a Comment",
+        "description": "Retrieve a ticket from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the `ticket` you want to retrive.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/comment"
+        ]
+      }
+    },
+    "/ticketing/comment/batch": {
+      "post": {
+        "operationId": "addComments",
+        "summary": "Add a batch of Comments",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedCommentInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/comment"
         ]
       }
     }
@@ -1397,6 +1599,18 @@
         ]
       },
       "UnifiedTicketInput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings"
+        ]
+      },
+      "UnifiedCommentInput": {
         "type": "object",
         "properties": {}
       }
