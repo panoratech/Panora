@@ -13,7 +13,7 @@ import { SyncContactsService } from './sync/sync.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceRegistry } from '../@utils/@registry/registry.service';
+import { ContactServiceRegistry } from './services/registry.service';
 
 @Module({
   imports: [
@@ -35,7 +35,7 @@ import { ServiceRegistry } from '../@utils/@registry/registry.service';
     SyncContactsService,
     WebhookService,
     EncryptionService,
-    ServiceRegistry,
+    ContactServiceRegistry,
   ],
   exports: [SyncContactsService],
 })

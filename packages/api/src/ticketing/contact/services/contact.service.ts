@@ -13,8 +13,8 @@ import { ContactResponse } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '@ticketing/@utils/@registry/registry.service';
 import { unify } from '@@core/utils/unification/unify';
+import { ContactServiceRegistry } from './registry.service';
 
 @Injectable()
 export class ContactService {
@@ -23,7 +23,7 @@ export class ContactService {
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
-    private serviceRegistry: ServiceRegistry,
+    private serviceRegistry: ContactServiceRegistry,
   ) {
     this.logger.setContext(ContactService.name);
   }

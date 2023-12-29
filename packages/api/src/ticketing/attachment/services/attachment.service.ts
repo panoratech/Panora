@@ -13,8 +13,8 @@ import { AttachmentResponse } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '@ticketing/@utils/@registry/registry.service';
 import { unify } from '@@core/utils/unification/unify';
+import { AttachmentServiceRegistry } from './registry.service';
 
 @Injectable()
 export class AttachmentService {
@@ -23,7 +23,7 @@ export class AttachmentService {
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
-    private serviceRegistry: ServiceRegistry,
+    private serviceRegistry: AttachmentServiceRegistry,
   ) {
     this.logger.setContext(AttachmentService.name);
   }

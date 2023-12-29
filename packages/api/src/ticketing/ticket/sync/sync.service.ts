@@ -6,7 +6,6 @@ import { Cron } from '@nestjs/schedule';
 import { ApiResponse, TICKETING_PROVIDERS } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '@ticketing/@utils/@registry/registry.service';
 import { unify } from '@@core/utils/unification/unify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { UnifiedTicketOutput } from '../types/model.unified';
@@ -15,6 +14,7 @@ import { tcg_tickets as TicketingTicket } from '@prisma/client';
 import { normalizeComments } from '../utils';
 import { ITicketService } from '../types';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
+import { TicketServiceRegistry } from '../services/registry.service';
 
 @Injectable()
 export class SyncTicketsService implements OnModuleInit {
@@ -23,7 +23,7 @@ export class SyncTicketsService implements OnModuleInit {
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
-    private serviceRegistry: ServiceRegistry,
+    private serviceRegistry: TicketServiceRegistry,
   ) {
     this.logger.setContext(SyncTicketsService.name);
   }

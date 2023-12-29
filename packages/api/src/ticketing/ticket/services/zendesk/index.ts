@@ -12,7 +12,7 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 
 @Injectable()
-export class ZendeskService implements ITicketService {
+export class ZendeskTicketService implements ITicketService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -20,7 +20,7 @@ export class ZendeskService implements ITicketService {
     private env: EnvironmentService,
   ) {
     this.logger.setContext(
-      TicketingObject.ticket.toUpperCase() + ':' + ZendeskService.name,
+      TicketingObject.ticket.toUpperCase() + ':' + ZendeskTicketService.name,
     );
   }
   async addTicket(

@@ -13,7 +13,7 @@ import { ZendeskCommentOutput } from './types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 
 @Injectable()
-export class ZendeskService implements ICommentService {
+export class ZendeskCommentService implements ICommentService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -21,7 +21,7 @@ export class ZendeskService implements ICommentService {
     private env: EnvironmentService,
   ) {
     this.logger.setContext(
-      TicketingObject.comment.toUpperCase() + ':' + ZendeskService.name,
+      TicketingObject.comment.toUpperCase() + ':' + ZendeskCommentService.name,
     );
   }
   async addComment(
