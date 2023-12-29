@@ -1,0 +1,1 @@
+// Content for mappingsTypes.ts

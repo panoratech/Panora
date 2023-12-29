@@ -4,7 +4,7 @@ import {
   CrmObject,
   PipedriveContactInput,
   PipedriveContactOutput,
-} from 'src/crm/@types';
+} from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';

@@ -4,7 +4,7 @@ import {
   CrmObject,
   ZendeskContactInput,
   ZendeskContactOutput,
-} from 'src/crm/@types';
+} from '@crm/@utils/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';

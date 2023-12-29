@@ -5,7 +5,7 @@ import {
   CrmObject,
   FreshsalesContactInput,
   FreshsalesContactOutput,
-} from 'src/crm/@types';
+} from '@crm/@utils/@types';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';

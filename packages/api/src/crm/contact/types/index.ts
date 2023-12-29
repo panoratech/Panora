@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
 import { ApiResponse } from '@@core/utils/types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { OriginalContactOutput } from '@@core/utils/types/original.output';
+import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 export interface IContactService {
   addContact(
     contactData: DesunifyReturnType,

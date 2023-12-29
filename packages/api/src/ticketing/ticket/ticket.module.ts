@@ -6,8 +6,10 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskService } from './services/zendesk';
+import { ZendeskTicketService } from './services/zendesk';
 import { BullModule } from '@nestjs/bull';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { TicketServiceRegistry } from './services/registry.service';
 
 @Module({
   imports: [
@@ -19,11 +21,13 @@ import { BullModule } from '@nestjs/bull';
   providers: [
     TicketService,
     PrismaService,
-    ZendeskService,
+    ZendeskTicketService,
     LoggerService,
     SyncTicketsService,
     WebhookService,
     EncryptionService,
+    FieldMappingService,
+    TicketServiceRegistry,
   ],
   exports: [SyncTicketsService],
 })

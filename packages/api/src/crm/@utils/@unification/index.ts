@@ -1,7 +1,7 @@
-import { CrmObject, unificationMapping } from '@crm/@types';
+import { CrmObject, unificationMapping } from '@crm/@utils/@types';
 import { Unified, UnifyReturnType } from '@@core/utils/types';
-import { CrmObjectInput } from '@@core/utils/types/original.input';
 import { UnifySourceType } from '@@core/utils/types/unfify.output';
+import { CrmObjectInput } from '@@core/utils/types/original/original.crm';
 
 export async function desunifyCrm<T extends Unified>({
   sourceObject,
@@ -19,11 +19,8 @@ export async function desunifyCrm<T extends Unified>({
 }): Promise<CrmObjectInput> {
   const mapping = unificationMapping[targetType_];
 
-  if (mapping && mapping[providerName] && mapping[providerName][targetType_]) {
-    return mapping[providerName][targetType_]['desunify'](
-      sourceObject,
-      customFieldMappings,
-    );
+  if (mapping && mapping[providerName]) {
+    return mapping[providerName]['desunify'](sourceObject, customFieldMappings);
   }
 
   throw new Error(
@@ -47,11 +44,8 @@ export async function unifyCrm<T extends UnifySourceType | UnifySourceType[]>({
 }): Promise<UnifyReturnType> {
   const mapping = unificationMapping[targetType_];
 
-  if (mapping && mapping[providerName] && mapping[providerName][targetType_]) {
-    return mapping[providerName][targetType_]['unify'](
-      sourceObject,
-      customFieldMappings,
-    );
+  if (mapping && mapping[providerName]) {
+    return mapping[providerName]['unify'](sourceObject, customFieldMappings);
   }
 
   throw new Error(

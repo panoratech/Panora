@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { customPropertiesUrls, getProviderVertical } from '../utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { CrmObject } from '@crm/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Injectable()

@@ -1,13 +1,13 @@
-import { CrmObject } from '@crm/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import {
   ProviderVertical,
   TargetObject,
   UnifyReturnType,
   getProviderVertical,
 } from '../types';
-import { unifyCrm } from '@crm/@unification';
-import { TicketingObject } from '@ticketing/@types';
-import { unifyTicketing } from '@ticketing/@unification';
+import { unifyCrm } from '@crm/@utils/@unification';
+import { TicketingObject } from '@ticketing/@utils/@types';
+import { unifyTicketing } from '@ticketing/@utils/@unification';
 import { UnifySourceType } from '../types/unfify.output';
 
 /* to fetch data

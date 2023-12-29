@@ -5,7 +5,7 @@ import {
   HubspotContactInput,
   HubspotContactOutput,
   commonHubspotProperties,
-} from 'src/crm/@types';
+} from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -65,7 +65,6 @@ export class HubspotService implements IContactService {
         ActionType.POST,
       );
     }
-    return;
   }
 
   async syncContacts(

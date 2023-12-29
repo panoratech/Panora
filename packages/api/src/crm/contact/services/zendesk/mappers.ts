@@ -1,4 +1,4 @@
-import { ZendeskContactInput, ZendeskContactOutput } from 'src/crm/@types';
+import { ZendeskContactInput, ZendeskContactOutput } from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
@@ -49,16 +49,16 @@ export class ZendeskContactMapper implements IContactMapper {
     }[],
   ): UnifiedContactOutput | UnifiedContactOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleZendeskContactToUnified(source, customFieldMappings);
+      return this.mapSingleContactToUnified(source, customFieldMappings);
     }
 
     // Handling array of HubspotContactOutput
     return source.map((contact) =>
-      this.mapSingleZendeskContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(contact, customFieldMappings),
     );
   }
 
-  mapSingleZendeskContactToUnified(
+  private mapSingleContactToUnified(
     contact: ZendeskContactOutput,
     customFieldMappings?: {
       slug: string;

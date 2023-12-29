@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { IContactService } from '@crm/contact/types';
-import { CrmObject, ZohoContactInput, ZohoContactOutput } from 'src/crm/@types';
+import {
+  CrmObject,
+  ZohoContactInput,
+  ZohoContactOutput,
+} from '@crm/@utils/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';

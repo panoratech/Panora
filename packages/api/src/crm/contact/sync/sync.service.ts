@@ -7,13 +7,14 @@ import { unify } from '@@core/utils/unification/unify';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '@crm/contact/types/model.unified';
 import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
-import { CrmObject } from '@crm/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 import { crm_contacts as CrmContact } from '@prisma/client';
-import { ServiceRegistry } from '@crm/contact/services/registry.service';
-import { OriginalContactOutput } from '@@core/utils/types/original.output';
+import { IContactService } from '../types';
+import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
+import { ContactServiceRegistry } from '../services/registry.service';
 
 @Injectable()
 export class SyncContactsService implements OnModuleInit {
@@ -22,7 +23,7 @@ export class SyncContactsService implements OnModuleInit {
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
-    private serviceRegistry: ServiceRegistry,
+    private serviceRegistry: ContactServiceRegistry,
   ) {
     this.logger.setContext(SyncContactsService.name);
   }
@@ -104,8 +105,8 @@ export class SyncContactsService implements OnModuleInit {
 
         const existingContact = await this.prisma.crm_contacts.findFirst({
           where: {
-            origin_id: originId,
-            origin: originSource,
+            remote_id: originId,
+            remote_platform: originSource,
             events: {
               id_linked_user: linkedUserId,
             },
@@ -164,8 +165,8 @@ export class SyncContactsService implements OnModuleInit {
             created_at: new Date(),
             modified_at: new Date(),
             id_event: jobId,
-            origin_id: originId,
-            origin: originSource,
+            remote_id: originId,
+            remote_platform: originSource,
           };
 
           if (normalizedEmails) {
@@ -295,7 +296,8 @@ export class SyncContactsService implements OnModuleInit {
         (mapping) => mapping.remote_id,
       );
 
-      const service = this.serviceRegistry.getService(integrationId);
+      const service: IContactService =
+        this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalContactOutput[]> =
         await service.syncContacts(linkedUserId, remoteProperties);
 
@@ -309,6 +311,7 @@ export class SyncContactsService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedContactOutput[];
 
+      //TODO
       const contactIds = sourceObject.map((contact) =>
         'id' in contact
           ? String(contact.id)

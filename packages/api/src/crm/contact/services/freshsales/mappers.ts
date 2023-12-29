@@ -6,7 +6,7 @@ import {
 import {
   FreshsalesContactInput,
   FreshsalesContactOutput,
-} from 'src/crm/@types';
+} from '@crm/@utils/@types';
 
 //TODO
 export class FreshsalesContactMapper implements IContactMapper {
@@ -36,7 +36,7 @@ export class FreshsalesContactMapper implements IContactMapper {
     );
   }
 
-  mapSingleFreshsalesContactToUnified(
+  private mapSingleFreshsalesContactToUnified(
     contact: FreshsalesContactOutput,
   ): UnifiedContactOutput {
     // Map email and phone details

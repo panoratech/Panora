@@ -1,4 +1,4 @@
-import { HubspotContactInput, HubspotContactOutput } from '@crm/@types';
+import { HubspotContactInput, HubspotContactOutput } from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
@@ -40,28 +40,23 @@ export class HubspotContactMapper implements IContactMapper {
     return result;
   }
 
-  unify<T extends UnifySourceType | UnifySourceType[]>(
-    source: T,
+  unify(
+    source: HubspotContactOutput | HubspotContactOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedContactOutput | UnifiedContactOutput[] {
-    const source_ = source as HubspotContactOutput | HubspotContactOutput[];
-
-    if (!Array.isArray(source_)) {
-      return this.mapSingleHubspotContactToUnified(
-        source_,
-        customFieldMappings,
-      );
+    if (!Array.isArray(source)) {
+      return this.mapSingleContactToUnified(source, customFieldMappings);
     }
     // Handling array of HubspotContactOutput
-    return source_.map((contact) =>
-      this.mapSingleHubspotContactToUnified(contact, customFieldMappings),
+    return source.map((contact) =>
+      this.mapSingleContactToUnified(contact, customFieldMappings),
     );
   }
 
-  mapSingleHubspotContactToUnified(
+  private mapSingleContactToUnified(
     contact: HubspotContactOutput,
     customFieldMappings?: {
       slug: string;

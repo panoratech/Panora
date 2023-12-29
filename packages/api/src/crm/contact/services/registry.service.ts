@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { FreshSalesService } from './freshsales';
-import { HubspotService } from './hubspot';
-import { ZohoService } from './zoho';
-import { ZendeskService } from './zendesk';
-import { PipedriveService } from './pipedrive';
-import { IContactService } from '@crm/contact/types';
+import { FreshSalesService } from '@crm/contact/services/freshsales';
+import { HubspotService } from '@crm/contact/services/hubspot';
+import { ZohoService } from '@crm/contact/services/zoho';
+import { ZendeskService } from '@crm/contact/services/zendesk';
+import { PipedriveService } from '@crm/contact/services/pipedrive';
+import { IContactService } from '../types';
 
 @Injectable()
-export class ServiceRegistry {
+export class ContactServiceRegistry {
   private serviceMap: Map<string, IContactService>;
 
   constructor(
@@ -17,6 +17,7 @@ export class ServiceRegistry {
     zendesk: ZendeskService,
     pipedrive: PipedriveService,
   ) {
+    //TODO
     this.serviceMap = new Map<string, IContactService>();
     this.serviceMap.set('freshsales', freshsales);
     this.serviceMap.set('hubspot', hubspot);

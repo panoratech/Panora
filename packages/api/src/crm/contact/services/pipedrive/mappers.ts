@@ -1,4 +1,7 @@
-import { PipedriveContactInput, PipedriveContactOutput } from 'src/crm/@types';
+import {
+  PipedriveContactInput,
+  PipedriveContactOutput,
+} from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
@@ -52,19 +55,16 @@ export class PipedriveContactMapper implements IContactMapper {
     }[],
   ): UnifiedContactOutput | UnifiedContactOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSinglePipedriveContactToUnified(
-        source,
-        customFieldMappings,
-      );
+      return this.mapSingleContactToUnified(source, customFieldMappings);
     }
 
     // Handling array of HubspotContactOutput
     return source.map((contact) =>
-      this.mapSinglePipedriveContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(contact, customFieldMappings),
     );
   }
 
-  mapSinglePipedriveContactToUnified(
+  private mapSingleContactToUnified(
     contact: PipedriveContactOutput,
     customFieldMappings?: {
       slug: string;
