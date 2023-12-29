@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest-large
+    runs-on: macos-latest
     env:
       ENVIRONMENT: SELF_HOSTED
 
