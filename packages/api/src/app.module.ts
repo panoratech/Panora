@@ -12,11 +12,12 @@ import { AtsModule } from './ats/ats.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { FileStorageModule } from './file-storage/file-storage.module';
 import { SentryInterceptor, SentryModule } from '@ntegral/nestjs-sentry';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerService } from '@@core/logger/logger.service';
 import { CoreModule } from '@@core/core.module';
 import { BullModule } from '@nestjs/bull';
 import { TicketingModule } from '@ticketing/ticketing.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -28,6 +29,12 @@ import { TicketingModule } from '@ticketing/ticketing.module';
     FileStorageModule,
     CrmModule,
     TicketingModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: parseInt(process.env.THROTTLER_TTL),
+        limit: parseInt(process.env.THROTTLER_LIMIT)
+      },
+    ]),
     ConfigModule.forRoot({ isGlobal: true }),
     ...(process.env.DISTRIBUTION === 'managed'
       ? [
@@ -66,6 +73,10 @@ import { TicketingModule } from '@ticketing/ticketing.module';
     AppService,
     TasksService,
     LoggerService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       provide: APP_INTERCEPTOR,
       useFactory: () =>
