@@ -1,3 +1,4 @@
+import { IContactService } from '@crm/contact/types';
 import { contactUnificationMapping } from '@crm/contact/types/mappingsTypes';
 import {
   UnifiedContactInput,
@@ -25,6 +26,9 @@ export const unificationMapping = {
   [CrmObject.contact]: contactUnificationMapping,
   [CrmObject.deal]: '',
 };
+
+export type ICrmService = IContactService;
+
 export * from '../../contact/services/freshsales/types';
 export * from '../../contact/services/zendesk/types';
 export * from '../../contact/services/hubspot/types';

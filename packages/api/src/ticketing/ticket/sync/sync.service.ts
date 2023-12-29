@@ -14,6 +14,7 @@ import { UnifiedTicketOutput } from '../types/model.unified';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { tcg_tickets as TicketingTicket } from '@prisma/client';
 import { normalizeComments } from '../utils';
+import { ITicketService } from '../types';
 
 @Injectable()
 export class SyncTicketsService implements OnModuleInit {
@@ -36,7 +37,7 @@ export class SyncTicketsService implements OnModuleInit {
   }
 
   @Cron('*/20 * * * *')
-  //function used by sync worker which populate our crm_contacts table
+  //function used by sync worker which populate our tcg_tickets table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
   async syncTickets() {
     try {
@@ -104,7 +105,7 @@ export class SyncTicketsService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'crm.ticket.pulled',
+          type: 'ticketing.ticket.pulled',
           method: 'PULL',
           url: '/pull',
           provider: integrationId,
@@ -120,13 +121,14 @@ export class SyncTicketsService implements OnModuleInit {
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
           linkedUserId,
-          'contact',
+          'ticket',
         );
       const remoteProperties: string[] = customFieldMappings.map(
         (mapping) => mapping.remote_id,
       );
 
-      const service = this.serviceRegistry.getService(integrationId);
+      const service: ITicketService =
+        this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalTicketOutput[]> =
         await service.syncTickets(linkedUserId, remoteProperties);
 
@@ -164,7 +166,7 @@ export class SyncTicketsService implements OnModuleInit {
       });
       await this.webhook.handleWebhook(
         tickets_data,
-        'crm.ticket.pulled',
+        'ticketing.ticket.pulled',
         id_project,
         job_id,
       );

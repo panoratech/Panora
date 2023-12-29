@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ContactResponse } from '../types';
+import { ContactResponse, IContactService } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { CrmObject } from '@crm/@utils/@types';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -113,7 +113,8 @@ export class ContactService {
           : [],
       });
 
-      const service = this.serviceRegistry.getService(integrationId);
+      const service: IContactService =
+        this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalContactOutput> = await service.addContact(
         desunifiedObject,
         linkedUserId,

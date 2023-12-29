@@ -4,11 +4,11 @@ import { HubspotService } from '@crm/contact/services/hubspot';
 import { ZohoService } from '@crm/contact/services/zoho';
 import { ZendeskService } from '@crm/contact/services/zendesk';
 import { PipedriveService } from '@crm/contact/services/pipedrive';
-import { IContactService } from '@crm/contact/types';
+import { ICrmService } from '../@types';
 
 @Injectable()
 export class ServiceRegistry {
-  private serviceMap: Map<string, IContactService>;
+  private serviceMap: Map<string, ICrmService>;
 
   constructor(
     freshsales: FreshSalesService,
@@ -17,7 +17,8 @@ export class ServiceRegistry {
     zendesk: ZendeskService,
     pipedrive: PipedriveService,
   ) {
-    this.serviceMap = new Map<string, IContactService>();
+    //TODO
+    this.serviceMap = new Map<string, ICrmService>();
     this.serviceMap.set('freshsales', freshsales);
     this.serviceMap.set('hubspot', hubspot);
     this.serviceMap.set('zoho', zoho);
@@ -25,11 +26,11 @@ export class ServiceRegistry {
     this.serviceMap.set('pipedrive', pipedrive);
   }
 
-  getService(integrationId: string): IContactService {
+  getService<T extends ICrmService>(integrationId: string): T {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
       throw new Error(`Service not found for integration ID: ${integrationId}`);
     }
-    return service;
+    return service as T;
   }
 }

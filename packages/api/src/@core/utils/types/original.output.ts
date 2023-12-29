@@ -5,7 +5,10 @@ import {
   ZendeskContactOutput,
   ZohoContactOutput,
 } from '@crm/@utils/@types';
-import { ZendeskTicketOutput } from '@ticketing/@utils/@types';
+import {
+  ZendeskTicketOutput,
+  ZendeskCommentOutput,
+} from '@ticketing/@utils/@types';
 
 /* CRM */
 
@@ -28,6 +31,10 @@ export type OriginalDealOutput = '';
 
 export type OriginalTicketOutput = ZendeskTicketOutput;
 
+/* comment */
+
+export type OriginalCommentOutput = ZendeskCommentOutput;
+
 /* Union Vertical Types */
 
 export type CrmObjectOutput =
@@ -35,7 +42,9 @@ export type CrmObjectOutput =
   | OriginalDealOutput
   | OriginalCompaniesOutput;
 
-export type TicketingObjectOutput = OriginalTicketOutput | '';
+export type TicketingObjectOutput =
+  | OriginalTicketOutput
+  | OriginalCommentOutput;
 
 export type AtsObjectOutput = '';
 

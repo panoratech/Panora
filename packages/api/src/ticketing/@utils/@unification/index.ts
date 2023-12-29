@@ -19,11 +19,8 @@ export async function desunifyTicketing<T extends Unified>({
 }): Promise<TicketingObjectInput> {
   const mapping = unificationMapping[targetType_];
 
-  if (mapping && mapping[providerName] && mapping[providerName][targetType_]) {
-    return mapping[providerName][targetType_]['desunify'](
-      sourceObject,
-      customFieldMappings,
-    );
+  if (mapping && mapping[providerName]) {
+    return mapping[providerName]['desunify'](sourceObject, customFieldMappings);
   }
 
   throw new Error(
@@ -49,11 +46,8 @@ export async function unifyTicketing<
 }): Promise<UnifyReturnType> {
   const mapping = unificationMapping[targetType_];
 
-  if (mapping && mapping[providerName] && mapping[providerName][targetType_]) {
-    return mapping[providerName][targetType_]['unify'](
-      sourceObject,
-      customFieldMappings,
-    );
+  if (mapping && mapping[providerName]) {
+    return mapping[providerName]['unify'](sourceObject, customFieldMappings);
   }
 
   throw new Error(

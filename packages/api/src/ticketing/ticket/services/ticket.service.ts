@@ -10,7 +10,7 @@ import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '../types/model.unified';
-import { TicketResponse } from '../types';
+import { ITicketService, TicketResponse } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -114,7 +114,8 @@ export class TicketService {
           : [],
       });
 
-      const service = this.serviceRegistry.getService(integrationId);
+      const service: ITicketService =
+        this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalTicketOutput> = await service.addTicket(
         desunifiedObject,
         linkedUserId,
@@ -293,7 +294,7 @@ export class TicketService {
       });
       await this.webhook.handleWebhook(
         result_ticket.data.tickets,
-        'crm.ticket.created',
+        'ticketing.ticket.created',
         linkedUser.id_project,
         job_id,
       );
@@ -401,7 +402,7 @@ export class TicketService {
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'crm.ticket.pull',
+          type: 'ticketing.ticket.pull',
           method: 'GET',
           url: '/ticketing/ticket',
           provider: integrationId,

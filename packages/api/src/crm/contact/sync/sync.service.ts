@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { crm_contacts as CrmContact } from '@prisma/client';
 import { ServiceRegistry } from '@crm/@utils/@registry/registry.service';
 import { OriginalContactOutput } from '@@core/utils/types/original.output';
+import { IContactService } from '../types';
 
 @Injectable()
 export class SyncContactsService implements OnModuleInit {
@@ -295,7 +296,8 @@ export class SyncContactsService implements OnModuleInit {
         (mapping) => mapping.remote_id,
       );
 
-      const service = this.serviceRegistry.getService(integrationId);
+      const service: IContactService =
+        this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalContactOutput[]> =
         await service.syncContacts(linkedUserId, remoteProperties);
 
