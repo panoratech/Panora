@@ -27,9 +27,7 @@ services:
       - backend
 
   api:
-    build:
-      context: ./
-      dockerfile: ./packages/api/Dockerfile
+    image: panoradotdev/backend-api:latest
     environment: 
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
         DISTRIBUTION: ${DISTRIBUTION}
@@ -45,6 +43,9 @@ services:
         ZENDESK_CLIENT_ID: ${ZENDESK_CLIENT_ID}
         ZENDESK_CLIENT_SECRET: ${ZENDESK_CLIENT_SECRET}
         OAUTH_REDIRECT_BASE: ${OAUTH_REDIRECT_BASE}
+        ZENDESK_TICKETING_SUBDOMAIN: ${ZENDESK_TICKETING_SUBDOMAIN}
+        ZENDESK_TICKETING_CLIENT_ID: ${ZENDESK_TICKETING_CLIENT_ID}
+        ZENDESK_TICKETING_CLIENT_SECRET: ${ZENDESK_TICKETING_CLIENT_SECRET}
 
 
     restart:
@@ -69,12 +70,7 @@ services:
       - backend
   
   webapp:
-    build:
-      dockerfile: ./apps/webapp/Dockerfile
-      context: ./
-      args:
-        VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
-        VITE_FRONTEND_DOMAIN: ${VITE_FRONTEND_DOMAIN}
+    image: panoradotdev/frontend-webapp:latest
     restart:
       unless-stopped
     ports:
@@ -86,13 +82,7 @@ services:
       - frontend
   
   magic-link-frontend:
-    build:
-      dockerfile: ./apps/frontend-snippet/Dockerfile
-      context: ./
-      args:
-        VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
-        VITE_ML_FRONTEND_URL: ${VITE_FRONTEND_DOMAIN}
-
+    image: panoradotdev/frontend-magic-links:latest
     restart:
       always
     ports:
