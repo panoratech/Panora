@@ -6,6 +6,7 @@ import {
   Get,
   Patch,
   Param,
+  UseGuards
 } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -17,6 +18,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('crm/contact')
 @Controller('crm/contact')
@@ -28,10 +30,11 @@ export class ContactController {
     this.logger.setContext(ContactController.name);
   }
 
+
   @ApiOperation({
     operationId: 'getContacts',
     summary: 'List a batch of CRM Contacts',
-  })
+  }) 
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({
@@ -41,6 +44,7 @@ export class ContactController {
     description: 'Set to true to include data from the original CRM software.',
   })
   //@ApiCustomResponse(ContactResponse)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   getContacts(
     @Query('integrationId') integrationId: string,
@@ -72,6 +76,7 @@ export class ContactController {
     description: 'Set to true to include data from the original CRM software.',
   })
   //@ApiCustomResponse(ContactResponse)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getContact(
     @Param('id') id: string,
@@ -107,6 +112,7 @@ export class ContactController {
   })
   @ApiBody({ type: UnifiedContactInput })
   //@ApiCustomResponse(ContactResponse)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   addContact(
     @Body() unfiedContactData: UnifiedContactInput,
@@ -136,6 +142,7 @@ export class ContactController {
   })
   @ApiBody({ type: UnifiedContactInput, isArray: true })
   //@ApiCustomResponse(ContactResponse)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
   addContacts(
     @Body() unfiedContactData: UnifiedContactInput[],
@@ -155,6 +162,7 @@ export class ContactController {
     operationId: 'updateContact',
     summary: 'Update a CRM Contact',
   })
+  @UseGuards(ApiKeyAuthGuard)
   @Patch()
   updateContact(
     @Query('id') id: string,
