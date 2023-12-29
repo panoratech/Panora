@@ -10,20 +10,21 @@ import {
   ZendeskAttachmentInput,
 } from '@ticketing/@utils/@types';
 import { IAttachmentService } from '@ticketing/attachment/types';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
-export class ZendeskAttachmentService implements IAttachmentService {
+export class ZendeskService implements IAttachmentService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      TicketingObject.attachment.toUpperCase() +
-        ':' +
-        ZendeskAttachmentService.name,
+      TicketingObject.attachment.toUpperCase() + ':' + ZendeskService.name,
     );
+    this.registry.registerService('zendesk_t', this);
   }
   addAttachment(
     attachmentData: DesunifyReturnType,

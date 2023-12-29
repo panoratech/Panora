@@ -8,18 +8,21 @@ import { OriginalContactOutput } from '@@core/utils/types/original/original.crm'
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { IContactService } from '@ticketing/contact/types';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
-export class ZendeskContactService implements IContactService {
+export class ZendeskService implements IContactService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      TicketingObject.contact.toUpperCase() + ':' + ZendeskContactService.name,
+      TicketingObject.contact.toUpperCase() + ':' + ZendeskService.name,
     );
+    this.registry.registerService('zendesk_t', this);
   }
   addContact(
     contactData: DesunifyReturnType,

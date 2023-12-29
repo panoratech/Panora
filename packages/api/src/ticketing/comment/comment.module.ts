@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { SyncCommentsService } from './sync/sync.service';
+import { SyncService } from './sync/sync.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskCommentService } from './services/zendesk';
+import { ZendeskService } from './services/zendesk';
 import { BullModule } from '@nestjs/bull';
 import { CommentController } from './comment.controller';
 import { CommentService } from './services/comment.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { CommentServiceRegistry } from './services/registry.service';
+import { ServiceRegistry } from './services/registry.service';
 
 @Module({
   imports: [
@@ -22,13 +22,14 @@ import { CommentServiceRegistry } from './services/registry.service';
     CommentService,
     PrismaService,
     LoggerService,
-    ZendeskCommentService,
-    SyncCommentsService,
+    SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
-    CommentServiceRegistry,
+    ServiceRegistry,
+    //PROVIDERS SERVICES
+    ZendeskService,
   ],
-  exports: [SyncCommentsService],
+  exports: [SyncService],
 })
 export class CommentModule {}

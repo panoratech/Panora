@@ -6,6 +6,11 @@ export type OAuth = {
   CLIENT_SECRET: string;
 };
 
+export type RateLimit = {
+  ttl: string;
+  limit: string;
+};
+
 @Injectable()
 export class EnvironmentService {
   constructor(private configService: ConfigService) {}
@@ -76,6 +81,13 @@ export class EnvironmentService {
     return {
       CLIENT_ID: this.configService.get<string>('PIPEDRIVE_CLIENT_ID'),
       CLIENT_SECRET: this.configService.get<string>('PIPEDRIVE_CLIENT_SECRET'),
+    };
+  }
+
+  getThrottleConfig(): RateLimit {
+    return {
+      ttl: this.configService.get<string>('THROTTLER_TTL'),
+      limit: this.configService.get<string>('THROTTLER_LIMIT'),
     };
   }
 }

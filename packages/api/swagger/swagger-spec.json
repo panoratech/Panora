@@ -652,7 +652,7 @@
           {
             "name": "integrationId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -660,13 +660,13 @@
           {
             "name": "linkedUserId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "remote_data",
+            "name": "remoteData",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original CRM software.",
@@ -692,9 +692,8 @@
           {
             "name": "integrationId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "description": "The integration ID",
-            "example": "6aa2acf3-c244-4f85-848b-13a57e7abf55",
             "schema": {
               "type": "string"
             }
@@ -702,15 +701,14 @@
           {
             "name": "linkedUserId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "description": "The linked user ID",
-            "example": "b008e199-eda9-4629-bd41-a01b6195864a",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "remote_data",
+            "name": "remoteData",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original CRM software.",
@@ -777,7 +775,7 @@
             }
           },
           {
-            "name": "remote_data",
+            "name": "remoteData",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original CRM software.",
@@ -804,7 +802,7 @@
           {
             "name": "integrationId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -812,13 +810,13 @@
           {
             "name": "linkedUserId",
             "required": true,
-            "in": "query",
+            "in": "header",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "remote_data",
+            "name": "remoteData",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original CRM software.",

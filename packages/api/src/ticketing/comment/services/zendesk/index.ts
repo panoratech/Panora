@@ -11,18 +11,21 @@ import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { ZendeskCommentOutput } from './types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
-export class ZendeskCommentService implements ICommentService {
+export class ZendeskService implements ICommentService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      TicketingObject.comment.toUpperCase() + ':' + ZendeskCommentService.name,
+      TicketingObject.comment.toUpperCase() + ':' + ZendeskService.name,
     );
+    this.registry.registerService('zendesk_t', this);
   }
   async addComment(
     commentData: DesunifyReturnType,

@@ -13,18 +13,18 @@ import { tcg_comments as TicketingComment } from '@prisma/client';
 import { UnifiedCommentOutput } from '../types/model.unified';
 import { ICommentService } from '../types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
-import { CommentServiceRegistry } from '../services/registry.service';
+import { ServiceRegistry } from '../services/registry.service';
 
 @Injectable()
-export class SyncCommentsService implements OnModuleInit {
+export class SyncService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
-    private serviceRegistry: CommentServiceRegistry,
+    private serviceRegistry: ServiceRegistry,
   ) {
-    this.logger.setContext(SyncCommentsService.name);
+    this.logger.setContext(SyncService.name);
   }
 
   async onModuleInit() {

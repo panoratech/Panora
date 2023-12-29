@@ -11,6 +11,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
 export class PipedriveService implements IContactService {
@@ -18,10 +19,12 @@ export class PipedriveService implements IContactService {
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + PipedriveService.name,
     );
+    this.registry.registerService('pipedrive', this);
   }
 
   async addContact(

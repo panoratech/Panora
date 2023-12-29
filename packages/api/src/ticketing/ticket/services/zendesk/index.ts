@@ -10,18 +10,21 @@ import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
-export class ZendeskTicketService implements ITicketService {
+export class ZendeskService implements ITicketService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      TicketingObject.ticket.toUpperCase() + ':' + ZendeskTicketService.name,
+      TicketingObject.ticket.toUpperCase() + ':' + ZendeskService.name,
     );
+    this.registry.registerService('zendesk_t', this);
   }
   async addTicket(
     ticketData: DesunifyReturnType,

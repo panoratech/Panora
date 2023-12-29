@@ -4,7 +4,6 @@ import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
-import { UnifiedDealInput } from '@crm/deal/dto/create-deal.dto';
 
 export enum CrmObject {
   company = 'company',
@@ -17,10 +16,7 @@ export enum CrmObject {
   user = 'user',
 }
 
-export type UnifiedCrm =
-  | UnifiedContactInput
-  | UnifiedContactOutput
-  | UnifiedDealInput;
+export type UnifiedCrm = UnifiedContactInput | UnifiedContactOutput;
 
 export const unificationMapping = {
   [CrmObject.contact]: contactUnificationMapping,

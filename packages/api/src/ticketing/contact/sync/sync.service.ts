@@ -11,18 +11,18 @@ import { TicketingObject } from '@ticketing/@utils/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '../types/model.unified';
 import { IContactService } from '../types';
-import { ContactServiceRegistry } from '../services/registry.service';
+import { ServiceRegistry } from '../services/registry.service';
 
 @Injectable()
-export class SyncContactsService implements OnModuleInit {
+export class SyncService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
-    private serviceRegistry: ContactServiceRegistry,
+    private serviceRegistry: ServiceRegistry,
   ) {
-    this.logger.setContext(SyncContactsService.name);
+    this.logger.setContext(SyncService.name);
   }
 
   async onModuleInit() {

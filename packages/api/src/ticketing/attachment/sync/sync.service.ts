@@ -11,18 +11,18 @@ import { TicketingObject } from '@ticketing/@utils/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedAttachmentOutput } from '../types/model.unified';
 import { IAttachmentService } from '../types';
-import { AttachmentServiceRegistry } from '../services/registry.service';
+import { ServiceRegistry } from '../services/registry.service';
 
 @Injectable()
-export class SyncAttachmentsService implements OnModuleInit {
+export class SyncService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
-    private serviceRegistry: AttachmentServiceRegistry,
+    private serviceRegistry: ServiceRegistry,
   ) {
-    this.logger.setContext(SyncAttachmentsService.name);
+    this.logger.setContext(SyncService.name);
   }
 
   async onModuleInit() {

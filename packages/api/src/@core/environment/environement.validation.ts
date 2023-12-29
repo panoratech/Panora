@@ -70,6 +70,14 @@ export class EnvVars {
 
   @IsString()
   REDIS_HOST: string;
+
+  @IsString()
+  @IsOptional()
+  THROTTLER_TTL?: string;
+
+  @IsString()
+  @IsOptional()
+  THROTTLER_LIMIT?: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {

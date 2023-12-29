@@ -12,17 +12,20 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { IContactService } from '@crm/contact/types';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
-export class FreshSalesService implements IContactService {
+export class FreshsalesService implements IContactService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      CrmObject.contact.toUpperCase() + ':' + FreshSalesService.name,
+      CrmObject.contact.toUpperCase() + ':' + FreshsalesService.name,
     );
+    this.registry.registerService('freshsales', this);
   }
 
   async addContact(

@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ITicketService } from '../types';
-import { ZendeskTicketService } from './zendesk';
 
 @Injectable()
-export class TicketServiceRegistry {
+export class ServiceRegistry {
   private serviceMap: Map<string, ITicketService>;
 
-  constructor(zendesk: ZendeskTicketService) {
-    //TODO
+  constructor() {
     this.serviceMap = new Map<string, ITicketService>();
-    this.serviceMap.set('zendesk_t', zendesk);
+  }
+
+  registerService(serviceKey: string, service: ITicketService) {
+    this.serviceMap.set(serviceKey, service);
   }
 
   getService(integrationId: string): ITicketService {

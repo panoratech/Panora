@@ -14,18 +14,18 @@ import { tcg_tickets as TicketingTicket } from '@prisma/client';
 import { normalizeComments } from '../utils';
 import { ITicketService } from '../types';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
-import { TicketServiceRegistry } from '../services/registry.service';
+import { ServiceRegistry } from '../services/registry.service';
 
 @Injectable()
-export class SyncTicketsService implements OnModuleInit {
+export class SyncService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
-    private serviceRegistry: TicketServiceRegistry,
+    private serviceRegistry: ServiceRegistry,
   ) {
-    this.logger.setContext(SyncTicketsService.name);
+    this.logger.setContext(SyncService.name);
   }
 
   async onModuleInit() {

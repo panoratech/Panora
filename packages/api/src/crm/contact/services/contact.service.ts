@@ -16,7 +16,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
-import { ContactServiceRegistry } from './registry.service';
+import { ServiceRegistry } from './registry.service';
 
 @Injectable()
 export class ContactService {
@@ -25,7 +25,7 @@ export class ContactService {
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
-    private serviceRegistry: ContactServiceRegistry,
+    private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(ContactService.name);
   }

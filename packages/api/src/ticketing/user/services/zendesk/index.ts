@@ -7,18 +7,21 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { Injectable } from '@nestjs/common';
 import { TicketingObject, ZendeskUserInput } from '@ticketing/@utils/@types';
 import { IUserService } from '@ticketing/user/types';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
-export class ZendeskUserService implements IUserService {
+export class ZendeskService implements IUserService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      TicketingObject.user.toUpperCase() + ':' + ZendeskUserService.name,
+      TicketingObject.user.toUpperCase() + ':' + ZendeskService.name,
     );
+    this.registry.registerService('zendesk_t', this);
   }
   addUser(
     userData: DesunifyReturnType,

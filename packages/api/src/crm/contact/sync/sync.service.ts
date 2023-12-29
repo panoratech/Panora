@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { crm_contacts as CrmContact } from '@prisma/client';
 import { IContactService } from '../types';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
-import { ContactServiceRegistry } from '../services/registry.service';
+import { ServiceRegistry } from '../services/registry.service';
 
 @Injectable()
 export class SyncContactsService implements OnModuleInit {
@@ -23,7 +23,7 @@ export class SyncContactsService implements OnModuleInit {
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
-    private serviceRegistry: ContactServiceRegistry,
+    private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(SyncContactsService.name);
   }

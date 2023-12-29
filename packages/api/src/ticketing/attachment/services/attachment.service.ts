@@ -14,7 +14,7 @@ import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { unify } from '@@core/utils/unification/unify';
-import { AttachmentServiceRegistry } from './registry.service';
+import { ServiceRegistry } from './registry.service';
 
 @Injectable()
 export class AttachmentService {
@@ -23,7 +23,7 @@ export class AttachmentService {
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
-    private serviceRegistry: AttachmentServiceRegistry,
+    private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(AttachmentService.name);
   }

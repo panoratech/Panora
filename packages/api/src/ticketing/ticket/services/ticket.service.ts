@@ -16,18 +16,18 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { unify } from '@@core/utils/unification/unify';
 import { normalizeComments } from '../utils';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
-import { TicketServiceRegistry } from './registry.service';
-import { ZendeskTicketService } from './zendesk';
+import { ServiceRegistry } from './registry.service';
+import { ZendeskService } from './zendesk';
 
 @Injectable()
 export class TicketService {
   constructor(
     private prisma: PrismaService,
-    private zendesk: ZendeskTicketService,
+    private zendesk: ZendeskService,
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
-    private serviceRegistry: TicketServiceRegistry,
+    private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(TicketService.name);
   }

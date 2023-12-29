@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { BullModule } from '@nestjs/bull';
 import { UserService } from './services/user.service';
-import { UserServiceRegistry } from './services/registry.service';
+import { ServiceRegistry } from './services/registry.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskUserService } from './services/zendesk';
+import { ZendeskService } from './services/zendesk';
 import { LoggerService } from '@@core/logger/logger.service';
-import { SyncUsersService } from './sync/sync.service';
+import { SyncService } from './sync/sync.service';
 
 @Module({
   imports: [
@@ -21,14 +21,15 @@ import { SyncUsersService } from './sync/sync.service';
   providers: [
     UserService,
     PrismaService,
-    ZendeskUserService,
     LoggerService,
-    SyncUsersService,
+    SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
-    UserServiceRegistry,
+    ServiceRegistry,
+    //PROVIDERS SERVICES
+    ZendeskService,
   ],
-  exports: [SyncUsersService],
+  exports: [SyncService],
 })
 export class UserModule {}

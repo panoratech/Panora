@@ -32,7 +32,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     ThrottlerModule.forRoot([
       {
         ttl: parseInt(process.env.THROTTLER_TTL),
-        limit: parseInt(process.env.THROTTLER_LIMIT)
+        limit: parseInt(process.env.THROTTLER_LIMIT),
       },
     ]),
     ConfigModule.forRoot({ isGlobal: true }),
