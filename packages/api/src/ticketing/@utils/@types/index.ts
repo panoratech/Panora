@@ -34,3 +34,6 @@ export type ITicketingService = ITicketService | ICommentService;
 
 export * from '../../ticket/services/zendesk/types';
 export * from '../../comment/services/zendesk/types';
+export * from '../../user/services/zendesk/types';
+export * from '../../contact/services/zendesk/types';
+export * from '../../attachment/services/zendesk/types';

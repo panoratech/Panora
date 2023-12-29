@@ -16,7 +16,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
 import { ServiceRegistry } from '../../@utils/@registry/registry.service';
-import { OriginalContactOutput } from '@@core/utils/types/original.output';
+import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class ContactService {

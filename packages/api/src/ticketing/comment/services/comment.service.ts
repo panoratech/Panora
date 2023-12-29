@@ -15,7 +15,6 @@ import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '@ticketing/@utils/@registry/registry.service';
-import { OriginalCommentOutput } from '@@core/utils/types/original.output';
 import { unify } from '@@core/utils/unification/unify';
 
 @Injectable()

@@ -10,7 +10,7 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { ZendeskCommentOutput } from './types';
-import { OriginalCommentOutput } from '@@core/utils/types/original.output';
+import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 
 @Injectable()
 export class ZendeskService implements ICommentService {

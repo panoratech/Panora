@@ -6,10 +6,10 @@ import { TicketingObject, ZendeskTicketOutput } from '@ticketing/@utils/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { OriginalTicketOutput } from '@@core/utils/types/original.output';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
+import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 
 @Injectable()
 export class ZendeskService implements ITicketService {

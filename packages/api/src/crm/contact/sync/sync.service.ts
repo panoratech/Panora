@@ -13,8 +13,8 @@ import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 import { crm_contacts as CrmContact } from '@prisma/client';
 import { ServiceRegistry } from '@crm/@utils/@registry/registry.service';
-import { OriginalContactOutput } from '@@core/utils/types/original.output';
 import { IContactService } from '../types';
+import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class SyncContactsService implements OnModuleInit {

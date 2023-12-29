@@ -1,5 +1,5 @@
 import { Unified, UnifyReturnType } from '@@core/utils/types';
-import { TicketingObjectInput } from '@@core/utils/types/original.input';
+import { TicketingObjectInput } from '@@core/utils/types/original/original.ticketing';
 import { UnifySourceType } from '@@core/utils/types/unfify.output';
 import { TicketingObject, unificationMapping } from '@ticketing/@utils/@types';
 

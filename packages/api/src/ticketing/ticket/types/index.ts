@@ -1,8 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedTicketInput, UnifiedTicketOutput } from './model.unified';
-import { OriginalTicketOutput } from '@@core/utils/types/original.output';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
+import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 
 export interface ITicketService {
   addTicket(

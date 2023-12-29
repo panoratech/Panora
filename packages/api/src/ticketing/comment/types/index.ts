@@ -1,8 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedCommentInput, UnifiedCommentOutput } from './model.unified';
-import { OriginalCommentOutput } from '@@core/utils/types/original.output';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
+import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 
 export interface ICommentService {
   addComment(
