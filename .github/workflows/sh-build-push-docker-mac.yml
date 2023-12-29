@@ -15,6 +15,11 @@ jobs:
       ENVIRONMENT: SELF_HOSTED
 
     steps:
+    - name: Install Docker (Mac Colima)
+      run: |
+        brew install docker
+        colima start
+
     - name: Checkout code
       uses: actions/checkout@v2
 
