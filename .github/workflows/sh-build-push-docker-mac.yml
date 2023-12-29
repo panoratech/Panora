@@ -37,6 +37,7 @@ jobs:
       with:
         context: .
         file: ./apps/frontend-snippet/Dockerfile
+        platforms: linux/amd64,linux/arm64
         push: true
         tags: panoradotdev/frontend-magic-links:latest
         build-args: |
@@ -49,6 +50,7 @@ jobs:
         context: .
         file: ./apps/webapp/Dockerfile
         push: true
+        platforms: linux/amd64,linux/arm64
         tags: panoradotdev/frontend-webapp:latest
         build-args: |
           VITE_BACKEND_DOMAIN=${{ secrets.VITE_BACKEND_DOMAIN }}
@@ -59,6 +61,7 @@ jobs:
       with:
         context: .
         file: ./packages/api/Dockerfile
+        platforms: linux/amd64,linux/arm64
         push: true
         tags: panoradotdev/backend-api:latest
         build-args: |
