@@ -33,7 +33,7 @@ jobs:
         context: .
         file: ./apps/frontend-snippet/Dockerfile
         push: true
-        tags: DOCKER_USERNAME/IMAGE_NAME:latest
+        tags: panoradotdev/frontend-magic-links:latest
         build-args: |
           VITE_BACKEND_DOMAIN=${{ secrets.VITE_BACKEND_DOMAIN }}
           VITE_ML_FRONTEND_URL=${{ secrets.VITE_FRONTEND_DOMAIN }}
