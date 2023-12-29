@@ -33,6 +33,13 @@ export interface ITicketMapper {
   ): UnifiedTicketOutput | UnifiedTicketOutput[];
 }
 
+export type Comment = {
+  remote_id?: string;
+  body: string;
+  html_body: string;
+  is_private: boolean;
+};
+
 export class TicketResponse {
   @ApiProperty({ type: [UnifiedTicketOutput] })
   tickets: UnifiedTicketOutput[];

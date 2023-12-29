@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { FreshSalesService } from './freshsales';
-import { HubspotService } from './hubspot';
-import { ZohoService } from './zoho';
-import { ZendeskService } from './zendesk';
-import { PipedriveService } from './pipedrive';
+import { FreshSalesService } from '@crm/contact/services/freshsales';
+import { HubspotService } from '@crm/contact/services/hubspot';
+import { ZohoService } from '@crm/contact/services/zoho';
+import { ZendeskService } from '@crm/contact/services/zendesk';
+import { PipedriveService } from '@crm/contact/services/pipedrive';
 import { IContactService } from '@crm/contact/types';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { Unified, UnifyReturnType } from '@@core/utils/types';
 import { TicketingObjectInput } from '@@core/utils/types/original.input';
 import { UnifySourceType } from '@@core/utils/types/unfify.output';
-import { TicketingObject, unificationMapping } from '@ticketing/@types';
+import { TicketingObject, unificationMapping } from '@ticketing/@utils/@types';
 
 export async function desunifyTicketing<T extends Unified>({
   sourceObject,

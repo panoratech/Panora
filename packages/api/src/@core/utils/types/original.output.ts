@@ -4,8 +4,8 @@ import {
   PipedriveContactOutput,
   ZendeskContactOutput,
   ZohoContactOutput,
-} from '@crm/@types';
-import { ZendeskTicketOutput } from '@ticketing/@types';
+} from '@crm/@utils/@types';
+import { ZendeskTicketOutput } from '@ticketing/@utils/@types';
 
 /* CRM */
 
@@ -26,7 +26,7 @@ export type OriginalDealOutput = '';
 
 /* ticket */
 
-export type OriginalTicketOutput = ZendeskTicketOutput | '';
+export type OriginalTicketOutput = ZendeskTicketOutput;
 
 /* Union Vertical Types */
 

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ContactResponse } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
-import { CrmObject } from 'src/crm/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import { LoggerService } from '@@core/logger/logger.service';
 import { unify } from '@@core/utils/unification/unify';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,7 +15,7 @@ import { handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
-import { ServiceRegistry } from './registry.service';
+import { ServiceRegistry } from '../../@utils/@registry/registry.service';
 import { OriginalContactOutput } from '@@core/utils/types/original.output';
 
 @Injectable()
@@ -139,8 +139,8 @@ export class ContactService {
 
       const existingContact = await this.prisma.crm_contacts.findFirst({
         where: {
-          origin_id: originId,
-          origin: integrationId,
+          remote_id: originId,
+          remote_platform: integrationId,
           events: {
             id_linked_user: linkedUserId,
           },
@@ -162,10 +162,8 @@ export class ContactService {
             id_crm_contact: existingContact.id_crm_contact,
           },
           data: {
-            first_name: target_contact.first_name
-              ? target_contact.first_name
-              : '',
-            last_name: target_contact.last_name ? target_contact.last_name : '',
+            first_name: target_contact.first_name || '',
+            last_name: target_contact.last_name || '',
             modified_at: new Date(),
             crm_email_addresses: {
               update: normalizedEmails.map((email, index) => ({
@@ -194,15 +192,13 @@ export class ContactService {
         this.logger.log('not existing contact ' + target_contact.first_name);
         const data = {
           id_crm_contact: uuidv4(),
-          first_name: target_contact.first_name
-            ? target_contact.first_name
-            : '',
-          last_name: target_contact.last_name ? target_contact.last_name : '',
+          first_name: target_contact.first_name || '',
+          last_name: target_contact.last_name || '',
           created_at: new Date(),
           modified_at: new Date(),
           id_event: job_id,
-          origin_id: originId,
-          origin: integrationId,
+          remote_id: originId,
+          remote_platform: integrationId,
         };
 
         if (normalizedEmails) {
@@ -247,9 +243,7 @@ export class ContactService {
             await this.prisma.value.create({
               data: {
                 id_value: uuidv4(),
-                data: Object.values(mapping)[0]
-                  ? Object.values(mapping)[0]
-                  : 'null',
+                data: Object.values(mapping)[0] || 'null',
                 attribute: {
                   connect: {
                     id_attribute: attribute.id_attribute,
@@ -417,7 +411,7 @@ export class ContactService {
       const job_id = job_resp_create.id_event;
       const contacts = await this.prisma.crm_contacts.findMany({
         where: {
-          origin: integrationId.toLowerCase(),
+          remote_id: integrationId.toLowerCase(),
           events: {
             id_linked_user: linkedUserId,
           },

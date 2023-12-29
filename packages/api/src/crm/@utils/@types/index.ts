@@ -25,8 +25,8 @@ export const unificationMapping = {
   [CrmObject.contact]: contactUnificationMapping,
   [CrmObject.deal]: '',
 };
-export * from '../contact/services/freshsales/types';
-export * from '../contact/services/zendesk/types';
-export * from '../contact/services/hubspot/types';
-export * from '../contact/services/zoho/types';
-export * from '../contact/services/pipedrive/types';
+export * from '../../contact/services/freshsales/types';
+export * from '../../contact/services/zendesk/types';
+export * from '../../contact/services/hubspot/types';
+export * from '../../contact/services/zoho/types';
+export * from '../../contact/services/pipedrive/types';

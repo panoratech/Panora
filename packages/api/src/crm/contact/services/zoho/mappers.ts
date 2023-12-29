@@ -1,4 +1,4 @@
-import { ZohoContactInput, ZohoContactOutput } from 'src/crm/@types';
+import { ZohoContactInput, ZohoContactOutput } from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
@@ -48,16 +48,16 @@ export class ZohoContactMapper implements IContactMapper {
     }[],
   ): UnifiedContactOutput | UnifiedContactOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleZohoContactToUnified(source, customFieldMappings);
+      return this.mapSingleContactToUnified(source, customFieldMappings);
     }
 
     // Handling array of HubspotContactOutput
     return source.map((contact) =>
-      this.mapSingleZohoContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(contact, customFieldMappings),
     );
   }
 
-  mapSingleZohoContactToUnified(
+  private mapSingleContactToUnified(
     contact: ZohoContactOutput,
     customFieldMappings?: {
       slug: string;

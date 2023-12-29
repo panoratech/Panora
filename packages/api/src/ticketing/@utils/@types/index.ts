@@ -14,4 +14,4 @@ export const unificationMapping = {
   [TicketingObject.ticket]: ticketUnificationMapping,
 };
 
-export * from '../ticket/services/zendesk/types';
+export * from '../../ticket/services/zendesk/types';

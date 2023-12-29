@@ -4,8 +4,8 @@ import {
   PipedriveContactInput,
   ZendeskContactInput,
   ZohoContactInput,
-} from '@crm/@types';
-import { ZendeskTicketInput } from '@ticketing/@types';
+} from '@crm/@utils/@types';
+import { ZendeskTicketInput } from '@ticketing/@utils/@types';
 
 /* CRM */
 

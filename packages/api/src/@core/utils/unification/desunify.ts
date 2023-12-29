@@ -1,13 +1,13 @@
-import { CrmObject } from '@crm/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import {
   ProviderVertical,
   TargetObject,
   Unified,
   getProviderVertical,
 } from '../types';
-import { desunifyCrm } from '@crm/@unification';
-import { TicketingObject } from '@ticketing/@types';
-import { desunifyTicketing } from '@ticketing/@unification';
+import { desunifyCrm } from '@crm/@utils/@unification';
+import { TicketingObject } from '@ticketing/@utils/@types';
+import { desunifyTicketing } from '@ticketing/@utils/@unification';
 import { DesunifyReturnType } from '../types/desunify.input';
 
 /* to insert data

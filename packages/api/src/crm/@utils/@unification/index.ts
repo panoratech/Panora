@@ -1,4 +1,4 @@
-import { CrmObject, unificationMapping } from '@crm/@types';
+import { CrmObject, unificationMapping } from '@crm/@utils/@types';
 import { Unified, UnifyReturnType } from '@@core/utils/types';
 import { CrmObjectInput } from '@@core/utils/types/original.input';
 import { UnifySourceType } from '@@core/utils/types/unfify.output';
