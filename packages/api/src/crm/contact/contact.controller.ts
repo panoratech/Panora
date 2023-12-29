@@ -6,7 +6,8 @@ import {
   Get,
   Patch,
   Param,
-  UseGuards
+  UseGuards,
+  Headers
 } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -17,6 +18,7 @@ import {
   ApiParam,
   ApiQuery,
   ApiTags,
+  ApiHeader
 } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
@@ -30,15 +32,14 @@ export class ContactController {
     this.logger.setContext(ContactController.name);
   }
 
-
   @ApiOperation({
     operationId: 'getContacts',
     summary: 'List a batch of CRM Contacts',
   }) 
-  @ApiQuery({ name: 'integrationId', required: true, type: String })
-  @ApiQuery({ name: 'linkedUserId', required: true, type: String })
+  @ApiHeader({ name: 'integrationId', required: true })
+  @ApiHeader({ name: 'linkedUserId', required: true})
   @ApiQuery({
-    name: 'remote_data',
+    name: 'remoteData',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
@@ -47,9 +48,9 @@ export class ContactController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   getContacts(
-    @Query('integrationId') integrationId: string,
-    @Query('linkedUserId') linkedUserId: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Headers('integrationId') integrationId: string,
+    @Headers('linkedUserId') linkedUserId: string,
+    @Query('remoteData') remote_data?: boolean,
   ) {
     return this.contactService.getContacts(
       integrationId,
@@ -70,7 +71,7 @@ export class ContactController {
     description: 'id of the `contact` you want to retrive.',
   })
   @ApiQuery({
-    name: 'remote_data',
+    name: 'remoteData',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
@@ -80,7 +81,7 @@ export class ContactController {
   @Get(':id')
   getContact(
     @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query('remoteData') remote_data?: boolean,
   ) {
     return this.contactService.getContact(id, remote_data);
   }
@@ -90,22 +91,20 @@ export class ContactController {
     summary: 'Create CRM Contact',
     description: 'Create a contact in any supported CRM',
   })
-  @ApiQuery({
+  @ApiHeader({
     name: 'integrationId',
     required: true,
-    type: String,
     description: 'The integration ID',
     example: '6aa2acf3-c244-4f85-848b-13a57e7abf55',
   })
-  @ApiQuery({
+  @ApiHeader({
     name: 'linkedUserId',
     required: true,
-    type: String,
     description: 'The linked user ID',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiQuery({
-    name: 'remote_data',
+    name: 'remoteData',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
@@ -116,9 +115,9 @@ export class ContactController {
   @Post()
   addContact(
     @Body() unfiedContactData: UnifiedContactInput,
-    @Query('integrationId') integrationId: string,
-    @Query('linkedUserId') linkedUserId: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Headers('integrationId') integrationId: string,
+    @Headers('linkedUserId') linkedUserId: string,
+    @Query('remoteData') remote_data?: boolean,
   ) {
     return this.contactService.addContact(
       unfiedContactData,
@@ -132,10 +131,10 @@ export class ContactController {
     operationId: 'addContacts',
     summary: 'Add a batch of CRM Contacts',
   })
-  @ApiQuery({ name: 'integrationId', required: true, type: String })
-  @ApiQuery({ name: 'linkedUserId', required: true, type: String })
+  @ApiHeader({ name: 'integrationId', required: true })
+  @ApiHeader({ name: 'linkedUserId', required: true })
   @ApiQuery({
-    name: 'remote_data',
+    name: 'remoteData',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
@@ -146,9 +145,9 @@ export class ContactController {
   @Post('batch')
   addContacts(
     @Body() unfiedContactData: UnifiedContactInput[],
-    @Query('integrationId') integrationId: string,
-    @Query('linkedUserId') linkedUserId: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Headers('integrationId') integrationId: string,
+    @Headers('linkedUserId') linkedUserId: string,
+    @Query('remoteData') remote_data?: boolean,
   ) {
     return this.contactService.batchAddContacts(
       unfiedContactData,
