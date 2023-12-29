@@ -27,7 +27,7 @@ import { SyncService } from './sync/sync.service';
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-    //PROVIDERS SERVICES
+    /* PROVIDERS SERVICES */
     ZendeskService,
   ],
   exports: [SyncService],

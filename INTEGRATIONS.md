@@ -154,7 +154,7 @@ export interface IContactService {
   ): Promise<ApiResponse<OriginalContactOutput>>;
 
   syncContacts(
-    linkedUserId: string,
+    linkedUserId: string, 
   ): Promise<ApiResponse<OriginalContactOutput[]>>;
 }
 ```
@@ -166,10 +166,13 @@ export class My3rdPartyService implements IContactService {
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + My3rdPartyService.name,
     );
+    this.registry.registerService('my3rdPartyService', this);
+
   }
   async addContact(
     contactData: 3rdPartyContactInput,
@@ -286,35 +289,7 @@ export const contactUnificationMapping = {
 };
 ```
 
-Don't forget to add your service you've defined at step 1 inside the Registry under `/crm/contact/services/registry.service.ts`.
-
-```ts
-@Injectable()
-export class ServiceRegistry {
-  private serviceMap: Map<string, IContactService>;
-
-  constructor(
-    freshsales: FreshSalesService,
-    hubspot: HubspotService,
-    zoho: ZohoService,
-    zendesk: ZendeskService,
-    pipedrive: PipedriveService,
-    // ADD YOUR 3RD PARTY HERE
-    my3rdParty: My3rdPartyService
-  ) {
-    this.serviceMap = new Map<string, IContactService>();
-    this.serviceMap.set('freshsales', freshsales);
-    this.serviceMap.set('hubspot', hubspot);
-    this.serviceMap.set('zoho', zoho);
-    this.serviceMap.set('zendesk', zendesk);
-    this.serviceMap.set('pipedrive', pipedrive);
-    // ADD YOUR 3RD PARTY HERE
-    this.serviceMap.set('my3rdParty', my3rdParty);
-  }
-}
-```
-
-Finally, add it under the `ContactModule` module !
+Don't forget to add your service you've defined at step 1 inside the module under `/crm/contact/contact.module.ts`.
 
 ```ts
 @Module({
@@ -327,21 +302,22 @@ Finally, add it under the `ContactModule` module !
   providers: [
     ContactService,
     PrismaService,
+    LoggerService,
+    FieldMappingService,
+    SyncService,
+    WebhookService,
+    EncryptionService,
+    ServiceRegistry,
+    /* PROVIDERS SERVICES */
     FreshSalesService,
     ZendeskService,
     ZohoService,
     PipedriveService,
     HubspotService,
-    LoggerService,
-    FieldMappingService,
-    SyncContactsService,
-    WebhookService,
-    EncryptionService,
-    ServiceRegistry,
     //INSERT YOUR SERVICE HERE
     My3rdPartyService
   ],
-  exports: [SyncContactsService],
+  exports: [SyncService],
 })
 export class ContactModule {}
 

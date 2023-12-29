@@ -27,7 +27,7 @@ import { ServiceRegistry } from './services/registry.service';
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-    //PROVIDERS SERVICES
+    /* PROVIDERS SERVICES */
     ZendeskService,
   ],
   exports: [SyncService],

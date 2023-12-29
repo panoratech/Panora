@@ -27,7 +27,7 @@ import { BullModule } from '@nestjs/bull';
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-    //PROVIDERS SERVICES
+    /* PROVIDERS SERVICES */
     ZendeskService,
   ],
   exports: [SyncService],

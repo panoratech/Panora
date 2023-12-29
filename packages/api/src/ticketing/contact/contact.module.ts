@@ -27,6 +27,7 @@ import { ContactController } from './contact.controller';
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
+    /* PROVIDERS SERVICES */
     ZendeskService,
   ],
   exports: [SyncService],

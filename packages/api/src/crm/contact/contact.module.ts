@@ -31,7 +31,7 @@ import { ServiceRegistry } from './services/registry.service';
     WebhookService,
     EncryptionService,
     ServiceRegistry,
-    //PROVIDERS SERVICES
+    /* PROVIDERS SERVICES */
     FreshsalesService,
     ZendeskService,
     ZohoService,
