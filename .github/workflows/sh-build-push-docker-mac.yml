@@ -1,0 +1,79 @@
+name: Build Docker Images (Selfhosted, For Apple CPUs )
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest-large
+    env:
+      ENVIRONMENT: SELF_HOSTED
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v1 
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Frontend (Magic Links)
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./apps/frontend-snippet/Dockerfile
+        push: true
+        tags: panoradotdev/frontend-magic-links:latest
+        build-args: |
+          VITE_BACKEND_DOMAIN=${{ secrets.VITE_BACKEND_DOMAIN }}
+          VITE_ML_FRONTEND_URL=${{ secrets.VITE_FRONTEND_DOMAIN }}
+
+    - name: Build and push Frontend (Dashboard)
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./apps/webapp/Dockerfile
+        push: true
+        tags: panoradotdev/frontend-webapp:latest
+        build-args: |
+          VITE_BACKEND_DOMAIN=${{ secrets.VITE_BACKEND_DOMAIN }}
+          VITE_FRONTEND_DOMAIN=${{ secrets.VITE_FRONTEND_DOMAIN }}
+
+    - name: Build and push Backend (API)
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./packages/api/Dockerfile
+        push: true
+        tags: panoradotdev/backend-api:latest
+        build-args: |
+          OAUTH_REDIRECT_BASE=${{ env.OAUTH_REDIRECT_BASE }}
+          DISTRIBUTION=${{ env.DISTRIBUTION }}
+          ENV=${{ ENV }}
+          DATABASE_URL=postgresql://${{env.POSTGRES_USER}}:${{secrets.POSTGRES_PASSWORD}}@${{env.POSTGRES_HOST}}:5432/${{env.POSTGRES_DB}}?ssl=false
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          REDIS_HOST=redis
+          ENCRYPT_CRYPTO_SECRET_KEY=${{ secrets.ENCRYPT_CRYPTO_SECRET_KEY }}
+          HUBSPOT_CLIENT_ID=${{ secrets.HUBSPOT_CLIENT_ID }}
+          HUBSPOT_CLIENT_SECRET=${{ secrets.HUBSPOT_CLIENT_SECRET }}
+          ZOHOCRM_CLIENT_ID=${{ secrets.ZOHOCRM_CLIENT_ID }}
+          ZOHOCRM_CLIENT_SECRET=${{ secrets.ZOHOCRM_CLIENT_SECRET }}
+          PIPEDRIVE_CLIENT_ID=${{ secrets.PIPEDRIVE_CLIENT_ID }}
+          PIPEDRIVE_CLIENT_SECRET=${{ secrets.PIPEDRIVE_CLIENT_SECRET }}
+          ZENDESK_CLIENT_ID=${{ secrets.ZENDESK_CLIENT_ID }}
+          ZENDESK_CLIENT_SECRET=${{ secrets.ZENDESK_CLIENT_SECRET }}
+          ZENDESK_TICKETING_SUBDOMAIN=${{ secrets.ZENDESK_TICKETING_SUBDOMAIN }}
+          ZENDESK_TICKETING_CLIENT_ID=${{ secrets.ZENDESK_TICKETING_CLIENT_ID }}
+          ZENDESK_TICKETING_CLIENT_SECRET=${{ secrets.ZENDESK_TICKETING_CLIENT_SECRET }}
+       
+       
