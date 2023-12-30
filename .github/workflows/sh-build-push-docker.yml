@@ -30,6 +30,7 @@ jobs:
     - name: Build and push Frontend (Magic Links)
       uses: docker/build-push-action@v2
       with:
+        platforms: linux/amd64,linux/arm64,linux/arm/v7
         context: .
         file: ./apps/frontend-snippet/Dockerfile
         push: true
@@ -41,6 +42,7 @@ jobs:
     - name: Build and push Frontend (Dashboard)
       uses: docker/build-push-action@v2
       with:
+        platforms: linux/amd64,linux/arm64,linux/arm/v7
         context: .
         file: ./apps/webapp/Dockerfile
         push: true
@@ -52,6 +54,7 @@ jobs:
     - name: Build and push Backend (API)
       uses: docker/build-push-action@v2
       with:
+        platforms: linux/amd64,linux/arm64,linux/arm/v7
         context: .
         file: ./packages/api/Dockerfile
         push: true
