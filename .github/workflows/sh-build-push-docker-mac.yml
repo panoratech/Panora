@@ -18,7 +18,7 @@ jobs:
     - name: Install Docker (Mac Colima)
       run: |
         brew install docker
-        colima start
+        colima start --profile arm64
 
     - name: Checkout code
       uses: actions/checkout@v2
