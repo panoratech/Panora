@@ -96,6 +96,13 @@ export class EnvironmentService {
     };
   }
 
+  getGithubSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('GITHUB_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('GITHUB_CLIENT_SECRET'),
+    };
+  }
+
   getThrottleConfig(): RateLimit {
     return {
       ttl: this.configService.get<string>('THROTTLER_TTL'),

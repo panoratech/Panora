@@ -12,6 +12,15 @@ export interface FrontOAuthResponse {
   token_type: string;
 }
 
+export interface GithubOAuthResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: string;
+  refresh_token_expires_in: string; //TODO
+  token_type: string;
+  scope: string;
+}
+
 export type CallbackParams = {
   linkedUserId: string;
   projectId: string;

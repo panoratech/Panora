@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingConnectionsService } from './services/ticketing.connection.service';
 import { ServiceRegistry } from './services/registry.service';
 import { FrontConnectionService } from './services/front/front.service';
+import { GithubConnectionService } from './services/github/github.service';
 
 @Module({
   imports: [WebhookModule],
@@ -23,6 +24,7 @@ import { FrontConnectionService } from './services/front/front.service';
     //PROVIDERS SERVICES
     ZendeskConnectionService,
     FrontConnectionService,
+    GithubConnectionService,
   ],
   exports: [TicketingConnectionsService],
 })
