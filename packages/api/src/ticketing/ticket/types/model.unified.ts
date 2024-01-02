@@ -8,11 +8,11 @@ export class UnifiedTicketInput {
   due_date?: Date;
   type?: string;
   parent_ticket?: string;
-  tags?: string;
+  tags?: string; // TODO: create a real Tag object here
   completed_at?: Date;
   priority?: string;
   assigned_to?: string[];
-  comments?: Comment[];
+  comments: Comment[];
   @ApiPropertyOptional({ type: [{}] })
   field_mappings?: Record<string, any>[];
 }

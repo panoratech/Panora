@@ -37,6 +37,9 @@ export class EnvironmentService {
   getCryptoKey(): string {
     return this.configService.get<string>('ENCRYPT_CRYPTO_SECRET_KEY');
   }
+
+  /* CRM */
+
   getHubspotAuth(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('HUBSPOT_CLIENT_ID'),
@@ -58,6 +61,21 @@ export class EnvironmentService {
     };
   }
 
+  getFreshsalesSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('FRESHSALES_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('FRESHSALES_CLIENT_SECRET'),
+    };
+  }
+  getPipedriveSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('PIPEDRIVE_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('PIPEDRIVE_CLIENT_SECRET'),
+    };
+  }
+
+  /* TICKETING */
+
   getZendeskTicketingSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('ZENDESK_TICKETING_CLIENT_ID'),
@@ -71,16 +89,10 @@ export class EnvironmentService {
     return this.configService.get<string>('ZENDESK_TICKETING_SUBDOMAIN');
   }
 
-  getFreshsalesSecret(): OAuth {
+  getFrontSecret(): OAuth {
     return {
-      CLIENT_ID: this.configService.get<string>('FRESHSALES_CLIENT_ID'),
-      CLIENT_SECRET: this.configService.get<string>('FRESHSALES_CLIENT_SECRET'),
-    };
-  }
-  getPipedriveSecret(): OAuth {
-    return {
-      CLIENT_ID: this.configService.get<string>('PIPEDRIVE_CLIENT_ID'),
-      CLIENT_SECRET: this.configService.get<string>('PIPEDRIVE_CLIENT_SECRET'),
+      CLIENT_ID: this.configService.get<string>('FRONT_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('FRONT_CLIENT_SECRET'),
     };
   }
 

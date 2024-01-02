@@ -23,6 +23,7 @@ import { PipedriveConnectionService } from './services/pipedrive/pipedrive.servi
     WebhookService,
     EnvironmentService,
     EncryptionService,
+    // PROVIDERS SERVICES
     FreshsalesConnectionService,
     HubspotConnectionService,
     ZohoConnectionService,

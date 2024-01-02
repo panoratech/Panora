@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { ITicketingConnectionService } from '../types';
-import { ZendeskConnectionService } from './zendesk/zendesk.service';
 
 @Injectable()
-export class ServiceConnectionRegistry {
+export class ServiceRegistry {
   private serviceMap: Map<string, ITicketingConnectionService>;
 
-  constructor(zendesk: ZendeskConnectionService) {
+  constructor() {
     this.serviceMap = new Map<string, ITicketingConnectionService>();
-    this.serviceMap.set('zendesk_t', zendesk);
+  }
+
+  registerService(serviceKey: string, service: ITicketingConnectionService) {
+    this.serviceMap.set(serviceKey, service);
   }
 
   getService(integrationId: string): ITicketingConnectionService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
-      throw new Error(
-        `Connection Service not found for integration ID: ${integrationId}`,
-      );
+      throw new Error(`Service not found for integration ID: ${integrationId}`);
     }
     return service;
   }

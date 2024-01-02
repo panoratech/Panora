@@ -8,11 +8,15 @@ import {
   ZendeskAttachmentOutput,
   ZendeskAttachmentInput,
 } from '@ticketing/@utils/@types';
+import {
+  FrontTicketInput,
+  FrontTicketOutput,
+} from '@ticketing/ticket/services/front/types';
 
 /* INPUT */
 
 /* ticket */
-export type OriginalTicketInput = ZendeskTicketInput;
+export type OriginalTicketInput = ZendeskTicketInput | FrontTicketInput;
 
 /* comment */
 export type OriginalCommentInput = ZendeskCommentInput;
@@ -32,7 +36,7 @@ export type TicketingObjectInput =
 /* OUTPUT */
 
 /* ticket */
-export type OriginalTicketOutput = ZendeskTicketOutput;
+export type OriginalTicketOutput = ZendeskTicketOutput | FrontTicketOutput;
 
 /* comment */
 export type OriginalCommentOutput = ZendeskCommentOutput;

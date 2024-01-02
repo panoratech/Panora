@@ -5,6 +5,12 @@ export interface ZendeskTicketingOAuthResponse {
   token_type: string;
   scope: string;
 }
+export interface FrontOAuthResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_at: string;
+  token_type: string;
+}
 
 export type CallbackParams = {
   linkedUserId: string;
