@@ -8,7 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
-import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
 
@@ -68,7 +67,7 @@ export class FrontService implements ITicketService {
   async syncTickets(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTicketOutput[]>> {
+  ): Promise<ApiResponse<FrontTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {

@@ -16,6 +16,14 @@ export interface HubspotContactInput {
   [key: string]: any;
 }
 
+export interface HubspotContactOutput {
+  id: string;
+  properties: HubspotPropertiesOuput;
+  createdAt: string;
+  updatedAt: string;
+  archived: boolean;
+}
+
 type HubspotPropertiesOuput = {
   createdate: string;
   email: string;
@@ -35,10 +43,3 @@ export const commonHubspotProperties = {
   lastname: '',
   // Add any other common properties here
 };
-export interface HubspotContactOutput {
-  id: string;
-  properties: HubspotPropertiesOuput;
-  createdAt: string;
-  updatedAt: string;
-  archived: boolean;
-}

@@ -10,6 +10,9 @@ import { CommentController } from './comment.controller';
 import { CommentService } from './services/comment.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './services/registry.service';
+import { GithubService } from './services/github';
+import { FrontService } from './services/front';
+import { HubspotService } from './services/hubspot';
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { ServiceRegistry } from './services/registry.service';
     ServiceRegistry,
     /* PROVIDERS SERVICES */
     ZendeskService,
+    HubspotService,
+    FrontService,
+    GithubService,
   ],
   exports: [SyncService],
 })

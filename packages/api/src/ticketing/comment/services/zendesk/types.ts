@@ -19,7 +19,7 @@ type BaseComment = {
   via?: Via; // Describes how the object was created.
 };
 
-type Attachment = {
+export type Attachment = {
   content_type: string; // The content type of the image, e.g., "image/png".
   content_url: string; // A full URL where the attachment image file can be downloaded.
   deleted: boolean; // If true, the attachment has been deleted.
@@ -40,7 +40,7 @@ type Attachment = {
   width: string | null; // The width of the image file in pixels, or null if unknown.
 };
 
-export type CustomField = {
+export type CustomField_ = {
   id: string;
   value: any;
 };

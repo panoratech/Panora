@@ -848,6 +848,210 @@
         ]
       }
     },
+    "/crm/deal": {
+      "get": {
+        "operationId": "getDeals",
+        "summary": "List a batch of Deals",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      },
+      "post": {
+        "operationId": "addDeal",
+        "summary": "Create a Deal",
+        "description": "Create a deal in any supported Crm software",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "description": "The integration ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "description": "The linked user ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedDealInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      },
+      "patch": {
+        "operationId": "updateDeal",
+        "summary": "Update a Deal",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      }
+    },
+    "/crm/deal/{id}": {
+      "get": {
+        "operationId": "getDeal",
+        "summary": "Retrieve a Deal",
+        "description": "Retrieve a deal from any connected Crm software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the  you want to retrive.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      }
+    },
+    "/crm/deal/batch": {
+      "post": {
+        "operationId": "addDeals",
+        "summary": "Add a batch of Deals",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedDealInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      }
+    },
     "/ticketing/ticket": {
       "get": {
         "operationId": "getTickets",
@@ -1095,7 +1299,7 @@
       "post": {
         "operationId": "addComment",
         "summary": "Create a Comment",
-        "description": "Create a ticket in any supported Ticketing software",
+        "description": "Create a comment in any supported Ticketing software",
         "parameters": [
           {
             "name": "integrationId",
@@ -1171,13 +1375,13 @@
       "get": {
         "operationId": "getComment",
         "summary": "Retrieve a Comment",
-        "description": "Retrieve a ticket from any connected Ticketing software",
+        "description": "Retrieve a comment from any connected Ticketing software",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "id of the `ticket` you want to retrive.",
+            "description": "id of the `comment` you want to retrive.",
             "schema": {
               "type": "string"
             }
@@ -1595,6 +1799,10 @@
           "phone_numbers",
           "field_mappings"
         ]
+      },
+      "UnifiedDealInput": {
+        "type": "object",
+        "properties": {}
       },
       "UnifiedTicketInput": {
         "type": "object",

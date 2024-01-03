@@ -7,7 +7,6 @@ import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
 import { GithubTicketInput, GithubTicketOutput } from './types';
 
@@ -66,7 +65,7 @@ export class GithubService implements ITicketService {
   async syncTickets(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTicketOutput[]>> {
+  ): Promise<ApiResponse<GithubTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {

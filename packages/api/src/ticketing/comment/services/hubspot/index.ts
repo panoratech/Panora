@@ -32,7 +32,7 @@ export class HubspotService implements ICommentService {
   ): Promise<ApiResponse<HubspotCommentOutput>> {
     try {
       //TODO: check required scope  => crm.objects.contacts.write
-      const connection = await this.prisma.connections.findFirst({
+      /*const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot_t',
@@ -57,7 +57,8 @@ export class HubspotService implements ICommentService {
         data: resp.data,
         message: 'Hubspot comment created',
         statusCode: 201,
-      };
+      };*/
+      return;
     } catch (error) {
       handleServiceError(
         error,
@@ -73,7 +74,7 @@ export class HubspotService implements ICommentService {
     id_ticket: string,
   ): Promise<ApiResponse<OriginalCommentOutput[]>> {
     try {
-      const connection = await this.prisma.connections.findFirst({
+      /*const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot_t',
@@ -106,7 +107,8 @@ export class HubspotService implements ICommentService {
         data: resp.data._results,
         message: 'Hubspot comments retrieved',
         statusCode: 200,
-      };
+      };*/
+      return;
     } catch (error) {
       handleServiceError(
         error,

@@ -7,9 +7,12 @@ import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
-import { HubspotTicketInput, HubspotTicketOutput } from './types';
+import {
+  HubspotTicketInput,
+  HubspotTicketOutput,
+  commonHubspotProperties,
+} from './types';
 
 @Injectable()
 export class HubspotService implements ITicketService {
@@ -35,9 +38,9 @@ export class HubspotService implements ITicketService {
           provider_slug: 'hubspot_t',
         },
       });
-      const dataBody = ticketData;
+      const dataBody = { properties: ticketData };
       const resp = await axios.post(
-        `https://api2.frontapp.com/conversations`,
+        `https://api.hubapi.com/crm/v3/objects/tickets`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -66,7 +69,7 @@ export class HubspotService implements ITicketService {
   async syncTickets(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTicketOutput[]>> {
+  ): Promise<ApiResponse<HubspotTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -75,7 +78,16 @@ export class HubspotService implements ITicketService {
         },
       });
 
-      const resp = await axios.get('https://api2.frontapp.com/conversations', {
+      const commonPropertyNames = Object.keys(commonHubspotProperties);
+      const allProperties = [...commonPropertyNames, ...custom_properties];
+      const baseURL = 'https://api.hubapi.com/crm/v3/objects/tickets/';
+
+      const queryString = allProperties
+        .map((prop) => `properties=${encodeURIComponent(prop)}`)
+        .join('&');
+
+      const url = `${baseURL}?${queryString}`;
+      const resp = await axios.get(url, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -86,7 +98,7 @@ export class HubspotService implements ITicketService {
       this.logger.log(`Synced hubspot tickets !`);
 
       return {
-        data: resp.data._results,
+        data: resp.data.results,
         message: 'Hubspot tickets retrieved',
         statusCode: 200,
       };
