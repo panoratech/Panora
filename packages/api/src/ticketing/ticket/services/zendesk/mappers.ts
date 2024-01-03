@@ -32,10 +32,13 @@ export class ZendeskTicketMapper implements ITicketMapper {
       type: source.type as 'problem' | 'incident' | 'question' | 'task',
       updated_at: source.completed_at?.toISOString(),
       comment: {
+        body: '', //TODO
+      },
+      /*comment: {
         body: source.comments[0].body,
         html_body: source.comments[0].html_body,
         public: !source.comments[0].is_private,
-      },
+      },*/
     };
 
     if (customFieldMappings && source.field_mappings) {
@@ -94,16 +97,6 @@ export class ZendeskTicketMapper implements ITicketMapper {
       completed_at: undefined, // If available, add logic to determine the completed date
       priority: ticket.priority,
       assigned_to: undefined, // If available, add logic to map assigned users
-      comments: ticket.comment
-        ? [
-            {
-              remote_id: ticket.comment.id.toString(),
-              body: ticket.comment.body,
-              html_body: ticket.comment.html_body,
-              is_private: !ticket.comment.public,
-            },
-          ]
-        : undefined,
       field_mappings: undefined, // Add logic to map custom fields if available
       id: ticket.id.toString(),
     };

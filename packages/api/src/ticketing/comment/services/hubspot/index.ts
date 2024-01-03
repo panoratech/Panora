@@ -10,42 +10,39 @@ import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
-import { ZendeskCommentOutput } from './types';
-import { EnvironmentService } from '@@core/environment/environment.service';
+import { HubspotCommentOutput } from './types';
+
 @Injectable()
-export class ZendeskService implements ICommentService {
+export class HubspotService implements ICommentService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      TicketingObject.comment.toUpperCase() + ':' + ZendeskService.name,
+      TicketingObject.comment.toUpperCase() + ':' + HubspotService.name,
     );
-    this.registry.registerService('zendesk_t', this);
+    this.registry.registerService('hubspot_t', this);
   }
   async addComment(
     commentData: DesunifyReturnType,
     linkedUserId: string,
     remoteIdTicket: string,
-  ): Promise<ApiResponse<ZendeskCommentOutput>> {
+  ): Promise<ApiResponse<HubspotCommentOutput>> {
     try {
+      //TODO: check required scope  => crm.objects.contacts.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_t',
+          provider_slug: 'hubspot_t',
         },
       });
       const dataBody = {
-        ticket: {
-          comment: commentData,
-        },
+        comment: commentData,
       };
-      //to add a comment on Zendesk you must update a ticket using the Ticket API
-      const resp = await axios.put(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets/${remoteIdTicket}.json`,
+      const resp = await axios.post(
+        `https://api2.frontapp.com/conversations/${remoteIdTicket}/comments`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -58,14 +55,14 @@ export class ZendeskService implements ICommentService {
       );
       return {
         data: resp.data,
-        message: 'Zendesk comment created',
+        message: 'Hubspot comment created',
         statusCode: 201,
       };
     } catch (error) {
       handleServiceError(
         error,
         this.logger,
-        'Zendesk',
+        'Hubspot',
         TicketingObject.comment,
         ActionType.POST,
       );
@@ -79,7 +76,7 @@ export class ZendeskService implements ICommentService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_t',
+          provider_slug: 'hubspot_t',
         },
       });
       //retrieve ticket remote id so we can retrieve the comments in the original software
@@ -93,9 +90,7 @@ export class ZendeskService implements ICommentService {
       });
 
       const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets/${
-          ticket.remote_id
-        }/comments.json`,
+        `https://api2.frontapp.com/conversations/${ticket.remote_id}/comments`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -105,18 +100,18 @@ export class ZendeskService implements ICommentService {
           },
         },
       );
-      this.logger.log(`Synced zendesk comments !`);
+      this.logger.log(`Synced hubspot comments !`);
 
       return {
-        data: resp.data.comments,
-        message: 'Zendesk comments retrieved',
+        data: resp.data._results,
+        message: 'Hubspot comments retrieved',
         statusCode: 200,
       };
     } catch (error) {
       handleServiceError(
         error,
         this.logger,
-        'Zendesk',
+        'Hubspot',
         TicketingObject.comment,
         ActionType.GET,
       );

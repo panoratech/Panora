@@ -8,10 +8,12 @@ export interface ICommentService {
   addComment(
     commentData: DesunifyReturnType,
     linkedUserId: string,
+    remoteIdTicket: string,
   ): Promise<ApiResponse<OriginalCommentOutput>>;
 
   syncComments(
     linkedUserId: string,
+    idTicket: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalCommentOutput[]>>;
 }

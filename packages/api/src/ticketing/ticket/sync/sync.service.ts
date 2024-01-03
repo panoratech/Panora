@@ -11,7 +11,6 @@ import { TicketingObject } from '@ticketing/@utils/@types';
 import { UnifiedTicketOutput } from '../types/model.unified';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { tcg_tickets as TicketingTicket } from '@prisma/client';
-import { normalizeComments } from '../utils';
 import { ITicketService } from '../types';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../services/registry.service';
@@ -204,8 +203,6 @@ export class SyncService implements OnModuleInit {
           include: { tcg_comments: true },
         });
 
-        const { normalizedComments } = normalizeComments(ticket.comments);
-
         let unique_ticketing_ticket_id: string;
 
         if (existingTicket) {
@@ -226,17 +223,6 @@ export class SyncService implements OnModuleInit {
               priority: ticket.priority || '',
               assigned_to: ticket.assigned_to || [],
               modified_at: new Date(),
-              tcg_comments: {
-                update: normalizedComments.map((comment, index) => ({
-                  where: {
-                    id_tcg_ticket:
-                      existingTicket.tcg_comments[index].id_tcg_ticket,
-                    id_tcg_comment:
-                      existingTicket.tcg_comments[index].id_tcg_comment,
-                  },
-                  data: comment,
-                })),
-              },
             },
           });
           unique_ticketing_ticket_id = res.id_tcg_ticket;
@@ -262,12 +248,6 @@ export class SyncService implements OnModuleInit {
             remote_id: originId,
             remote_platform: originSource,
           };
-
-          if (normalizedComments) {
-            data['tcg_comments'] = {
-              create: normalizedComments,
-            };
-          }
           const res = await this.prisma.tcg_tickets.create({
             data: data,
           });

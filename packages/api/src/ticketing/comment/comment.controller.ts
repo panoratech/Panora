@@ -60,13 +60,13 @@ export class CommentController {
   @ApiOperation({
     operationId: 'getComment',
     summary: 'Retrieve a Comment',
-    description: 'Retrieve a ticket from any connected Ticketing software',
+    description: 'Retrieve a comment from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
-    description: 'id of the `ticket` you want to retrive.',
+    description: 'id of the `comment` you want to retrive.',
   })
   @ApiQuery({
     name: 'remoteData',
@@ -87,7 +87,7 @@ export class CommentController {
   @ApiOperation({
     operationId: 'addComment',
     summary: 'Create a Comment',
-    description: 'Create a ticket in any supported Ticketing software',
+    description: 'Create a comment in any supported Ticketing software',
   })
   @ApiHeader({
     name: 'integrationId',
@@ -112,13 +112,13 @@ export class CommentController {
   //@ApiCustomResponse(CommentResponse)
   @Post()
   addComment(
-    @Body() unfiedContactData: UnifiedCommentInput,
+    @Body() unfiedCommentData: UnifiedCommentInput,
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
     @Query('remoteData') remote_data?: boolean,
   ) {
     return this.commentService.addComment(
-      unfiedContactData,
+      unfiedCommentData,
       integrationId,
       linkedUserId,
       remote_data,
@@ -142,13 +142,13 @@ export class CommentController {
   //@ApiCustomResponse(CommentResponse)
   @Post('batch')
   addComments(
-    @Body() unfiedContactData: UnifiedCommentInput[],
+    @Body() unfiedCommentData: UnifiedCommentInput[],
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
     @Query('remoteData') remote_data?: boolean,
   ) {
     return this.commentService.batchAddComments(
-      unfiedContactData,
+      unfiedCommentData,
       integrationId,
       linkedUserId,
       remote_data,

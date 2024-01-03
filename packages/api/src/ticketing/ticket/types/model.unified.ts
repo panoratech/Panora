@@ -1,5 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Comment } from '@ticketing/ticket/types';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UnifiedTicketInput {
   name: string;
@@ -12,12 +11,11 @@ export class UnifiedTicketInput {
   completed_at?: Date;
   priority?: string;
   assigned_to?: string[];
-  comments: Comment[];
   @ApiPropertyOptional({ type: [{}] })
   field_mappings?: Record<string, any>[];
 }
 
 export class UnifiedTicketOutput extends UnifiedTicketInput {
-  @ApiPropertyOptional()
-  id?: string;
+  @ApiProperty()
+  id: string;
 }

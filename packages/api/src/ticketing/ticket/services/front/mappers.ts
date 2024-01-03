@@ -25,7 +25,7 @@ export class FrontTicketMapper implements ITicketMapper {
       subject: source.name,
       inbox_id: source.assigned_to?.[0], // TODO
       comment: {
-        body: source.comments[0].body || '', //TODO: handle where a lot of comments must be added
+        body: '', //source.comments[0].body || '', //TODO: handle where a lot of comments must be added
         //TODO: attachments: [''],
       },
     };
@@ -70,17 +70,6 @@ export class FrontTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): UnifiedTicketOutput {
-    //TODO: retrieve comments for the conv id: https://dev.frontapp.com/reference/get_conversations-conversation-id-comments
-    const comments = [];
-    /*ticket.comments?.map((comment) => ({
-      body: comment.body,
-      html_body: comment.html_body,
-      is_private: comment.is_private,
-      remote_id: comment.id.toString(),
-      // Assuming attachments are URLs in string format
-      attachments: comment.attachments?.map((att) => ({ url: att })),
-    }));*/
-
     const field_mappings = customFieldMappings?.map((mapping) => ({
       [mapping.slug]: ticket.custom_fields?.[mapping.remote_id],
     }));
@@ -93,7 +82,6 @@ export class FrontTicketMapper implements ITicketMapper {
       due_date: new Date(ticket.created_at), // todo ?
       tags: JSON.stringify(ticket.tags?.map((tag) => tag.name)),
       assigned_to: ticket.assignee ? [ticket.assignee.email] : undefined,
-      comments: comments,
       field_mappings: field_mappings,
     };
 

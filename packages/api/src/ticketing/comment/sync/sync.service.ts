@@ -64,11 +64,23 @@ export class SyncService implements OnModuleInit {
           const providers = TICKETING_PROVIDERS;
           for (const provider of providers) {
             try {
-              await this.syncCommentsForLinkedUser(
-                provider,
-                linkedUser.id_linked_user,
-                id_project,
-              );
+              //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
+              const tickets = await this.prisma.tcg_tickets.findMany({
+                where: {
+                  remote_platform: provider,
+                  events: {
+                    id_linked_user: linkedUser.id_linked_user,
+                  },
+                },
+              });
+              for (const ticket of tickets) {
+                await this.syncCommentsForLinkedUser(
+                  provider,
+                  linkedUser.id_linked_user,
+                  id_project,
+                  ticket.id_tcg_ticket,
+                );
+              }
             } catch (error) {
               handleServiceError(error, this.logger);
             }
@@ -87,6 +99,7 @@ export class SyncService implements OnModuleInit {
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    id_ticket: string,
   ) {
     try {
       this.logger.log(
@@ -129,7 +142,7 @@ export class SyncService implements OnModuleInit {
       const service: ICommentService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalCommentOutput[]> =
-        await service.syncComments(linkedUserId, remoteProperties);
+        await service.syncComments(linkedUserId, id_ticket, remoteProperties);
 
       const sourceObject: OriginalCommentOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
@@ -145,13 +158,13 @@ export class SyncService implements OnModuleInit {
       const commentsIds = sourceObject.map((comment) =>
         'id' in comment ? String(comment.id) : undefined,
       );
-
       //insert the data in the DB with the fieldMappings (value table)
       const comments_data = await this.saveCommentsInDb(
         linkedUserId,
         unifiedObject,
         commentsIds,
         integrationId,
+        id_ticket,
         job_id,
         sourceObject,
       );
@@ -176,12 +189,99 @@ export class SyncService implements OnModuleInit {
 
   async saveCommentsInDb(
     linkedUserId: string,
-    tickets: UnifiedCommentOutput[],
+    comments: UnifiedCommentOutput[],
     originIds: string[],
     originSource: string,
+    id_ticket: string,
     jobId: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingComment[]> {
-    return;
+    try {
+      let comments_results: TicketingComment[] = [];
+      for (let i = 0; i < comments.length; i++) {
+        const comment = comments[i];
+        const originId = originIds[i];
+
+        if (!originId || originId == '') {
+          throw new NotFoundError(`Origin id not there, found ${originId}`);
+        }
+
+        const existingComment = await this.prisma.tcg_comments.findFirst({
+          where: {
+            remote_id: originId,
+            remote_platform: originSource,
+            events: {
+              id_linked_user: linkedUserId,
+            },
+          },
+        });
+
+        let unique_ticketing_comment_id: string;
+
+        if (existingComment) {
+          // Update the existing comment
+          const res = await this.prisma.tcg_comments.update({
+            where: {
+              id_tcg_comment: existingComment.id_tcg_comment,
+            },
+            data: {
+              body: comment.body,
+              html_body: comment.html_body,
+              is_private: comment.is_private,
+              author_type: comment.author_type,
+              id_tcg_ticket: id_ticket,
+              id_event: jobId,
+              modified_at: new Date(),
+            },
+          });
+          unique_ticketing_comment_id = res.id_tcg_comment;
+          comments_results = [...comments_results, res];
+        } else {
+          // Create a new comment
+          this.logger.log('comment not exists');
+          const data = {
+            id_tcg_comment: uuidv4(),
+            body: comment.body,
+            html_body: comment.html_body,
+            is_private: comment.is_private,
+            created_at: new Date(),
+            modified_at: new Date(),
+            author_type: comment.author_type,
+            id_tcg_ticket: id_ticket,
+            id_event: jobId,
+            remote_id: originId,
+            remote_platform: originSource,
+            //TODO; id_tcg_contact  String?       @db.Uuid
+            //TODO; id_tcg_user     String?       @db.Uuid
+          };
+          const res = await this.prisma.tcg_comments.create({
+            data: data,
+          });
+          comments_results = [...comments_results, res];
+          unique_ticketing_comment_id = res.id_tcg_comment;
+        }
+
+        //insert remote_data in db
+        await this.prisma.remote_data.upsert({
+          where: {
+            ressource_owner_id: unique_ticketing_comment_id,
+          },
+          create: {
+            id_remote_data: uuidv4(),
+            ressource_owner_id: unique_ticketing_comment_id,
+            format: 'json',
+            data: JSON.stringify(remote_data[i]),
+            created_at: new Date(),
+          },
+          update: {
+            data: JSON.stringify(remote_data[i]),
+            created_at: new Date(),
+          },
+        });
+      }
+      return comments_results;
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 }

@@ -14,16 +14,13 @@ import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { unify } from '@@core/utils/unification/unify';
-import { normalizeComments } from '../utils';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from './registry.service';
-import { ZendeskService } from './zendesk';
 
 @Injectable()
 export class TicketService {
   constructor(
     private prisma: PrismaService,
-    private zendesk: ZendeskService,
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
@@ -143,10 +140,7 @@ export class TicketService {
             id_linked_user: linkedUserId,
           },
         },
-        include: { tcg_comments: true },
       });
-
-      const { normalizedComments } = normalizeComments(target_ticket.comments);
 
       let unique_ticketing_ticket_id: string;
 
@@ -168,17 +162,6 @@ export class TicketService {
             priority: target_ticket.priority || '',
             assigned_to: target_ticket.assigned_to || [],
             modified_at: new Date(),
-            tcg_comments: {
-              update: normalizedComments.map((comment, index) => ({
-                where: {
-                  id_tcg_ticket:
-                    existingTicket.tcg_comments[index].id_tcg_ticket,
-                  id_tcg_comment:
-                    existingTicket.tcg_comments[index].id_tcg_comment,
-                },
-                data: comment,
-              })),
-            },
           },
         });
         unique_ticketing_ticket_id = res.id_tcg_ticket;
@@ -203,12 +186,6 @@ export class TicketService {
           remote_id: originId,
           remote_platform: integrationId,
         };
-
-        if (normalizedComments) {
-          data['tcg_comments'] = {
-            create: normalizedComments,
-          };
-        }
 
         const res = await this.prisma.tcg_tickets.create({
           data: data,
@@ -313,9 +290,6 @@ export class TicketService {
         where: {
           id_tcg_ticket: id_ticketing_ticket,
         },
-        include: {
-          tcg_comments: true,
-        },
       });
 
       // Fetch field mappings for the ticket
@@ -355,12 +329,6 @@ export class TicketService {
         completed_at: ticket.completed_at || null,
         priority: ticket.priority || '',
         assigned_to: ticket.assigned_to || [],
-        comments: ticket.tcg_comments.map((comment) => ({
-          remote_id: comment.remote_id,
-          body: comment.body,
-          html_body: comment.html_body,
-          is_private: comment.is_private,
-        })),
         field_mappings: field_mappings,
       };
 
