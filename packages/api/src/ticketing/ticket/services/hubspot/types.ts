@@ -14,7 +14,7 @@ export type HubspotTicketOutput = {
   archived: boolean;
 };
 
-type TicketProperties = {
+export type TicketProperties = {
   createdate: string;
   hs_lastmodifieddate: string;
   hs_pipeline: string;

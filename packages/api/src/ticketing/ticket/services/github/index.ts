@@ -10,6 +10,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GithubTicketInput, GithubTicketOutput } from './types';
 
+//TODO
 @Injectable()
 export class GithubService implements ITicketService {
   constructor(
@@ -35,8 +36,10 @@ export class GithubService implements ITicketService {
         },
       });
       const dataBody = ticketData;
+      const owner = '';
+      const repo = '';
       const resp = await axios.post(
-        `https://api2.frontapp.com/conversations`,
+        `https://api.github.com/repos/${owner}/${repo}/issues`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -73,15 +76,19 @@ export class GithubService implements ITicketService {
           provider_slug: 'github',
         },
       });
-
-      const resp = await axios.get('https://api2.frontapp.com/conversations', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const owner = '';
+      const repo = '';
+      const resp = await axios.get(
+        `https://api.github.com/repos/${owner}/${repo}/issues`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
       this.logger.log(`Synced github tickets !`);
 
       return {

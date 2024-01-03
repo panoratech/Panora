@@ -13,8 +13,16 @@ export class ZendeskCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): ZendeskCommentInput {
-    //TODO
-    return;
+    const result: ZendeskCommentInput = {
+      body: source.body,
+      html_body: source.html_body,
+      public: !source.is_private,
+      author_id: source.user_id ? parseInt(source.user_id) : undefined,
+      created_at: source.created_at.toISOString(),
+      type: 'Comment',
+    };
+
+    return result;
   }
 
   unify(
@@ -39,9 +47,15 @@ export class ZendeskCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): UnifiedCommentOutput {
-    /*TODO const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: comment.custom_fields[mapping.remote_id],
-    }));*/
-    return;
+    return {
+      id: comment.id.toString(),
+      body: comment.body || '',
+      html_body: comment.html_body || '',
+      is_private: !comment.public,
+      created_at: new Date(comment.created_at),
+      modified_at: new Date(comment.created_at), // Assuming the creation date for modification as well
+      author_type: '', //TODO
+      ticket_id: '', //TODO
+    };
   }
 }

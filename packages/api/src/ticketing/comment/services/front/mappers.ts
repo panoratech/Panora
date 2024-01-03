@@ -13,8 +13,12 @@ export class FrontCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): FrontCommentInput {
-    //TODO
-    return;
+    const result: FrontCommentInput = {
+      body: source.body,
+      author_id: source.user_id || source.contact_id, //TODO:
+    };
+
+    return result;
   }
 
   unify(
@@ -39,9 +43,16 @@ export class FrontCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): UnifiedCommentOutput {
-    /*TODO const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: comment.custom_fields[mapping.remote_id],
-    }));*/
-    return;
+    return {
+      id: comment.id,
+      body: comment.body,
+      html_body: '',
+      created_at: new Date(comment.posted_at * 1000), // Convert UNIX timestamp to Date
+      modified_at: new Date(), // Placeholder, as modified_at is not available
+      author_type: comment.author ? 'user' : '',
+      ticket_id: '', // TODO: Need to be determined from related data
+      contact_id: '', // TODO: Need to be determined from related data
+      user_id: '', //TODO
+    };
   }
 }

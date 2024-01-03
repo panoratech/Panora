@@ -2,8 +2,8 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UnifiedCommentInput {
   body: string;
-  html_body: string;
-  is_private: boolean;
+  html_body?: string;
+  is_private?: boolean;
   created_at: Date;
   modified_at: Date;
   author_type: string;

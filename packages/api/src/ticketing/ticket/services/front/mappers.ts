@@ -25,8 +25,8 @@ export class FrontTicketMapper implements ITicketMapper {
       subject: source.name,
       inbox_id: source.assigned_to?.[0], // TODO
       comment: {
-        body: '', //source.comments[0].body || '', //TODO: handle where a lot of comments must be added
-        //TODO: attachments: [''],
+        body: source.comment.body,
+        author_id: source.comment.contact_id || source.comment.user_id,
       },
     };
 

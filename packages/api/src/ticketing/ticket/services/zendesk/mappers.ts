@@ -32,13 +32,10 @@ export class ZendeskTicketMapper implements ITicketMapper {
       type: source.type as 'problem' | 'incident' | 'question' | 'task',
       updated_at: source.completed_at?.toISOString(),
       comment: {
-        body: '', //TODO
+        body: source.comment.body,
+        html_body: source.comment.html_body,
+        public: !source.comment.is_private,
       },
-      /*comment: {
-        body: source.comments[0].body,
-        html_body: source.comments[0].html_body,
-        public: !source.comments[0].is_private,
-      },*/
     };
 
     if (customFieldMappings && source.field_mappings) {

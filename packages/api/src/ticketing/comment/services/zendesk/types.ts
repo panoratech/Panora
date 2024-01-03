@@ -1,4 +1,4 @@
-export type ZendeskCommentInput = BaseComment;
+export type ZendeskCommentInput = Partial<BaseComment>;
 
 export type ZendeskCommentOutput = ZendeskCommentInput & {
   id: number;
