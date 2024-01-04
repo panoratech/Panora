@@ -1,10 +1,5 @@
 import { ITicketMapper } from '@ticketing/ticket/types';
-import {
-  HubspotTicketInput,
-  HubspotTicketOutput,
-  TicketProperties,
-  commonHubspotProperties,
-} from './types';
+import { HubspotTicketInput, HubspotTicketOutput } from './types';
 import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
@@ -18,30 +13,28 @@ export class HubspotTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): HubspotTicketInput {
-    const properties: TicketProperties = { ...commonHubspotProperties };
+    const result = {
+      subject: source.name,
+      hs_pipeline: source.type,
+      hubspot_owner_id: '', // TODO Replace 'default' with actual owner ID
+      hs_pipeline_stage: source.status,
+      hs_ticket_priority: source.priority || 'MEDIUM',
+    };
 
-    properties.subject = source.name;
-    properties.hs_ticket_priority = source.priority || 'MEDIUM'; // Assuming 'MEDIUM' as a default
-
-    // Map the custom fields
     if (customFieldMappings && source.field_mappings) {
-      source.field_mappings.forEach((fieldMapping) => {
-        const mapping = customFieldMappings.find((m) =>
-          fieldMapping.hasOwnProperty(m.slug),
-        );
-        if (mapping && fieldMapping[mapping.slug]) {
-          properties[mapping.remote_id] = fieldMapping[mapping.slug];
+      for (const fieldMapping of source.field_mappings) {
+        for (const key in fieldMapping) {
+          const mapping = customFieldMappings.find(
+            (mapping) => mapping.slug === key,
+          );
+          if (mapping) {
+            result[mapping.remote_id] = fieldMapping[key];
+          }
         }
-      });
+      }
     }
 
-    return {
-      subject: source.name,
-      hs_pipeline: 'default', // Replace 'default' with actual pipeline ID
-      hubspot_owner_id: '', // TODO Replace 'default' with actual owner ID
-      hs_pipeline_stage: '', // TODO Replace 'default' with actual pipeline stage
-      hs_ticket_priority: properties.hs_ticket_priority,
-    };
+    return result;
   }
 
   unify(
@@ -73,10 +66,10 @@ export class HubspotTicketMapper implements ITicketMapper {
     return {
       id: ticket.id,
       name: ticket.properties.subject,
-      status: ticket.properties.hs_pipeline_stage, // Map to your unified status
+      status: ticket.properties.hs_pipeline_stage,
       description: ticket.properties.subject,
       due_date: new Date(ticket.properties.createdate),
-      type: '', // Define how you determine the type
+      type: ticket.properties.hs_pipeline,
       parent_ticket: '', // Define how you determine the parent ticket
       tags: '', // Define how you map or store tags
       completed_at: new Date(ticket.properties.hs_lastmodifieddate),

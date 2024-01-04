@@ -4,6 +4,7 @@ export type FrontTicketInput = {
   teammate_ids?: string[];
   subject: string;
   comment: Comment;
+  custom_fields?: CustomFields;
 };
 
 type Comment = {

@@ -7,7 +7,6 @@ import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
 
@@ -17,7 +16,6 @@ export class FrontService implements ITicketService {
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
-    private env: EnvironmentService,
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
@@ -66,7 +64,6 @@ export class FrontService implements ITicketService {
   }
   async syncTickets(
     linkedUserId: string,
-    custom_properties?: string[],
   ): Promise<ApiResponse<FrontTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({

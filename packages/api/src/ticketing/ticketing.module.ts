@@ -4,6 +4,7 @@ import { CommentModule } from './comment/comment.module';
 import { UserModule } from './user/user.module';
 import { AttachmentModule } from './attachment/attachment.module';
 import { ContactModule } from './contact/contact.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -15,8 +16,7 @@ import { ContactModule } from './contact/contact.module';
   ],
   providers: [],
   controllers: [],
-  exports: [
-    TicketModule,
+  exports: [    TicketModule,
     CommentModule,
     UserModule,
     AttachmentModule,

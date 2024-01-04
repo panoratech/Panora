@@ -32,6 +32,14 @@ import {
   HubspotTicketInput,
   HubspotTicketOutput,
 } from '@ticketing/ticket/services/hubspot/types';
+import {
+  FrontUserInput,
+  FrontUserOutput,
+} from '@ticketing/user/services/front/types';
+import {
+  GithubUserInput,
+  GithubUserOutput,
+} from '@ticketing/user/services/github/types';
 
 /* INPUT */
 
@@ -49,7 +57,10 @@ export type OriginalCommentInput =
   | GithubCommentInput
   | HubspotCommentInput;
 /* user */
-export type OriginalUserInput = ZendeskUserInput;
+export type OriginalUserInput =
+  | ZendeskUserInput
+  | GithubUserInput
+  | FrontUserInput;
 
 /* attachment */
 export type OriginalAttachmentInput = ZendeskAttachmentInput;
@@ -75,7 +86,10 @@ export type OriginalCommentOutput =
   | GithubCommentOutput
   | HubspotCommentOutput;
 /* user */
-export type OriginalUserOutput = ZendeskUserOutput;
+export type OriginalUserOutput =
+  | ZendeskUserOutput
+  | GithubUserOutput
+  | FrontUserOutput;
 
 /* attachment */
 export type OriginalAttachmentOutput = ZendeskAttachmentOutput;

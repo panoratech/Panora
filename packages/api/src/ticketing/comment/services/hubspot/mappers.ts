@@ -5,6 +5,7 @@ import {
 } from '@ticketing/comment/types/model.unified';
 import { HubspotCommentInput, HubspotCommentOutput } from './types';
 
+//TODO: HUBSPOT DOES NOT HAVE A COMMENT ENDPOINT
 export class HubspotCommentMapper implements ICommentMapper {
   desunify(
     source: UnifiedCommentInput,

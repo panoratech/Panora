@@ -18,7 +18,6 @@ export class ZendeskCommentMapper implements ICommentMapper {
       html_body: source.html_body,
       public: !source.is_private,
       author_id: source.user_id ? parseInt(source.user_id) : undefined,
-      created_at: source.created_at.toISOString(),
       type: 'Comment',
     };
 
@@ -54,7 +53,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
       is_private: !comment.public,
       created_at: new Date(comment.created_at),
       modified_at: new Date(comment.created_at), // Assuming the creation date for modification as well
-      author_type: '', //TODO
+      author_type: null, //TODO
       ticket_id: '', //TODO
     };
   }

@@ -13,37 +13,33 @@ export class FrontTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): FrontTicketInput {
-    // For simplicity, we're assuming that the attachments are provided as string URLs.
-    // In a real implementation, we would need to handle binary data for attachments.
-    //TODO: handle attachments
-    /*const attachments = source.comments?.[0]?.attachments?.map(
-      (attachment) => attachment.url,
-    );*/
-
     const result: FrontTicketInput = {
       type: 'discussion', // Assuming 'discussion' as a default type for Front conversations
       subject: source.name,
-      inbox_id: source.assigned_to?.[0], // TODO
+      teammate_ids: source.assigned_to,
       comment: {
         body: source.comment.body,
-        author_id: source.comment.contact_id || source.comment.user_id,
+        author_id:
+          source.comment.author_type === 'user'
+            ? source.comment.user_id
+            : source.comment.contact_id,
+        attachments: source.attachments,
       },
     };
 
     //TODO: custom fields => https://dev.frontapp.com/reference/patch_conversations-conversation-id
-
-    // Custom fields mapping logic
-    /*if (customFieldMappings && source.field_mappings) {
-      result.custom_fields = {};
-      customFieldMappings.forEach((mapping) => {
-        const fieldMapping = source.field_mappings?.find(
-          (fm) => fm[mapping.slug],
-        );
-        if (fieldMapping && fieldMapping[mapping.slug]) {
-          result.custom_fields[mapping.remote_id] = fieldMapping[mapping.slug];
+    if (customFieldMappings && source.field_mappings) {
+      for (const fieldMapping of source.field_mappings) {
+        for (const key in fieldMapping) {
+          const mapping = customFieldMappings.find(
+            (mapping) => mapping.slug === key,
+          );
+          if (mapping) {
+            result[mapping.remote_id] = fieldMapping[key];
+          }
         }
-      });
-    }*/
+      }
+    }
 
     return result;
   }
@@ -81,7 +77,7 @@ export class FrontTicketMapper implements ITicketMapper {
       description: ticket.subject, // todo: ?
       due_date: new Date(ticket.created_at), // todo ?
       tags: JSON.stringify(ticket.tags?.map((tag) => tag.name)),
-      assigned_to: ticket.assignee ? [ticket.assignee.email] : undefined,
+      assigned_to: ticket.assignee ? [ticket.assignee.email] : undefined, //TODO: it must be a uuid of a user object
       field_mappings: field_mappings,
     };
 

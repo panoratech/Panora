@@ -1,5 +1,7 @@
 export type ZendeskUserInput = {
-  id: string;
+  _: string;
 };
 
-export type ZendeskUserOutput = ZendeskUserInput;
+export type ZendeskUserOutput = ZendeskUserInput & {
+  id: number; // Read-only. Automatically assigned when the ticket is created.
+};

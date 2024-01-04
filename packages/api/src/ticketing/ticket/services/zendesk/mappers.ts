@@ -14,9 +14,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
     }[],
   ): ZendeskTicketInput {
     const result: ZendeskTicketInput = {
-      assignee_email: source.assigned_to?.[0], // Assuming the first assigned_to is the assignee email
-      created_at: source.completed_at?.toISOString(),
-      custom_fields: undefined, // Custom field mapping logic needed TODO
+      assignee_email: source.assigned_to?.[0], //TODO; get the mail of the uuid
       description: source.description,
       due_at: source.due_date?.toISOString(),
       priority: source.priority as 'urgent' | 'high' | 'normal' | 'low',
@@ -30,7 +28,6 @@ export class ZendeskTicketMapper implements ITicketMapper {
       subject: source.name,
       tags: [source.tags],
       type: source.type as 'problem' | 'incident' | 'question' | 'task',
-      updated_at: source.completed_at?.toISOString(),
       comment: {
         body: source.comment.body,
         html_body: source.comment.html_body,
@@ -46,8 +43,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
             (mapping) => mapping.slug === key,
           );
           if (mapping) {
-            const obj = { id: mapping.remote_id, value: fieldMapping[key] }; //TODO
-            //result[custom_fields][mapping.remote_id] = fieldMapping[key];
+            const obj = { id: mapping.remote_id, value: fieldMapping[key] };
             res = [...res, obj];
           }
         }
@@ -79,9 +75,15 @@ export class ZendeskTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): UnifiedTicketOutput {
-    /*TODO const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: ticket.custom_fields[mapping.remote_id],
-    }));*/
+    const field_mappings = customFieldMappings.reduce((acc, mapping) => {
+      const customField = ticket.custom_fields.find(
+        (field) => field.id === mapping.remote_id,
+      );
+      if (customField) {
+        acc.push({ [mapping.slug]: customField.value });
+      }
+      return acc;
+    }, [] as Record<string, any>[]);
 
     const unifiedTicket: UnifiedTicketOutput = {
       name: ticket.subject,
@@ -94,7 +96,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       completed_at: undefined, // If available, add logic to determine the completed date
       priority: ticket.priority,
       assigned_to: undefined, // If available, add logic to map assigned users
-      field_mappings: undefined, // Add logic to map custom fields if available
+      field_mappings: field_mappings,
       id: ticket.id.toString(),
     };
 

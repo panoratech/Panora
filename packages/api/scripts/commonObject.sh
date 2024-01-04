@@ -352,7 +352,7 @@ export class ${ObjectCap}Controller {
     name: 'id',
     required: true,
     type: String,
-    description: 'id of the `${objectType}` you want to retrive.',
+    description: 'id of the ${objectType} you want to retrieve.',
   })
   @ApiQuery({
     name: 'remoteData',
@@ -398,13 +398,13 @@ export class ${ObjectCap}Controller {
   //@ApiCustomResponse(${ObjectCap}Response)
   @Post()
   add${ObjectCap}(
-    @Body() unfied${ObjectCap}Data: Unified${ObjectCap}Input,
+    @Body() unified${ObjectCap}Data: Unified${ObjectCap}Input,
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
     @Query('remoteData') remote_data?: boolean,
   ) {
     return this.${objectType}Service.add${ObjectCap}(
-      unfied${ObjectCap}Data,
+      unified${ObjectCap}Data,
       integrationId,
       linkedUserId,
       remote_data,

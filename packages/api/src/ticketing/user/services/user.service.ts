@@ -10,8 +10,9 @@ import { UserResponse } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { unify } from '@@core/utils/unification/unify';
 import { ServiceRegistry } from './registry.service';
+import { OriginalUserOutput } from '@@core/utils/types/original/original.ticketing';
+import { unify } from '@@core/utils/unification/unify';
 
 @Injectable()
 export class UserService {
@@ -25,5 +26,18 @@ export class UserService {
     this.logger.setContext(UserService.name);
   }
 
-  // Additional methods and logic
+  async getUser(
+    id_ticketing_user: string,
+    remote_data?: boolean,
+  ): Promise<ApiResponse<UserResponse>> {
+    return;
+  }
+
+  async getUsers(
+    integrationId: string,
+    linkedUserId: string,
+    remote_data?: boolean,
+  ): Promise<ApiResponse<UserResponse>> {
+    return;
+  }
 }

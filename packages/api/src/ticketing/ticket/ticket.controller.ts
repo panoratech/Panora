@@ -114,13 +114,13 @@ export class TicketController {
   //@ApiCustomResponse(TicketResponse)
   @Post()
   addTicket(
-    @Body() unfiedContactData: UnifiedTicketInput,
+    @Body() unfiedTicketData: UnifiedTicketInput,
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
     @Query('remoteData') remote_data?: boolean,
   ) {
     return this.ticketService.addTicket(
-      unfiedContactData,
+      unfiedTicketData,
       integrationId,
       linkedUserId,
       remote_data,

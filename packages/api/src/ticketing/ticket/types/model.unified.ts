@@ -12,9 +12,11 @@ export class UnifiedTicketInput {
   completed_at?: Date;
   priority?: string;
   assigned_to?: string[];
-  @ApiPropertyOptional({ type: [{}] })
   field_mappings?: Record<string, any>[];
   comment?: UnifiedCommentInput;
+  attachments?: string[];
+  account_id?: string;
+  contact_id?: string;
 }
 export class UnifiedTicketOutput extends UnifiedTicketInput {
   @ApiProperty()

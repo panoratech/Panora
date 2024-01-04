@@ -78,21 +78,18 @@ export class GithubService implements ITicketService {
       });
       const owner = '';
       const repo = '';
-      const resp = await axios.get(
-        `https://api.github.com/repos/${owner}/${repo}/issues`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const resp = await axios.get(`https://api.github.com/repos/issues`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
       this.logger.log(`Synced github tickets !`);
 
       return {
-        data: resp.data._results,
+        data: resp.data,
         message: 'Github tickets retrieved',
         statusCode: 200,
       };

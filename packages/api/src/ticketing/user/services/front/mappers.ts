@@ -1,38 +1,38 @@
 import { IUserMapper } from '@ticketing/user/types';
-import { ZendeskUserInput, ZendeskUserOutput } from './types';
 import {
   UnifiedUserInput,
   UnifiedUserOutput,
 } from '@ticketing/user/types/model.unified';
+import { FrontUserInput, FrontUserOutput } from './types';
 
-export class ZendeskUserMapper implements IUserMapper {
+export class FrontUserMapper implements IUserMapper {
   desunify(
     source: UnifiedUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZendeskUserInput {
+  ): FrontUserInput {
     return;
   }
 
   unify(
-    source: ZendeskUserOutput | ZendeskUserOutput[],
+    source: FrontUserOutput | FrontUserOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedUserOutput | UnifiedUserOutput[] {
-    if (!Array.isArray(source)) {
-      return this.mapSingleUserToUnified(source, customFieldMappings);
-    }
-    return source.map((ticket) =>
-      this.mapSingleUserToUnified(ticket, customFieldMappings),
+    // If the source is not an array, convert it to an array for mapping
+    const sourcesArray = Array.isArray(source) ? source : [source];
+
+    return sourcesArray.map((ticket) =>
+      this.mapSingleTicketToUnified(ticket, customFieldMappings),
     );
   }
 
-  private mapSingleUserToUnified(
-    ticket: ZendeskUserOutput,
+  private mapSingleTicketToUnified(
+    ticket: FrontUserOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

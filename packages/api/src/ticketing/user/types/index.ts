@@ -1,15 +1,10 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedUserInput, UnifiedUserOutput } from './model.unified';
+import { OriginalUserOutput } from '@@core/utils/types/original/original.ticketing';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
-import { OriginalUserOutput } from '@@core/utils/types/original/original.ticketing';
 
 export interface IUserService {
-  addUser(
-    userData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalUserOutput>>;
-
   syncUsers(
     linkedUserId: string,
     custom_properties?: string[],

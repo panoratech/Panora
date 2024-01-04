@@ -49,7 +49,7 @@ export class FrontCommentMapper implements ICommentMapper {
       html_body: '',
       created_at: new Date(comment.posted_at * 1000), // Convert UNIX timestamp to Date
       modified_at: new Date(), // Placeholder, as modified_at is not available
-      author_type: comment.author ? 'user' : '',
+      author_type: comment.author ? 'user' : null,
       ticket_id: '', // TODO: Need to be determined from related data
       contact_id: '', // TODO: Need to be determined from related data
       user_id: '', //TODO
