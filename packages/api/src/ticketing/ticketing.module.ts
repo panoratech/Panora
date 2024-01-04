@@ -4,7 +4,7 @@ import { CommentModule } from './comment/comment.module';
 import { UserModule } from './user/user.module';
 import { AttachmentModule } from './attachment/attachment.module';
 import { ContactModule } from './contact/contact.module';
-import { UserModule } from './user/user.module';
+import { AccountModule } from './account/account.module';
 
 @Module({
   imports: [
@@ -13,6 +13,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     AttachmentModule,
     ContactModule,
+    AccountModule,
   ],
   providers: [],
   controllers: [],

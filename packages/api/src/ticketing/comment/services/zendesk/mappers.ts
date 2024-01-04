@@ -53,7 +53,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
       is_private: !comment.public,
       created_at: new Date(comment.created_at),
       modified_at: new Date(comment.created_at), // Assuming the creation date for modification as well
-      author_type: null, //TODO
+      creator_type: null, //TODO
       ticket_id: '', //TODO
     };
   }

@@ -422,7 +422,7 @@ export class TicketService {
           return {
             id: ticket.id_tcg_ticket,
             name: ticket.name || '',
-            remote_id: ticket.remote_id || '',
+            //TODO: remote_id: ticket.remote_id || '',
             status: ticket.status || '',
             description: ticket.description || '',
             due_date: ticket.due_date || null,

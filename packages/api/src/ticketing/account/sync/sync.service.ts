@@ -1,19 +1,19 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse, TICKETING_PROVIDERS } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ServiceRegistry } from '../services/registry.service';
 import { unify } from '@@core/utils/unification/unify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { tcg_comments as TicketingComment } from '@prisma/client';
-import { UnifiedCommentOutput } from '../types/model.unified';
-import { ICommentService } from '../types';
-import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
-import { ServiceRegistry } from '../services/registry.service';
+import { UnifiedAccountOutput } from '../types/model.unified';
+import { IAccountService } from '../types';
+import { OriginalAccountOutput } from '@@core/utils/types/original/original.ticketing';
+import { tcg_accounts as TicketingAccount } from '@prisma/client';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -29,18 +29,18 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.syncComments();
+      await this.syncAccounts();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
   @Cron('*/20 * * * *')
-  //function used by sync worker which populate our tcg_comments table
-  //its role is to fetch all comments from providers 3rd parties and save the info inside our db
-  async syncComments() {
+  //function used by sync worker which populate our tcg_accounts table
+  //its role is to fetch all accounts from providers 3rd parties and save the info inside our db
+  async syncAccounts() {
     try {
-      this.logger.log(`Syncing comments....`);
+      this.logger.log(`Syncing accounts....`);
       const defaultOrg = await this.prisma.organizations.findFirst({
         where: {
           name: 'Acme Inc',
@@ -54,33 +54,21 @@ export class SyncService implements OnModuleInit {
         },
       });
       const id_project = defaultProject.id_project;
-      const linkedUsers = await this.prisma.linked_users.findMany({
+      const linkedAccounts = await this.prisma.linked_users.findMany({
         where: {
           id_project: id_project,
         },
       });
-      linkedUsers.map(async (linkedUser) => {
+      linkedAccounts.map(async (linkedAccount) => {
         try {
           const providers = TICKETING_PROVIDERS;
           for (const provider of providers) {
             try {
-              //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
-              const tickets = await this.prisma.tcg_tickets.findMany({
-                where: {
-                  remote_platform: provider,
-                  events: {
-                    id_linked_user: linkedUser.id_linked_user,
-                  },
-                },
-              });
-              for (const ticket of tickets) {
-                await this.syncCommentsForLinkedUser(
-                  provider,
-                  linkedUser.id_linked_user,
-                  id_project,
-                  ticket.id_tcg_ticket,
-                );
-              }
+              await this.syncAccountsForLinkedAccount(
+                provider,
+                linkedAccount.id_linked_user,
+                id_project,
+              );
             } catch (error) {
               handleServiceError(error, this.logger);
             }
@@ -95,20 +83,19 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncCommentsForLinkedUser(
+  async syncAccountsForLinkedAccount(
     integrationId: string,
-    linkedUserId: string,
+    linkedAccountId: string,
     id_project: string,
-    id_ticket: string,
   ) {
     try {
       this.logger.log(
-        `Syncing ${integrationId} comments for linkedUser ${linkedUserId}`,
+        `Syncing ${integrationId} accounts for linkedAccount ${linkedAccountId}`,
       );
-      // check if linkedUser has a connection if not just stop sync
+      // check if linkedAccount has a connection if not just stop sync
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedUserId,
+          id_linked_user: linkedAccountId,
           provider_slug: integrationId,
         },
       });
@@ -117,13 +104,13 @@ export class SyncService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'ticketing.comment.pulled',
+          type: 'ticketing.account.pulled',
           method: 'PULL',
           url: '/pull',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedUserId,
+          id_linked_user: linkedAccountId,
         },
       });
       const job_id = job_resp_create.id_event;
@@ -132,39 +119,39 @@ export class SyncService implements OnModuleInit {
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
-          linkedUserId,
-          'comment',
+          linkedAccountId,
+          'account',
         );
       const remoteProperties: string[] = customFieldMappings.map(
         (mapping) => mapping.remote_id,
       );
 
-      const service: ICommentService =
+      const service: IAccountService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalCommentOutput[]> =
-        await service.syncComments(linkedUserId, id_ticket, remoteProperties);
+      const resp: ApiResponse<OriginalAccountOutput[]> =
+        await service.syncAccounts(linkedAccountId, remoteProperties);
 
-      const sourceObject: OriginalCommentOutput[] = resp.data;
+      const sourceObject: OriginalAccountOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalCommentOutput[]>({
+      const unifiedObject = (await unify<OriginalAccountOutput[]>({
         sourceObject,
-        targetType: TicketingObject.comment,
+        targetType: TicketingObject.account,
         providerName: integrationId,
         customFieldMappings,
-      })) as UnifiedCommentOutput[];
+      })) as UnifiedAccountOutput[];
 
       //TODO
-      const commentsIds = sourceObject.map((comment) =>
-        'id' in comment ? String(comment.id) : undefined,
+      const accountIds = sourceObject.map((account) =>
+        'id' in account ? String(account.id) : undefined,
       );
+
       //insert the data in the DB with the fieldMappings (value table)
-      const comments_data = await this.saveCommentsInDb(
-        linkedUserId,
+      const account_data = await this.saveAccountsInDb(
+        linkedAccountId,
         unifiedObject,
-        commentsIds,
+        accountIds,
         integrationId,
-        id_ticket,
         job_id,
         sourceObject,
       );
@@ -177,8 +164,8 @@ export class SyncService implements OnModuleInit {
         },
       });
       await this.webhook.handleWebhook(
-        comments_data,
-        'ticketing.comment.pulled',
+        account_data,
+        'ticketing.account.pulled',
         id_project,
         job_id,
       );
@@ -187,88 +174,119 @@ export class SyncService implements OnModuleInit {
     }
   }
 
-  async saveCommentsInDb(
-    linkedUserId: string,
-    comments: UnifiedCommentOutput[],
+  async saveAccountsInDb(
+    linkedAccountId: string,
+    accounts: UnifiedAccountOutput[],
     originIds: string[],
     originSource: string,
-    id_ticket: string,
     jobId: string,
     remote_data: Record<string, any>[],
-  ): Promise<TicketingComment[]> {
+  ): Promise<TicketingAccount[]> {
     try {
-      let comments_results: TicketingComment[] = [];
-      for (let i = 0; i < comments.length; i++) {
-        const comment = comments[i];
+      let accounts_results: TicketingAccount[] = [];
+      for (let i = 0; i < accounts.length; i++) {
+        const account = accounts[i];
         const originId = originIds[i];
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);
         }
 
-        const existingComment = await this.prisma.tcg_comments.findFirst({
+        const existingAccount = await this.prisma.tcg_accounts.findFirst({
           where: {
             remote_id: originId,
             remote_platform: originSource,
             events: {
-              id_linked_user: linkedUserId,
+              id_linked_account: linkedAccountId,
             },
           },
         });
 
-        let unique_ticketing_comment_id: string;
+        let unique_ticketing_account_id: string;
 
-        if (existingComment) {
-          // Update the existing comment
-          const res = await this.prisma.tcg_comments.update({
+        if (existingAccount) {
+          // Update the existing ticket
+          const res = await this.prisma.tcg_accounts.update({
             where: {
-              id_tcg_comment: existingComment.id_tcg_comment,
+              id_tcg_account: existingAccount.id_tcg_account,
             },
             data: {
-              body: comment.body,
-              html_body: comment.html_body,
-              is_private: comment.is_private,
-              creator_type: comment.creator_type,
-              id_tcg_ticket: id_ticket,
-              id_event: jobId,
+              name: existingAccount.name,
+              domains: existingAccount.domains,
               modified_at: new Date(),
             },
           });
-          unique_ticketing_comment_id = res.id_tcg_comment;
-          comments_results = [...comments_results, res];
+          unique_ticketing_account_id = res.id_tcg_account;
+          accounts_results = [...accounts_results, res];
         } else {
-          // Create a new comment
-          this.logger.log('comment not exists');
+          // Create a new account
+          this.logger.log('not existing account ' + account.name);
           const data = {
-            id_tcg_comment: uuidv4(),
-            body: comment.body,
-            html_body: comment.html_body,
-            is_private: comment.is_private,
+            id_tcg_account: uuidv4(),
+            name: account.name,
+            domains: account.domains,
             created_at: new Date(),
             modified_at: new Date(),
-            creator_type: comment.creator_type,
-            id_tcg_ticket: id_ticket,
             id_event: jobId,
             remote_id: originId,
             remote_platform: originSource,
-            //TODO; id_tcg_contact  String?       @db.Uuid
-            //TODO; id_tcg_user     String?       @db.Uuid
           };
-          const res = await this.prisma.tcg_comments.create({
+          const res = await this.prisma.tcg_accounts.create({
             data: data,
           });
-          comments_results = [...comments_results, res];
-          unique_ticketing_comment_id = res.id_tcg_comment;
+          accounts_results = [...accounts_results, res];
+          unique_ticketing_account_id = res.id_tcg_account;
+        }
+
+        // check duplicate or existing values
+        if (account.field_mappings && account.field_mappings.length > 0) {
+          const entity = await this.prisma.entity.create({
+            data: {
+              id_entity: uuidv4(),
+              ressource_owner_id: unique_ticketing_account_id,
+            },
+          });
+
+          for (const mapping of account.field_mappings) {
+            const attribute = await this.prisma.attribute.findFirst({
+              where: {
+                slug: Object.keys(mapping)[0],
+                source: originSource,
+                id_consumer: linkedAccountId,
+              },
+            });
+
+            if (attribute) {
+              await this.prisma.value.create({
+                data: {
+                  id_value: uuidv4(),
+                  data: Object.values(mapping)[0]
+                    ? Object.values(mapping)[0]
+                    : 'null',
+                  attribute: {
+                    connect: {
+                      id_attribute: attribute.id_attribute,
+                    },
+                  },
+                  entity: {
+                    connect: {
+                      id_entity: entity.id_entity,
+                    },
+                  },
+                },
+              });
+            }
+          }
         }
 
         //insert remote_data in db
         await this.prisma.remote_data.upsert({
           where: {
-            ressource_owner_id: unique_ticketing_comment_id,
+            ressource_owner_id: unique_ticketing_account_id,
           },
           create: {
             id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_comment_id,
+            ressource_owner_id: unique_ticketing_account_id,
             format: 'json',
             data: JSON.stringify(remote_data[i]),
             created_at: new Date(),
@@ -279,7 +297,7 @@ export class SyncService implements OnModuleInit {
           },
         });
       }
-      return comments_results;
+      return accounts_results;
     } catch (error) {
       handleServiceError(error, this.logger);
     }

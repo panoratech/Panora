@@ -61,6 +61,24 @@ export type OriginalUserInput =
   | ZendeskUserInput
   | GithubUserInput
   | FrontUserInput;
+/* account */
+export type OriginalAccountInput =
+  | ZendeskAccountInput
+  | GithubAccountInput
+  | FrontAccountInput;
+/* contact */
+export type OriginalContactInput =
+  | ZendeskContactInput
+  | GithubContactInput
+  | FrontContactInput;
+
+/* tag */
+export type OriginalTagInput = ZendeskTagInput | GithubTagInput | FrontTagInput;
+/* team */
+export type OriginalTeamInput =
+  | ZendeskTeamInput
+  | GithubTeamInput
+  | FrontTeamInput;
 
 /* attachment */
 export type OriginalAttachmentInput = ZendeskAttachmentInput;
@@ -90,6 +108,28 @@ export type OriginalUserOutput =
   | ZendeskUserOutput
   | GithubUserOutput
   | FrontUserOutput;
+
+/* account */
+export type OriginalAccountOutput =
+  | ZendeskAccountOutput
+  | GithubAccountOutput
+  | FrontAccountOutput;
+/* contact */
+export type OriginalContactOutput =
+  | ZendeskContactOutput
+  | GithubContactOutput
+  | FrontContactOutput;
+
+/* tag */
+export type OriginalTagOutput =
+  | ZendeskTagOutput
+  | GithubTagOutput
+  | FrontTagOutput;
+/* team */
+export type OriginalTeamOutput =
+  | ZendeskTeamOutput
+  | GithubTeamOutput
+  | FrontTeamOutput;
 
 /* attachment */
 export type OriginalAttachmentOutput = ZendeskAttachmentOutput;

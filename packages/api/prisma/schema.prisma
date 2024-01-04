@@ -385,9 +385,9 @@ model tcg_comments {
   is_private      Boolean?
   created_at      DateTime?     @db.Timestamp(6)
   modified_at     DateTime?     @db.Timestamp(6)
-  author_type     String?       @db.Uuid
   remote_id       String?
   remote_platform String?
+  creator_type    String?
   id_tcg_ticket   String?       @db.Uuid
   id_tcg_contact  String?       @db.Uuid
   id_tcg_user     String?       @db.Uuid
@@ -414,10 +414,12 @@ model tcg_contacts {
   remote_id       String?
   remote_platform String?
   id_event        String?        @db.Uuid
+  id_tcg_account  String?        @db.Uuid
   tcg_comments    tcg_comments[]
   events          events?        @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_43")
 
   @@index([id_event], map: "fk_tcg_contact_event_id")
+  @@index([id_tcg_account], map: "fk_tcg_contact_tcg_account_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -438,10 +440,13 @@ model tcg_tickets {
   remote_id       String?
   remote_platform String?
   id_event        String?        @db.Uuid
+  creator_type    String?
+  id_tcg_user     String?        @db.Uuid
   tcg_comments    tcg_comments[]
   events          events?        @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_44")
 
   @@index([id_event], map: "fk_tcg_tickets_eventid")
+  @@index([id_tcg_user], map: "fk_tcg_ticket_tcg_user")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -449,11 +454,12 @@ model tcg_users {
   id_tcg_user     String         @id(map: "pk_tcg_users") @db.Uuid
   name            String?
   email_address   String?
-  created_at      DateTime?      @db.Timestamp(6)
-  modified_at     DateTime?      @db.Timestamp(6)
   remote_id       String?
   remote_platform String?
   id_event        String?        @db.Uuid
+  teams           String[]
+  created_at      DateTime?      @db.Timestamp(6)
+  modified_at     DateTime?      @db.Timestamp(6)
   tcg_comments    tcg_comments[]
   events          events?        @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_45")
 
@@ -537,4 +543,42 @@ model webhooks_reponses {
   http_response_data        String
   http_status_code          String
   webhook_delivery_attempts webhook_delivery_attempts[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tcg_accounts {
+  id_tcg_account String    @db.Uuid
+  created_at     DateTime? @db.Timestamp(6)
+  modified_at    DateTime  @db.Timestamp(6)
+  remote_id      String?
+  name           String?
+  domains        String[]
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tcg_tags {
+  id_tcg_tag    String    @db.Uuid
+  remote_id     String?
+  name          String?
+  created_at    DateTime? @db.Timestamp(6)
+  modified_at   DateTime? @db.Timestamp(6)
+  id_tcg_ticket String?   @db.Uuid
+
+  @@index([id_tcg_ticket], map: "fk_tcg_tag_tcg_ticketid")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tcg_teams {
+  id_tcg_team String    @db.Uuid
+  remote_id   String?
+  name        String?
+  description String?
+  created_at  DateTime? @db.Timestamp(6)
+  modified_at DateTime? @db.Timestamp(6)
+
+  @@ignore
 }

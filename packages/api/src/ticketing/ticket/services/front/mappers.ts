@@ -20,7 +20,7 @@ export class FrontTicketMapper implements ITicketMapper {
       comment: {
         body: source.comment.body,
         author_id:
-          source.comment.author_type === 'user'
+          source.comment.creator_type === 'user'
             ? source.comment.user_id
             : source.comment.contact_id,
         attachments: source.attachments,
