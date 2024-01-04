@@ -1,38 +1,38 @@
 import { IContactMapper } from '@ticketing/contact/types';
-import { ZendeskContactInput, ZendeskContactOutput } from './types';
+import { FrontContactInput, FrontContactOutput } from './types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@ticketing/contact/types/model.unified';
 
-export class ZendeskContactMapper implements IContactMapper {
+export class FrontContactMapper implements IContactMapper {
   desunify(
     source: UnifiedContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZendeskContactInput {
+  ): FrontContactInput {
     return;
   }
 
   unify(
-    source: ZendeskContactOutput | ZendeskContactOutput[],
+    source: FrontContactOutput | FrontContactOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedContactOutput | UnifiedContactOutput[] {
-    if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
-    }
-    return source.map((ticket) =>
-      this.mapSingleContactToUnified(ticket, customFieldMappings),
+    // If the source is not an array, convert it to an array for mapping
+    const sourcesArray = Array.isArray(source) ? source : [source];
+
+    return sourcesArray.map((ticket) =>
+      this.mapSingleTicketToUnified(ticket, customFieldMappings),
     );
   }
 
-  private mapSingleContactToUnified(
-    ticket: ZendeskContactOutput,
+  private mapSingleTicketToUnified(
+    ticket: FrontContactOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

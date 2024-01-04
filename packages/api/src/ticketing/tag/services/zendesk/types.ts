@@ -1,7 +1,7 @@
-export type ZendeskContactInput = {
+export type ZendeskTagInput = {
   _: string;
 };
 
-export type ZendeskContactOutput = ZendeskContactInput & {
+export type ZendeskTagOutput = ZendeskTagInput & {
   id: number; // Read-only. Automatically assigned when the ticket is created.
 };

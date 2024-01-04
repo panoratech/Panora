@@ -1,6 +1,16 @@
+import { contactUnificationMapping } from '@crm/contact/types/mappingsTypes';
 import { IAccountService } from '@ticketing/account/types';
-import { UnifiedAccountInput, UnifiedAccountOutput } from '@ticketing/account/types/model.unified';
+import { accountUnificationMapping } from '@ticketing/account/types/mappingsTypes';
+import {
+  UnifiedAccountInput,
+  UnifiedAccountOutput,
+} from '@ticketing/account/types/model.unified';
 import { IAttachmentService } from '@ticketing/attachment/types';
+import { attachmentUnificationMapping } from '@ticketing/attachment/types/mappingsTypes';
+import {
+  UnifiedAttachmentInput,
+  UnifiedAttachmentOutput,
+} from '@ticketing/attachment/types/model.unified';
 import { ICommentService } from '@ticketing/comment/types';
 import { commentUnificationMapping } from '@ticketing/comment/types/mappingsTypes';
 import {
@@ -8,6 +18,22 @@ import {
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { IContactService } from '@ticketing/contact/types';
+import {
+  UnifiedContactInput,
+  UnifiedContactOutput,
+} from '@ticketing/contact/types/model.unified';
+import { ITagService } from '@ticketing/tag/types';
+import { tagUnificationMapping } from '@ticketing/tag/types/mappingsTypes';
+import {
+  UnifiedTagInput,
+  UnifiedTagOutput,
+} from '@ticketing/tag/types/model.unified';
+import { ITeamService } from '@ticketing/team/types';
+import { teamUnificationMapping } from '@ticketing/team/types/mappingsTypes';
+import {
+  UnifiedTeamInput,
+  UnifiedTeamOutput,
+} from '@ticketing/team/types/model.unified';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ticketUnificationMapping } from '@ticketing/ticket/types/mappingsTypes';
 import {
@@ -40,9 +66,9 @@ export type UnifiedTicketing =
   | UnifiedUserInput
   | UnifiedUserOutput
   | UnifiedAccountInput
-  | UnifiedAccountOutput;
+  | UnifiedAccountOutput
   | UnifiedContactInput
-  | UnifiedContactOutput;
+  | UnifiedContactOutput
   | UnifiedTeamInput
   | UnifiedTeamOutput
   | UnifiedTagInput
@@ -67,10 +93,9 @@ export type ITicketingService =
   | IUserService
   | IAttachmentService
   | IContactService
+  | IAccountService
   | ITeamService
   | ITagService;
-;
-
 export * from '../../ticket/services/zendesk/types';
 export * from '../../comment/services/zendesk/types';
 export * from '../../user/services/zendesk/types';

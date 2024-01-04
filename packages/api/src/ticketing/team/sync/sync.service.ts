@@ -6,14 +6,14 @@ import { Cron } from '@nestjs/schedule';
 import { ApiResponse, TICKETING_PROVIDERS } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ServiceRegistry } from '../services/registry.service';
 import { unify } from '@@core/utils/unification/unify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedContactOutput } from '../types/model.unified';
-import { IContactService } from '../types';
-import { ServiceRegistry } from '../services/registry.service';
-import { tcg_contacts as TicketingContact } from '@prisma/client';
-import { OriginalContactOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedTeamOutput } from '../types/model.unified';
+import { ITeamService } from '../types';
+import { tcg_teams as TicketingTeam } from '@prisma/client';
+import { OriginalTeamOutput } from '@@core/utils/types/original/original.ticketing';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -29,18 +29,18 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.syncContacts();
+      await this.syncTeams();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
   @Cron('*/20 * * * *')
-  //function used by sync worker which populate our tcg_contacts table
-  //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
-  async syncContacts() {
+  //function used by sync worker which populate our tcg_teams table
+  //its role is to fetch all teams from providers 3rd parties and save the info inside our db
+  async syncTeams() {
     try {
-      this.logger.log(`Syncing contacts....`);
+      this.logger.log(`Syncing teams....`);
       const defaultOrg = await this.prisma.organizations.findFirst({
         where: {
           name: 'Acme Inc',
@@ -54,19 +54,19 @@ export class SyncService implements OnModuleInit {
         },
       });
       const id_project = defaultProject.id_project;
-      const linkedContacts = await this.prisma.linked_users.findMany({
+      const linkedTeams = await this.prisma.linked_users.findMany({
         where: {
           id_project: id_project,
         },
       });
-      linkedContacts.map(async (linkedContact) => {
+      linkedTeams.map(async (linkedTeam) => {
         try {
           const providers = TICKETING_PROVIDERS;
           for (const provider of providers) {
             try {
-              await this.syncContactsForLinkedContact(
+              await this.syncTeamsForLinkedTeam(
                 provider,
-                linkedContact.id_linked_user,
+                linkedTeam.id_linked_user,
                 id_project,
               );
             } catch (error) {
@@ -83,19 +83,19 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncContactsForLinkedContact(
+  async syncTeamsForLinkedTeam(
     integrationId: string,
-    linkedContactId: string,
+    linkedTeamId: string,
     id_project: string,
   ) {
     try {
       this.logger.log(
-        `Syncing ${integrationId} contacts for linkedContact ${linkedContactId}`,
+        `Syncing ${integrationId} teams for linkedTeam ${linkedTeamId}`,
       );
-      // check if linkedContact has a connection if not just stop sync
+      // check if linkedTeam has a connection if not just stop sync
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedContactId,
+          id_linked_user: linkedTeamId,
           provider_slug: integrationId,
         },
       });
@@ -104,13 +104,13 @@ export class SyncService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'ticketing.contact.pulled',
+          type: 'ticketing.team.pulled',
           method: 'PULL',
           url: '/pull',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedContactId,
+          id_linked_user: linkedTeamId,
         },
       });
       const job_id = job_resp_create.id_event;
@@ -119,38 +119,40 @@ export class SyncService implements OnModuleInit {
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
-          linkedContactId,
-          'contact',
+          linkedTeamId,
+          'team',
         );
       const remoteProperties: string[] = customFieldMappings.map(
         (mapping) => mapping.remote_id,
       );
 
-      const service: IContactService =
+      const service: ITeamService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalContactOutput[]> =
-        await service.syncContacts(linkedContactId, remoteProperties);
+      const resp: ApiResponse<OriginalTeamOutput[]> = await service.syncTeams(
+        linkedTeamId,
+        remoteProperties,
+      );
 
-      const sourceObject: OriginalContactOutput[] = resp.data;
+      const sourceObject: OriginalTeamOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalContactOutput[]>({
+      const unifiedObject = (await unify<OriginalTeamOutput[]>({
         sourceObject,
-        targetType: TicketingObject.contact,
+        targetType: TicketingObject.team,
         providerName: integrationId,
         customFieldMappings,
-      })) as UnifiedContactOutput[];
+      })) as UnifiedTeamOutput[];
 
       //TODO
-      const contactIds = sourceObject.map((contact) =>
-        'id' in contact ? String(contact.id) : undefined,
+      const teamIds = sourceObject.map((team) =>
+        'id' in team ? String(team.id) : undefined,
       );
 
       //insert the data in the DB with the fieldMappings (value table)
-      const contact_data = await this.saveContactsInDb(
-        linkedContactId,
+      const team_data = await this.saveTeamsInDb(
+        linkedTeamId,
         unifiedObject,
-        contactIds,
+        teamIds,
         integrationId,
         job_id,
         sourceObject,
@@ -164,8 +166,8 @@ export class SyncService implements OnModuleInit {
         },
       });
       await this.webhook.handleWebhook(
-        contact_data,
-        'ticketing.contact.pulled',
+        team_data,
+        'ticketing.team.pulled',
         id_project,
         job_id,
       );
@@ -174,89 +176,85 @@ export class SyncService implements OnModuleInit {
     }
   }
 
-  async saveContactsInDb(
-    linkedContactId: string,
-    contacts: UnifiedContactOutput[],
+  async saveTeamsInDb(
+    linkedTeamId: string,
+    teams: UnifiedTeamOutput[],
     originIds: string[],
     originSource: string,
     jobId: string,
     remote_data: Record<string, any>[],
-  ): Promise<TicketingContact[]> {
+  ): Promise<TicketingTeam[]> {
     try {
-      let contacts_results: TicketingContact[] = [];
-      for (let i = 0; i < contacts.length; i++) {
-        const contact = contacts[i];
+      let teams_results: TicketingTeam[] = [];
+      for (let i = 0; i < teams.length; i++) {
+        const team = teams[i];
         const originId = originIds[i];
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);
         }
 
-        const existingContact = await this.prisma.tcg_contacts.findFirst({
+        const existingTeam = await this.prisma.tcg_teams.findFirst({
           where: {
             remote_id: originId,
             remote_platform: originSource,
             events: {
-              id_linked_user: linkedContactId,
+              id_linked_user: linkedTeamId,
             },
           },
         });
 
-        let unique_ticketing_contact_id: string;
+        let unique_ticketing_team_id: string;
 
-        if (existingContact) {
+        if (existingTeam) {
           // Update the existing ticket
-          const res = await this.prisma.tcg_contacts.update({
+          const res = await this.prisma.tcg_teams.update({
             where: {
-              id_tcg_contact: existingContact.id_tcg_contact,
+              id_tcg_team: existingTeam.id_tcg_team,
             },
             data: {
-              name: existingContact.name,
-              email_address: existingContact.email_address,
-              phone_number: existingContact.phone_number,
-              details: existingContact.details,
+              name: existingTeam.name,
+              description: team.description,
               modified_at: new Date(),
             },
           });
-          unique_ticketing_contact_id = res.id_tcg_contact;
-          contacts_results = [...contacts_results, res];
+          unique_ticketing_team_id = res.id_tcg_team;
+          teams_results = [...teams_results, res];
         } else {
-          // Create a new contact
-          this.logger.log('not existing contact ' + contact.name);
+          // Create a new team
+          this.logger.log('not existing team ' + team.name);
           const data = {
-            id_tcg_contact: uuidv4(),
-            name: contact.name,
-            email_address: contact.email_address,
-            phone_number: contact.phone_number,
-            details: contact.details,
+            id_tcg_team: uuidv4(),
+            name: team.name,
+            description: team.description,
             created_at: new Date(),
             modified_at: new Date(),
             id_event: jobId,
             remote_id: originId,
             remote_platform: originSource,
           };
-          const res = await this.prisma.tcg_contacts.create({
+          const res = await this.prisma.tcg_teams.create({
             data: data,
           });
-          contacts_results = [...contacts_results, res];
-          unique_ticketing_contact_id = res.id_tcg_contact;
+          teams_results = [...teams_results, res];
+          unique_ticketing_team_id = res.id_tcg_team;
         }
 
         // check duplicate or existing values
-        if (contact.field_mappings && contact.field_mappings.length > 0) {
+        if (team.field_mappings && team.field_mappings.length > 0) {
           const entity = await this.prisma.entity.create({
             data: {
               id_entity: uuidv4(),
-              ressource_owner_id: unique_ticketing_contact_id,
+              ressource_owner_id: unique_ticketing_team_id,
             },
           });
 
-          for (const mapping of contact.field_mappings) {
+          for (const mapping of team.field_mappings) {
             const attribute = await this.prisma.attribute.findFirst({
               where: {
                 slug: Object.keys(mapping)[0],
                 source: originSource,
-                id_consumer: linkedContactId,
+                id_consumer: linkedTeamId,
               },
             });
 
@@ -286,11 +284,11 @@ export class SyncService implements OnModuleInit {
         //insert remote_data in db
         await this.prisma.remote_data.upsert({
           where: {
-            ressource_owner_id: unique_ticketing_contact_id,
+            ressource_owner_id: unique_ticketing_team_id,
           },
           create: {
             id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_contact_id,
+            ressource_owner_id: unique_ticketing_team_id,
             format: 'json',
             data: JSON.stringify(remote_data[i]),
             created_at: new Date(),
@@ -301,7 +299,7 @@ export class SyncService implements OnModuleInit {
           },
         });
       }
-      return contacts_results;
+      return teams_results;
     } catch (error) {
       handleServiceError(error, this.logger);
     }

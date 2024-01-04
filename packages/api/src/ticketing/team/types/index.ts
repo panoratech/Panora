@@ -1,19 +1,19 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
+import { UnifiedTeamInput, UnifiedTeamOutput } from './model.unified';
+import { OriginalTeamOutput } from '@@core/utils/types/original/original.ticketing';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
-import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 
-export interface IContactService {
-  syncContacts(
+export interface ITeamService {
+  syncTeams(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalContactOutput[]>>;
+  ): Promise<ApiResponse<OriginalTeamOutput[]>>;
 }
 
-export interface IContactMapper {
+export interface ITeamMapper {
   desunify(
-    source: UnifiedContactInput,
+    source: UnifiedTeamInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -21,17 +21,17 @@ export interface IContactMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalContactOutput | OriginalContactOutput[],
+    source: OriginalTeamOutput | OriginalTeamOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[];
+  ): UnifiedTeamOutput | UnifiedTeamOutput[];
 }
 
-export class ContactResponse {
-  @ApiProperty({ type: [UnifiedContactOutput] })
-  contacts: UnifiedContactOutput[];
+export class TeamResponse {
+  @ApiProperty({ type: [UnifiedTeamOutput] })
+  teams: UnifiedTeamOutput[];
 
   @ApiPropertyOptional({ type: [{}] })
   remote_data?: Record<string, any>[]; // Data in original format

@@ -7,7 +7,23 @@ import {
   ZendeskUserOutput,
   ZendeskAttachmentOutput,
   ZendeskAttachmentInput,
+  ZendeskAccountInput,
+  ZendeskAccountOutput,
+  ZendeskContactInput,
+  ZendeskContactOutput,
+  ZendeskTagInput,
+  ZendeskTagOutput,
+  ZendeskTeamInput,
+  ZendeskTeamOutput,
 } from '@ticketing/@utils/@types';
+import {
+  FrontAccountInput,
+  FrontAccountOutput,
+} from '@ticketing/account/services/front/types';
+import {
+  GithubAccountInput,
+  GithubAccountOutput,
+} from '@ticketing/account/services/github/types';
 import {
   FrontCommentInput,
   FrontCommentOutput,
@@ -20,6 +36,30 @@ import {
   HubspotCommentInput,
   HubspotCommentOutput,
 } from '@ticketing/comment/services/hubspot/types';
+import {
+  FrontContactInput,
+  FrontContactOutput,
+} from '@ticketing/contact/services/front/types';
+import {
+  GithubContactInput,
+  GithubContactOutput,
+} from '@ticketing/contact/services/github/types';
+import {
+  FrontTagInput,
+  FrontTagOutput,
+} from '@ticketing/tag/services/front/types';
+import {
+  GithubTagInput,
+  GithubTagOutput,
+} from '@ticketing/tag/services/github/types';
+import {
+  FrontTeamInput,
+  FrontTeamOutput,
+} from '@ticketing/team/services/front/types';
+import {
+  GithubTeamInput,
+  GithubTeamOutput,
+} from '@ticketing/team/services/github/types';
 import {
   FrontTicketInput,
   FrontTicketOutput,
@@ -138,4 +178,8 @@ export type TicketingObjectOutput =
   | OriginalTicketOutput
   | OriginalCommentOutput
   | OriginalUserOutput
-  | OriginalAttachmentOutput;
+  | OriginalAttachmentOutput
+  | OriginalTeamOutput
+  | OriginalTagOutput
+  | OriginalContactOutput
+  | OriginalAccountOutput;

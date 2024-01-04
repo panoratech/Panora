@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
+import { TagController } from './tag.controller';
 import { SyncService } from './sync/sync.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskService } from './services/zendesk';
-import { BullModule } from '@nestjs/bull';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { TagService } from './services/tag.service';
 import { ServiceRegistry } from './services/registry.service';
-import { ContactService } from './services/contact.service';
-import { ContactController } from './contact.controller';
+import { EncryptionService } from '@@core/encryption/encryption.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { WebhookService } from '@@core/webhook/webhook.service';
+import { BullModule } from '@nestjs/bull';
 import { FrontService } from './services/front';
 import { GithubService } from './services/github';
+import { ZendeskService } from './services/zendesk';
 
 @Module({
   imports: [
@@ -19,9 +19,9 @@ import { GithubService } from './services/github';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [ContactController],
+  controllers: [TagController],
   providers: [
-    ContactService,
+    TagService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -36,4 +36,4 @@ import { GithubService } from './services/github';
   ],
   exports: [SyncService],
 })
-export class ContactModule {}
+export class TagModule {}

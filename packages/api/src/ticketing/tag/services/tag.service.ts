@@ -4,23 +4,23 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { handleServiceError } from '@@core/utils/errors';
-import { UnifiedContactOutput } from '../types/model.unified';
-import { ContactResponse } from '../types';
+import { UnifiedTagOutput } from '../types/model.unified';
+import { TagResponse } from '../types';
 
 @Injectable()
-export class ContactService {
+export class TagService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
-    this.logger.setContext(ContactService.name);
+    this.logger.setContext(TagService.name);
   }
 
-  async getContact(
-    id_ticketing_contact: string,
+  async getTag(
+    id_ticketing_tag: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ApiResponse<TagResponse>> {
     try {
-      const contact = await this.prisma.tcg_contacts.findUnique({
+      const tag = await this.prisma.tcg_tags.findUnique({
         where: {
-          id_tcg_contact: id_ticketing_contact,
+          id_tcg_tag: id_ticketing_tag,
         },
       });
 
@@ -28,7 +28,7 @@ export class ContactService {
       const values = await this.prisma.value.findMany({
         where: {
           entity: {
-            ressource_owner_id: contact.id_tcg_contact,
+            ressource_owner_id: tag.id_tcg_tag,
           },
         },
         include: {
@@ -48,24 +48,21 @@ export class ContactService {
         [key]: value,
       }));
 
-      // Transform to UnifiedContactOutput format
-      const unifiedContact: UnifiedContactOutput = {
-        id: contact.id_tcg_contact,
-        email_address: contact.email_address,
-        name: contact.name,
-        details: contact.details,
-        phone_number: contact.phone_number,
+      // Transform to UnifiedTagOutput format
+      const unifiedTag: UnifiedTagOutput = {
+        id: tag.id_tcg_tag,
+        name: tag.name,
         field_mappings: field_mappings,
       };
 
-      let res: ContactResponse = {
-        contacts: [unifiedContact],
+      let res: TagResponse = {
+        tags: [unifiedTag],
       };
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
-            ressource_owner_id: contact.id_tcg_contact,
+            ressource_owner_id: tag.id_tcg_tag,
           },
         });
         const remote_data = JSON.parse(resp.data);
@@ -85,43 +82,43 @@ export class ContactService {
     }
   }
 
-  async getContacts(
+  async getTags(
     integrationId: string,
-    linkedContactId: string,
+    linkedTagId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ApiResponse<TagResponse>> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'ticketing.contact.pull',
+          type: 'ticketing.tag.pull',
           method: 'GET',
-          url: '/ticketing/contact',
+          url: '/ticketing/tag',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedContactId,
+          id_linked_user: linkedTagId,
         },
       });
       const job_id = job_resp_create.id_event;
-      const contacts = await this.prisma.tcg_contacts.findMany({
+      const tags = await this.prisma.tcg_tags.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
           events: {
-            id_linked_user: linkedContactId,
+            id_linked_user: linkedTagId,
           },
         },
       });
 
-      const unifiedContacts: UnifiedContactOutput[] = await Promise.all(
-        contacts.map(async (contact) => {
-          // Fetch field mappings for the contact
+      const unifiedTags: UnifiedTagOutput[] = await Promise.all(
+        tags.map(async (tag) => {
+          // Fetch field mappings for the tag
           const values = await this.prisma.value.findMany({
             where: {
               entity: {
-                ressource_owner_id: contact.id_tcg_contact,
+                ressource_owner_id: tag.id_tcg_tag,
               },
             },
             include: {
@@ -141,28 +138,25 @@ export class ContactService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedContactOutput format
+          // Transform to UnifiedTagOutput format
           return {
-            id: contact.id_tcg_contact,
-            email_address: contact.email_address,
-            name: contact.name,
-            details: contact.details,
-            phone_number: contact.phone_number,
+            id: tag.id_tcg_tag,
+            name: tag.name,
             field_mappings: field_mappings,
           };
         }),
       );
 
-      let res: ContactResponse = {
-        contacts: unifiedContacts,
+      let res: TagResponse = {
+        tags: unifiedTags,
       };
 
       if (remote_data) {
         const remote_array_data: Record<string, any>[] = await Promise.all(
-          contacts.map(async (contact) => {
+          tags.map(async (tag) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: contact.id_tcg_contact,
+                ressource_owner_id: tag.id_tcg_tag,
               },
             });
             const remote_data = JSON.parse(resp.data);

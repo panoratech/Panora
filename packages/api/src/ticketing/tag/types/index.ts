@@ -1,19 +1,19 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
+import { UnifiedTagInput, UnifiedTagOutput } from './model.unified';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
-import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 
-export interface IContactService {
-  syncContacts(
+export interface ITagService {
+  syncTags(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalContactOutput[]>>;
+  ): Promise<ApiResponse<OriginalTagOutput[]>>;
 }
 
-export interface IContactMapper {
+export interface ITagMapper {
   desunify(
-    source: UnifiedContactInput,
+    source: UnifiedTagInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -21,17 +21,17 @@ export interface IContactMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalContactOutput | OriginalContactOutput[],
+    source: OriginalTagOutput | OriginalTagOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[];
+  ): UnifiedTagOutput | UnifiedTagOutput[];
 }
 
-export class ContactResponse {
-  @ApiProperty({ type: [UnifiedContactOutput] })
-  contacts: UnifiedContactOutput[];
+export class TagResponse {
+  @ApiProperty({ type: [UnifiedTagOutput] })
+  tags: UnifiedTagOutput[];
 
   @ApiPropertyOptional({ type: [{}] })
   remote_data?: Record<string, any>[]; // Data in original format

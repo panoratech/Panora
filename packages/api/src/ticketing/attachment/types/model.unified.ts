@@ -1,3 +1,7 @@
-export class UnifiedAttachmentInput {}
+export class UnifiedAttachmentInput {
+  field_mappings?: Record<string, any>[];
+}
 
-export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {}
+export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
+  id: string;
+}

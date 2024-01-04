@@ -4,23 +4,23 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { handleServiceError } from '@@core/utils/errors';
-import { UnifiedContactOutput } from '../types/model.unified';
-import { ContactResponse } from '../types';
+import { UnifiedTeamOutput } from '../types/model.unified';
+import { TeamResponse } from '../types';
 
 @Injectable()
-export class ContactService {
+export class TeamService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
-    this.logger.setContext(ContactService.name);
+    this.logger.setContext(TeamService.name);
   }
 
-  async getContact(
-    id_ticketing_contact: string,
+  async getTeam(
+    id_ticketing_team: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ApiResponse<TeamResponse>> {
     try {
-      const contact = await this.prisma.tcg_contacts.findUnique({
+      const team = await this.prisma.tcg_teams.findUnique({
         where: {
-          id_tcg_contact: id_ticketing_contact,
+          id_tcg_team: id_ticketing_team,
         },
       });
 
@@ -28,7 +28,7 @@ export class ContactService {
       const values = await this.prisma.value.findMany({
         where: {
           entity: {
-            ressource_owner_id: contact.id_tcg_contact,
+            ressource_owner_id: team.id_tcg_team,
           },
         },
         include: {
@@ -48,24 +48,22 @@ export class ContactService {
         [key]: value,
       }));
 
-      // Transform to UnifiedContactOutput format
-      const unifiedContact: UnifiedContactOutput = {
-        id: contact.id_tcg_contact,
-        email_address: contact.email_address,
-        name: contact.name,
-        details: contact.details,
-        phone_number: contact.phone_number,
+      // Transform to UnifiedTeamOutput format
+      const unifiedTeam: UnifiedTeamOutput = {
+        id: team.id_tcg_team,
+        name: team.name,
+        description: team.description,
         field_mappings: field_mappings,
       };
 
-      let res: ContactResponse = {
-        contacts: [unifiedContact],
+      let res: TeamResponse = {
+        teams: [unifiedTeam],
       };
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
-            ressource_owner_id: contact.id_tcg_contact,
+            ressource_owner_id: team.id_tcg_team,
           },
         });
         const remote_data = JSON.parse(resp.data);
@@ -85,43 +83,43 @@ export class ContactService {
     }
   }
 
-  async getContacts(
+  async getTeams(
     integrationId: string,
-    linkedContactId: string,
+    linkedTeamId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ApiResponse<TeamResponse>> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'initialized',
-          type: 'ticketing.contact.pull',
+          type: 'ticketing.team.pull',
           method: 'GET',
-          url: '/ticketing/contact',
+          url: '/ticketing/team',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedContactId,
+          id_linked_user: linkedTeamId,
         },
       });
       const job_id = job_resp_create.id_event;
-      const contacts = await this.prisma.tcg_contacts.findMany({
+      const teams = await this.prisma.tcg_teams.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
           events: {
-            id_linked_user: linkedContactId,
+            id_linked_user: linkedTeamId,
           },
         },
       });
 
-      const unifiedContacts: UnifiedContactOutput[] = await Promise.all(
-        contacts.map(async (contact) => {
-          // Fetch field mappings for the contact
+      const unifiedTeams: UnifiedTeamOutput[] = await Promise.all(
+        teams.map(async (team) => {
+          // Fetch field mappings for the team
           const values = await this.prisma.value.findMany({
             where: {
               entity: {
-                ressource_owner_id: contact.id_tcg_contact,
+                ressource_owner_id: team.id_tcg_team,
               },
             },
             include: {
@@ -141,28 +139,26 @@ export class ContactService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedContactOutput format
+          // Transform to UnifiedTeamOutput format
           return {
-            id: contact.id_tcg_contact,
-            email_address: contact.email_address,
-            name: contact.name,
-            details: contact.details,
-            phone_number: contact.phone_number,
+            id: team.id_tcg_team,
+            name: team.name,
+            description: team.description,
             field_mappings: field_mappings,
           };
         }),
       );
 
-      let res: ContactResponse = {
-        contacts: unifiedContacts,
+      let res: TeamResponse = {
+        teams: unifiedTeams,
       };
 
       if (remote_data) {
         const remote_array_data: Record<string, any>[] = await Promise.all(
-          contacts.map(async (contact) => {
+          teams.map(async (team) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: contact.id_tcg_contact,
+                ressource_owner_id: team.id_tcg_team,
               },
             });
             const remote_data = JSON.parse(resp.data);
