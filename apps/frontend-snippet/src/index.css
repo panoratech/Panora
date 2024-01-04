@@ -33,7 +33,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  font-family: "IBM Plex Mono", monospace;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 button {
