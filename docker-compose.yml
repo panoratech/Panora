@@ -99,14 +99,11 @@ services:
       - "9001:9001"
     command: server /data --console-address ":9001"
     healthcheck:
-      test:
-        - CMD
-        - curl
-        - '-f'
-        - 'http://localhost:9000/minio/health/live'
-      retries: 5
+      test: timeout 5s bash -c ':> /dev/tcp/127.0.0.1/9000' || exit 1
+      start_period: 5s
       interval: 10s
       timeout: 5s
+      retries: 2
     volumes:
       - pnr-objstr:/data
     restart:
@@ -118,12 +115,19 @@ services:
     entrypoint: []
     command: >
       sh -c "
+        sleep 10 &&
         mc alias set panora-store http://panora-store:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} &&
+        echo "****1****" &&
         mc mb panora-store/${S3_TCG_ATTACHMENTS_BUCKETNAME} &&
+        echo "****2****" &&
+        mc admin user add panora-store ${BUCKET_TCG_ATTACHMENTS_USER} ${BUCKET_TCG_ATTACHMENTS_PW} &&
+        echo "****3****" &&
+        mc admin policy attach panora-store readwrite --user ${BUCKET_TCG_ATTACHMENTS_USER} &&
+        echo "****4****" &&
         mc ls panora-store 
       "
     depends_on:
-      - panora-store
+      - postgres
     volumes:
       - pnr-objstr:/data
 
