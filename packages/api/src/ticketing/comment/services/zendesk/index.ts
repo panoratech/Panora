@@ -10,7 +10,7 @@ import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
-import { ZendeskCommentOutput } from './types';
+import { ZendeskCommentInput, ZendeskCommentOutput } from './types';
 import { EnvironmentService } from '@@core/environment/environment.service';
 @Injectable()
 export class ZendeskService implements ICommentService {
@@ -26,8 +26,9 @@ export class ZendeskService implements ICommentService {
     );
     this.registry.registerService('zendesk_t', this);
   }
+
   async addComment(
-    commentData: DesunifyReturnType,
+    commentData: ZendeskCommentInput,
     linkedUserId: string,
     remoteIdTicket: string,
   ): Promise<ApiResponse<ZendeskCommentOutput>> {
@@ -38,9 +39,41 @@ export class ZendeskService implements ICommentService {
           provider_slug: 'zendesk_t',
         },
       });
+
+      // We must fetch tokens from zendesk with the commentData.uploads array of Attachment uuids
+      const uuids = commentData.uploads;
+      let uploads = [];
+      uuids.map(async (uuid) => {
+        const res = await this.prisma.tcg_attachments.findUnique({
+          where: {
+            id_tcg_attachment: uuid,
+          },
+        });
+        if (!res) throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+
+        //TODO:; fetch the right file from AWS s3
+        const s3File = '';
+        const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
+          res.file_name
+        }`;
+
+        const resp = await axios.get(url, {
+          headers: {
+            'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        });
+        uploads = [...uploads, resp.data.upload.token];
+      });
+      const finalData = {
+        ...commentData,
+        uploads: uploads,
+      };
       const dataBody = {
         ticket: {
-          comment: commentData,
+          comment: finalData,
         },
       };
       //to add a comment on Zendesk you must update a ticket using the Ticket API

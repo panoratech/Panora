@@ -21,9 +21,6 @@ import { TeamModule } from './team/team.module';
   ],
   providers: [],
   controllers: [],
-  exports: [    UserModule,
-    AttachmentModule,
-    ContactModule,
-  ],
+  exports: [UserModule, AttachmentModule, ContactModule],
 })
 export class TicketingModule {}

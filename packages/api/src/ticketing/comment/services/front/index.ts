@@ -3,12 +3,11 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@utils/@types';
-import { FrontCommentOutput } from './types';
+import { FrontCommentInput, FrontCommentOutput } from './types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
 
@@ -26,7 +25,7 @@ export class FrontService implements ICommentService {
     this.registry.registerService('front', this);
   }
   async addComment(
-    commentData: DesunifyReturnType,
+    commentData: FrontCommentInput,
     linkedUserId: string,
     remoteIdTicket: string,
   ): Promise<ApiResponse<FrontCommentOutput>> {
@@ -38,7 +37,24 @@ export class FrontService implements ICommentService {
           provider_slug: 'front',
         },
       });
-      const dataBody = commentData;
+      const uuids = commentData.attachments;
+      let uploads = [];
+      uuids.map(async (uuid) => {
+        const res = await this.prisma.tcg_attachments.findUnique({
+          where: {
+            id_tcg_attachment: uuid,
+          },
+        });
+        if (!res) throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+        //TODO: construct the right binary attachment
+        //get the AWS s3 right file
+        const url = res.file_url;
+        uploads = [...uploads, url];
+      });
+      const dataBody = {
+        ...commentData,
+        attachments: uploads,
+      };
       const resp = await axios.post(
         `https://api2.frontapp.com/conversations/${remoteIdTicket}/comments`,
         JSON.stringify(dataBody),

@@ -37,11 +37,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
         body: source.comment.body,
         html_body: source.comment.html_body,
         public: !source.comment.is_private,
-        uploads: source.comment.attachments
-          ? await this.utils.get_Zendesk_AttachmentsTokensFromUuid(
-              source.comment.attachments,
-            )
-          : [], //fetch token attachments for this uuid
+        uploads: source.comment.attachments, //fetch token attachments for this uuid
       },
     };
 

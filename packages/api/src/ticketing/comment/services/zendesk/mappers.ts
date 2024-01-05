@@ -26,11 +26,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
         ? parseInt(source.contact_id)
         : undefined, //TODO: make sure either one is passed
       type: 'Comment',
-      uploads: source.attachments
-        ? await this.utils.get_Zendesk_AttachmentsTokensFromUuid(
-            source.attachments,
-          )
-        : [], //fetch token attachments for this uuid
+      uploads: source.attachments, //we let the array of uuids on purpose (it will be modified in the given service on the fly!)
     };
 
     return result;

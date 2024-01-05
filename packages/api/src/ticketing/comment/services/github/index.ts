@@ -10,7 +10,7 @@ import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
-import { GithubCommentOutput } from './types';
+import { GithubCommentInput, GithubCommentOutput } from './types';
 
 @Injectable()
 export class GithubService implements ICommentService {
@@ -26,7 +26,7 @@ export class GithubService implements ICommentService {
     this.registry.registerService('github', this);
   }
   async addComment(
-    commentData: DesunifyReturnType,
+    commentData: GithubCommentInput,
     linkedUserId: string,
     remoteIdTicket: string,
   ): Promise<ApiResponse<GithubCommentOutput>> {

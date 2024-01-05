@@ -9,13 +9,7 @@ import {
   UnifiedAttachmentInput,
   UnifiedAttachmentOutput,
 } from '../types/model.unified';
-import { AttachmentResponse, IAttachmentService } from '../types';
-import { desunify } from '@@core/utils/unification/desunify';
-import { TicketingObject } from '@ticketing/@utils/@types';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { unify } from '@@core/utils/unification/unify';
-import { ServiceRegistry } from './registry.service';
-import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
+import { AttachmentResponse } from '../types';
 
 @Injectable()
 export class AttachmentService {
@@ -23,8 +17,6 @@ export class AttachmentService {
     private prisma: PrismaService,
     private logger: LoggerService,
     private webhook: WebhookService,
-    private fieldMappingService: FieldMappingService,
-    private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(AttachmentService.name);
   }
@@ -81,47 +73,14 @@ export class AttachmentService {
       });
       if (!linkedUser) throw new Error('Linked User Not Found');
 
-      //TODO
-      // Retrieve custom field mappings
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'attachment',
-        );
-      //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedAttachmentInput>({
-        sourceObject: unifiedAttachmentData,
-        targetType: TicketingObject.attachment,
-        providerName: integrationId,
-        customFieldMappings: unifiedAttachmentData.field_mappings
-          ? customFieldMappings
-          : [],
-      });
-
-      const service: IAttachmentService =
-        this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalAttachmentOutput> =
-        await service.addAttachment(desunifiedObject, linkedUserId);
-
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
-        sourceObject: [resp.data],
-        targetType: TicketingObject.attachment,
-        providerName: integrationId,
-        customFieldMappings: customFieldMappings,
-      })) as UnifiedAttachmentOutput[];
+      //EXCEPTION: for Attachments we directly store them inside our db (no raw call to the provider)
+      //the actual job to retrieve the attachment info would be done inside /comments
 
       // add the attachment inside our db
-      const source_attachment = resp.data;
-      const target_attachment = unifiedObject[0];
-      const originId =
-        'id' in source_attachment ? String(source_attachment.id) : undefined; //TODO
 
       const existingAttachment = await this.prisma.tcg_attachments.findFirst({
         where: {
-          remote_id: originId,
+          file_name: unifiedAttachmentData.file_name,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -136,22 +95,20 @@ export class AttachmentService {
             id_tcg_attachment: existingAttachment.id_tcg_attachment,
           },
           data: {
-            //TODO
+            file_name: unifiedAttachmentData.file_name,
             modified_at: new Date(),
           },
         });
         unique_ticketing_attachment_id = res.id_tcg_attachment;
       } else {
         // Create a new attachment
-        this.logger.log('not existing attachment ' + target_attachment);
+        this.logger.log('not existing attachment ');
         const data = {
           id_tcg_attachment: uuidv4(),
-          //TODO
-
+          file_name: unifiedAttachmentData.file_name,
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
           remote_platform: integrationId,
         };
 
@@ -161,77 +118,15 @@ export class AttachmentService {
         unique_ticketing_attachment_id = res.id_tcg_attachment;
       }
 
-      // check duplicate or existing values
-      if (
-        target_attachment.field_mappings &&
-        target_attachment.field_mappings.length > 0
-      ) {
-        const entity = await this.prisma.entity.create({
-          data: {
-            id_entity: uuidv4(),
-            ressource_owner_id: unique_ticketing_attachment_id,
-          },
-        });
-
-        for (const mapping of target_attachment.field_mappings) {
-          const attribute = await this.prisma.attribute.findFirst({
-            where: {
-              slug: Object.keys(mapping)[0],
-              source: integrationId,
-              id_consumer: linkedUserId,
-            },
-          });
-
-          if (attribute) {
-            await this.prisma.value.create({
-              data: {
-                id_value: uuidv4(),
-                data: Object.values(mapping)[0] || 'null',
-                attribute: {
-                  connect: {
-                    id_attribute: attribute.id_attribute,
-                  },
-                },
-                entity: {
-                  connect: {
-                    id_entity: entity.id_entity,
-                  },
-                },
-              },
-            });
-          }
-        }
-      }
-      if (remote_data) {
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ticketing_attachment_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_attachment_id,
-            format: 'json',
-            data: JSON.stringify(source_attachment),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(source_attachment),
-            created_at: new Date(),
-          },
-        });
-      }
-
       const result_attachment = await this.getAttachment(
         unique_ticketing_attachment_id,
         remote_data,
       );
 
-      const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
-          status: status_resp,
+          status: 'success',
           type: 'ticketing.attachment.push', //sync, push or pull
           method: 'POST',
           url: '/ticketing/attachment',
@@ -248,7 +143,7 @@ export class AttachmentService {
         linkedUser.id_project,
         event.id_event,
       );
-      return { ...resp, data: result_attachment.data };
+      return { statusCode: 201, data: result_attachment.data };
     } catch (error) {
       handleServiceError(error, this.logger);
     }

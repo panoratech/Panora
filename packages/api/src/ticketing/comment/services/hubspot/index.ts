@@ -10,7 +10,7 @@ import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
-import { HubspotCommentOutput } from './types';
+import { HubspotCommentInput, HubspotCommentOutput } from './types';
 
 @Injectable()
 export class HubspotService implements ICommentService {
@@ -26,7 +26,7 @@ export class HubspotService implements ICommentService {
     this.registry.registerService('hubspot_t', this);
   }
   async addComment(
-    commentData: DesunifyReturnType,
+    commentData: HubspotCommentInput,
     linkedUserId: string,
     remoteIdTicket: string,
   ): Promise<ApiResponse<HubspotCommentOutput>> {

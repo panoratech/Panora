@@ -34,7 +34,25 @@ export class FrontService implements ITicketService {
           provider_slug: 'front',
         },
       });
-      const dataBody = ticketData;
+
+      const uuids = ticketData.comment.attachments;
+      let uploads = [];
+      uuids.map(async (uuid) => {
+        const res = await this.prisma.tcg_attachments.findUnique({
+          where: {
+            id_tcg_attachment: uuid,
+          },
+        });
+        if (!res) throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+        //TODO: construct the right binary attachment
+        //get the AWS s3 right file
+        const url = res.file_url;
+        uploads = [...uploads, url];
+      });
+      const dataBody = {
+        ...ticketData,
+        comment: { ...ticketData.comment, attachments: uploads },
+      };
       const resp = await axios.post(
         `https://api2.frontapp.com/conversations`,
         JSON.stringify(dataBody),

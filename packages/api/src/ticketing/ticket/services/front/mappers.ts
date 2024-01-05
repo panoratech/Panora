@@ -26,11 +26,7 @@ export class FrontTicketMapper implements ITicketMapper {
           source.comment.creator_type === 'user'
             ? source.comment.user_id
             : source.comment.contact_id,
-        attachments: source.comment.attachments
-          ? await this.utils.get_Front_AttachmentsFromUuid(
-              source.comment.attachments,
-            )
-          : [],
+        attachments: source.comment.attachments,
       },
     };
 
