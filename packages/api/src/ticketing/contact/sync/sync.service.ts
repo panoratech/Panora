@@ -85,17 +85,17 @@ export class SyncService implements OnModuleInit {
   //todo: HANDLE DATA REMOVED FROM PROVIDER
   async syncContactsForLinkedContact(
     integrationId: string,
-    linkedContactId: string,
+    linkedUserId: string,
     id_project: string,
   ) {
     try {
       this.logger.log(
-        `Syncing ${integrationId} contacts for linkedContact ${linkedContactId}`,
+        `Syncing ${integrationId} contacts for linkedContact ${linkedUserId}`,
       );
       // check if linkedContact has a connection if not just stop sync
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedContactId,
+          id_linked_user: linkedUserId,
           provider_slug: integrationId,
         },
       });
@@ -110,7 +110,7 @@ export class SyncService implements OnModuleInit {
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedContactId,
+          id_linked_user: linkedUserId,
         },
       });
       const job_id = job_resp_create.id_event;
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit {
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
-          linkedContactId,
+          linkedUserId,
           'contact',
         );
       const remoteProperties: string[] = customFieldMappings.map(
@@ -129,7 +129,7 @@ export class SyncService implements OnModuleInit {
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalContactOutput[]> =
-        await service.syncContacts(linkedContactId, remoteProperties);
+        await service.syncContacts(linkedUserId, remoteProperties);
 
       const sourceObject: OriginalContactOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
@@ -148,7 +148,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const contact_data = await this.saveContactsInDb(
-        linkedContactId,
+        linkedUserId,
         unifiedObject,
         contactIds,
         integrationId,
@@ -175,7 +175,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveContactsInDb(
-    linkedContactId: string,
+    linkedUserId: string,
     contacts: UnifiedContactOutput[],
     originIds: string[],
     originSource: string,
@@ -197,7 +197,7 @@ export class SyncService implements OnModuleInit {
             remote_id: originId,
             remote_platform: originSource,
             events: {
-              id_linked_user: linkedContactId,
+              id_linked_user: linkedUserId,
             },
           },
         });
@@ -256,7 +256,7 @@ export class SyncService implements OnModuleInit {
               where: {
                 slug: Object.keys(mapping)[0],
                 source: originSource,
-                id_consumer: linkedContactId,
+                id_consumer: linkedUserId,
               },
             });
 

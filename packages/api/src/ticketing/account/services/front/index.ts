@@ -25,12 +25,12 @@ export class FrontService implements IAccountService {
   }
 
   async syncAccounts(
-    linkedAccountId: string,
+    linkedUserId: string,
   ): Promise<ApiResponse<FrontAccountOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedAccountId,
+          id_linked_user: linkedUserId,
           provider_slug: 'front',
         },
       });

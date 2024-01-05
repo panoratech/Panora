@@ -29,13 +29,13 @@ export class ZendeskService implements IContactService {
   }
 
   async syncContacts(
-    linkedContactId: string,
+    linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedContactId,
+          id_linked_user: linkedUserId,
           provider_slug: 'zendesk_t',
         },
       });

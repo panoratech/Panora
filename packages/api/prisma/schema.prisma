@@ -383,10 +383,10 @@ model tcg_comments {
   body            String?
   html_body       String?
   is_private      Boolean?
-  created_at      DateTime?     @db.Timestamp(6)
-  modified_at     DateTime?     @db.Timestamp(6)
   remote_id       String?
   remote_platform String?
+  created_at      DateTime?     @db.Timestamp(6)
+  modified_at     DateTime?     @db.Timestamp(6)
   creator_type    String?
   id_tcg_ticket   String?       @db.Uuid
   id_tcg_contact  String?       @db.Uuid
@@ -409,10 +409,10 @@ model tcg_contacts {
   email_address   String?
   phone_number    String?
   details         String?
-  created_at      DateTime?      @db.Timestamp(6)
-  modified_at     DateTime?      @db.Timestamp(6)
   remote_id       String?
   remote_platform String?
+  created_at      DateTime?      @db.Timestamp(6)
+  modified_at     DateTime?      @db.Timestamp(6)
   id_event        String?        @db.Uuid
   id_tcg_account  String?        @db.Uuid
   tcg_comments    tcg_comments[]
@@ -548,37 +548,48 @@ model webhooks_reponses {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model tcg_accounts {
-  id_tcg_account String    @db.Uuid
-  created_at     DateTime? @db.Timestamp(6)
-  modified_at    DateTime  @db.Timestamp(6)
-  remote_id      String?
-  name           String?
-  domains        String[]
-
-  @@ignore
+  id_tcg_account  String   @id(map: "pk_tcg_account") @db.Uuid
+  remote_id       String?
+  name            String?
+  domains         String[]
+  remote_platform String?
+  created_at      DateTime @db.Timestamp(6)
+  modified_at     DateTime @db.Timestamp(6)
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model tcg_tags {
-  id_tcg_tag    String    @db.Uuid
-  remote_id     String?
-  name          String?
-  created_at    DateTime? @db.Timestamp(6)
-  modified_at   DateTime? @db.Timestamp(6)
-  id_tcg_ticket String?   @db.Uuid
+  id_tcg_tag      String   @id(map: "pk_tcg_tags") @db.Uuid
+  name            String?
+  remote_id       String?
+  remote_platform String?
+  created_at      DateTime @db.Timestamp(6)
+  modified_at     DateTime @db.Timestamp(6)
+  id_tcg_ticket   String?  @db.Uuid
 
   @@index([id_tcg_ticket], map: "fk_tcg_tag_tcg_ticketid")
-  @@ignore
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model tcg_teams {
-  id_tcg_team String    @db.Uuid
-  remote_id   String?
-  name        String?
-  description String?
-  created_at  DateTime? @db.Timestamp(6)
-  modified_at DateTime? @db.Timestamp(6)
+  id_tcg_team     String   @id(map: "pk_tcg_teams") @db.Uuid
+  remote_id       String?
+  remote_platform String?
+  name            String?
+  description     String?
+  created_at      DateTime @db.Timestamp(6)
+  modified_at     DateTime @db.Timestamp(6)
+}
 
-  @@ignore
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tcg_attachments {
+  id_tcg_attachment String   @id(map: "pk_tcg_attachments") @db.Uuid
+  remote_id         String?
+  remote_platform   String?
+  file_name         String?
+  id_tcg_ticket     String?  @db.Uuid
+  file_url          String?
+  uploader          String   @db.Uuid
+  created_at        DateTime @db.Timestamp(6)
+  modified_at       DateTime @db.Timestamp(6)
 }

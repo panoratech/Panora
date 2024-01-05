@@ -26,13 +26,13 @@ export class ZendeskService implements ITeamService {
   }
 
   async syncTeams(
-    linkedTeamId: string,
+    linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<ZendeskTeamOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedTeamId,
+          id_linked_user: linkedUserId,
           provider_slug: 'zendesk_t',
         },
       });

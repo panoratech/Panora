@@ -29,13 +29,13 @@ export class ZendeskService implements IAccountService {
   }
 
   async syncAccounts(
-    linkedAccountId: string,
+    linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<ZendeskAccountOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedAccountId,
+          id_linked_user: linkedUserId,
           provider_slug: 'zendesk_t',
         },
       });

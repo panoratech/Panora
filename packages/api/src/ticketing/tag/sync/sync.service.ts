@@ -85,17 +85,17 @@ export class SyncService implements OnModuleInit {
   //todo: HANDLE DATA REMOVED FROM PROVIDER
   async syncTagsForLinkedTag(
     integrationId: string,
-    linkedTagId: string,
+    linkedUserId: string,
     id_project: string,
   ) {
     try {
       this.logger.log(
-        `Syncing ${integrationId} tags for linkedTag ${linkedTagId}`,
+        `Syncing ${integrationId} tags for linkedTag ${linkedUserId}`,
       );
       // check if linkedTag has a connection if not just stop sync
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedTagId,
+          id_linked_user: linkedUserId,
           provider_slug: integrationId,
         },
       });
@@ -110,7 +110,7 @@ export class SyncService implements OnModuleInit {
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedTagId,
+          id_linked_user: linkedUserId,
         },
       });
       const job_id = job_resp_create.id_event;
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit {
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
-          linkedTagId,
+          linkedUserId,
           'tag',
         );
       const remoteProperties: string[] = customFieldMappings.map(
@@ -129,7 +129,7 @@ export class SyncService implements OnModuleInit {
       const service: ITagService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalTagOutput[]> = await service.syncTags(
-        linkedTagId,
+        linkedUserId,
         remoteProperties,
       );
 
@@ -150,7 +150,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const tag_data = await this.saveTagsInDb(
-        linkedTagId,
+        linkedUserId,
         unifiedObject,
         tagIds,
         integrationId,
@@ -177,7 +177,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveTagsInDb(
-    linkedTagId: string,
+    linkedUserId: string,
     tags: UnifiedTagOutput[],
     originIds: string[],
     originSource: string,
@@ -199,7 +199,7 @@ export class SyncService implements OnModuleInit {
             remote_id: originId,
             remote_platform: originSource,
             events: {
-              id_linked_user: linkedTagId,
+              id_linked_user: linkedUserId,
             },
           },
         });
@@ -252,7 +252,7 @@ export class SyncService implements OnModuleInit {
               where: {
                 slug: Object.keys(mapping)[0],
                 source: originSource,
-                id_consumer: linkedTagId,
+                id_consumer: linkedUserId,
               },
             });
 

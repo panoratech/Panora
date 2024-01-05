@@ -1,5 +1,7 @@
 export type ZendeskAttachmentInput = {
-  id: string;
+  _: string;
 };
 
-export type ZendeskAttachmentOutput = ZendeskAttachmentInput;
+export type ZendeskAttachmentOutput = ZendeskAttachmentInput & {
+  id: number; // Read-only. Automatically assigned when the ticket is created.
+};

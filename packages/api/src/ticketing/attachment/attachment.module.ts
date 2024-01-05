@@ -10,6 +10,8 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
+import { GithubService } from './services/github';
+import { FrontService } from './services/front';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { BullModule } from '@nestjs/bull';
     ServiceRegistry,
     /* PROVIDERS SERVICES */
     ZendeskService,
+    FrontService,
+    GithubService,
   ],
   exports: [SyncService],
 })

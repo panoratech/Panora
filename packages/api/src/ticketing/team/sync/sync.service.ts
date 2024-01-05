@@ -85,17 +85,17 @@ export class SyncService implements OnModuleInit {
   //todo: HANDLE DATA REMOVED FROM PROVIDER
   async syncTeamsForLinkedTeam(
     integrationId: string,
-    linkedTeamId: string,
+    linkedUserId: string,
     id_project: string,
   ) {
     try {
       this.logger.log(
-        `Syncing ${integrationId} teams for linkedTeam ${linkedTeamId}`,
+        `Syncing ${integrationId} teams for linkedTeam ${linkedUserId}`,
       );
       // check if linkedTeam has a connection if not just stop sync
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedTeamId,
+          id_linked_user: linkedUserId,
           provider_slug: integrationId,
         },
       });
@@ -110,7 +110,7 @@ export class SyncService implements OnModuleInit {
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedTeamId,
+          id_linked_user: linkedUserId,
         },
       });
       const job_id = job_resp_create.id_event;
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit {
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
-          linkedTeamId,
+          linkedUserId,
           'team',
         );
       const remoteProperties: string[] = customFieldMappings.map(
@@ -129,7 +129,7 @@ export class SyncService implements OnModuleInit {
       const service: ITeamService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalTeamOutput[]> = await service.syncTeams(
-        linkedTeamId,
+        linkedUserId,
         remoteProperties,
       );
 
@@ -150,7 +150,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const team_data = await this.saveTeamsInDb(
-        linkedTeamId,
+        linkedUserId,
         unifiedObject,
         teamIds,
         integrationId,
@@ -177,7 +177,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveTeamsInDb(
-    linkedTeamId: string,
+    linkedUserId: string,
     teams: UnifiedTeamOutput[],
     originIds: string[],
     originSource: string,
@@ -199,7 +199,7 @@ export class SyncService implements OnModuleInit {
             remote_id: originId,
             remote_platform: originSource,
             events: {
-              id_linked_user: linkedTeamId,
+              id_linked_user: linkedUserId,
             },
           },
         });
@@ -254,7 +254,7 @@ export class SyncService implements OnModuleInit {
               where: {
                 slug: Object.keys(mapping)[0],
                 source: originSource,
-                id_consumer: linkedTeamId,
+                id_consumer: linkedUserId,
               },
             });
 

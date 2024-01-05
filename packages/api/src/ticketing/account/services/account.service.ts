@@ -51,9 +51,8 @@ export class AccountService {
       // Transform to UnifiedAccountOutput format
       const unifiedAccount: UnifiedAccountOutput = {
         id: account.id_tcg_account,
-        email_address: account.email_address,
         name: account.name,
-        teams: account.teams,
+        domains: account.domains,
         field_mappings: field_mappings,
       };
 
@@ -86,7 +85,7 @@ export class AccountService {
 
   async getAccounts(
     integrationId: string,
-    linkedAccountId: string,
+    linkedUserId: string,
     remote_data?: boolean,
   ): Promise<ApiResponse<AccountResponse>> {
     try {
@@ -101,7 +100,7 @@ export class AccountService {
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedAccountId,
+          id_linked_user: linkedUserId,
         },
       });
       const job_id = job_resp_create.id_event;
@@ -109,7 +108,7 @@ export class AccountService {
         where: {
           remote_id: integrationId.toLowerCase(),
           events: {
-            id_linked_user: linkedAccountId,
+            id_linked_user: linkedUserId,
           },
         },
       });
@@ -143,9 +142,8 @@ export class AccountService {
           // Transform to UnifiedAccountOutput format
           return {
             id: account.id_tcg_account,
-            email_address: account.email_address,
             name: account.name,
-            teams: account.teams,
+            domains: account.domains,
             field_mappings: field_mappings,
           };
         }),

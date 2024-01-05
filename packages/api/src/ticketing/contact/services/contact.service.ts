@@ -87,7 +87,7 @@ export class ContactService {
 
   async getContacts(
     integrationId: string,
-    linkedContactId: string,
+    linkedUserId: string,
     remote_data?: boolean,
   ): Promise<ApiResponse<ContactResponse>> {
     try {
@@ -102,7 +102,7 @@ export class ContactService {
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedContactId,
+          id_linked_user: linkedUserId,
         },
       });
       const job_id = job_resp_create.id_event;
@@ -110,7 +110,7 @@ export class ContactService {
         where: {
           remote_id: integrationId.toLowerCase(),
           events: {
-            id_linked_user: linkedContactId,
+            id_linked_user: linkedUserId,
           },
         },
       });

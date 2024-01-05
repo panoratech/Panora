@@ -85,17 +85,17 @@ export class SyncService implements OnModuleInit {
   //todo: HANDLE DATA REMOVED FROM PROVIDER
   async syncAccountsForLinkedAccount(
     integrationId: string,
-    linkedAccountId: string,
+    linkedUserId: string,
     id_project: string,
   ) {
     try {
       this.logger.log(
-        `Syncing ${integrationId} accounts for linkedAccount ${linkedAccountId}`,
+        `Syncing ${integrationId} accounts for linkedAccount ${linkedUserId}`,
       );
       // check if linkedAccount has a connection if not just stop sync
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedAccountId,
+          id_linked_user: linkedUserId,
           provider_slug: integrationId,
         },
       });
@@ -110,7 +110,7 @@ export class SyncService implements OnModuleInit {
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedAccountId,
+          id_linked_user: linkedUserId,
         },
       });
       const job_id = job_resp_create.id_event;
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit {
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
-          linkedAccountId,
+          linkedUserId,
           'account',
         );
       const remoteProperties: string[] = customFieldMappings.map(
@@ -129,7 +129,7 @@ export class SyncService implements OnModuleInit {
       const service: IAccountService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalAccountOutput[]> =
-        await service.syncAccounts(linkedAccountId, remoteProperties);
+        await service.syncAccounts(linkedUserId, remoteProperties);
 
       const sourceObject: OriginalAccountOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
@@ -148,7 +148,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const account_data = await this.saveAccountsInDb(
-        linkedAccountId,
+        linkedUserId,
         unifiedObject,
         accountIds,
         integrationId,
@@ -175,7 +175,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveAccountsInDb(
-    linkedAccountId: string,
+    linkedUserId: string,
     accounts: UnifiedAccountOutput[],
     originIds: string[],
     originSource: string,
@@ -197,7 +197,7 @@ export class SyncService implements OnModuleInit {
             remote_id: originId,
             remote_platform: originSource,
             events: {
-              id_linked_account: linkedAccountId,
+              id_linked_account: linkedUserId,
             },
           },
         });
@@ -252,7 +252,7 @@ export class SyncService implements OnModuleInit {
               where: {
                 slug: Object.keys(mapping)[0],
                 source: originSource,
-                id_consumer: linkedAccountId,
+                id_consumer: linkedUserId,
               },
             });
 

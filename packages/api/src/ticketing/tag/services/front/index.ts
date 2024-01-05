@@ -24,11 +24,11 @@ export class FrontService implements ITagService {
     this.registry.registerService('front', this);
   }
 
-  async syncTags(linkedTagId: string): Promise<ApiResponse<FrontTagOutput[]>> {
+  async syncTags(linkedUserId: string): Promise<ApiResponse<FrontTagOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedTagId,
+          id_linked_user: linkedUserId,
           provider_slug: 'front',
         },
       });

@@ -1,38 +1,38 @@
 import { IAttachmentMapper } from '@ticketing/attachment/types';
-import { ZendeskAttachmentInput, ZendeskAttachmentOutput } from './types';
+import { FrontAttachmentInput, FrontAttachmentOutput } from './types';
 import {
   UnifiedAttachmentInput,
   UnifiedAttachmentOutput,
 } from '@ticketing/attachment/types/model.unified';
 
-export class ZendeskAttachmentMapper implements IAttachmentMapper {
+export class FrontAttachmentMapper implements IAttachmentMapper {
   desunify(
     source: UnifiedAttachmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZendeskAttachmentInput {
+  ): FrontAttachmentInput {
     return;
   }
 
   unify(
-    source: ZendeskAttachmentOutput | ZendeskAttachmentOutput[],
+    source: FrontAttachmentOutput | FrontAttachmentOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedAttachmentOutput | UnifiedAttachmentOutput[] {
-    if (!Array.isArray(source)) {
-      return this.mapSingleAttachmentToUnified(source, customFieldMappings);
-    }
-    return source.map((ticket) =>
-      this.mapSingleAttachmentToUnified(ticket, customFieldMappings),
+    // If the source is not an array, convert it to an array for mapping
+    const sourcesArray = Array.isArray(source) ? source : [source];
+
+    return sourcesArray.map((ticket) =>
+      this.mapSingleTicketToUnified(ticket, customFieldMappings),
     );
   }
 
-  private mapSingleAttachmentToUnified(
-    ticket: ZendeskAttachmentOutput,
+  private mapSingleTicketToUnified(
+    ticket: FrontAttachmentOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

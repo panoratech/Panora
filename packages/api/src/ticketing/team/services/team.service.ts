@@ -85,7 +85,7 @@ export class TeamService {
 
   async getTeams(
     integrationId: string,
-    linkedTeamId: string,
+    linkedUserId: string,
     remote_data?: boolean,
   ): Promise<ApiResponse<TeamResponse>> {
     try {
@@ -100,7 +100,7 @@ export class TeamService {
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedTeamId,
+          id_linked_user: linkedUserId,
         },
       });
       const job_id = job_resp_create.id_event;
@@ -108,7 +108,7 @@ export class TeamService {
         where: {
           remote_id: integrationId.toLowerCase(),
           events: {
-            id_linked_user: linkedTeamId,
+            id_linked_user: linkedUserId,
           },
         },
       });

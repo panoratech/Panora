@@ -7,12 +7,12 @@ import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
-import { ITagService } from '@ticketing/tag/types';
-import { GithubTagOutput } from './types';
+import { IAttachmentService } from '@ticketing/attachment/types';
+import { GithubAttachmentInput, GithubAttachmentOutput } from './types';
 
 //TODO
 @Injectable()
-export class GithubService implements ITagService {
+export class GithubService implements IAttachmentService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -20,15 +20,20 @@ export class GithubService implements ITagService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      TicketingObject.tag.toUpperCase() + ':' + GithubService.name,
+      TicketingObject.attachment.toUpperCase() + ':' + GithubService.name,
     );
     this.registry.registerService('github', this);
   }
-
-  async syncTags(
+  async addAttachment(
+    attachmentData: GithubAttachmentInput,
+    linkedUserId: string,
+  ): Promise<ApiResponse<GithubAttachmentOutput>> {
+    return;
+  }
+  async syncAttachments(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<GithubTagOutput[]>> {
+  ): Promise<ApiResponse<GithubAttachmentOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -36,7 +41,7 @@ export class GithubService implements ITagService {
           provider_slug: 'github',
         },
       });
-      const resp = await axios.get(`https://api.github.com/tags`, {
+      const resp = await axios.get(`https://api.github.com/attachments`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -44,11 +49,11 @@ export class GithubService implements ITagService {
           )}`,
         },
       });
-      this.logger.log(`Synced github tags !`);
+      this.logger.log(`Synced github attachments !`);
 
       return {
         data: resp.data,
-        message: 'Github tags retrieved',
+        message: 'Github attachments retrieved',
         statusCode: 200,
       };
     } catch (error) {
@@ -56,7 +61,7 @@ export class GithubService implements ITagService {
         error,
         this.logger,
         'Github',
-        TicketingObject.tag,
+        TicketingObject.attachment,
         ActionType.GET,
       );
     }

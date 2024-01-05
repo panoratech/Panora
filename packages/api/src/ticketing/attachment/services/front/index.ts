@@ -7,12 +7,11 @@ import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
-import { ITagService } from '@ticketing/tag/types';
-import { GithubTagOutput } from './types';
+import { IAttachmentService } from '@ticketing/attachment/types';
+import { FrontAttachmentInput, FrontAttachmentOutput } from './types';
 
-//TODO
 @Injectable()
-export class GithubService implements ITagService {
+export class FrontService implements IAttachmentService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -20,23 +19,30 @@ export class GithubService implements ITagService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      TicketingObject.tag.toUpperCase() + ':' + GithubService.name,
+      TicketingObject.attachment.toUpperCase() + ':' + FrontService.name,
     );
-    this.registry.registerService('github', this);
+    this.registry.registerService('front', this);
   }
 
-  async syncTags(
+  async addAttachment(
+    attachmentData: FrontAttachmentInput,
     linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<GithubTagOutput[]>> {
+  ): Promise<ApiResponse<FrontAttachmentOutput>> {
+    return;
+  }
+
+  async syncAttachments(
+    linkedUserId: string,
+  ): Promise<ApiResponse<FrontAttachmentOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'github',
+          provider_slug: 'front',
         },
       });
-      const resp = await axios.get(`https://api.github.com/tags`, {
+
+      const resp = await axios.get('https://api2.frontapp.com/teammates', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -44,19 +50,19 @@ export class GithubService implements ITagService {
           )}`,
         },
       });
-      this.logger.log(`Synced github tags !`);
+      this.logger.log(`Synced front attachments !`);
 
       return {
-        data: resp.data,
-        message: 'Github tags retrieved',
+        data: resp.data._results,
+        message: 'Front attachments retrieved',
         statusCode: 200,
       };
     } catch (error) {
       handleServiceError(
         error,
         this.logger,
-        'Github',
-        TicketingObject.tag,
+        'Front',
+        TicketingObject.attachment,
         ActionType.GET,
       );
     }

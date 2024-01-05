@@ -25,12 +25,12 @@ export class FrontService implements ITeamService {
   }
 
   async syncTeams(
-    linkedTeamId: string,
+    linkedUserId: string,
   ): Promise<ApiResponse<FrontTeamOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedTeamId,
+          id_linked_user: linkedUserId,
           provider_slug: 'front',
         },
       });
