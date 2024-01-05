@@ -288,7 +288,7 @@ export class TicketService {
           id_event: uuidv4(),
           status: status_resp,
           type: 'ticketing.ticket.push', //sync, push or pull
-          method: 'POST',
+          method: 'PUSH',
           url: '/ticketing/ticket',
           provider: integrationId,
           direction: '0',

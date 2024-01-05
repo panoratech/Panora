@@ -68,7 +68,7 @@ export class SyncService implements OnModuleInit {
               const tickets = await this.prisma.tcg_tickets.findMany({
                 where: {
                   remote_platform: provider,
-                  events: {
+                  linked_users: {
                     id_linked_user: linkedUser.id_linked_user,
                   },
                 },
@@ -113,20 +113,6 @@ export class SyncService implements OnModuleInit {
         },
       });
       if (!connection) return;
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'ticketing.comment.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
 
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -165,22 +151,27 @@ export class SyncService implements OnModuleInit {
         commentsIds,
         integrationId,
         id_ticket,
-        job_id,
         sourceObject,
       );
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+
+      const event = await this.prisma.events.create({
         data: {
-          status: 'success',
+          id_event: uuidv4(),
+          status: 'initialized',
+          type: 'ticketing.comment.synced',
+          method: 'SYNC',
+          url: '/sync',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
       await this.webhook.handleWebhook(
         comments_data,
-        'ticketing.comment.pulled',
+        'ticketing.comment.synced',
         id_project,
-        job_id,
+        event.id_event,
       );
     } catch (error) {
       handleServiceError(error, this.logger);
@@ -193,7 +184,6 @@ export class SyncService implements OnModuleInit {
     originIds: string[],
     originSource: string,
     id_ticket: string,
-    jobId: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingComment[]> {
     try {
@@ -230,7 +220,6 @@ export class SyncService implements OnModuleInit {
               is_private: comment.is_private,
               creator_type: comment.creator_type,
               id_tcg_ticket: id_ticket,
-              id_event: jobId,
               modified_at: new Date(),
             },
           });
@@ -248,7 +237,7 @@ export class SyncService implements OnModuleInit {
             modified_at: new Date(),
             creator_type: comment.creator_type,
             id_tcg_ticket: id_ticket,
-            id_event: jobId,
+            id_linked_user: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,
             //TODO; id_tcg_contact  String?       @db.Uuid

@@ -379,23 +379,24 @@ model remote_data {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model tcg_comments {
-  id_tcg_comment  String        @id(map: "pk_tcg_comments") @db.Uuid
-  body            String?
-  html_body       String?
-  is_private      Boolean?
-  remote_id       String?
-  remote_platform String?
-  created_at      DateTime?     @db.Timestamp(6)
-  modified_at     DateTime?     @db.Timestamp(6)
-  creator_type    String?
-  id_tcg_ticket   String?       @db.Uuid
-  id_tcg_contact  String?       @db.Uuid
-  id_tcg_user     String?       @db.Uuid
-  id_event        String?       @db.Uuid
-  tcg_tickets     tcg_tickets?  @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_40_1")
-  tcg_contacts    tcg_contacts? @relation(fields: [id_tcg_contact], references: [id_tcg_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_41")
-  tcg_users       tcg_users?    @relation(fields: [id_tcg_user], references: [id_tcg_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_42")
-  events          events?       @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_46")
+  id_tcg_comment    String        @id(map: "pk_tcg_comments") @db.Uuid
+  body              String?
+  html_body         String?
+  is_private        Boolean?
+  remote_id         String?
+  remote_platform   String?
+  created_at        DateTime?     @db.Timestamp(6)
+  modified_at       DateTime?     @db.Timestamp(6)
+  creator_type      String?
+  id_tcg_ticket     String?       @db.Uuid
+  id_tcg_contact    String?       @db.Uuid
+  id_tcg_user       String?       @db.Uuid
+  id_event          String?       @db.Uuid
+  id_tcg_attachment String[]      @db.Uuid
+  tcg_tickets       tcg_tickets?  @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_40_1")
+  tcg_contacts      tcg_contacts? @relation(fields: [id_tcg_contact], references: [id_tcg_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_41")
+  tcg_users         tcg_users?    @relation(fields: [id_tcg_user], references: [id_tcg_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_42")
+  events            events?       @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_46")
 
   @@index([id_tcg_contact], map: "fk_tcg_comment_tcg_contact")
   @@index([id_tcg_ticket], map: "fk_tcg_comment_tcg_ticket")
@@ -592,4 +593,5 @@ model tcg_attachments {
   uploader          String   @db.Uuid
   created_at        DateTime @db.Timestamp(6)
   modified_at       DateTime @db.Timestamp(6)
+  id_linked_user    String?  @db.Uuid
 }

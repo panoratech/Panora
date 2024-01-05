@@ -4,21 +4,33 @@ import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
+import { Utils } from '@ticketing/ticket/utils';
 
 export class ZendeskCommentMapper implements ICommentMapper {
-  desunify(
+  private readonly utils = new Utils();
+
+  async desunify(
     source: UnifiedCommentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZendeskCommentInput {
+  ): Promise<ZendeskCommentInput> {
     const result: ZendeskCommentInput = {
       body: source.body,
       html_body: source.html_body,
       public: !source.is_private,
-      author_id: source.user_id ? parseInt(source.user_id) : undefined,
+      author_id: source.user_id
+        ? parseInt(source.user_id)
+        : source.contact_id
+        ? parseInt(source.contact_id)
+        : undefined, //TODO: make sure either one is passed
       type: 'Comment',
+      uploads: source.attachments
+        ? await this.utils.get_Zendesk_AttachmentsTokensFromUuid(
+            source.attachments,
+          )
+        : [], //fetch token attachments for this uuid
     };
 
     return result;
@@ -47,14 +59,15 @@ export class ZendeskCommentMapper implements ICommentMapper {
     }[],
   ): UnifiedCommentOutput {
     return {
-      id: comment.id.toString(),
       body: comment.body || '',
       html_body: comment.html_body || '',
       is_private: !comment.public,
       created_at: new Date(comment.created_at),
       modified_at: new Date(comment.created_at), // Assuming the creation date for modification as well
-      creator_type: null, //TODO
+      creator_type: 'contact',
       ticket_id: '', //TODO
+      contact_id: '', // TODO:
+      user_id: '', //TODO
     };
   }
 }

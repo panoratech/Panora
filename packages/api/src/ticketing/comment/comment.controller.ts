@@ -154,16 +154,4 @@ export class CommentController {
       remote_data,
     );
   }
-
-  @ApiOperation({
-    operationId: 'updateComment',
-    summary: 'Update a Comment',
-  })
-  @Patch()
-  updateComment(
-    @Query('id') id: string,
-    @Body() updateCommentData: Partial<UnifiedCommentInput>,
-  ) {
-    return this.commentService.updateComment(id, updateCommentData);
-  }
 }

@@ -4,20 +4,25 @@ import {
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { FrontCommentInput, FrontCommentOutput } from './types';
+import { Utils } from '@ticketing/ticket/utils';
 
 export class FrontCommentMapper implements ICommentMapper {
-  desunify(
+  private readonly utils = new Utils();
+
+  async desunify(
     source: UnifiedCommentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): FrontCommentInput {
+  ): Promise<FrontCommentInput> {
     const result: FrontCommentInput = {
       body: source.body,
-      author_id: source.user_id || source.contact_id, //TODO:
+      author_id: source.user_id || source.contact_id, //TODO: make sure either one is passed
+      attachments: source.attachments
+        ? await this.utils.get_Front_AttachmentsFromUuid(source.attachments)
+        : [],
     };
-
     return result;
   }
 
@@ -47,9 +52,7 @@ export class FrontCommentMapper implements ICommentMapper {
       id: comment.id,
       body: comment.body,
       html_body: '',
-      created_at: new Date(comment.posted_at * 1000), // Convert UNIX timestamp to Date
-      modified_at: new Date(), // Placeholder, as modified_at is not available
-      creator_type: comment.author ? 'user' : null,
+      creator_type: comment.author ? 'contact' : null,
       ticket_id: '', // TODO: Need to be determined from related data
       contact_id: '', // TODO: Need to be determined from related data
       user_id: '', //TODO
