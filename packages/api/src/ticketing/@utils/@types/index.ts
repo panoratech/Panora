@@ -6,7 +6,6 @@ import {
   UnifiedAccountOutput,
 } from '@ticketing/account/types/model.unified';
 import { IAttachmentService } from '@ticketing/attachment/types';
-import { attachmentUnificationMapping } from '@ticketing/attachment/types/mappingsTypes';
 import {
   UnifiedAttachmentInput,
   UnifiedAttachmentOutput,
@@ -84,7 +83,6 @@ export const unificationMapping = {
   [TicketingObject.contact]: contactUnificationMapping,
   [TicketingObject.team]: teamUnificationMapping,
   [TicketingObject.tag]: tagUnificationMapping,
-  [TicketingObject.attachment]: attachmentUnificationMapping,
 };
 
 export type ITicketingService =
@@ -96,11 +94,12 @@ export type ITicketingService =
   | IAccountService
   | ITeamService
   | ITagService;
+
+//TODO; export everything
 export * from '../../ticket/services/zendesk/types';
 export * from '../../comment/services/zendesk/types';
 export * from '../../user/services/zendesk/types';
 export * from '../../contact/services/zendesk/types';
-export * from '../../attachment/services/zendesk/types';
 export * from '../../account/services/zendesk/types';
 export * from '../../team/services/zendesk/types';
 export * from '../../tag/services/zendesk/types';

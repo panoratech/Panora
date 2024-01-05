@@ -5,8 +5,6 @@ import {
   ZendeskTicketOutput,
   ZendeskCommentOutput,
   ZendeskUserOutput,
-  ZendeskAttachmentOutput,
-  ZendeskAttachmentInput,
   ZendeskAccountInput,
   ZendeskAccountOutput,
   ZendeskContactInput,
@@ -24,14 +22,7 @@ import {
   GithubAccountInput,
   GithubAccountOutput,
 } from '@ticketing/account/services/github/types';
-import {
-  FrontAttachmentInput,
-  FrontAttachmentOutput,
-} from '@ticketing/attachment/services/front/types';
-import {
-  GithubAttachmentInput,
-  GithubAttachmentOutput,
-} from '@ticketing/attachment/services/github/types';
+
 import {
   FrontCommentInput,
   FrontCommentOutput,
@@ -129,10 +120,7 @@ export type OriginalTeamInput =
   | FrontTeamInput;
 
 /* attachment */
-export type OriginalAttachmentInput =
-  | ZendeskAttachmentInput
-  | FrontAttachmentInput
-  | GithubAttachmentInput;
+export type OriginalAttachmentInput = null;
 
 export type TicketingObjectInput =
   | OriginalTicketInput
@@ -187,10 +175,7 @@ export type OriginalTeamOutput =
   | FrontTeamOutput;
 
 /* attachment */
-export type OriginalAttachmentOutput =
-  | ZendeskAttachmentOutput
-  | FrontAttachmentOutput
-  | GithubAttachmentOutput;
+export type OriginalAttachmentOutput = null;
 
 export type TicketingObjectOutput =
   | OriginalTicketOutput
