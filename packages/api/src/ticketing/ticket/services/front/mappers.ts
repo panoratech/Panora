@@ -4,15 +4,18 @@ import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
+import { Utils } from '@ticketing/ticket/utils';
 
 export class FrontTicketMapper implements ITicketMapper {
-  desunify(
+  private readonly utils = new Utils();
+
+  async desunify(
     source: UnifiedTicketInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): FrontTicketInput {
+  ): Promise<FrontTicketInput> {
     const result: FrontTicketInput = {
       type: 'discussion', // Assuming 'discussion' as a default type for Front conversations
       subject: source.name,
@@ -23,7 +26,11 @@ export class FrontTicketMapper implements ITicketMapper {
           source.comment.creator_type === 'user'
             ? source.comment.user_id
             : source.comment.contact_id,
-        attachments: source.attachments,
+        attachments: source.comment.attachments
+          ? await this.utils.get_Front_AttachmentsFromUuid(
+              source.comment.attachments,
+            )
+          : [],
       },
     };
 

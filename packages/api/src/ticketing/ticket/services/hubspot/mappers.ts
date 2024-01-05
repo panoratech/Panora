@@ -65,16 +65,16 @@ export class HubspotTicketMapper implements ITicketMapper {
 
     return {
       id: ticket.id,
-      name: ticket.properties.subject,
+      name: ticket.properties.name, //TODO
       status: ticket.properties.hs_pipeline_stage,
-      description: ticket.properties.subject,
+      description: ticket.properties.description, //TODO
       due_date: new Date(ticket.properties.createdate),
       type: ticket.properties.hs_pipeline,
       parent_ticket: '', // Define how you determine the parent ticket
       tags: '', // Define how you map or store tags
       completed_at: new Date(ticket.properties.hs_lastmodifieddate),
       priority: ticket.properties.hs_ticket_priority,
-      assigned_to: [], // Define how you determine assigned users
+      assigned_to: [ticket.properties.hubspot_owner_id], // Define how you determine assigned users
       field_mappings: field_mappings,
     };
   }

@@ -77,22 +77,44 @@ export class TicketService {
           id_linked_user: linkedUserId,
         },
       });
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'ticketing.ticket.created', //sync, push or pull
-          method: 'POST',
-          url: '/ticketing/ticket',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
+      //CHECKS
+      if (!linkedUser) throw new Error('Linked User Not Found');
+      const acc = unifiedTicketData.account_id;
+      //check if contact_id and account_id refer to real uuids
+      if (acc) {
+        const search = await this.prisma.tcg_accounts.findUnique({
+          where: {
+            id_tcg_account: acc,
+          },
+        });
+        if (!search)
+          throw new Error('You inserted an account_id which does not exist');
+      }
 
-      //TODO
+      const contact = unifiedTicketData.contact_id;
+      //check if contact_id and account_id refer to real uuids
+      if (contact) {
+        const search = await this.prisma.tcg_contacts.findUnique({
+          where: {
+            id_tcg_contact: contact,
+          },
+        });
+        if (!search)
+          throw new Error('You inserted a contact_id which does not exist');
+      }
+      const assignees = unifiedTicketData.assigned_to;
+      //CHEK IF assigned_to contains valid Users uuids
+      if (assignees && assignees.length > 0) {
+        assignees.map(async (assignee) => {
+          const search = await this.prisma.tcg_users.findUnique({
+            where: {
+              id_tcg_user: assignee,
+            },
+          });
+          if (!search)
+            throw new Error('You inserted an assignee which does not exist');
+        });
+      }
       // Retrieve custom field mappings
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -136,7 +158,7 @@ export class TicketService {
         where: {
           remote_id: originId,
           remote_platform: integrationId,
-          events: {
+          linked_users: {
             id_linked_user: linkedUserId,
           },
         },
@@ -182,7 +204,7 @@ export class TicketService {
           assigned_to: target_ticket.assigned_to || [],
           created_at: new Date(),
           modified_at: new Date(),
-          id_event: job_id,
+          id_linked_user: linkedUserId,
           remote_id: originId,
           remote_platform: integrationId,
         };
@@ -261,19 +283,24 @@ export class TicketService {
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: status_resp,
+          type: 'ticketing.ticket.push', //sync, push or pull
+          method: 'POST',
+          url: '/ticketing/ticket',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
       await this.webhook.handleWebhook(
         result_ticket.data.tickets,
         'ticketing.ticket.created',
         linkedUser.id_project,
-        job_id,
+        event.id_event,
       );
       return { ...resp, data: result_ticket.data };
     } catch (error) {
@@ -366,20 +393,6 @@ export class TicketService {
   ): Promise<ApiResponse<TicketResponse>> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'ticketing.ticket.pull',
-          method: 'GET',
-          url: '/ticketing/ticket',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
       const tickets = await this.prisma.tcg_tickets.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
@@ -422,7 +435,6 @@ export class TicketService {
           return {
             id: ticket.id_tcg_ticket,
             name: ticket.name || '',
-            //TODO: remote_id: ticket.remote_id || '',
             status: ticket.status || '',
             description: ticket.description || '',
             due_date: ticket.due_date || null,
@@ -432,12 +444,6 @@ export class TicketService {
             completed_at: ticket.completed_at || null,
             priority: ticket.priority || '',
             assigned_to: ticket.assigned_to || [],
-            comments: ticket.tcg_comments.map((comment) => ({
-              remote_id: comment.remote_id,
-              body: comment.body,
-              html_body: comment.html_body,
-              is_private: comment.is_private,
-            })),
             field_mappings: field_mappings,
           };
         }),
@@ -465,12 +471,18 @@ export class TicketService {
           remote_data: remote_array_data,
         };
       }
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'ticketing.ticket.pulled',
+          method: 'GET',
+          url: '/ticketing/ticket',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
 

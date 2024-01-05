@@ -4,17 +4,22 @@ import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
+import { Utils } from '@ticketing/ticket/utils';
 
 export class ZendeskTicketMapper implements ITicketMapper {
-  desunify(
+  private readonly utils = new Utils();
+
+  async desunify(
     source: UnifiedTicketInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZendeskTicketInput {
+  ): Promise<ZendeskTicketInput> {
     const result: ZendeskTicketInput = {
-      assignee_email: source.assigned_to?.[0], //TODO; get the mail of the uuid
+      assignee_email: await this.utils.getAssigneeMetadataFromUuid(
+        source.assigned_to?.[0],
+      ), // get the mail of the uuid
       description: source.description,
       due_at: source.due_date?.toISOString(),
       priority: source.priority as 'urgent' | 'high' | 'normal' | 'low',
@@ -32,6 +37,11 @@ export class ZendeskTicketMapper implements ITicketMapper {
         body: source.comment.body,
         html_body: source.comment.html_body,
         public: !source.comment.is_private,
+        uploads: source.comment.attachments
+          ? await this.utils.get_Zendesk_AttachmentsTokensFromUuid(
+              source.comment.attachments,
+            )
+          : [], //fetch token attachments for this uuid
       },
     };
 
@@ -93,9 +103,9 @@ export class ZendeskTicketMapper implements ITicketMapper {
       type: ticket.type,
       parent_ticket: undefined, // If available, add logic to map parent ticket
       tags: JSON.stringify(ticket.tags), //TODO
-      completed_at: undefined, // If available, add logic to determine the completed date
+      completed_at: new Date(ticket.updated_at),
       priority: ticket.priority,
-      assigned_to: undefined, // If available, add logic to map assigned users
+      assigned_to: [String(ticket.assignee_id)],
       field_mappings: field_mappings,
       id: ticket.id.toString(),
     };

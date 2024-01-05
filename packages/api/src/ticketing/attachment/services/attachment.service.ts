@@ -436,4 +436,11 @@ export class AttachmentService {
       handleServiceError(error, this.logger);
     }
   }
+
+  async downloadAttachmentt(
+    id_ticketing_attachment: string,
+    remote_data?: boolean,
+  ): Promise<ApiResponse<AttachmentResponse>> {
+    return;
+  }
 }

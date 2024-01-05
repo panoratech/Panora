@@ -11,12 +11,11 @@ export class UnifiedTicketInput {
   tags?: string; // TODO: create a real Tag object here
   completed_at?: Date;
   priority?: string;
-  assigned_to?: string[];
-  field_mappings?: Record<string, any>[];
+  assigned_to?: string[]; //uuid of Users objects ?
   comment?: UnifiedCommentInput;
-  attachments?: string[];
   account_id?: string;
   contact_id?: string;
+  field_mappings?: Record<string, any>[];
 }
 export class UnifiedTicketOutput extends UnifiedTicketInput {
   @ApiProperty()
