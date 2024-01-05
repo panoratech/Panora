@@ -112,21 +112,7 @@ export class SyncService implements OnModuleInit {
           provider_slug: integrationId,
         },
       });
-      if (!connection) return;
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'ticketing.attachment.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
+      if (!connection) throw new Error('connection not found');
 
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -165,22 +151,26 @@ export class SyncService implements OnModuleInit {
         attachmentsIds,
         integrationId,
         id_ticket,
-        job_id,
         sourceObject,
       );
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'ticketing.attachment.pulled',
+          method: 'PULL',
+          url: '/pull',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
       await this.webhook.handleWebhook(
         attachments_data,
         'ticketing.attachment.pulled',
         id_project,
-        job_id,
+        event.id_event,
       );
     } catch (error) {
       handleServiceError(error, this.logger);
@@ -193,7 +183,6 @@ export class SyncService implements OnModuleInit {
     originIds: string[],
     originSource: string,
     id_ticket: string,
-    jobId: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingAttachment[]> {
     try {
@@ -210,9 +199,7 @@ export class SyncService implements OnModuleInit {
           where: {
             remote_id: originId,
             remote_platform: originSource,
-            events: {
-              id_linked_user: linkedUserId,
-            },
+            id_linked_user: linkedUserId,
           },
         });
 
@@ -227,7 +214,6 @@ export class SyncService implements OnModuleInit {
             data: {
               //TODO
               id_tcg_ticket: id_ticket,
-              id_event: jobId,
               modified_at: new Date(),
             },
           });
@@ -242,7 +228,7 @@ export class SyncService implements OnModuleInit {
             created_at: new Date(),
             modified_at: new Date(),
             id_tcg_ticket: id_ticket,
-            id_event: jobId,
+            id_linkedUser: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,
             //TODO; id_tcg_contact  String?       @db.Uuid
