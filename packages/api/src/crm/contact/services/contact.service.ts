@@ -80,20 +80,6 @@ export class ContactService {
           id_linked_user: linkedUserId,
         },
       });
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'crm.contact.created', //sync, push or pull
-          method: 'POST',
-          url: '/crm/contact',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
 
       // Retrieve custom field mappings
       // get potential fieldMappings and extract the original properties name
@@ -142,9 +128,7 @@ export class ContactService {
         where: {
           remote_id: originId,
           remote_platform: integrationId,
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
         include: { crm_email_addresses: true, crm_phone_numbers: true },
       });
@@ -197,7 +181,7 @@ export class ContactService {
           last_name: target_contact.last_name || '',
           created_at: new Date(),
           modified_at: new Date(),
-          id_event: job_id,
+          id_linked_user: linkedUserId,
           remote_id: originId,
           remote_platform: integrationId,
         };
@@ -287,19 +271,24 @@ export class ContactService {
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: status_resp,
+          type: 'crm.contact.created', //sync, push or pull
+          method: 'POST',
+          url: '/crm/contact',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
       await this.webhook.handleWebhook(
         result_contact.data.contacts,
         'crm.contact.created',
         linkedUser.id_project,
-        job_id,
+        event.id_event,
       );
       return { ...resp, data: result_contact.data };
     } catch (error) {
@@ -396,20 +385,7 @@ export class ContactService {
   ): Promise<ApiResponse<ContactResponse>> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'crm.contact.pull',
-          method: 'GET',
-          url: '/crm/contact',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
+
       const contacts = await this.prisma.crm_contacts.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
@@ -489,15 +465,19 @@ export class ContactService {
           remote_data: remote_array_data,
         };
       }
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'crm.contact.pull',
+          method: 'GET',
+          url: '/crm/contact',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
-
       return {
         data: res,
         statusCode: 200,

@@ -90,7 +90,6 @@ export class SyncContactsService implements OnModuleInit {
     contacts: UnifiedContactOutput[],
     originIds: string[],
     originSource: string,
-    jobId: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmContact[]> {
     try {
@@ -107,9 +106,7 @@ export class SyncContactsService implements OnModuleInit {
           where: {
             remote_id: originId,
             remote_platform: originSource,
-            events: {
-              id_linked_user: linkedUserId,
-            },
+            id_linked_user: linkedUserId,
           },
           include: { crm_email_addresses: true, crm_phone_numbers: true },
         });
@@ -164,7 +161,7 @@ export class SyncContactsService implements OnModuleInit {
             last_name: contact.last_name ? contact.last_name : '',
             created_at: new Date(),
             modified_at: new Date(),
-            id_event: jobId,
+            id_linked_user: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,
           };
@@ -269,21 +266,7 @@ export class SyncContactsService implements OnModuleInit {
           provider_slug: integrationId,
         },
       });
-      if (!connection) return;
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'crm.contact.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
+      if (!connection) throw new Error('connection not found');
 
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -326,22 +309,26 @@ export class SyncContactsService implements OnModuleInit {
         unifiedObject,
         contactIds,
         integrationId,
-        job_id,
         sourceObject,
       );
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'crm.contact.pulled',
+          method: 'PULL',
+          url: '/pull',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
       await this.webhook.handleWebhook(
         contacts_data,
         'crm.contact.pulled',
         id_project,
-        job_id,
+        event.id_event,
       );
     } catch (error) {
       handleServiceError(error, this.logger);

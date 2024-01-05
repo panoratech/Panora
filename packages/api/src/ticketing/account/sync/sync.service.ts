@@ -99,21 +99,7 @@ export class SyncService implements OnModuleInit {
           provider_slug: integrationId,
         },
       });
-      if (!connection) return;
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'ticketing.account.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
+      if (!connection) throw new Error('connection not found');
 
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -152,22 +138,26 @@ export class SyncService implements OnModuleInit {
         unifiedObject,
         accountIds,
         integrationId,
-        job_id,
         sourceObject,
       );
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'ticketing.account.pulled',
+          method: 'PULL',
+          url: '/pull',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
       await this.webhook.handleWebhook(
         account_data,
         'ticketing.account.pulled',
         id_project,
-        job_id,
+        event.id_event,
       );
     } catch (error) {
       handleServiceError(error, this.logger);
@@ -179,7 +169,6 @@ export class SyncService implements OnModuleInit {
     accounts: UnifiedAccountOutput[],
     originIds: string[],
     originSource: string,
-    jobId: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingAccount[]> {
     try {
@@ -196,9 +185,7 @@ export class SyncService implements OnModuleInit {
           where: {
             remote_id: originId,
             remote_platform: originSource,
-            events: {
-              id_linked_account: linkedUserId,
-            },
+            id_linked_account: linkedUserId,
           },
         });
 
@@ -227,7 +214,7 @@ export class SyncService implements OnModuleInit {
             domains: account.domains,
             created_at: new Date(),
             modified_at: new Date(),
-            id_event: jobId,
+            id_linked_user: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,
           };

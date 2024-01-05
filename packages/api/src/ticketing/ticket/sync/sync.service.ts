@@ -187,11 +187,8 @@ export class SyncService implements OnModuleInit {
           where: {
             remote_id: originId,
             remote_platform: originSource,
-            linked_users: {
-              id_linked_user: linkedUserId,
-            },
+            id_linked_user: linkedUserId,
           },
-          include: { tcg_comments: true },
         });
 
         let unique_ticketing_ticket_id: string;

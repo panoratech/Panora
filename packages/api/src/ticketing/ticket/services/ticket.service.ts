@@ -158,9 +158,7 @@ export class TicketService {
         where: {
           remote_id: originId,
           remote_platform: integrationId,
-          linked_users: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
       });
 

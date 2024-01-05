@@ -79,20 +79,7 @@ export class AttachmentService {
           id_linked_user: linkedUserId,
         },
       });
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'ticketing.attachment.created', //sync, push or pull
-          method: 'POST',
-          url: '/ticketing/attachment',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
+      if (!linkedUser) throw new Error('Linked User Not Found');
 
       //TODO
       // Retrieve custom field mappings
@@ -136,9 +123,7 @@ export class AttachmentService {
         where: {
           remote_id: originId,
           remote_platform: integrationId,
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
       });
 
@@ -162,9 +147,10 @@ export class AttachmentService {
         const data = {
           id_tcg_attachment: uuidv4(),
           //TODO
+
           created_at: new Date(),
           modified_at: new Date(),
-          id_event: job_id,
+          id_linked_user: linkedUserId,
           remote_id: originId,
           remote_platform: integrationId,
         };
@@ -236,26 +222,31 @@ export class AttachmentService {
         });
       }
 
-      /////
       const result_attachment = await this.getAttachment(
         unique_ticketing_attachment_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: status_resp,
+          type: 'ticketing.attachment.push', //sync, push or pull
+          method: 'POST',
+          url: '/ticketing/attachment',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
+
       await this.webhook.handleWebhook(
         result_attachment.data.attachments,
         'ticketing.attachment.created',
         linkedUser.id_project,
-        job_id,
+        event.id_event,
       );
       return { ...resp, data: result_attachment.data };
     } catch (error) {
@@ -437,7 +428,8 @@ export class AttachmentService {
     }
   }
 
-  async downloadAttachmentt(
+  //TODO
+  async downloadAttachment(
     id_ticketing_attachment: string,
     remote_data?: boolean,
   ): Promise<ApiResponse<AttachmentResponse>> {

@@ -90,26 +90,11 @@ export class TeamService {
   ): Promise<ApiResponse<TeamResponse>> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'ticketing.team.pull',
-          method: 'GET',
-          url: '/ticketing/team',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
+
       const teams = await this.prisma.tcg_teams.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
       });
 
@@ -171,12 +156,17 @@ export class TeamService {
           remote_data: remote_array_data,
         };
       }
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'ticketing.team.pull',
+          method: 'GET',
+          url: '/ticketing/team',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
 

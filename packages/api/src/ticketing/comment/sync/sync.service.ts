@@ -68,9 +68,7 @@ export class SyncService implements OnModuleInit {
               const tickets = await this.prisma.tcg_tickets.findMany({
                 where: {
                   remote_platform: provider,
-                  linked_users: {
-                    id_linked_user: linkedUser.id_linked_user,
-                  },
+                  id_linked_user: linkedUser.id_linked_user,
                 },
               });
               for (const ticket of tickets) {
@@ -157,7 +155,7 @@ export class SyncService implements OnModuleInit {
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
-          status: 'initialized',
+          status: 'success',
           type: 'ticketing.comment.synced',
           method: 'SYNC',
           url: '/sync',
@@ -200,9 +198,7 @@ export class SyncService implements OnModuleInit {
           where: {
             remote_id: originId,
             remote_platform: originSource,
-            events: {
-              id_linked_user: linkedUserId,
-            },
+            id_linked_user: linkedUserId,
           },
         });
 

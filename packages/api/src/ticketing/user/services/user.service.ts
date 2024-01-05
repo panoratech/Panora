@@ -91,20 +91,6 @@ export class UserService {
   ): Promise<ApiResponse<UserResponse>> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'ticketing.user.pull',
-          method: 'GET',
-          url: '/ticketing/user',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
       const users = await this.prisma.tcg_users.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
@@ -173,12 +159,18 @@ export class UserService {
           remote_data: remote_array_data,
         };
       }
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'ticketing.user.pull',
+          method: 'GET',
+          url: '/ticketing/user',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
 

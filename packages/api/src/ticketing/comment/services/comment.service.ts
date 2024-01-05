@@ -174,9 +174,7 @@ export class CommentService {
         where: {
           remote_id: originId,
           remote_platform: integrationId,
-          linked_users: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
       });
 
@@ -254,7 +252,7 @@ export class CommentService {
           id_event: uuidv4(),
           status: status_resp,
           type: 'ticketing.comment.push', //sync, push or pull
-          method: 'PUSH',
+          method: 'POST',
           url: '/ticketing/comment',
           provider: integrationId,
           direction: '0',
