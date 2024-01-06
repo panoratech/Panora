@@ -63,7 +63,7 @@ services:
       - backend
   
   webapp:
-    image: panoradotdev/frontend-webapp:latest
+    image: panora.docker.scarf.sh/panoradotdev/frontend-webapp:latest
     restart:
       unless-stopped
     ports:
