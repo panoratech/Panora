@@ -26,18 +26,22 @@ export class FrontTeamMapper implements ITeamMapper {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
-    return sourcesArray.map((ticket) =>
-      this.mapSingleTicketToUnified(ticket, customFieldMappings),
+    return sourcesArray.map((team) =>
+      this.mapSingleTeamToUnified(team, customFieldMappings),
     );
   }
 
-  private mapSingleTicketToUnified(
-    ticket: FrontTeamOutput,
+  private mapSingleTeamToUnified(
+    team: FrontTeamOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedTeamOutput {
-    return;
+    const unifiedTeam: UnifiedTeamOutput = {
+      name: team.name,
+    };
+
+    return unifiedTeam;
   }
 }

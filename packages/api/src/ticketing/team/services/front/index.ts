@@ -35,7 +35,7 @@ export class FrontService implements ITeamService {
         },
       });
 
-      const resp = await axios.get('https://api2.frontapp.com/teammates', {
+      const resp = await axios.get('https://api2.frontapp.com/teams', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

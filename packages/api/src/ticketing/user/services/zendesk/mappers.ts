@@ -26,18 +26,28 @@ export class ZendeskUserMapper implements IUserMapper {
     if (!Array.isArray(source)) {
       return this.mapSingleUserToUnified(source, customFieldMappings);
     }
-    return source.map((ticket) =>
-      this.mapSingleUserToUnified(ticket, customFieldMappings),
+    return source.map((user) =>
+      this.mapSingleUserToUnified(user, customFieldMappings),
     );
   }
 
   private mapSingleUserToUnified(
-    ticket: ZendeskUserOutput,
+    user: ZendeskUserOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedUserOutput {
-    return;
+    const field_mappings = customFieldMappings?.map((mapping) => ({
+      [mapping.slug]: user.user_fields?.[mapping.remote_id],
+    }));
+
+    const unifiedUser: UnifiedUserOutput = {
+      name: user.name,
+      email_address: user.email,
+      field_mappings: field_mappings,
+    };
+
+    return unifiedUser;
   }
 }

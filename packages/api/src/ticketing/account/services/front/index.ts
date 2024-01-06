@@ -35,7 +35,7 @@ export class FrontService implements IAccountService {
         },
       });
 
-      const resp = await axios.get('https://api2.frontapp.com/teammates', {
+      const resp = await axios.get('https://api2.frontapp.com/accounts', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -26,18 +26,35 @@ export class FrontContactMapper implements IContactMapper {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
-    return sourcesArray.map((ticket) =>
-      this.mapSingleTicketToUnified(ticket, customFieldMappings),
+    return sourcesArray.map((contact) =>
+      this.mapSingleContactToUnified(contact, customFieldMappings),
     );
   }
 
-  private mapSingleTicketToUnified(
-    ticket: FrontContactOutput,
+  private mapSingleContactToUnified(
+    contact: FrontContactOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedContactOutput {
-    return;
+    const field_mappings = customFieldMappings?.map((mapping) => ({
+      [mapping.slug]: contact.custom_fields?.[mapping.remote_id],
+    }));
+    const emailHandle = contact.handles.find(
+      (handle) => handle.source === 'email',
+    );
+    const phoneHandle = contact.handles.find(
+      (handle) => handle.source === 'phone',
+    );
+
+    const unifiedContact: UnifiedContactOutput = {
+      name: contact.name,
+      email_address: emailHandle.handle || '',
+      phone_number: phoneHandle.handle || '',
+      field_mappings: field_mappings,
+    };
+
+    return unifiedContact;
   }
 }

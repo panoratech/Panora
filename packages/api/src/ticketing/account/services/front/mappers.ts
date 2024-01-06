@@ -26,18 +26,28 @@ export class FrontAccountMapper implements IAccountMapper {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
-    return sourcesArray.map((ticket) =>
-      this.mapSingleTicketToUnified(ticket, customFieldMappings),
+    return sourcesArray.map((account) =>
+      this.mapSingleAccountToUnified(account, customFieldMappings),
     );
   }
 
-  private mapSingleTicketToUnified(
-    ticket: FrontAccountOutput,
+  private mapSingleAccountToUnified(
+    account: FrontAccountOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedAccountOutput {
-    return;
+    const field_mappings = customFieldMappings?.map((mapping) => ({
+      [mapping.slug]: account.custom_fields?.[mapping.remote_id],
+    }));
+
+    const unifiedAccount: UnifiedAccountOutput = {
+      name: account.name,
+      domains: account.domains.flat(),
+      field_mappings: field_mappings,
+    };
+
+    return unifiedAccount;
   }
 }
