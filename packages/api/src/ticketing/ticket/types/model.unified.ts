@@ -18,7 +18,12 @@ export class UnifiedTicketInput {
   field_mappings?: Record<string, any>[];
 }
 export class UnifiedTicketOutput extends UnifiedTicketInput {
-  @ApiProperty()
+  @ApiPropertyOptional({ description: 'The id of the ticket', type: String })
   id?: string;
+  @ApiPropertyOptional({
+    description:
+      'The id of the ticket in the context of the Ticketing software',
+    type: String,
+  })
   remote_id?: string;
 }

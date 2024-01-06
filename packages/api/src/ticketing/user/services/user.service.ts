@@ -16,7 +16,7 @@ export class UserService {
   async getUser(
     id_ticketing_user: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<UserResponse>> {
+  ): Promise<UserResponse> {
     try {
       const user = await this.prisma.tcg_users.findUnique({
         where: {
@@ -75,10 +75,7 @@ export class UserService {
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -88,15 +85,13 @@ export class UserService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<UserResponse>> {
+  ): Promise<UserResponse> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const users = await this.prisma.tcg_users.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
       });
 
@@ -174,10 +169,7 @@ export class UserService {
         },
       });
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }

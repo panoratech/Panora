@@ -16,7 +16,7 @@ export class TeamService {
   async getTeam(
     id_ticketing_team: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<TeamResponse>> {
+  ): Promise<TeamResponse> {
     try {
       const team = await this.prisma.tcg_teams.findUnique({
         where: {
@@ -74,10 +74,7 @@ export class TeamService {
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -87,7 +84,7 @@ export class TeamService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<TeamResponse>> {
+  ): Promise<TeamResponse> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -170,10 +167,7 @@ export class TeamService {
         },
       });
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }

@@ -34,7 +34,7 @@ export class TicketService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<TicketResponse>> {
+  ): Promise<TicketResponse> {
     try {
       const responses = await Promise.all(
         unifiedTicketData.map((unifiedData) =>
@@ -47,18 +47,14 @@ export class TicketService {
         ),
       );
 
-      const allTickets = responses.flatMap((response) => response.data.tickets);
+      const allTickets = responses.flatMap((response) => response.tickets);
       const allRemoteData = responses.flatMap(
-        (response) => response.data.remote_data || [],
+        (response) => response.remote_data || [],
       );
 
       return {
-        data: {
-          tickets: allTickets,
-          remote_data: allRemoteData,
-        },
-        message: 'All tickets inserted successfully',
-        statusCode: 201,
+        tickets: allTickets,
+        remote_data: allRemoteData,
       };
     } catch (error) {
       handleServiceError(error, this.logger);
@@ -70,7 +66,7 @@ export class TicketService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<TicketResponse>> {
+  ): Promise<TicketResponse> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -295,12 +291,12 @@ export class TicketService {
         },
       });
       await this.webhook.handleWebhook(
-        result_ticket.data.tickets,
+        result_ticket.tickets,
         'ticketing.ticket.created',
         linkedUser.id_project,
         event.id_event,
       );
-      return { ...resp, data: result_ticket.data };
+      return result_ticket;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -310,7 +306,7 @@ export class TicketService {
   async getTicket(
     id_ticketing_ticket: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<TicketResponse>> {
+  ): Promise<TicketResponse> {
     try {
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
@@ -376,10 +372,7 @@ export class TicketService {
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -389,15 +382,13 @@ export class TicketService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<TicketResponse>> {
+  ): Promise<TicketResponse> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const tickets = await this.prisma.tcg_tickets.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
         /* TODO: only if params 
         include: {
@@ -486,10 +477,7 @@ export class TicketService {
         },
       });
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -498,7 +486,7 @@ export class TicketService {
   async updateTicket(
     id: string,
     updateTicketData: Partial<UnifiedTicketInput>,
-  ): Promise<ApiResponse<TicketResponse>> {
+  ): Promise<TicketResponse> {
     try {
     } catch (error) {
       handleServiceError(error, this.logger);

@@ -16,7 +16,7 @@ export class AccountService {
   async getAccount(
     id_ticketing_account: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<AccountResponse>> {
+  ): Promise<AccountResponse> {
     try {
       const account = await this.prisma.tcg_accounts.findUnique({
         where: {
@@ -74,10 +74,7 @@ export class AccountService {
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -87,7 +84,7 @@ export class AccountService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<AccountResponse>> {
+  ): Promise<AccountResponse> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -169,10 +166,7 @@ export class AccountService {
           id_linked_user: linkedUserId,
         },
       });
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }

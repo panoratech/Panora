@@ -88,7 +88,7 @@ export class ${ObjectCap}Service {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<${ObjectCap}Response>> {
+  ): Promise<${ObjectCap}Response> {
     return
   }
 
@@ -97,14 +97,14 @@ export class ${ObjectCap}Service {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<${ObjectCap}Response>> {
+  ): Promise<${ObjectCap}Response> {
     return;
   }
 
   async get${ObjectCap}(
     id_${VerticalLow}_${objectType}: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<${ObjectCap}Response>> {
+  ): Promise<${ObjectCap}Response> {
     return;
   }
 
@@ -112,14 +112,14 @@ export class ${ObjectCap}Service {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<${ObjectCap}Response>> {
+  ): Promise<${ObjectCap}Response> {
     return;
   }
 
   async update${ObjectCap}(
     id: string,
     update${ObjectCap}Data: Partial<Unified${ObjectCap}Input>,
-  ): Promise<ApiResponse<${ObjectCap}Response>> {
+  ): Promise<${ObjectCap}Response> {
     return;
   }
 }

@@ -32,7 +32,7 @@ export class CommentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<CommentResponse>> {
+  ): Promise<CommentResponse> {
     try {
       const responses = await Promise.all(
         unifiedCommentData.map((unifiedData) =>
@@ -45,20 +45,14 @@ export class CommentService {
         ),
       );
 
-      const allComments = responses.flatMap(
-        (response) => response.data.comments,
-      );
+      const allComments = responses.flatMap((response) => response.comments);
       const allRemoteData = responses.flatMap(
-        (response) => response.data.remote_data || [],
+        (response) => response.remote_data || [],
       );
 
       return {
-        data: {
-          comments: allComments,
-          remote_data: allRemoteData,
-        },
-        message: 'All comments inserted successfully',
-        statusCode: 201,
+        comments: allComments,
+        remote_data: allRemoteData,
       };
     } catch (error) {
       handleServiceError(error, this.logger);
@@ -70,7 +64,7 @@ export class CommentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<CommentResponse>> {
+  ): Promise<CommentResponse> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -265,12 +259,12 @@ export class CommentService {
         },
       });
       await this.webhook.handleWebhook(
-        result_comment.data.comments,
+        result_comment.comments,
         'ticketing.comment.created',
         linkedUser.id_project,
         event.id_event,
       );
-      return { ...resp, data: result_comment.data };
+      return result_comment;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -280,7 +274,7 @@ export class CommentService {
   async getComment(
     id_commenting_comment: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<CommentResponse>> {
+  ): Promise<CommentResponse> {
     try {
       const comment = await this.prisma.tcg_comments.findUnique({
         where: {
@@ -344,10 +338,7 @@ export class CommentService {
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -359,7 +350,7 @@ export class CommentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<CommentResponse>> {
+  ): Promise<CommentResponse> {
     try {
       const comments = await this.prisma.tcg_comments.findMany({
         where: {
@@ -446,10 +437,7 @@ export class CommentService {
         },
       });
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }

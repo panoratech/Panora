@@ -35,7 +35,7 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ContactResponse> {
     try {
       const responses = await Promise.all(
         unifiedContactData.map((unifiedData) =>
@@ -48,20 +48,14 @@ export class ContactService {
         ),
       );
 
-      const allContacts = responses.flatMap(
-        (response) => response.data.contacts,
-      );
+      const allContacts = responses.flatMap((response) => response.contacts);
       const allRemoteData = responses.flatMap(
-        (response) => response.data.remote_data || [],
+        (response) => response.remote_data || [],
       );
 
       return {
-        data: {
-          contacts: allContacts,
-          remote_data: allRemoteData,
-        },
-        message: 'All contacts inserted successfully',
-        statusCode: 201,
+        contacts: allContacts,
+        remote_data: allRemoteData,
       };
     } catch (error) {
       handleServiceError(error, this.logger);
@@ -73,7 +67,7 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ContactResponse> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -285,12 +279,12 @@ export class ContactService {
         },
       });
       await this.webhook.handleWebhook(
-        result_contact.data.contacts,
+        result_contact.contacts,
         'crm.contact.created',
         linkedUser.id_project,
         event.id_event,
       );
-      return { ...resp, data: result_contact.data };
+      return result_contact;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -299,7 +293,7 @@ export class ContactService {
   async getContact(
     id_crm_contact: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ContactResponse> {
     try {
       const contact = await this.prisma.crm_contacts.findUnique({
         where: {
@@ -369,10 +363,7 @@ export class ContactService {
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -382,7 +373,7 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ContactResponse> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -476,10 +467,7 @@ export class ContactService {
           id_linked_user: linkedUserId,
         },
       });
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -488,7 +476,7 @@ export class ContactService {
   async updateContact(
     id: string,
     updateContactData: Partial<UnifiedContactInput>,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ContactResponse> {
     try {
     } catch (error) {
       handleServiceError(error, this.logger);

@@ -16,7 +16,7 @@ export class ContactService {
   async getContact(
     id_ticketing_contact: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ContactResponse> {
     try {
       const contact = await this.prisma.tcg_contacts.findUnique({
         where: {
@@ -76,10 +76,7 @@ export class ContactService {
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -89,15 +86,13 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<ContactResponse> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const contacts = await this.prisma.tcg_contacts.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
       });
 
@@ -175,10 +170,7 @@ export class ContactService {
         },
       });
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }

@@ -26,7 +26,7 @@ export class AttachmentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<AttachmentResponse>> {
+  ): Promise<AttachmentResponse> {
     try {
       const responses = await Promise.all(
         unifiedAttachmentData.map((unifiedData) =>
@@ -40,19 +40,15 @@ export class AttachmentService {
       );
 
       const allAttachments = responses.flatMap(
-        (response) => response.data.attachments,
+        (response) => response.attachments,
       );
       const allRemoteData = responses.flatMap(
-        (response) => response.data.remote_data || [],
+        (response) => response.remote_data || [],
       );
 
       return {
-        data: {
-          attachments: allAttachments,
-          remote_data: allRemoteData,
-        },
-        message: 'All attachments inserted successfully',
-        statusCode: 201,
+        attachments: allAttachments,
+        remote_data: allRemoteData,
       };
     } catch (error) {
       handleServiceError(error, this.logger);
@@ -64,7 +60,7 @@ export class AttachmentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<AttachmentResponse>> {
+  ): Promise<AttachmentResponse> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -140,12 +136,12 @@ export class AttachmentService {
       });
 
       await this.webhook.handleWebhook(
-        result_attachment.data.attachments,
+        result_attachment.attachments,
         'ticketing.attachment.created',
         linkedUser.id_project,
         event.id_event,
       );
-      return { statusCode: 201, data: result_attachment.data };
+      return result_attachment;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -154,7 +150,7 @@ export class AttachmentService {
   async getAttachment(
     id_ticketing_attachment: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<AttachmentResponse>> {
+  ): Promise<AttachmentResponse> {
     try {
       const attachment = await this.prisma.tcg_attachments.findUnique({
         where: {
@@ -213,10 +209,7 @@ export class AttachmentService {
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -226,7 +219,7 @@ export class AttachmentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<AttachmentResponse>> {
+  ): Promise<AttachmentResponse> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const attachments = await this.prisma.tcg_attachments.findMany({
@@ -310,10 +303,7 @@ export class AttachmentService {
         },
       });
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -323,7 +313,7 @@ export class AttachmentService {
   async downloadAttachment(
     id_ticketing_attachment: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<AttachmentResponse>> {
+  ): Promise<AttachmentResponse> {
     return;
   }
 }

@@ -15,7 +15,13 @@ export class UnifiedCommentInput {
 }
 
 export class UnifiedCommentOutput {
+  @ApiPropertyOptional({ description: 'The id of the comment', type: String })
   id?: string;
+  @ApiPropertyOptional({
+    description:
+      'The id of the comment in the context of the Ticketing software',
+    type: String,
+  })
   remote_id?: string;
   body: string;
   html_body?: string;

@@ -16,7 +16,7 @@ export class TagService {
   async getTag(
     id_ticketing_tag: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<TagResponse>> {
+  ): Promise<TagResponse> {
     try {
       const tag = await this.prisma.tcg_tags.findUnique({
         where: {
@@ -73,10 +73,7 @@ export class TagService {
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -86,7 +83,7 @@ export class TagService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<TagResponse>> {
+  ): Promise<TagResponse> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const tags = await this.prisma.tcg_tags.findMany({
@@ -167,10 +164,7 @@ export class TagService {
         },
       });
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
