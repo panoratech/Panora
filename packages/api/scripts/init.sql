@@ -1,4 +1,5 @@
 
+
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -64,13 +65,15 @@ COMMENT ON COLUMN webhook_endpoints."scope" IS 'stringified array with events,';
 
 CREATE TABLE tcg_teams
 (
- id_tcg_team uuid NOT NULL,
- remote_id   text NULL,
- name        text NULL,
- description text NULL,
- created_at  timestamp NULL,
- modified_at timestamp NULL
-
+ id_tcg_team     uuid NOT NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
+ name            text NULL,
+ description     text NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ id_linked_user  uuid NULL,
+ CONSTRAINT PK_tcg_teams PRIMARY KEY ( id_tcg_team )
 );
 
 
@@ -84,13 +87,15 @@ CREATE TABLE tcg_teams
 
 CREATE TABLE tcg_accounts
 (
- id_tcg_account uuid NOT NULL,
- created_at     timestamp NULL,
- modified_at    timestamp NOT NULL,
- remote_id      text NULL,
- name           text NULL,
- domains        text[] NULL
-
+ id_tcg_account  uuid NOT NULL,
+ remote_id       text NULL,
+ name            text NULL,
+ domains         text[] NULL,
+ remote_platform text NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ id_linked_user  uuid NULL,
+ CONSTRAINT PK_tcg_account PRIMARY KEY ( id_tcg_account )
 );
 
 
@@ -161,11 +166,12 @@ COMMENT ON COLUMN entity.ressource_owner_id IS 'uuid of the ressource owner - ca
 
 CREATE TABLE crm_users
 (
- id_crm_user uuid NOT NULL,
- name        text NULL,
- email       text NULL,
- created_at  timestamp NOT NULL,
- modified_at timestamp NOT NULL,
+ id_crm_user    uuid NOT NULL,
+ name           text NULL,
+ email          text NULL,
+ created_at     timestamp NOT NULL,
+ modified_at    timestamp NOT NULL,
+ id_linked_user uuid NULL,
  CONSTRAINT PK_crm_users PRIMARY KEY ( id_crm_user )
 );
 
@@ -208,6 +214,7 @@ CREATE TABLE crm_deals_stages
  stage_name         text NULL,
  created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
+ id_linked_user     uuid NULL,
  CONSTRAINT PK_crm_deal_stages PRIMARY KEY ( id_crm_deals_stage )
 );
 
@@ -288,6 +295,7 @@ CREATE TABLE crm_deals
  modified_at        timestamp NOT NULL,
  id_crm_user        uuid NULL,
  id_crm_deals_stage uuid NULL,
+ id_linked_user     uuid NULL,
  CONSTRAINT PK_crm_deal PRIMARY KEY ( id_crm_deal ),
  CONSTRAINT FK_22 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_21 FOREIGN KEY ( id_crm_deals_stage ) REFERENCES crm_deals_stages ( id_crm_deals_stage )
@@ -609,6 +617,7 @@ CREATE TABLE tcg_users
  teams           text[] NULL,
  created_at      timestamp NULL,
  modified_at     timestamp NULL,
+ id_linked_user  uuid NULL,
  CONSTRAINT PK_tcg_users PRIMARY KEY ( id_tcg_user ),
  CONSTRAINT FK_45 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
 );
@@ -635,14 +644,16 @@ CREATE TABLE tcg_contacts
  email_address   text NULL,
  phone_number    text NULL,
  details         text NULL,
- created_at      timestamp NULL,
- modified_at     timestamp NULL,
  remote_id       text NULL,
  remote_platform text NULL,
+ created_at      timestamp NULL,
+ modified_at     timestamp NULL,
  id_event        uuid NULL,
  id_tcg_account  uuid NULL,
+ id_linked_user  uuid NULL,
  CONSTRAINT PK_tcg_contact PRIMARY KEY ( id_tcg_contact ),
- CONSTRAINT FK_43 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
+ CONSTRAINT FK_43 FOREIGN KEY ( id_event ) REFERENCES events ( id_event ),
+ CONSTRAINT FK_49 FOREIGN KEY ( id_tcg_account ) REFERENCES tcg_accounts ( id_tcg_account )
 );
 
 CREATE INDEX FK_tcg_contact_event_ID ON tcg_contacts
@@ -702,6 +713,7 @@ CREATE TABLE crm_contacts
  remote_platform text NOT NULL,
  id_crm_user     uuid NULL,
  id_event        uuid NOT NULL,
+ id_linked_user  uuid NULL,
  CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
  CONSTRAINT job_id_crm_contact FOREIGN KEY ( id_event ) REFERENCES events ( id_event ),
  CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
@@ -737,6 +749,7 @@ CREATE TABLE crm_companies
  modified_at         timestamp NOT NULL,
  id_crm_user         uuid NULL,
  id_event            uuid NOT NULL,
+ id_linked_user      uuid NULL,
  CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
  CONSTRAINT FK_24 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_13 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
@@ -781,6 +794,7 @@ CREATE TABLE tcg_tickets
  id_event        uuid NULL,
  creator_type    text NULL,
  id_tcg_user     uuid NULL,
+ id_linked_user  uuid NOT NULL,
  CONSTRAINT PK_tcg_tickets PRIMARY KEY ( id_tcg_ticket ),
  CONSTRAINT FK_44 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
 );
@@ -824,6 +838,7 @@ CREATE TABLE crm_tasks
  id_crm_user    uuid NULL,
  id_crm_company uuid NULL,
  id_crm_deal    uuid NULL,
+ id_linked_user uuid NULL,
  CONSTRAINT PK_crm_task PRIMARY KEY ( id_crm_task ),
  CONSTRAINT FK_26 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_25 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
@@ -898,6 +913,7 @@ CREATE TABLE crm_notes
  id_crm_company uuid NULL,
  id_crm_contact uuid NULL,
  id_crm_deal    uuid NULL,
+ id_linked_user uuid NULL,
  CONSTRAINT PK_crm_notes PRIMARY KEY ( id_crm_note ),
  CONSTRAINT FK_19 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_18 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
@@ -941,6 +957,7 @@ CREATE TABLE crm_engagements
  remote_id              text NULL,
  id_crm_engagement_type uuid NOT NULL,
  id_crm_company         uuid NULL,
+ id_linked_user         uuid NULL,
  CONSTRAINT PK_crm_engagement PRIMARY KEY ( id_crm_engagement ),
  CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_28 FOREIGN KEY ( id_crm_engagement_type ) REFERENCES crm_engagement_types ( id_crm_engagement_type )
@@ -1045,13 +1062,16 @@ COMMENT ON COLUMN crm_addresses.owner_type IS 'Can be a company or a contact''s 
 
 CREATE TABLE tcg_tags
 (
- id_tcg_tag    uuid NOT NULL,
- remote_id     text NULL,
- name          text NULL,
- created_at    timestamp NULL,
- modified_at   timestamp NULL,
- id_tcg_ticket uuid NULL
-
+ id_tcg_tag      uuid NOT NULL,
+ name            text NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ id_tcg_ticket   uuid NULL,
+ id_linked_user  uuid NULL,
+ CONSTRAINT PK_tcg_tags PRIMARY KEY ( id_tcg_tag ),
+ CONSTRAINT FK_48 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
 );
 
 CREATE INDEX FK_tcg_tag_tcg_ticketID ON tcg_tags
@@ -1070,19 +1090,21 @@ CREATE INDEX FK_tcg_tag_tcg_ticketID ON tcg_tags
 
 CREATE TABLE tcg_comments
 (
- id_tcg_comment  uuid NOT NULL,
- body            text NULL,
- html_body       text NULL,
- is_private      boolean NULL,
- created_at      timestamp NULL,
- modified_at     timestamp NULL,
- remote_id       text NULL,
- remote_platform text NULL,
- creator_type    text NULL,
- id_tcg_ticket   uuid NULL,
- id_tcg_contact  uuid NULL,
- id_tcg_user     uuid NULL,
- id_event        uuid NULL,
+ id_tcg_comment    uuid NOT NULL,
+ body              text NULL,
+ html_body         text NULL,
+ is_private        boolean NULL,
+ remote_id         text NULL,
+ remote_platform   text NULL,
+ created_at        timestamp NULL,
+ modified_at       timestamp NULL,
+ creator_type      text NULL,
+ id_tcg_attachment text[] NULL,
+ id_tcg_ticket     uuid NULL,
+ id_tcg_contact    uuid NULL,
+ id_tcg_user       uuid NULL,
+ id_event          uuid NULL,
+ id_linked_user    uuid NULL,
  CONSTRAINT PK_tcg_comments PRIMARY KEY ( id_tcg_comment ),
  CONSTRAINT FK_41 FOREIGN KEY ( id_tcg_contact ) REFERENCES tcg_contacts ( id_tcg_contact ),
  CONSTRAINT FK_40_1 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket ),
@@ -1141,6 +1163,46 @@ CREATE INDEX FK_engagement_contact_crmContactID ON crm_engagement_contacts
 
 
 
+
+
+
+
+
+-- ************************************** tcg_attachments
+
+CREATE TABLE tcg_attachments
+(
+ id_tcg_attachment uuid NOT NULL,
+ remote_id         text NULL,
+ remote_platform   text NULL,
+ file_name         text NULL,
+ file_url          text NULL,
+ uploader          uuid NOT NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ id_linked_user    uuid NULL,
+ id_tcg_ticket     uuid NULL,
+ id_tcg_comment    uuid NULL,
+ CONSTRAINT PK_tcg_attachments PRIMARY KEY ( id_tcg_attachment ),
+ CONSTRAINT FK_51 FOREIGN KEY ( id_tcg_comment ) REFERENCES tcg_comments ( id_tcg_comment ),
+ CONSTRAINT FK_50 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
+);
+
+CREATE INDEX FK_tcg_attachment_tcg_commentID ON tcg_attachments
+(
+ id_tcg_comment
+);
+
+CREATE INDEX FK_tcg_attachment_tcg_ticketID ON tcg_attachments
+(
+ id_tcg_ticket
+);
+
+
+
+COMMENT ON COLUMN tcg_attachments.remote_id IS 'If empty, means the file is stored is panora but not in the destination platform (often because the platform doesn''t support )';
+COMMENT ON COLUMN tcg_attachments.uploader IS 'id_tcg_user  who uploaded the file';
+COMMENT ON COLUMN tcg_attachments.id_tcg_ticket IS 'For cases where the ticketing platform does not specify which comment the attachment belongs to.';
 
 
 
