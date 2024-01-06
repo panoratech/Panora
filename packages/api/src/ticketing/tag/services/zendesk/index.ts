@@ -22,7 +22,7 @@ export class ZendeskService implements ITagService {
     this.logger.setContext(
       TicketingObject.tag.toUpperCase() + ':' + ZendeskService.name,
     );
-    this.registry.registerService('zendesk_t', this);
+    this.registry.registerService('zendesk_tcg', this);
   }
 
   async syncTags(
@@ -33,7 +33,7 @@ export class ZendeskService implements ITagService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_t',
+          provider_slug: 'zendesk_tcg',
         },
       });
 

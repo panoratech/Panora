@@ -26,7 +26,7 @@ export class ZendeskService implements ITicketService {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + ZendeskService.name,
     );
-    this.registry.registerService('zendesk_t', this);
+    this.registry.registerService('zendesk_tcg', this);
   }
   async addTicket(
     ticketData: ZendeskTicketInput,
@@ -36,7 +36,7 @@ export class ZendeskService implements ITicketService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_t',
+          provider_slug: 'zendesk_tcg',
         },
       });
 
@@ -112,7 +112,7 @@ export class ZendeskService implements ITicketService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_t',
+          provider_slug: 'zendesk_tcg',
         },
       });
 

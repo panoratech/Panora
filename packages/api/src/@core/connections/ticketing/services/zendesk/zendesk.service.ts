@@ -24,7 +24,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
-    this.registry.registerService('zendesk_t', this);
+    this.registry.registerService('zendesk_tcg', this);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -33,7 +33,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_t', //TODO
+          provider_slug: 'zendesk_tcg',
         },
       });
 
@@ -81,7 +81,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
         db_res = await this.prisma.connections.create({
           data: {
             id_connection: uuidv4(),
-            provider_slug: 'zendesk_t',
+            provider_slug: 'zendesk_tcg',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
@@ -99,7 +99,12 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'zendesk_t', Action.oauthCallback);
+      handleServiceError(
+        error,
+        this.logger,
+        'zendesk_tcg',
+        Action.oauthCallback,
+      );
     }
   }
 
