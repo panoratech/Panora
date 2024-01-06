@@ -389,9 +389,7 @@ export class ContactService {
       const contacts = await this.prisma.crm_contacts.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
         include: {
           crm_email_addresses: true,

@@ -92,9 +92,7 @@ export class TagService {
       const tags = await this.prisma.tcg_tags.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
       });
 

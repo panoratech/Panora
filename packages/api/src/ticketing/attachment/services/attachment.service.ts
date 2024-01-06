@@ -106,6 +106,7 @@ export class AttachmentService {
         const data = {
           id_tcg_attachment: uuidv4(),
           file_name: unifiedAttachmentData.file_name,
+          uploader: linkedUserId, //TODO
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
@@ -187,7 +188,9 @@ export class AttachmentService {
       // Transform to UnifiedAttachmentOutput format
       const unifiedAttachment: UnifiedAttachmentOutput = {
         id: attachment.id_tcg_attachment,
-        //TODO
+        file_name: attachment.file_name,
+        file_url: attachment.file_url,
+        uploader: attachment.uploader, //TODO
         field_mappings: field_mappings,
       };
 
@@ -261,7 +264,9 @@ export class AttachmentService {
           // Transform to UnifiedAttachmentOutput format
           return {
             id: attachment.id_tcg_attachment,
-            //TODO
+            file_name: attachment.file_name,
+            file_url: attachment.file_url,
+            uploader: attachment.uploader, //TODO
             field_mappings: field_mappings,
           };
         }),

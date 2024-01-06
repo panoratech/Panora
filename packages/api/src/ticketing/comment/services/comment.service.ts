@@ -319,7 +319,6 @@ export class CommentService {
         ticket_id: comment.id_tcg_ticket,
         contact_id: comment.id_tcg_contact, // uuid of Contact object
         user_id: comment.id_tcg_user, // uuid of User object
-        attachments: comment.attachments, //uuids of Attachments objects
       };
 
       let res: CommentResponse = {
@@ -401,7 +400,6 @@ export class CommentService {
             ticket_id: comment.id_tcg_ticket,
             contact_id: comment.id_tcg_contact, // uuid of Contact object
             user_id: comment.id_tcg_user, // uuid of User object
-            attachments: comment.attachments, //uuids of Attachments objects
           };
         }),
       );

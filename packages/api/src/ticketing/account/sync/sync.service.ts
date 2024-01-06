@@ -185,7 +185,7 @@ export class SyncService implements OnModuleInit {
           where: {
             remote_id: originId,
             remote_platform: originSource,
-            id_linked_account: linkedUserId,
+            id_linked_user: linkedUserId,
           },
         });
 
