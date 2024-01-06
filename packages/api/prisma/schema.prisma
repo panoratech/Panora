@@ -426,7 +426,7 @@ model tcg_tickets {
   due_date        DateTime?         @db.Timestamp(6)
   ticket_type     String?
   parent_ticket   String?           @db.Uuid
-  tags            String?
+  tags            String[]
   completed_at    DateTime?         @db.Timestamp(6)
   priority        String?
   created_at      DateTime          @db.Timestamp(6)

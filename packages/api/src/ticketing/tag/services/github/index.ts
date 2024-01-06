@@ -27,7 +27,7 @@ export class GithubService implements ITagService {
 
   async syncTags(
     linkedUserId: string,
-    custom_properties?: string[],
+    id_ticket: string,
   ): Promise<ApiResponse<GithubTagOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({

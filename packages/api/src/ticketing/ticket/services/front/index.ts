@@ -37,8 +37,11 @@ export class FrontService implements ITicketService {
         },
       });
 
+      //We deconstruct as tags must be added separately
+      const { tags, ...restOfTicketData } = ticketData;
+
       let uploads = [];
-      const uuids = ticketData.comment.attachments;
+      const uuids = restOfTicketData.comment.attachments;
       if (uuids && uuids.length > 0) {
         for (const uuid of uuids) {
           const res = await this.prisma.tcg_attachments.findUnique({
@@ -60,8 +63,8 @@ export class FrontService implements ITicketService {
       let resp;
       if (uploads.length > 0) {
         const dataBody = {
-          ...ticketData,
-          comment: { ...ticketData.comment, attachments: uploads },
+          ...restOfTicketData,
+          comment: { ...restOfTicketData.comment, attachments: uploads },
         };
         const formData = new FormData();
 
@@ -101,7 +104,26 @@ export class FrontService implements ITicketService {
       } else {
         resp = await axios.post(
           `https://api2.frontapp.com/conversations`,
-          JSON.stringify(ticketData),
+          JSON.stringify(restOfTicketData),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          },
+        );
+      }
+
+      //now we can add tags to the conversation we just created
+      if (tags && tags.length > 0) {
+        const data = {
+          tag_ids: tags,
+        };
+        const tag_resp = await axios.post(
+          `https://api2.frontapp.com/conversations/${resp.data.id}/tags`,
+          JSON.stringify(data),
           {
             headers: {
               'Content-Type': 'application/json',

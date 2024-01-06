@@ -31,7 +31,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
         | 'solved'
         | 'closed',
       subject: source.name,
-      tags: [source.tags],
+      tags: source.tags,
       type: source.type as 'problem' | 'incident' | 'question' | 'task',
       comment: {
         body: source.comment.body,
@@ -98,7 +98,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       due_date: ticket.due_at ? new Date(ticket.due_at) : undefined,
       type: ticket.type,
       parent_ticket: undefined, // If available, add logic to map parent ticket
-      tags: JSON.stringify(ticket.tags), //TODO
+      tags: ticket.tags,
       completed_at: new Date(ticket.updated_at),
       priority: ticket.priority,
       assigned_to: [String(ticket.assignee_id)],

@@ -7,7 +7,7 @@ import { ApiResponse } from '@@core/utils/types';
 export interface ITagService {
   syncTags(
     linkedUserId: string,
-    custom_properties?: string[],
+    id_ticket: string,
   ): Promise<ApiResponse<OriginalTagOutput[]>>;
 }
 

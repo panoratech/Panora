@@ -70,7 +70,6 @@ export class HubspotTicketMapper implements ITicketMapper {
       due_date: new Date(ticket.properties.createdate),
       type: ticket.properties.hs_pipeline,
       parent_ticket: '', // Define how you determine the parent ticket
-      tags: '', // Define how you map or store tags
       completed_at: new Date(ticket.properties.hs_lastmodifieddate),
       priority: ticket.properties.hs_ticket_priority,
       assigned_to: [ticket.properties.hubspot_owner_id], // Define how you determine assigned users

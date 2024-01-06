@@ -54,21 +54,31 @@ export class SyncService implements OnModuleInit {
         },
       });
       const id_project = defaultProject.id_project;
-      const linkedTags = await this.prisma.linked_users.findMany({
+      const linkedUsers = await this.prisma.linked_users.findMany({
         where: {
           id_project: id_project,
         },
       });
-      linkedTags.map(async (linkedTag) => {
+      linkedUsers.map(async (linkedUser) => {
         try {
           const providers = TICKETING_PROVIDERS;
           for (const provider of providers) {
             try {
-              await this.syncTagsForLinkedTag(
-                provider,
-                linkedTag.id_linked_user,
-                id_project,
-              );
+              //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
+              const tickets = await this.prisma.tcg_tickets.findMany({
+                where: {
+                  remote_platform: provider,
+                  id_linked_user: linkedUser.id_linked_user,
+                },
+              });
+              for (const ticket of tickets) {
+                await this.syncTagsForLinkedUser(
+                  provider,
+                  linkedUser.id_linked_user,
+                  id_project,
+                  ticket.id_tcg_ticket,
+                );
+              }
             } catch (error) {
               handleServiceError(error, this.logger);
             }
@@ -83,10 +93,11 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncTagsForLinkedTag(
+  async syncTagsForLinkedUser(
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    id_ticket: string,
   ) {
     try {
       this.logger.log(
@@ -108,15 +119,12 @@ export class SyncService implements OnModuleInit {
           linkedUserId,
           'tag',
         );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
 
       const service: ITagService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalTagOutput[]> = await service.syncTags(
         linkedUserId,
-        remoteProperties,
+        id_ticket,
       );
 
       const sourceObject: OriginalTagOutput[] = resp.data;
@@ -140,6 +148,7 @@ export class SyncService implements OnModuleInit {
         unifiedObject,
         tagIds,
         integrationId,
+        id_ticket,
         sourceObject,
       );
       const event = await this.prisma.events.create({
@@ -171,16 +180,17 @@ export class SyncService implements OnModuleInit {
     tags: UnifiedTagOutput[],
     originIds: string[],
     originSource: string,
+    id_ticket: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingTag[]> {
     try {
       let tags_results: TicketingTag[] = [];
       for (let i = 0; i < tags.length; i++) {
         const tag = tags[i];
-        const originId = originIds[i];
+        let originId = originIds[i];
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          originId = 'zendesk_id_tag'; //zendesk does not return a uuid so we put that as default value
         }
 
         const existingTag = await this.prisma.tcg_tags.findFirst({
@@ -214,6 +224,7 @@ export class SyncService implements OnModuleInit {
             name: tag.name,
             created_at: new Date(),
             modified_at: new Date(),
+            id_tcg_ticket: id_ticket,
             id_linked_users: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,

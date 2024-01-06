@@ -28,6 +28,7 @@ export class FrontTicketMapper implements ITicketMapper {
             : source.comment.contact_id,
         attachments: source.comment.attachments,
       },
+      tags: source.tags,
     };
 
     //TODO: custom fields => https://dev.frontapp.com/reference/patch_conversations-conversation-id
@@ -78,7 +79,7 @@ export class FrontTicketMapper implements ITicketMapper {
       status: ticket.status,
       description: ticket.subject, // todo: ?
       due_date: new Date(ticket.created_at), // todo ?
-      tags: JSON.stringify(ticket.tags?.map((tag) => tag.name)),
+      tags: ticket.tags?.map((tag) => tag.name),
       assigned_to: ticket.assignee ? [ticket.assignee.email] : undefined, //TODO: it must be a uuid of a user object
       field_mappings: field_mappings,
     };

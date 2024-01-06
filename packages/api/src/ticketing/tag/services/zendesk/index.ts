@@ -27,7 +27,7 @@ export class ZendeskService implements ITagService {
 
   async syncTags(
     linkedUserId: string,
-    custom_properties?: string[],
+    id_ticket: string,
   ): Promise<ApiResponse<ZendeskTagOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -37,8 +37,19 @@ export class ZendeskService implements ITagService {
         },
       });
 
+      const ticket = await this.prisma.tcg_tickets.findUnique({
+        where: {
+          id_tcg_ticket: id_ticket,
+        },
+        select: {
+          remote_id: true,
+        },
+      });
+
       const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tags`,
+        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets/${
+          ticket.remote_id
+        }/tags`,
         {
           headers: {
             'Content-Type': 'application/json',

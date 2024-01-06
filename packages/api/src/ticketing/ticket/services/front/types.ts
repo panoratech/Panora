@@ -5,6 +5,7 @@ export type FrontTicketInput = {
   subject: string;
   comment: Comment;
   custom_fields?: CustomFields;
+  tags?: string[];
 };
 
 type Comment = {
