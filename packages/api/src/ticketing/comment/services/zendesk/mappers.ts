@@ -4,11 +4,12 @@ import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
-import { Utils } from '@ticketing/ticket/utils';
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { unify } from '@@core/utils/unification/unify';
+import { TicketingObject } from '@ticketing/@utils/@types';
+import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
 
 export class ZendeskCommentMapper implements ICommentMapper {
-  private readonly utils = new Utils();
-
   async desunify(
     source: UnifiedCommentInput,
     customFieldMappings?: {
@@ -32,38 +33,46 @@ export class ZendeskCommentMapper implements ICommentMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: ZendeskCommentOutput | ZendeskCommentOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCommentOutput | UnifiedCommentOutput[] {
+  ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleCommentToUnified(source, customFieldMappings);
     }
-    return source.map((comment) =>
-      this.mapSingleCommentToUnified(comment, customFieldMappings),
+    return Promise.all(
+      source.map((comment) =>
+        this.mapSingleCommentToUnified(comment, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleCommentToUnified(
+  private async mapSingleCommentToUnified(
     comment: ZendeskCommentOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCommentOutput {
+  ): Promise<UnifiedCommentOutput> {
+    const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
+      sourceObject: comment.attachments,
+      targetType: TicketingObject.attachment,
+      providerName: 'front',
+      customFieldMappings: [],
+    })) as UnifiedAttachmentOutput[];
+
     return {
       body: comment.body || '',
       html_body: comment.html_body || '',
       is_private: !comment.public,
-      created_at: new Date(comment.created_at),
-      modified_at: new Date(comment.created_at), // Assuming the creation date for modification as well
       creator_type: 'contact',
       ticket_id: '', //TODO
       contact_id: '', // TODO:
       user_id: '', //TODO
+      attachments: unifiedObject,
     };
   }
 }

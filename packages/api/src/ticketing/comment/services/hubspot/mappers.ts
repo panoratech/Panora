@@ -18,13 +18,13 @@ export class HubspotCommentMapper implements ICommentMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: HubspotCommentOutput | HubspotCommentOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCommentOutput | UnifiedCommentOutput[] {
+  ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleCommentToUnified(source, customFieldMappings);
     }

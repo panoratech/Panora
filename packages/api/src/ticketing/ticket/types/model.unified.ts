@@ -19,5 +19,6 @@ export class UnifiedTicketInput {
 }
 export class UnifiedTicketOutput extends UnifiedTicketInput {
   @ApiProperty()
-  id: string;
+  id?: string;
+  remote_id?: string;
 }

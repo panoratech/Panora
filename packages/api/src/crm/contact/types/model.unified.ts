@@ -17,4 +17,6 @@ export class UnifiedContactInput {
 export class UnifiedContactOutput extends UnifiedContactInput {
   @ApiPropertyOptional()
   id?: string;
+  @ApiPropertyOptional()
+  remote_id?: string;
 }

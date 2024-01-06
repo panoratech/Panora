@@ -5,5 +5,6 @@ export class UnifiedTeamInput {
 }
 
 export class UnifiedTeamOutput extends UnifiedTeamInput {
-  id: string;
+  id?: string;
+  remote_id?: string;
 }

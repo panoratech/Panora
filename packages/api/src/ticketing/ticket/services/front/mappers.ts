@@ -74,7 +74,6 @@ export class FrontTicketMapper implements ITicketMapper {
     }));
 
     const unifiedTicket: UnifiedTicketOutput = {
-      id: ticket.id,
       name: ticket.subject,
       status: ticket.status,
       description: ticket.subject, // todo: ?

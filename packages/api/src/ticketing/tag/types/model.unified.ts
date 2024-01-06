@@ -4,5 +4,6 @@ export class UnifiedTagInput {
 }
 
 export class UnifiedTagOutput extends UnifiedTagInput {
-  id: string;
+  id?: string;
+  remote_id?: string;
 }

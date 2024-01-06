@@ -32,7 +32,7 @@ export interface ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCommentOutput | UnifiedCommentOutput[];
+  ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]>;
 }
 
 export type Comment = {

@@ -7,5 +7,6 @@ export class UnifiedContactInput {
 }
 
 export class UnifiedContactOutput extends UnifiedContactInput {
-  id: string;
+  id?: string;
+  remote_id?: string;
 }

@@ -103,7 +103,6 @@ export class ZendeskTicketMapper implements ITicketMapper {
       priority: ticket.priority,
       assigned_to: [String(ticket.assignee_id)],
       field_mappings: field_mappings,
-      id: ticket.id.toString(),
     };
 
     return unifiedTicket;

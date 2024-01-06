@@ -85,7 +85,7 @@ export class FrontService implements ICommentService {
   async syncComments(
     linkedUserId: string,
     id_ticket: string,
-  ): Promise<ApiResponse<OriginalCommentOutput[]>> {
+  ): Promise<ApiResponse<FrontCommentOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {

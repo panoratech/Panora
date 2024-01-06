@@ -6,5 +6,6 @@ export class UnifiedUserInput {
 }
 
 export class UnifiedUserOutput extends UnifiedUserInput {
-  id: string;
+  id?: string;
+  remote_id?: string;
 }

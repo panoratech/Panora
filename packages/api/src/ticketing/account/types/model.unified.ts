@@ -5,5 +5,6 @@ export class UnifiedAccountInput {
 }
 
 export class UnifiedAccountOutput extends UnifiedAccountInput {
-  id: string;
+  id?: string;
+  remote_id?: string;
 }

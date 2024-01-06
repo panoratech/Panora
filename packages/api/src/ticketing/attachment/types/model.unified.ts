@@ -6,5 +6,6 @@ export class UnifiedAttachmentInput {
 }
 
 export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
-  id: string;
+  id?: string;
+  remote_id?: string;
 }
