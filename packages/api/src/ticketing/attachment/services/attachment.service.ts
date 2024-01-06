@@ -96,6 +96,7 @@ export class AttachmentService {
           },
           data: {
             file_name: unifiedAttachmentData.file_name,
+            uploader: linkedUserId,
             modified_at: new Date(),
           },
         });
@@ -106,7 +107,7 @@ export class AttachmentService {
         const data = {
           id_tcg_attachment: uuidv4(),
           file_name: unifiedAttachmentData.file_name,
-          uploader: linkedUserId, //TODO
+          uploader: linkedUserId,
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
@@ -190,7 +191,7 @@ export class AttachmentService {
         id: attachment.id_tcg_attachment,
         file_name: attachment.file_name,
         file_url: attachment.file_url,
-        uploader: attachment.uploader, //TODO
+        uploader: attachment.uploader,
         field_mappings: field_mappings,
       };
 

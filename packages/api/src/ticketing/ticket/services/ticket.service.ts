@@ -306,6 +306,7 @@ export class TicketService {
     }
   }
 
+  //TODO: given params return attachments and comments
   async getTicket(
     id_ticketing_ticket: string,
     remote_data?: boolean,
@@ -398,9 +399,10 @@ export class TicketService {
             id_linked_user: linkedUserId,
           },
         },
+        /* TODO: only if params 
         include: {
           tcg_comments: true,
-        },
+        },*/
       });
 
       const unifiedTickets: UnifiedTicketOutput[] = await Promise.all(

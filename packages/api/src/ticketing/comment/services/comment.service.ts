@@ -150,6 +150,10 @@ export class CommentService {
           remote_id: true,
         },
       });
+      if (!ticket)
+        throw new Error(
+          'ticket does not exist for the comment you try to create',
+        );
       const resp: ApiResponse<OriginalCommentOutput> = await service.addComment(
         desunifiedObject,
         linkedUserId,
@@ -272,6 +276,7 @@ export class CommentService {
     }
   }
 
+  //TODO: return attachments if specified in param
   async getComment(
     id_commenting_comment: string,
     remote_data?: boolean,
@@ -348,6 +353,8 @@ export class CommentService {
     }
   }
 
+  //TODO: return attachments if specified in param
+
   async getComments(
     integrationId: string,
     linkedUserId: string,
@@ -357,9 +364,7 @@ export class CommentService {
       const comments = await this.prisma.tcg_comments.findMany({
         where: {
           remote_id: integrationId.toLowerCase(),
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
       });
 
