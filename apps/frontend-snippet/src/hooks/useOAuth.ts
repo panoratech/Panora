@@ -47,7 +47,9 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
       console.log(finalAuth);
     } else if(providerName == "zendesk"){
       finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&state=${state}`
-    } else { 
+    } else if(providerName == "zendesk_tcg" ||  providerName=="front") {
+      finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
+    }else{ 
       finalAuth = addScope ? 
       `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
       : `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;

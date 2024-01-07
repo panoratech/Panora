@@ -29,7 +29,7 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.syncComments();
+      //await this.syncComments();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
