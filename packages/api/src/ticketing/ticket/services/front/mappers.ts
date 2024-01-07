@@ -31,7 +31,6 @@ export class FrontTicketMapper implements ITicketMapper {
       tags: source.tags,
     };
 
-    //TODO: custom fields => https://dev.frontapp.com/reference/patch_conversations-conversation-id
     if (customFieldMappings && source.field_mappings) {
       for (const fieldMapping of source.field_mappings) {
         for (const key in fieldMapping) {
@@ -39,7 +38,7 @@ export class FrontTicketMapper implements ITicketMapper {
             (mapping) => mapping.slug === key,
           );
           if (mapping) {
-            result[mapping.remote_id] = fieldMapping[key];
+            result['custom_fields'][mapping.remote_id] = fieldMapping[key];
           }
         }
       }

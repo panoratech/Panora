@@ -9,7 +9,7 @@ import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { FrontCommentInput, FrontCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
-import { fetchFileStreamFromURL } from '@ticketing/comment/utils';
+import { Utils } from '@ticketing/comment/utils';
 
 @Injectable()
 export class FrontService implements ICommentService {
@@ -24,6 +24,8 @@ export class FrontService implements ICommentService {
     );
     this.registry.registerService('front', this);
   }
+  private readonly utils = new Utils();
+
   async addComment(
     commentData: FrontCommentInput,
     linkedUserId: string,
@@ -37,6 +39,16 @@ export class FrontService implements ICommentService {
           provider_slug: 'front',
         },
       });
+
+      //retreive the right user for author
+      const user = await this.prisma.tcg_users.findUnique({
+        where: {
+          id_tcg_user: commentData.author_id,
+        },
+        select: { remote_id: true },
+      });
+      if (!user)
+        throw new Error('author_id is invalid, it must be a valid User');
 
       let uploads = [];
       const uuids = commentData.attachments;
@@ -52,7 +64,9 @@ export class FrontService implements ICommentService {
           //TODO: construct the right binary attachment
           //get the AWS s3 right file
           //TODO: check how to send a stream of a url
-          const fileStream = await fetchFileStreamFromURL(res.file_url);
+          const fileStream = await this.utils.fetchFileStreamFromURL(
+            res.file_url,
+          );
 
           uploads = [...uploads, fileStream];
         }
@@ -62,6 +76,7 @@ export class FrontService implements ICommentService {
       if (uploads.length > 0) {
         const dataBody = {
           ...commentData,
+          author_id: user.remote_id,
           attachments: uploads,
         };
         const formData = new FormData();
@@ -91,6 +106,7 @@ export class FrontService implements ICommentService {
       } else {
         const dataBody = {
           ...commentData,
+          author_id: user.remote_id,
         };
         resp = await axios.post(
           `https://api2.frontapp.com/conversations/${remoteIdTicket}/comments`,

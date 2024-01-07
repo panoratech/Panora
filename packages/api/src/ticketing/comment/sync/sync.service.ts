@@ -203,28 +203,37 @@ export class SyncService implements OnModuleInit {
         });
 
         let unique_ticketing_comment_id: string;
-
+        const opts =
+          comment.creator_type === 'contact'
+            ? {
+                id_tcg_contact: comment.contact_id,
+              }
+            : {
+                id_tcg_user: comment.user_id,
+              };
         if (existingComment) {
           // Update the existing comment
+          const data = {
+            body: comment.body,
+            html_body: comment.html_body,
+            is_private: comment.is_private,
+            creator_type: comment.creator_type,
+            id_tcg_ticket: id_ticket,
+            modified_at: new Date(),
+            ...opts,
+          };
           const res = await this.prisma.tcg_comments.update({
             where: {
               id_tcg_comment: existingComment.id_tcg_comment,
             },
-            data: {
-              body: comment.body,
-              html_body: comment.html_body,
-              is_private: comment.is_private,
-              creator_type: comment.creator_type,
-              id_tcg_ticket: id_ticket,
-              modified_at: new Date(),
-            },
+            data: data,
           });
           unique_ticketing_comment_id = res.id_tcg_comment;
           comments_results = [...comments_results, res];
         } else {
           // Create a new comment
           this.logger.log('comment not exists');
-          const data = {
+          let data = {
             id_tcg_comment: uuidv4(),
             body: comment.body,
             html_body: comment.html_body,
@@ -236,9 +245,10 @@ export class SyncService implements OnModuleInit {
             id_linked_user: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,
-            //TODO; id_tcg_contact  String?       @db.Uuid
-            //TODO; id_tcg_user     String?       @db.Uuid
           };
+
+          data = { ...data, ...opts };
+
           const res = await this.prisma.tcg_comments.create({
             data: data,
           });
@@ -292,8 +302,6 @@ export class SyncService implements OnModuleInit {
               id_tcg_ticket: id_ticket,
               id_linked_user: linkedUserId,
               remote_platform: originSource,
-              //TODO; id_tcg_contact  String?       @db.Uuid
-              //TODO; id_tcg_user     String?       @db.Uuid
             };
             const res = await this.prisma.tcg_attachments.create({
               data: data,

@@ -15,6 +15,8 @@ export class Utils {
       });
       if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
       return res.email_address;
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

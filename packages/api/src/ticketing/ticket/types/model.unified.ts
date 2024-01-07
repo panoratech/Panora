@@ -8,7 +8,7 @@ export class UnifiedTicketInput {
   due_date?: Date;
   type?: string;
   parent_ticket?: string;
-  tags?: string[]; // TODO: create a real Tag object here
+  tags?: string[]; // tags names
   completed_at?: Date;
   priority?: string;
   assigned_to?: string[]; //uuid of Users objects ?

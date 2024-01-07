@@ -8,8 +8,11 @@ import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unifi
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { unify } from '@@core/utils/unification/unify';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
+import { Utils } from '@ticketing/comment/utils';
 
 export class FrontCommentMapper implements ICommentMapper {
+  private readonly utils = new Utils();
+
   async desunify(
     source: UnifiedCommentInput,
     customFieldMappings?: {
@@ -19,7 +22,7 @@ export class FrontCommentMapper implements ICommentMapper {
   ): Promise<FrontCommentInput> {
     const result: FrontCommentInput = {
       body: source.body,
-      author_id: source.user_id || source.contact_id, //TODO: make sure either one is passed
+      author_id: source.user_id || source.contact_id, // for Front it must be a User
       attachments: source.attachments,
     };
     return result;
@@ -58,14 +61,31 @@ export class FrontCommentMapper implements ICommentMapper {
       customFieldMappings: [],
     })) as UnifiedAttachmentOutput[];
 
-    return {
+    const user_id = await this.utils.getUserUuidFromRemoteId(
+      String(comment.id),
+      'zendesk_tcg',
+    );
+    let creator_type: string;
+    let opts;
+    if (user_id) {
+      creator_type = 'user';
+      opts = { user_id: user_id };
+    } else {
+      const contact_id = await this.utils.getContactUuidFromRemoteId(
+        String(comment.id),
+        'zendesk_tcg',
+      );
+      creator_type = 'contact';
+      opts = { user_id: contact_id };
+    }
+
+    const res = {
       body: comment.body,
-      html_body: '',
-      creator_type: comment.author ? 'contact' : null,
-      ticket_id: '', // TODO: Need to be determined from related data
-      contact_id: '', // TODO: Need to be determined from related data
-      user_id: '', //TODO
+      creator_type: creator_type, //it must be user
       attachments: unifiedObject,
+      ...opts,
     };
+
+    return res;
   }
 }

@@ -9,7 +9,7 @@ import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
-import { fetchFileStreamFromURL } from '@ticketing/comment/utils';
+import { Utils } from '@ticketing/comment/utils';
 
 @Injectable()
 export class FrontService implements ITicketService {
@@ -24,6 +24,7 @@ export class FrontService implements ITicketService {
     );
     this.registry.registerService('front', this);
   }
+  private readonly utils = new Utils();
 
   async addTicket(
     ticketData: FrontTicketInput,
@@ -38,7 +39,7 @@ export class FrontService implements ITicketService {
       });
 
       //We deconstruct as tags must be added separately
-      const { tags, ...restOfTicketData } = ticketData;
+      const { tags, custom_fields, ...restOfTicketData } = ticketData;
 
       let uploads = [];
       const uuids = restOfTicketData.comment.attachments;
@@ -54,7 +55,9 @@ export class FrontService implements ITicketService {
           //TODO: construct the right binary attachment
           //get the AWS s3 right file
           //TODO: check how to send a stream of a url
-          const fileStream = await fetchFileStreamFromURL(res.file_url);
+          const fileStream = await this.utils.fetchFileStreamFromURL(
+            res.file_url,
+          );
 
           uploads = [...uploads, fileStream];
         }
@@ -116,13 +119,14 @@ export class FrontService implements ITicketService {
         );
       }
 
-      //now we can add tags to the conversation we just created
-      if (tags && tags.length > 0) {
+      //now we can add tags and/or custom fields to the conversation we just created
+      if ((tags && tags.length > 0) || custom_fields) {
         const data = {
           tag_ids: tags,
+          custom_fields: custom_fields,
         };
-        const tag_resp = await axios.post(
-          `https://api2.frontapp.com/conversations/${resp.data.id}/tags`,
+        const tag_resp = await axios.patch(
+          `https://api2.frontapp.com/conversations/${resp.data.id}`,
           JSON.stringify(data),
           {
             headers: {
@@ -134,6 +138,8 @@ export class FrontService implements ITicketService {
           },
         );
       }
+
+      //now we can insert
 
       return {
         data: resp.data,

@@ -177,27 +177,37 @@ export class CommentService {
       });
 
       let unique_ticketing_comment_id: string;
+      const opts =
+        target_comment.creator_type === 'contact'
+          ? {
+              id_tcg_contact: unifiedCommentData.contact_id,
+            }
+          : {
+              id_tcg_user: unifiedCommentData.user_id,
+            };
 
       if (existingComment) {
         // Update the existing comment
+        const data = {
+          body: target_comment.body,
+          html_body: target_comment.html_body,
+          is_private: target_comment.is_private,
+          creator_type: target_comment.creator_type,
+          id_tcg_ticket: unifiedCommentData.ticket_id,
+          modified_at: new Date(),
+          ...opts,
+        };
         const res = await this.prisma.tcg_comments.update({
           where: {
             id_tcg_comment: existingComment.id_tcg_comment,
           },
-          data: {
-            body: target_comment.body,
-            html_body: target_comment.html_body,
-            is_private: target_comment.is_private,
-            creator_type: target_comment.creator_type,
-            id_tcg_ticket: target_comment.ticket_id,
-            modified_at: new Date(),
-          },
+          data: data,
         });
         unique_ticketing_comment_id = res.id_tcg_comment;
       } else {
         // Create a new comment
         this.logger.log('comment not exists');
-        const data = {
+        let data = {
           id_tcg_comment: uuidv4(),
           body: target_comment.body,
           html_body: target_comment.html_body,
@@ -205,13 +215,14 @@ export class CommentService {
           created_at: new Date(),
           modified_at: new Date(),
           creator_type: target_comment.creator_type,
-          id_tcg_ticket: target_comment.ticket_id,
+          id_tcg_ticket: unifiedCommentData.ticket_id,
           id_linked_user: linkedUserId,
           remote_id: originId,
           remote_platform: integrationId,
-          //TODO; id_tcg_contact  String?       @db.Uuid
-          //TODO; id_tcg_user     String?       @db.Uuid
         };
+
+        data = { ...data, ...opts };
+
         const res = await this.prisma.tcg_comments.create({
           data: data,
         });

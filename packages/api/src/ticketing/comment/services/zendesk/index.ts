@@ -39,35 +39,66 @@ export class ZendeskService implements ICommentService {
         },
       });
 
+      //first we retrieve the right author_id (it must be either a User or a Cntact)
+      const author_id = commentData.author_id; //uuid of either a User or a Contact
+      let author_data;
+      const res_user = await this.prisma.tcg_users.findUnique({
+        where: {
+          id_tcg_user: String(author_id),
+        },
+        select: { remote_id: true },
+      });
+      author_data = res_user; //it might be undefined but if it is i insert the right data below
+
+      if (!res_user) {
+        //try to see if there is a contact for this uuid
+        const res_contact = await this.prisma.tcg_contacts.findUnique({
+          where: {
+            id_tcg_contact: String(author_id),
+          },
+          select: { remote_id: true },
+        });
+        if (!res_contact) {
+          throw new Error(
+            'author_id is invalid, it must be a valid User or Contact',
+          );
+        }
+        author_data = res_contact;
+      }
+
       // We must fetch tokens from zendesk with the commentData.uploads array of Attachment uuids
       const uuids = commentData.uploads;
       let uploads = [];
-      uuids.map(async (uuid) => {
-        const res = await this.prisma.tcg_attachments.findUnique({
-          where: {
-            id_tcg_attachment: uuid,
-          },
-        });
-        if (!res) throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+      const uploadTokens = await Promise.all(
+        uuids.map(async (uuid) => {
+          const res = await this.prisma.tcg_attachments.findUnique({
+            where: {
+              id_tcg_attachment: uuid,
+            },
+          });
+          if (!res)
+            throw new Error(`tcg_attachment not found for uuid ${uuid}`);
 
-        //TODO:; fetch the right file from AWS s3
-        const s3File = '';
-        const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
-          res.file_name
-        }`;
+          //TODO:; fetch the right file from AWS s3
+          const s3File = '';
+          const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
+            res.file_name
+          }`;
 
-        const resp = await axios.get(url, {
-          headers: {
-            'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        });
-        uploads = [...uploads, resp.data.upload.token];
-      });
+          const resp = await axios.get(url, {
+            headers: {
+              'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          });
+          uploads = [...uploads, resp.data.upload.token];
+        }),
+      );
       const finalData = {
         ...commentData,
+        author_id: author_data.remote_id,
         uploads: uploads,
       };
       const dataBody = {

@@ -8,8 +8,10 @@ import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unifi
 import { unify } from '@@core/utils/unification/unify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
+import { Utils } from '@ticketing/comment/utils';
 
 export class ZendeskCommentMapper implements ICommentMapper {
+  private readonly utils = new Utils();
   async desunify(
     source: UnifiedCommentInput,
     customFieldMappings?: {
@@ -23,9 +25,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
       public: !source.is_private,
       author_id: source.user_id
         ? parseInt(source.user_id)
-        : source.contact_id
-        ? parseInt(source.contact_id)
-        : undefined, //TODO: make sure either one is passed
+        : parseInt(source.contact_id), // either one must be passed
       type: 'Comment',
       uploads: source.attachments, //we let the array of uuids on purpose (it will be modified in the given service on the fly!)
     };
@@ -63,16 +63,33 @@ export class ZendeskCommentMapper implements ICommentMapper {
       providerName: 'front',
       customFieldMappings: [],
     })) as UnifiedAttachmentOutput[];
+    const user_id = await this.utils.getUserUuidFromRemoteId(
+      String(comment.id),
+      'zendesk_tcg',
+    );
+    let creator_type: string;
+    let opts;
+    if (user_id) {
+      creator_type = 'user';
+      opts = { user_id: user_id };
+    } else {
+      const contact_id = await this.utils.getContactUuidFromRemoteId(
+        String(comment.id),
+        'zendesk_tcg',
+      );
+      creator_type = 'contact';
+      opts = { user_id: contact_id };
+    }
 
-    return {
+    const res = {
       body: comment.body || '',
       html_body: comment.html_body || '',
       is_private: !comment.public,
-      creator_type: 'contact',
-      ticket_id: '', //TODO
-      contact_id: '', // TODO:
-      user_id: '', //TODO
+      creator_type: creator_type,
       attachments: unifiedObject,
+      ...opts,
     };
+
+    return res;
   }
 }

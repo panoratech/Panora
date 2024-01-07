@@ -17,29 +17,28 @@ export class ZendeskTagMapper implements ITagMapper {
   }
 
   unify(
-    source: ZendeskTagOutput | ZendeskTagOutput[],
+    source: ZendeskTagOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedTagOutput | UnifiedTagOutput[] {
-    if (!Array.isArray(source)) {
-      return this.mapSingleTagToUnified(source, customFieldMappings);
-    }
-    return source.map((tag) =>
+    const tags = source.tags;
+
+    return tags.map((tag) =>
       this.mapSingleTagToUnified(tag, customFieldMappings),
     );
   }
 
   private mapSingleTagToUnified(
-    tag: ZendeskTagOutput,
+    tag: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedTagOutput {
     const unifiedTag: UnifiedTagOutput = {
-      name: tag.tags[0], //TODO
+      name: tag,
     };
 
     return unifiedTag;
