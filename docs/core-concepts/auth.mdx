@@ -1,0 +1,63 @@
+---
+title: 'Authentication'
+description: "Learn how to authenticate your requests to the Panora API."
+icon: 'code'
+---
+
+The Panora API uses uses two elements to indentify users: API keys and an id_linked_user.  
+API Keys are used to authenticate yourself to our backend, while `id_linked_user` serves to identify which user's data you want to manipulate.
+You can view and manage your API keys in the Panora Dashboard. Panora supports restricted API keys for granular permissions.
+You can catch new `id_linked_user` and their corresponding platform by listening to webhooks.
+Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+
+
+## This guide will help you properly add API Keys and id_linked_user to your code.
+
+<Steps>
+    <Step title="Setup your API Key in your code:">
+        <CodeGroup>
+
+              ```javascript TypeScript
+            import { PanoraSDK } from '@panora/typescript-sdk';
+            const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+            ```
+            
+            ```javascript TypeScript
+            import { PanoraSDK } from '@panora/typescript-sdk';
+            const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+            ```
+
+            ```python Python
+            sdk = PanoraSDK('YOUR_BEARER_TOKEN')
+            ```
+
+            ```java Java
+            PanoraSDK sdk = new PanoraSDK("YOUR_BEARER_TOKEN");
+            ```
+
+        </CodeGroup>
+    </Step>
+
+     <Step title="Identify the ressource you want to manipulate:">
+        <CodeGroup>
+
+            ```javascript TypeScript
+            import { PanoraSDK } from '@panora/typescript-sdk';
+            const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+            ```
+
+            ```python Python
+            sdk = PanoraSDK('YOUR_BEARER_TOKEN')
+            ```
+
+            ```java Java
+            PanoraSDK sdk = new PanoraSDK("YOUR_BEARER_TOKEN");
+            ```
+
+        </CodeGroup>
+    </Step>
+
+
+</Steps>
+
+Read more about our SDKs in [TypeScript](/backend-sdk/typescript), [Java](/backend-sdk/java), [Python](/backend-sdk/python)

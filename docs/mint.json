@@ -6,9 +6,9 @@
     "name": "Home"
   },
   "api": {
-    "baseUrl": "https://api-demo.panora.dev",
+    "baseUrl": "https://api.panora.dev",
     "auth": {
-      "method": "key"
+      "method": "bearer"
     }
   },
   "modeToggle": {
@@ -46,10 +46,6 @@
   "tabs": [
 
     {
-      "name": "Connections",
-      "url": "connections"
-    },
-    {
       "name": "CRM",
       "url": "crm"
     },
@@ -62,26 +58,8 @@
       "url": "ticketing"
     },
     {
-      "name": "Webhooks",
-      "url": "webhooks"
-    },
-
-    {
-      "name": "SDKs",
-      "url": "backend-sdk"
-    }
-    ,
-    {
       "name": "API Reference",
       "url": "api-reference"
-    },
-    {
-      "name": "Contribute",
-      "url": "contribute"
-    },
-    {
-      "name": "Support",
-      "url": "support"
     }
   ],
   "anchors": [
@@ -99,7 +77,7 @@
       "pages": [
         "connections/overview",
         "connections/api/list"
-    ]
+      ]
     }
     ,
     {
@@ -126,13 +104,16 @@
     {
       "group": "Ticketing",
       "pages": [
-        "ticketing/introduction"
-      ]
-    },
-    {
-      "group": "Webhooks",
-      "pages": [
-        "webhooks/event-types"
+        "ticketing/quick-start",
+        "ticketing/catalog",
+        {
+          "group": "Tickets",
+          "pages": [ "ticketing/tickets/overview", "ticketing/tickets/api/get", "ticketing/tickets/api/post" ]
+        },
+        {
+          "group": "Comments",
+          "pages": [ "ticketing/comments/overview", "ticketing/comments/api/get", "ticketing/comments/api/post" ]
+        }
       ]
     },
     {
@@ -154,7 +135,7 @@
         "group": "connections",
         "pages": [
           "api-reference/connections/capture-oauth-callback",
-          "api-reference/connections/retrieve-connections"
+          "api-reference/connections/list-connections"
         ]
       },
       {
@@ -221,40 +202,69 @@
       {
         "group": "crm/contact",
         "pages": [
-          "api-reference/crmcontact/retrieve-a-batch-of-crm-contacts",
+          "api-reference/crmcontact/list-a-batch-of-crm-contacts",
           "api-reference/crmcontact/create-crm-contact",
           "api-reference/crmcontact/update-a-crm-contact",
           "api-reference/crmcontact/retrieve-a-crm-contact",
           "api-reference/crmcontact/add-a-batch-of-crm-contacts"
         ]
+      },
+      {
+        "group": "ticketing/ticket",
+        "pages": [
+          "api-reference/ticketingticket/list-a-batch-of-tickets",
+          "api-reference/ticketingticket/create-a-ticket",
+          "api-reference/ticketingticket/update-a-ticket",
+          "api-reference/ticketingticket/retrieve-a-ticket",
+          "api-reference/ticketingticket/add-a-batch-of-tickets"
+        ]
+      },
+      {
+        "group": "ticketing/comment",
+        "pages": [
+          "api-reference/ticketingcomment/list-a-batch-of-comments",
+          "api-reference/ticketingcomment/create-a-comment",
+          "api-reference/ticketingcomment/update-a-comment",
+          "api-reference/ticketingcomment/retrieve-a-comment",
+          "api-reference/ticketingcomment/add-a-batch-of-comments"
+        ]
       }
+
+    ]
+    },
+    {
+      "group": "Core Concepts",
+      "pages": [
+        "core-concepts/auth",
+        "core-concepts/magic-links",
+        "core-concepts/custom-fields",
+        "core-concepts/sync-strategies"
+      ]
+    },
+    {
+      "group": "Devtools",
+      "pages": [
+        {
+          "group": "SDKs",
+          "pages": ["backend-sdk/typescript", "backend-sdk/python" , "backend-sdk/java"]
+        }
+      ]
+    },
+    {
+      "group": "Webhooks",
+      "pages": [
+        "webhooks/event-types"
       ]
     },
 
     {
-      "group": "Backend SDKs",
+      "group": "Open-Source",
       "pages": [
-        "backend-sdk/typescript",
-        "backend-sdk/python",
-        "backend-sdk/java"
-      ]
-    }
-    ,
-    {
-      "group": "Contribute",
-      "pages": [
-        "contribute/overview"
+        "open-source/self-host-guide",
+        "open-source/contributors"
       ]
     },
-    {
-      "group": "Panora Features",
-      "pages": [
-        "features/self-host-guide",
-        "features/magic-links",
-        "features/custom-fields"
-      ]
-    }
-    ,
+  
     {
       "group": "Support",
       "pages": [
