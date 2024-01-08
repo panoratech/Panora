@@ -2,14 +2,9 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
-import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
+import { OriginalContactOutput } from '@@core/utils/types/original/original.ticketing';
 
 export interface IContactService {
-  addContact(
-    contactData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalContactOutput>>;
-
   syncContacts(
     linkedUserId: string,
     custom_properties?: string[],

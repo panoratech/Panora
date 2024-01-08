@@ -15,6 +15,11 @@ export class UnifiedContactInput {
 }
 
 export class UnifiedContactOutput extends UnifiedContactInput {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: 'The id of the contact' })
   id?: string;
+  @ApiPropertyOptional({
+    description: 'The id of the contact in the context of the Crm software',
+  })
+  remote_id?: string;
+  remote_data?: Record<string, any>;
 }

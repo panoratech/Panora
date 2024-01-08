@@ -42,8 +42,7 @@ export class DealController {
     name: 'remoteData',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original Crm software.',
   })
   //@ApiCustomResponse(DealResponse)
   @Get()
@@ -52,11 +51,7 @@ export class DealController {
     @Headers('linkedUserId') linkedUserId: string,
     @Query('remoteData') remote_data?: boolean,
   ) {
-    return this.dealService.getDeals(
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    return this.dealService.getDeals(integrationId, linkedUserId, remote_data);
   }
 
   @ApiOperation({
@@ -74,15 +69,11 @@ export class DealController {
     name: 'remoteData',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original Crm software.',
   })
   //@ApiCustomResponse(DealResponse)
   @Get(':id')
-  getDeal(
-    @Param('id') id: string,
-    @Query('remoteData') remote_data?: boolean,
-  ) {
+  getDeal(@Param('id') id: string, @Query('remoteData') remote_data?: boolean) {
     return this.dealService.getDeal(id, remote_data);
   }
 
@@ -107,8 +98,7 @@ export class DealController {
     name: 'remoteData',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original Crm software.',
   })
   @ApiBody({ type: UnifiedDealInput })
   //@ApiCustomResponse(DealResponse)
@@ -137,8 +127,7 @@ export class DealController {
     name: 'remoteData',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original Crm software.',
   })
   @ApiBody({ type: UnifiedDealInput, isArray: true })
   //@ApiCustomResponse(DealResponse)

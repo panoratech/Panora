@@ -7,20 +7,24 @@ import { WebhookModule } from '@@core/webhook/webhook.module';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingConnectionsService } from './services/ticketing.connection.service';
-import { ServiceConnectionRegistry } from './services/registry.service';
+import { ServiceRegistry } from './services/registry.service';
+import { FrontConnectionService } from './services/front/front.service';
+import { GithubConnectionService } from './services/github/github.service';
 
 @Module({
   imports: [WebhookModule],
   providers: [
     TicketingConnectionsService,
     PrismaService,
-    ZendeskConnectionService,
     LoggerService,
     WebhookService,
     EnvironmentService,
     EncryptionService,
-    ServiceConnectionRegistry,
+    ServiceRegistry,
+    //PROVIDERS SERVICES
     ZendeskConnectionService,
+    FrontConnectionService,
+    GithubConnectionService,
   ],
   exports: [TicketingConnectionsService],
 })

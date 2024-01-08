@@ -20,7 +20,7 @@ async function main() {
       id_webhook_endpoint: 'a18682af-43f6-4ed2-8bde-b84298f51dde',
     },
     data: {
-      scope: 'crm.contact.pulled',
+      scope: ['crm.contact.pulled'],
     },
   });
 }

@@ -35,7 +35,7 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<UnifiedContactOutput[]> {
     try {
       const responses = await Promise.all(
         unifiedContactData.map((unifiedData) =>
@@ -48,21 +48,7 @@ export class ContactService {
         ),
       );
 
-      const allContacts = responses.flatMap(
-        (response) => response.data.contacts,
-      );
-      const allRemoteData = responses.flatMap(
-        (response) => response.data.remote_data || [],
-      );
-
-      return {
-        data: {
-          contacts: allContacts,
-          remote_data: allRemoteData,
-        },
-        message: 'All contacts inserted successfully',
-        statusCode: 201,
-      };
+      return responses;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -73,27 +59,13 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<UnifiedContactOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
           id_linked_user: linkedUserId,
         },
       });
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'crm.contact.created', //sync, push or pull
-          method: 'POST',
-          url: '/crm/contact',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
 
       // Retrieve custom field mappings
       // get potential fieldMappings and extract the original properties name
@@ -142,9 +114,7 @@ export class ContactService {
         where: {
           remote_id: originId,
           remote_platform: integrationId,
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          id_linked_user: linkedUserId,
         },
         include: { crm_email_addresses: true, crm_phone_numbers: true },
       });
@@ -197,7 +167,7 @@ export class ContactService {
           last_name: target_contact.last_name || '',
           created_at: new Date(),
           modified_at: new Date(),
-          id_event: job_id,
+          id_linked_user: linkedUserId,
           remote_id: originId,
           remote_platform: integrationId,
         };
@@ -280,28 +250,32 @@ export class ContactService {
         });
       }
 
-      /////
       const result_contact = await this.getContact(
         unique_crm_contact_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: status_resp,
+          type: 'crm.contact.created', //sync, push or pull
+          method: 'POST',
+          url: '/crm/contact',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
       await this.webhook.handleWebhook(
-        result_contact.data.contacts,
+        result_contact,
         'crm.contact.created',
         linkedUser.id_project,
-        job_id,
+        event.id_event,
       );
-      return { ...resp, data: result_contact.data };
+      return result_contact;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -310,7 +284,7 @@ export class ContactService {
   async getContact(
     id_crm_contact: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<UnifiedContactOutput> {
     try {
       const contact = await this.prisma.crm_contacts.findUnique({
         where: {
@@ -362,10 +336,7 @@ export class ContactService {
         field_mappings: field_mappings,
       };
 
-      let res: ContactResponse = {
-        contacts: [unifiedContact],
-      };
-
+      let res: UnifiedContactOutput = unifiedContact;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -376,14 +347,11 @@ export class ContactService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -393,29 +361,14 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<UnifiedContactOutput[]> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'crm.contact.pull',
-          method: 'GET',
-          url: '/crm/contact',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
+
       const contacts = await this.prisma.crm_contacts.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
-          events: {
-            id_linked_user: linkedUserId,
-          },
+          remote_platform: integrationId.toLowerCase(),
+          id_linked_user: linkedUserId,
         },
         include: {
           crm_email_addresses: true,
@@ -467,41 +420,37 @@ export class ContactService {
         }),
       );
 
-      let res: ContactResponse = {
-        contacts: unifiedContacts,
-      };
+      let res: UnifiedContactOutput[] = unifiedContacts;
 
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          contacts.map(async (contact) => {
+        const remote_array_data: UnifiedContactOutput[] = await Promise.all(
+          res.map(async (contact) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: contact.id_crm_contact,
+                ressource_owner_id: contact.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            return { ...contact, remote_data };
           }),
         );
 
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'crm.contact.pull',
+          method: 'GET',
+          url: '/crm/contact',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
-
-      return {
-        data: res,
-        statusCode: 200,
-      };
+      return res;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -510,7 +459,7 @@ export class ContactService {
   async updateContact(
     id: string,
     updateContactData: Partial<UnifiedContactInput>,
-  ): Promise<ApiResponse<ContactResponse>> {
+  ): Promise<UnifiedContactOutput> {
     try {
     } catch (error) {
       handleServiceError(error, this.logger);

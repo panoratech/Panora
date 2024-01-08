@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AttachmentController } from './attachment.controller';
-import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ZendeskService } from './services/zendesk';
 import { AttachmentService } from './services/attachment.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
@@ -22,14 +20,11 @@ import { BullModule } from '@nestjs/bull';
     AttachmentService,
     PrismaService,
     LoggerService,
-    SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
     /* PROVIDERS SERVICES */
-    ZendeskService,
   ],
-  exports: [SyncService],
 })
 export class AttachmentModule {}

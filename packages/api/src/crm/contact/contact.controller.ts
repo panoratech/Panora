@@ -7,7 +7,7 @@ import {
   Patch,
   Param,
   UseGuards,
-  Headers
+  Headers,
 } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -18,7 +18,7 @@ import {
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiHeader
+  ApiHeader,
 } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
@@ -35,9 +35,9 @@ export class ContactController {
   @ApiOperation({
     operationId: 'getContacts',
     summary: 'List a batch of CRM Contacts',
-  }) 
+  })
   @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true})
+  @ApiHeader({ name: 'linkedUserId', required: true })
   @ApiQuery({
     name: 'remoteData',
     required: false,

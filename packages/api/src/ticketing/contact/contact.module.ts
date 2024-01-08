@@ -10,6 +10,8 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { ServiceRegistry } from './services/registry.service';
 import { ContactService } from './services/contact.service';
 import { ContactController } from './contact.controller';
+import { FrontService } from './services/front';
+import { GithubService } from './services/github';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { ContactController } from './contact.controller';
     ServiceRegistry,
     /* PROVIDERS SERVICES */
     ZendeskService,
+    FrontService,
+    GithubService,
   ],
   exports: [SyncService],
 })

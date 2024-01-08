@@ -46,7 +46,7 @@ export class WebhookService {
           active: true,
           created_at: new Date(),
           id_project: data.id_project,
-          scope: JSON.stringify(data.scope),
+          scope: data.scope,
         },
       });
     } catch (error) {
@@ -73,7 +73,7 @@ export class WebhookService {
       if (!webhooks) return;
 
       const webhook = webhooks.find((wh) => {
-        const scopes = JSON.parse(wh.scope);
+        const scopes = wh.scope;
         return scopes.includes(eventType);
       });
 

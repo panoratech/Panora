@@ -90,7 +90,7 @@ export const CRM_PROVIDERS = [
 export const HRIS_PROVIDERS = [''];
 export const ATS_PROVIDERS = [''];
 export const ACCOUNTING_PROVIDERS = [''];
-export const TICKETING_PROVIDERS = ['zendesk_t'];
+export const TICKETING_PROVIDERS = ['zendesk_tcg', 'front']; //TODO: add github
 export const MARKETING_AUTOMATION_PROVIDERS = [''];
 export const FILE_STORAGE_PROVIDERS = [''];
 

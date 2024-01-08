@@ -49,6 +49,20 @@ export const providersConfig: ProvidersConfig = {
     },
 
   },
+  'Ticketing': {
+    'front': {
+      clientId: '5f1d8d963c77285f339a',
+      scopes: '',
+      authBaseUrl: 'https://app.frontapp.com/oauth/authorize',
+      logoPath: 'assets/ticketing/front.png',
+    },
+    'zendesk_tcg': {
+      clientId: 'panora_ticketing',
+      scopes: 'read write',
+      authBaseUrl: 'https://panora3702.zendesk.com/oauth/authorizations/new',
+      logoPath: 'assets/crm/zendesk_logo.png',
+    },
+  },
   'Accounting': {
     'pennylane': {
       clientId: '',

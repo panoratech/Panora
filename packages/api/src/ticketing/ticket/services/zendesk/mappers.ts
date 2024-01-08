@@ -4,39 +4,74 @@ import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
+import { Utils } from '@ticketing/ticket/utils';
 
 export class ZendeskTicketMapper implements ITicketMapper {
-  desunify(
+  private readonly utils = new Utils();
+
+  async desunify(
     source: UnifiedTicketInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZendeskTicketInput {
-    const result: ZendeskTicketInput = {
-      assignee_email: source.assigned_to?.[0], // Assuming the first assigned_to is the assignee email
-      created_at: source.completed_at?.toISOString(),
-      custom_fields: undefined, // Custom field mapping logic needed TODO
+  ): Promise<ZendeskTicketInput> {
+    let result: ZendeskTicketInput = {
       description: source.description,
-      due_at: source.due_date?.toISOString(),
-      priority: source.priority as 'urgent' | 'high' | 'normal' | 'low',
-      status: source.status as
-        | 'new'
-        | 'open'
-        | 'pending'
-        | 'hold'
-        | 'solved'
-        | 'closed',
+      priority: 'high',
+      status: 'new',
       subject: source.name,
-      tags: [source.tags],
-      type: source.type as 'problem' | 'incident' | 'question' | 'task',
-      updated_at: source.completed_at?.toISOString(),
       comment: {
-        body: source.comments[0].body,
-        html_body: source.comments[0].html_body,
-        public: !source.comments[0].is_private,
+        body: source.comment.body,
+        html_body: source.comment.html_body || null,
+        public: !source.comment.is_private || true,
+        uploads: source.comment.attachments, //fetch token attachments for this uuid, would be done on the fly in dest service
       },
     };
+    if (source.assigned_to && source.assigned_to.length > 0) {
+      result = {
+        ...result,
+        assignee_email: await this.utils.getAssigneeMetadataFromUuid(
+          source.assigned_to?.[0],
+        ), // get the mail of the uuid
+      };
+    }
+    if (source.due_date) {
+      result = {
+        ...result,
+        due_at: source.due_date?.toISOString(),
+      };
+    }
+    if (source.priority) {
+      result = {
+        ...result,
+        priority: source.priority as 'urgent' | 'high' | 'normal' | 'low',
+      };
+    }
+    if (source.status) {
+      result = {
+        ...result,
+        status: source.status as
+          | 'new'
+          | 'open'
+          | 'pending'
+          | 'hold'
+          | 'solved'
+          | 'closed',
+      };
+    }
+    if (source.tags) {
+      result = {
+        ...result,
+        tags: source.tags,
+      };
+    }
+    if (source.type) {
+      result = {
+        ...result,
+        type: source.type as 'problem' | 'incident' | 'question' | 'task',
+      };
+    }
 
     if (customFieldMappings && source.field_mappings) {
       let res: CustomField[] = [];
@@ -46,8 +81,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
             (mapping) => mapping.slug === key,
           );
           if (mapping) {
-            const obj = { id: mapping.remote_id, value: fieldMapping[key] }; //TODO
-            //result[custom_fields][mapping.remote_id] = fieldMapping[key];
+            const obj = { id: mapping.remote_id, value: fieldMapping[key] };
             res = [...res, obj];
           }
         }
@@ -57,31 +91,56 @@ export class ZendeskTicketMapper implements ITicketMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: ZendeskTicketOutput | ZendeskTicketOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput | UnifiedTicketOutput[] {
+  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleTicketToUnified(source, customFieldMappings);
     }
-    return source.map((ticket) =>
-      this.mapSingleTicketToUnified(ticket, customFieldMappings),
+    return Promise.all(
+      source.map((ticket) =>
+        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleTicketToUnified(
+  private async mapSingleTicketToUnified(
     ticket: ZendeskTicketOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput {
-    /*TODO const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: ticket.custom_fields[mapping.remote_id],
-    }));*/
+  ): Promise<Promise<UnifiedTicketOutput>> {
+    const field_mappings = customFieldMappings.reduce((acc, mapping) => {
+      const customField = ticket.custom_fields.find(
+        (field) => field.id === mapping.remote_id,
+      );
+      if (customField) {
+        acc.push({ [mapping.slug]: customField.value });
+      }
+      return acc;
+    }, [] as Record<string, any>[]);
+    let opts: any;
+
+    /* TODO: uncomment when test for sync of users/contacts is done as right now we dont have any real users nor contacts inside our db
+
+    if (ticket.assignee_id) {
+      //fetch the right assignee uuid from remote id
+      const user_id = await this.utils.getUserUuidFromRemoteId(
+        String(ticket.assignee_id),
+        'zendesk_tcg',
+      );
+      if (user_id) {
+        opts = { assigned_to: [user_id] };
+      } else {
+        //TODO: in future we must throw an error ?
+        //throw new Error('user id not found for this ticket');
+      }
+    }*/
 
     const unifiedTicket: UnifiedTicketOutput = {
       name: ticket.subject,
@@ -90,22 +149,11 @@ export class ZendeskTicketMapper implements ITicketMapper {
       due_date: ticket.due_at ? new Date(ticket.due_at) : undefined,
       type: ticket.type,
       parent_ticket: undefined, // If available, add logic to map parent ticket
-      tags: JSON.stringify(ticket.tags), //TODO
-      completed_at: undefined, // If available, add logic to determine the completed date
+      tags: ticket.tags,
+      completed_at: new Date(ticket.updated_at),
       priority: ticket.priority,
-      assigned_to: undefined, // If available, add logic to map assigned users
-      comments: ticket.comment
-        ? [
-            {
-              remote_id: ticket.comment.id.toString(),
-              body: ticket.comment.body,
-              html_body: ticket.comment.html_body,
-              is_private: !ticket.comment.public,
-            },
-          ]
-        : undefined,
-      field_mappings: undefined, // Add logic to map custom fields if available
-      id: ticket.id.toString(),
+      field_mappings: field_mappings,
+      ...opts,
     };
 
     return unifiedTicket;

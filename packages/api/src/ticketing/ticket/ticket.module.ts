@@ -10,6 +10,9 @@ import { ZendeskService } from './services/zendesk';
 import { BullModule } from '@nestjs/bull';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './services/registry.service';
+import { HubspotService } from './services/hubspot';
+import { FrontService } from './services/front';
+import { GithubService } from './services/github';
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { ServiceRegistry } from './services/registry.service';
     ServiceRegistry,
     /* PROVIDERS SERVICES */
     ZendeskService,
+    HubspotService,
+    FrontService,
+    GithubService,
   ],
   exports: [SyncService],
 })

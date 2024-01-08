@@ -6,12 +6,14 @@ import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ProviderVertical, getProviderVertical } from '@@core/utils/types';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
 
 @ApiTags('connections')
 @Controller('connections')
 export class ConnectionsController {
   constructor(
     private readonly crmConnectionsService: CrmConnectionsService,
+    private readonly ticketingConnectionsService: TicketingConnectionsService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
@@ -67,6 +69,12 @@ export class ConnectionsController {
         case ProviderVertical.MarketingAutomation:
           break;
         case ProviderVertical.Ticketing:
+          this.ticketingConnectionsService.handleTicketingCallBack(
+            projectId,
+            linkedUserId,
+            providerName,
+            code,
+          );
           break;
         case ProviderVertical.Unknown:
           break;

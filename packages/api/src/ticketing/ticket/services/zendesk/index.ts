@@ -2,14 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { TicketingObject, ZendeskTicketOutput } from '@ticketing/@utils/@types';
+import {
+  TicketingObject,
+  ZendeskTicketInput,
+  ZendeskTicketOutput,
+} from '@ticketing/@utils/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
-import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
@@ -24,23 +26,65 @@ export class ZendeskService implements ITicketService {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + ZendeskService.name,
     );
-    this.registry.registerService('zendesk_t', this);
+    this.registry.registerService('zendesk_tcg', this);
   }
   async addTicket(
-    ticketData: DesunifyReturnType,
+    ticketData: ZendeskTicketInput,
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskTicketOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_t',
+          provider_slug: 'zendesk_tcg',
         },
       });
-      const dataBody = {
+      let dataBody = {
         ticket: ticketData,
       };
+      // We must fetch tokens from zendesk with the commentData.uploads array of Attachment uuids
+      const uuids = ticketData.comment.uploads;
+      let uploads = [];
+      if (uuids && uuids.length > 0) {
+        await Promise.all(
+          uuids.map(async (uuid) => {
+            const res = await this.prisma.tcg_attachments.findUnique({
+              where: {
+                id_tcg_attachment: uuid,
+              },
+            });
+            if (!res)
+              throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+
+            //TODO:; fetch the right file from AWS s3
+            const s3File = '';
+            const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
+              res.file_name
+            }`;
+
+            const resp = await axios.get(url, {
+              headers: {
+                'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            });
+            uploads = [...uploads, resp.data.upload.token];
+          }),
+        );
+        const finalData = {
+          ...ticketData,
+          comment: {
+            ...ticketData.comment,
+            uploads: uploads,
+          },
+        };
+        dataBody = {
+          ticket: finalData,
+        };
+      }
+
       const resp = await axios.post(
         `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets.json`,
         JSON.stringify(dataBody),
@@ -54,7 +98,7 @@ export class ZendeskService implements ITicketService {
         },
       );
       return {
-        data: resp.data,
+        data: resp.data.ticket,
         message: 'Zendesk ticket created',
         statusCode: 201,
       };
@@ -68,10 +112,44 @@ export class ZendeskService implements ITicketService {
       );
     }
   }
-  syncTickets(
+  async syncTickets(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTicketOutput[]>> {
-    throw new Error('Method not implemented.');
+  ): Promise<ApiResponse<ZendeskTicketOutput[]>> {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'zendesk_tcg',
+        },
+      });
+
+      const resp = await axios.get(
+        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets.json`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+      this.logger.log(`Synced zendesk tickets !`);
+
+      return {
+        data: resp.data.tickets,
+        message: 'Zendesk tickets retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Zendesk',
+        TicketingObject.ticket,
+        ActionType.GET,
+      );
+    }
   }
 }

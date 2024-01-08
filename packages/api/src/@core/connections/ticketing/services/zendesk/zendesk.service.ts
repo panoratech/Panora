@@ -12,6 +12,7 @@ import {
   ITicketingConnectionService,
   ZendeskTicketingOAuthResponse,
 } from '../../types';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
 export class ZendeskConnectionService implements ITicketingConnectionService {
@@ -20,8 +21,10 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
+    this.registry.registerService('zendesk_tcg', this);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -30,7 +33,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk', //TODO
+          provider_slug: 'zendesk_tcg',
         },
       });
 
@@ -78,7 +81,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
         db_res = await this.prisma.connections.create({
           data: {
             id_connection: uuidv4(),
-            provider_slug: 'zendesk',
+            provider_slug: 'zendesk_tcg',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
@@ -96,11 +99,17 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'zendesk', Action.oauthCallback);
+      handleServiceError(
+        error,
+        this.logger,
+        'zendesk_tcg',
+        Action.oauthCallback,
+      );
     }
   }
 
-  //TODO
+  //todo: revoke ?
+  //ZENDESK TICKETING OAUTH TOKENS DONT EXPIRE BUT THEY MAY BE REVOKED
   async handleTokenRefresh(opts: RefreshParams): Promise<any> {
     throw new Error('Method not implemented.');
   }

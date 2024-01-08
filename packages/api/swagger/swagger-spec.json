@@ -848,6 +848,210 @@
         ]
       }
     },
+    "/crm/deal": {
+      "get": {
+        "operationId": "getDeals",
+        "summary": "List a batch of Deals",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      },
+      "post": {
+        "operationId": "addDeal",
+        "summary": "Create a Deal",
+        "description": "Create a deal in any supported Crm software",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "description": "The integration ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "description": "The linked user ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedDealInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      },
+      "patch": {
+        "operationId": "updateDeal",
+        "summary": "Update a Deal",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      }
+    },
+    "/crm/deal/{id}": {
+      "get": {
+        "operationId": "getDeal",
+        "summary": "Retrieve a Deal",
+        "description": "Retrieve a deal from any connected Crm software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the  you want to retrive.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      }
+    },
+    "/crm/deal/batch": {
+      "post": {
+        "operationId": "addDeals",
+        "summary": "Add a batch of Deals",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedDealInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      }
+    },
     "/ticketing/ticket": {
       "get": {
         "operationId": "getTickets",
@@ -1095,7 +1299,7 @@
       "post": {
         "operationId": "addComment",
         "summary": "Create a Comment",
-        "description": "Create a ticket in any supported Ticketing software",
+        "description": "Create a comment in any supported Ticketing software",
         "parameters": [
           {
             "name": "integrationId",
@@ -1143,41 +1347,19 @@
         "tags": [
           "ticketing/comment"
         ]
-      },
-      "patch": {
-        "operationId": "updateComment",
-        "summary": "Update a Comment",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "ticketing/comment"
-        ]
       }
     },
     "/ticketing/comment/{id}": {
       "get": {
         "operationId": "getComment",
         "summary": "Retrieve a Comment",
-        "description": "Retrieve a ticket from any connected Ticketing software",
+        "description": "Retrieve a comment from any connected Ticketing software",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "id of the `ticket` you want to retrive.",
+            "description": "id of the `comment` you want to retrive.",
             "schema": {
               "type": "string"
             }
@@ -1253,6 +1435,603 @@
         },
         "tags": [
           "ticketing/comment"
+        ]
+      }
+    },
+    "/ticketing/user": {
+      "get": {
+        "operationId": "getUsers",
+        "summary": "List a batch of Users",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/user"
+        ]
+      }
+    },
+    "/ticketing/user/{id}": {
+      "get": {
+        "operationId": "getUser",
+        "summary": "Retrieve a User",
+        "description": "Retrieve a user from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the user you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/user"
+        ]
+      }
+    },
+    "/ticketing/attachment": {
+      "get": {
+        "operationId": "getAttachments",
+        "summary": "List a batch of Attachments",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/attachment"
+        ]
+      },
+      "post": {
+        "operationId": "addAttachment",
+        "summary": "Create a Attachment",
+        "description": "Create a attachment in any supported Ticketing software",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "description": "The integration ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "description": "The linked user ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedAttachmentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/attachment"
+        ]
+      }
+    },
+    "/ticketing/attachment/{id}": {
+      "get": {
+        "operationId": "getAttachment",
+        "summary": "Retrieve a Attachment",
+        "description": "Retrieve a attachment from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the attachment you want to retrive.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/attachment"
+        ]
+      }
+    },
+    "/ticketing/attachment/{id}/download": {
+      "get": {
+        "operationId": "downloadAttachment",
+        "summary": "Download a Attachment",
+        "description": "Download a attachment from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the attachment you want to retrive.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/attachment"
+        ]
+      }
+    },
+    "/ticketing/attachment/batch": {
+      "post": {
+        "operationId": "addAttachments",
+        "summary": "Add a batch of Attachments",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedAttachmentInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/attachment"
+        ]
+      }
+    },
+    "/ticketing/contact": {
+      "get": {
+        "operationId": "getContacts",
+        "summary": "List a batch of Contacts",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/contact"
+        ]
+      }
+    },
+    "/ticketing/contact/{id}": {
+      "get": {
+        "operationId": "getContact",
+        "summary": "Retrieve a Contact",
+        "description": "Retrieve a contact from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the contact you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/contact"
+        ]
+      }
+    },
+    "/ticketing/account": {
+      "get": {
+        "operationId": "getAccounts",
+        "summary": "List a batch of Accounts",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/account"
+        ]
+      }
+    },
+    "/ticketing/account/{id}": {
+      "get": {
+        "operationId": "getAccount",
+        "summary": "Retrieve an Account",
+        "description": "Retrieve an account from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the account you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/account"
+        ]
+      }
+    },
+    "/ticketing/tag": {
+      "get": {
+        "operationId": "getTags",
+        "summary": "List a batch of Tags",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/tag"
+        ]
+      }
+    },
+    "/ticketing/tag/{id}": {
+      "get": {
+        "operationId": "getTag",
+        "summary": "Retrieve a Tag",
+        "description": "Retrieve a tag from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the tag you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/tag"
+        ]
+      }
+    },
+    "/ticketing/team": {
+      "get": {
+        "operationId": "getTeams",
+        "summary": "List a batch of Teams",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/team"
+        ]
+      }
+    },
+    "/ticketing/team/{id}": {
+      "get": {
+        "operationId": "getTeam",
+        "summary": "Retrieve a Team",
+        "description": "Retrieve a team from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the team you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remoteData",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ticketing/team"
         ]
       }
     }
@@ -1596,19 +2375,19 @@
           "field_mappings"
         ]
       },
+      "UnifiedDealInput": {
+        "type": "object",
+        "properties": {}
+      },
       "UnifiedTicketInput": {
         "type": "object",
-        "properties": {
-          "field_mappings": {
-            "type": "object",
-            "properties": {}
-          }
-        },
-        "required": [
-          "field_mappings"
-        ]
+        "properties": {}
       },
       "UnifiedCommentInput": {
+        "type": "object",
+        "properties": {}
+      },
+      "UnifiedAttachmentInput": {
         "type": "object",
         "properties": {}
       }

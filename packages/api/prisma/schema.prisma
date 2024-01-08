@@ -90,9 +90,8 @@ model crm_companies {
   created_at          DateTime              @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
   id_crm_user         String?               @db.Uuid
-  id_event            String                @db.Uuid
+  id_linked_user      String?               @db.Uuid
   crm_addresses       crm_addresses[]
-  events              events                @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_13")
   crm_users           crm_users?            @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_24")
   crm_email_addresses crm_email_addresses[]
   crm_engagements     crm_engagements[]
@@ -101,7 +100,6 @@ model crm_companies {
   crm_tasks           crm_tasks[]
 
   @@index([id_crm_user], map: "fk_crm_company_crm_userid")
-  @@index([id_event], map: "fk_crm_company_jobid")
 }
 
 model crm_contacts {
@@ -110,18 +108,16 @@ model crm_contacts {
   last_name           String
   created_at          DateTime              @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
-  remote_platform     String
   remote_id           String
+  remote_platform     String
   id_crm_user         String?               @db.Uuid
-  id_event            String                @db.Uuid
+  id_linked_user      String?               @db.Uuid
   crm_addresses       crm_addresses[]
   crm_users           crm_users?            @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_23")
-  events              events                @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "job_id_crm_contact")
   crm_email_addresses crm_email_addresses[]
   crm_notes           crm_notes[]
   crm_phone_numbers   crm_phone_numbers[]
 
-  @@index([id_event], map: "crm_contact_id_job")
   @@index([id_crm_user], map: "fk_crm_contact_userid")
 }
 
@@ -135,6 +131,7 @@ model crm_deals {
   modified_at        DateTime          @db.Timestamp(6)
   id_crm_user        String?           @db.Uuid
   id_crm_deals_stage String?           @db.Uuid
+  id_linked_user     String?           @db.Uuid
   crm_deals_stages   crm_deals_stages? @relation(fields: [id_crm_deals_stage], references: [id_crm_deals_stage], onDelete: NoAction, onUpdate: NoAction, map: "fk_21")
   crm_users          crm_users?        @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_22")
   crm_notes          crm_notes[]
@@ -149,6 +146,7 @@ model crm_deals_stages {
   stage_name         String?
   created_at         DateTime    @db.Timestamp(6)
   modified_at        DateTime    @db.Timestamp(6)
+  id_linked_user     String?     @db.Uuid
   crm_deals          crm_deals[]
 }
 
@@ -202,6 +200,7 @@ model crm_engagements {
   remote_id               String?
   id_crm_engagement_type  String                    @db.Uuid
   id_crm_company          String?                   @db.Uuid
+  id_linked_user          String?                   @db.Uuid
   crm_engagement_contacts crm_engagement_contacts[]
   crm_engagement_types    crm_engagement_types      @relation(fields: [id_crm_engagement_type], references: [id_crm_engagement_type], onDelete: NoAction, onUpdate: NoAction, map: "fk_28")
   crm_companies           crm_companies?            @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_29")
@@ -218,6 +217,7 @@ model crm_notes {
   id_crm_company String?        @db.Uuid
   id_crm_contact String?        @db.Uuid
   id_crm_deal    String?        @db.Uuid
+  id_linked_user String?        @db.Uuid
   crm_companies  crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_18")
   crm_contacts   crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_19")
   crm_deals      crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_20")
@@ -256,6 +256,7 @@ model crm_tasks {
   id_crm_user    String?        @db.Uuid
   id_crm_company String?        @db.Uuid
   id_crm_deal    String?        @db.Uuid
+  id_linked_user String?        @db.Uuid
   crm_users      crm_users?     @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_25")
   crm_companies  crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_26")
   crm_deals      crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_27")
@@ -266,15 +267,16 @@ model crm_tasks {
 }
 
 model crm_users {
-  id_crm_user   String          @id(map: "pk_crm_users") @db.Uuid
-  name          String?
-  email         String?
-  created_at    DateTime        @db.Timestamp(6)
-  modified_at   DateTime        @db.Timestamp(6)
-  crm_companies crm_companies[]
-  crm_contacts  crm_contacts[]
-  crm_deals     crm_deals[]
-  crm_tasks     crm_tasks[]
+  id_crm_user    String          @id(map: "pk_crm_users") @db.Uuid
+  name           String?
+  email          String?
+  created_at     DateTime        @db.Timestamp(6)
+  modified_at    DateTime        @db.Timestamp(6)
+  id_linked_user String?         @db.Uuid
+  crm_companies  crm_companies[]
+  crm_contacts   crm_contacts[]
+  crm_deals      crm_deals[]
+  crm_tasks      crm_tasks[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -296,14 +298,8 @@ model events {
   url                       String
   provider                  String
   id_linked_user            String                      @db.Uuid
-  crm_companies             crm_companies[]
-  crm_contacts              crm_contacts[]
   linked_users              linked_users                @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
   jobs_status_history       jobs_status_history[]
-  tcg_comments              tcg_comments[]
-  tcg_contacts              tcg_contacts[]
-  tcg_tickets               tcg_tickets[]
-  tcg_users                 tcg_users[]
   webhook_delivery_attempts webhook_delivery_attempts[]
 
   @@index([id_linked_user], map: "fk_linkeduserid_projectid")
@@ -379,28 +375,28 @@ model remote_data {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model tcg_comments {
-  id_tcg_comment  String        @id(map: "pk_tcg_comments") @db.Uuid
-  body            String?
-  html_body       String?
-  is_private      Boolean?
-  created_at      DateTime?     @db.Timestamp(6)
-  modified_at     DateTime?     @db.Timestamp(6)
-  author_type     String?       @db.Uuid
-  remote_id       String?
-  remote_platform String?
-  id_tcg_ticket   String?       @db.Uuid
-  id_tcg_contact  String?       @db.Uuid
-  id_tcg_user     String?       @db.Uuid
-  id_event        String?       @db.Uuid
-  tcg_tickets     tcg_tickets?  @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_40_1")
-  tcg_contacts    tcg_contacts? @relation(fields: [id_tcg_contact], references: [id_tcg_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_41")
-  tcg_users       tcg_users?    @relation(fields: [id_tcg_user], references: [id_tcg_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_42")
-  events          events?       @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_46")
+  id_tcg_comment    String            @id(map: "pk_tcg_comments") @db.Uuid
+  body              String?
+  html_body         String?
+  is_private        Boolean?
+  remote_id         String?
+  remote_platform   String?
+  created_at        DateTime?         @db.Timestamp(6)
+  modified_at       DateTime?         @db.Timestamp(6)
+  creator_type      String?
+  id_tcg_attachment String[]
+  id_tcg_ticket     String?           @db.Uuid
+  id_tcg_contact    String?           @db.Uuid
+  id_tcg_user       String?           @db.Uuid
+  id_linked_user    String?           @db.Uuid
+  tcg_attachments   tcg_attachments[]
+  tcg_tickets       tcg_tickets?      @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_40_1")
+  tcg_contacts      tcg_contacts?     @relation(fields: [id_tcg_contact], references: [id_tcg_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_41")
+  tcg_users         tcg_users?        @relation(fields: [id_tcg_user], references: [id_tcg_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_42")
 
   @@index([id_tcg_contact], map: "fk_tcg_comment_tcg_contact")
   @@index([id_tcg_ticket], map: "fk_tcg_comment_tcg_ticket")
   @@index([id_tcg_user], map: "fk_tcg_comment_tcg_userid")
-  @@index([id_event], map: "fk_tcg_comments_eventid")
 }
 
 model tcg_contacts {
@@ -409,39 +405,43 @@ model tcg_contacts {
   email_address   String?
   phone_number    String?
   details         String?
-  created_at      DateTime?      @db.Timestamp(6)
-  modified_at     DateTime?      @db.Timestamp(6)
   remote_id       String?
   remote_platform String?
-  id_event        String?        @db.Uuid
+  created_at      DateTime?      @db.Timestamp(6)
+  modified_at     DateTime?      @db.Timestamp(6)
+  id_tcg_account  String?        @db.Uuid
+  id_linked_user  String?        @db.Uuid
   tcg_comments    tcg_comments[]
-  events          events?        @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_43")
+  tcg_accounts    tcg_accounts?  @relation(fields: [id_tcg_account], references: [id_tcg_account], onDelete: NoAction, onUpdate: NoAction, map: "fk_49")
 
-  @@index([id_event], map: "fk_tcg_contact_event_id")
+  @@index([id_tcg_account], map: "fk_tcg_contact_tcg_account_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model tcg_tickets {
-  id_tcg_ticket   String         @id(map: "pk_tcg_tickets") @db.Uuid
+  id_tcg_ticket   String            @id(map: "pk_tcg_tickets") @db.Uuid
   name            String?
   status          String?
   description     String?
-  due_date        DateTime?      @db.Timestamp(6)
+  due_date        DateTime?         @db.Timestamp(6)
   ticket_type     String?
-  parent_ticket   String?        @db.Uuid
-  tags            String?
-  completed_at    DateTime?      @db.Timestamp(6)
+  parent_ticket   String?           @db.Uuid
+  tags            String[]
+  completed_at    DateTime?         @db.Timestamp(6)
   priority        String?
-  created_at      DateTime       @db.Timestamp(6)
-  modified_at     DateTime       @db.Timestamp(6)
+  created_at      DateTime          @db.Timestamp(6)
+  modified_at     DateTime          @db.Timestamp(6)
   assigned_to     String[]
   remote_id       String?
   remote_platform String?
-  id_event        String?        @db.Uuid
+  creator_type    String?
+  id_tcg_user     String?           @db.Uuid
+  id_linked_user  String            @db.Uuid
+  tcg_attachments tcg_attachments[]
   tcg_comments    tcg_comments[]
-  events          events?        @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_44")
+  tcg_tags        tcg_tags[]
 
-  @@index([id_event], map: "fk_tcg_tickets_eventid")
+  @@index([id_tcg_user], map: "fk_tcg_ticket_tcg_user")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -449,15 +449,13 @@ model tcg_users {
   id_tcg_user     String         @id(map: "pk_tcg_users") @db.Uuid
   name            String?
   email_address   String?
-  created_at      DateTime?      @db.Timestamp(6)
-  modified_at     DateTime?      @db.Timestamp(6)
   remote_id       String?
   remote_platform String?
-  id_event        String?        @db.Uuid
+  teams           String[]
+  created_at      DateTime?      @db.Timestamp(6)
+  modified_at     DateTime?      @db.Timestamp(6)
+  id_linked_user  String?        @db.Uuid
   tcg_comments    tcg_comments[]
-  events          events?        @relation(fields: [id_event], references: [id_event], onDelete: NoAction, onUpdate: NoAction, map: "fk_45")
-
-  @@index([id_event], map: "fk_tcg_users_event_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -519,7 +517,7 @@ model webhook_endpoints {
   secret                    String
   active                    Boolean
   created_at                DateTime                    @db.Timestamp(6)
-  scope                     String?
+  scope                     String[]
   id_project                String                      @db.Uuid
   last_update               DateTime?                   @db.Timestamp(6)
   webhook_delivery_attempts webhook_delivery_attempts[]
@@ -537,4 +535,64 @@ model webhooks_reponses {
   http_response_data        String
   http_status_code          String
   webhook_delivery_attempts webhook_delivery_attempts[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tcg_accounts {
+  id_tcg_account  String         @id(map: "pk_tcg_account") @db.Uuid
+  remote_id       String?
+  name            String?
+  domains         String[]
+  remote_platform String?
+  created_at      DateTime       @db.Timestamp(6)
+  modified_at     DateTime       @db.Timestamp(6)
+  id_linked_user  String?        @db.Uuid
+  tcg_contacts    tcg_contacts[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tcg_teams {
+  id_tcg_team     String   @id(map: "pk_tcg_teams") @db.Uuid
+  remote_id       String?
+  remote_platform String?
+  name            String?
+  description     String?
+  created_at      DateTime @db.Timestamp(6)
+  modified_at     DateTime @db.Timestamp(6)
+  id_linked_user  String?  @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tcg_attachments {
+  id_tcg_attachment String        @id(map: "pk_tcg_attachments") @db.Uuid
+  remote_id         String?
+  remote_platform   String?
+  file_name         String?
+  file_url          String?
+  uploader          String        @db.Uuid
+  created_at        DateTime      @db.Timestamp(6)
+  modified_at       DateTime      @db.Timestamp(6)
+  id_linked_user    String?       @db.Uuid
+  id_tcg_ticket     String?       @db.Uuid
+  id_tcg_comment    String?       @db.Uuid
+  tcg_tickets       tcg_tickets?  @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_50")
+  tcg_comments      tcg_comments? @relation(fields: [id_tcg_comment], references: [id_tcg_comment], onDelete: NoAction, onUpdate: NoAction, map: "fk_51")
+
+  @@index([id_tcg_comment], map: "fk_tcg_attachment_tcg_commentid")
+  @@index([id_tcg_ticket], map: "fk_tcg_attachment_tcg_ticketid")
+}
+
+model tcg_tags {
+  id_tcg_tag      String       @id(map: "pk_tcg_tags") @db.Uuid
+  name            String?
+  remote_id       String?
+  remote_platform String?
+  created_at      DateTime     @db.Timestamp(6)
+  modified_at     DateTime     @db.Timestamp(6)
+  id_tcg_ticket   String?      @db.Uuid
+  id_linked_user  String?      @db.Uuid
+  tcg_tickets     tcg_tickets? @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_48")
+
+  @@index([id_tcg_ticket], map: "fk_tcg_tag_tcg_ticketid")
 }

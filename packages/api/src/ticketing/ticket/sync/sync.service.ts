@@ -11,7 +11,6 @@ import { TicketingObject } from '@ticketing/@utils/@types';
 import { UnifiedTicketOutput } from '../types/model.unified';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { tcg_tickets as TicketingTicket } from '@prisma/client';
-import { normalizeComments } from '../utils';
 import { ITicketService } from '../types';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../services/registry.service';
@@ -30,7 +29,7 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.syncTickets();
+      //await this.syncTickets();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -101,20 +100,6 @@ export class SyncService implements OnModuleInit {
         },
       });
       if (!connection) return;
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'ticketing.ticket.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      const job_id = job_resp_create.id_event;
 
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -142,7 +127,7 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedTicketOutput[];
 
-      //TODO
+      //remote Ids in provider's tools
       const ticketIds = sourceObject.map((ticket) =>
         'id' in ticket ? String(ticket.id) : undefined,
       );
@@ -153,22 +138,28 @@ export class SyncService implements OnModuleInit {
         unifiedObject,
         ticketIds,
         integrationId,
-        job_id,
         sourceObject,
       );
-      await this.prisma.events.update({
-        where: {
-          id_event: job_id,
-        },
+
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'ticketing.ticket.synced',
+          method: 'SYNC',
+          url: '/sync',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
+
       await this.webhook.handleWebhook(
         tickets_data,
-        'ticketing.ticket.pulled',
+        'ticketing.ticket.synced',
         id_project,
-        job_id,
+        event.id_event,
       );
     } catch (error) {
       handleServiceError(error, this.logger);
@@ -180,7 +171,6 @@ export class SyncService implements OnModuleInit {
     tickets: UnifiedTicketOutput[],
     originIds: string[],
     originSource: string,
-    jobId: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingTicket[]> {
     try {
@@ -197,82 +187,98 @@ export class SyncService implements OnModuleInit {
           where: {
             remote_id: originId,
             remote_platform: originSource,
-            events: {
-              id_linked_user: linkedUserId,
-            },
+            id_linked_user: linkedUserId,
           },
-          include: { tcg_comments: true },
         });
-
-        const { normalizedComments } = normalizeComments(ticket.comments);
 
         let unique_ticketing_ticket_id: string;
 
         if (existingTicket) {
           // Update the existing ticket
+          let data: any = {
+            id_tcg_ticket: uuidv4(),
+            modified_at: new Date(),
+          };
+          if (ticket.name) {
+            data = { ...data, name: ticket.name };
+          }
+          if (ticket.status) {
+            data = { ...data, status: ticket.status };
+          }
+          if (ticket.description) {
+            data = { ...data, description: ticket.description };
+          }
+          if (ticket.type) {
+            data = { ...data, ticket_type: ticket.type };
+          }
+          if (ticket.tags) {
+            data = { ...data, tags: ticket.tags };
+          }
+          if (ticket.priority) {
+            data = { ...data, priority: ticket.priority };
+          }
+          if (ticket.completed_at) {
+            data = { ...data, completed_at: ticket.completed_at };
+          }
+          if (ticket.assigned_to) {
+            data = { ...data, assigned_to: ticket.assigned_to };
+          }
+          /*
+            parent_ticket: ticket.parent_ticket || 'd',
+          */
           const res = await this.prisma.tcg_tickets.update({
             where: {
               id_tcg_ticket: existingTicket.id_tcg_ticket,
             },
-            data: {
-              name: ticket.name || '',
-              status: ticket.status || '',
-              description: ticket.description || '',
-              due_date: ticket.due_date || '',
-              ticket_type: ticket.type || '',
-              parent_ticket: ticket.parent_ticket || '',
-              tags: ticket.tags || '',
-              completed_at: ticket.completed_at || '',
-              priority: ticket.priority || '',
-              assigned_to: ticket.assigned_to || [],
-              modified_at: new Date(),
-              tcg_comments: {
-                update: normalizedComments.map((comment, index) => ({
-                  where: {
-                    id_tcg_ticket:
-                      existingTicket.tcg_comments[index].id_tcg_ticket,
-                    id_tcg_comment:
-                      existingTicket.tcg_comments[index].id_tcg_comment,
-                  },
-                  data: comment,
-                })),
-              },
-            },
+            data: data,
           });
           unique_ticketing_ticket_id = res.id_tcg_ticket;
           tickets_results = [...tickets_results, res];
         } else {
           // Create a new ticket
           this.logger.log('not existing ticket ' + ticket.name);
-          const data = {
+
+          let data: any = {
             id_tcg_ticket: uuidv4(),
-            name: ticket.name || '',
-            status: ticket.status || '',
-            description: ticket.description || '',
-            due_date: ticket.due_date || '',
-            ticket_type: ticket.type || '',
-            parent_ticket: ticket.parent_ticket || '',
-            tags: ticket.tags || '',
-            completed_at: ticket.completed_at || '',
-            priority: ticket.priority || '',
-            assigned_to: ticket.assigned_to || [],
             created_at: new Date(),
             modified_at: new Date(),
-            id_event: jobId,
+            id_linked_user: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,
           };
-
-          if (normalizedComments) {
-            data['tcg_comments'] = {
-              create: normalizedComments,
-            };
+          if (ticket.name) {
+            data = { ...data, name: ticket.name };
           }
+          if (ticket.status) {
+            data = { ...data, status: ticket.status };
+          }
+          if (ticket.description) {
+            data = { ...data, description: ticket.description };
+          }
+          if (ticket.type) {
+            data = { ...data, ticket_type: ticket.type };
+          }
+          if (ticket.tags) {
+            data = { ...data, tags: ticket.tags };
+          }
+          if (ticket.priority) {
+            data = { ...data, priority: ticket.priority };
+          }
+          if (ticket.completed_at) {
+            data = { ...data, completed_at: ticket.completed_at };
+          }
+          if (ticket.assigned_to) {
+            data = { ...data, assigned_to: ticket.assigned_to };
+          }
+          /*
+            parent_ticket: ticket.parent_ticket || 'd',
+          */
+
           const res = await this.prisma.tcg_tickets.create({
             data: data,
           });
-          tickets_results = [...tickets_results, res];
           unique_ticketing_ticket_id = res.id_tcg_ticket;
+          tickets_results = [...tickets_results, res];
         }
 
         // check duplicate or existing values
