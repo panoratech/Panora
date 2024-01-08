@@ -62,7 +62,9 @@ export class TeamController {
           connection_token,
         );
       return this.teamService.getTeams(remoteSource, linkedUserId, remote_data);
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({

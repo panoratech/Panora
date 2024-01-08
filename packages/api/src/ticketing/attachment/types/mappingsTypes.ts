@@ -6,7 +6,7 @@ const zendeskAttachmentMapper = new ZendeskAttachmentMapper();
 const githubAttachmentMapper = new GithubAttachmentMapper();
 const frontAttachmentMapper = new FrontAttachmentMapper();
 
-export const commentUnificationMapping = {
+export const attachmentUnificationMapping = {
   zendesk_tcg: {
     unify: zendeskAttachmentMapper.unify.bind(zendeskAttachmentMapper),
     desunify: zendeskAttachmentMapper.desunify,

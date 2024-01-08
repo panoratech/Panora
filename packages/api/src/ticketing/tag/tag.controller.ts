@@ -62,7 +62,9 @@ export class TagController {
           connection_token,
         );
       return this.tagService.getTags(remoteSource, linkedUserId, remote_data);
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({

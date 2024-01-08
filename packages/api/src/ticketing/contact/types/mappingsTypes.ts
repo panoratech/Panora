@@ -6,17 +6,17 @@ const zendeskContactMapper = new ZendeskContactMapper();
 const frontContactMapper = new FrontContactMapper();
 const githubContactMapper = new GithubContactMapper();
 
-export const accountUnificationMapping = {
+export const contactUnificationMapping = {
   zendesk_tcg: {
-    unify: zendeskContactMapper.unify,
+    unify: zendeskContactMapper.unify.bind(zendeskContactMapper),
     desunify: zendeskContactMapper.desunify,
   },
   front: {
-    unify: frontContactMapper.unify,
+    unify: frontContactMapper.unify.bind(frontContactMapper),
     desunify: frontContactMapper.desunify,
   },
   github: {
-    unify: githubContactMapper.unify,
+    unify: githubContactMapper.unify.bind(githubContactMapper),
     desunify: githubContactMapper.desunify,
   },
 };

@@ -66,7 +66,9 @@ export class AccountController {
         linkedUserId,
         remote_data,
       );
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({

@@ -650,17 +650,10 @@
         "summary": "List a batch of CRM Contacts",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -677,7 +670,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedContactOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -690,19 +701,10 @@
         "description": "Create a contact in any supported CRM",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "description": "The integration ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
-            "description": "The linked user ID",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -728,8 +730,26 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedContactOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -786,7 +806,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedContactOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -800,17 +838,10 @@
         "summary": "Add a batch of CRM Contacts",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -839,8 +870,26 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedContactOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1058,17 +1107,10 @@
         "summary": "List a batch of Tickets",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1085,7 +1127,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTicketOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1098,19 +1158,10 @@
         "description": "Create a ticket in any supported Ticketing software",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "description": "The integration ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
-            "description": "The linked user ID",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1136,8 +1187,26 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTicketOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1194,7 +1263,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTicketOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1208,17 +1295,10 @@
         "summary": "Add a batch of Tickets",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1247,8 +1327,26 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTicketOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1262,17 +1360,10 @@
         "summary": "List a batch of Comments",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1289,7 +1380,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCommentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1302,19 +1411,10 @@
         "description": "Create a comment in any supported Ticketing software",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "description": "The integration ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
-            "description": "The linked user ID",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1340,8 +1440,26 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCommentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1376,7 +1494,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCommentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1390,17 +1526,10 @@
         "summary": "Add a batch of Comments",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1429,8 +1558,26 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCommentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1444,17 +1591,10 @@
         "summary": "List a batch of Users",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1471,7 +1611,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedUserOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1506,7 +1664,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedUserOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1520,17 +1696,10 @@
         "summary": "List a batch of Attachments",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1547,7 +1716,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedAttachmentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1560,19 +1747,10 @@
         "description": "Create a attachment in any supported Ticketing software",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "description": "The integration ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
-            "description": "The linked user ID",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1598,8 +1776,26 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedAttachmentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1634,7 +1830,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedAttachmentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1669,7 +1883,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedAttachmentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1683,17 +1915,10 @@
         "summary": "Add a batch of Attachments",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1722,8 +1947,26 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedAttachmentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1737,17 +1980,10 @@
         "summary": "List a batch of Contacts",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1764,7 +2000,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedContactOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1799,7 +2053,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedContactOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1813,17 +2085,10 @@
         "summary": "List a batch of Accounts",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1840,7 +2105,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedAccountOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1875,7 +2158,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedAccountOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1889,17 +2190,10 @@
         "summary": "List a batch of Tags",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1916,7 +2210,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTagOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1951,7 +2263,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTagOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1965,17 +2295,10 @@
         "summary": "List a batch of Teams",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1992,7 +2315,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTeamOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2027,7 +2368,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTeamOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2298,6 +2657,23 @@
           "data"
         ]
       },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "statusCode"
+        ]
+      },
       "Email": {
         "type": "object",
         "properties": {
@@ -2339,6 +2715,49 @@
           "phone_type"
         ]
       },
+      "UnifiedContactOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the contact"
+          },
+          "email_address": {
+            "type": "string",
+            "description": "The email address of the contact"
+          },
+          "phone_number": {
+            "type": "string",
+            "description": "The phone number of the contact"
+          },
+          "details": {
+            "type": "string",
+            "description": "The details of the contact"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the contact"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the contact in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "email_address",
+          "field_mappings",
+          "remote_data"
+        ]
+      },
       "UnifiedContactInput": {
         "type": "object",
         "properties": {
@@ -2351,12 +2770,14 @@
             "description": "The last name of the contact"
           },
           "email_addresses": {
+            "description": "The email addresses of the contact",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Email"
             }
           },
           "phone_numbers": {
+            "description": "The phone numbers of the contact",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Phone"
@@ -2379,17 +2800,487 @@
         "type": "object",
         "properties": {}
       },
+      "UnifiedTicketOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the ticket"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the ticket"
+          },
+          "description": {
+            "description": "The description of the ticket",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "due_date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date the ticket is due"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the ticket"
+          },
+          "parent_ticket": {
+            "type": "string",
+            "description": "The uuid of the parent ticket"
+          },
+          "tags": {
+            "description": "The tags names of the ticket",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "completed_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date the ticket has been completed"
+          },
+          "priority": {
+            "type": "string",
+            "description": "The priority of the ticket"
+          },
+          "assigned_to": {
+            "description": "The users uuids the ticket is assigned to",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "comment": {
+            "description": "The users uuids the ticket is assigned to",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "account_id": {
+            "type": "string",
+            "description": "The uuid of the account which the ticket belongs to"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid of the contact which the ticket belongs to"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the ticket"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the ticket in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "field_mappings",
+          "remote_data"
+        ]
+      },
       "UnifiedTicketInput": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the ticket"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the ticket"
+          },
+          "description": {
+            "description": "The description of the ticket",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "due_date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date the ticket is due"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the ticket"
+          },
+          "parent_ticket": {
+            "type": "string",
+            "description": "The uuid of the parent ticket"
+          },
+          "tags": {
+            "description": "The tags names of the ticket",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "completed_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date the ticket has been completed"
+          },
+          "priority": {
+            "type": "string",
+            "description": "The priority of the ticket"
+          },
+          "assigned_to": {
+            "description": "The users uuids the ticket is assigned to",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "comment": {
+            "description": "The users uuids the ticket is assigned to",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "account_id": {
+            "type": "string",
+            "description": "The uuid of the account which the ticket belongs to"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid of the contact which the ticket belongs to"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "field_mappings"
+        ]
+      },
+      "UnifiedAttachmentOutput": {
+        "type": "object",
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "description": "The file name of the attachment"
+          },
+          "file_url": {
+            "type": "string",
+            "description": "The file url of the attachment"
+          },
+          "uploader": {
+            "type": "string",
+            "description": "The uploader's uuid of the attachment"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the attachment"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the attachment in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "file_name",
+          "file_url",
+          "uploader",
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedCommentOutput": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "The body of the comment"
+          },
+          "html_body": {
+            "type": "string",
+            "description": "The html body of the comment"
+          },
+          "is_private": {
+            "type": "boolean",
+            "description": "The public status of the comment"
+          },
+          "creator_type": {
+            "type": "string",
+            "description": "The creator type of the comment (either user or contact)"
+          },
+          "ticket_id": {
+            "type": "string",
+            "description": "The uuid of the ticket the comment is tied to"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid of the contact which the comment belongs to (if no user_id specified)"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user which the comment belongs to (if no contact_id specified)"
+          },
+          "attachments": {
+            "description": "The attachemnets tied to the comment",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnifiedAttachmentOutput"
+            }
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the comment"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the comment in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "body",
+          "remote_data"
+        ]
       },
       "UnifiedCommentInput": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "The body of the comment"
+          },
+          "html_body": {
+            "type": "string",
+            "description": "The html body of the comment"
+          },
+          "is_private": {
+            "type": "boolean",
+            "description": "The public status of the comment"
+          },
+          "creator_type": {
+            "type": "string",
+            "description": "The creator type of the comment (either user or contact)"
+          },
+          "ticket_id": {
+            "type": "string",
+            "description": "The uuid of the ticket the comment is tied to"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid of the contact which the comment belongs to (if no user_id specified)"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user which the comment belongs to (if no contact_id specified)"
+          },
+          "attachments": {
+            "description": "The attachements uuids tied to the comment",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
+      "UnifiedUserOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the user"
+          },
+          "email_address": {
+            "type": "string",
+            "description": "The email address of the user"
+          },
+          "teams": {
+            "description": "The teams whose the user is part of",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the user"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the user in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "email_address",
+          "field_mappings",
+          "remote_data"
+        ]
       },
       "UnifiedAttachmentInput": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "description": "The file name of the attachment"
+          },
+          "file_url": {
+            "type": "string",
+            "description": "The file url of the attachment"
+          },
+          "uploader": {
+            "type": "string",
+            "description": "The uploader's uuid of the attachment"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "file_name",
+          "file_url",
+          "uploader",
+          "field_mappings"
+        ]
+      },
+      "UnifiedAccountOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the account"
+          },
+          "domains": {
+            "description": "The domains of the account",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the account"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the account in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedTagOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the tag"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the tag"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the tag in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedTeamOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the team"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the team"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the team"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the team in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "field_mappings",
+          "remote_data"
+        ]
       }
     }
   }

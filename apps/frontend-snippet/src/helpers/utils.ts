@@ -57,9 +57,9 @@ export const providersConfig: ProvidersConfig = {
       logoPath: 'assets/ticketing/front.png',
     },
     'zendesk_tcg': {
-      clientId: 'panora_ticketing',
+      clientId: 'panora_bbb',
       scopes: 'read write',
-      authBaseUrl: 'https://panora3702.zendesk.com/oauth/authorizations/new',
+      authBaseUrl: 'https://panora7548.zendesk.com/oauth/authorizations/new',
       logoPath: 'assets/crm/zendesk_logo.png',
     },
   },

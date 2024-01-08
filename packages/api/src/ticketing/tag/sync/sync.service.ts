@@ -29,13 +29,13 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      //await this.syncTags();
+      await this.syncTags();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
-  //@Cron('*/20 * * * *')
+  @Cron('*/20 * * * *')
   //function used by sync worker which populate our tcg_tags table
   //its role is to fetch all tags from providers 3rd parties and save the info inside our db
   async syncTags() {
@@ -110,8 +110,12 @@ export class SyncService implements OnModuleInit {
           provider_slug: integrationId,
         },
       });
-      if (!connection) throw new Error('connection not found');
-
+      if (!connection) {
+        this.logger.warn(
+          `Skipping tags syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
+        );
+        return;
+      }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(

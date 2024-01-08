@@ -29,13 +29,13 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      //await this.syncAccounts();
+      await this.syncAccounts();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
-  //@Cron('*/20 * * * *')
+  @Cron('*/20 * * * *')
   //function used by sync worker which populate our tcg_accounts table
   //its role is to fetch all accounts from providers 3rd parties and save the info inside our db
   async syncAccounts() {
@@ -99,7 +99,12 @@ export class SyncService implements OnModuleInit {
           provider_slug: integrationId,
         },
       });
-      if (!connection) throw new Error('connection not found');
+      if (!connection) {
+        this.logger.warn(
+          `Skipping accounts syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
+        );
+        return;
+      }
 
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =

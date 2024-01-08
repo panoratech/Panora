@@ -8,15 +8,15 @@ const githubUserMapper = new GithubUserMapper();
 
 export const userUnificationMapping = {
   zendesk_tcg: {
-    unify: zendeskUserMapper.unify,
+    unify: zendeskUserMapper.unify.bind(zendeskUserMapper),
     desunify: zendeskUserMapper.desunify,
   },
   front: {
-    unify: frontUserMapper.unify,
+    unify: frontUserMapper.unify.bind(frontUserMapper),
     desunify: frontUserMapper.desunify,
   },
   github: {
-    unify: githubUserMapper.unify,
+    unify: githubUserMapper.unify.bind(githubUserMapper),
     desunify: githubUserMapper.desunify,
   },
 };

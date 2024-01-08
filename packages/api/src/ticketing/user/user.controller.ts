@@ -62,7 +62,9 @@ export class UserController {
           connection_token,
         );
       return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({

@@ -72,7 +72,9 @@ export class AttachmentController {
         linkedUserId,
         remote_data,
       );
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({
@@ -169,7 +171,9 @@ export class AttachmentController {
         linkedUserId,
         remote_data,
       );
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({
@@ -209,6 +213,8 @@ export class AttachmentController {
         linkedUserId,
         remote_data,
       );
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

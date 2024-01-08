@@ -8,15 +8,15 @@ const githubTagMapper = new GithubTagMapper();
 
 export const tagUnificationMapping = {
   zendesk_tcg: {
-    unify: zendeskTagMapper.unify,
+    unify: zendeskTagMapper.unify.bind(zendeskTagMapper),
     desunify: zendeskTagMapper.desunify,
   },
   front: {
-    unify: frontTagMapper.unify,
+    unify: frontTagMapper.unify.bind(frontTagMapper),
     desunify: frontTagMapper.desunify,
   },
   github: {
-    unify: githubTagMapper.unify,
+    unify: githubTagMapper.unify.bind(githubTagMapper),
     desunify: githubTagMapper.desunify,
   },
 };

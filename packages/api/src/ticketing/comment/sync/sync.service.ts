@@ -29,7 +29,7 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      //await this.syncComments();
+      await this.syncComments();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -110,8 +110,12 @@ export class SyncService implements OnModuleInit {
           provider_slug: integrationId,
         },
       });
-      if (!connection) throw new Error('connection not found');
-
+      if (!connection) {
+        this.logger.warn(
+          `Skipping comments syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
+        );
+        return;
+      }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
