@@ -39,7 +39,7 @@ export class DealController {
   @ApiHeader({ name: 'integrationId', required: true })
   @ApiHeader({ name: 'linkedUserId', required: true })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
@@ -49,7 +49,7 @@ export class DealController {
   getDeals(
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.dealService.getDeals(integrationId, linkedUserId, remote_data);
   }
@@ -66,14 +66,14 @@ export class DealController {
     description: 'id of the  you want to retrive.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
   //@ApiCustomResponse(DealResponse)
   @Get(':id')
-  getDeal(@Param('id') id: string, @Query('remoteData') remote_data?: boolean) {
+  getDeal(@Param('id') id: string, @Query('remote_data') remote_data?: boolean) {
     return this.dealService.getDeal(id, remote_data);
   }
 
@@ -95,7 +95,7 @@ export class DealController {
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
@@ -107,7 +107,7 @@ export class DealController {
     @Body() unfiedDealData: UnifiedDealInput,
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.dealService.addDeal(
       unfiedDealData,
@@ -124,7 +124,7 @@ export class DealController {
   @ApiHeader({ name: 'integrationId', required: true })
   @ApiHeader({ name: 'linkedUserId', required: true })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
@@ -136,7 +136,7 @@ export class DealController {
     @Body() unfiedDealData: UnifiedDealInput[],
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.dealService.batchAddDeals(
       unfiedDealData,

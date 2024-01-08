@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -17,11 +18,19 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { CommentService } from './services/comment.service';
-import { UnifiedCommentInput } from './types/model.unified';
+import {
+  UnifiedCommentInput,
+  UnifiedCommentOutput,
+} from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiCustomResponse } from '@@core/utils/types';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('ticketing/comment')
 @Controller('ticketing/comment')
 export class CommentController {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly commentService: CommentService,
     private logger: LoggerService,
@@ -33,27 +42,37 @@ export class CommentController {
     operationId: 'getComments',
     summary: 'List a batch of Comments',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(CommentResponse)
+  @ApiCustomResponse(UnifiedCommentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
-  getComments(
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+  async getComments(
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.commentService.getComments(
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.commentService.getComments(
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {}
   }
 
   @ApiOperation({
@@ -68,17 +87,18 @@ export class CommentController {
     description: 'id of the `comment` you want to retrive.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(CommentResponse)
+  @ApiCustomResponse(UnifiedCommentOutput)
   @Get(':id')
+  @UseGuards(ApiKeyAuthGuard)
   getComment(
     @Param('id') id: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.commentService.getComment(id, remote_data);
   }
@@ -89,68 +109,78 @@ export class CommentController {
     description: 'Create a comment in any supported Ticketing software',
   })
   @ApiHeader({
-    name: 'integrationId',
+    name: 'connection_token',
     required: true,
-    description: 'The integration ID',
-    example: '6aa2acf3-c244-4f85-848b-13a57e7abf55',
-  })
-  @ApiHeader({
-    name: 'linkedUserId',
-    required: true,
-    description: 'The linked user ID',
+    description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
   @ApiBody({ type: UnifiedCommentInput })
-  //@ApiCustomResponse(CommentResponse)
+  @ApiCustomResponse(UnifiedCommentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
-  addComment(
+  async addComment(
     @Body() unfiedCommentData: UnifiedCommentInput,
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.commentService.addComment(
-      unfiedCommentData,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.commentService.addComment(
+        unfiedCommentData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {}
   }
 
   @ApiOperation({
     operationId: 'addComments',
     summary: 'Add a batch of Comments',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
   @ApiBody({ type: UnifiedCommentInput, isArray: true })
-  //@ApiCustomResponse(CommentResponse)
+  @ApiCustomResponse(UnifiedCommentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  addComments(
+  async addComments(
     @Body() unfiedCommentData: UnifiedCommentInput[],
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.commentService.batchAddComments(
-      unfiedCommentData,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.commentService.batchAddComments(
+        unfiedCommentData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {}
   }
 }

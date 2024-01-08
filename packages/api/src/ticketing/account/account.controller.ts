@@ -1,4 +1,11 @@
-import { Controller, Query, Get, Param, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Query,
+  Get,
+  Param,
+  Headers,
+  UseGuards,
+} from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   ApiOperation,
@@ -9,10 +16,15 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { AccountService } from './services/account.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { UnifiedAccountOutput } from './types/model.unified';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('ticketing/account')
 @Controller('ticketing/account')
 export class AccountController {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly accountService: AccountService,
     private logger: LoggerService,
@@ -24,27 +36,37 @@ export class AccountController {
     operationId: 'getAccounts',
     summary: 'List a batch of Accounts',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(AccountResponse)
+  @ApiCustomResponse(UnifiedAccountOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
-  getAccounts(
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+  async getAccounts(
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.accountService.getAccounts(
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.accountService.getAccounts(
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {}
   }
 
   @ApiOperation({
@@ -59,17 +81,18 @@ export class AccountController {
     description: 'id of the account you want to retrieve.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(AccountResponse)
+  @ApiCustomResponse(UnifiedAccountOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getAccount(
     @Param('id') id: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.accountService.getAccount(id, remote_data);
   }

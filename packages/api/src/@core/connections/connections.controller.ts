@@ -93,6 +93,11 @@ export class ConnectionsController {
   @ApiResponse({ status: 200 })
   @Get()
   async getConnections() {
-    return await this.prisma.connections.findMany();
+    return await this.prisma.connections.findMany({
+      select: {
+        access_token: false,
+        refresh_token: false,
+      },
+    });
   }
 }

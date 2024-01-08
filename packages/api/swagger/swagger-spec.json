@@ -666,7 +666,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original CRM software.",
@@ -708,7 +708,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original CRM software.",
@@ -775,7 +775,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original CRM software.",
@@ -816,7 +816,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original CRM software.",
@@ -870,7 +870,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Crm software.",
@@ -912,7 +912,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Crm software.",
@@ -979,7 +979,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Crm software.",
@@ -1020,7 +1020,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Crm software.",
@@ -1074,7 +1074,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1116,7 +1116,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1183,7 +1183,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1224,7 +1224,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1278,7 +1278,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1320,7 +1320,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1365,7 +1365,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1406,7 +1406,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1460,7 +1460,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1495,7 +1495,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1536,7 +1536,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1578,7 +1578,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1623,7 +1623,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1658,7 +1658,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1699,7 +1699,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1753,7 +1753,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1788,7 +1788,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1829,7 +1829,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1864,7 +1864,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1905,7 +1905,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1940,7 +1940,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -1981,7 +1981,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",
@@ -2016,7 +2016,7 @@
             }
           },
           {
-            "name": "remoteData",
+            "name": "remote_data",
             "required": false,
             "in": "query",
             "description": "Set to true to include data from the original Ticketing software.",

@@ -4,7 +4,6 @@ import axios, { AxiosError } from 'axios';
 import { Prisma } from '@prisma/client';
 import { TargetObject } from './types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { PinoLogger } from 'nestjs-pino';
 
 type ServiceError = AxiosError | PrismaClientKnownRequestError | Error;
 

@@ -59,6 +59,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       const data: PipeDriveOAuthResponse = res.data;
       this.logger.log('OAuth credentials : pipedrive ');
       let db_res;
+      const connection_token = uuidv4();
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -79,6 +80,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
         db_res = await this.prisma.connections.create({
           data: {
             id_connection: uuidv4(),
+            connection_token: connection_token,
             provider_slug: 'pipedrive',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),

@@ -1,4 +1,11 @@
-import { Controller, Query, Get, Param, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Query,
+  Get,
+  Param,
+  Headers,
+  UseGuards,
+} from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   ApiOperation,
@@ -9,10 +16,15 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TeamService } from './services/team.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { UnifiedTeamOutput } from './types/model.unified';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('ticketing/team')
 @Controller('ticketing/team')
 export class TeamController {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly teamService: TeamService,
     private logger: LoggerService,
@@ -24,23 +36,33 @@ export class TeamController {
     operationId: 'getTeams',
     summary: 'List a batch of Teams',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(TeamResponse)
+  @ApiCustomResponse(UnifiedTeamOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
-  getTeams(
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+  async getTeams(
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.teamService.getTeams(integrationId, linkedUserId, remote_data);
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.teamService.getTeams(remoteSource, linkedUserId, remote_data);
+    } catch (error) {}
   }
 
   @ApiOperation({
@@ -55,15 +77,19 @@ export class TeamController {
     description: 'id of the team you want to retrieve.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(TeamResponse)
+  @ApiCustomResponse(UnifiedTeamOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getTeam(@Param('id') id: string, @Query('remoteData') remote_data?: boolean) {
+  getTeam(
+    @Param('id') id: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
     return this.teamService.getTeam(id, remote_data);
   }
 }

@@ -1,4 +1,11 @@
-import { Controller, Query, Get, Param, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Query,
+  Get,
+  Param,
+  Headers,
+  UseGuards,
+} from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   ApiOperation,
@@ -8,10 +15,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ContactService } from './services/contact.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { UnifiedContactOutput } from './types/model.unified';
+import { ApiCustomResponse } from '@@core/utils/types';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('ticketing/contact')
 @Controller('ticketing/contact')
 export class ContactController {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly contactService: ContactService,
     private logger: LoggerService,
@@ -23,27 +36,37 @@ export class ContactController {
     operationId: 'getContacts',
     summary: 'List a batch of Contacts',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(ContactResponse)
+  @ApiCustomResponse(UnifiedContactOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
-  getContacts(
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+  async getContacts(
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.getContacts(
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.contactService.getContacts(
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {}
   }
 
   @ApiOperation({
@@ -58,17 +81,18 @@ export class ContactController {
     description: 'id of the contact you want to retrieve.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(ContactResponse)
+  @ApiCustomResponse(UnifiedContactOutput)
   @Get(':id')
+  @UseGuards(ApiKeyAuthGuard)
   getContact(
     @Param('id') id: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.contactService.getContact(id, remote_data);
   }

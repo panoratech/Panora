@@ -1,4 +1,11 @@
-import { Controller, Query, Get, Param, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Query,
+  Get,
+  Param,
+  Headers,
+  UseGuards,
+} from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   ApiOperation,
@@ -9,10 +16,15 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TagService } from './services/tag.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { UnifiedTagOutput } from './types/model.unified';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('ticketing/tag')
 @Controller('ticketing/tag')
 export class TagController {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly tagService: TagService,
     private logger: LoggerService,
@@ -24,23 +36,33 @@ export class TagController {
     operationId: 'getTags',
     summary: 'List a batch of Tags',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(TagResponse)
+  @ApiCustomResponse(UnifiedTagOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
-  getTags(
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+  async getTags(
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.tagService.getTags(integrationId, linkedUserId, remote_data);
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.tagService.getTags(remoteSource, linkedUserId, remote_data);
+    } catch (error) {}
   }
 
   @ApiOperation({
@@ -55,15 +77,16 @@ export class TagController {
     description: 'id of the tag you want to retrieve.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(TagResponse)
+  @ApiCustomResponse(UnifiedTagOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getTag(@Param('id') id: string, @Query('remoteData') remote_data?: boolean) {
+  getTag(@Param('id') id: string, @Query('remote_data') remote_data?: boolean) {
     return this.tagService.getTag(id, remote_data);
   }
 }

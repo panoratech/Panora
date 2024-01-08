@@ -65,6 +65,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
       );
 
       let db_res;
+      const connection_token = uuidv4();
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -85,6 +86,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
         db_res = await this.prisma.connections.create({
           data: {
             id_connection: uuidv4(),
+            connection_token: connection_token,
             provider_slug: 'front',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),

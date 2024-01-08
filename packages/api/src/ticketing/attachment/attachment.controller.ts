@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -18,11 +19,18 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { AttachmentService } from './services/attachment.service';
-import { UnifiedAttachmentInput } from './types/model.unified';
+import {
+  UnifiedAttachmentInput,
+  UnifiedAttachmentOutput,
+} from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('ticketing/attachment')
 @Controller('ticketing/attachment')
 export class AttachmentController {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly attachmentService: AttachmentService,
     private logger: LoggerService,
@@ -34,27 +42,37 @@ export class AttachmentController {
     operationId: 'getAttachments',
     summary: 'List a batch of Attachments',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(AttachmentResponse)
+  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
-  getAttachments(
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+  async getAttachments(
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.attachmentService.getAttachments(
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.attachmentService.getAttachments(
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {}
   }
 
   @ApiOperation({
@@ -69,17 +87,18 @@ export class AttachmentController {
     description: 'id of the attachment you want to retrive.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(AttachmentResponse)
+  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getAttachment(
     @Param('id') id: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.attachmentService.getAttachment(id, remote_data);
   }
@@ -96,17 +115,18 @@ export class AttachmentController {
     description: 'id of the attachment you want to retrive.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  //@ApiCustomResponse(AttachmentResponse)
+  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id/download')
   downloadAttachment(
     @Param('id') id: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.attachmentService.downloadAttachment(id, remote_data);
   }
@@ -117,68 +137,78 @@ export class AttachmentController {
     description: 'Create a attachment in any supported Ticketing software',
   })
   @ApiHeader({
-    name: 'integrationId',
+    name: 'connection_token',
     required: true,
-    description: 'The integration ID',
-    example: '6aa2acf3-c244-4f85-848b-13a57e7abf55',
-  })
-  @ApiHeader({
-    name: 'linkedUserId',
-    required: true,
-    description: 'The linked user ID',
+    description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
   @ApiBody({ type: UnifiedAttachmentInput })
-  //@ApiCustomResponse(AttachmentResponse)
+  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
-  addAttachment(
+  async addAttachment(
     @Body() unfiedAttachmentData: UnifiedAttachmentInput,
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.attachmentService.addAttachment(
-      unfiedAttachmentData,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.attachmentService.addAttachment(
+        unfiedAttachmentData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {}
   }
 
   @ApiOperation({
     operationId: 'addAttachments',
     summary: 'Add a batch of Attachments',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
   })
   @ApiBody({ type: UnifiedAttachmentInput, isArray: true })
-  //@ApiCustomResponse(AttachmentResponse)
+  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  addAttachments(
+  async addAttachments(
     @Body() unfiedAttachmentData: UnifiedAttachmentInput[],
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.attachmentService.batchAddAttachments(
-      unfiedAttachmentData,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.attachmentService.batchAddAttachments(
+        unfiedAttachmentData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {}
   }
 }

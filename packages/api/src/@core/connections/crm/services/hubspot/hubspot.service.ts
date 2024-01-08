@@ -59,6 +59,8 @@ export class HubspotConnectionService implements ICrmConnectionService {
       const data: HubspotOAuthResponse = res.data;
       // save tokens for this customer inside our db
       let db_res;
+      const connection_token = uuidv4();
+
       if (isNotUnique) {
         // Update existing connection
         db_res = await this.prisma.connections.update({
@@ -80,6 +82,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
         db_res = await this.prisma.connections.create({
           data: {
             id_connection: uuidv4(),
+            connection_token: connection_token,
             provider_slug: 'hubspot',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),

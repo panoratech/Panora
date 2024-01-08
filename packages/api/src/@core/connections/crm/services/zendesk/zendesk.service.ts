@@ -59,6 +59,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
       this.logger.log('OAuth credentials : zendesk ' + JSON.stringify(data));
 
       let db_res;
+      const connection_token = uuidv4();
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -81,6 +82,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
         db_res = await this.prisma.connections.create({
           data: {
             id_connection: uuidv4(),
+            connection_token: connection_token,
             provider_slug: 'zendesk',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),

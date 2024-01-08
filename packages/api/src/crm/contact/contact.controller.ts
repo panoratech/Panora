@@ -11,7 +11,10 @@ import {
 } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { UnifiedContactInput } from './types/model.unified';
+import {
+  UnifiedContactInput,
+  UnifiedContactOutput,
+} from './types/model.unified';
 import {
   ApiBody,
   ApiOperation,
@@ -21,10 +24,14 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiCustomResponse } from '@@core/utils/types';
 
 @ApiTags('crm/contact')
 @Controller('crm/contact')
 export class ContactController {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly contactService: ContactService,
     private logger: LoggerService,
@@ -36,27 +43,38 @@ export class ContactController {
     operationId: 'getContacts',
     summary: 'List a batch of CRM Contacts',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
   })
-  //@ApiCustomResponse(ContactResponse)
+  @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  getContacts(
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+  async getContacts(
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.getContacts(
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.contactService.getContacts(
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({
@@ -71,17 +89,17 @@ export class ContactController {
     description: 'id of the `contact` you want to retrive.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
   })
-  //@ApiCustomResponse(ContactResponse)
+  @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getContact(
     @Param('id') id: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.contactService.getContact(id, remote_data);
   }
@@ -92,69 +110,81 @@ export class ContactController {
     description: 'Create a contact in any supported CRM',
   })
   @ApiHeader({
-    name: 'integrationId',
+    name: 'connection_token',
     required: true,
-    description: 'The integration ID',
-    example: '6aa2acf3-c244-4f85-848b-13a57e7abf55',
-  })
-  @ApiHeader({
-    name: 'linkedUserId',
-    required: true,
-    description: 'The linked user ID',
+    description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
   })
   @ApiBody({ type: UnifiedContactInput })
-  //@ApiCustomResponse(ContactResponse)
+  @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  addContact(
+  async addContact(
     @Body() unfiedContactData: UnifiedContactInput,
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.addContact(
-      unfiedContactData,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.contactService.addContact(
+        unfiedContactData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({
     operationId: 'addContacts',
     summary: 'Add a batch of CRM Contacts',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
   })
   @ApiBody({ type: UnifiedContactInput, isArray: true })
-  //@ApiCustomResponse(ContactResponse)
+  @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  addContacts(
+  async addContacts(
     @Body() unfiedContactData: UnifiedContactInput[],
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.batchAddContacts(
-      unfiedContactData,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.contactService.batchAddContacts(
+        unfiedContactData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({

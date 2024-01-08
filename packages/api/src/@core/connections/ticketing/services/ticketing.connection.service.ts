@@ -40,19 +40,6 @@ export class TicketingConnectionsService {
     zohoLocation?: string,
   ) {
     try {
-      const job_resp_create = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'initialized',
-          type: 'connection.created',
-          method: 'GET',
-          url: '/oauth/callback',
-          provider: providerName.toLowerCase(),
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
       const serviceName = providerName.toLowerCase();
       const service = this.serviceRegistry.getService(serviceName);
 
@@ -66,19 +53,25 @@ export class TicketingConnectionsService {
         location: zohoLocation || null,
       };
       const data: Connection = await service.handleCallback(callbackOpts);
-      await this.prisma.events.update({
-        where: {
-          id_event: job_resp_create.id_event,
-        },
+
+      const event = await this.prisma.events.create({
         data: {
+          id_event: uuidv4(),
           status: 'success',
+          type: 'connection.created',
+          method: 'GET',
+          url: '/oauth/callback',
+          provider: providerName.toLowerCase(),
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
       await this.webhook.handleWebhook(
         data,
         'connection.created',
         projectId,
-        job_resp_create.id_event,
+        event.id_event,
       );
     } catch (error) {
       handleServiceError(error, this.logger);

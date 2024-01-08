@@ -323,7 +323,7 @@ export class ${ObjectCap}Controller {
   @ApiHeader({ name: 'integrationId', required: true })
   @ApiHeader({ name: 'linkedUserId', required: true })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
@@ -334,7 +334,7 @@ export class ${ObjectCap}Controller {
   get${ObjectCap}s(
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.${objectType}Service.get${ObjectCap}s(
       integrationId,
@@ -355,7 +355,7 @@ export class ${ObjectCap}Controller {
     description: 'id of the ${objectType} you want to retrieve.',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
@@ -365,7 +365,7 @@ export class ${ObjectCap}Controller {
   @Get(':id')
   get${ObjectCap}(
     @Param('id') id: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.${objectType}Service.get${ObjectCap}(id, remote_data);
   }
@@ -388,7 +388,7 @@ export class ${ObjectCap}Controller {
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
@@ -401,7 +401,7 @@ export class ${ObjectCap}Controller {
     @Body() unified${ObjectCap}Data: Unified${ObjectCap}Input,
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.${objectType}Service.add${ObjectCap}(
       unified${ObjectCap}Data,
@@ -418,7 +418,7 @@ export class ${ObjectCap}Controller {
   @ApiHeader({ name: 'integrationId', required: true })
   @ApiHeader({ name: 'linkedUserId', required: true })
   @ApiQuery({
-    name: 'remoteData',
+    name: 'remote_data',
     required: false,
     type: Boolean,
     description:
@@ -431,7 +431,7 @@ export class ${ObjectCap}Controller {
     @Body() unfied${ObjectCap}Data: Unified${ObjectCap}Input[],
     @Headers('integrationId') integrationId: string,
     @Headers('linkedUserId') linkedUserId: string,
-    @Query('remoteData') remote_data?: boolean,
+    @Query('remote_data') remote_data?: boolean,
   ) {
     return this.${objectType}Service.batchAdd${ObjectCap}s(
       unfied${ObjectCap}Data,
