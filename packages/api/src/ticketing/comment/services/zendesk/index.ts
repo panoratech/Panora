@@ -39,73 +39,94 @@ export class ZendeskService implements ICommentService {
         },
       });
 
+      let dataBody = {
+        ticket: {
+          comment: commentData,
+        },
+      };
+
       //first we retrieve the right author_id (it must be either a User or a Cntact)
       const author_id = commentData.author_id; //uuid of either a User or a Contact
       let author_data;
-      const res_user = await this.prisma.tcg_users.findUnique({
-        where: {
-          id_tcg_user: String(author_id),
-        },
-        select: { remote_id: true },
-      });
-      author_data = res_user; //it might be undefined but if it is i insert the right data below
 
-      if (!res_user) {
-        //try to see if there is a contact for this uuid
-        const res_contact = await this.prisma.tcg_contacts.findUnique({
+      if (author_id) {
+        const res_user = await this.prisma.tcg_users.findUnique({
           where: {
-            id_tcg_contact: String(author_id),
+            id_tcg_user: String(author_id),
           },
           select: { remote_id: true },
         });
-        if (!res_contact) {
-          throw new Error(
-            'author_id is invalid, it must be a valid User or Contact',
-          );
+        author_data = res_user; //it might be undefined but if it is i insert the right data below
+
+        if (!res_user) {
+          //try to see if there is a contact for this uuid
+          const res_contact = await this.prisma.tcg_contacts.findUnique({
+            where: {
+              id_tcg_contact: String(author_id),
+            },
+            select: { remote_id: true },
+          });
+          if (!res_contact) {
+            throw new Error(
+              'author_id is invalid, it must be a valid User or Contact',
+            );
+          }
+          author_data = res_contact;
         }
-        author_data = res_contact;
+
+        const finalData = {
+          ticket: {
+            comment: {
+              ...commentData,
+              author_id: author_data.remote_id,
+            },
+          },
+        };
+        dataBody = finalData;
       }
 
       // We must fetch tokens from zendesk with the commentData.uploads array of Attachment uuids
       const uuids = commentData.uploads;
       let uploads = [];
-      const uploadTokens = await Promise.all(
-        uuids.map(async (uuid) => {
-          const res = await this.prisma.tcg_attachments.findUnique({
-            where: {
-              id_tcg_attachment: uuid,
-            },
-          });
-          if (!res)
-            throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+      if (uuids && uuids.length > 0) {
+        await Promise.all(
+          uuids.map(async (uuid) => {
+            const res = await this.prisma.tcg_attachments.findUnique({
+              where: {
+                id_tcg_attachment: uuid,
+              },
+            });
+            if (!res)
+              throw new Error(`tcg_attachment not found for uuid ${uuid}`);
 
-          //TODO:; fetch the right file from AWS s3
-          const s3File = '';
-          const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
-            res.file_name
-          }`;
+            //TODO:; fetch the right file from AWS s3
+            const s3File = '';
+            const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
+              res.file_name
+            }`;
 
-          const resp = await axios.get(url, {
-            headers: {
-              'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
-              Authorization: `Bearer ${this.cryptoService.decrypt(
-                connection.access_token,
-              )}`,
+            const resp = await axios.get(url, {
+              headers: {
+                'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            });
+            uploads = [...uploads, resp.data.upload.token];
+          }),
+        );
+        const finalData = {
+          ticket: {
+            comment: {
+              ...commentData,
+              uploads: uploads,
             },
-          });
-          uploads = [...uploads, resp.data.upload.token];
-        }),
-      );
-      const finalData = {
-        ...commentData,
-        author_id: author_data.remote_id,
-        uploads: uploads,
-      };
-      const dataBody = {
-        ticket: {
-          comment: finalData,
-        },
-      };
+          },
+        };
+        dataBody = finalData;
+      }
+
       //to add a comment on Zendesk you must update a ticket using the Ticket API
       const resp = await axios.put(
         `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets/${remoteIdTicket}.json`,
@@ -119,8 +140,11 @@ export class ZendeskService implements ICommentService {
           },
         },
       );
+      const pre_res = resp.data.audit.events.find((obj) =>
+        obj.hasOwnProperty('body'),
+      );
       return {
-        data: resp.data,
+        data: pre_res,
         message: 'Zendesk comment created',
         statusCode: 201,
       };

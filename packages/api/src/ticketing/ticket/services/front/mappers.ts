@@ -16,7 +16,7 @@ export class FrontTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<FrontTicketInput> {
-    const result: FrontTicketInput = {
+    let result: FrontTicketInput = {
       type: 'discussion', // Assuming 'discussion' as a default type for Front conversations
       subject: source.name,
       teammate_ids: source.assigned_to,
@@ -28,8 +28,27 @@ export class FrontTicketMapper implements ITicketMapper {
             : source.comment.contact_id,
         attachments: source.comment.attachments,
       },
-      tags: source.tags,
     };
+
+    if (source.assigned_to && source.assigned_to.length > 0) {
+      const res: string[] = [];
+      for (const assignee of source.assigned_to) {
+        res.push(
+          await this.utils.getAsigneeRemoteIdFromUserUuid(assignee, 'front'),
+        );
+      }
+      result = {
+        ...result,
+        teammate_ids: res,
+      };
+    }
+
+    if (source.tags) {
+      result = {
+        ...result,
+        tags: source.tags,
+      };
+    }
 
     if (customFieldMappings && source.field_mappings) {
       for (const fieldMapping of source.field_mappings) {
@@ -47,31 +66,48 @@ export class FrontTicketMapper implements ITicketMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: FrontTicketOutput | FrontTicketOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput | UnifiedTicketOutput[] {
+  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
-    return sourcesArray.map((ticket) =>
-      this.mapSingleTicketToUnified(ticket, customFieldMappings),
+    return Promise.all(
+      sourcesArray.map((ticket) =>
+        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleTicketToUnified(
+  private async mapSingleTicketToUnified(
     ticket: FrontTicketOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput {
+  ): Promise<UnifiedTicketOutput> {
     const field_mappings = customFieldMappings?.map((mapping) => ({
       [mapping.slug]: ticket.custom_fields?.[mapping.remote_id],
     }));
+
+    let opts: any;
+
+    if (ticket.assignee) {
+      //fetch the right assignee uuid from remote id
+      const user_id = await this.utils.getUserUuidFromRemoteId(
+        String(ticket.assignee.id),
+        'front',
+      );
+      if (user_id) {
+        opts = { assigned_to: [user_id] };
+      } else {
+        throw new Error('user id not found for this ticket');
+      }
+    }
 
     const unifiedTicket: UnifiedTicketOutput = {
       name: ticket.subject,
@@ -79,8 +115,8 @@ export class FrontTicketMapper implements ITicketMapper {
       description: ticket.subject, // todo: ?
       due_date: new Date(ticket.created_at), // todo ?
       tags: ticket.tags?.map((tag) => tag.name),
-      assigned_to: ticket.assignee ? [ticket.assignee.email] : undefined, //TODO: it must be a uuid of a user object
       field_mappings: field_mappings,
+      ...opts,
     };
 
     return unifiedTicket;

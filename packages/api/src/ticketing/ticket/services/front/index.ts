@@ -120,14 +120,16 @@ export class FrontService implements ITicketService {
       }
 
       //now we can add tags and/or custom fields to the conversation we just created
-      if ((tags && tags.length > 0) || custom_fields) {
-        const data = {
+      if (tags && tags.length > 0) {
+        let final: any = {
           tag_ids: tags,
-          custom_fields: custom_fields,
         };
+        if (custom_fields) {
+          final = { ...final, custom_fields: custom_fields };
+        }
         const tag_resp = await axios.patch(
           `https://api2.frontapp.com/conversations/${resp.data.id}`,
-          JSON.stringify(data),
+          JSON.stringify(final),
           {
             headers: {
               'Content-Type': 'application/json',

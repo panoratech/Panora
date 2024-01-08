@@ -7,7 +7,7 @@ const frontTagMapper = new FrontTagMapper();
 const githubTagMapper = new GithubTagMapper();
 
 export const tagUnificationMapping = {
-  zendesk: {
+  zendesk_tcg: {
     unify: zendeskTagMapper.unify,
     desunify: zendeskTagMapper.desunify,
   },

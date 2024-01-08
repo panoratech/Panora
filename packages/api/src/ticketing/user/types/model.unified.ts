@@ -8,4 +8,5 @@ export class UnifiedUserInput {
 export class UnifiedUserOutput extends UnifiedUserInput {
   id?: string;
   remote_id?: string;
+  remote_data?: Record<string, any>;
 }

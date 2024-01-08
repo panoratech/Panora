@@ -16,7 +16,7 @@ export class TeamService {
   async getTeam(
     id_ticketing_team: string,
     remote_data?: boolean,
-  ): Promise<TeamResponse> {
+  ): Promise<UnifiedTeamOutput> {
     try {
       const team = await this.prisma.tcg_teams.findUnique({
         where: {
@@ -56,9 +56,7 @@ export class TeamService {
         field_mappings: field_mappings,
       };
 
-      let res: TeamResponse = {
-        teams: [unifiedTeam],
-      };
+      let res: UnifiedTeamOutput = unifiedTeam;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -70,7 +68,7 @@ export class TeamService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
@@ -84,13 +82,13 @@ export class TeamService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<TeamResponse> {
+  ): Promise<UnifiedTeamOutput[]> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
       const teams = await this.prisma.tcg_teams.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
+          remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
@@ -131,27 +129,22 @@ export class TeamService {
         }),
       );
 
-      let res: TeamResponse = {
-        teams: unifiedTeams,
-      };
+      let res: UnifiedTeamOutput[] = unifiedTeams;
 
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          teams.map(async (team) => {
+        const remote_array_data: UnifiedTeamOutput[] = await Promise.all(
+          res.map(async (team) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: team.id_tcg_team,
+                ressource_owner_id: team.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            return { ...team, remote_data };
           }),
         );
 
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
       const event = await this.prisma.events.create({
         data: {

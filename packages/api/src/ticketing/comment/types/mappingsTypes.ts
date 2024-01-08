@@ -7,16 +7,16 @@ const githubCommentMapper = new GithubCommentMapper();
 const frontCommentMapper = new FrontCommentMapper();
 
 export const commentUnificationMapping = {
-  zendesk: {
-    unify: zendeskCommentMapper.unify,
+  zendesk_tcg: {
+    unify: zendeskCommentMapper.unify.bind(zendeskCommentMapper),
     desunify: zendeskCommentMapper.desunify,
   },
   front: {
-    unify: frontCommentMapper.unify,
+    unify: frontCommentMapper.unify.bind(frontCommentMapper),
     desunify: frontCommentMapper.desunify,
   },
   github: {
-    unify: githubCommentMapper.unify,
+    unify: githubCommentMapper.unify.bind(githubCommentMapper),
     desunify: githubCommentMapper.desunify,
   },
 };

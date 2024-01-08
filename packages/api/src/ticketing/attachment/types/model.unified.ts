@@ -19,4 +19,5 @@ export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
     type: String,
   })
   remote_id?: string;
+  remote_data?: Record<string, any>;
 }

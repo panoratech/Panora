@@ -16,7 +16,7 @@ export class TagService {
   async getTag(
     id_ticketing_tag: string,
     remote_data?: boolean,
-  ): Promise<TagResponse> {
+  ): Promise<UnifiedTagOutput> {
     try {
       const tag = await this.prisma.tcg_tags.findUnique({
         where: {
@@ -55,9 +55,7 @@ export class TagService {
         field_mappings: field_mappings,
       };
 
-      let res: TagResponse = {
-        tags: [unifiedTag],
-      };
+      let res: UnifiedTagOutput = unifiedTag;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -69,7 +67,7 @@ export class TagService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
@@ -83,12 +81,12 @@ export class TagService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<TagResponse> {
+  ): Promise<UnifiedTagOutput[]> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const tags = await this.prisma.tcg_tags.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
+          remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
@@ -128,27 +126,22 @@ export class TagService {
         }),
       );
 
-      let res: TagResponse = {
-        tags: unifiedTags,
-      };
+      let res: UnifiedTagOutput[] = unifiedTags;
 
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          tags.map(async (tag) => {
+        const remote_array_data: UnifiedTagOutput[] = await Promise.all(
+          res.map(async (tag) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: tag.id_tcg_tag,
+                ressource_owner_id: tag.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            return { ...tag, remote_data };
           }),
         );
 
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
       const event = await this.prisma.events.create({
         data: {

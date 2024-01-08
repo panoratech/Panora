@@ -16,7 +16,7 @@ export class ContactService {
   async getContact(
     id_ticketing_contact: string,
     remote_data?: boolean,
-  ): Promise<ContactResponse> {
+  ): Promise<UnifiedContactOutput> {
     try {
       const contact = await this.prisma.tcg_contacts.findUnique({
         where: {
@@ -58,9 +58,7 @@ export class ContactService {
         field_mappings: field_mappings,
       };
 
-      let res: ContactResponse = {
-        contacts: [unifiedContact],
-      };
+      let res: UnifiedContactOutput = unifiedContact;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -72,7 +70,7 @@ export class ContactService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
@@ -86,12 +84,12 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ContactResponse> {
+  ): Promise<UnifiedContactOutput[]> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const contacts = await this.prisma.tcg_contacts.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
+          remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
@@ -134,27 +132,22 @@ export class ContactService {
         }),
       );
 
-      let res: ContactResponse = {
-        contacts: unifiedContacts,
-      };
+      let res: UnifiedContactOutput[] = unifiedContacts;
 
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          contacts.map(async (contact) => {
+        const remote_array_data: UnifiedContactOutput[] = await Promise.all(
+          res.map(async (contact) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: contact.id_tcg_contact,
+                ressource_owner_id: contact.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            return { ...contact, remote_data };
           }),
         );
 
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
       const event = await this.prisma.events.create({
         data: {

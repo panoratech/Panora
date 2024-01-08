@@ -25,7 +25,9 @@ export class ZendeskCommentMapper implements ICommentMapper {
       public: !source.is_private,
       author_id: source.user_id
         ? parseInt(source.user_id)
-        : parseInt(source.contact_id), // either one must be passed
+        : parseInt(source.contact_id),
+      // we let the Panora uuids on purpose (it will be modified in the given service on the fly where we'll retrieve the actual remote id for the given uuid!)
+      // either one must be passed
       type: 'Comment',
       uploads: source.attachments, //we let the array of uuids on purpose (it will be modified in the given service on the fly!)
     };
@@ -57,36 +59,41 @@ export class ZendeskCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput> {
-    const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
-      sourceObject: comment.attachments,
-      targetType: TicketingObject.attachment,
-      providerName: 'front',
-      customFieldMappings: [],
-    })) as UnifiedAttachmentOutput[];
-    const user_id = await this.utils.getUserUuidFromRemoteId(
-      String(comment.id),
-      'zendesk_tcg',
-    );
-    let creator_type: string;
     let opts;
-    if (user_id) {
-      creator_type = 'user';
-      opts = { user_id: user_id };
-    } else {
-      const contact_id = await this.utils.getContactUuidFromRemoteId(
-        String(comment.id),
+
+    if (comment.attachments && comment.attachments.length > 0) {
+      const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
+        sourceObject: comment.attachments,
+        targetType: TicketingObject.attachment,
+        providerName: 'zendesk_tcg',
+        customFieldMappings: [],
+      })) as UnifiedAttachmentOutput[];
+
+      opts = { ...opts, attachments: unifiedObject };
+    }
+
+    /*TODO: uncomment when test for sync of users/contacts is done as right now we dont have any real users nor contacts inside our db
+    if (comment.author_id) {
+      const user_id = await this.utils.getUserUuidFromRemoteId(
+        String(comment.author_id),
         'zendesk_tcg',
       );
-      creator_type = 'contact';
-      opts = { user_id: contact_id };
-    }
+
+      if (user_id) {
+        opts = { user_id: user_id, creator_type: 'user' };
+      } else {
+        const contact_id = await this.utils.getContactUuidFromRemoteId(
+          String(comment.author_id),
+          'zendesk_tcg',
+        );
+        opts = { creator_type: 'contact', contact_id: contact_id };
+      }
+    }*/
 
     const res = {
       body: comment.body || '',
       html_body: comment.html_body || '',
       is_private: !comment.public,
-      creator_type: creator_type,
-      attachments: unifiedObject,
       ...opts,
     };
 

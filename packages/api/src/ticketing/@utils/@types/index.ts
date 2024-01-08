@@ -50,7 +50,7 @@ export enum TicketingObject {
   ticket = 'ticket',
   comment = 'comment',
   user = 'user',
-  attachment = 'attachement',
+  attachment = 'attachment',
   contact = 'contact',
   account = 'account',
   tag = 'tag',

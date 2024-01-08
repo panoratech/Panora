@@ -16,30 +16,62 @@ export class ZendeskTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<ZendeskTicketInput> {
-    const result: ZendeskTicketInput = {
-      assignee_email: await this.utils.getAssigneeMetadataFromUuid(
-        source.assigned_to?.[0],
-      ), // get the mail of the uuid
+    let result: ZendeskTicketInput = {
       description: source.description,
-      due_at: source.due_date?.toISOString(),
-      priority: source.priority as 'urgent' | 'high' | 'normal' | 'low',
-      status: source.status as
-        | 'new'
-        | 'open'
-        | 'pending'
-        | 'hold'
-        | 'solved'
-        | 'closed',
+      priority: 'high',
+      status: 'new',
       subject: source.name,
-      tags: source.tags,
-      type: source.type as 'problem' | 'incident' | 'question' | 'task',
       comment: {
         body: source.comment.body,
-        html_body: source.comment.html_body,
-        public: !source.comment.is_private,
-        uploads: source.comment.attachments, //fetch token attachments for this uuid
+        html_body: source.comment.html_body || null,
+        public: !source.comment.is_private || true,
+        uploads: source.comment.attachments, //fetch token attachments for this uuid, would be done on the fly in dest service
       },
     };
+    if (source.assigned_to && source.assigned_to.length > 0) {
+      result = {
+        ...result,
+        assignee_email: await this.utils.getAssigneeMetadataFromUuid(
+          source.assigned_to?.[0],
+        ), // get the mail of the uuid
+      };
+    }
+    if (source.due_date) {
+      result = {
+        ...result,
+        due_at: source.due_date?.toISOString(),
+      };
+    }
+    if (source.priority) {
+      result = {
+        ...result,
+        priority: source.priority as 'urgent' | 'high' | 'normal' | 'low',
+      };
+    }
+    if (source.status) {
+      result = {
+        ...result,
+        status: source.status as
+          | 'new'
+          | 'open'
+          | 'pending'
+          | 'hold'
+          | 'solved'
+          | 'closed',
+      };
+    }
+    if (source.tags) {
+      result = {
+        ...result,
+        tags: source.tags,
+      };
+    }
+    if (source.type) {
+      result = {
+        ...result,
+        type: source.type as 'problem' | 'incident' | 'question' | 'task',
+      };
+    }
 
     if (customFieldMappings && source.field_mappings) {
       let res: CustomField[] = [];
@@ -59,28 +91,30 @@ export class ZendeskTicketMapper implements ITicketMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: ZendeskTicketOutput | ZendeskTicketOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput | UnifiedTicketOutput[] {
+  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleTicketToUnified(source, customFieldMappings);
     }
-    return source.map((ticket) =>
-      this.mapSingleTicketToUnified(ticket, customFieldMappings),
+    return Promise.all(
+      source.map((ticket) =>
+        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleTicketToUnified(
+  private async mapSingleTicketToUnified(
     ticket: ZendeskTicketOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput {
+  ): Promise<Promise<UnifiedTicketOutput>> {
     const field_mappings = customFieldMappings.reduce((acc, mapping) => {
       const customField = ticket.custom_fields.find(
         (field) => field.id === mapping.remote_id,
@@ -90,6 +124,23 @@ export class ZendeskTicketMapper implements ITicketMapper {
       }
       return acc;
     }, [] as Record<string, any>[]);
+    let opts: any;
+
+    /* TODO: uncomment when test for sync of users/contacts is done as right now we dont have any real users nor contacts inside our db
+
+    if (ticket.assignee_id) {
+      //fetch the right assignee uuid from remote id
+      const user_id = await this.utils.getUserUuidFromRemoteId(
+        String(ticket.assignee_id),
+        'zendesk_tcg',
+      );
+      if (user_id) {
+        opts = { assigned_to: [user_id] };
+      } else {
+        //TODO: in future we must throw an error ?
+        //throw new Error('user id not found for this ticket');
+      }
+    }*/
 
     const unifiedTicket: UnifiedTicketOutput = {
       name: ticket.subject,
@@ -101,8 +152,8 @@ export class ZendeskTicketMapper implements ITicketMapper {
       tags: ticket.tags,
       completed_at: new Date(ticket.updated_at),
       priority: ticket.priority,
-      assigned_to: [String(ticket.assignee_id)],
       field_mappings: field_mappings,
+      ...opts,
     };
 
     return unifiedTicket;

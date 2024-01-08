@@ -35,7 +35,7 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ContactResponse> {
+  ): Promise<UnifiedContactOutput[]> {
     try {
       const responses = await Promise.all(
         unifiedContactData.map((unifiedData) =>
@@ -48,15 +48,7 @@ export class ContactService {
         ),
       );
 
-      const allContacts = responses.flatMap((response) => response.contacts);
-      const allRemoteData = responses.flatMap(
-        (response) => response.remote_data || [],
-      );
-
-      return {
-        contacts: allContacts,
-        remote_data: allRemoteData,
-      };
+      return responses;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -67,7 +59,7 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ContactResponse> {
+  ): Promise<UnifiedContactOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -258,7 +250,6 @@ export class ContactService {
         });
       }
 
-      /////
       const result_contact = await this.getContact(
         unique_crm_contact_id,
         remote_data,
@@ -279,7 +270,7 @@ export class ContactService {
         },
       });
       await this.webhook.handleWebhook(
-        result_contact.contacts,
+        result_contact,
         'crm.contact.created',
         linkedUser.id_project,
         event.id_event,
@@ -293,7 +284,7 @@ export class ContactService {
   async getContact(
     id_crm_contact: string,
     remote_data?: boolean,
-  ): Promise<ContactResponse> {
+  ): Promise<UnifiedContactOutput> {
     try {
       const contact = await this.prisma.crm_contacts.findUnique({
         where: {
@@ -345,10 +336,7 @@ export class ContactService {
         field_mappings: field_mappings,
       };
 
-      let res: ContactResponse = {
-        contacts: [unifiedContact],
-      };
-
+      let res: UnifiedContactOutput = unifiedContact;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -359,7 +347,7 @@ export class ContactService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
@@ -373,13 +361,13 @@ export class ContactService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<ContactResponse> {
+  ): Promise<UnifiedContactOutput[]> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
       const contacts = await this.prisma.crm_contacts.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
+          remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
         include: {
@@ -432,27 +420,22 @@ export class ContactService {
         }),
       );
 
-      let res: ContactResponse = {
-        contacts: unifiedContacts,
-      };
+      let res: UnifiedContactOutput[] = unifiedContacts;
 
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          contacts.map(async (contact) => {
+        const remote_array_data: UnifiedContactOutput[] = await Promise.all(
+          res.map(async (contact) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: contact.id_crm_contact,
+                ressource_owner_id: contact.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            return { ...contact, remote_data };
           }),
         );
 
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
       const event = await this.prisma.events.create({
         data: {
@@ -476,7 +459,7 @@ export class ContactService {
   async updateContact(
     id: string,
     updateContactData: Partial<UnifiedContactInput>,
-  ): Promise<ContactResponse> {
+  ): Promise<UnifiedContactOutput> {
     try {
     } catch (error) {
       handleServiceError(error, this.logger);

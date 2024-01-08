@@ -45,8 +45,8 @@ export class CommentController {
   //@ApiCustomResponse(CommentResponse)
   @Get()
   getComments(
-    @Query('integrationId') integrationId: string,
-    @Query('linkedUserId') linkedUserId: string,
+    @Headers('integrationId') integrationId: string,
+    @Headers('linkedUserId') linkedUserId: string,
     @Query('remoteData') remote_data?: boolean,
   ) {
     return this.commentService.getComments(

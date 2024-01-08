@@ -26,4 +26,5 @@ export class UnifiedTicketOutput extends UnifiedTicketInput {
     type: String,
   })
   remote_id?: string;
+  remote_data?: Record<string, any>;
 }

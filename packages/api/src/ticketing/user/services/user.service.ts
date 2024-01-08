@@ -16,7 +16,7 @@ export class UserService {
   async getUser(
     id_ticketing_user: string,
     remote_data?: boolean,
-  ): Promise<UserResponse> {
+  ): Promise<UnifiedUserOutput> {
     try {
       const user = await this.prisma.tcg_users.findUnique({
         where: {
@@ -57,9 +57,7 @@ export class UserService {
         field_mappings: field_mappings,
       };
 
-      let res: UserResponse = {
-        users: [unifiedUser],
-      };
+      let res: UnifiedUserOutput = unifiedUser;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -71,7 +69,7 @@ export class UserService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
@@ -85,12 +83,12 @@ export class UserService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UserResponse> {
+  ): Promise<UnifiedUserOutput[]> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const users = await this.prisma.tcg_users.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
+          remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
@@ -132,27 +130,22 @@ export class UserService {
         }),
       );
 
-      let res: UserResponse = {
-        users: unifiedUsers,
-      };
+      let res: UnifiedUserOutput[] = unifiedUsers;
 
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          users.map(async (user) => {
+        const remote_array_data: UnifiedUserOutput[] = await Promise.all(
+          res.map(async (user) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: user.id_tcg_user,
+                ressource_owner_id: user.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            return { ...user, remote_data };
           }),
         );
 
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
 
       const event = await this.prisma.events.create({

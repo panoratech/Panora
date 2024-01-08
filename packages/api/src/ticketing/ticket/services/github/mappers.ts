@@ -16,13 +16,13 @@ export class GithubTicketMapper implements ITicketMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: GithubTicketOutput | GithubTicketOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput | UnifiedTicketOutput[] {
+  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
     return;
   }
 }

@@ -15,7 +15,7 @@ export class AccountService {
   async getAccount(
     id_ticketing_account: string,
     remote_data?: boolean,
-  ): Promise<AccountResponse> {
+  ): Promise<UnifiedAccountOutput> {
     try {
       const account = await this.prisma.tcg_accounts.findUnique({
         where: {
@@ -55,9 +55,7 @@ export class AccountService {
         field_mappings: field_mappings,
       };
 
-      let res: AccountResponse = {
-        accounts: [unifiedAccount],
-      };
+      let res: UnifiedAccountOutput = unifiedAccount;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -69,7 +67,7 @@ export class AccountService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
@@ -83,13 +81,13 @@ export class AccountService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<AccountResponse> {
+  ): Promise<UnifiedAccountOutput[]> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
       const accounts = await this.prisma.tcg_accounts.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
+          remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
@@ -130,27 +128,22 @@ export class AccountService {
         }),
       );
 
-      let res: AccountResponse = {
-        accounts: unifiedAccounts,
-      };
+      let res: UnifiedAccountOutput[] = unifiedAccounts;
 
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          accounts.map(async (account) => {
+        const remote_array_data: UnifiedAccountOutput[] = await Promise.all(
+          res.map(async (account) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: account.id_tcg_account,
+                ressource_owner_id: account.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            return { ...account, remote_data };
           }),
         );
 
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
       const event = await this.prisma.events.create({
         data: {

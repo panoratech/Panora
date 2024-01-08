@@ -195,52 +195,90 @@ export class SyncService implements OnModuleInit {
 
         if (existingTicket) {
           // Update the existing ticket
+          let data: any = {
+            id_tcg_ticket: uuidv4(),
+            modified_at: new Date(),
+          };
+          if (ticket.name) {
+            data = { ...data, name: ticket.name };
+          }
+          if (ticket.status) {
+            data = { ...data, status: ticket.status };
+          }
+          if (ticket.description) {
+            data = { ...data, description: ticket.description };
+          }
+          if (ticket.type) {
+            data = { ...data, ticket_type: ticket.type };
+          }
+          if (ticket.tags) {
+            data = { ...data, tags: ticket.tags };
+          }
+          if (ticket.priority) {
+            data = { ...data, priority: ticket.priority };
+          }
+          if (ticket.completed_at) {
+            data = { ...data, completed_at: ticket.completed_at };
+          }
+          if (ticket.assigned_to) {
+            data = { ...data, assigned_to: ticket.assigned_to };
+          }
+          /*
+            parent_ticket: ticket.parent_ticket || 'd',
+          */
           const res = await this.prisma.tcg_tickets.update({
             where: {
               id_tcg_ticket: existingTicket.id_tcg_ticket,
             },
-            data: {
-              name: ticket.name || '',
-              status: ticket.status || '',
-              description: ticket.description || '',
-              due_date: ticket.due_date || '',
-              ticket_type: ticket.type || '',
-              parent_ticket: ticket.parent_ticket || '',
-              tags: ticket.tags || [],
-              completed_at: ticket.completed_at || '',
-              priority: ticket.priority || '',
-              assigned_to: ticket.assigned_to || [],
-              modified_at: new Date(),
-            },
+            data: data,
           });
           unique_ticketing_ticket_id = res.id_tcg_ticket;
           tickets_results = [...tickets_results, res];
         } else {
           // Create a new ticket
           this.logger.log('not existing ticket ' + ticket.name);
-          const data = {
+
+          let data: any = {
             id_tcg_ticket: uuidv4(),
-            name: ticket.name || '',
-            status: ticket.status || '',
-            description: ticket.description || '',
-            due_date: ticket.due_date || '',
-            ticket_type: ticket.type || '',
-            parent_ticket: ticket.parent_ticket || '',
-            tags: ticket.tags || [],
-            completed_at: ticket.completed_at || '',
-            priority: ticket.priority || '',
-            assigned_to: ticket.assigned_to || [],
             created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,
           };
+          if (ticket.name) {
+            data = { ...data, name: ticket.name };
+          }
+          if (ticket.status) {
+            data = { ...data, status: ticket.status };
+          }
+          if (ticket.description) {
+            data = { ...data, description: ticket.description };
+          }
+          if (ticket.type) {
+            data = { ...data, ticket_type: ticket.type };
+          }
+          if (ticket.tags) {
+            data = { ...data, tags: ticket.tags };
+          }
+          if (ticket.priority) {
+            data = { ...data, priority: ticket.priority };
+          }
+          if (ticket.completed_at) {
+            data = { ...data, completed_at: ticket.completed_at };
+          }
+          if (ticket.assigned_to) {
+            data = { ...data, assigned_to: ticket.assigned_to };
+          }
+          /*
+            parent_ticket: ticket.parent_ticket || 'd',
+          */
+
           const res = await this.prisma.tcg_tickets.create({
             data: data,
           });
-          tickets_results = [...tickets_results, res];
           unique_ticketing_ticket_id = res.id_tcg_ticket;
+          tickets_results = [...tickets_results, res];
         }
 
         // check duplicate or existing values

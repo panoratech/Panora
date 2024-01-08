@@ -30,7 +30,7 @@ export interface ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput | UnifiedTicketOutput[];
+  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]>;
 }
 
 export type Comment = {

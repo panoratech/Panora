@@ -22,6 +22,9 @@ export class FrontCommentMapper implements ICommentMapper {
   ): Promise<FrontCommentInput> {
     const result: FrontCommentInput = {
       body: source.body,
+      // for author and attachments
+      // we let the Panora uuids on purpose (it will be modified in the given service on the fly where we'll retrieve the actual remote id for the given uuid!)
+      // either one must be passed
       author_id: source.user_id || source.contact_id, // for Front it must be a User
       attachments: source.attachments,
     };
@@ -54,35 +57,39 @@ export class FrontCommentMapper implements ICommentMapper {
   ): Promise<UnifiedCommentOutput> {
     //map the front attachment to our unified version of attachment
     //unifying the original attachment object coming from Front
-    const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
-      sourceObject: comment.attachments,
-      targetType: TicketingObject.attachment,
-      providerName: 'front',
-      customFieldMappings: [],
-    })) as UnifiedAttachmentOutput[];
-
-    const user_id = await this.utils.getUserUuidFromRemoteId(
-      String(comment.id),
-      'zendesk_tcg',
-    );
-    let creator_type: string;
     let opts;
-    if (user_id) {
-      creator_type = 'user';
-      opts = { user_id: user_id };
-    } else {
-      const contact_id = await this.utils.getContactUuidFromRemoteId(
-        String(comment.id),
+
+    if (comment.attachments && comment.attachments.length > 0) {
+      const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
+        sourceObject: comment.attachments,
+        targetType: TicketingObject.attachment,
+        providerName: 'front',
+        customFieldMappings: [],
+      })) as UnifiedAttachmentOutput[];
+
+      opts = { ...opts, attachments: unifiedObject };
+    }
+
+    if (comment.author.id) {
+      const user_id = await this.utils.getUserUuidFromRemoteId(
+        String(comment.author.id),
         'zendesk_tcg',
       );
-      creator_type = 'contact';
-      opts = { user_id: contact_id };
+
+      if (user_id) {
+        // we must always fall here for Front
+        opts = { user_id: user_id, creator_type: 'user' };
+      } else {
+        const contact_id = await this.utils.getContactUuidFromRemoteId(
+          String(comment.author.id),
+          'zendesk_tcg',
+        );
+        opts = { creator_type: 'contact', contact_id: contact_id };
+      }
     }
 
     const res = {
       body: comment.body,
-      creator_type: creator_type, //it must be user
-      attachments: unifiedObject,
       ...opts,
     };
 

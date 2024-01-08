@@ -34,7 +34,7 @@ export class TicketService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<TicketResponse> {
+  ): Promise<UnifiedTicketOutput[]> {
     try {
       const responses = await Promise.all(
         unifiedTicketData.map((unifiedData) =>
@@ -46,16 +46,7 @@ export class TicketService {
           ),
         ),
       );
-
-      const allTickets = responses.flatMap((response) => response.tickets);
-      const allRemoteData = responses.flatMap(
-        (response) => response.remote_data || [],
-      );
-
-      return {
-        tickets: allTickets,
-        remote_data: allRemoteData,
-      };
+      return responses;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -66,7 +57,7 @@ export class TicketService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<TicketResponse> {
+  ): Promise<UnifiedTicketOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -162,46 +153,83 @@ export class TicketService {
 
       if (existingTicket) {
         // Update the existing ticket
+        let data: any = {
+          id_tcg_ticket: uuidv4(),
+          modified_at: new Date(),
+        };
+        if (target_ticket.name) {
+          data = { ...data, name: target_ticket.name };
+        }
+        if (target_ticket.status) {
+          data = { ...data, status: target_ticket.status };
+        }
+        if (target_ticket.description) {
+          data = { ...data, description: target_ticket.description };
+        }
+        if (target_ticket.type) {
+          data = { ...data, ticket_type: target_ticket.type };
+        }
+        if (target_ticket.tags) {
+          data = { ...data, tags: target_ticket.tags };
+        }
+        if (target_ticket.priority) {
+          data = { ...data, priority: target_ticket.priority };
+        }
+        if (target_ticket.completed_at) {
+          data = { ...data, completed_at: target_ticket.completed_at };
+        }
+        if (target_ticket.assigned_to) {
+          data = { ...data, assigned_to: target_ticket.assigned_to };
+        }
+        /*
+          parent_ticket: target_ticket.parent_ticket || 'd',
+        */
         const res = await this.prisma.tcg_tickets.update({
           where: {
             id_tcg_ticket: existingTicket.id_tcg_ticket,
           },
-          data: {
-            name: target_ticket.name || '',
-            status: target_ticket.status || '',
-            description: target_ticket.description || '',
-            due_date: target_ticket.due_date || '',
-            ticket_type: target_ticket.type || '',
-            parent_ticket: target_ticket.parent_ticket || '',
-            tags: target_ticket.tags || [],
-            completed_at: target_ticket.completed_at || '',
-            priority: target_ticket.priority || '',
-            assigned_to: target_ticket.assigned_to || [],
-            modified_at: new Date(),
-          },
+          data: data,
         });
         unique_ticketing_ticket_id = res.id_tcg_ticket;
       } else {
         // Create a new ticket
         this.logger.log('not existing ticket ' + target_ticket.name);
-        const data = {
+
+        let data: any = {
           id_tcg_ticket: uuidv4(),
-          name: target_ticket.name || '',
-          status: target_ticket.status || '',
-          description: target_ticket.description || '',
-          due_date: target_ticket.due_date || '',
-          ticket_type: target_ticket.type || '',
-          parent_ticket: target_ticket.parent_ticket || '',
-          tags: target_ticket.tags || [],
-          completed_at: target_ticket.completed_at || '',
-          priority: target_ticket.priority || '',
-          assigned_to: target_ticket.assigned_to || [],
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
           remote_id: originId,
           remote_platform: integrationId,
         };
+        if (target_ticket.name) {
+          data = { ...data, name: target_ticket.name };
+        }
+        if (target_ticket.status) {
+          data = { ...data, status: target_ticket.status };
+        }
+        if (target_ticket.description) {
+          data = { ...data, description: target_ticket.description };
+        }
+        if (target_ticket.type) {
+          data = { ...data, ticket_type: target_ticket.type };
+        }
+        if (target_ticket.tags) {
+          data = { ...data, tags: target_ticket.tags };
+        }
+        if (target_ticket.priority) {
+          data = { ...data, priority: target_ticket.priority };
+        }
+        if (target_ticket.completed_at) {
+          data = { ...data, completed_at: target_ticket.completed_at };
+        }
+        if (target_ticket.assigned_to) {
+          data = { ...data, assigned_to: target_ticket.assigned_to };
+        }
+        /*
+          parent_ticket: target_ticket.parent_ticket || 'd',
+        */
 
         const res = await this.prisma.tcg_tickets.create({
           data: data,
@@ -270,7 +298,6 @@ export class TicketService {
         });
       }
 
-      /////
       const result_ticket = await this.getTicket(
         unique_ticketing_ticket_id,
         remote_data,
@@ -291,7 +318,7 @@ export class TicketService {
         },
       });
       await this.webhook.handleWebhook(
-        result_ticket.tickets,
+        result_ticket,
         'ticketing.ticket.created',
         linkedUser.id_project,
         event.id_event,
@@ -306,7 +333,7 @@ export class TicketService {
   async getTicket(
     id_ticketing_ticket: string,
     remote_data?: boolean,
-  ): Promise<TicketResponse> {
+  ): Promise<UnifiedTicketOutput> {
     try {
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
@@ -354,8 +381,8 @@ export class TicketService {
         field_mappings: field_mappings,
       };
 
-      let res: TicketResponse = {
-        tickets: [unifiedTicket],
+      let res: UnifiedTicketOutput = {
+        ...unifiedTicket,
       };
 
       if (remote_data) {
@@ -368,7 +395,7 @@ export class TicketService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
@@ -382,12 +409,12 @@ export class TicketService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<TicketResponse> {
+  ): Promise<UnifiedTicketOutput[]> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const tickets = await this.prisma.tcg_tickets.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
+          remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
         /* TODO: only if params 
@@ -440,27 +467,24 @@ export class TicketService {
         }),
       );
 
-      let res: TicketResponse = {
-        tickets: unifiedTickets,
-      };
-
+      let res: UnifiedTicketOutput[] = unifiedTickets;
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          tickets.map(async (ticket) => {
+        const remote_array_data: UnifiedTicketOutput[] = await Promise.all(
+          res.map(async (ticket) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: ticket.id_tcg_ticket,
+                ressource_owner_id: ticket.id,
               },
             });
-            const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            //TODO:
+            let remote_data: any;
+            if (resp && resp.data) {
+              remote_data = JSON.parse(resp.data);
+            }
+            return { ...ticket, remote_data };
           }),
         );
-
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
 
       const event = await this.prisma.events.create({

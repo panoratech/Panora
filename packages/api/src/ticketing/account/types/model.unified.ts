@@ -7,4 +7,5 @@ export class UnifiedAccountInput {
 export class UnifiedAccountOutput extends UnifiedAccountInput {
   id?: string;
   remote_id?: string;
+  remote_data?: Record<string, any>;
 }

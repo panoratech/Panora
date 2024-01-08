@@ -39,44 +39,52 @@ export class ZendeskService implements ITicketService {
           provider_slug: 'zendesk_tcg',
         },
       });
-
+      let dataBody = {
+        ticket: ticketData,
+      };
       // We must fetch tokens from zendesk with the commentData.uploads array of Attachment uuids
       const uuids = ticketData.comment.uploads;
       let uploads = [];
-      uuids.map(async (uuid) => {
-        const res = await this.prisma.tcg_attachments.findUnique({
-          where: {
-            id_tcg_attachment: uuid,
-          },
-        });
-        if (!res) throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+      if (uuids && uuids.length > 0) {
+        await Promise.all(
+          uuids.map(async (uuid) => {
+            const res = await this.prisma.tcg_attachments.findUnique({
+              where: {
+                id_tcg_attachment: uuid,
+              },
+            });
+            if (!res)
+              throw new Error(`tcg_attachment not found for uuid ${uuid}`);
 
-        //TODO:; fetch the right file from AWS s3
-        const s3File = '';
-        const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
-          res.file_name
-        }`;
+            //TODO:; fetch the right file from AWS s3
+            const s3File = '';
+            const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
+              res.file_name
+            }`;
 
-        const resp = await axios.get(url, {
-          headers: {
-            'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
+            const resp = await axios.get(url, {
+              headers: {
+                'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            });
+            uploads = [...uploads, resp.data.upload.token];
+          }),
+        );
+        const finalData = {
+          ...ticketData,
+          comment: {
+            ...ticketData.comment,
+            uploads: uploads,
           },
-        });
-        uploads = [...uploads, resp.data.upload.token];
-      });
-      const finalData = {
-        ...ticketData,
-        comment: {
-          ...ticketData.comment,
-          uploads: uploads,
-        },
-      };
-      const dataBody = {
-        ticket: finalData,
-      };
+        };
+        dataBody = {
+          ticket: finalData,
+        };
+      }
+
       const resp = await axios.post(
         `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets.json`,
         JSON.stringify(dataBody),
@@ -90,7 +98,7 @@ export class ZendeskService implements ITicketService {
         },
       );
       return {
-        data: resp.data,
+        data: resp.data.ticket,
         message: 'Zendesk ticket created',
         statusCode: 201,
       };

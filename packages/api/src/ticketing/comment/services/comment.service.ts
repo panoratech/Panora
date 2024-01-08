@@ -9,7 +9,7 @@ import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '../types/model.unified';
-import { CommentResponse, ICommentService } from '../types';
+import { ICommentService } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { unify } from '@@core/utils/unification/unify';
@@ -32,7 +32,7 @@ export class CommentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<CommentResponse> {
+  ): Promise<UnifiedCommentOutput[]> {
     try {
       const responses = await Promise.all(
         unifiedCommentData.map((unifiedData) =>
@@ -45,15 +45,7 @@ export class CommentService {
         ),
       );
 
-      const allComments = responses.flatMap((response) => response.comments);
-      const allRemoteData = responses.flatMap(
-        (response) => response.remote_data || [],
-      );
-
-      return {
-        comments: allComments,
-        remote_data: allRemoteData,
-      };
+      return responses;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -64,7 +56,7 @@ export class CommentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<CommentResponse> {
+  ): Promise<UnifiedCommentOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -182,21 +174,32 @@ export class CommentService {
           ? {
               id_tcg_contact: unifiedCommentData.contact_id,
             }
-          : {
+          : target_comment.creator_type === 'user'
+          ? {
               id_tcg_user: unifiedCommentData.user_id,
-            };
+            }
+          : {}; //case where nothing is passed for creator or a not authorized value;
 
       if (existingComment) {
         // Update the existing comment
-        const data = {
-          body: target_comment.body,
-          html_body: target_comment.html_body,
-          is_private: target_comment.is_private,
-          creator_type: target_comment.creator_type,
+        let data: any = {
           id_tcg_ticket: unifiedCommentData.ticket_id,
           modified_at: new Date(),
-          ...opts,
         };
+        if (target_comment.body) {
+          data = { ...data, body: target_comment.body };
+        }
+        if (target_comment.html_body) {
+          data = { ...data, html_body: target_comment.html_body };
+        }
+        if (target_comment.is_private) {
+          data = { ...data, is_private: target_comment.is_private };
+        }
+        if (target_comment.creator_type) {
+          data = { ...data, creator_type: target_comment.creator_type };
+        }
+        data = { ...data, ...opts };
+
         const res = await this.prisma.tcg_comments.update({
           where: {
             id_tcg_comment: existingComment.id_tcg_comment,
@@ -207,20 +210,28 @@ export class CommentService {
       } else {
         // Create a new comment
         this.logger.log('comment not exists');
-        let data = {
+        let data: any = {
           id_tcg_comment: uuidv4(),
-          body: target_comment.body,
-          html_body: target_comment.html_body,
-          is_private: target_comment.is_private,
           created_at: new Date(),
           modified_at: new Date(),
-          creator_type: target_comment.creator_type,
           id_tcg_ticket: unifiedCommentData.ticket_id,
           id_linked_user: linkedUserId,
           remote_id: originId,
           remote_platform: integrationId,
         };
 
+        if (target_comment.body) {
+          data = { ...data, body: target_comment.body };
+        }
+        if (target_comment.html_body) {
+          data = { ...data, html_body: target_comment.html_body };
+        }
+        if (target_comment.is_private) {
+          data = { ...data, is_private: target_comment.is_private };
+        }
+        if (target_comment.creator_type) {
+          data = { ...data, creator_type: target_comment.creator_type };
+        }
         data = { ...data, ...opts };
 
         const res = await this.prisma.tcg_comments.create({
@@ -270,7 +281,7 @@ export class CommentService {
         },
       });
       await this.webhook.handleWebhook(
-        result_comment.comments,
+        result_comment,
         'ticketing.comment.created',
         linkedUser.id_project,
         event.id_event,
@@ -285,7 +296,7 @@ export class CommentService {
   async getComment(
     id_commenting_comment: string,
     remote_data?: boolean,
-  ): Promise<CommentResponse> {
+  ): Promise<UnifiedCommentOutput> {
     try {
       const comment = await this.prisma.tcg_comments.findUnique({
         where: {
@@ -331,8 +342,8 @@ export class CommentService {
         user_id: comment.id_tcg_user, // uuid of User object
       };
 
-      let res: CommentResponse = {
-        comments: [unifiedComment],
+      let res: UnifiedCommentOutput = {
+        ...unifiedComment,
       };
 
       if (remote_data) {
@@ -345,7 +356,7 @@ export class CommentService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
@@ -361,11 +372,11 @@ export class CommentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<CommentResponse> {
+  ): Promise<UnifiedCommentOutput[]> {
     try {
       const comments = await this.prisma.tcg_comments.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
+          remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
@@ -411,27 +422,21 @@ export class CommentService {
         }),
       );
 
-      let res: CommentResponse = {
-        comments: unifiedComments,
-      };
+      let res: UnifiedCommentOutput[] = unifiedComments;
 
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          comments.map(async (comment) => {
+        const remote_array_data: UnifiedCommentOutput[] = await Promise.all(
+          res.map(async (comment) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: comment.id_tcg_comment,
+                ressource_owner_id: comment.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            return { ...comment, remote_data };
           }),
         );
-
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
 
       const event = await this.prisma.events.create({

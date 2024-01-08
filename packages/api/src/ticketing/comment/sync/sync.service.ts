@@ -208,20 +208,31 @@ export class SyncService implements OnModuleInit {
             ? {
                 id_tcg_contact: comment.contact_id,
               }
-            : {
+            : comment.creator_type === 'user'
+            ? {
                 id_tcg_user: comment.user_id,
-              };
+              }
+            : {}; //case where nothing is passed for creator or a not authorized value;
+
         if (existingComment) {
           // Update the existing comment
-          const data = {
-            body: comment.body,
-            html_body: comment.html_body,
-            is_private: comment.is_private,
-            creator_type: comment.creator_type,
-            id_tcg_ticket: id_ticket,
+          let data: any = {
+            id_tcg_ticket: comment.ticket_id,
             modified_at: new Date(),
-            ...opts,
           };
+          if (comment.body) {
+            data = { ...data, body: comment.body };
+          }
+          if (comment.html_body) {
+            data = { ...data, html_body: comment.html_body };
+          }
+          if (comment.is_private) {
+            data = { ...data, is_private: comment.is_private };
+          }
+          if (comment.creator_type) {
+            data = { ...data, creator_type: comment.creator_type };
+          }
+          data = { ...data, ...opts };
           const res = await this.prisma.tcg_comments.update({
             where: {
               id_tcg_comment: existingComment.id_tcg_comment,
@@ -233,20 +244,28 @@ export class SyncService implements OnModuleInit {
         } else {
           // Create a new comment
           this.logger.log('comment not exists');
-          let data = {
+          let data: any = {
             id_tcg_comment: uuidv4(),
-            body: comment.body,
-            html_body: comment.html_body,
-            is_private: comment.is_private,
             created_at: new Date(),
             modified_at: new Date(),
-            creator_type: comment.creator_type,
-            id_tcg_ticket: id_ticket,
+            id_tcg_ticket: comment.ticket_id,
             id_linked_user: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,
           };
 
+          if (comment.body) {
+            data = { ...data, body: comment.body };
+          }
+          if (comment.html_body) {
+            data = { ...data, html_body: comment.html_body };
+          }
+          if (comment.is_private) {
+            data = { ...data, is_private: comment.is_private };
+          }
+          if (comment.creator_type) {
+            data = { ...data, creator_type: comment.creator_type };
+          }
           data = { ...data, ...opts };
 
           const res = await this.prisma.tcg_comments.create({
@@ -260,72 +279,74 @@ export class SyncService implements OnModuleInit {
         // we should already have at least initial data (as it must have been inserted by the end linked user before adding comment)
         // though we might sync comments that have been also directly been added to the provider without passing through Panora
         // in this case just create a new attachment row !
+        if (comment.attachments && comment.attachments.length > 0) {
+          for (const attchmt of comment.attachments) {
+            let unique_ticketing_attachmt_id: string;
 
-        for (const attchmt of comment.attachments) {
-          let unique_ticketing_attachmt_id: string;
+            const existingAttachmt =
+              await this.prisma.tcg_attachments.findFirst({
+                where: {
+                  remote_platform: originSource,
+                  id_linked_user: linkedUserId,
+                  file_name: attchmt.file_name,
+                },
+              });
 
-          const existingAttachmt = await this.prisma.tcg_attachments.findFirst({
-            where: {
-              remote_platform: originSource,
-              id_linked_user: linkedUserId,
-              file_name: attchmt.file_name,
-            },
-          });
-
-          if (existingAttachmt) {
-            // Update the existing attachmt
-            const res = await this.prisma.tcg_attachments.update({
-              where: {
-                id_tcg_attachment: existingAttachmt.id_tcg_attachment,
-              },
-              data: {
+            if (existingAttachmt) {
+              // Update the existing attachmt
+              const res = await this.prisma.tcg_attachments.update({
+                where: {
+                  id_tcg_attachment: existingAttachmt.id_tcg_attachment,
+                },
+                data: {
+                  remote_id: attchmt.id,
+                  file_url: attchmt.file_url,
+                  id_tcg_comment: unique_ticketing_comment_id,
+                  id_tcg_ticket: id_ticket,
+                  modified_at: new Date(),
+                },
+              });
+              unique_ticketing_attachmt_id = res.id_tcg_attachment;
+            } else {
+              // Create a new attachment
+              this.logger.log('attchmt not exists');
+              const data = {
+                id_tcg_attachment: uuidv4(),
                 remote_id: attchmt.id,
+                file_name: attchmt.file_name,
                 file_url: attchmt.file_url,
                 id_tcg_comment: unique_ticketing_comment_id,
-                id_tcg_ticket: id_ticket,
+                created_at: new Date(),
                 modified_at: new Date(),
-              },
-            });
-            unique_ticketing_attachmt_id = res.id_tcg_attachment;
-          } else {
-            // Create a new comment
-            this.logger.log('attchmt not exists');
-            const data = {
-              id_tcg_attachment: uuidv4(),
-              remote_id: attchmt.id,
-              file_name: attchmt.file_name,
-              file_url: attchmt.file_url,
-              id_tcg_comment: unique_ticketing_comment_id,
-              created_at: new Date(),
-              modified_at: new Date(),
-              uploader: linkedUserId, //TODO
-              id_tcg_ticket: id_ticket,
-              id_linked_user: linkedUserId,
-              remote_platform: originSource,
-            };
-            const res = await this.prisma.tcg_attachments.create({
-              data: data,
-            });
-            unique_ticketing_attachmt_id = res.id_tcg_attachment;
-          }
+                uploader: linkedUserId, //TODO
+                id_tcg_ticket: id_ticket,
+                id_linked_user: linkedUserId,
+                remote_platform: originSource,
+              };
+              const res = await this.prisma.tcg_attachments.create({
+                data: data,
+              });
+              unique_ticketing_attachmt_id = res.id_tcg_attachment;
+            }
 
-          //TODO: insert remote_data in db i dont know the type of remote_data to extract the right source attachment object
-          /*await this.prisma.remote_data.upsert({
-            where: {
-              ressource_owner_id: unique_ticketing_attachmt_id,
-            },
-            create: {
-              id_remote_data: uuidv4(),
-              ressource_owner_id: unique_ticketing_attachmt_id,
-              format: 'json',
-              data: JSON.stringify(remote_data[i]),
-              created_at: new Date(),
-            },
-            update: {
-              data: JSON.stringify(remote_data[i]),
-              created_at: new Date(),
-            },
-          });*/
+            //TODO: insert remote_data in db i dont know the type of remote_data to extract the right source attachment object
+            /*await this.prisma.remote_data.upsert({
+              where: {
+                ressource_owner_id: unique_ticketing_attachmt_id,
+              },
+              create: {
+                id_remote_data: uuidv4(),
+                ressource_owner_id: unique_ticketing_attachmt_id,
+                format: 'json',
+                data: JSON.stringify(remote_data[i]),
+                created_at: new Date(),
+              },
+              update: {
+                data: JSON.stringify(remote_data[i]),
+                created_at: new Date(),
+              },
+            });*/
+          }
         }
 
         //insert remote_data in db

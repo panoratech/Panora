@@ -37,13 +37,13 @@ export class HubspotTicketMapper implements ITicketMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: HubspotTicketOutput | HubspotTicketOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput | UnifiedTicketOutput[] {
+  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 

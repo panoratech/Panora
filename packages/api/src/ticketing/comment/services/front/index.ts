@@ -32,7 +32,7 @@ export class FrontService implements ICommentService {
     remoteIdTicket: string,
   ): Promise<ApiResponse<FrontCommentOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.write
+      // Check required scope => crm.objects.contacts.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -40,57 +40,62 @@ export class FrontService implements ICommentService {
         },
       });
 
-      //retreive the right user for author
-      const user = await this.prisma.tcg_users.findUnique({
-        where: {
-          id_tcg_user: commentData.author_id,
-        },
-        select: { remote_id: true },
-      });
-      if (!user)
-        throw new Error('author_id is invalid, it must be a valid User');
+      let dataBody = commentData;
 
+      //first we retrieve the right author_id (it must be either a User or a Cntact)
+      const author_id = commentData.author_id; //uuid of either a User or a Contact
+      let author_data;
+
+      if (author_id) {
+        // Retrieve the right user for author
+        const user = await this.prisma.tcg_users.findUnique({
+          where: {
+            id_tcg_user: commentData.author_id,
+          },
+          select: { remote_id: true },
+        });
+        if (!user) {
+          throw new Error('author_id is invalid, it must be a valid User');
+        }
+        author_data = user; //it might be undefined but if it is i insert the right data below
+        dataBody = { ...dataBody, author_id: user.remote_id };
+      }
+
+      // Process attachments
       let uploads = [];
       const uuids = commentData.attachments;
       if (uuids && uuids.length > 0) {
-        for (const uuid of uuids) {
-          const res = await this.prisma.tcg_attachments.findUnique({
-            where: {
-              id_tcg_attachment: uuid,
-            },
-          });
-          if (!res)
-            throw new Error(`tcg_attachment not found for uuid ${uuid}`);
-          //TODO: construct the right binary attachment
-          //get the AWS s3 right file
-          //TODO: check how to send a stream of a url
-          const fileStream = await this.utils.fetchFileStreamFromURL(
-            res.file_url,
-          );
-
-          uploads = [...uploads, fileStream];
-        }
+        uploads = await Promise.all(
+          uuids.map(async (uuid) => {
+            const attachment = await this.prisma.tcg_attachments.findUnique({
+              where: {
+                id_tcg_attachment: uuid,
+              },
+            });
+            if (!attachment) {
+              throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+            }
+            // TODO: Construct the right binary attachment
+            // Get the AWS S3 right file
+            // TODO: Check how to send a stream of a URL
+            return await this.utils.fetchFileStreamFromURL(attachment.file_url);
+          }),
+        );
       }
 
+      // Prepare request data
       let resp;
       if (uploads.length > 0) {
-        const dataBody = {
-          ...commentData,
-          author_id: user.remote_id,
-          attachments: uploads,
-        };
         const formData = new FormData();
-
-        if (dataBody.author_id) {
-          formData.append('author_id', dataBody.author_id);
+        if (author_data) {
+          formData.append('author_id', author_data.remote_id);
         }
-        formData.append('body', dataBody.body);
+        formData.append('body', commentData.body);
+        uploads.forEach((fileStream, index) => {
+          formData.append(`attachments[${index}]`, fileStream);
+        });
 
-        for (let i = 0; i < uploads.length; i++) {
-          const up = uploads[i];
-          formData.append(`attachments[${i}]`, up);
-        }
-
+        // Send request with attachments
         resp = await axios.post(
           `https://api2.frontapp.com/conversations/${remoteIdTicket}/comments`,
           formData,
@@ -104,10 +109,7 @@ export class FrontService implements ICommentService {
           },
         );
       } else {
-        const dataBody = {
-          ...commentData,
-          author_id: user.remote_id,
-        };
+        // Send request without attachments
         resp = await axios.post(
           `https://api2.frontapp.com/conversations/${remoteIdTicket}/comments`,
           JSON.stringify(dataBody),
@@ -122,6 +124,7 @@ export class FrontService implements ICommentService {
         );
       }
 
+      // Return response
       return {
         data: resp.data,
         message: 'Front comment created',

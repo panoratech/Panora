@@ -7,7 +7,7 @@ const frontTeamMapper = new FrontTeamMapper();
 const githubTeamMapper = new GithubTeamMapper();
 
 export const teamUnificationMapping = {
-  zendesk: {
+  zendesk_tcg: {
     unify: zendeskTeamMapper.unify,
     desunify: zendeskTeamMapper.desunify,
   },

@@ -26,7 +26,7 @@ export class AttachmentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<AttachmentResponse> {
+  ): Promise<UnifiedAttachmentOutput[]> {
     try {
       const responses = await Promise.all(
         unifiedAttachmentData.map((unifiedData) =>
@@ -39,17 +39,7 @@ export class AttachmentService {
         ),
       );
 
-      const allAttachments = responses.flatMap(
-        (response) => response.attachments,
-      );
-      const allRemoteData = responses.flatMap(
-        (response) => response.remote_data || [],
-      );
-
-      return {
-        attachments: allAttachments,
-        remote_data: allRemoteData,
-      };
+      return responses;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -60,7 +50,7 @@ export class AttachmentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<AttachmentResponse> {
+  ): Promise<UnifiedAttachmentOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -136,7 +126,7 @@ export class AttachmentService {
       });
 
       await this.webhook.handleWebhook(
-        result_attachment.attachments,
+        result_attachment,
         'ticketing.attachment.created',
         linkedUser.id_project,
         event.id_event,
@@ -150,7 +140,7 @@ export class AttachmentService {
   async getAttachment(
     id_ticketing_attachment: string,
     remote_data?: boolean,
-  ): Promise<AttachmentResponse> {
+  ): Promise<UnifiedAttachmentOutput> {
     try {
       const attachment = await this.prisma.tcg_attachments.findUnique({
         where: {
@@ -191,9 +181,7 @@ export class AttachmentService {
         field_mappings: field_mappings,
       };
 
-      let res: AttachmentResponse = {
-        attachments: [unifiedAttachment],
-      };
+      let res: UnifiedAttachmentOutput = unifiedAttachment;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -205,7 +193,7 @@ export class AttachmentService {
 
         res = {
           ...res,
-          remote_data: [remote_data],
+          remote_data: remote_data,
         };
       }
 
@@ -219,12 +207,12 @@ export class AttachmentService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<AttachmentResponse> {
+  ): Promise<UnifiedAttachmentOutput[]> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       const attachments = await this.prisma.tcg_attachments.findMany({
         where: {
-          remote_id: integrationId.toLowerCase(),
+          remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
@@ -266,27 +254,22 @@ export class AttachmentService {
         }),
       );
 
-      let res: AttachmentResponse = {
-        attachments: unifiedAttachments,
-      };
+      let res: UnifiedAttachmentOutput[] = unifiedAttachments;
 
       if (remote_data) {
-        const remote_array_data: Record<string, any>[] = await Promise.all(
-          attachments.map(async (attachment) => {
+        const remote_array_data: UnifiedAttachmentOutput[] = await Promise.all(
+          res.map(async (attachment) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: attachment.id_tcg_attachment,
+                ressource_owner_id: attachment.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return remote_data;
+            return { ...attachment, remote_data };
           }),
         );
 
-        res = {
-          ...res,
-          remote_data: remote_array_data,
-        };
+        res = remote_array_data;
       }
 
       const event = await this.prisma.events.create({
@@ -313,7 +296,7 @@ export class AttachmentService {
   async downloadAttachment(
     id_ticketing_attachment: string,
     remote_data?: boolean,
-  ): Promise<AttachmentResponse> {
+  ): Promise<UnifiedAttachmentOutput> {
     return;
   }
 }

@@ -9,4 +9,5 @@ export class UnifiedContactInput {
 export class UnifiedContactOutput extends UnifiedContactInput {
   id?: string;
   remote_id?: string;
+  remote_data?: Record<string, any>;
 }

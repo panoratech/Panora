@@ -5,8 +5,6 @@ export class UnifiedCommentInput {
   body: string;
   html_body?: string;
   is_private?: boolean;
-  created_at?: Date;
-  modified_at?: Date;
   creator_type: 'user' | 'contact' | null | string;
   ticket_id?: string; // uuid of Ticket object
   contact_id?: string; // uuid of Contact object
@@ -23,6 +21,7 @@ export class UnifiedCommentOutput {
     type: String,
   })
   remote_id?: string;
+  remote_data?: Record<string, any>;
   body: string;
   html_body?: string;
   is_private?: boolean;

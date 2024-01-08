@@ -7,4 +7,5 @@ export class UnifiedTeamInput {
 export class UnifiedTeamOutput extends UnifiedTeamInput {
   id?: string;
   remote_id?: string;
+  remote_data?: Record<string, any>;
 }

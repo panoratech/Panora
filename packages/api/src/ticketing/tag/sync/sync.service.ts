@@ -35,7 +35,7 @@ export class SyncService implements OnModuleInit {
     }
   }
 
-  @Cron('*/20 * * * *')
+  //@Cron('*/20 * * * *')
   //function used by sync worker which populate our tcg_tags table
   //its role is to fetch all tags from providers 3rd parties and save the info inside our db
   async syncTags() {
