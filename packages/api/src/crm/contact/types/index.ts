@@ -65,10 +65,3 @@ export type NormalizedContactInfo = {
   normalizedEmails: Email[];
   normalizedPhones: Phone[];
 };
-
-export class ContactResponse {
-  @ApiProperty({ type: [UnifiedContactOutput] })
-  contacts: UnifiedContactOutput[];
-  @ApiPropertyOptional({ type: [{}] })
-  remote_data?: Record<string, any>[]; //data in original format
-}

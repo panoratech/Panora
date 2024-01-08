@@ -56,6 +56,17 @@ import { CallbackParams, ICrmConnectionService, RefreshParams } from '../../type
 
 @Injectable()
 export class My3rdPartyConnectionService implements ICrmConnectionService {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private env: EnvironmentService,
+    private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
+  ) {
+    this.logger.setContext(My3rdPartyConnectionService.name);
+    this.registry.registerService('insert_the_name_of_your_3rd_party', this);
+  }
+
   async handleCallback(
     opts: CallbackParams
   ) {
@@ -71,38 +82,7 @@ Now that you have the structure, check other 3rd parties implementations under `
 
 ## 2. Enable your connection service to handle oAuth granting access
 
-`cd @core/connections/crm/services/registry.service.ts`
-
-Add your new 3rd party service to the `registry` service.
-
-```ts
-//ADD YOUR IMPORT 
-import { My3rdPartyConnectionService } from './my3rdParty/my3rdParty.service';
-
-@Injectable()
-export class ServiceConnectionRegistry {
-  private serviceMap: Map<string, ICrmConnectionService>;
-
-  constructor(
-    freshsales: FreshsalesConnectionService,
-    hubspot: HubspotConnectionService,
-    zoho: ZohoConnectionService,
-    zendesk: ZendeskConnectionService,
-    pipedrive: PipedriveConnectionService,
-  ) {
-    this.serviceMap = new Map<string, ICrmConnectionService>();
-    this.serviceMap.set('freshsales', freshsales);
-    this.serviceMap.set('hubspot', hubspot);
-    this.serviceMap.set('zoho', zoho);
-    this.serviceMap.set('zendesk', zendesk);
-    this.serviceMap.set('pipedrive', pipedrive);
-    //ADD YOUR SERVICE
-    this.serviceMap.set('my3rdParty', my3rdParty);
-  }
-}
-```
-
-Don't forget to ddd your service to the `CrmConnectionModule` module !
+Add your service to the `CrmConnectionModule` under `@core/connections/crm/crm.connection.module.ts` module !
 
 ```ts
 @Module({
@@ -171,7 +151,7 @@ export class My3rdPartyService implements IContactService {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + My3rdPartyService.name,
     );
-    this.registry.registerService('my3rdPartyService', this);
+    this.registry.registerService('insert_the_name_of_your_3rd_party', this);
 
   }
   async addContact(

@@ -1,16 +1,6 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Query,
-  Get,
-  Patch,
-  Param,
-  Headers,
-} from '@nestjs/common';
+import { Controller, Query, Get, Param, Headers } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
-  ApiBody,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -19,8 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TagService } from './services/tag.service';
-import { TagResponse } from './types';
-import { UnifiedTagInput } from './types/model.unified';
 
 @ApiTags('ticketing/tag')
 @Controller('ticketing/tag')

@@ -1,7 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedAccountInput, UnifiedAccountOutput } from './model.unified';
 import { OriginalAccountOutput } from '@@core/utils/types/original/original.ticketing';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IAccountService {
@@ -27,12 +26,4 @@ export interface IAccountMapper {
       remote_id: string;
     }[],
   ): UnifiedAccountOutput | UnifiedAccountOutput[];
-}
-
-export class AccountResponse {
-  @ApiProperty({ type: [UnifiedAccountOutput] })
-  accounts: UnifiedAccountOutput[];
-
-  @ApiPropertyOptional({ type: [{}] })
-  remote_data?: Record<string, any>[]; // Data in original format
 }

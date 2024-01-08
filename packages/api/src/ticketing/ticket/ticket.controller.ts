@@ -19,7 +19,6 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TicketService } from './services/ticket.service';
-import { TicketResponse } from './types';
 import { UnifiedTicketInput } from './types/model.unified';
 
 @ApiTags('ticketing/ticket')

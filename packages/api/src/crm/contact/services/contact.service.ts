@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ContactResponse, IContactService } from '../types';
+import { IContactService } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { CrmObject } from '@crm/@utils/@types';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -230,25 +230,23 @@ export class ContactService {
           }
         }
       }
-      if (remote_data) {
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_crm_contact_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_crm_contact_id,
-            format: 'json',
-            data: JSON.stringify(source_contact),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(source_contact),
-            created_at: new Date(),
-          },
-        });
-      }
+      //insert remote_data in db
+      await this.prisma.remote_data.upsert({
+        where: {
+          ressource_owner_id: unique_crm_contact_id,
+        },
+        create: {
+          id_remote_data: uuidv4(),
+          ressource_owner_id: unique_crm_contact_id,
+          format: 'json',
+          data: JSON.stringify(source_contact),
+          created_at: new Date(),
+        },
+        update: {
+          data: JSON.stringify(source_contact),
+          created_at: new Date(),
+        },
+      });
 
       const result_contact = await this.getContact(
         unique_crm_contact_id,

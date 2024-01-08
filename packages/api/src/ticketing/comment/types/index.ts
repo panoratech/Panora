@@ -1,6 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedCommentInput, UnifiedCommentOutput } from './model.unified';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 
@@ -41,10 +40,3 @@ export type Comment = {
   html_body: string;
   is_private: boolean;
 };
-
-export class CommentResponse {
-  @ApiProperty({ type: [UnifiedCommentOutput] })
-  comments: UnifiedCommentOutput[];
-  @ApiPropertyOptional({ type: [{}] })
-  remote_data?: Record<string, any>[]; //data in original format
-}

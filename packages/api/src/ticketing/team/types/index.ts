@@ -1,7 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedTeamInput, UnifiedTeamOutput } from './model.unified';
 import { OriginalTeamOutput } from '@@core/utils/types/original/original.ticketing';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface ITeamService {
@@ -27,12 +26,4 @@ export interface ITeamMapper {
       remote_id: string;
     }[],
   ): UnifiedTeamOutput | UnifiedTeamOutput[];
-}
-
-export class TeamResponse {
-  @ApiProperty({ type: [UnifiedTeamOutput] })
-  teams: UnifiedTeamOutput[];
-
-  @ApiPropertyOptional({ type: [{}] })
-  remote_data?: Record<string, any>[]; // Data in original format
 }

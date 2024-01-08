@@ -9,7 +9,6 @@ import {
   UnifiedAttachmentInput,
   UnifiedAttachmentOutput,
 } from '../types/model.unified';
-import { AttachmentResponse } from '../types';
 
 @Injectable()
 export class AttachmentService {

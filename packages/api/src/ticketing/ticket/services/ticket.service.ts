@@ -9,7 +9,7 @@ import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '../types/model.unified';
-import { ITicketService, TicketResponse } from '../types';
+import { ITicketService } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -278,25 +278,23 @@ export class TicketService {
           }
         }
       }
-      if (remote_data) {
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ticketing_ticket_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_ticket_id,
-            format: 'json',
-            data: JSON.stringify(source_ticket),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(source_ticket),
-            created_at: new Date(),
-          },
-        });
-      }
+      //insert remote_data in db
+      await this.prisma.remote_data.upsert({
+        where: {
+          ressource_owner_id: unique_ticketing_ticket_id,
+        },
+        create: {
+          id_remote_data: uuidv4(),
+          ressource_owner_id: unique_ticketing_ticket_id,
+          format: 'json',
+          data: JSON.stringify(source_ticket),
+          created_at: new Date(),
+        },
+        update: {
+          data: JSON.stringify(source_ticket),
+          created_at: new Date(),
+        },
+      });
 
       const result_ticket = await this.getTicket(
         unique_ticketing_ticket_id,
@@ -510,7 +508,7 @@ export class TicketService {
   async updateTicket(
     id: string,
     updateTicketData: Partial<UnifiedTicketInput>,
-  ): Promise<TicketResponse> {
+  ): Promise<UnifiedTicketOutput> {
     try {
     } catch (error) {
       handleServiceError(error, this.logger);

@@ -4,7 +4,6 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { handleServiceError } from '@@core/utils/errors';
 import { UnifiedAccountOutput } from '../types/model.unified';
-import { AccountResponse } from '../types';
 
 @Injectable()
 export class AccountService {

@@ -240,25 +240,23 @@ export class CommentService {
         unique_ticketing_comment_id = res.id_tcg_comment;
       }
 
-      if (remote_data) {
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ticketing_comment_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_comment_id,
-            format: 'json',
-            data: JSON.stringify(source_comment),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(source_comment),
-            created_at: new Date(),
-          },
-        });
-      }
+      //insert remote_data in db
+      await this.prisma.remote_data.upsert({
+        where: {
+          ressource_owner_id: unique_ticketing_comment_id,
+        },
+        create: {
+          id_remote_data: uuidv4(),
+          ressource_owner_id: unique_ticketing_comment_id,
+          format: 'json',
+          data: JSON.stringify(source_comment),
+          created_at: new Date(),
+        },
+        update: {
+          data: JSON.stringify(source_comment),
+          created_at: new Date(),
+        },
+      });
 
       const result_comment = await this.getComment(
         unique_ticketing_comment_id,
