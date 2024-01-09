@@ -49,9 +49,11 @@ export class ZendeskService implements IUserService {
         },
       );
       this.logger.log(`Synced zendesk users !`);
+      const users: ZendeskUserOutput[] = resp.data.users;
+      const filteredUsers = users.filter((user) => user.role === 'agent');
 
       return {
-        data: resp.data.users,
+        data: filteredUsers,
         message: 'Zendesk users retrieved',
         statusCode: 200,
       };

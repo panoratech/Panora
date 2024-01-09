@@ -32,12 +32,17 @@ export class ZendeskAccountMapper implements IAccountMapper {
   }
 
   private mapSingleAccountToUnified(
-    ticket: ZendeskAccountOutput,
+    account: ZendeskAccountOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedAccountOutput {
-    return;
+    const unifiedAccount: UnifiedAccountOutput = {
+      name: account.name,
+      domains: account.domain_names,
+    };
+
+    return unifiedAccount;
   }
 }

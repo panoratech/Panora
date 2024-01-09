@@ -41,7 +41,7 @@ export class ZendeskService implements IAccountService {
       });
 
       const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/accounts`,
+        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/organizations.json`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export class ZendeskService implements IAccountService {
       this.logger.log(`Synced zendesk accounts !`);
 
       return {
-        data: resp.data.accounts,
+        data: resp.data.organizations,
         message: 'Zendesk accounts retrieved',
         statusCode: 200,
       };

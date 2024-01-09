@@ -200,7 +200,6 @@ export class SyncService implements OnModuleInit {
         if (existingTicket) {
           // Update the existing ticket
           let data: any = {
-            id_tcg_ticket: uuidv4(),
             modified_at: new Date(),
           };
           if (ticket.name) {

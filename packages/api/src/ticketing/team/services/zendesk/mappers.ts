@@ -32,12 +32,17 @@ export class ZendeskTeamMapper implements ITeamMapper {
   }
 
   private mapSingleTeamToUnified(
-    ticket: ZendeskTeamOutput,
+    team: ZendeskTeamOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedTeamOutput {
-    return;
+    const unifiedTeam: UnifiedTeamOutput = {
+      name: team.name,
+      description: team.description,
+    };
+
+    return unifiedTeam;
   }
 }

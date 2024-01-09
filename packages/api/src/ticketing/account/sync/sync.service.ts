@@ -121,9 +121,11 @@ export class SyncService implements OnModuleInit {
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalAccountOutput[]> =
         await service.syncAccounts(linkedUserId, remoteProperties);
+      this.logger.log('bdbdbdbdbdb ');
 
       const sourceObject: OriginalAccountOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+      this.logger.log('resp is ' + sourceObject);
+
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalAccountOutput[]>({
         sourceObject,

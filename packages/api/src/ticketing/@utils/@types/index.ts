@@ -1,4 +1,5 @@
 import { contactUnificationMapping } from '@crm/contact/types/mappingsTypes';
+import { contactUnificationMapping as contactTicketingUnificationMapping } from '@ticketing/contact/types/mappingsTypes';
 import { IAccountService } from '@ticketing/account/types';
 import { accountUnificationMapping } from '@ticketing/account/types/mappingsTypes';
 import {
@@ -80,7 +81,7 @@ export const unificationMapping = {
   [TicketingObject.comment]: commentUnificationMapping,
   [TicketingObject.user]: userUnificationMapping,
   [TicketingObject.account]: accountUnificationMapping,
-  [TicketingObject.contact]: contactUnificationMapping,
+  [TicketingObject.contact]: contactTicketingUnificationMapping,
   [TicketingObject.team]: teamUnificationMapping,
   [TicketingObject.tag]: tagUnificationMapping,
 };

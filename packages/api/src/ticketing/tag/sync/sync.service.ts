@@ -132,7 +132,13 @@ export class SyncService implements OnModuleInit {
       );
 
       const sourceObject: OriginalTagOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+
+      //TODO; do it in every file
+      if (!sourceObject || sourceObject.length == 0) {
+        this.logger.warn('Source object is empty, returning :) ....');
+        return;
+      }
+
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalTagOutput[]>({
         sourceObject,
@@ -141,8 +147,8 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedTagOutput[];
 
-      //TODO
-      const tagIds = sourceObject.map((tag) =>
+      //TODO: exceptionally we use the unifiedObject as we might need to get the fake remote ids from Zendesk store in id field
+      const tagIds = unifiedObject.map((tag) =>
         'id' in tag ? String(tag.id) : undefined,
       );
 
@@ -191,10 +197,10 @@ export class SyncService implements OnModuleInit {
       let tags_results: TicketingTag[] = [];
       for (let i = 0; i < tags.length; i++) {
         const tag = tags[i];
-        let originId = originIds[i];
+        const originId = originIds[i];
 
         if (!originId || originId == '') {
-          originId = 'zendesk_id_tag'; //zendesk does not return a uuid so we put that as default value
+          return;
         }
 
         const existingTag = await this.prisma.tcg_tags.findFirst({
@@ -223,13 +229,14 @@ export class SyncService implements OnModuleInit {
         } else {
           // Create a new tag
           this.logger.log('not existing tag ' + tag.name);
+
           const data = {
             id_tcg_tag: uuidv4(),
             name: tag.name,
             created_at: new Date(),
             modified_at: new Date(),
             id_tcg_ticket: id_ticket,
-            id_linked_users: linkedUserId,
+            id_linked_user: linkedUserId,
             remote_id: originId,
             remote_platform: originSource,
           };

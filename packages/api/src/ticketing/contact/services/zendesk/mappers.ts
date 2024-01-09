@@ -32,12 +32,24 @@ export class ZendeskContactMapper implements IContactMapper {
   }
 
   private mapSingleContactToUnified(
-    ticket: ZendeskContactOutput,
+    contact: ZendeskContactOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedContactOutput {
-    return;
+    const field_mappings = customFieldMappings?.map((mapping) => ({
+      [mapping.slug]: contact.user_fields?.[mapping.remote_id],
+    }));
+
+    const unifiedContact: UnifiedContactOutput = {
+      name: contact.name,
+      email_address: contact.email,
+      phone_number: contact.phone,
+      details: contact.details,
+      field_mappings: field_mappings,
+    };
+
+    return unifiedContact;
   }
 }

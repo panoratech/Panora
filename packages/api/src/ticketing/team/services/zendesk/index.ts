@@ -38,7 +38,7 @@ export class ZendeskService implements ITeamService {
       });
 
       const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/teams`,
+        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/groups.json`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ export class ZendeskService implements ITeamService {
       this.logger.log(`Synced zendesk teams !`);
 
       return {
-        data: resp.data.teams,
+        data: resp.data.groups,
         message: 'Zendesk teams retrieved',
         statusCode: 200,
       };

@@ -41,7 +41,7 @@ export class ZendeskService implements IContactService {
       });
 
       const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/contacts`,
+        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/users`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -51,10 +51,14 @@ export class ZendeskService implements IContactService {
           },
         },
       );
+      const contacts: ZendeskContactOutput[] = resp.data.users;
+      const filteredContacts = contacts.filter(
+        (contact) => contact.role === 'end-user',
+      );
       this.logger.log(`Synced zendesk contacts !`);
 
       return {
-        data: resp.data.contacts,
+        data: filteredContacts,
         message: 'Zendesk contacts retrieved',
         statusCode: 200,
       };
