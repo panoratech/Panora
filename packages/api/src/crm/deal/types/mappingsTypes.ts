@@ -1,12 +1,34 @@
-/* EXAMPLE ONCE YOU HAVE DEFINED YOUR SERVICE PROVIDER UNDER /services/myProvider
+import { FreshsalesDealMapper } from '../services/freshsales/mappers';
+import { HubspotDealMapper } from '../services/hubspot/mappers';
+import { PipedriveDealMapper } from '../services/pipedrive/mappers';
+import { ZendeskDealMapper } from '../services/zendesk/mappers';
+import { ZohoDealMapper } from '../services/zoho/mappers';
 
-import { MyProviderDealMapper } from '../services/myProvider/mappers';
-
-const myProviderDealMapper = new MyProviderDealMapper();
+const hubspotDealMapper = new HubspotDealMapper();
+const zendeskDealMapper = new ZendeskDealMapper();
+const zohoDealMapper = new ZohoDealMapper();
+const pipedriveDealMapper = new PipedriveDealMapper();
+const freshSalesDealMapper = new FreshsalesDealMapper();
 
 export const dealUnificationMapping = {
-  myProvider: {
-    unify: myProviderDealMapper.unify,
-    desunify: myProviderDealMapper.desunify,
+  hubspot: {
+    unify: hubspotDealMapper.unify,
+    desunify: hubspotDealMapper.desunify,
   },
-}; */
+  pipedrive: {
+    unify: pipedriveDealMapper.unify,
+    desunify: pipedriveDealMapper.desunify,
+  },
+  zoho: {
+    unify: zohoDealMapper.unify,
+    desunify: zohoDealMapper.desunify,
+  },
+  zendesk: {
+    unify: zendeskDealMapper.unify,
+    desunify: zendeskDealMapper.desunify,
+  },
+  freshsales: {
+    unify: freshSalesDealMapper.unify,
+    desunify: freshSalesDealMapper.desunify,
+  },
+};

@@ -1,4 +1,8 @@
-import { ZendeskContactInput, ZendeskContactOutput } from '@crm/@utils/@types';
+import {
+  Address,
+  ZendeskContactInput,
+  ZendeskContactOutput,
+} from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
@@ -23,6 +27,13 @@ export class ZendeskContactMapper implements IContactMapper {
       last_name: source.last_name,
       email: primaryEmail,
       phone: primaryPhone,
+      address: {
+        line1: source.addresses[0].street_1,
+        city: source.addresses[0].city,
+        state: source.addresses[0].state,
+        postal_code: source.addresses[0].postal_code,
+        country: source.addresses[0].country,
+      },
     };
 
     if (customFieldMappings && source.field_mappings) {
@@ -84,12 +95,21 @@ export class ZendeskContactMapper implements IContactMapper {
       });
     }
 
+    const address: Address = {
+      street_1: contact.address.line1,
+      city: contact.address.city,
+      state: contact.address.state,
+      postal_code: contact.address.postal_code,
+      country: contact.address.country,
+    };
+
     return {
       first_name: contact.first_name,
       last_name: contact.last_name,
       email_addresses,
       phone_numbers,
       field_mappings,
+      addresses: [address],
     };
   }
 }

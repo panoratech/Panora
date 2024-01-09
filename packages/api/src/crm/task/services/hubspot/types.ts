@@ -1,0 +1,27 @@
+export interface HubspotTaskInput {
+  hs_task_body: string;
+  hs_timestamp: string;
+  hs_task_status: string;
+  hs_task_subject: string;
+  hs_task_priority: string;
+  hubspot_owner_id: string;
+  [key: string]: any;
+}
+
+export interface HubspotTaskOutput {
+  id: string;
+  properties: {
+    createdate: string;
+    hs_lastmodifieddate: string;
+    hs_task_body: string;
+    hs_task_priority: 'HIGH' | 'MEDIUM' | 'LOW'; // Assuming these are the only valid values for task priority
+    hs_task_status: 'WAITING' | 'COMPLETED' | 'IN_PROGRESS'; // Assuming these are the valid statuses for task status
+    hs_task_subject: string;
+    hs_timestamp: string;
+    hubspot_owner_id: string;
+    [key: string]: any;
+  };
+  createdAt: string;
+  updatedAt: string;
+  archived: boolean;
+}

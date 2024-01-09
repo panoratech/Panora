@@ -1,4 +1,5 @@
 import {
+  Address,
   PipedriveContactInput,
   PipedriveContactOutput,
 } from '@crm/@utils/@types';
@@ -74,6 +75,14 @@ export class PipedriveContactMapper implements IContactMapper {
     const field_mappings = customFieldMappings.map((mapping) => ({
       [mapping.slug]: contact[mapping.remote_id],
     }));
+    const address: Address = {
+      street_1: '',
+      city: '',
+      state: '',
+      postal_code: '',
+      country: '',
+    };
+
     return {
       first_name: contact.first_name,
       last_name: contact.last_name,
@@ -86,6 +95,7 @@ export class PipedriveContactMapper implements IContactMapper {
         phone_type: p.label ? p.label : '',
       })), // Map each phone number,
       field_mappings,
+      addresses: [address],
     };
   }
 }

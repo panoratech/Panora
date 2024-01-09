@@ -63,13 +63,13 @@ import { ApiResponse } from '@@core/utils/types';
 import { handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output } from '../types/model.unified';
-import { ${ObjectCap}Response } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
 import { ${VerticalCap}Object } from '@${VerticalLow}/@utils/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { Original${ObjectCap}Output } from '@@core/utils/types/original/original.${VerticalLow}';
 import { unify } from '@@core/utils/unification/unify';
+import { I${ObjectCap}Service } from '../types';
 
 @Injectable()
 export class ${ObjectCap}Service {
@@ -88,39 +88,427 @@ export class ${ObjectCap}Service {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<${ObjectCap}Response> {
-    return
+  ): Promise<Unified${ObjectCap}Output[]> {
+    try {
+      const responses = await Promise.all(
+        unified${ObjectCap}Data.map((unifiedData) =>
+          this.add${ObjectCap}(
+            unifiedData,
+            integrationId.toLowerCase(),
+            linkedUserId,
+            remote_data,
+          ),
+        ),
+      );
+
+      return responses;
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
-  async add${ObjectCap}(  
+  async add${ObjectCap}(
     unified${ObjectCap}Data: Unified${ObjectCap}Input,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<${ObjectCap}Response> {
-    return;
+  ): Promise<Unified${ObjectCap}Output> {
+    try {
+      const linkedUser = await this.prisma.linked_users.findUnique({
+        where: {
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      //CHECKS
+      if (!linkedUser) throw new Error('Linked User Not Found');
+      const tick = unified${ObjectCap}Data.ticket_id;
+      //check if contact_id and account_id refer to real uuids
+      if (tick) {
+        const search = await this.prisma.tcg_tickets.findUnique({
+          where: {
+            id_tcg_ticket: tick,
+          },
+        });
+        if (!search)
+          throw new Error('You inserted a ticket_id which does not exist');
+      }
+
+      const contact = unified${ObjectCap}Data.contact_id;
+      //check if contact_id and account_id refer to real uuids
+      if (contact) {
+        const search = await this.prisma.tcg_contacts.findUnique({
+          where: {
+            id_tcg_contact: contact,
+          },
+        });
+        if (!search)
+          throw new Error('You inserted a contact_id which does not exist');
+      }
+      const user = unified${ObjectCap}Data.user_id;
+      //check if contact_id and account_id refer to real uuids
+      if (user) {
+        const search = await this.prisma.tcg_users.findUnique({
+          where: {
+            id_tcg_user: user,
+          },
+        });
+        if (!search)
+          throw new Error('You inserted a user_id which does not exist');
+      }
+
+      const attachmts = unified${ObjectCap}Data.attachments;
+      //CHEK IF attachments contains valid Attachment uuids
+      if (attachmts && attachmts.length > 0) {
+        attachmts.map(async (attachmt) => {
+          const search = await this.prisma.tcg_attachments.findUnique({
+            where: {
+              id_tcg_attachment: attachmt,
+            },
+          });
+          if (!search)
+            throw new Error(
+              'You inserted an attachment_id which does not exist',
+            );
+        });
+      }
+
+      //desunify the data according to the target obj wanted
+      const desunifiedObject = await desunify<Unified${ObjectCap}Input>({
+        sourceObject: unified${ObjectCap}Data,
+        targetType: ${VerticalCap}Object.${objectType},
+        providerName: integrationId,
+        customFieldMappings: [],
+      });
+
+      const service: I${ObjectCap}Service =
+        this.serviceRegistry.getService(integrationId);
+      //get remote_id of the ticket so the ${objectType} is inserted successfully
+      const ticket = await this.prisma.tcg_tickets.findUnique({
+        where: {
+          id_tcg_ticket: unified${ObjectCap}Data.ticket_id,
+        },
+        select: {
+          remote_id: true,
+        },
+      });
+      if (!ticket)
+        throw new Error(
+          'ticket does not exist for the ${objectType} you try to create',
+        );
+      const resp: ApiResponse<Original${ObjectCap}Output> = await service.add${ObjectCap}(
+        desunifiedObject,
+        linkedUserId,
+        ticket.remote_id,
+      );
+
+      //unify the data according to the target obj wanted
+      const unifiedObject = (await unify<Original${ObjectCap}Output[]>({
+        sourceObject: [resp.data],
+        targetType: ${VerticalCap}Object.${objectType},
+        providerName: integrationId, 
+        customFieldMappings: [],
+      })) as Unified${ObjectCap}Output[];
+
+      // add the ${objectType} inside our db
+      const source_${objectType} = resp.data;
+      const target_${objectType} = unifiedObject[0];
+      const originId =
+        'id' in source_${objectType} ? String(source_${objectType}.id) : undefined; //TODO
+
+      const existing${ObjectCap} = await this.prisma.tcg_${objectType}s.findFirst({
+        where: {
+          remote_id: originId,
+          remote_platform: integrationId,
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      let unique_ticketing_${objectType}_id: string;
+      const opts =
+        target_${objectType}.creator_type === 'contact'
+          ? {
+              id_tcg_contact: unified${ObjectCap}Data.contact_id,
+            }
+          : target_${objectType}.creator_type === 'user'
+          ? {
+              id_tcg_user: unified${ObjectCap}Data.user_id,
+            }
+          : {}; //case where nothing is passed for creator or a not authorized value;
+
+      if (existing${ObjectCap}) {
+        // Update the existing ${objectType}
+        let data: any = {
+          id_tcg_ticket: unified${ObjectCap}Data.ticket_id,
+          modified_at: new Date(),
+        };
+        if (target_${objectType}.body) {
+          data = { ...data, body: target_${objectType}.body };
+        }
+        if (target_${objectType}.html_body) {
+          data = { ...data, html_body: target_${objectType}.html_body };
+        }
+        if (target_${objectType}.is_private) {
+          data = { ...data, is_private: target_${objectType}.is_private };
+        }
+        if (target_${objectType}.creator_type) {
+          data = { ...data, creator_type: target_${objectType}.creator_type };
+        }
+        data = { ...data, ...opts };
+
+        const res = await this.prisma.tcg_${objectType}s.update({
+          where: {
+            id_tcg_${objectType}: existing${ObjectCap}.id_tcg_${objectType},
+          },
+          data: data,
+        });
+        unique_ticketing_${objectType}_id = res.id_tcg_${objectType};
+      } else {
+        // Create a new ${objectType}
+        this.logger.log('${objectType} not exists');
+        let data: any = {
+          id_tcg_${objectType}: uuidv4(),
+          created_at: new Date(),
+          modified_at: new Date(),
+          id_tcg_ticket: unified${ObjectCap}Data.ticket_id,
+          id_linked_user: linkedUserId,
+          remote_id: originId,
+          remote_platform: integrationId,
+        };
+
+        if (target_${objectType}.body) {
+          data = { ...data, body: target_${objectType}.body };
+        }
+        if (target_${objectType}.html_body) {
+          data = { ...data, html_body: target_${objectType}.html_body };
+        }
+        if (target_${objectType}.is_private) {
+          data = { ...data, is_private: target_${objectType}.is_private };
+        }
+        if (target_${objectType}.creator_type) {
+          data = { ...data, creator_type: target_${objectType}.creator_type };
+        }
+        data = { ...data, ...opts };
+
+        const res = await this.prisma.tcg_${objectType}s.create({
+          data: data,
+        });
+        unique_ticketing_${objectType}_id = res.id_tcg_${objectType};
+      }
+
+      //insert remote_data in db
+      await this.prisma.remote_data.upsert({
+        where: {
+          ressource_owner_id: unique_ticketing_${objectType}_id,
+        },
+        create: {
+          id_remote_data: uuidv4(),
+          ressource_owner_id: unique_ticketing_${objectType}_id,
+          format: 'json',
+          data: JSON.stringify(source_${objectType}),
+          created_at: new Date(),
+        },
+        update: {
+          data: JSON.stringify(source_${objectType}),
+          created_at: new Date(),
+        },
+      });
+
+      const result_${objectType} = await this.get${ObjectCap}(
+        unique_ticketing_${objectType}_id,
+        remote_data,
+      );
+
+      const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
+
+      const event = await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: status_resp,
+          type: 'ticketing.${objectType}.push', //sync, push or pull
+          method: 'POST',
+          url: '/ticketing/${objectType}',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
+      await this.webhook.handleWebhook(
+        result_${objectType},
+        'ticketing.${objectType}.created',
+        linkedUser.id_project,
+        event.id_event,
+      );
+      return result_${objectType};
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 
   async get${ObjectCap}(
-    id_${VerticalLow}_${objectType}: string,
+    id_${objectType}ing_${objectType}: string,
     remote_data?: boolean,
-  ): Promise<${ObjectCap}Response> {
-    return;
+  ): Promise<Unified${ObjectCap}Output> {
+    try {
+      const ${objectType} = await this.prisma.tcg_${objectType}s.findUnique({
+        where: {
+          id_tcg_${objectType}: id_${objectType}ing_${objectType},
+        },
+      });
+
+      // WE SHOULDNT HAVE FIELD MAPPINGS TO COMMENT
+
+      // Fetch field mappings for the ${objectType}
+      /*const values = await this.prisma.value.findMany({
+        where: {
+          entity: {
+            ressource_owner_id: ${objectType}.id_tcg_${objectType},
+          },
+        },
+        include: {
+          attribute: true,
+        },
+      });
+
+      Create a map to store unique field mappings
+      const fieldMappingsMap = new Map();
+
+      values.forEach((value) => {
+        fieldMappingsMap.set(value.attribute.slug, value.data);
+      });
+
+      // Convert the map to an array of objects
+      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
+        [key]: value,
+      }));*/
+
+      // Transform to Unified${ObjectCap}Output format
+      const unified${ObjectCap}: Unified${ObjectCap}Output = {
+        id: ${objectType}.id_tcg_${objectType},
+        body: ${objectType}.body,
+        html_body: ${objectType}.html_body,
+        is_private: ${objectType}.is_private,
+        creator_type: ${objectType}.creator_type,
+        ticket_id: ${objectType}.id_tcg_ticket,
+        contact_id: ${objectType}.id_tcg_contact, // uuid of Contact object
+        user_id: ${objectType}.id_tcg_user, // uuid of User object
+      };
+
+      let res: Unified${ObjectCap}Output = {
+        ...unified${ObjectCap},
+      };
+
+      if (remote_data) {
+        const resp = await this.prisma.remote_data.findFirst({
+          where: {
+            ressource_owner_id: ${objectType}.id_tcg_${objectType},
+          },
+        });
+        const remote_data = JSON.parse(resp.data);
+
+        res = {
+          ...res,
+          remote_data: remote_data,
+        };
+      }
+
+      return res;
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
+
 
   async get${ObjectCap}s(
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<${ObjectCap}Response> {
-    return;
-  }
+  ): Promise<Unified${ObjectCap}Output[]> {
+    try {
+      const ${objectType}s = await this.prisma.tcg_${objectType}s.findMany({
+        where: {
+          remote_platform: integrationId.toLowerCase(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-  async update${ObjectCap}(
-    id: string,
-    update${ObjectCap}Data: Partial<Unified${ObjectCap}Input>,
-  ): Promise<${ObjectCap}Response> {
-    return;
+      const unified${ObjectCap}s: Unified${ObjectCap}Output[] = await Promise.all(
+        ${objectType}s.map(async (${objectType}) => {
+          //WE SHOULDNT HAVE FIELD MAPPINGS FOR COMMENT
+          // Fetch field mappings for the ticket
+          /*const values = await this.prisma.value.findMany({
+            where: {
+              entity: {
+                ressource_owner_id: ${objectType}.id_tcg_ticket,
+              },
+            },
+            include: {
+              attribute: true,
+            },
+          });
+          // Create a map to store unique field mappings
+          const fieldMappingsMap = new Map();
+
+          values.forEach((value) => {
+            fieldMappingsMap.set(value.attribute.slug, value.data);
+          });
+
+          // Convert the map to an array of objects
+          const field_mappings = Array.from(
+            fieldMappingsMap,
+            ([key, value]) => ({ [key]: value }),
+          );*/
+
+          // Transform to Unified${ObjectCap}Output format
+          return {
+            id: ${objectType}.id_tcg_${objectType},
+            body: ${objectType}.body,
+            html_body: ${objectType}.html_body,
+            is_private: ${objectType}.is_private,
+            creator_type: ${objectType}.creator_type,
+            ticket_id: ${objectType}.id_tcg_ticket,
+            contact_id: ${objectType}.id_tcg_contact, // uuid of Contact object
+            user_id: ${objectType}.id_tcg_user, // uuid of User object
+          };
+        }),
+      );
+
+      let res: Unified${ObjectCap}Output[] = unified${ObjectCap}s;
+
+      if (remote_data) {
+        const remote_array_data: Unified${ObjectCap}Output[] = await Promise.all(
+          res.map(async (${objectType}) => {
+            const resp = await this.prisma.remote_data.findFirst({
+              where: {
+                ressource_owner_id: ${objectType}.id,
+              },
+            });
+            const remote_data = JSON.parse(resp.data);
+            return { ...${objectType}, remote_data };
+          }),
+        );
+        res = remote_array_data;
+      }
+
+      const event = await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.${objectType}.pulled',
+          method: 'GET',
+          url: '/ticketing/${objectType}',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      return res;
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
   }
 }
 EOF
@@ -165,7 +553,6 @@ cat > "types/index.ts" <<EOF
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output } from './model.unified';
 import { Original${ObjectCap}Output } from '@@core/utils/types/original/original.${VerticalLow}';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface I${ObjectCap}Service {
@@ -196,14 +583,6 @@ export interface I${ObjectCap}Mapper {
       remote_id: string;
     }[],
   ): Unified${ObjectCap}Output | Unified${ObjectCap}Output[];
-}
-
-export class ${ObjectCap}Response {
-  @ApiProperty({ type: [Unified${ObjectCap}Output] })
-  ${objectType}s: Unified${ObjectCap}Output[];
-
-  @ApiPropertyOptional({ type: [{}] })
-  remote_data?: Record<string, any>[]; // Data in original format
 }
 EOF
 
@@ -303,12 +682,14 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ${ObjectCap}Service } from './services/${objectType}.service';
-import { ${ObjectCap}Response } from './types';
-import { Unified${ObjectCap}Input } from './types/model.unified';
+import { Unified${ObjectCap}Input, Unified${ObjectCap}Output  } from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('${VerticalLow}/${objectType}')
 @Controller('${VerticalLow}/${objectType}')
 export class ${ObjectCap}Controller {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly ${objectType}Service: ${ObjectCap}Service,
     private logger: LoggerService,
@@ -320,8 +701,12 @@ export class ${ObjectCap}Controller {
     operationId: 'get${ObjectCap}s',
     summary: 'List a batch of ${ObjectCap}s',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+   @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
     name: 'remote_data',
     required: false,
@@ -329,18 +714,26 @@ export class ${ObjectCap}Controller {
     description:
       'Set to true to include data from the original ${VerticalCap} software.',
   })
-  //@ApiCustomResponse(${ObjectCap}Response)
+  @ApiCustomResponse(Unified${ObjectCap}Output)
+  //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  get${ObjectCap}s(
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
+  async get${ObjectCap}s(
+    @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.${objectType}Service.get${ObjectCap}s(
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try{
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+      );
+      return this.${objectType}Service.get${ObjectCap}s(
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    }catch(error){
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({
@@ -361,7 +754,8 @@ export class ${ObjectCap}Controller {
     description:
       'Set to true to include data from the original ${VerticalCap} software.',
   })
-  //@ApiCustomResponse(${ObjectCap}Response)
+  @ApiCustomResponse(Unified${ObjectCap}Output)
+  //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   get${ObjectCap}(
     @Param('id') id: string,
@@ -375,16 +769,10 @@ export class ${ObjectCap}Controller {
     summary: 'Create a ${ObjectCap}',
     description: 'Create a ${objectType} in any supported ${VerticalCap} software',
   })
-  @ApiHeader({
-    name: 'integrationId',
+   @ApiHeader({
+    name: 'connection_token',
     required: true,
-    description: 'The integration ID',
-    example: '6aa2acf3-c244-4f85-848b-13a57e7abf55',
-  })
-  @ApiHeader({
-    name: 'linkedUserId',
-    required: true,
-    description: 'The linked user ID',
+    description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiQuery({
@@ -395,28 +783,40 @@ export class ${ObjectCap}Controller {
       'Set to true to include data from the original ${VerticalCap} software.',
   })
   @ApiBody({ type: Unified${ObjectCap}Input })
-  //@ApiCustomResponse(${ObjectCap}Response)
+  @ApiCustomResponse(Unified${ObjectCap}Output)
+  //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  add${ObjectCap}(
+  async add${ObjectCap}(
     @Body() unified${ObjectCap}Data: Unified${ObjectCap}Input,
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
+    @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.${objectType}Service.add${ObjectCap}(
-      unified${ObjectCap}Data,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try{
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+      );
+      return this.${objectType}Service.add${ObjectCap}(
+        unified${ObjectCap}Data,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    }catch(error){
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({
     operationId: 'add${ObjectCap}s',
     summary: 'Add a batch of ${ObjectCap}s',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+   @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
     name: 'remote_data',
     required: false,
@@ -425,26 +825,37 @@ export class ${ObjectCap}Controller {
       'Set to true to include data from the original ${VerticalCap} software.',
   })
   @ApiBody({ type: Unified${ObjectCap}Input, isArray: true })
-  //@ApiCustomResponse(${ObjectCap}Response)
+  @ApiCustomResponse(Unified${ObjectCap}Output)
+  //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  add${ObjectCap}s(
+  async add${ObjectCap}s(
     @Body() unfied${ObjectCap}Data: Unified${ObjectCap}Input[],
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
+    @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.${objectType}Service.batchAdd${ObjectCap}s(
-      unfied${ObjectCap}Data,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try{
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+      );
+      return this.${objectType}Service.batchAdd${ObjectCap}s(
+        unfied${ObjectCap}Data,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    }catch(error){
+      throw new Error(error);
+    }
+    
   }
 
   @ApiOperation({
     operationId: 'update${ObjectCap}',
     summary: 'Update a ${ObjectCap}',
   })
+  @ApiCustomResponse(Unified${ObjectCap}Output)
+  //@UseGuards(ApiKeyAuthGuard)
   @Patch()
   update${ObjectCap}(
     @Query('id') id: string,

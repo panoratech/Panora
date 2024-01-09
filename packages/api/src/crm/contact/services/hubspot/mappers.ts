@@ -1,10 +1,13 @@
-import { HubspotContactInput, HubspotContactOutput } from '@crm/@utils/@types';
+import {
+  Address,
+  HubspotContactInput,
+  HubspotContactOutput,
+} from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
-import { UnifySourceType } from '@@core/utils/types/unfify.output';
 
 export class HubspotContactMapper implements IContactMapper {
   desunify(
@@ -66,6 +69,14 @@ export class HubspotContactMapper implements IContactMapper {
     const field_mappings = customFieldMappings.map((mapping) => ({
       [mapping.slug]: contact.properties[mapping.remote_id],
     }));
+    const address: Address = {
+      street_1: '',
+      city: '',
+      state: '',
+      postal_code: '',
+      country: '',
+    };
+
     return {
       first_name: contact.properties.firstname,
       last_name: contact.properties.lastname,
@@ -79,6 +90,7 @@ export class HubspotContactMapper implements IContactMapper {
         { phone_number: '' /*contact.properties.*/, phone_type: 'primary' },
       ],
       field_mappings,
+      addresses: [address],
     };
   }
 }
