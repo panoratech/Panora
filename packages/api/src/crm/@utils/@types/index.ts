@@ -22,12 +22,7 @@ import {
   UnifiedEngagementInput,
   UnifiedEngagementOutput,
 } from '@crm/engagement/types/model.unified';
-import { ILeadService } from '@crm/lead/types';
-import { leadUnificationMapping } from '@crm/lead/types/mappingsTypes';
-import {
-  UnifiedLeadInput,
-  UnifiedLeadOutput,
-} from '@crm/lead/types/model.unified';
+
 import { INoteService } from '@crm/note/types';
 import { noteUnificationMapping } from '@crm/note/types/mappingsTypes';
 import {
@@ -62,6 +57,7 @@ export enum CrmObject {
   note = 'note',
   task = 'task',
   engagement = 'engagement',
+  engagementType = 'engagementType',
   stage = 'stage',
   user = 'user',
 }
@@ -75,8 +71,6 @@ export type UnifiedCrm =
   | UnifiedDealOutput
   | UnifiedEngagementInput
   | UnifiedEngagementOutput
-  | UnifiedLeadInput
-  | UnifiedLeadOutput
   | UnifiedNoteInput
   | UnifiedNoteOutput
   | UnifiedStageInput
@@ -91,7 +85,6 @@ export const unificationMapping = {
   [CrmObject.deal]: dealUnificationMapping,
   [CrmObject.company]: companyUnificationMapping,
   [CrmObject.engagement]: engagementUnificationMapping,
-  [CrmObject.lead]: leadUnificationMapping,
   [CrmObject.note]: noteUnificationMapping,
   [CrmObject.stage]: stageUnificationMapping,
   [CrmObject.task]: taskUnificationMapping,
@@ -104,7 +97,6 @@ export type ICrmService =
   | IEngagementService
   | INoteService
   | IDealService
-  | ILeadService
   | ITaskService
   | IStageService
   | ICompanyService;
@@ -144,13 +136,6 @@ export * from '../../deal/services/hubspot/types';
 export * from '../../deal/services/zoho/types';
 export * from '../../deal/services/pipedrive/types';
 
-/* lead */
-export * from '../../lead/services/freshsales/types';
-export * from '../../lead/services/zendesk/types';
-export * from '../../lead/services/hubspot/types';
-export * from '../../lead/services/zoho/types';
-export * from '../../lead/services/pipedrive/types';
-
 /* task */
 export * from '../../task/services/freshsales/types';
 export * from '../../task/services/zendesk/types';
@@ -171,6 +156,8 @@ export * from '../../company/services/zendesk/types';
 export * from '../../company/services/hubspot/types';
 export * from '../../company/services/zoho/types';
 export * from '../../company/services/pipedrive/types';
+
+/* engagementType */
 
 export class Email {
   @ApiProperty({
@@ -237,12 +224,12 @@ export class Address {
   @ApiProperty({
     description: 'The address type',
   })
-  address_type: string;
+  address_type?: string;
 
   @ApiProperty({
     description: 'The owner type of the address',
   })
-  owner_type: string;
+  owner_type?: string;
 }
 
 export type NormalizedContactInfo = {

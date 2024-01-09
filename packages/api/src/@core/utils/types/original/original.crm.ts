@@ -16,8 +16,6 @@ import {
   ZohoCompanyOutput,
   FreshsalesEngagementInput,
   FreshsalesEngagementOutput,
-  FreshsalesLeadInput,
-  FreshsalesLeadOutput,
   FreshsalesNoteInput,
   FreshsalesNoteOutput,
   FreshsalesStageInput,
@@ -27,32 +25,24 @@ import {
   HubspotDealOutput,
   HubspotEngagementInput,
   HubspotEngagementOutput,
-  HubspotLeadInput,
-  HubspotLeadOutput,
   HubspotStageInput,
   HubspotStageOutput,
   HubspotTaskInput,
   HubspotTaskOutput,
   PipedriveEngagementInput,
   PipedriveEngagementOutput,
-  PipedriveLeadInput,
-  PipedriveLeadOutput,
   PipedriveStageInput,
   PipedriveStageOutput,
   PipedriveTaskInput,
   PipedriveTaskOutput,
   ZendeskEngagementInput,
   ZendeskEngagementOutput,
-  ZendeskLeadInput,
-  ZendeskLeadOutput,
   ZendeskStageInput,
   ZendeskStageOutput,
   ZendeskTaskInput,
   ZendeskTaskOutput,
   ZohoEngagementInput,
   ZohoEngagementOutput,
-  ZohoLeadInput,
-  ZohoLeadOutput,
   ZohoNoteInput,
   ZohoNoteOutput,
   ZohoStageInput,
@@ -145,13 +135,7 @@ export type OriginalStageInput =
   | ZendeskStageInput
   | PipedriveStageInput;
 
-/* lead */
-export type OriginalLeadInput =
-  | FreshsalesLeadInput
-  | HubspotLeadInput
-  | ZohoLeadInput
-  | ZendeskLeadInput
-  | PipedriveLeadInput;
+/* engagementType */
 
 /* user */
 export type OriginalUserInput =
@@ -169,7 +153,6 @@ export type CrmObjectInput =
   | OriginalNoteInput
   | OriginalTaskInput
   | OriginalStageInput
-  | OriginalLeadInput
   | OriginalUserInput;
 
 /* OUTPUT */
@@ -229,13 +212,7 @@ export type OriginalStageOutput =
   | ZendeskStageOutput
   | PipedriveStageOutput;
 
-/* lead */
-export type OriginalLeadOutput =
-  | FreshsalesLeadOutput
-  | HubspotLeadOutput
-  | ZohoLeadOutput
-  | ZendeskLeadOutput
-  | PipedriveLeadOutput;
+/* engagementType */
 
 /* user */
 export type OriginalUserOutput =
@@ -253,5 +230,4 @@ export type CrmObjectOutput =
   | OriginalNoteOutput
   | OriginalTaskOutput
   | OriginalStageOutput
-  | OriginalLeadOutput
   | OriginalUserOutput;
