@@ -23,48 +23,6 @@ export class ZohoService implements IUserService {
     this.registry.registerService('zoho', this);
   }
 
-  async addUser(
-    userData: ZohoUserInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoUserOutput>> {
-    try {
-      //TODO: check required scope  => crm.objects.users.write
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
-        },
-      });
-      const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Users`,
-        { data: [userData] },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      //this.logger.log('zoho resp is ' + JSON.stringify(resp));
-      return {
-        data: resp.data.data,
-        message: 'Zoho user created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.user,
-        ActionType.POST,
-      );
-    }
-    return;
-  }
-
   async syncUsers(
     linkedUserId: string,
   ): Promise<ApiResponse<ZohoUserOutput[]>> {

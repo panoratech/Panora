@@ -27,48 +27,6 @@ export class HubspotService implements IUserService {
     );
     this.registry.registerService('hubspot', this);
   }
-  async addUser(
-    userData: HubspotUserInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<HubspotUserOutput>> {
-    try {
-      //TODO: check required scope  => crm.objects.users.write
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-        },
-      });
-      const dataBody = {
-        properties: userData,
-      };
-      const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/users/`,
-        JSON.stringify(dataBody),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      return {
-        data: resp.data,
-        message: 'Hubspot user created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.user,
-        ActionType.POST,
-      );
-    }
-  }
 
   async syncUsers(
     linkedUserId: string,
@@ -85,7 +43,7 @@ export class HubspotService implements IUserService {
 
       const commonPropertyNames = Object.keys(commonHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/users/';
+      const baseURL = 'https://api.hubapi.com/settings/v3/users';
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

@@ -40,7 +40,7 @@ export class PipedriveService implements IDealService {
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/persons`,
+        `https://api.pipedrive.com/v1/deals`,
         JSON.stringify(dealData),
         {
           headers: {
@@ -79,7 +79,7 @@ export class PipedriveService implements IDealService {
           provider_slug: 'pipedrive',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
+      const resp = await axios.get(`https://api.pipedrive.com/v1/deals`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

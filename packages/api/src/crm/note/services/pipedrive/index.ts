@@ -40,7 +40,7 @@ export class PipedriveService implements INoteService {
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/persons`,
+        `https://api.pipedrive.com/v1/notes`,
         JSON.stringify(noteData),
         {
           headers: {
@@ -79,7 +79,7 @@ export class PipedriveService implements INoteService {
           provider_slug: 'pipedrive',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
+      const resp = await axios.get(`https://api.pipedrive.com/v1/notes`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

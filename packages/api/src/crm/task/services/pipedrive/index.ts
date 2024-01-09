@@ -40,7 +40,7 @@ export class PipedriveService implements ITaskService {
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/persons`,
+        `https://api.pipedrive.com/v1/tasks`,
         JSON.stringify(taskData),
         {
           headers: {
@@ -79,7 +79,7 @@ export class PipedriveService implements ITaskService {
           provider_slug: 'pipedrive',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
+      const resp = await axios.get(`https://api.pipedrive.com/v1/tasks`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

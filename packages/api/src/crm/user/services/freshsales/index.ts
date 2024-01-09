@@ -28,47 +28,6 @@ export class FreshsalesService implements IUserService {
     this.registry.registerService('freshsales', this);
   }
 
-  async addUser(
-    userData: FreshsalesUserInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<FreshsalesUserOutput>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
-      const dataBody = {
-        user: userData,
-      };
-      const resp = await axios.post(
-        'https://domain.freshsales.io/api/users',
-        JSON.stringify(dataBody),
-        {
-          headers: {
-            Authorization: `Token token=${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      return {
-        data: resp.data,
-        message: 'Freshsales user created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Freshsales',
-        CrmObject.user,
-        ActionType.POST,
-      );
-    }
-  }
-
   async syncUsers(
     linkedUserId: string,
   ): Promise<ApiResponse<FreshsalesUserOutput[]>> {

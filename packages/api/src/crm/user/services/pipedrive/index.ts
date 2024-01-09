@@ -27,47 +27,6 @@ export class PipedriveService implements IUserService {
     this.registry.registerService('pipedrive', this);
   }
 
-  async addUser(
-    userData: PipedriveUserInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<PipedriveUserOutput>> {
-    try {
-      //TODO: check required scope  => crm.objects.users.write
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'pipedrive',
-        },
-      });
-      const resp = await axios.post(
-        `https://api.pipedrive.com/v1/persons`,
-        JSON.stringify(userData),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      return {
-        data: resp.data.data,
-        message: 'Pipedrive user created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.user,
-        ActionType.POST,
-      );
-    }
-    return;
-  }
-
   async syncUsers(
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveUserOutput[]>> {
@@ -79,7 +38,7 @@ export class PipedriveService implements IUserService {
           provider_slug: 'pipedrive',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
+      const resp = await axios.get(`https://api.pipedrive.com/v1/users`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

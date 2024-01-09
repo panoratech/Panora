@@ -1,91 +1,29 @@
 export interface ZendeskDeal {
-  owner_id: number;
-  created_at: string;
-  description: string | null;
-  industry: string | null;
-  billing_address: string | null;
-  linkedin: string | null;
-  title: string;
-  contact_id: number;
-  skype: string | null;
-  twitter: string | null;
-  shipping_address: string | null;
   id: number;
-  fax: string | null;
-  is_organization: boolean;
-  first_name: string;
-  email: string;
-  prospect_status: string;
-  website: string | null;
-  address: Address;
-  facebook: string | null;
-  mobile: string;
-  last_name: string;
-  tags: Tag[];
-  custom_field_values: CustomFieldValue[];
-  phone: string;
-  customer_status: string;
-  name: string;
   creator_id: number;
-  meta: Meta;
+  owner_id?: number;
+  name?: string;
+  value: number | string; // Could be either number or string depending on the presence of decimal part
+  currency?: string;
+  hot?: boolean;
+  stage_id?: number;
+  last_stage_change_at?: string;
+  last_stage_change_by_id: number;
+  last_activity_at: string;
+  source_id?: number;
+  loss_reason_id?: number;
+  unqualified_reason_id?: number;
+  dropbox_email: string;
+  contact_id?: number;
+  organization_id: number;
+  estimated_close_date?: string;
+  customized_win_likelihood?: number;
+  tags?: string[];
   custom_fields: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+  added_at: string;
 }
 
 export type ZendeskDealInput = Partial<ZendeskDeal>;
 export type ZendeskDealOutput = ZendeskDealInput;
-
-type TagData = {
-  name: string;
-  resource_type: string;
-  id: number;
-};
-
-type TagMeta = {
-  type: string;
-};
-
-type Tag = {
-  data: TagData;
-  meta: TagMeta;
-};
-
-type PreviousEvent = {
-  title: string;
-};
-
-type Meta = {
-  event_id: string;
-  event_cause: string;
-  sequence: number;
-  event_time: string;
-  event_type: string;
-  previous: PreviousEvent;
-  type: string;
-};
-
-interface Address {
-  line1: string;
-  city: string;
-  postal_code: string;
-  state: string;
-  country: string;
-}
-
-type CustomFieldData = {
-  name: string;
-  resource_type: string;
-  id: number;
-  type: string;
-};
-
-type CustomFieldMeta = {
-  type: string;
-};
-
-type CustomFieldValue = {
-  value: boolean;
-  custom_field: {
-    data: CustomFieldData;
-    meta: CustomFieldMeta;
-  };
-};

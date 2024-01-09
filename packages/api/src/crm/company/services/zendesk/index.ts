@@ -26,6 +26,7 @@ export class ZendeskService implements ICompanyService {
     this.registry.registerService('zendesk', this);
   }
 
+  //TODO: CANT ADD A COMPANY WITH ZENDESK
   async addCompany(
     companyData: ZendeskCompanyInput,
     linkedUserId: string,
@@ -39,7 +40,7 @@ export class ZendeskService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `https://api.getbase.com/v2/companys`,
+        `https://api.getbase.com/v2/accounts/self`,
         {
           data: companyData,
         },
@@ -81,7 +82,7 @@ export class ZendeskService implements ICompanyService {
           provider_slug: 'zendesk',
         },
       });
-      const resp = await axios.get(`https://api.getbase.com/v2/companys`, {
+      const resp = await axios.get(`https://api.getbase.com/v2/accounts/self`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -26,50 +26,6 @@ export class ZendeskService implements IUserService {
     this.registry.registerService('zendesk', this);
   }
 
-  async addUser(
-    userData: ZendeskUserInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZendeskUserOutput>> {
-    try {
-      //TODO: check required scope  => crm.objects.users.write
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-        },
-      });
-      const resp = await axios.post(
-        `https://api.getbase.com/v2/users`,
-        {
-          data: userData,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-
-      return {
-        data: resp.data.data,
-        message: 'Zendesk user created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.user,
-        ActionType.POST,
-      );
-    }
-    return;
-  }
-
   async syncUsers(
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskUserOutput[]>> {

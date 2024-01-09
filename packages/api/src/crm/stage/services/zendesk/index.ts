@@ -26,50 +26,6 @@ export class ZendeskService implements IStageService {
     this.registry.registerService('zendesk', this);
   }
 
-  async addStage(
-    stageData: ZendeskStageInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZendeskStageOutput>> {
-    try {
-      //TODO: check required scope  => crm.objects.stages.write
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-        },
-      });
-      const resp = await axios.post(
-        `https://api.getbase.com/v2/stages`,
-        {
-          data: stageData,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-
-      return {
-        data: resp.data.data,
-        message: 'Zendesk stage created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.stage,
-        ActionType.POST,
-      );
-    }
-    return;
-  }
-
   async syncStages(
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskStageOutput[]>> {

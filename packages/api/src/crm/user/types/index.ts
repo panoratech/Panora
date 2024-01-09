@@ -4,11 +4,6 @@ import { OriginalUserOutput } from '@@core/utils/types/original/original.crm';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IUserService {
-  addUser(
-    userData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalUserOutput>>;
-
   syncUsers(
     linkedUserId: string,
     custom_properties?: string[],

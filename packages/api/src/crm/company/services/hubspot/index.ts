@@ -43,7 +43,7 @@ export class HubspotService implements ICompanyService {
         properties: companyData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/companys/`,
+        `https://api.hubapi.com/crm/v3/objects/companies`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -85,7 +85,7 @@ export class HubspotService implements ICompanyService {
 
       const commonPropertyNames = Object.keys(commonHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/companys/';
+      const baseURL = 'https://api.hubapi.com/crm/v3/objects/companies';
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
@@ -101,11 +101,11 @@ export class HubspotService implements ICompanyService {
           )}`,
         },
       });
-      this.logger.log(`Synced hubspot companys !`);
+      this.logger.log(`Synced hubspot companies !`);
 
       return {
         data: resp.data.results,
-        message: 'Hubspot companys retrieved',
+        message: 'Hubspot companies retrieved',
         statusCode: 200,
       };
     } catch (error) {

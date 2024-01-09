@@ -4,11 +4,6 @@ import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IStageService {
-  addStage(
-    stageData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalStageOutput>>;
-
   syncStages(
     linkedUserId: string,
     custom_properties?: string[],
