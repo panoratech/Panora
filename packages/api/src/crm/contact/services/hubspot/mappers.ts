@@ -4,7 +4,6 @@ import {
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
-import { UnifySourceType } from '@@core/utils/types/unfify.output';
 
 export class HubspotContactMapper implements IContactMapper {
   desunify(

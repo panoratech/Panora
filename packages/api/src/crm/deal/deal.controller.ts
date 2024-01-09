@@ -19,12 +19,14 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { DealService } from './services/deal.service';
-import { DealResponse } from './types';
-import { UnifiedDealInput } from './types/model.unified';
+import { UnifiedDealInput, UnifiedDealOutput } from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('crm/deal')
 @Controller('crm/deal')
 export class DealController {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly dealService: DealService,
     private logger: LoggerService,
@@ -36,22 +38,34 @@ export class DealController {
     operationId: 'getDeals',
     summary: 'List a batch of Deals',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
-  //@ApiCustomResponse(DealResponse)
+  @ApiCustomResponse(UnifiedDealOutput)
+  //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  getDeals(
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
+  async getDeals(
+    @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.dealService.getDeals(integrationId, linkedUserId, remote_data);
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.dealService.getDeals(remoteSource, linkedUserId, remote_data);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({
@@ -63,7 +77,7 @@ export class DealController {
     name: 'id',
     required: true,
     type: String,
-    description: 'id of the  you want to retrive.',
+    description: 'id of the deal you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -71,9 +85,13 @@ export class DealController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
-  //@ApiCustomResponse(DealResponse)
+  @ApiCustomResponse(UnifiedDealOutput)
+  //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getDeal(@Param('id') id: string, @Query('remote_data') remote_data?: boolean) {
+  getDeal(
+    @Param('id') id: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
     return this.dealService.getDeal(id, remote_data);
   }
 
@@ -83,15 +101,9 @@ export class DealController {
     description: 'Create a deal in any supported Crm software',
   })
   @ApiHeader({
-    name: 'integrationId',
+    name: 'connection_token',
     required: true,
-    description: 'The integration ID',
-    example: '6aa2acf3-c244-4f85-848b-13a57e7abf55',
-  })
-  @ApiHeader({
-    name: 'linkedUserId',
-    required: true,
-    description: 'The linked user ID',
+    description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiQuery({
@@ -101,28 +113,40 @@ export class DealController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiBody({ type: UnifiedDealInput })
-  //@ApiCustomResponse(DealResponse)
+  @ApiCustomResponse(UnifiedDealOutput)
+  //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  addDeal(
-    @Body() unfiedDealData: UnifiedDealInput,
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
+  async addDeal(
+    @Body() unifiedDealData: UnifiedDealInput,
+    @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.dealService.addDeal(
-      unfiedDealData,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.dealService.addDeal(
+        unifiedDealData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({
     operationId: 'addDeals',
     summary: 'Add a batch of Deals',
   })
-  @ApiHeader({ name: 'integrationId', required: true })
-  @ApiHeader({ name: 'linkedUserId', required: true })
+  @ApiHeader({
+    name: 'connection_token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiQuery({
     name: 'remote_data',
     required: false,
@@ -130,29 +154,39 @@ export class DealController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiBody({ type: UnifiedDealInput, isArray: true })
-  //@ApiCustomResponse(DealResponse)
+  @ApiCustomResponse(UnifiedDealOutput)
+  //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  addDeals(
+  async addDeals(
     @Body() unfiedDealData: UnifiedDealInput[],
-    @Headers('integrationId') integrationId: string,
-    @Headers('linkedUserId') linkedUserId: string,
+    @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.dealService.batchAddDeals(
-      unfiedDealData,
-      integrationId,
-      linkedUserId,
-      remote_data,
-    );
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.dealService.batchAddDeals(
+        unfiedDealData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @ApiOperation({
     operationId: 'updateDeal',
     summary: 'Update a Deal',
   })
-  @Patch()
+  @ApiCustomResponse(UnifiedDealOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Patch(':id')
   updateDeal(
-    @Query('id') id: string,
+    @Param('id') id: string,
     @Body() updateDealData: Partial<UnifiedDealInput>,
   ) {
     return this.dealService.updateDeal(id, updateDealData);

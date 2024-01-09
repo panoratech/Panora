@@ -17,6 +17,7 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from './registry.service';
+import { normalizeAddresses } from '@crm/company/utils';
 
 @Injectable()
 export class ContactService {
@@ -116,7 +117,11 @@ export class ContactService {
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
-        include: { crm_email_addresses: true, crm_phone_numbers: true },
+        include: {
+          crm_email_addresses: true,
+          crm_phone_numbers: true,
+          crm_addresses: true,
+        },
       });
 
       const { normalizedEmails, normalizedPhones } = normalizeEmailsAndNumbers(
@@ -124,47 +129,70 @@ export class ContactService {
         target_contact.phone_numbers,
       );
 
+      const normalizedAddresses = normalizeAddresses(target_contact.addresses);
+
       let unique_crm_contact_id: string;
 
       if (existingContact) {
         // Update the existing contact
+        let data: any = {
+          modified_at: new Date(),
+          crm_email_addresses: {
+            update: normalizedEmails.map((email, index) => ({
+              where: {
+                id_crm_email:
+                  existingContact.crm_email_addresses[index].id_crm_email,
+              },
+              data: email,
+            })),
+          },
+          crm_phone_numbers: {
+            update: normalizedPhones.map((phone, index) => ({
+              where: {
+                id_crm_phone_number:
+                  existingContact.crm_phone_numbers[index].id_crm_phone_number,
+              },
+              data: phone,
+            })),
+          },
+          crm_addresses: {
+            update: normalizedAddresses.map((addy, index) => ({
+              where: {
+                id_crm_address:
+                  existingContact.crm_addresses[index].id_crm_address,
+              },
+              data: addy,
+            })),
+          },
+        };
+
+        if (target_contact.first_name) {
+          data = { ...data, first_name: target_contact.first_name };
+        }
+        if (target_contact.last_name) {
+          data = { ...data, last_name: target_contact.last_name };
+        }
+        if (target_contact.user_id) {
+          data = {
+            ...data,
+            id_crm_user: target_contact.user_id,
+          };
+        }
+
         const res = await this.prisma.crm_contacts.update({
           where: {
             id_crm_contact: existingContact.id_crm_contact,
           },
-          data: {
-            first_name: target_contact.first_name || '',
-            last_name: target_contact.last_name || '',
-            modified_at: new Date(),
-            crm_email_addresses: {
-              update: normalizedEmails.map((email, index) => ({
-                where: {
-                  id_crm_email:
-                    existingContact.crm_email_addresses[index].id_crm_email,
-                },
-                data: email,
-              })),
-            },
-            crm_phone_numbers: {
-              update: normalizedPhones.map((phone, index) => ({
-                where: {
-                  id_crm_phone_number:
-                    existingContact.crm_phone_numbers[index]
-                      .id_crm_phone_number,
-                },
-                data: phone,
-              })),
-            },
-          },
+          data: data,
         });
+
         unique_crm_contact_id = res.id_crm_contact;
       } else {
         // Create a new contact
         this.logger.log('not existing contact ' + target_contact.first_name);
-        const data = {
-          id_crm_contact: uuidv4(),
-          first_name: target_contact.first_name || '',
-          last_name: target_contact.last_name || '',
+        const uuid = uuidv4();
+        let data: any = {
+          id_crm_contact: uuid,
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
@@ -172,17 +200,36 @@ export class ContactService {
           remote_platform: integrationId,
         };
 
+        if (target_contact.first_name) {
+          data = { ...data, first_name: target_contact.first_name };
+        }
+        if (target_contact.last_name) {
+          data = { ...data, last_name: target_contact.last_name };
+        }
+        if (target_contact.user_id) {
+          data = {
+            ...data,
+            id_crm_user: target_contact.user_id,
+          };
+        }
+
         if (normalizedEmails) {
           data['crm_email_addresses'] = {
-            create: normalizedEmails,
+            create: { ...normalizedEmails, id_crm_contact: uuid },
           };
         }
 
         if (normalizedPhones) {
           data['crm_phone_numbers'] = {
-            create: normalizedPhones,
+            create: { ...normalizedPhones, id_crm_contact: uuid },
           };
         }
+        if (normalizedAddresses) {
+          data['crm_addresses'] = {
+            create: { ...normalizeAddresses, id_crm_contact: uuid },
+          };
+        }
+
         const res = await this.prisma.crm_contacts.create({
           data: data,
         });
@@ -291,6 +338,7 @@ export class ContactService {
         include: {
           crm_email_addresses: true,
           crm_phone_numbers: true,
+          crm_addresses: true,
         },
       });
 
@@ -331,6 +379,10 @@ export class ContactService {
           phone_number: phone.phone_number,
           phone_type: phone.phone_type,
         })),
+        addresses: contact.crm_addresses.map((addy) => ({
+          ...addy,
+        })),
+        user_id: contact.id_crm_user,
         field_mappings: field_mappings,
       };
 
@@ -371,6 +423,7 @@ export class ContactService {
         include: {
           crm_email_addresses: true,
           crm_phone_numbers: true,
+          crm_addresses: true,
         },
       });
 
@@ -413,6 +466,10 @@ export class ContactService {
               phone_number: phone.phone_number,
               phone_type: phone.phone_type,
             })),
+            addresses: contact.crm_addresses.map((addy) => ({
+              ...addy,
+            })),
+            user_id: contact.id_crm_user,
             field_mappings: field_mappings,
           };
         }),
