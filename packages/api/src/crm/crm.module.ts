@@ -7,8 +7,6 @@ import { StageModule } from './stage/stage.module';
 import { TaskModule } from './task/task.module';
 import { UserModule } from './user/user.module';
 import { CompanyModule } from './company/company.module';
-import { EngagementTypeModule } from './engagementType/engagementType.module';
-import { EngagementTypeModule } from './engagement-type/engagement-type.module';
 
 @Module({
   imports: [
@@ -20,7 +18,6 @@ import { EngagementTypeModule } from './engagement-type/engagement-type.module';
     StageModule,
     TaskModule,
     UserModule,
-    EngagementTypeModule,
   ],
   providers: [],
   controllers: [],
@@ -33,7 +30,6 @@ import { EngagementTypeModule } from './engagement-type/engagement-type.module';
     StageModule,
     TaskModule,
     UserModule,
-    EngagementTypeModule,
   ],
 })
 export class CrmModule {}

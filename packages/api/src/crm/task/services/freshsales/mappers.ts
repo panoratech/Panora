@@ -11,9 +11,9 @@ export class FreshsalesTaskMapper implements ITaskMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: FreshsalesTaskOutput | FreshsalesTaskOutput[],
-  ): UnifiedTaskOutput | UnifiedTaskOutput[] {
+  ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     // Handling single FreshsalesTaskOutput
     if (!Array.isArray(source)) {
       return this.mapSingleFreshsalesTaskToUnified(source);

@@ -14,13 +14,15 @@ import { ApiResponse } from '@@core/utils/types';
 import { handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from './registry.service';
 import { normalizeAddresses } from '@crm/company/utils';
+import { Utils } from '../utils';
 
 @Injectable()
 export class ContactService {
+  private readonly utils = new Utils();
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -124,10 +126,11 @@ export class ContactService {
         },
       });
 
-      const { normalizedEmails, normalizedPhones } = normalizeEmailsAndNumbers(
-        target_contact.email_addresses,
-        target_contact.phone_numbers,
-      );
+      const { normalizedEmails, normalizedPhones } =
+        this.utils.normalizeEmailsAndNumbers(
+          target_contact.email_addresses,
+          target_contact.phone_numbers,
+        );
 
       const normalizedAddresses = normalizeAddresses(target_contact.addresses);
 

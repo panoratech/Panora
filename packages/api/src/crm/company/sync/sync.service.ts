@@ -14,11 +14,13 @@ import { UnifiedCompanyOutput } from '../types/model.unified';
 import { ICompanyService } from '../types';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 import { crm_companies as CrmCompany } from '@prisma/client';
-import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
 import { normalizeAddresses } from '../utils';
+import { Utils } from '@crm/contact/utils';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
+  private readonly utils = new Utils();
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -203,7 +205,7 @@ export class SyncService implements OnModuleInit {
         });
 
         const { normalizedEmails, normalizedPhones } =
-          normalizeEmailsAndNumbers(
+          this.utils.normalizeEmailsAndNumbers(
             company.email_addresses,
             company.phone_numbers,
           );

@@ -90,6 +90,8 @@ model crm_companies {
   number_of_employees BigInt?
   created_at          DateTime              @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
+  remote_id           String?
+  remote_platform     String?
   id_crm_user         String?               @db.Uuid
   id_linked_user      String?               @db.Uuid
   crm_addresses       crm_addresses[]
@@ -130,6 +132,8 @@ model crm_deals {
   amount             BigInt
   created_at         DateTime          @db.Timestamp(6)
   modified_at        DateTime          @db.Timestamp(6)
+  remote_id          String?
+  remote_platform    String?
   id_crm_user        String?           @db.Uuid
   id_crm_deals_stage String?           @db.Uuid
   id_linked_user     String?           @db.Uuid
@@ -148,6 +152,8 @@ model crm_deals_stages {
   created_at         DateTime    @db.Timestamp(6)
   modified_at        DateTime    @db.Timestamp(6)
   id_linked_user     String?     @db.Uuid
+  remote_id          String?
+  remote_platform    String?
   crm_deals          crm_deals[]
 }
 
@@ -186,6 +192,7 @@ model crm_engagement_types {
   remote_id              String?
   created_at             DateTime          @db.Timestamp(6)
   modified_at            DateTime          @db.Timestamp(6)
+  remote_platform        String?
   crm_engagements        crm_engagements[]
 }
 
@@ -202,6 +209,7 @@ model crm_engagements {
   id_crm_engagement_type  String                    @db.Uuid
   id_crm_company          String?                   @db.Uuid
   id_linked_user          String?                   @db.Uuid
+  remote_platform         String?
   crm_engagement_contacts crm_engagement_contacts[]
   crm_engagement_types    crm_engagement_types      @relation(fields: [id_crm_engagement_type], references: [id_crm_engagement_type], onDelete: NoAction, onUpdate: NoAction, map: "fk_28")
   crm_companies           crm_companies?            @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_29")
@@ -211,17 +219,19 @@ model crm_engagements {
 }
 
 model crm_notes {
-  id_crm_note    String         @id(map: "pk_crm_notes") @db.Uuid
-  content        String
-  created_at     DateTime       @db.Timestamp(6)
-  modified_at    DateTime       @db.Timestamp(6)
-  id_crm_company String?        @db.Uuid
-  id_crm_contact String?        @db.Uuid
-  id_crm_deal    String?        @db.Uuid
-  id_linked_user String?        @db.Uuid
-  crm_companies  crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_18")
-  crm_contacts   crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_19")
-  crm_deals      crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_20")
+  id_crm_note     String         @id(map: "pk_crm_notes") @db.Uuid
+  content         String
+  created_at      DateTime       @db.Timestamp(6)
+  modified_at     DateTime       @db.Timestamp(6)
+  id_crm_company  String?        @db.Uuid
+  id_crm_contact  String?        @db.Uuid
+  id_crm_deal     String?        @db.Uuid
+  id_linked_user  String?        @db.Uuid
+  remote_id       String?
+  remote_platform String?
+  crm_companies   crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_18")
+  crm_contacts    crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_19")
+  crm_deals       crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_20")
 
   @@index([id_crm_contact], map: "fk_crm_note_crm_companyid")
   @@index([id_crm_company], map: "fk_crm_note_crm_contactid")
@@ -246,21 +256,23 @@ model crm_phone_numbers {
 }
 
 model crm_tasks {
-  id_crm_task    String         @id(map: "pk_crm_task") @db.Uuid
-  subject        String?
-  content        String?
-  status         String?
-  due_date       DateTime?      @db.Timestamp(6)
-  finished_date  DateTime?      @db.Timestamp(6)
-  created_at     DateTime       @db.Timestamp(6)
-  modified_at    DateTime       @db.Timestamp(6)
-  id_crm_user    String?        @db.Uuid
-  id_crm_company String?        @db.Uuid
-  id_crm_deal    String?        @db.Uuid
-  id_linked_user String?        @db.Uuid
-  crm_users      crm_users?     @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_25")
-  crm_companies  crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_26")
-  crm_deals      crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_27")
+  id_crm_task     String         @id(map: "pk_crm_task") @db.Uuid
+  subject         String?
+  content         String?
+  status          String?
+  due_date        DateTime?      @db.Timestamp(6)
+  finished_date   DateTime?      @db.Timestamp(6)
+  created_at      DateTime       @db.Timestamp(6)
+  modified_at     DateTime       @db.Timestamp(6)
+  id_crm_user     String?        @db.Uuid
+  id_crm_company  String?        @db.Uuid
+  id_crm_deal     String?        @db.Uuid
+  id_linked_user  String?        @db.Uuid
+  remote_id       String?
+  remote_platform String?
+  crm_users       crm_users?     @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_25")
+  crm_companies   crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_26")
+  crm_deals       crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_27")
 
   @@index([id_crm_company], map: "fk_crm_task_companyid")
   @@index([id_crm_user], map: "fk_crm_task_userid")
@@ -268,16 +280,18 @@ model crm_tasks {
 }
 
 model crm_users {
-  id_crm_user    String          @id(map: "pk_crm_users") @db.Uuid
-  name           String?
-  email          String?
-  created_at     DateTime        @db.Timestamp(6)
-  modified_at    DateTime        @db.Timestamp(6)
-  id_linked_user String?         @db.Uuid
-  crm_companies  crm_companies[]
-  crm_contacts   crm_contacts[]
-  crm_deals      crm_deals[]
-  crm_tasks      crm_tasks[]
+  id_crm_user     String          @id(map: "pk_crm_users") @db.Uuid
+  name            String?
+  email           String?
+  created_at      DateTime        @db.Timestamp(6)
+  modified_at     DateTime        @db.Timestamp(6)
+  id_linked_user  String?         @db.Uuid
+  remote_id       String?
+  remote_platform String?
+  crm_companies   crm_companies[]
+  crm_contacts    crm_contacts[]
+  crm_deals       crm_deals[]
+  crm_tasks       crm_tasks[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments

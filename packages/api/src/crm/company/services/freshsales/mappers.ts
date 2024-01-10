@@ -14,9 +14,9 @@ export class FreshsalesCompanyMapper implements ICompanyMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: FreshsalesCompanyOutput | FreshsalesCompanyOutput[],
-  ): UnifiedCompanyOutput | UnifiedCompanyOutput[] {
+  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     // Handling single FreshsalesCompanyOutput
     if (!Array.isArray(source)) {
       return this.mapSingleFreshsalesCompanyToUnified(source);

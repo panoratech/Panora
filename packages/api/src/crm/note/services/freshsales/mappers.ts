@@ -11,9 +11,9 @@ export class FreshsalesNoteMapper implements INoteMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: FreshsalesNoteOutput | FreshsalesNoteOutput[],
-  ): UnifiedNoteOutput | UnifiedNoteOutput[] {
+  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
     // Handling single FreshsalesNoteOutput
     if (!Array.isArray(source)) {
       return this.mapSingleFreshsalesNoteToUnified(source);

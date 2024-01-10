@@ -11,9 +11,9 @@ export class FreshsalesDealMapper implements IDealMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: FreshsalesDealOutput | FreshsalesDealOutput[],
-  ): UnifiedDealOutput | UnifiedDealOutput[] {
+  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     // Handling single FreshsalesDealOutput
     if (!Array.isArray(source)) {
       return this.mapSingleFreshsalesDealToUnified(source);

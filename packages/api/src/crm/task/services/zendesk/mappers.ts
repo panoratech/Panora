@@ -36,7 +36,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
     if (source.user_id) {
       const user_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (user_id) {
-        result.owner_id = user_id;
+        result.owner_id = Number(user_id);
       }
     }
 

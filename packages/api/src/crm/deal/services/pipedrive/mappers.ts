@@ -24,7 +24,7 @@ export class PipedriveDealMapper implements IDealMapper {
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {
-        result.creator_user_id.id = owner_id;
+        result.creator_user_id.id = Number(owner_id);
       }
     }
     if (source.stage_id) {
@@ -32,7 +32,7 @@ export class PipedriveDealMapper implements IDealMapper {
         source.stage_id,
       );
       if (stage_id) {
-        result.stage_id = stage_id;
+        result.stage_id = Number(stage_id);
       }
     }
 

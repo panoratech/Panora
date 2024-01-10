@@ -41,7 +41,7 @@ export class PipedriveContactMapper implements IContactMapper {
       const owner = await this.utils.getUser(source.user_id);
       if (owner) {
         result.owner_id = {
-          id: owner.remote_id,
+          id: Number(owner.remote_id),
           name: owner.name,
           email: owner.email,
           has_pic: 0,

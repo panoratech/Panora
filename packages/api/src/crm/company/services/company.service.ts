@@ -16,11 +16,12 @@ import { ServiceRegistry } from './registry.service';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 import { unify } from '@@core/utils/unification/unify';
 import { ICompanyService } from '../types';
-import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
 import { normalizeAddresses } from '../utils';
+import { Utils } from '@crm/contact/utils';
 
 @Injectable()
 export class CompanyService {
+  private readonly utils = new Utils();
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -126,10 +127,11 @@ export class CompanyService {
         },
       });
 
-      const { normalizedEmails, normalizedPhones } = normalizeEmailsAndNumbers(
-        target_company.email_addresses,
-        target_company.phone_numbers,
-      );
+      const { normalizedEmails, normalizedPhones } =
+        this.utils.normalizeEmailsAndNumbers(
+          target_company.email_addresses,
+          target_company.phone_numbers,
+        );
 
       const normalizedAddresses = normalizeAddresses(target_company.addresses);
 

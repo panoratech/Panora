@@ -23,9 +23,9 @@ export class FreshsalesContactMapper implements IContactMapper {
     };
   }
 
-  unify(
+  async unify(
     source: FreshsalesContactOutput | FreshsalesContactOutput[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     // Handling single FreshsalesContactOutput
     if (!Array.isArray(source)) {
       return this.mapSingleFreshsalesContactToUnified(source);
