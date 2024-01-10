@@ -1,14 +1,12 @@
 ---
 title: 'Quick Start'
-description: 'Go from zero to hero about integrations in a few minutes.'
+description: 'This 5 minutes checklist helps you get all the requirements to start adding integrations to your product. '
 icon: 'star'
 ---
 
-## Welcome on Board!
+<Steps titleSize="h3">
 
-<Steps>
-
-<Step title="Create a free account, or run the self-hosted version:">
+<Step title="Create a free account, or run the self-hosted version:" >
 <CardGroup cols={2}>
   <Card
     title="Create an account"
@@ -20,26 +18,45 @@ icon: 'star'
   <Card
     title="Visit Self-Hosting Guide"
     icon="house-laptop"
-    href="/features/self-host-guide"
+    href="/open-source/self-host-guide"
   >
     Ideal for early-stage companies that want to ship faster
   </Card>
 </CardGroup>
   </Step>
 
-<Step title="Collect access rights your users data">
+
+  <Step title="Generate your API Keys">
+   Login to your dashboard and go to the API Keys section to generate your keys.
+   Find more details about the dashboard and authentication on the dedicated page.
+
+   <CardGroup cols={1}>
+  <Card
+    title="Authentication"
+    icon="code"
+    href="/core-concepts/auth"
+  >
+    Move faster thanks to our scalable managed infrastructure
+  </Card>
+</CardGroup>
+
+
+  </Step>
+
+
+<Step title="Collecting access rights your users data">
 <CardGroup cols={2}>
   <Card
     title="No Code: Magic links"
     icon="wand-magic-sparkles"
-    href="/concepts/magic-links"
+    href="/core-concepts/magic-links"
   >
     Ask your customers to grant you access to their tools, without writing code
   </Card>
   <Card
     title="For Developpers: Native Integration"
     icon="code"
-    href="/docs/development"
+    href="#"
   >
     Embed Panora into your product to collect access to use user's data
   </Card>
@@ -47,42 +64,40 @@ icon: 'star'
 
   </Step>
 
-  <Step title="Generate your API Keys">
-   Visit the [dashboard](https://app.panora.dev/dashboard) and go to the API Keys section to generate your keys.
-  </Step>
 
-  <Step title="Start reading and writing data to multitple platforms with one endpoint">
-  
-<CardGroup cols={3}>
-  <Card
-    title="CRM"
-    icon="address-book"
-    href="/crm/quick-start"
-  >
-    Write contacts, deals, and more to any platform
-  </Card>
-  <Card
-    title="Marketing Automation"
-    icon="arrow-up-right-dots"
-    href="/marketing_automation/introduction"
-  >
-    Send emails, texts, and more through many platform
-  </Card>
-    <Card
-    title="Ticketing"
-    icon="ticket"
-    href="/ticketing/introduction"
-  >
-    Opening, closing tickets and more, anywhere
-  </Card>
-
-</CardGroup>
-
-
+  <Step title="Write data to multiple platforms with one endpoint">
+    <CardGroup cols={2}>
+      <Card
+        title="CRM"
+        icon="address-book"
+        href="/crm/quick-start"
+      >
+        Write contacts, deals, and more to any platform
+      </Card>
+        <Card
+        title="Ticketing"
+        icon="ticket"
+        href="/ticketing/introduction"
+      >
+        Opening, closing tickets and more, anywhere
+      </Card>
+    </CardGroup>
   </Step>
 
 
+  <Step title="Listen to events coming from multiple platforms using one webhook">
+    <CardGroup cols={1}>
+      <Card
+        title="Setup your unified webhook"
+        icon="address-book"
+        href="/webhooks/overview"
+      >
+      Test
+      </Card>
+      
+    </CardGroup>
+  </Step>
 </Steps>
 
 
-[Share your feedback](https://tally.so/r/mRD1QQ?feedback_source=home_quick-start)
+[Suggest an update](https://tally.so/r/mRD1QQ?feedback_source=home_quick-start)
