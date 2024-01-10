@@ -31,23 +31,23 @@ export function MainNav({
       >
         Quick Start
       </a>*/}
-      <a
+      {/*<a
         className={navItemClassName('dashboard')}
         onClick={() => click('dashboard')}
       >
         Dashboard
-      </a>
-      <a
-        className={navItemClassName('jobs')}
-        onClick={() => click('jobs')}
-      >
-        Jobs
-      </a>
-      <a
+    </a>*/}
+    <a
         className={navItemClassName('connections')}
         onClick={() => click('connections')}
       >
         Connections
+      </a>
+      <a
+        className={navItemClassName('logs')}
+        onClick={() => click('logs')}
+      >
+        Logs
       </a>
       <a
         className={navItemClassName('configuration')}
