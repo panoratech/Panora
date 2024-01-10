@@ -30,5 +30,5 @@ export interface ITaskMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTaskOutput | UnifiedTaskOutput[];
+  ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]>;
 }

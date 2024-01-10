@@ -49,13 +49,13 @@ export class ZohoContactMapper implements IContactMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: ZohoContactOutput | ZohoContactOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleContactToUnified(source, customFieldMappings);
     }

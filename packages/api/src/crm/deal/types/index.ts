@@ -30,5 +30,5 @@ export interface IDealMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedDealOutput | UnifiedDealOutput[];
+  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]>;
 }

@@ -29,5 +29,5 @@ export interface IContactMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[];
+  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]>;
 }

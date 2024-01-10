@@ -8,15 +8,18 @@ import {
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
+import { Utils } from '@crm/contact/utils';
 
 export class HubspotContactMapper implements IContactMapper {
-  desunify(
+  private readonly utils = new Utils();
+
+  async desunify(
     source: UnifiedContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): HubspotContactInput {
+  ): Promise<HubspotContactInput> {
     // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
     const primaryEmail = source.email_addresses?.[0]?.email_address;
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
@@ -26,7 +29,15 @@ export class HubspotContactMapper implements IContactMapper {
       lastname: source.last_name,
       email: primaryEmail,
       phone: primaryPhone,
+      hubspot_owner_id: source.user_id, //TODO: we le tthe uuid to retrieve the remote one in the service
     };
+
+    if (source.user_id) {
+      const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
+      if (owner_id) {
+        result.hubspot_owner_id = owner_id;
+      }
+    }
 
     if (customFieldMappings && source.field_mappings) {
       for (const fieldMapping of source.field_mappings) {
@@ -43,13 +54,13 @@ export class HubspotContactMapper implements IContactMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: HubspotContactOutput | HubspotContactOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleContactToUnified(source, customFieldMappings);
     }

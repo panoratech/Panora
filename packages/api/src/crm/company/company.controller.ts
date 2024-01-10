@@ -38,8 +38,8 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanys',
-    summary: 'List a batch of Companys',
+    operationId: 'getCompanies',
+    summary: 'List a batch of Companies',
   })
   @ApiHeader({
     name: 'connection_token',
@@ -145,8 +145,8 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'addCompanys',
-    summary: 'Add a batch of Companys',
+    operationId: 'addCompanies',
+    summary: 'Add a batch of Companies',
   })
   @ApiHeader({
     name: 'connection_token',

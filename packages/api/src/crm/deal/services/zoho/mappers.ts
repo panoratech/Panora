@@ -6,40 +6,65 @@ import {
 import { IDealMapper } from '@crm/deal/types';
 
 export class ZohoDealMapper implements IDealMapper {
-  desunify(
+  async desunify(
     source: UnifiedDealInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZohoDealInput {
-    return;
+  ): Promise<ZohoDealInput> {
+    const result: ZohoDealInput = {
+      Description: source.description,
+      Title: source.name,
+    };
+
+    if (customFieldMappings && source.field_mappings) {
+      customFieldMappings.forEach((mapping) => {
+        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
+        if (customValue) {
+          result.custom_fields[mapping.remote_id] = customValue[mapping.slug];
+        }
+      });
+    }
+
+    return result;
   }
 
-  unify(
+  async unify(
     source: ZohoDealOutput | ZohoDealOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedDealOutput | UnifiedDealOutput[] {
+  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleDealToUnified(source, customFieldMappings);
+      return await this.mapSingleDealToUnified(source, customFieldMappings);
     }
 
-    // Handling array of HubspotDealOutput
-    return source.map((deal) =>
-      this.mapSingleDealToUnified(deal, customFieldMappings),
+    return Promise.all(
+      source.map((deal) =>
+        this.mapSingleDealToUnified(deal, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleDealToUnified(
+  private async mapSingleDealToUnified(
     deal: ZohoDealOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedDealOutput {
-    return;
+  ): Promise<UnifiedDealOutput> {
+    const field_mappings =
+      customFieldMappings?.map((mapping) => ({
+        [mapping.slug]: deal.custom_fields[mapping.remote_id],
+      })) || [];
+
+    return {
+      name: deal.Title,
+      description: deal.Description,
+      amount: 0, //todo;
+      field_mappings,
+    };
   }
 }

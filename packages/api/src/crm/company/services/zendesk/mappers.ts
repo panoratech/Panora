@@ -13,21 +13,30 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
       remote_id: string;
     }[],
   ): ZendeskCompanyInput {
-    return;
+    const result: ZendeskCompanyInput = {
+      name: source.name,
+      phone: source.phone_numbers?.find(
+        (phone) => phone.phone_type === 'primary',
+      )?.phone_number,
+      created_at: new Date().toISOString(), // Placeholder, adjust as needed
+      updated_at: new Date().toISOString(), // Placeholder, adjust as needed
+      // Add other direct mappings and custom field mappings here
+    };
+
+    return result;
   }
 
-  unify(
+  async unify(
     source: ZendeskCompanyOutput | ZendeskCompanyOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCompanyOutput | UnifiedCompanyOutput[] {
+  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleCompanyToUnified(source, customFieldMappings);
     }
 
-    // Handling array of HubspotCompanyOutput
     return source.map((company) =>
       this.mapSingleCompanyToUnified(company, customFieldMappings),
     );
@@ -40,6 +49,16 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
       remote_id: string;
     }[],
   ): UnifiedCompanyOutput {
-    return;
+    const field_mappings =
+      customFieldMappings?.map((mapping) => ({
+        [mapping.slug]: company[mapping.remote_id],
+      })) || [];
+
+    return {
+      name: company.name,
+      industry: '',
+      number_of_employees: 0, //TODO
+      field_mappings,
+    };
   }
 }

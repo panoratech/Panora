@@ -6,7 +6,6 @@ import { ApiResponse, CRM_PROVIDERS } from '@@core/utils/types';
 import { unify } from '@@core/utils/unification/unify';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '@crm/contact/types/model.unified';
-import { normalizeEmailsAndNumbers } from '@crm/contact/utils';
 import { CrmObject } from '@crm/@utils/@types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
@@ -16,9 +15,11 @@ import { IContactService } from '../types';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from '../services/registry.service';
 import { normalizeAddresses } from '@crm/company/utils';
+import { Utils } from '../utils';
 
 @Injectable()
 export class SyncContactsService implements OnModuleInit {
+  private readonly utils = new Utils();
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -207,7 +208,7 @@ export class SyncContactsService implements OnModuleInit {
         });
 
         const { normalizedEmails, normalizedPhones } =
-          normalizeEmailsAndNumbers(
+          this.utils.normalizeEmailsAndNumbers(
             contact.email_addresses,
             contact.phone_numbers,
           );

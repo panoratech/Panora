@@ -8,15 +8,18 @@ import {
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
+import { Utils } from '@crm/contact/utils';
 
 export class PipedriveContactMapper implements IContactMapper {
-  desunify(
+  private readonly utils = new Utils();
+
+  async desunify(
     source: UnifiedContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): PipedriveContactInput {
+  ): Promise<PipedriveContactInput> {
     // Assuming 'email_addresses' and 'phone_numbers' arrays contain at least one entry
     const primaryEmail = source.email_addresses?.[0]?.email_address;
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
@@ -31,7 +34,23 @@ export class PipedriveContactMapper implements IContactMapper {
       name: `${source.first_name} ${source.last_name}`,
       email: emailObject,
       phone: phoneObject,
+      cc_email: source.user_id, //TODO: i put in here for tmp reasons uuid
     };
+
+    if (source.user_id) {
+      const owner = await this.utils.getUser(source.user_id);
+      if (owner) {
+        result.owner_id = {
+          id: owner.remote_id,
+          name: owner.name,
+          email: owner.email,
+          has_pic: 0,
+          pic_hash: '',
+          active_flag: false,
+          value: 0,
+        };
+      }
+    }
 
     if (customFieldMappings && source.field_mappings) {
       for (const fieldMapping of source.field_mappings) {
@@ -48,30 +67,32 @@ export class PipedriveContactMapper implements IContactMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: PipedriveContactOutput | PipedriveContactOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
+      return await this.mapSingleContactToUnified(source, customFieldMappings);
     }
 
     // Handling array of HubspotContactOutput
-    return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+    return Promise.all(
+      source.map((contact) =>
+        this.mapSingleContactToUnified(contact, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleContactToUnified(
+  private async mapSingleContactToUnified(
     contact: PipedriveContactOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput {
+  ): Promise<UnifiedContactOutput> {
     const field_mappings = customFieldMappings.map((mapping) => ({
       [mapping.slug]: contact[mapping.remote_id],
     }));
@@ -82,6 +103,18 @@ export class PipedriveContactMapper implements IContactMapper {
       postal_code: '',
       country: '',
     };
+    let opts: any = {};
+    if (contact.owner_id.id) {
+      const user_id = await this.utils.getUserUuidFromRemoteId(
+        String(contact.owner_id.id),
+        'pipedrive',
+      );
+      if (user_id) {
+        opts = {
+          user_id: user_id,
+        };
+      }
+    }
 
     return {
       first_name: contact.first_name,
@@ -96,6 +129,7 @@ export class PipedriveContactMapper implements IContactMapper {
       })), // Map each phone number,
       field_mappings,
       addresses: [address],
+      ...opts,
     };
   }
 }

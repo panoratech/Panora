@@ -30,5 +30,5 @@ export interface INoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedNoteOutput | UnifiedNoteOutput[];
+  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]>;
 }

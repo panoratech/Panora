@@ -30,5 +30,5 @@ export interface ICompanyMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCompanyOutput | UnifiedCompanyOutput[];
+  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]>;
 }

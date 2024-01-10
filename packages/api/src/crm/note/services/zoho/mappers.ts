@@ -6,40 +6,62 @@ import {
 import { INoteMapper } from '@crm/note/types';
 
 export class ZohoNoteMapper implements INoteMapper {
-  desunify(
+  async desunify(
     source: UnifiedNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZohoNoteInput {
-    return;
+  ): Promise<ZohoNoteInput> {
+    const result: ZohoNoteInput = {
+      Description: source.content,
+    };
+
+    if (customFieldMappings && source.field_mappings) {
+      customFieldMappings.forEach((mapping) => {
+        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
+        if (customValue) {
+          result[mapping.remote_id] = customValue[mapping.slug];
+        }
+      });
+    }
+
+    return result;
   }
 
-  unify(
+  async unify(
     source: ZohoNoteOutput | ZohoNoteOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedNoteOutput | UnifiedNoteOutput[] {
+  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleNoteToUnified(source, customFieldMappings);
+      return await this.mapSingleNoteToUnified(source, customFieldMappings);
     }
 
-    // Handling array of HubspotNoteOutput
-    return source.map((note) =>
-      this.mapSingleNoteToUnified(note, customFieldMappings),
+    return Promise.all(
+      source.map((note) =>
+        this.mapSingleNoteToUnified(note, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleNoteToUnified(
+  private async mapSingleNoteToUnified(
     note: ZohoNoteOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedNoteOutput {
-    return;
+  ): Promise<UnifiedNoteOutput> {
+    const field_mappings =
+      customFieldMappings?.map((mapping) => ({
+        [mapping.slug]: note[mapping.remote_id],
+      })) || [];
+
+    return {
+      content: note.Description,
+      field_mappings,
+    };
   }
 }

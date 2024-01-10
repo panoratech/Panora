@@ -13,7 +13,20 @@ export class ZendeskStageMapper implements IStageMapper {
       remote_id: string;
     }[],
   ): ZendeskStageInput {
-    return;
+    const result: ZendeskStageInput = {
+      name: source.stage_name,
+    };
+
+    if (customFieldMappings && source.field_mappings) {
+      customFieldMappings.forEach((mapping) => {
+        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
+        if (customValue) {
+          result[mapping.remote_id] = customValue[mapping.slug];
+        }
+      });
+    }
+
+    return result;
   }
 
   unify(
@@ -27,7 +40,7 @@ export class ZendeskStageMapper implements IStageMapper {
       return this.mapSingleStageToUnified(source, customFieldMappings);
     }
 
-    // Handling array of HubspotStageOutput
+    // Handling array of ZendeskStageOutput
     return source.map((stage) =>
       this.mapSingleStageToUnified(stage, customFieldMappings),
     );
@@ -40,6 +53,14 @@ export class ZendeskStageMapper implements IStageMapper {
       remote_id: string;
     }[],
   ): UnifiedStageOutput {
-    return;
+    const field_mappings =
+      customFieldMappings?.map((mapping) => ({
+        [mapping.slug]: stage[mapping.remote_id],
+      })) || [];
+
+    return {
+      stage_name: stage.name,
+      field_mappings,
+    };
   }
 }

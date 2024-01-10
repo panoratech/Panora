@@ -13,7 +13,21 @@ export class ZendeskUserMapper implements IUserMapper {
       remote_id: string;
     }[],
   ): ZendeskUserInput {
-    return;
+    const result: ZendeskUserInput = {
+      name: source.name,
+      email: source.email,
+    };
+
+    if (customFieldMappings && source.field_mappings) {
+      customFieldMappings.forEach((mapping) => {
+        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
+        if (customValue) {
+          result[mapping.remote_id] = customValue[mapping.slug];
+        }
+      });
+    }
+
+    return result;
   }
 
   unify(
@@ -27,7 +41,7 @@ export class ZendeskUserMapper implements IUserMapper {
       return this.mapSingleUserToUnified(source, customFieldMappings);
     }
 
-    // Handling array of HubspotUserOutput
+    // Handling array of ZendeskUserOutput
     return source.map((user) =>
       this.mapSingleUserToUnified(user, customFieldMappings),
     );
@@ -40,6 +54,15 @@ export class ZendeskUserMapper implements IUserMapper {
       remote_id: string;
     }[],
   ): UnifiedUserOutput {
-    return;
+    const field_mappings =
+      customFieldMappings?.map((mapping) => ({
+        [mapping.slug]: user[mapping.remote_id],
+      })) || [];
+
+    return {
+      name: user.name,
+      email: user.email,
+      field_mappings,
+    };
   }
 }

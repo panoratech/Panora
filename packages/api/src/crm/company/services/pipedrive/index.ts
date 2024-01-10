@@ -40,7 +40,7 @@ export class PipedriveService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/persons`,
+        `https://api.pipedrive.com/v1/organizations`,
         JSON.stringify(companyData),
         {
           headers: {
@@ -79,18 +79,21 @@ export class PipedriveService implements ICompanyService {
           provider_slug: 'pipedrive',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const resp = await axios.get(
+        `https://api.pipedrive.com/v1/organizations`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
 
       return {
         data: resp.data.data,
-        message: 'Pipedrive companys retrieved',
+        message: 'Pipedrive companies retrieved',
         statusCode: 200,
       };
     } catch (error) {

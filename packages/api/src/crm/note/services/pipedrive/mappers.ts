@@ -4,42 +4,132 @@ import {
   UnifiedNoteOutput,
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
+import { Utils } from '@crm/note/utils';
 
 export class PipedriveNoteMapper implements INoteMapper {
-  desunify(
+  private readonly utils = new Utils();
+
+  async desunify(
     source: UnifiedNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): PipedriveNoteInput {
-    return;
+  ): Promise<PipedriveNoteInput> {
+    const result: PipedriveNoteInput = {
+      content: source.content,
+    };
+
+    if (source.contact_id) {
+      const owner_id = await this.utils.getRemoteIdFromContactUuid(
+        source.contact_id,
+      );
+      if (owner_id) {
+        result.person_id = Number(owner_id);
+      }
+    }
+
+    if (source.company_id) {
+      const org_id = await this.utils.getRemoteIdFromCompanyUuid(
+        source.company_id,
+      );
+      if (org_id) {
+        result.org_id = Number(org_id);
+      }
+    }
+
+    if (source.deal_id) {
+      const deal_id = await this.utils.getRemoteIdFromDealUuid(source.deal_id);
+      if (deal_id) {
+        result.deal_id = Number(deal_id);
+      }
+    }
+
+    if (customFieldMappings && source.field_mappings) {
+      customFieldMappings.forEach((mapping) => {
+        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
+        if (customValue) {
+          result[mapping.remote_id] = customValue[mapping.slug];
+        }
+      });
+    }
+
+    return result;
   }
 
-  unify(
+  async unify(
     source: PipedriveNoteOutput | PipedriveNoteOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedNoteOutput | UnifiedNoteOutput[] {
+  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleNoteToUnified(source, customFieldMappings);
+      return await this.mapSingleNoteToUnified(source, customFieldMappings);
     }
 
     // Handling array of HubspotNoteOutput
-    return source.map((note) =>
-      this.mapSingleNoteToUnified(note, customFieldMappings),
+    return Promise.all(
+      source.map((note) =>
+        this.mapSingleNoteToUnified(note, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleNoteToUnified(
+  private async mapSingleNoteToUnified(
     note: PipedriveNoteOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedNoteOutput {
-    return;
+  ): Promise<UnifiedNoteOutput> {
+    const field_mappings =
+      customFieldMappings?.map((mapping) => ({
+        [mapping.slug]: note[mapping.remote_id],
+      })) || [];
+
+    let opts: any = {};
+
+    if (note.person_id) {
+      const contact_id = await this.utils.getContactUuidFromRemoteId(
+        String(note.person_id),
+        'pipedrive',
+      );
+      if (contact_id) {
+        opts = {
+          contact_id: contact_id,
+        };
+      }
+    }
+
+    if (note.deal_id) {
+      const deal_id = await this.utils.getDealUuidFromRemoteId(
+        String(note.deal_id),
+        'pipedrive',
+      );
+      if (deal_id) {
+        opts = {
+          deal_id: deal_id,
+        };
+      }
+    }
+
+    if (note.org_id) {
+      const org_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(note.org_id),
+        'pipedrive',
+      );
+      if (org_id) {
+        opts = {
+          company_id: org_id,
+        };
+      }
+    }
+
+    return {
+      content: note.content,
+      field_mappings,
+      ...opts,
+    };
   }
 }

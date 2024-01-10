@@ -13,7 +13,23 @@ export class HubspotStageMapper implements IStageMapper {
       remote_id: string;
     }[],
   ): HubspotStageInput {
-    return;
+    const result: HubspotStageInput = {
+      // Assuming 'stage_name' maps to a specific field in HubspotStageInput
+      // and custom mappings are required for the rest of the fields
+      // Add direct mappings for HubspotStageInput here
+      // Custom field mappings
+    };
+
+    if (customFieldMappings && source.field_mappings) {
+      customFieldMappings.forEach((mapping) => {
+        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
+        if (customValue) {
+          result[mapping.remote_id] = customValue[mapping.slug];
+        }
+      });
+    }
+
+    return result;
   }
 
   unify(
@@ -39,6 +55,14 @@ export class HubspotStageMapper implements IStageMapper {
       remote_id: string;
     }[],
   ): UnifiedStageOutput {
-    return;
+    const field_mappings =
+      customFieldMappings?.map((mapping) => ({
+        [mapping.slug]: stage[mapping.remote_id],
+      })) || [];
+
+    return {
+      stage_name: '', // Assuming a direct mapping or a custom field mapping is required
+      field_mappings,
+    };
   }
 }

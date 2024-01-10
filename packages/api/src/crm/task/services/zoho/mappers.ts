@@ -4,42 +4,47 @@ import {
   UnifiedTaskOutput,
 } from '@crm/task/types/model.unified';
 import { ITaskMapper } from '@crm/task/types';
+import { Utils } from '@crm/task/utils';
 
 export class ZohoTaskMapper implements ITaskMapper {
-  desunify(
+  private readonly utils = new Utils();
+
+  async desunify(
     source: UnifiedTaskInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZohoTaskInput {
+  ): Promise<ZohoTaskInput> {
     return;
   }
 
-  unify(
+  async unify(
     source: ZohoTaskOutput | ZohoTaskOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTaskOutput | UnifiedTaskOutput[] {
+  ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleTaskToUnified(source, customFieldMappings);
+      return await this.mapSingleTaskToUnified(source, customFieldMappings);
     }
 
     // Handling array of HubspotTaskOutput
-    return source.map((task) =>
-      this.mapSingleTaskToUnified(task, customFieldMappings),
+    return Promise.all(
+      source.map((task) =>
+        this.mapSingleTaskToUnified(task, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleTaskToUnified(
+  private async mapSingleTaskToUnified(
     task: ZohoTaskOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTaskOutput {
+  ): Promise<UnifiedTaskOutput> {
     return;
   }
 }
