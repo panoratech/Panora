@@ -71,13 +71,6 @@
         "welcome",
         "quick-start"
       ]
-    },
-    {
-      "group": "Connections",
-      "pages": [
-        "connections/overview",
-        "connections/api/list"
-      ]
     }
     ,
     {
@@ -238,7 +231,11 @@
         "core-concepts/auth",
         "core-concepts/magic-links",
         "core-concepts/custom-fields",
-        "core-concepts/sync-strategies"
+        "core-concepts/sync-strategies",
+        {
+          "group": "Connections",
+          "pages": ["connections/overview", "connections/api/list"]
+        }
       ]
     },
     {
@@ -253,7 +250,11 @@
     {
       "group": "Webhooks",
       "pages": [
-        "webhooks/event-types"
+        "webhooks/overview",
+        {
+          "group": "Events",
+          "pages": ["webhooks/events/overview"]
+        }
       ]
     },
 

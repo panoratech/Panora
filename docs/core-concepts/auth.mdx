@@ -8,65 +8,146 @@ icon: 'code'
 
 
 ### The Panora API uses uses two elements to indentify requests: `API keys` and a `connection_token`.  
-API Keys are used to authenticate yourself to our backend, while a `connection_token` serves to identify which of your user's you're making API calls for.
-Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+`API Keys` are used to authenticate yourself to our backend, while a `connection_token` serves to identify which of your user's you're making API calls for.
 
+
+## Learn how to generate your API Keys and catch connection tokens.
 
 <Steps>
-    <Step title="Generate your first API Key">
-    Show: You can manage your API keys in the Panora Dashboard. Panora supports restricted API keys for granular permissions.
+    <Step title="Creating your API Key">
+    Go to your dashboard, and visit the API Keys section. Click the Create New Key button.
+        <Frame type="glass">
+            <img src="/images/api-keys.png" />
+        </Frame>
     </Step>
 
-    <Step title="Generate your first API Key">
-    Show: You can catch new `connection_token` by listening to webhooks.
+    <Step title="Safely store your API Key">
+        Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+    </Step>
+
+    <Step title="Catch your first `connection_token`">
+
+    A `connection_token` is created everytime a user connects an account to your platform.
+    You need to setup a webhook and listen to events `connection.created` to catch a `connection_token`.
+    `connection_token` is a string, located in the "data" object, inside a `connection.created` event.
+
+    <Info>Read about webhooks [here](/webhooks/overview)</Info>
+
+    ```json Example connection.created event
+    {
+        "id_event": "dc2d12b9-dd07-4e33-a244-d0560a9eeed7",
+        "type": "connection.created",
+        "data": {
+            "id" : "6fc7017a-6596-4b05-81b6-595296a59f87"
+            "connection_token": "CONNECTION_TOKEN_HERE",
+            "provider_slug": "hubspot",
+            ...
+        },
+        ...
+    }
+    ```
+    Congrats! You have everything you need to make authenticated requests.
     </Step>
 </Steps>
 
 
+## Make your first API request with your `API Key` and a `connection_token`
 
-### This guide will help you properly add API Keys and id_linked_user to your code.
+Take a look at these examples to understand the concept. 
+We also recommend practising by looking at the specific verticals you want to integrate.
 
 <Steps>
     <Step title="Setup your API Key in your code:">
+
+        If you use one of our
         <CodeGroup>
-
-            ```javascript TypeScript
+            ```javascript TypeScript SDK
             import { PanoraSDK } from '@panora/typescript-sdk';
             const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
             ```
 
-            ```javascript TypeScript
-            import { PanoraSDK } from '@panora/typescript-sdk';
-            const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
-            ```
-
-            ```python Python
+            ```python Python SDK
             sdk = PanoraSDK('YOUR_BEARER_TOKEN')
             ```
 
-            ```java Java
+            ```java Java SDK
             PanoraSDK sdk = new PanoraSDK("YOUR_BEARER_TOKEN");
             ```
-
         </CodeGroup>
     </Step>
 
-     <Step title="Identify the ressource you want to manipulate:">
+     <Step title="Make your first unified API call:">
+        <Info>In this example, we will create a contact in a CRM. Visit other sections of the documentation to find category-specific examples</Info>
         <CodeGroup>
+
+            ```curl curl
+            curl --request POST \
+            --url https://api.panora.dev/crm/contact \
+            --header 'Authorization: Bearer dfsdf' \
+            --header 'Content-Type: application/json' \
+            --header 'connection_token: <connection_token>' \
+            --data '{
+            "first_name": "Mark",
+            "last_name": "Zuckerbeg",
+            "email_addresses": [
+                {
+                "email_address": "mark@zuckerberg.com",
+                "email_address_type": "personal",
+                "owner_type": "contact"
+                }
+            ],
+            "phone_numbers": [
+                {
+                "phone_number": "+33694837462",
+                "phone_type": "personal",
+                "owner_type": "contact"
+                }
+            ],
+            "field_mappings": {}
+            }'
+            ```
 
             ```javascript TypeScript
             import { PanoraSDK } from '@panora/typescript-sdk';
             const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+
+            (async () => {
+            const input = {
+                email_addresses: [],
+                field_mappings: {},
+                first_name: 'first_name',
+                last_name: 'last_name',
+                phone_numbers: [],
+            };
+            const result = await sdk.crmContact.addContact(input, 'connection_token', {
+                remoteData: true,
+            });
+            console.log(result);
+            })();
             ```
 
             ```python Python
-            sdk = PanoraSDK('YOUR_BEARER_TOKEN')
-            ```
+            from os import getenv
+            from pprint import pprint
+            from panorasdk import PanoraSDK
+            sdk = PanoraSDK()
+            sdk.set_access_token(getenv("YOUR_API_KEY"))
+            request_body = {
+                'email_addresses': [],
+                'field_mappings': {},
+                'first_name': 'first_name',
+                'last_name': 'last_name',
+                'phone_numbers': []
+            }
+            results = sdk.crm_contact.add_contact(
+                request_input = request_body,
+                connection_token = 'USER_CONNECTION_TOKEN',
+                remote_data = True
+            )
 
-            ```java Java
-            PanoraSDK sdk = new PanoraSDK("YOUR_BEARER_TOKEN");
-            ```
+            pprint(vars(results))
 
+            ```
         </CodeGroup>
     </Step>
 
