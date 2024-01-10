@@ -66,7 +66,7 @@ Your customers expect all of their tools to work well together. Panora avoids yo
   docker compose up
  ```
 
-You can now open your browser and go to <http://localhost> to connect to the application.
+You can now open your browser and go to <http://localhost:80> to connect to the application.
 Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product
 
 ## 🤔 Have questions? Ask the core team
