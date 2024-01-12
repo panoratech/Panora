@@ -61,6 +61,30 @@ COMMENT ON COLUMN webhook_endpoints."scope" IS 'stringified array with events,';
 
 
 
+-- ************************************** tcg_users
+
+CREATE TABLE tcg_users
+(
+ id_tcg_user     uuid NOT NULL,
+ name            text NULL,
+ email_address   text NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
+ teams           text[] NULL,
+ created_at      timestamp NULL,
+ modified_at     timestamp NULL,
+ id_linked_user  uuid NULL,
+ CONSTRAINT PK_tcg_users PRIMARY KEY ( id_tcg_user )
+);
+
+COMMENT ON TABLE tcg_users IS 'The User object is used to represent an employee within a company.';
+
+COMMENT ON COLUMN tcg_users.teams IS 'array of id_tcg_team. Teams the support agent belongs to.';
+
+
+
+
+
 -- ************************************** tcg_teams
 
 CREATE TABLE tcg_teams
@@ -254,6 +278,81 @@ COMMENT ON COLUMN users.created_at IS 'DEFAULT NOW() to automatically insert a v
 
 
 
+-- ************************************** tcg_tickets
+
+CREATE TABLE tcg_tickets
+(
+ id_tcg_ticket   uuid NOT NULL,
+ name            text NULL,
+ status          text NULL,
+ description     text NULL,
+ due_date        timestamp NULL,
+ ticket_type     text NULL,
+ parent_ticket   uuid NULL,
+ tags            text[] NULL,
+ completed_at    timestamp NULL,
+ priority        text NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ assigned_to     text[] NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
+ creator_type    text NULL,
+ id_tcg_user     uuid NULL,
+ id_linked_user  uuid NOT NULL,
+ CONSTRAINT PK_tcg_tickets PRIMARY KEY ( id_tcg_ticket )
+);
+
+CREATE INDEX FK_tcg_ticket_tcg_user ON tcg_tickets
+(
+ id_tcg_user
+);
+
+
+
+COMMENT ON COLUMN tcg_tickets.name IS 'Name of the ticket. Usually very short.';
+COMMENT ON COLUMN tcg_tickets.status IS 'OPEN, CLOSED, IN_PROGRESS, ON_HOLD';
+COMMENT ON COLUMN tcg_tickets.tags IS 'array of tags uuid';
+COMMENT ON COLUMN tcg_tickets.assigned_to IS 'Employees assigned to this ticket.
+
+It is a stringified array containing tcg_users';
+COMMENT ON COLUMN tcg_tickets.id_tcg_user IS 'id of the user who created the ticket';
+
+
+
+
+
+-- ************************************** tcg_contacts
+
+CREATE TABLE tcg_contacts
+(
+ id_tcg_contact  uuid NOT NULL,
+ name            text NULL,
+ email_address   text NULL,
+ phone_number    text NULL,
+ details         text NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
+ created_at      timestamp NULL,
+ modified_at     timestamp NULL,
+ id_tcg_account  uuid NULL,
+ id_linked_user  uuid NULL,
+ CONSTRAINT PK_tcg_contact PRIMARY KEY ( id_tcg_contact ),
+ CONSTRAINT FK_49 FOREIGN KEY ( id_tcg_account ) REFERENCES tcg_accounts ( id_tcg_account )
+);
+
+CREATE INDEX FK_tcg_contact_tcg_account_id ON tcg_contacts
+(
+ id_tcg_account
+);
+
+
+
+
+
+
+
+
 -- ************************************** projects
 
 CREATE TABLE projects
@@ -314,6 +413,64 @@ CREATE INDEX crm_deal_deal_stageID ON crm_deals
 
 
 COMMENT ON COLUMN crm_deals.amount IS 'AMOUNT IN CENTS';
+
+
+
+
+
+-- ************************************** crm_contacts
+
+CREATE TABLE crm_contacts
+(
+ id_crm_contact  uuid NOT NULL,
+ first_name      text NOT NULL,
+ last_name       text NOT NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ remote_id       text NOT NULL,
+ remote_platform text NOT NULL,
+ id_crm_user     uuid NULL,
+ id_linked_user  uuid NULL,
+ CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
+ CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
+);
+
+CREATE INDEX FK_crm_contact_userID ON crm_contacts
+(
+ id_crm_user
+);
+
+
+
+COMMENT ON COLUMN crm_contacts.remote_platform IS 'can be hubspot, zendesk, zoho...';
+
+
+
+
+
+-- ************************************** crm_companies
+
+CREATE TABLE crm_companies
+(
+ id_crm_company      uuid NOT NULL,
+ name                text NULL,
+ industry            text NULL,
+ number_of_employees bigint NULL,
+ created_at          timestamp NOT NULL,
+ modified_at         timestamp NOT NULL,
+ id_crm_user         uuid NULL,
+ id_linked_user      uuid NULL,
+ CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
+ CONSTRAINT FK_24 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
+);
+
+CREATE INDEX FK_crm_company_crm_userID ON crm_companies
+(
+ id_crm_user
+);
+
+
+
 
 
 
@@ -396,6 +553,81 @@ COMMENT ON COLUMN value.data IS 'can be: true, false, 0, 1 , 2 3 , 4 , hello, wo
 
 
 
+-- ************************************** tcg_tags
+
+CREATE TABLE tcg_tags
+(
+ id_tcg_tag      uuid NOT NULL,
+ name            text NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ id_tcg_ticket   uuid NULL,
+ id_linked_user  uuid NULL,
+ CONSTRAINT PK_tcg_tags PRIMARY KEY ( id_tcg_tag ),
+ CONSTRAINT FK_48 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
+);
+
+CREATE INDEX FK_tcg_tag_tcg_ticketID ON tcg_tags
+(
+ id_tcg_ticket
+);
+
+
+
+
+
+
+
+
+-- ************************************** tcg_comments
+
+CREATE TABLE tcg_comments
+(
+ id_tcg_comment    uuid NOT NULL,
+ body              text NULL,
+ html_body         text NULL,
+ is_private        boolean NULL,
+ remote_id         text NULL,
+ remote_platform   text NULL,
+ created_at        timestamp NULL,
+ modified_at       timestamp NULL,
+ creator_type      text NULL,
+ id_tcg_attachment text[] NULL,
+ id_tcg_ticket     uuid NULL,
+ id_tcg_contact    uuid NULL,
+ id_tcg_user       uuid NULL,
+ id_linked_user    uuid NULL,
+ CONSTRAINT PK_tcg_comments PRIMARY KEY ( id_tcg_comment ),
+ CONSTRAINT FK_41 FOREIGN KEY ( id_tcg_contact ) REFERENCES tcg_contacts ( id_tcg_contact ),
+ CONSTRAINT FK_40_1 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket ),
+ CONSTRAINT FK_42 FOREIGN KEY ( id_tcg_user ) REFERENCES tcg_users ( id_tcg_user )
+);
+
+CREATE INDEX FK_tcg_comment_tcg_contact ON tcg_comments
+(
+ id_tcg_contact
+);
+
+CREATE INDEX FK_tcg_comment_tcg_ticket ON tcg_comments
+(
+ id_tcg_ticket
+);
+
+CREATE INDEX FK_tcg_comment_tcg_userID ON tcg_comments
+(
+ id_tcg_user
+);
+
+COMMENT ON TABLE tcg_comments IS 'The tcg_comment object represents a comment on a ticket.';
+
+COMMENT ON COLUMN tcg_comments.creator_type IS 'Who created the comment. Can be a a id_tcg_contact or a id_tcg_user';
+
+
+
+
+
 -- ************************************** linked_users
 
 CREATE TABLE linked_users
@@ -417,407 +649,6 @@ CREATE INDEX FK_proectID_linked_users ON linked_users
 
 COMMENT ON COLUMN linked_users.linked_user_origin_id IS 'id of the customer, in our customers own systems';
 COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME company)';
-
-
-
-
-
--- ************************************** api_keys
-
-CREATE TABLE api_keys
-(
- id_api_key   uuid NOT NULL,
- api_key_hash text NOT NULL,
- name         text NULL,
- id_project   uuid NOT NULL,
- id_user      uuid NOT NULL,
- CONSTRAINT id_ PRIMARY KEY ( id_api_key ),
- CONSTRAINT unique_api_keys UNIQUE ( api_key_hash ),
- CONSTRAINT FK_8 FOREIGN KEY ( id_user ) REFERENCES users ( id_user ),
- CONSTRAINT FK_7 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
-);
-
-CREATE INDEX FK_2 ON api_keys
-(
- id_user
-);
-
-CREATE INDEX FK_api_keys_projects ON api_keys
-(
- id_project
-);
-
-
-
-
-
-
-
-
--- ************************************** invite_links
-
-CREATE TABLE invite_links
-(
- id_invite_link uuid NOT NULL,
- status         text NOT NULL,
- email          text NULL,
- id_linked_user uuid NOT NULL,
- CONSTRAINT PK_invite_links PRIMARY KEY ( id_invite_link ),
- CONSTRAINT FK_37 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
-);
-
-CREATE INDEX FK_invite_link_linkedUserID ON invite_links
-(
- id_linked_user
-);
-
-
-
-
-
-
-
-
--- ************************************** events
-
-CREATE TABLE events
-(
- id_event       uuid NOT NULL,
- status         text NOT NULL,
- type           text NOT NULL,
- direction      text NOT NULL,
- "timestamp"      timestamp NOT NULL DEFAULT NOW(),
- method         text NOT NULL,
- url            text NOT NULL,
- provider       text NOT NULL,
- id_linked_user uuid NOT NULL,
- CONSTRAINT PK_jobs PRIMARY KEY ( id_event ),
- CONSTRAINT FK_12 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
-);
-
-CREATE INDEX FK_linkeduserID_projectID ON events
-(
- id_linked_user
-);
-
-
-
-COMMENT ON COLUMN events.status IS 'pending,, retry_scheduled, failed, success';
-COMMENT ON COLUMN events.type IS 'example crm_contact.created crm_contact.deleted';
-
-
-
-
-
--- ************************************** connections
-
-CREATE TABLE connections
-(
- id_connection        uuid NOT NULL,
- status               text NOT NULL,
- provider_slug        text NOT NULL,
- account_url          text NULL,
- token_type           text NOT NULL,
- access_token         text NULL,
- refresh_token        text NULL,
- expiration_timestamp timestamp NULL,
- created_at           timestamp NOT NULL,
- id_project           uuid NOT NULL,
- id_linked_user       uuid NOT NULL,
- CONSTRAINT PK_connections PRIMARY KEY ( id_connection ),
- CONSTRAINT Index_3 UNIQUE ( access_token, refresh_token ),
- CONSTRAINT FK_9 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
- CONSTRAINT FK_11 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
-);
-
-CREATE INDEX FK_1 ON connections
-(
- id_project
-);
-
-CREATE INDEX FK_connections_to_LinkedUsersID ON connections
-(
- id_linked_user
-);
-
-
-
-COMMENT ON COLUMN connections.status IS 'ONLY FOR INVITE LINK';
-COMMENT ON COLUMN connections.token_type IS 'The type of the token, such as "Bearer," "JWT," or any other supported type.';
-
-
-
-
-
--- ************************************** webhook_delivery_attempts
-
-CREATE TABLE webhook_delivery_attempts
-(
- id_webhook_delivery_attempt uuid NOT NULL,
- "timestamp"                   timestamp NOT NULL,
- status                      text NOT NULL,
- next_retry                  timestamp NULL,
- attempt_count               bigint NOT NULL,
- id_webhooks_payload         uuid NULL,
- id_webhook_endpoint         uuid NULL,
- id_event                    uuid NULL,
- id_webhooks_reponse         uuid NULL,
- CONSTRAINT PK_webhook_event PRIMARY KEY ( id_webhook_delivery_attempt ),
- CONSTRAINT FK_38_1 FOREIGN KEY ( id_webhooks_payload ) REFERENCES webhooks_payloads ( id_webhooks_payload ),
- CONSTRAINT FK_38_2 FOREIGN KEY ( id_webhook_endpoint ) REFERENCES webhook_endpoints ( id_webhook_endpoint ),
- CONSTRAINT FK_39 FOREIGN KEY ( id_event ) REFERENCES events ( id_event ),
- CONSTRAINT FK_40 FOREIGN KEY ( id_webhooks_reponse ) REFERENCES webhooks_reponses ( id_webhooks_reponse )
-);
-
-CREATE INDEX FK_we_payload_webhookID ON webhook_delivery_attempts
-(
- id_webhooks_payload
-);
-
-CREATE INDEX FK_we_webhookEndpointID ON webhook_delivery_attempts
-(
- id_webhook_endpoint
-);
-
-CREATE INDEX FK_webhook_delivery_attempt_eventID ON webhook_delivery_attempts
-(
- id_event
-);
-
-CREATE INDEX FK_webhook_delivery_attempt_webhook_responseID ON webhook_delivery_attempts
-(
- id_webhooks_reponse
-);
-
-
-
-COMMENT ON COLUMN webhook_delivery_attempts."timestamp" IS 'timestamp of the delivery attempt';
-COMMENT ON COLUMN webhook_delivery_attempts.status IS 'status of the delivery attempt
-
-can be success, retry, failure';
-COMMENT ON COLUMN webhook_delivery_attempts.next_retry IS 'if null no next retry';
-COMMENT ON COLUMN webhook_delivery_attempts.attempt_count IS 'Number of attempt
-
-can be 0 1 2 3 4 5 6';
-
-
-
-
-
--- ************************************** tcg_users
-
-CREATE TABLE tcg_users
-(
- id_tcg_user     uuid NOT NULL,
- name            text NULL,
- email_address   text NULL,
- remote_id       text NULL,
- remote_platform text NULL,
- id_event        uuid NULL,
- teams           text[] NULL,
- created_at      timestamp NULL,
- modified_at     timestamp NULL,
- id_linked_user  uuid NULL,
- CONSTRAINT PK_tcg_users PRIMARY KEY ( id_tcg_user ),
- CONSTRAINT FK_45 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
-);
-
-CREATE INDEX FK_tcg_users_event_ID ON tcg_users
-(
- id_event
-);
-
-COMMENT ON TABLE tcg_users IS 'The User object is used to represent an employee within a company.';
-
-COMMENT ON COLUMN tcg_users.teams IS 'array of id_tcg_team. Teams the support agent belongs to.';
-
-
-
-
-
--- ************************************** tcg_contacts
-
-CREATE TABLE tcg_contacts
-(
- id_tcg_contact  uuid NOT NULL,
- name            text NULL,
- email_address   text NULL,
- phone_number    text NULL,
- details         text NULL,
- remote_id       text NULL,
- remote_platform text NULL,
- created_at      timestamp NULL,
- modified_at     timestamp NULL,
- id_event        uuid NULL,
- id_tcg_account  uuid NULL,
- id_linked_user  uuid NULL,
- CONSTRAINT PK_tcg_contact PRIMARY KEY ( id_tcg_contact ),
- CONSTRAINT FK_43 FOREIGN KEY ( id_event ) REFERENCES events ( id_event ),
- CONSTRAINT FK_49 FOREIGN KEY ( id_tcg_account ) REFERENCES tcg_accounts ( id_tcg_account )
-);
-
-CREATE INDEX FK_tcg_contact_event_ID ON tcg_contacts
-(
- id_event
-);
-
-CREATE INDEX FK_tcg_contact_tcg_account_id ON tcg_contacts
-(
- id_tcg_account
-);
-
-
-
-
-
-
-
-
--- ************************************** jobs_status_history
-
-CREATE TABLE jobs_status_history
-(
- id_jobs_status_history uuid NOT NULL,
- "timestamp"              timestamp NOT NULL DEFAULT NOW(),
- previous_status        text NOT NULL,
- new_status             text NOT NULL,
- id_event               uuid NOT NULL,
- CONSTRAINT PK_jobs_status_history PRIMARY KEY ( id_jobs_status_history ),
- CONSTRAINT FK_4 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
-);
-
-CREATE INDEX id_job_jobs_status_history ON jobs_status_history
-(
- id_event
-);
-
-
-
-COMMENT ON COLUMN jobs_status_history.previous_status IS 'void when first initialization';
-COMMENT ON COLUMN jobs_status_history.new_status IS 'pending, retry_scheduled, failed, success';
-
-
-
-
-
--- ************************************** crm_contacts
-
-CREATE TABLE crm_contacts
-(
- id_crm_contact  uuid NOT NULL,
- first_name      text NOT NULL,
- last_name       text NOT NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
- remote_id       text NOT NULL,
- remote_platform text NOT NULL,
- id_crm_user     uuid NULL,
- id_event        uuid NOT NULL,
- id_linked_user  uuid NULL,
- CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
- CONSTRAINT job_id_crm_contact FOREIGN KEY ( id_event ) REFERENCES events ( id_event ),
- CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
-);
-
-CREATE INDEX crm_contact_id_job ON crm_contacts
-(
- id_event
-);
-
-CREATE INDEX FK_crm_contact_userID ON crm_contacts
-(
- id_crm_user
-);
-
-
-
-COMMENT ON COLUMN crm_contacts.remote_platform IS 'can be hubspot, zendesk, zoho...';
-
-
-
-
-
--- ************************************** crm_companies
-
-CREATE TABLE crm_companies
-(
- id_crm_company      uuid NOT NULL,
- name                text NULL,
- industry            text NULL,
- number_of_employees bigint NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
- id_crm_user         uuid NULL,
- id_event            uuid NOT NULL,
- id_linked_user      uuid NULL,
- CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
- CONSTRAINT FK_24 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
- CONSTRAINT FK_13 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
-);
-
-CREATE INDEX FK_crm_company_crm_userID ON crm_companies
-(
- id_crm_user
-);
-
-CREATE INDEX FK_crm_company_jobID ON crm_companies
-(
- id_event
-);
-
-
-
-
-
-
-
-
--- ************************************** tcg_tickets
-
-CREATE TABLE tcg_tickets
-(
- id_tcg_ticket   uuid NOT NULL,
- name            text NULL,
- status          text NULL,
- description     text NULL,
- due_date        timestamp NULL,
- ticket_type     text NULL,
- parent_ticket   uuid NULL,
- tags            text NULL,
- completed_at    timestamp NULL,
- priority        text NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
- assigned_to     text[] NULL,
- remote_id       text NULL,
- remote_platform text NULL,
- id_event        uuid NULL,
- creator_type    text NULL,
- id_tcg_user     uuid NULL,
- id_linked_user  uuid NOT NULL,
- CONSTRAINT PK_tcg_tickets PRIMARY KEY ( id_tcg_ticket ),
- CONSTRAINT FK_44 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
-);
-
-CREATE INDEX FK_tcg_ticket_tcg_user ON tcg_tickets
-(
- id_tcg_user
-);
-
-CREATE INDEX FK_tcg_tickets_eventID ON tcg_tickets
-(
- id_event
-);
-
-
-
-COMMENT ON COLUMN tcg_tickets.name IS 'Name of the ticket. Usually very short.';
-COMMENT ON COLUMN tcg_tickets.status IS 'OPEN, CLOSED, IN_PROGRESS, ON_HOLD';
-COMMENT ON COLUMN tcg_tickets.tags IS 'array of tags';
-COMMENT ON COLUMN tcg_tickets.assigned_to IS 'Employees assigned to this ticket.
-
-It is a stringified array containing tcg_users';
-COMMENT ON COLUMN tcg_tickets.id_tcg_user IS 'id of the user who created the ticket';
 
 
 
@@ -1058,107 +889,29 @@ COMMENT ON COLUMN crm_addresses.owner_type IS 'Can be a company or a contact''s 
 
 
 
--- ************************************** tcg_tags
+-- ************************************** api_keys
 
-CREATE TABLE tcg_tags
+CREATE TABLE api_keys
 (
- id_tcg_tag      uuid NOT NULL,
- name            text NULL,
- remote_id       text NULL,
- remote_platform text NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
- id_tcg_ticket   uuid NULL,
- id_linked_user  uuid NULL,
- CONSTRAINT PK_tcg_tags PRIMARY KEY ( id_tcg_tag ),
- CONSTRAINT FK_48 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
+ id_api_key   uuid NOT NULL,
+ api_key_hash text NOT NULL,
+ name         text NULL,
+ id_project   uuid NOT NULL,
+ id_user      uuid NOT NULL,
+ CONSTRAINT id_ PRIMARY KEY ( id_api_key ),
+ CONSTRAINT unique_api_keys UNIQUE ( api_key_hash ),
+ CONSTRAINT FK_8 FOREIGN KEY ( id_user ) REFERENCES users ( id_user ),
+ CONSTRAINT FK_7 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
 );
 
-CREATE INDEX FK_tcg_tag_tcg_ticketID ON tcg_tags
+CREATE INDEX FK_2 ON api_keys
 (
- id_tcg_ticket
+ id_user
 );
 
-
-
-
-
-
-
-
--- ************************************** tcg_comments
-
-CREATE TABLE tcg_comments
+CREATE INDEX FK_api_keys_projects ON api_keys
 (
- id_tcg_comment    uuid NOT NULL,
- body              text NULL,
- html_body         text NULL,
- is_private        boolean NULL,
- remote_id         text NULL,
- remote_platform   text NULL,
- created_at        timestamp NULL,
- modified_at       timestamp NULL,
- creator_type      text NULL,
- id_tcg_attachment text[] NULL,
- id_tcg_ticket     uuid NULL,
- id_tcg_contact    uuid NULL,
- id_tcg_user       uuid NULL,
- id_event          uuid NULL,
- id_linked_user    uuid NULL,
- CONSTRAINT PK_tcg_comments PRIMARY KEY ( id_tcg_comment ),
- CONSTRAINT FK_41 FOREIGN KEY ( id_tcg_contact ) REFERENCES tcg_contacts ( id_tcg_contact ),
- CONSTRAINT FK_40_1 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket ),
- CONSTRAINT FK_42 FOREIGN KEY ( id_tcg_user ) REFERENCES tcg_users ( id_tcg_user ),
- CONSTRAINT FK_46 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
-);
-
-CREATE INDEX FK_tcg_comment_tcg_contact ON tcg_comments
-(
- id_tcg_contact
-);
-
-CREATE INDEX FK_tcg_comment_tcg_ticket ON tcg_comments
-(
- id_tcg_ticket
-);
-
-CREATE INDEX FK_tcg_comment_tcg_userID ON tcg_comments
-(
- id_tcg_user
-);
-
-CREATE INDEX FK_tcg_comments_eventID ON tcg_comments
-(
- id_event
-);
-
-COMMENT ON TABLE tcg_comments IS 'The tcg_comment object represents a comment on a ticket.';
-
-COMMENT ON COLUMN tcg_comments.creator_type IS 'Who created the comment. Can be a a id_tcg_contact or a id_tcg_user';
-
-
-
-
-
--- ************************************** crm_engagement_contacts
-
-CREATE TABLE crm_engagement_contacts
-(
- id_crm_engagement_contact uuid NOT NULL,
- id_crm_contact            uuid NULL,
- id_crm_engagement         uuid NOT NULL,
- CONSTRAINT PK_crm_engagement_contact PRIMARY KEY ( id_crm_engagement_contact ),
- CONSTRAINT FK_30 FOREIGN KEY ( id_crm_engagement ) REFERENCES crm_engagements ( id_crm_engagement )
-);
-
-CREATE INDEX FK_crm_engagement_contacts_crmEngagementID ON crm_engagement_contacts
-(
- id_crm_engagement
-);
-
-CREATE INDEX FK_engagement_contact_crmContactID ON crm_engagement_contacts
-(
- id_crm_contact
+ id_project
 );
 
 
@@ -1203,6 +956,213 @@ CREATE INDEX FK_tcg_attachment_tcg_ticketID ON tcg_attachments
 COMMENT ON COLUMN tcg_attachments.remote_id IS 'If empty, means the file is stored is panora but not in the destination platform (often because the platform doesn''t support )';
 COMMENT ON COLUMN tcg_attachments.uploader IS 'id_tcg_user  who uploaded the file';
 COMMENT ON COLUMN tcg_attachments.id_tcg_ticket IS 'For cases where the ticketing platform does not specify which comment the attachment belongs to.';
+
+
+
+
+
+-- ************************************** invite_links
+
+CREATE TABLE invite_links
+(
+ id_invite_link uuid NOT NULL,
+ status         text NOT NULL,
+ email          text NULL,
+ id_linked_user uuid NOT NULL,
+ CONSTRAINT PK_invite_links PRIMARY KEY ( id_invite_link ),
+ CONSTRAINT FK_37 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
+);
+
+CREATE INDEX FK_invite_link_linkedUserID ON invite_links
+(
+ id_linked_user
+);
+
+
+
+
+
+
+
+
+-- ************************************** events
+
+CREATE TABLE events
+(
+ id_event       uuid NOT NULL,
+ status         text NOT NULL,
+ type           text NOT NULL,
+ direction      text NOT NULL,
+ "timestamp"      timestamp NOT NULL DEFAULT NOW(),
+ method         text NOT NULL,
+ url            text NOT NULL,
+ provider       text NOT NULL,
+ id_linked_user uuid NOT NULL,
+ CONSTRAINT PK_jobs PRIMARY KEY ( id_event ),
+ CONSTRAINT FK_12 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
+);
+
+CREATE INDEX FK_linkeduserID_projectID ON events
+(
+ id_linked_user
+);
+
+
+
+COMMENT ON COLUMN events.status IS 'pending,, retry_scheduled, failed, success';
+COMMENT ON COLUMN events.type IS 'example crm_contact.created crm_contact.deleted';
+
+
+
+
+
+-- ************************************** crm_engagement_contacts
+
+CREATE TABLE crm_engagement_contacts
+(
+ id_crm_engagement_contact uuid NOT NULL,
+ id_crm_contact            uuid NULL,
+ id_crm_engagement         uuid NOT NULL,
+ CONSTRAINT PK_crm_engagement_contact PRIMARY KEY ( id_crm_engagement_contact ),
+ CONSTRAINT FK_30 FOREIGN KEY ( id_crm_engagement ) REFERENCES crm_engagements ( id_crm_engagement )
+);
+
+CREATE INDEX FK_crm_engagement_contacts_crmEngagementID ON crm_engagement_contacts
+(
+ id_crm_engagement
+);
+
+CREATE INDEX FK_engagement_contact_crmContactID ON crm_engagement_contacts
+(
+ id_crm_contact
+);
+
+
+
+
+
+
+
+
+-- ************************************** connections
+
+CREATE TABLE connections
+(
+ id_connection        uuid NOT NULL,
+ status               text NOT NULL,
+ provider_slug        text NOT NULL,
+ account_url          text NULL,
+ token_type           text NOT NULL,
+ access_token         text NULL,
+ refresh_token        text NULL,
+ expiration_timestamp timestamp NULL,
+ created_at           timestamp NOT NULL,
+ connection_token     text NULL,
+ id_project           uuid NOT NULL,
+ id_linked_user       uuid NOT NULL,
+ CONSTRAINT PK_connections PRIMARY KEY ( id_connection ),
+ CONSTRAINT Index_3 UNIQUE ( access_token, refresh_token ),
+ CONSTRAINT FK_9 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
+ CONSTRAINT FK_11 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
+);
+
+CREATE INDEX FK_1 ON connections
+(
+ id_project
+);
+
+CREATE INDEX FK_connections_to_LinkedUsersID ON connections
+(
+ id_linked_user
+);
+
+
+
+COMMENT ON COLUMN connections.status IS 'ONLY FOR INVITE LINK';
+COMMENT ON COLUMN connections.token_type IS 'The type of the token, such as "Bearer," "JWT," or any other supported type.';
+COMMENT ON COLUMN connections.connection_token IS 'Connection token users will put in their header to identify which service / linked_User they make request for';
+
+
+
+
+
+-- ************************************** webhook_delivery_attempts
+
+CREATE TABLE webhook_delivery_attempts
+(
+ id_webhook_delivery_attempt uuid NOT NULL,
+ "timestamp"                   timestamp NOT NULL,
+ status                      text NOT NULL,
+ next_retry                  timestamp NULL,
+ attempt_count               bigint NOT NULL,
+ id_webhooks_payload         uuid NULL,
+ id_webhook_endpoint         uuid NULL,
+ id_event                    uuid NULL,
+ id_webhooks_reponse         uuid NULL,
+ CONSTRAINT PK_webhook_event PRIMARY KEY ( id_webhook_delivery_attempt ),
+ CONSTRAINT FK_38_1 FOREIGN KEY ( id_webhooks_payload ) REFERENCES webhooks_payloads ( id_webhooks_payload ),
+ CONSTRAINT FK_38_2 FOREIGN KEY ( id_webhook_endpoint ) REFERENCES webhook_endpoints ( id_webhook_endpoint ),
+ CONSTRAINT FK_39 FOREIGN KEY ( id_event ) REFERENCES events ( id_event ),
+ CONSTRAINT FK_40 FOREIGN KEY ( id_webhooks_reponse ) REFERENCES webhooks_reponses ( id_webhooks_reponse )
+);
+
+CREATE INDEX FK_we_payload_webhookID ON webhook_delivery_attempts
+(
+ id_webhooks_payload
+);
+
+CREATE INDEX FK_we_webhookEndpointID ON webhook_delivery_attempts
+(
+ id_webhook_endpoint
+);
+
+CREATE INDEX FK_webhook_delivery_attempt_eventID ON webhook_delivery_attempts
+(
+ id_event
+);
+
+CREATE INDEX FK_webhook_delivery_attempt_webhook_responseID ON webhook_delivery_attempts
+(
+ id_webhooks_reponse
+);
+
+
+
+COMMENT ON COLUMN webhook_delivery_attempts."timestamp" IS 'timestamp of the delivery attempt';
+COMMENT ON COLUMN webhook_delivery_attempts.status IS 'status of the delivery attempt
+
+can be success, retry, failure';
+COMMENT ON COLUMN webhook_delivery_attempts.next_retry IS 'if null no next retry';
+COMMENT ON COLUMN webhook_delivery_attempts.attempt_count IS 'Number of attempt
+
+can be 0 1 2 3 4 5 6';
+
+
+
+
+
+-- ************************************** jobs_status_history
+
+CREATE TABLE jobs_status_history
+(
+ id_jobs_status_history uuid NOT NULL,
+ "timestamp"              timestamp NOT NULL DEFAULT NOW(),
+ previous_status        text NOT NULL,
+ new_status             text NOT NULL,
+ id_event               uuid NOT NULL,
+ CONSTRAINT PK_jobs_status_history PRIMARY KEY ( id_jobs_status_history ),
+ CONSTRAINT FK_4 FOREIGN KEY ( id_event ) REFERENCES events ( id_event )
+);
+
+CREATE INDEX id_job_jobs_status_history ON jobs_status_history
+(
+ id_event
+);
+
+
+
+COMMENT ON COLUMN jobs_status_history.previous_status IS 'void when first initialization';
+COMMENT ON COLUMN jobs_status_history.new_status IS 'pending, retry_scheduled, failed, success';
 
 
 
