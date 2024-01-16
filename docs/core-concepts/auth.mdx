@@ -7,18 +7,35 @@ icon: 'code'
 <Note>This guide assumes you have a Panora account, or a working self-hosted version</Note>
 
 
-### The Panora API uses uses two elements to indentify requests: `API keys` and a `connection_token`.  
-`API Keys` are used to authenticate yourself to our backend, while a `connection_token` serves to identify which of your user's you're making API calls for.
+### The Panora API uses uses two elements to indentify requests: API keys and a connection_token.  
+**API Keys** are used to authenticate yourself to our backend, while a **connection_token** serves to identify which of your user's you're making API calls for.
 
+Depending on your setup, you should make requests to one of those endpoints:
+    <Tabs>
+
+        <Tab title="US Servers">
+            `https://api.panora.dev/`
+        </Tab>
+
+        <Tab title="EU Servers">
+            `https://api-eu.panora.dev/`
+        </Tab>
+
+        <Tab title="Self-Hosted">
+            `http://localhost:3000/`
+        </Tab>
+
+    </Tabs>
+   
 
 ## Learn how to generate your API Keys and catch connection tokens.
-
 <Steps>
+
     <Step title="Creating your API Key">
-    Go to your dashboard, and visit the API Keys section. Click the Create New Key button.
-        <Frame type="glass">
-            <img src="/images/api-keys.png" />
-        </Frame>
+        Go to your dashboard, and visit the API Keys section. Click the Create New Key button.
+            <Frame type="glass">
+                <img src="/images/api-keys.png" />
+            </Frame>
     </Step>
 
     <Step title="Safely store your API Key">

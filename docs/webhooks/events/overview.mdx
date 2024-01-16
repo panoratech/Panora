@@ -73,32 +73,3 @@ The typical implementation consists in listening for events and triggering workl
 
 ## Securing your webhooks 
 We use secrets to make sure your endpoints do not receive data from third-parties usurpating Panora.
-
-## List of Event Types
-This is a list of all the types of events we currently send. We may add more at any time, so in developing and maintaining your code, you should not assume that only these types exist.
-
-You’ll notice that these events follow a pattern: resource.event. Our goal is to design a consistent system that makes things easier to anticipate and code against. 
-
-<ResponseField name="Event Types List">
-  <Expandable title="properties" defaultOpen="true">
-
-    <ResponseField name="crm.contact.created">
-        Occurs whenever a new contact was created in a CRM. The **data** field is a [`CRM Contact`](/crm/contacts/overview)    
-    </ResponseField>
-
-    <ResponseField name="crm.contact.updated" >
-        Occurs whenever a new contact was updated in a CRM. The **data** field is a [`CRM Contact`](/crm/contacts/overview)    
-    </ResponseField>
-
-    <ResponseField name="crm.contact.deleted" >
-        Occurs whenever a new contact was deleted in a CRM. The **data** field is a [`CRM Contact`](/crm/contacts/overview)     
-    </ResponseField>
-
-    <ResponseField name="connection.created">
-       Occurs when a new connection was created. The **data** field is a `Connection` object.
-    </ResponseField>
-
-
-  </Expandable>
-</ResponseField>
-
