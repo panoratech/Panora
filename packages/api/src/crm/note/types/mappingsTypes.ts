@@ -12,23 +12,23 @@ const freshSalesNoteMapper = new FreshsalesNoteMapper();
 
 export const noteUnificationMapping = {
   hubspot: {
-    unify: hubspotNoteMapper.unify,
-    desunify: hubspotNoteMapper.desunify,
+    unify: hubspotNoteMapper.unify.bind(hubspotNoteMapper),
+    desunify: hubspotNoteMapper.desunify.bind(hubspotNoteMapper),
   },
   pipedrive: {
-    unify: pipedriveNoteMapper.unify,
-    desunify: pipedriveNoteMapper.desunify,
+    unify: pipedriveNoteMapper.unify.bind(pipedriveNoteMapper),
+    desunify: pipedriveNoteMapper.desunify.bind(pipedriveNoteMapper),
   },
   zoho: {
-    unify: zohoNoteMapper.unify,
-    desunify: zohoNoteMapper.desunify,
+    unify: zohoNoteMapper.unify.bind(zohoNoteMapper),
+    desunify: zohoNoteMapper.desunify.bind(zohoNoteMapper),
   },
   zendesk: {
-    unify: zendeskNoteMapper.unify,
-    desunify: zendeskNoteMapper.desunify,
+    unify: zendeskNoteMapper.unify.bind(zendeskNoteMapper),
+    desunify: zendeskNoteMapper.desunify.bind(zendeskNoteMapper),
   },
   freshsales: {
-    unify: freshSalesNoteMapper.unify,
-    desunify: freshSalesNoteMapper.desunify,
+    unify: freshSalesNoteMapper.unify.bind(freshSalesNoteMapper),
+    desunify: freshSalesNoteMapper.desunify.bind(freshSalesNoteMapper),
   },
 };

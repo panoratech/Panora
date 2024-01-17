@@ -4,7 +4,7 @@ export interface HubspotTaskInput {
   hs_task_status: string;
   hs_task_subject: string;
   hs_task_priority: string;
-  hubspot_owner_id: string;
+  hubspot_owner_id?: string;
   [key: string]: any;
 }
 
@@ -25,3 +25,11 @@ export interface HubspotTaskOutput {
   updatedAt: string;
   archived: boolean;
 }
+
+export const commonTaskHubspotProperties = {
+  hs_task_body: '',
+  hs_task_priority: '',
+  hs_task_status: '',
+  hs_task_subject: '',
+  hubspot_owner_id: '',
+};

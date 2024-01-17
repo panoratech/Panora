@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { IUserService } from '@crm/user/types';
 import {
   CrmObject,
-  HubspotUserInput,
   HubspotUserOutput,
-  commonHubspotProperties,
+  commonUserHubspotProperties,
 } from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -33,7 +32,6 @@ export class HubspotService implements IUserService {
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotUserOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.users.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -41,9 +39,9 @@ export class HubspotService implements IUserService {
         },
       });
 
-      const commonPropertyNames = Object.keys(commonHubspotProperties);
+      const commonPropertyNames = Object.keys(commonUserHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/settings/v3/users';
+      const baseURL = 'https://api.hubapi.com/crm/v3/owners';
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
@@ -59,6 +57,7 @@ export class HubspotService implements IUserService {
           )}`,
         },
       });
+
       this.logger.log(`Synced hubspot users !`);
 
       return {

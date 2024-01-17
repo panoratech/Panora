@@ -4,7 +4,7 @@ import {
   CrmObject,
   HubspotCompanyInput,
   HubspotCompanyOutput,
-  commonHubspotProperties,
+  commonCompanyHubspotProperties,
 } from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -83,7 +83,7 @@ export class HubspotService implements ICompanyService {
         },
       });
 
-      const commonPropertyNames = Object.keys(commonHubspotProperties);
+      const commonPropertyNames = Object.keys(commonCompanyHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
       const baseURL = 'https://api.hubapi.com/crm/v3/objects/companies';
 

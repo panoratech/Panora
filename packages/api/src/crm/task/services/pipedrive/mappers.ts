@@ -7,7 +7,11 @@ import { ITaskMapper } from '@crm/task/types';
 import { Utils } from '@crm/task/utils';
 
 export class PipedriveTaskMapper implements ITaskMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
 
   async desunify(
     source: UnifiedTaskInput,

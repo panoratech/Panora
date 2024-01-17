@@ -5,6 +5,7 @@ export interface HubspotCompanyInput {
   state: string;
   domain: string;
   industry: string;
+  hubspot_owner_id?: string;
   [key: string]: any;
 }
 
@@ -15,6 +16,7 @@ export interface HubspotCompanyOutput {
     createdate: string;
     domain: string;
     hs_lastmodifieddate: string;
+    hubspot_owner_id: string;
     industry: string;
     name: string;
     phone: string;
@@ -25,3 +27,14 @@ export interface HubspotCompanyOutput {
   updatedAt: string;
   archived: boolean;
 }
+
+export const commonCompanyHubspotProperties = {
+  city: '',
+  createdate: '',
+  domain: '',
+  industry: '',
+  name: '',
+  phone: '',
+  state: '',
+  hubspot_owner_id: '',
+};

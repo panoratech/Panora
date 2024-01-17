@@ -11,7 +11,11 @@ import { IContactMapper } from '@crm/contact/types';
 import { Utils } from '@crm/contact/utils';
 
 export class HubspotContactMapper implements IContactMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
 
   async desunify(
     source: UnifiedContactInput,
@@ -29,7 +33,6 @@ export class HubspotContactMapper implements IContactMapper {
       lastname: source.last_name,
       email: primaryEmail,
       phone: primaryPhone,
-      hubspot_owner_id: source.user_id, //TODO: we le tthe uuid to retrieve the remote one in the service
     };
 
     if (source.user_id) {
@@ -80,13 +83,13 @@ export class HubspotContactMapper implements IContactMapper {
     const field_mappings = customFieldMappings.map((mapping) => ({
       [mapping.slug]: contact.properties[mapping.remote_id],
     }));
-    const address: Address = {
+    /*todo: const address: Address = {
       street_1: '',
       city: '',
       state: '',
       postal_code: '',
       country: '',
-    };
+    };*/
 
     return {
       first_name: contact.properties.firstname,
@@ -95,13 +98,18 @@ export class HubspotContactMapper implements IContactMapper {
         {
           email_address: contact.properties.email,
           email_address_type: 'primary',
+          owner_type: 'contact',
         },
       ],
       phone_numbers: [
-        { phone_number: '' /*contact.properties.*/, phone_type: 'primary' },
+        {
+          phone_number: contact.properties.phone,
+          phone_type: 'primary',
+          owner_type: 'contact',
+        },
       ],
       field_mappings,
-      addresses: [address],
+      addresses: [],
     };
   }
 }

@@ -205,19 +205,19 @@ export class SyncService implements OnModuleInit {
             modified_at: new Date(),
           };
           if (deal.name) {
-            data = { ...data, body: deal.name };
+            data = { ...data, name: deal.name };
           }
           if (deal.description) {
-            data = { ...data, html_body: deal.description };
+            data = { ...data, description: deal.description };
           }
           if (deal.amount) {
-            data = { ...data, is_private: deal.amount };
+            data = { ...data, amount: deal.amount };
           }
           if (deal.user_id) {
-            data = { ...data, creator_type: deal.user_id };
+            data = { ...data, user_id: deal.user_id };
           }
           if (deal.stage_id) {
-            data = { ...data, creator_type: deal.stage_id };
+            data = { ...data, stage_id: deal.stage_id };
           }
 
           const res = await this.prisma.crm_deals.update({
@@ -240,20 +240,22 @@ export class SyncService implements OnModuleInit {
             remote_platform: originSource,
           };
 
+          this.logger.log('deal name is ' + deal.name);
+
           if (deal.name) {
-            data = { ...data, body: deal.name };
+            data = { ...data, name: deal.name };
           }
           if (deal.description) {
-            data = { ...data, html_body: deal.description };
+            data = { ...data, description: deal.description };
           }
           if (deal.amount) {
-            data = { ...data, is_private: deal.amount };
+            data = { ...data, amount: deal.amount };
           }
           if (deal.user_id) {
-            data = { ...data, creator_type: deal.user_id };
+            data = { ...data, user_id: deal.user_id };
           }
           if (deal.stage_id) {
-            data = { ...data, creator_type: deal.stage_id };
+            data = { ...data, stage_id: deal.stage_id };
           }
           const res = await this.prisma.crm_deals.create({
             data: data,

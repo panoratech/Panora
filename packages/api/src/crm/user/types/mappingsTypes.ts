@@ -12,23 +12,23 @@ const freshSalesUserMapper = new FreshsalesUserMapper();
 
 export const userUnificationMapping = {
   hubspot: {
-    unify: hubspotUserMapper.unify,
-    desunify: hubspotUserMapper.desunify,
+    unify: hubspotUserMapper.unify.bind(hubspotUserMapper),
+    desunify: hubspotUserMapper.desunify.bind(hubspotUserMapper),
   },
   pipedrive: {
-    unify: pipedriveUserMapper.unify,
-    desunify: pipedriveUserMapper.desunify,
+    unify: pipedriveUserMapper.unify.bind(pipedriveUserMapper),
+    desunify: pipedriveUserMapper.desunify.bind(pipedriveUserMapper),
   },
   zoho: {
-    unify: zohoUserMapper.unify,
-    desunify: zohoUserMapper.desunify,
+    unify: zohoUserMapper.unify.bind(zohoUserMapper),
+    desunify: zohoUserMapper.desunify.bind(zohoUserMapper),
   },
   zendesk: {
-    unify: zendeskUserMapper.unify,
-    desunify: zendeskUserMapper.desunify,
+    unify: zendeskUserMapper.unify.bind(zendeskUserMapper),
+    desunify: zendeskUserMapper.desunify.bind(zendeskUserMapper),
   },
   freshsales: {
-    unify: freshSalesUserMapper.unify,
-    desunify: freshSalesUserMapper.desunify,
+    unify: freshSalesUserMapper.unify.bind(freshSalesUserMapper),
+    desunify: freshSalesUserMapper.desunify.bind(freshSalesUserMapper),
   },
 };

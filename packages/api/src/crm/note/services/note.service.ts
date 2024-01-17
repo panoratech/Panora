@@ -66,6 +66,17 @@ export class NoteService {
       //CHECKS
       if (!linkedUser) throw new Error('Linked User Not Found');
 
+      const user = unifiedNoteData.user_id;
+      if (user) {
+        const search = await this.prisma.crm_users.findUnique({
+          where: {
+            id_crm_user: user,
+          },
+        });
+        if (!search)
+          throw new Error('You inserted a user_id which does not exist');
+      }
+
       const company = unifiedNoteData.company_id;
       //check if contact_id and account_id refer to real uuids
       if (company) {
@@ -157,6 +168,9 @@ export class NoteService {
         if (target_note.deal_id) {
           data = { ...data, id_crm_deal: target_note.deal_id };
         }
+        if (target_note.user_id) {
+          data = { ...data, id_crm_user: target_note.user_id };
+        }
 
         const res = await this.prisma.crm_notes.update({
           where: {
@@ -187,6 +201,10 @@ export class NoteService {
         }
         if (target_note.deal_id) {
           data = { ...data, id_crm_deal: target_note.deal_id };
+        }
+
+        if (target_note.user_id) {
+          data = { ...data, id_crm_user: target_note.user_id };
         }
 
         const res = await this.prisma.crm_notes.create({
@@ -283,6 +301,7 @@ export class NoteService {
         company_id: note.id_crm_company,
         contact_id: note.id_crm_contact, // uuid of Contact object
         deal_id: note.id_crm_deal, // uuid of Contact object
+        user_id: note.id_crm_user,
         field_mappings: field_mappings,
       };
 
@@ -356,6 +375,7 @@ export class NoteService {
             company_id: note.id_crm_company,
             contact_id: note.id_crm_contact, // uuid of Contact object
             deal_id: note.id_crm_deal, // uuid of Contact object
+            user_id: note.id_crm_user,
             field_mappings: field_mappings,
           };
         }),

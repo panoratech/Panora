@@ -7,7 +7,11 @@ import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/deal/utils';
 
 export class PipedriveDealMapper implements IDealMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
 
   async desunify(
     source: UnifiedDealInput,

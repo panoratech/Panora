@@ -12,23 +12,23 @@ const freshSalesTaskMapper = new FreshsalesTaskMapper();
 
 export const taskUnificationMapping = {
   hubspot: {
-    unify: hubspotTaskMapper.unify,
-    desunify: hubspotTaskMapper.desunify,
+    unify: hubspotTaskMapper.unify.bind(hubspotTaskMapper),
+    desunify: hubspotTaskMapper.desunify.bind(hubspotTaskMapper),
   },
   pipedrive: {
-    unify: pipedriveTaskMapper.unify,
-    desunify: pipedriveTaskMapper.desunify,
+    unify: pipedriveTaskMapper.unify.bind(pipedriveTaskMapper),
+    desunify: pipedriveTaskMapper.desunify.bind(pipedriveTaskMapper),
   },
   zoho: {
-    unify: zohoTaskMapper.unify,
-    desunify: zohoTaskMapper.desunify,
+    unify: zohoTaskMapper.unify.bind(zohoTaskMapper),
+    desunify: zohoTaskMapper.desunify.bind(zohoTaskMapper),
   },
   zendesk: {
-    unify: zendeskTaskMapper.unify,
-    desunify: zendeskTaskMapper.desunify,
+    unify: zendeskTaskMapper.unify.bind(zendeskTaskMapper),
+    desunify: zendeskTaskMapper.desunify.bind(zendeskTaskMapper),
   },
   freshsales: {
-    unify: freshSalesTaskMapper.unify,
-    desunify: freshSalesTaskMapper.desunify,
+    unify: freshSalesTaskMapper.unify.bind(freshSalesTaskMapper),
+    desunify: freshSalesTaskMapper.desunify.bind(freshSalesTaskMapper),
   },
 };

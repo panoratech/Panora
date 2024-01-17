@@ -4,7 +4,7 @@ import {
   CrmObject,
   HubspotDealInput,
   HubspotDealOutput,
-  commonHubspotProperties,
+  commonDealHubspotProperties,
 } from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -76,6 +76,7 @@ export class HubspotService implements IDealService {
   ): Promise<ApiResponse<HubspotDealOutput[]>> {
     try {
       //TODO: check required scope  => crm.objects.deals.READ
+      //crm.schemas.deals.read","crm.objects.deals.read
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -83,7 +84,7 @@ export class HubspotService implements IDealService {
         },
       });
 
-      const commonPropertyNames = Object.keys(commonHubspotProperties);
+      const commonPropertyNames = Object.keys(commonDealHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
       const baseURL = 'https://api.hubapi.com/crm/v3/objects/deals';
 

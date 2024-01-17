@@ -43,7 +43,7 @@ export class HubspotService implements IEngagementService {
         properties: engagementData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/engagements/`,
+        `https://api.hubapi.com/crm/v3/objects/engagements`,
         JSON.stringify(dataBody),
         {
           headers: {

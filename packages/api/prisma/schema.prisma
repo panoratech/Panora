@@ -105,6 +105,7 @@ model crm_companies {
   @@index([id_crm_user], map: "fk_crm_company_crm_userid")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model crm_contacts {
   id_crm_contact      String                @id(map: "pk_crm_contacts") @db.Uuid
   first_name          String
@@ -229,6 +230,7 @@ model crm_notes {
   id_linked_user  String?        @db.Uuid
   remote_id       String?
   remote_platform String?
+  id_crm_user     String?        @db.Uuid
   crm_companies   crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_18")
   crm_contacts    crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_19")
   crm_deals       crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_20")
@@ -236,6 +238,7 @@ model crm_notes {
   @@index([id_crm_contact], map: "fk_crm_note_crm_companyid")
   @@index([id_crm_company], map: "fk_crm_note_crm_contactid")
   @@index([id_crm_deal], map: "fk_crm_notes_crm_dealid")
+  @@index([id_crm_user], map: "fk_crm_note_crm_userid")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -389,6 +392,39 @@ model remote_data {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tcg_accounts {
+  id_tcg_account  String         @id(map: "pk_tcg_account") @db.Uuid
+  remote_id       String?
+  name            String?
+  domains         String[]
+  remote_platform String?
+  created_at      DateTime       @db.Timestamp(6)
+  modified_at     DateTime       @db.Timestamp(6)
+  id_linked_user  String?        @db.Uuid
+  tcg_contacts    tcg_contacts[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tcg_attachments {
+  id_tcg_attachment String        @id(map: "pk_tcg_attachments") @db.Uuid
+  remote_id         String?
+  remote_platform   String?
+  file_name         String?
+  file_url          String?
+  uploader          String        @db.Uuid
+  created_at        DateTime      @db.Timestamp(6)
+  modified_at       DateTime      @db.Timestamp(6)
+  id_linked_user    String?       @db.Uuid
+  id_tcg_ticket     String?       @db.Uuid
+  id_tcg_comment    String?       @db.Uuid
+  tcg_tickets       tcg_tickets?  @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_50")
+  tcg_comments      tcg_comments? @relation(fields: [id_tcg_comment], references: [id_tcg_comment], onDelete: NoAction, onUpdate: NoAction, map: "fk_51")
+
+  @@index([id_tcg_comment], map: "fk_tcg_attachment_tcg_commentid")
+  @@index([id_tcg_ticket], map: "fk_tcg_attachment_tcg_ticketid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model tcg_comments {
   id_tcg_comment    String            @id(map: "pk_tcg_comments") @db.Uuid
   body              String?
@@ -430,6 +466,31 @@ model tcg_contacts {
   tcg_accounts    tcg_accounts?  @relation(fields: [id_tcg_account], references: [id_tcg_account], onDelete: NoAction, onUpdate: NoAction, map: "fk_49")
 
   @@index([id_tcg_account], map: "fk_tcg_contact_tcg_account_id")
+}
+
+model tcg_tags {
+  id_tcg_tag      String       @id(map: "pk_tcg_tags") @db.Uuid
+  name            String?
+  remote_id       String?
+  remote_platform String?
+  created_at      DateTime     @db.Timestamp(6)
+  modified_at     DateTime     @db.Timestamp(6)
+  id_tcg_ticket   String?      @db.Uuid
+  id_linked_user  String?      @db.Uuid
+  tcg_tickets     tcg_tickets? @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_48")
+
+  @@index([id_tcg_ticket], map: "fk_tcg_tag_tcg_ticketid")
+}
+
+model tcg_teams {
+  id_tcg_team     String   @id(map: "pk_tcg_teams") @db.Uuid
+  remote_id       String?
+  remote_platform String?
+  name            String?
+  description     String?
+  created_at      DateTime @db.Timestamp(6)
+  modified_at     DateTime @db.Timestamp(6)
+  id_linked_user  String?  @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -550,64 +611,4 @@ model webhooks_reponses {
   http_response_data        String
   http_status_code          String
   webhook_delivery_attempts webhook_delivery_attempts[]
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model tcg_accounts {
-  id_tcg_account  String         @id(map: "pk_tcg_account") @db.Uuid
-  remote_id       String?
-  name            String?
-  domains         String[]
-  remote_platform String?
-  created_at      DateTime       @db.Timestamp(6)
-  modified_at     DateTime       @db.Timestamp(6)
-  id_linked_user  String?        @db.Uuid
-  tcg_contacts    tcg_contacts[]
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model tcg_teams {
-  id_tcg_team     String   @id(map: "pk_tcg_teams") @db.Uuid
-  remote_id       String?
-  remote_platform String?
-  name            String?
-  description     String?
-  created_at      DateTime @db.Timestamp(6)
-  modified_at     DateTime @db.Timestamp(6)
-  id_linked_user  String?  @db.Uuid
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model tcg_attachments {
-  id_tcg_attachment String        @id(map: "pk_tcg_attachments") @db.Uuid
-  remote_id         String?
-  remote_platform   String?
-  file_name         String?
-  file_url          String?
-  uploader          String        @db.Uuid
-  created_at        DateTime      @db.Timestamp(6)
-  modified_at       DateTime      @db.Timestamp(6)
-  id_linked_user    String?       @db.Uuid
-  id_tcg_ticket     String?       @db.Uuid
-  id_tcg_comment    String?       @db.Uuid
-  tcg_tickets       tcg_tickets?  @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_50")
-  tcg_comments      tcg_comments? @relation(fields: [id_tcg_comment], references: [id_tcg_comment], onDelete: NoAction, onUpdate: NoAction, map: "fk_51")
-
-  @@index([id_tcg_comment], map: "fk_tcg_attachment_tcg_commentid")
-  @@index([id_tcg_ticket], map: "fk_tcg_attachment_tcg_ticketid")
-}
-
-model tcg_tags {
-  id_tcg_tag      String       @id(map: "pk_tcg_tags") @db.Uuid
-  name            String?
-  remote_id       String?
-  remote_platform String?
-  created_at      DateTime     @db.Timestamp(6)
-  modified_at     DateTime     @db.Timestamp(6)
-  id_tcg_ticket   String?      @db.Uuid
-  id_linked_user  String?      @db.Uuid
-  tcg_tickets     tcg_tickets? @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_48")
-
-  @@index([id_tcg_ticket], map: "fk_tcg_tag_tcg_ticketid")
 }

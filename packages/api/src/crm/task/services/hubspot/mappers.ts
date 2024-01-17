@@ -7,7 +7,11 @@ import { ITaskMapper } from '@crm/task/types';
 import { Utils } from '@crm/task/utils';
 
 export class HubspotTaskMapper implements ITaskMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
 
   async desunify(
     source: UnifiedTaskInput,
@@ -24,7 +28,6 @@ export class HubspotTaskMapper implements ITaskMapper {
       hs_timestamp: source.due_date
         ? source.due_date.toISOString()
         : new Date().toISOString(),
-      hubspot_owner_id: source.user_id || '',
     };
 
     if (source.user_id) {

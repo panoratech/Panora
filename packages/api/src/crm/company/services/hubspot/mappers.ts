@@ -4,15 +4,21 @@ import {
   UnifiedCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
+import { Utils } from '@crm/deal/utils';
 
 export class HubspotCompanyMapper implements ICompanyMapper {
-  desunify(
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
+  async desunify(
     source: UnifiedCompanyInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): HubspotCompanyInput {
+  ): Promise<HubspotCompanyInput> {
     const result: HubspotCompanyInput = {
       city: '',
       name: source.name,
@@ -27,11 +33,19 @@ export class HubspotCompanyMapper implements ICompanyMapper {
     if (primaryPhone) {
       result.phone = primaryPhone;
     }
-    const address = source.addresses[0];
+    if (source.addresses) {
+      const address = source.addresses[0];
+      if (address) {
+        result.city = address.city;
+        result.state = address.state;
+      }
+    }
 
-    if (address) {
-      result.city = address.city;
-      result.state = address.state;
+    if (source.user_id) {
+      const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
+      if (owner_id) {
+        result.hubspot_owner_id = owner_id;
+      }
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -61,41 +75,49 @@ export class HubspotCompanyMapper implements ICompanyMapper {
       return this.mapSingleCompanyToUnified(source, customFieldMappings);
     }
     // Handling array of HubspotCompanyOutput
-    return source.map((company) =>
-      this.mapSingleCompanyToUnified(company, customFieldMappings),
+    return Promise.all(
+      source.map((company) =>
+        this.mapSingleCompanyToUnified(company, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleCompanyToUnified(
+  private async mapSingleCompanyToUnified(
     company: HubspotCompanyOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCompanyOutput {
+  ): Promise<UnifiedCompanyOutput> {
     const field_mappings =
       customFieldMappings?.map((mapping) => ({
         [mapping.slug]: company.properties[mapping.remote_id],
       })) || [];
 
+    let opts: any = {};
+    if (company.properties.hubspot_owner_id) {
+      const owner_id = await this.utils.getUserUuidFromRemoteId(
+        company.properties.hubspot_owner_id,
+        'hubspot',
+      );
+      if (owner_id) {
+        opts = {
+          user_id: owner_id,
+        };
+      }
+    }
+
     return {
       name: company.properties.name,
       industry: company.properties.industry,
       number_of_employees: 0, // Placeholder, as there's no direct mapping provided
-      email_addresses: [
-        {
-          email_address: company.properties.email,
-          email_address_type: 'primary',
-          owner_type: 'company',
-        },
-      ], // Assuming 'email' is a property in company.properties
       addresses: [
         {
-          street_1: company.properties.street,
+          street_1: '',
           city: company.properties.city,
           state: company.properties.state,
-          postal_code: company.properties.postal_code,
-          country: company.properties.country,
+          postal_code: '',
+          country: '',
           address_type: 'primary',
           owner_type: 'company',
         },
@@ -108,6 +130,7 @@ export class HubspotCompanyMapper implements ICompanyMapper {
         },
       ],
       field_mappings,
+      ...opts,
     };
   }
 }

@@ -134,19 +134,19 @@ export class DealService {
           modified_at: new Date(),
         };
         if (target_deal.name) {
-          data = { ...data, body: target_deal.name };
+          data = { ...data, name: target_deal.name };
         }
         if (target_deal.description) {
-          data = { ...data, html_body: target_deal.description };
+          data = { ...data, description: target_deal.description };
         }
         if (target_deal.amount) {
-          data = { ...data, is_private: target_deal.amount };
+          data = { ...data, amount: target_deal.amount };
         }
         if (target_deal.user_id) {
-          data = { ...data, creator_type: target_deal.user_id };
+          data = { ...data, user_id: target_deal.user_id };
         }
         if (target_deal.stage_id) {
-          data = { ...data, creator_type: target_deal.stage_id };
+          data = { ...data, stage_id: target_deal.stage_id };
         }
 
         const res = await this.prisma.crm_deals.update({
@@ -169,19 +169,19 @@ export class DealService {
         };
 
         if (target_deal.name) {
-          data = { ...data, body: target_deal.name };
+          data = { ...data, name: target_deal.name };
         }
         if (target_deal.description) {
-          data = { ...data, html_body: target_deal.description };
+          data = { ...data, description: target_deal.description };
         }
         if (target_deal.amount) {
-          data = { ...data, is_private: target_deal.amount };
+          data = { ...data, amount: target_deal.amount };
         }
         if (target_deal.user_id) {
-          data = { ...data, creator_type: target_deal.user_id };
+          data = { ...data, user_id: target_deal.user_id };
         }
         if (target_deal.stage_id) {
-          data = { ...data, creator_type: target_deal.stage_id };
+          data = { ...data, stage_id: target_deal.stage_id };
         }
         const res = await this.prisma.crm_deals.create({
           data: data,

@@ -10,8 +10,11 @@ import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/contact/utils';
 
 export class PipedriveCompanyMapper implements ICompanyMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
 
+  constructor() {
+    this.utils = new Utils();
+  }
   async desunify(
     source: UnifiedCompanyInput,
     customFieldMappings?: {

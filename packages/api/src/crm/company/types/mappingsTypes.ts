@@ -12,23 +12,23 @@ const freshSalesCompanyMapper = new FreshsalesCompanyMapper();
 
 export const companyUnificationMapping = {
   hubspot: {
-    unify: hubspotCompanyMapper.unify,
-    desunify: hubspotCompanyMapper.desunify,
+    unify: hubspotCompanyMapper.unify.bind(hubspotCompanyMapper),
+    desunify: hubspotCompanyMapper.desunify.bind(hubspotCompanyMapper),
   },
   pipedrive: {
-    unify: pipedriveCompanyMapper.unify,
-    desunify: pipedriveCompanyMapper.desunify,
+    unify: pipedriveCompanyMapper.unify.bind(pipedriveCompanyMapper),
+    desunify: pipedriveCompanyMapper.desunify.bind(pipedriveCompanyMapper),
   },
   zoho: {
-    unify: zohoCompanyMapper.unify,
-    desunify: zohoCompanyMapper.desunify,
+    unify: zohoCompanyMapper.unify.bind(zohoCompanyMapper),
+    desunify: zohoCompanyMapper.desunify.bind(zohoCompanyMapper),
   },
   zendesk: {
-    unify: zendeskCompanyMapper.unify,
-    desunify: zendeskCompanyMapper.desunify,
+    unify: zendeskCompanyMapper.unify.bind(zendeskCompanyMapper),
+    desunify: zendeskCompanyMapper.desunify.bind(zendeskCompanyMapper),
   },
   freshsales: {
-    unify: freshSalesCompanyMapper.unify,
-    desunify: freshSalesCompanyMapper.desunify,
+    unify: freshSalesCompanyMapper.unify.bind(freshSalesCompanyMapper),
+    desunify: freshSalesCompanyMapper.desunify.bind(freshSalesCompanyMapper),
   },
 };

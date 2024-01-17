@@ -7,8 +7,11 @@ import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/note/utils';
 
 export class ZendeskNoteMapper implements INoteMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
 
+  constructor() {
+    this.utils = new Utils();
+  }
   async desunify(
     source: UnifiedNoteInput,
     customFieldMappings?: {

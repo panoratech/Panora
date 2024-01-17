@@ -11,7 +11,11 @@ import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.t
 import { Utils } from '@ticketing/comment/utils';
 
 export class ZendeskCommentMapper implements ICommentMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
   async desunify(
     source: UnifiedCommentInput,
     customFieldMappings?: {

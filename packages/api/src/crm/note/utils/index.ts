@@ -9,11 +9,15 @@ export class Utils {
 
   async getRemoteIdFromUserUuid(uuid: string) {
     try {
-      const res = await this.prisma.crm_users.findFirst({
+      const res = await this.prisma.crm_users.findUnique({
         where: {
-          id_crm_user: uuid,
+          id_crm_user: uuid.trim(),
+        },
+        select: {
+          remote_id: true,
         },
       });
+
       if (!res) throw new Error(`crm_user not found for uuid ${uuid}`);
       return res.remote_id;
     } catch (error) {

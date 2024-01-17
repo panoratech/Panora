@@ -11,24 +11,30 @@ export class Utils {
   }
 
   normalizeEmailsAndNumbers(email_addresses: Email[], phone_numbers: Phone[]) {
-    const normalizedEmails = email_addresses.map((email) => ({
-      ...email,
-      owner_type: email.owner_type ? email.owner_type : '',
-      created_at: new Date(),
-      modified_at: new Date(),
-      id_crm_email: uuidv4(), // This line is changed
-      email_address_type:
-        email.email_address_type === '' ? 'work' : email.email_address_type,
-    }));
+    let normalizedEmails = [];
+    let normalizedPhones = [];
 
-    const normalizedPhones = phone_numbers.map((phone) => ({
-      ...phone,
-      owner_type: phone.owner_type ? phone.owner_type : '',
-      created_at: new Date(),
-      modified_at: new Date(),
-      id_crm_phone_number: uuidv4(), // This line is changed
-      phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
-    }));
+    if (email_addresses) {
+      normalizedEmails = email_addresses.map((email) => ({
+        ...email,
+        owner_type: email.owner_type ? email.owner_type : '',
+        created_at: new Date(),
+        modified_at: new Date(),
+        id_crm_email: uuidv4(), // This line is changed
+        email_address_type:
+          email.email_address_type === '' ? 'work' : email.email_address_type,
+      }));
+    }
+    if (phone_numbers) {
+      normalizedPhones = phone_numbers.map((phone) => ({
+        ...phone,
+        owner_type: phone.owner_type ? phone.owner_type : '',
+        created_at: new Date(),
+        modified_at: new Date(),
+        id_crm_phone_number: uuidv4(), // This line is changed
+        phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
+      }));
+    }
 
     return {
       normalizedEmails,

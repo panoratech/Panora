@@ -7,7 +7,11 @@ import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/deal/utils';
 
 export class HubspotDealMapper implements IDealMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
 
   async desunify(
     source: UnifiedDealInput,
@@ -22,7 +26,6 @@ export class HubspotDealMapper implements IDealMapper {
       pipeline: source.stage_id || '',
       closedate: '',
       dealstage: '',
-      hubspot_owner_id: '',
     };
 
     if (source.user_id) {
@@ -98,7 +101,7 @@ export class HubspotDealMapper implements IDealMapper {
 
     return {
       name: deal.properties.dealname,
-      description: '', // Placeholder if there's no direct mapping
+      description: deal.properties.dealname, // Placeholder if there's no direct mapping
       amount: parseFloat(deal.properties.amount),
       //TODO; stage_id: deal.properties.dealstage,
       field_mappings,

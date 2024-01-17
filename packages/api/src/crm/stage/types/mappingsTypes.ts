@@ -12,23 +12,23 @@ const freshSalesStageMapper = new FreshsalesStageMapper();
 
 export const stageUnificationMapping = {
   hubspot: {
-    unify: hubspotStageMapper.unify,
-    desunify: hubspotStageMapper.desunify,
+    unify: hubspotStageMapper.unify.bind(hubspotStageMapper),
+    desunify: hubspotStageMapper.desunify.bind(hubspotStageMapper),
   },
   pipedrive: {
-    unify: pipedriveStageMapper.unify,
-    desunify: pipedriveStageMapper.desunify,
+    unify: pipedriveStageMapper.unify.bind(pipedriveStageMapper),
+    desunify: pipedriveStageMapper.desunify.bind(pipedriveStageMapper),
   },
   zoho: {
-    unify: zohoStageMapper.unify,
-    desunify: zohoStageMapper.desunify,
+    unify: zohoStageMapper.unify.bind(zohoStageMapper),
+    desunify: zohoStageMapper.desunify.bind(zohoStageMapper),
   },
   zendesk: {
-    unify: zendeskStageMapper.unify,
-    desunify: zendeskStageMapper.desunify,
+    unify: zendeskStageMapper.unify.bind(zendeskStageMapper),
+    desunify: zendeskStageMapper.desunify.bind(zendeskStageMapper),
   },
   freshsales: {
-    unify: freshSalesStageMapper.unify,
-    desunify: freshSalesStageMapper.desunify,
+    unify: freshSalesStageMapper.unify.bind(freshSalesStageMapper),
+    desunify: freshSalesStageMapper.desunify.bind(freshSalesStageMapper),
   },
 };

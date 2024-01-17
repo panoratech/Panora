@@ -39,6 +39,15 @@ export class HubspotUserMapper implements IUserMapper {
       remote_id: string;
     }[],
   ): UnifiedUserOutput {
-    return;
+    const field_mappings =
+      customFieldMappings?.map((mapping) => ({
+        [mapping.slug]: user[mapping.remote_id],
+      })) || [];
+
+    return {
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      field_mappings,
+    };
   }
 }

@@ -216,6 +216,9 @@ export class SyncService implements OnModuleInit {
           if (note.deal_id) {
             data = { ...data, id_crm_deal: note.deal_id };
           }
+          if (note.user_id) {
+            data = { ...data, id_crm_user: note.user_id };
+          }
 
           const res = await this.prisma.crm_notes.update({
             where: {
@@ -247,6 +250,9 @@ export class SyncService implements OnModuleInit {
           }
           if (note.deal_id) {
             data = { ...data, id_crm_deal: note.deal_id };
+          }
+          if (note.user_id) {
+            data = { ...data, id_crm_user: note.user_id };
           }
 
           const res = await this.prisma.crm_notes.create({

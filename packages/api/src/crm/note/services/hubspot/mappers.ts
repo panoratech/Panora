@@ -7,7 +7,11 @@ import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/note/utils';
 
 export class HubspotNoteMapper implements INoteMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
 
   async desunify(
     source: UnifiedNoteInput,
@@ -19,14 +23,10 @@ export class HubspotNoteMapper implements INoteMapper {
     const result: HubspotNoteInput = {
       hs_note_body: source.content,
       hs_timestamp: new Date().toISOString(), // Placeholder for timestamp
-      hubspot_owner_id: '',
     };
 
-    //TODO: owner is contact or company ?
-    if (source.contact_id) {
-      const owner_id = await this.utils.getRemoteIdFromUserUuid(
-        source.contact_id,
-      );
+    if (source.user_id) {
+      const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {
         result.hubspot_owner_id = owner_id;
       }
@@ -83,7 +83,7 @@ export class HubspotNoteMapper implements INoteMapper {
       );
       if (owner_id) {
         opts = {
-          contact_id: owner_id, //TODO is it really the contact id ?
+          user_id: owner_id,
         };
       }
     }

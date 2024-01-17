@@ -5,6 +5,7 @@ import {
   HubspotNoteInput,
   HubspotNoteOutput,
   commonHubspotProperties,
+  commonNoteHubspotProperties,
 } from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -83,7 +84,7 @@ export class HubspotService implements INoteService {
         },
       });
 
-      const commonPropertyNames = Object.keys(commonHubspotProperties);
+      const commonPropertyNames = Object.keys(commonNoteHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
       const baseURL = 'https://api.hubapi.com/crm/v3/objects/notes';
 

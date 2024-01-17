@@ -11,7 +11,11 @@ import { IContactMapper } from '@crm/contact/types';
 import { Utils } from '@crm/contact/utils';
 
 export class ZendeskContactMapper implements IContactMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
 
   async desunify(
     source: UnifiedContactInput,

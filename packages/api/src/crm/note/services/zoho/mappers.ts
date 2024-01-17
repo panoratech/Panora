@@ -4,8 +4,14 @@ import {
   UnifiedNoteOutput,
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
+import { Utils } from '@crm/note/utils';
 
 export class ZohoNoteMapper implements INoteMapper {
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
   async desunify(
     source: UnifiedNoteInput,
     customFieldMappings?: {

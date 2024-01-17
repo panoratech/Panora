@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { EngagementService } from './services/engagement.service';
-import { UnifiedEngagementInput, UnifiedEngagementOutput  } from './types/model.unified';
+import {
+  UnifiedEngagementInput,
+  UnifiedEngagementOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('crm/engagement')
@@ -38,7 +41,7 @@ export class EngagementController {
     operationId: 'getEngagements',
     summary: 'List a batch of Engagements',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'connection_token',
     required: true,
     description: 'The connection token',
@@ -48,8 +51,7 @@ export class EngagementController {
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedEngagementOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -58,17 +60,17 @@ export class EngagementController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.engagementService.getEngagements(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -88,8 +90,7 @@ export class EngagementController {
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedEngagementOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -106,7 +107,7 @@ export class EngagementController {
     summary: 'Create a Engagement',
     description: 'Create a engagement in any supported Crm software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'connection_token',
     required: true,
     description: 'The connection token',
@@ -116,8 +117,7 @@ export class EngagementController {
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original Crm software.',
   })
   @ApiBody({ type: UnifiedEngagementInput })
   @ApiCustomResponse(UnifiedEngagementOutput)
@@ -128,18 +128,18 @@ export class EngagementController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.engagementService.addEngagement(
         unifiedEngagementData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +148,7 @@ export class EngagementController {
     operationId: 'addEngagements',
     summary: 'Add a batch of Engagements',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'connection_token',
     required: true,
     description: 'The connection token',
@@ -158,8 +158,7 @@ export class EngagementController {
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original Crm software.',
   })
   @ApiBody({ type: UnifiedEngagementInput, isArray: true })
   @ApiCustomResponse(UnifiedEngagementOutput)
@@ -170,21 +169,20 @@ export class EngagementController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.engagementService.batchAddEngagements(
         unfiedEngagementData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
   }
 
   @ApiOperation({

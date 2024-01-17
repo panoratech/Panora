@@ -2,6 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UnifiedNoteInput {
   content: string;
+  user_id?: string;
   company_id?: string;
   contact_id?: string;
   deal_id?: string;
