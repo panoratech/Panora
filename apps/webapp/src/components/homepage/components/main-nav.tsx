@@ -11,8 +11,8 @@ export function MainNav({
   const [selectedItem, setSelectedItem] = useState<string>("quickstart");
 
   const navItemClassName = (itemName: string) =>
-    `text-sm border-b font-medium w-full text-left px-4 py-2 hover:bg-gray-900 cursor-pointer ${
-      selectedItem === itemName ? "bg-gray-900" : "text-muted-foreground"
+    `text-sm border-b font-medium w-full text-left px-4 py-2 hover:bg-zinc-900 cursor-pointer ${
+      selectedItem === itemName ? "bg-zinc-800" : "text-muted-foreground"
     } transition-colors`;
   
   function click(name: string) {
