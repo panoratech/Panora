@@ -18,7 +18,7 @@ export const providersConfig: ProvidersConfig = {
   'CRM': {
     'hubspot': {
       clientId: 'ba591170-a7c7-4fca-8086-1bd178c6b14d',
-      scopes: 'crm.objects.contacts.read crm.objects.contacts.write',
+      scopes: 'crm.objects.contacts.read crm.objects.contacts.write crm.schemas.deals.read crm.schemas.deals.write crm.objects.deals.read crm.objects.deals.write crm.objects.companies.read crm.objects.companies.write crm.objects.owners.read settings.users.read settings.users.write settings.users.teams.read settings.users.teams.write',
       authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
       logoPath: './assets/crm/hubspot_logo.png',
     },

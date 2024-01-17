@@ -1,7 +1,7 @@
 export type HubspotTicketInput = {
   subject: string;
   hs_pipeline: string;
-  hubspot_owner_id: string;
+  hubspot_owner_id?: string;
   hs_pipeline_stage: string;
   hs_ticket_priority: string;
   [key: string]: any;

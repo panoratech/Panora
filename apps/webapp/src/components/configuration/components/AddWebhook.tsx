@@ -179,7 +179,7 @@ const AddWebhook = () => {
                     </div>
                 </CardContent>
                 <CardFooter className="justify-between space-x-2">
-                    <Button type="submit">Submit</Button>
+                    <Button variant="outline" type="submit">Submit</Button>
                 </CardFooter>
             </form>
             </Form>

@@ -4,6 +4,7 @@ import {
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import {
+  Address,
   FreshsalesContactInput,
   FreshsalesContactOutput,
 } from '@crm/@utils/@types';
@@ -22,9 +23,9 @@ export class FreshsalesContactMapper implements IContactMapper {
     };
   }
 
-  unify(
+  async unify(
     source: FreshsalesContactOutput | FreshsalesContactOutput[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     // Handling single FreshsalesContactOutput
     if (!Array.isArray(source)) {
       return this.mapSingleFreshsalesContactToUnified(source);
@@ -56,12 +57,20 @@ export class FreshsalesContactMapper implements IContactMapper {
         phone_type: 'mobile',
       });
     }
+    const address: Address = {
+      street_1: contact.address,
+      city: contact.city,
+      state: contact.state,
+      postal_code: contact.zipcode,
+      country: contact.country,
+    };
 
     return {
       first_name: contact.first_name,
       last_name: contact.last_name,
       email_addresses,
       phone_numbers,
+      addresses: [address],
     };
   }
 }

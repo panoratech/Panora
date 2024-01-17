@@ -8,7 +8,7 @@ import {
 import { unifyCrm } from '@crm/@utils/@unification';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { unifyTicketing } from '@ticketing/@utils/@unification';
-import { UnifySourceType } from '../types/unfify.output';
+import { UnifySourceType } from '../types/unify.output';
 
 /* to fetch data
 

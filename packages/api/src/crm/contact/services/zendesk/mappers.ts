@@ -1,18 +1,29 @@
-import { ZendeskContactInput, ZendeskContactOutput } from '@crm/@utils/@types';
+import {
+  Address,
+  ZendeskContactInput,
+  ZendeskContactOutput,
+} from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
+import { Utils } from '@crm/contact/utils';
 
 export class ZendeskContactMapper implements IContactMapper {
-  desunify(
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
+
+  async desunify(
     source: UnifiedContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZendeskContactInput {
+  ): Promise<ZendeskContactInput> {
     // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
     const primaryEmail = source.email_addresses?.[0]?.email_address;
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
@@ -23,7 +34,20 @@ export class ZendeskContactMapper implements IContactMapper {
       last_name: source.last_name,
       email: primaryEmail,
       phone: primaryPhone,
+      address: {
+        line1: source.addresses[0].street_1,
+        city: source.addresses[0].city,
+        state: source.addresses[0].state,
+        postal_code: source.addresses[0].postal_code,
+        country: source.addresses[0].country,
+      },
     };
+    if (source.user_id) {
+      const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
+      if (owner_id) {
+        result.owner_id = Number(owner_id);
+      }
+    }
 
     if (customFieldMappings && source.field_mappings) {
       for (const fieldMapping of source.field_mappings) {
@@ -41,30 +65,32 @@ export class ZendeskContactMapper implements IContactMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: ZendeskContactOutput | ZendeskContactOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
+      return await this.mapSingleContactToUnified(source, customFieldMappings);
     }
 
     // Handling array of HubspotContactOutput
-    return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+    return Promise.all(
+      source.map((contact) =>
+        this.mapSingleContactToUnified(contact, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleContactToUnified(
+  private async mapSingleContactToUnified(
     contact: ZendeskContactOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput {
+  ): Promise<UnifiedContactOutput> {
     const field_mappings = customFieldMappings.map((mapping) => ({
       [mapping.slug]: contact.custom_fields[mapping.remote_id],
     }));
@@ -84,12 +110,35 @@ export class ZendeskContactMapper implements IContactMapper {
       });
     }
 
+    let opts: any = {};
+    if (contact.owner_id) {
+      const user_id = await this.utils.getUserUuidFromRemoteId(
+        String(contact.owner_id),
+        'zendesk',
+      );
+      if (user_id) {
+        opts = {
+          user_id: user_id,
+        };
+      }
+    }
+
+    const address: Address = {
+      street_1: contact.address.line1,
+      city: contact.address.city,
+      state: contact.address.state,
+      postal_code: contact.address.postal_code,
+      country: contact.address.country,
+    };
+
     return {
       first_name: contact.first_name,
       last_name: contact.last_name,
       email_addresses,
       phone_numbers,
       field_mappings,
+      addresses: [address],
+      ...opts,
     };
   }
 }

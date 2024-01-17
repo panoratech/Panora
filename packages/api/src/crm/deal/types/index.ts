@@ -1,7 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedDealInput, UnifiedDealOutput } from './model.unified';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IDealService {
@@ -31,13 +30,5 @@ export interface IDealMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedDealOutput | UnifiedDealOutput[];
-}
-
-export class DealResponse {
-  @ApiProperty({ type: [UnifiedDealOutput] })
-  deals: UnifiedDealOutput[];
-
-  @ApiPropertyOptional({ type: [{}] })
-  remote_data?: Record<string, any>[]; // Data in original format
+  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]>;
 }

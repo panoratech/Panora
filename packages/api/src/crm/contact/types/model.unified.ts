@@ -1,5 +1,5 @@
+import { Address, Email, Phone } from '@crm/@utils/@types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Email, Phone } from '.';
 
 export class UnifiedContactInput {
   @ApiProperty({ description: 'The first name of the contact' })
@@ -19,6 +19,18 @@ export class UnifiedContactInput {
     description: 'The phone numbers of the contact',
   })
   phone_numbers: Phone[];
+
+  @ApiProperty({
+    type: [Address],
+    description: 'The addresses of the contact',
+  })
+  addresses: Address[];
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The uuid of the user who owns the contact',
+  })
+  user_id?: string;
 
   @ApiPropertyOptional({
     type: [{}],

@@ -39,6 +39,7 @@ export class HubspotService implements IContactService {
           provider_slug: 'hubspot',
         },
       });
+
       const dataBody = {
         properties: contactData,
       };

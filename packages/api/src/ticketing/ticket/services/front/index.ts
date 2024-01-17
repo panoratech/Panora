@@ -13,6 +13,8 @@ import { Utils } from '@ticketing/comment/utils';
 
 @Injectable()
 export class FrontService implements ITicketService {
+  private readonly utils: Utils;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -23,8 +25,8 @@ export class FrontService implements ITicketService {
       TicketingObject.ticket.toUpperCase() + ':' + FrontService.name,
     );
     this.registry.registerService('front', this);
+    this.utils = new Utils();
   }
-  private readonly utils = new Utils();
 
   async addTicket(
     ticketData: FrontTicketInput,
