@@ -105,46 +105,6 @@ export abstract class CommonTicketService<T, U> extends CommonServiceHelper<T> {
     ticketData: U,
     linkedUserId: string,
   ): Promise<ApiResponse<T>>;
-
-  // async addTicket(
-  //   ticketData: U,
-  //   linkedUserId: string,
-  // ): Promise<ApiResponse<T>> {
-  //   try {
-  //     const connection = await this.prisma.connections.findFirst({
-  //       where: {
-  //         id_linked_user: linkedUserId,
-  //         provider_slug: this.providerSlug,
-  //       },
-  //     });
-  //     const dataBody = { properties: ticketData };
-  //     const resp = await axios.post(
-  //       `https://api.hubapi.com/crm/v3/objects/tickets`,
-  //       JSON.stringify(dataBody),
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${this.cryptoService.decrypt(
-  //             connection.access_token,
-  //           )}`,
-  //         },
-  //       },
-  //     );
-  //     return {
-  //       data: resp.data,
-  //       message: `${this.providerName} ticket created`,
-  //       statusCode: 201,
-  //     };
-  //   } catch (error) {
-  //     handleServiceError(
-  //       error,
-  //       this.logger,
-  //       this.providerName,
-  //       TicketingObject.ticket,
-  //       ActionType.POST,
-  //     );
-  //   }
-  // }
 }
 
 export abstract class CommonUserService<T> extends CommonServiceHelper<T> {
