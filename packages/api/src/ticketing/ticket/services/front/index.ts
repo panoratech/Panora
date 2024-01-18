@@ -18,7 +18,7 @@ export class FrontService
   implements ITicketService
 {
   private readonly utils: Utils;
-  
+
   constructor(
     prisma: PrismaService,
     logger: LoggerService,
