@@ -17,6 +17,8 @@ export class FrontService
   extends CommonTicketService<FrontTicketOutput, FrontTicketInput>
   implements ITicketService
 {
+  private readonly utils: Utils;
+  
   constructor(
     prisma: PrismaService,
     logger: LoggerService,
@@ -24,8 +26,8 @@ export class FrontService
     registry: ServiceRegistry,
   ) {
     super(prisma, logger, cryptoService, registry, 'Front', 'front');
+    this.utils = new Utils();
   }
-  private readonly utils = new Utils();
 
   async addTicket(
     ticketData: FrontTicketInput,

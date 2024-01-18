@@ -260,7 +260,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
               </div>
             </CardContent>
             <CardFooter>
-              <Button>Define Field</Button>
+              <Button variant="outline">Define Field</Button>
             </CardFooter>
           </form>
           </Form>
@@ -413,7 +413,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
               </div>
             </CardContent>
             <CardFooter>
-              <Button>Map Field</Button>
+              <Button variant="outline">Map Field</Button>
             </CardFooter>
           </form>
           </Form>

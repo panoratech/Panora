@@ -1,4 +1,8 @@
-import { ZohoContactInput, ZohoContactOutput } from '@crm/@utils/@types';
+import {
+  Address,
+  ZohoContactInput,
+  ZohoContactOutput,
+} from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
@@ -22,6 +26,11 @@ export class ZohoContactMapper implements IContactMapper {
       Last_Name: source.last_name,
       Email: primaryEmail,
       Phone: primaryPhone,
+      Mailing_Street: source.addresses[0].street_1,
+      Mailing_City: source.addresses[0].city,
+      Mailing_State: source.addresses[0].state,
+      Mailing_Zip: source.addresses[0].postal_code,
+      Mailing_Country: source.addresses[0].country,
     };
 
     if (customFieldMappings && source.field_mappings) {
@@ -40,13 +49,13 @@ export class ZohoContactMapper implements IContactMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: ZohoContactOutput | ZohoContactOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleContactToUnified(source, customFieldMappings);
     }
@@ -100,12 +109,21 @@ export class ZohoContactMapper implements IContactMapper {
       });
     }
 
+    const address: Address = {
+      street_1: contact.Mailing_Street,
+      city: contact.Mailing_City,
+      state: contact.Mailing_State,
+      postal_code: contact.Mailing_Zip,
+      country: contact.Mailing_Country,
+    };
+
     return {
       first_name: contact.First_Name ? contact.First_Name : '',
       last_name: contact.Last_Name ? contact.Last_Name : '',
       email_addresses,
       phone_numbers,
       field_mappings,
+      addresses: [address],
     };
   }
 }

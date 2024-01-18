@@ -41,5 +41,5 @@ export const commonHubspotProperties = {
   hs_object_id: '',
   lastmodifieddate: '',
   lastname: '',
-  // Add any other common properties here
+  hubspot_owner_id: '',
 };

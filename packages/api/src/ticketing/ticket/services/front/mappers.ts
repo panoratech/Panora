@@ -7,7 +7,11 @@ import {
 import { Utils } from '@ticketing/ticket/utils';
 
 export class FrontTicketMapper implements ITicketMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
 
   async desunify(
     source: UnifiedTicketInput,

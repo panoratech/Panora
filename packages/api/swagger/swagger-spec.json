@@ -903,17 +903,10 @@
         "summary": "List a batch of Deals",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -930,7 +923,25 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedDealOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -943,19 +954,10 @@
         "description": "Create a deal in any supported Crm software",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "description": "The integration ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
-            "description": "The linked user ID",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -981,30 +983,26 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "crm/deal"
-        ]
-      },
-      "patch": {
-        "operationId": "updateDeal",
-        "summary": "Update a Deal",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedDealOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1022,7 +1020,7 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "id of the  you want to retrive.",
+            "description": "id of the deal you want to retrieve.",
             "schema": {
               "type": "string"
             }
@@ -1039,7 +1037,65 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedDealOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/deal"
+        ]
+      },
+      "patch": {
+        "operationId": "updateDeal",
+        "summary": "Update a Deal",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedDealOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1053,17 +1109,10 @@
         "summary": "Add a batch of Deals",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "connection_token",
             "required": true,
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "header",
+            "description": "The connection token",
             "schema": {
               "type": "string"
             }
@@ -1092,12 +1141,1284 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedDealOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
           "crm/deal"
+        ]
+      }
+    },
+    "/crm/note": {
+      "get": {
+        "operationId": "getNotes",
+        "summary": "List a batch of Notes",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedNoteOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/note"
+        ]
+      },
+      "post": {
+        "operationId": "addNote",
+        "summary": "Create a Note",
+        "description": "Create a note in any supported Crm software",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedNoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedNoteOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/note"
+        ]
+      }
+    },
+    "/crm/note/{id}": {
+      "get": {
+        "operationId": "getNote",
+        "summary": "Retrieve a Note",
+        "description": "Retrieve a note from any connected Crm software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the note you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedNoteOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/note"
+        ]
+      }
+    },
+    "/crm/note/batch": {
+      "post": {
+        "operationId": "addNotes",
+        "summary": "Add a batch of Notes",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedNoteInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedNoteOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/note"
+        ]
+      }
+    },
+    "/crm/company": {
+      "get": {
+        "operationId": "getCompanies",
+        "summary": "List a batch of Companies",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCompanyOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/company"
+        ]
+      },
+      "post": {
+        "operationId": "addCompany",
+        "summary": "Create a Company",
+        "description": "Create a company in any supported Crm software",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedCompanyInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCompanyOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/company"
+        ]
+      },
+      "patch": {
+        "operationId": "updateCompany",
+        "summary": "Update a Company",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCompanyOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/company"
+        ]
+      }
+    },
+    "/crm/company/{id}": {
+      "get": {
+        "operationId": "getCompany",
+        "summary": "Retrieve a Company",
+        "description": "Retrieve a company from any connected Crm software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the company you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCompanyOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/company"
+        ]
+      }
+    },
+    "/crm/company/batch": {
+      "post": {
+        "operationId": "addCompanies",
+        "summary": "Add a batch of Companies",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedCompanyInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCompanyOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/company"
+        ]
+      }
+    },
+    "/crm/engagement": {
+      "get": {
+        "operationId": "getEngagements",
+        "summary": "List a batch of Engagements",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedEngagementOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/engagement"
+        ]
+      },
+      "post": {
+        "operationId": "addEngagement",
+        "summary": "Create a Engagement",
+        "description": "Create a engagement in any supported Crm software",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedEngagementInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedEngagementOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/engagement"
+        ]
+      },
+      "patch": {
+        "operationId": "updateEngagement",
+        "summary": "Update a Engagement",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedEngagementOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/engagement"
+        ]
+      }
+    },
+    "/crm/engagement/{id}": {
+      "get": {
+        "operationId": "getEngagement",
+        "summary": "Retrieve a Engagement",
+        "description": "Retrieve a engagement from any connected Crm software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the engagement you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedEngagementOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/engagement"
+        ]
+      }
+    },
+    "/crm/engagement/batch": {
+      "post": {
+        "operationId": "addEngagements",
+        "summary": "Add a batch of Engagements",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedEngagementInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedEngagementOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/engagement"
+        ]
+      }
+    },
+    "/crm/stage": {
+      "get": {
+        "operationId": "getStages",
+        "summary": "List a batch of Stages",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedStageOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/stage"
+        ]
+      }
+    },
+    "/crm/stage/{id}": {
+      "get": {
+        "operationId": "getStage",
+        "summary": "Retrieve a Stage",
+        "description": "Retrieve a stage from any connected Crm software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the stage you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedStageOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/stage"
+        ]
+      }
+    },
+    "/crm/task": {
+      "get": {
+        "operationId": "getTasks",
+        "summary": "List a batch of Tasks",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTaskOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/task"
+        ]
+      },
+      "post": {
+        "operationId": "addTask",
+        "summary": "Create a Task",
+        "description": "Create a task in any supported Crm software",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedTaskInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTaskOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/task"
+        ]
+      },
+      "patch": {
+        "operationId": "updateTask",
+        "summary": "Update a Task",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTaskOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/task"
+        ]
+      }
+    },
+    "/crm/task/{id}": {
+      "get": {
+        "operationId": "getTask",
+        "summary": "Retrieve a Task",
+        "description": "Retrieve a task from any connected Crm software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the task you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTaskOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/task"
+        ]
+      }
+    },
+    "/crm/task/batch": {
+      "post": {
+        "operationId": "addTasks",
+        "summary": "Add a batch of Tasks",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedTaskInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTaskOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/task"
+        ]
+      }
+    },
+    "/crm/user": {
+      "get": {
+        "operationId": "getUsers",
+        "summary": "List a batch of Users",
+        "parameters": [
+          {
+            "name": "connection_token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedUserOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/user"
+        ]
+      }
+    },
+    "/crm/user/{id}": {
+      "get": {
+        "operationId": "getUser",
+        "summary": "Retrieve a User",
+        "description": "Retrieve a user from any connected Crm software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the user you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Crm software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedUserOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "crm/user"
         ]
       }
     },
@@ -2679,15 +4000,15 @@
         "properties": {
           "email_address": {
             "type": "string",
-            "description": "The email address of a contact"
+            "description": "The email address"
           },
           "email_address_type": {
             "type": "string",
-            "description": "The email address type of a contact"
+            "description": "The email address type"
           },
           "owner_type": {
             "type": "string",
-            "description": "The owner type of a the email tied to the contact"
+            "description": "The owner type of an email"
           }
         },
         "required": [
@@ -2700,19 +4021,67 @@
         "properties": {
           "phone_number": {
             "type": "string",
-            "description": "The phone number of a contact"
+            "description": "The phone number"
           },
           "phone_type": {
             "type": "string",
-            "description": "The phone type of a contact"
+            "description": "The phone type"
           },
           "owner_type": {
-            "type": "string"
+            "type": "string",
+            "description": "The owner type of a phone number"
           }
         },
         "required": [
           "phone_number",
           "phone_type"
+        ]
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "street_1": {
+            "type": "string",
+            "description": "The street"
+          },
+          "street_2": {
+            "type": "string",
+            "description": "More information about the street "
+          },
+          "city": {
+            "type": "string",
+            "description": "The city"
+          },
+          "state": {
+            "type": "string",
+            "description": "The state"
+          },
+          "postal_code": {
+            "type": "string",
+            "description": "The postal code"
+          },
+          "country": {
+            "type": "string",
+            "description": "The country"
+          },
+          "address_type": {
+            "type": "string",
+            "description": "The address type"
+          },
+          "owner_type": {
+            "type": "string",
+            "description": "The owner type of the address"
+          }
+        },
+        "required": [
+          "street_1",
+          "street_2",
+          "city",
+          "state",
+          "postal_code",
+          "country",
+          "address_type",
+          "owner_type"
         ]
       },
       "UnifiedContactOutput": {
@@ -2783,6 +4152,17 @@
               "$ref": "#/components/schemas/Phone"
             }
           },
+          "addresses": {
+            "description": "The addresses of the contact",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user who owns the contact"
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
@@ -2793,12 +4173,261 @@
           "last_name",
           "email_addresses",
           "phone_numbers",
+          "addresses",
           "field_mappings"
+        ]
+      },
+      "UnifiedDealOutput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the deal"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the deal in the context of the Crm 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data"
         ]
       },
       "UnifiedDealInput": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings"
+        ]
+      },
+      "UnifiedNoteOutput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the note"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the note in the context of the Crm 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedNoteInput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings"
+        ]
+      },
+      "UnifiedCompanyOutput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the company"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the company in the context of the Crm 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedCompanyInput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings"
+        ]
+      },
+      "UnifiedEngagementOutput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the engagement"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the engagement in the context of the Crm 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedEngagementInput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings"
+        ]
+      },
+      "UnifiedStageOutput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the stage"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the stage in the context of the Crm 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedTaskOutput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the task"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the task in the context of the Crm 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedTaskInput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings"
+        ]
+      },
+      "UnifiedUserOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the user"
+          },
+          "email_address": {
+            "type": "string",
+            "description": "The email address of the user"
+          },
+          "teams": {
+            "description": "The teams whose the user is part of",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the user"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the user in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "email_address",
+          "field_mappings",
+          "remote_data"
+        ]
       },
       "UnifiedTicketOutput": {
         "type": "object",
@@ -3110,48 +4739,6 @@
         },
         "required": [
           "body"
-        ]
-      },
-      "UnifiedUserOutput": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the user"
-          },
-          "email_address": {
-            "type": "string",
-            "description": "The email address of the user"
-          },
-          "teams": {
-            "description": "The teams whose the user is part of",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "field_mappings": {
-            "type": "object",
-            "properties": {}
-          },
-          "id": {
-            "type": "string",
-            "description": "The uuid of the user"
-          },
-          "remote_id": {
-            "type": "string",
-            "description": "The id of the user in the context of the 3rd Party"
-          },
-          "remote_data": {
-            "type": "object",
-            "properties": {}
-          }
-        },
-        "required": [
-          "name",
-          "email_address",
-          "field_mappings",
-          "remote_data"
         ]
       },
       "UnifiedAttachmentInput": {

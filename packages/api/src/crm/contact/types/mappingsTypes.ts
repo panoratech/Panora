@@ -12,23 +12,23 @@ const freshSalesContactMapper = new FreshsalesContactMapper();
 
 export const contactUnificationMapping = {
   hubspot: {
-    unify: hubspotContactMapper.unify,
+    unify: hubspotContactMapper.unify.bind(hubspotContactMapper),
     desunify: hubspotContactMapper.desunify,
   },
   pipedrive: {
-    unify: pipedriveContactMapper.unify,
-    desunify: pipedriveContactMapper.desunify,
+    unify: pipedriveContactMapper.unify.bind(pipedriveContactMapper),
+    desunify: pipedriveContactMapper.desunify.bind(pipedriveContactMapper),
   },
   zoho: {
-    unify: zohoContactMapper.unify,
-    desunify: zohoContactMapper.desunify,
+    unify: zohoContactMapper.unify.bind(zohoContactMapper),
+    desunify: zohoContactMapper.desunify.bind(zohoContactMapper),
   },
   zendesk: {
-    unify: zendeskContactMapper.unify,
-    desunify: zendeskContactMapper.desunify,
+    unify: zendeskContactMapper.unify.bind(zendeskContactMapper),
+    desunify: zendeskContactMapper.desunify.bind(zendeskContactMapper),
   },
   freshsales: {
-    unify: freshSalesContactMapper.unify,
-    desunify: freshSalesContactMapper.desunify,
+    unify: freshSalesContactMapper.unify.bind(freshSalesContactMapper),
+    desunify: freshSalesContactMapper.desunify.bind(freshSalesContactMapper),
   },
 };

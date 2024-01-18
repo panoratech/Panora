@@ -51,25 +51,25 @@ export function SmallNav({
                 onClick={() => click('quickstart')}
               >
                 <p className="mx-4">Quick Start</p>
-              </a>*/}
+              </a>
               <a
                 className={navItemClassName('dashboard')}
                 onClick={() => click('dashboard')}
               >
                 <p className="mx-4">Dashboard</p>
-              </a>
-              <a
-                className={navItemClassName('jobs')}
-                onClick={() => click('jobs')}
-              >
-                <p className="mx-4">Jobs</p>
-
-              </a>
+              </a>*/}
               <a
                 className={navItemClassName('connections')}
                 onClick={() => click('connections')}
               >
                 <p className="mx-4">Connections</p>
+              </a>
+              <a
+                className={navItemClassName('logs')}
+                onClick={() => click('logs')}
+              >
+                <p className="mx-4">Logs</p>
+
               </a>
               <a
                 className={navItemClassName('configuration')}

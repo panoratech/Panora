@@ -216,7 +216,7 @@ const AddConnectionButton = ({
           <Button variant="outline" onClick={() => setShowNewLinkedUserDialog({open: false})}>
             Cancel
           </Button>
-          <Button type="submit">Generate</Button>
+          <Button variant="outline" type="submit">Generate</Button>
         </DialogFooter>
         </form>
         </Form>

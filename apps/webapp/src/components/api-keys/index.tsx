@@ -1,5 +1,5 @@
 import { PlusCircledIcon } from "@radix-ui/react-icons";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button"
 import { columns } from "./data/columns";
 import { DataTable } from "../shared/data-table";
 import {
@@ -19,6 +19,7 @@ import useApiKeyMutation from "@/hooks/mutations/useApiKeyMutation";
 import useProfileStore from "@/state/profileStore";
 import { useState } from "react";
 import { LoadingSpinner } from "../connections/components/LoadingSpinner";
+import { cn } from "@/lib/utils";
 
 export default function ApiKeysPage() {
   const [keyName, setKeyName] = useState('');
@@ -63,10 +64,15 @@ export default function ApiKeysPage() {
           <div></div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>
-                <PlusCircledIcon className="mr-2 h-4 w-4" />
-                Create New Key
-              </Button>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-label="Select a team"
+              className={cn("w-[180px] justify-between")}
+            >
+              <PlusCircledIcon className="mr-2 h-5 w-5" />
+              Create New Key
+            </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -86,7 +92,10 @@ export default function ApiKeysPage() {
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={handleSubmit}>Create</Button>
+                <Button 
+                  onClick={handleSubmit}
+                  variant="outline"
+                >Create</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>

@@ -11,7 +11,11 @@ import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.t
 import { Utils } from '@ticketing/comment/utils';
 
 export class ZendeskCommentMapper implements ICommentMapper {
-  private readonly utils = new Utils();
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
   async desunify(
     source: UnifiedCommentInput,
     customFieldMappings?: {
@@ -26,6 +30,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
       author_id: source.user_id
         ? parseInt(source.user_id)
         : parseInt(source.contact_id),
+      // TODO: this may be done here actually
       // we let the Panora uuids on purpose (it will be modified in the given service on the fly where we'll retrieve the actual remote id for the given uuid!)
       // either one must be passed
       type: 'Comment',

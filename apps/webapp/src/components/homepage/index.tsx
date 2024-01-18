@@ -31,7 +31,7 @@ export default function Homepage() {
     /*case 'quickstart':
       ContentComponent = QuickStartPage;
       break;*/
-    case 'jobs':
+    case 'logs':
       ContentComponent = JobsPage;
       break;
     case 'connections':
@@ -47,16 +47,16 @@ export default function Homepage() {
       ContentComponent = ApiKeysPage;
       break;
     default:
-      ContentComponent = MainPage; //QuickStartPage; // The default page content
+      ContentComponent = ConnectionsPage;
   }
   return (
     <>
       <div>
         { windowWidth < lgBreakpoint ? <SmallNav onLinkClick={setActivePage} /> : 
           <div className="items-center hidden lg:flex lg:flex-col border-r fixed left-0 bg-opacity-90 backdrop-filter backdrop-blur-lg w-[200px] h-screen">
-            <div className="flex lg:flex-col items-start py-4 space-y-4">
-              <div className="flex flex-row items-center ml-3">
-                <img src="logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span>
+            <div className="flex lg:flex-col items-center py-4 space-y-4">
+              <div className="flex flex-row justify-center">
+                <img src="logo.png" className="w-14"/>
               </div>
               <TeamSwitcher className="w-40 ml-3" />
               <MainNav className="flex lg:flex-col mx-auto w-[200px] space-y-0" onLinkClick={setActivePage} />

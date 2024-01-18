@@ -11,8 +11,8 @@ export function MainNav({
   const [selectedItem, setSelectedItem] = useState<string>("quickstart");
 
   const navItemClassName = (itemName: string) =>
-    `text-sm border-b font-medium w-full text-left px-4 py-2 hover:bg-gray-900 cursor-pointer ${
-      selectedItem === itemName ? "bg-gray-900" : "text-muted-foreground"
+    `text-sm border-b font-medium w-full text-left px-4 py-2 hover:bg-zinc-900 cursor-pointer ${
+      selectedItem === itemName ? "bg-zinc-800" : "text-muted-foreground"
     } transition-colors`;
   
   function click(name: string) {
@@ -31,23 +31,23 @@ export function MainNav({
       >
         Quick Start
       </a>*/}
-      <a
+      {/*<a
         className={navItemClassName('dashboard')}
         onClick={() => click('dashboard')}
       >
         Dashboard
-      </a>
-      <a
-        className={navItemClassName('jobs')}
-        onClick={() => click('jobs')}
-      >
-        Jobs
-      </a>
-      <a
+    </a>*/}
+    <a
         className={navItemClassName('connections')}
         onClick={() => click('connections')}
       >
         Connections
+      </a>
+      <a
+        className={navItemClassName('logs')}
+        onClick={() => click('logs')}
+      >
+        Logs
       </a>
       <a
         className={navItemClassName('configuration')}

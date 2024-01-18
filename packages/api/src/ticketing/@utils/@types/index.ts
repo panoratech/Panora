@@ -1,4 +1,3 @@
-import { contactUnificationMapping } from '@crm/contact/types/mappingsTypes';
 import { contactUnificationMapping as contactTicketingUnificationMapping } from '@ticketing/contact/types/mappingsTypes';
 import { IAccountService } from '@ticketing/account/types';
 import { accountUnificationMapping } from '@ticketing/account/types/mappingsTypes';
@@ -96,7 +95,7 @@ export type ITicketingService =
   | ITeamService
   | ITagService;
 
-//TODO; export everything
+/*TODO: export all providers  */
 export * from '../../ticket/services/zendesk/types';
 export * from '../../comment/services/zendesk/types';
 export * from '../../user/services/zendesk/types';
