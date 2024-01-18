@@ -9,20 +9,21 @@ import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GithubTicketInput, GithubTicketOutput } from './types';
+import { CommonTicketService } from '@ticketing/@utils/@services/common';
 
 //TODO
 @Injectable()
-export class GithubService implements ITicketService {
+export class GithubService
+  extends CommonTicketService<GithubTicketOutput, GithubTicketInput>
+  implements ITicketService
+{
   constructor(
-    private prisma: PrismaService,
-    private logger: LoggerService,
-    private cryptoService: EncryptionService,
-    private registry: ServiceRegistry,
+    prisma: PrismaService,
+    logger: LoggerService,
+    cryptoService: EncryptionService,
+    registry: ServiceRegistry,
   ) {
-    this.logger.setContext(
-      TicketingObject.ticket.toUpperCase() + ':' + GithubService.name,
-    );
-    this.registry.registerService('github', this);
+    super(prisma, logger, cryptoService, registry, 'Github', 'github');
   }
   async addTicket(
     ticketData: GithubTicketInput,
@@ -65,42 +66,12 @@ export class GithubService implements ITicketService {
       );
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<GithubTicketOutput[]>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'github',
-        },
-      });
-      const owner = '';
-      const repo = '';
-      const resp = await axios.get(`https://api.github.com/repos/issues`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
-        },
-      });
-      this.logger.log(`Synced github tickets !`);
 
-      return {
-        data: resp.data,
-        message: 'Github tickets retrieved',
-        statusCode: 200,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Github',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
-    }
+  protected mapResponse(data: any): GithubTicketOutput[] {
+    return data;
+  }
+
+  protected constructApiEndpoint(): string {
+    return 'https://api.github.com/repos/issues';
   }
 }

@@ -13,20 +13,21 @@ import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
+import { CommonTicketService } from '@ticketing/@utils/@services/common';
 
 @Injectable()
-export class ZendeskService implements ITicketService {
+export class ZendeskService
+  extends CommonTicketService<ZendeskTicketOutput, ZendeskTicketInput>
+  implements ITicketService
+{
   constructor(
-    private prisma: PrismaService,
-    private logger: LoggerService,
-    private cryptoService: EncryptionService,
+    prisma: PrismaService,
+    logger: LoggerService,
+    cryptoService: EncryptionService,
     private env: EnvironmentService,
-    private registry: ServiceRegistry,
+    registry: ServiceRegistry,
   ) {
-    this.logger.setContext(
-      TicketingObject.ticket.toUpperCase() + ':' + ZendeskService.name,
-    );
-    this.registry.registerService('zendesk_tcg', this);
+    super(prisma, logger, cryptoService, registry, 'Zendesk', 'zendesk_tcg');
   }
   async addTicket(
     ticketData: ZendeskTicketInput,
@@ -112,44 +113,12 @@ export class ZendeskService implements ITicketService {
       );
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<ZendeskTicketOutput[]>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_tcg',
-        },
-      });
 
-      const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets.json`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      this.logger.log(`Synced zendesk tickets !`);
+  protected constructApiEndpoint(): string {
+    return `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets.json`;
+  }
 
-      return {
-        data: resp.data.tickets,
-        message: 'Zendesk tickets retrieved',
-        statusCode: 200,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
-    }
+  protected mapResponse(data: any): ZendeskTicketOutput[] {
+    return data.tickets;
   }
 }

@@ -10,19 +10,20 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
 import { Utils } from '@ticketing/comment/utils';
+import { CommonTicketService } from '@ticketing/@utils/@services/common';
 
 @Injectable()
-export class FrontService implements ITicketService {
+export class FrontService
+  extends CommonTicketService<FrontTicketOutput, FrontTicketInput>
+  implements ITicketService
+{
   constructor(
-    private prisma: PrismaService,
-    private logger: LoggerService,
-    private cryptoService: EncryptionService,
-    private registry: ServiceRegistry,
+    prisma: PrismaService,
+    logger: LoggerService,
+    cryptoService: EncryptionService,
+    registry: ServiceRegistry,
   ) {
-    this.logger.setContext(
-      TicketingObject.ticket.toUpperCase() + ':' + FrontService.name,
-    );
-    this.registry.registerService('front', this);
+    super(prisma, logger, cryptoService, registry, 'Front', 'front');
   }
   private readonly utils = new Utils();
 
@@ -158,40 +159,12 @@ export class FrontService implements ITicketService {
       );
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-  ): Promise<ApiResponse<FrontTicketOutput[]>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'front',
-        },
-      });
 
-      const resp = await axios.get('https://api2.frontapp.com/conversations', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
-        },
-      });
-      this.logger.log(`Synced front tickets !`);
+  protected constructApiEndpoint(): string {
+    return 'https://api2.frontapp.com/conversations';
+  }
 
-      return {
-        data: resp.data._results,
-        message: 'Front tickets retrieved',
-        statusCode: 200,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Front',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
-    }
+  protected mapResponse(data: any): FrontTicketOutput[] {
+    return data._results;
   }
 }
