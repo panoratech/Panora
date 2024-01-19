@@ -13,20 +13,7 @@ export class PipedriveStageMapper implements IStageMapper {
       remote_id: string;
     }[],
   ): PipedriveStageInput {
-    const result: PipedriveStageInput = {
-      name: source.stage_name,
-    };
-
-    if (customFieldMappings && source.field_mappings) {
-      customFieldMappings.forEach((mapping) => {
-        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
-        if (customValue) {
-          result[mapping.remote_id] = customValue[mapping.slug];
-        }
-      });
-    }
-
-    return result;
+    return;
   }
 
   unify(

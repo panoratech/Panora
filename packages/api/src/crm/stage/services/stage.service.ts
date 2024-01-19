@@ -148,9 +148,9 @@ export class StageService {
         data: {
           id_event: uuidv4(),
           status: 'success',
-          type: 'ticketing.stage.pulled',
+          type: 'crm.stage.pulled',
           method: 'GET',
-          url: '/ticketing/stage',
+          url: '/crm/stage',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

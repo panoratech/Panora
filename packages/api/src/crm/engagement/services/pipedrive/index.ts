@@ -27,9 +27,11 @@ export class PipedriveService implements IEngagementService {
     this.registry.registerService('pipedrive', this);
   }
 
+  /*TODO: */
   async addEngagement(
     engagementData: PipedriveEngagementInput,
     linkedUserId: string,
+    engagement_type: string,
   ): Promise<ApiResponse<PipedriveEngagementOutput>> {
     try {
       //TODO: check required scope  => crm.objects.engagements.write
@@ -39,23 +41,12 @@ export class PipedriveService implements IEngagementService {
           provider_slug: 'pipedrive',
         },
       });
-      const resp = await axios.post(
-        `https://api.pipedrive.com/v1/persons`,
-        JSON.stringify(engagementData),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      return {
+      return;
+      /*return {
         data: resp.data.data,
         message: 'Pipedrive engagement created',
         statusCode: 201,
-      };
+      };*/
     } catch (error) {
       handleServiceError(
         error,
@@ -65,21 +56,44 @@ export class PipedriveService implements IEngagementService {
         ActionType.POST,
       );
     }
-    return;
   }
 
   async syncEngagements(
     linkedUserId: string,
+    engagement_type: string,
   ): Promise<ApiResponse<PipedriveEngagementOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.engagements.READ
+      switch (engagement_type) {
+        case 'CALL':
+          return this.syncCalls(linkedUserId);
+        case 'MEETING':
+          return this.syncMeetings(linkedUserId);
+        case 'EMAIL':
+          return this.syncEmails(linkedUserId);
+        default:
+          break;
+      }
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Pipedrive',
+        CrmObject.engagement,
+        ActionType.GET,
+      );
+    }
+  }
+
+  private async syncCalls(linkedUserId: string) {
+    try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
+
+      const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -87,10 +101,15 @@ export class PipedriveService implements IEngagementService {
           )}`,
         },
       });
+      //filter only calls
+      const finalData = resp.data.data.filter(
+        (item) => item.key_string == 'call',
+      );
+      this.logger.log(`Synced pipedrive engagements calls !`);
 
       return {
-        data: resp.data.data,
-        message: 'Pipedrive engagements retrieved',
+        data: finalData,
+        message: 'Pipedrive engagements calls retrieved',
         statusCode: 200,
       };
     } catch (error) {
@@ -98,7 +117,83 @@ export class PipedriveService implements IEngagementService {
         error,
         this.logger,
         'Pipedrive',
-        CrmObject.engagement,
+        CrmObject.engagement_call,
+        ActionType.GET,
+      );
+    }
+  }
+  private async syncMeetings(linkedUserId: string) {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'pipedrive',
+        },
+      });
+
+      const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
+      //filter only calls
+      const finalData = resp.data.data.filter(
+        (item) => item.key_string == 'meeting',
+      );
+      this.logger.log(`Synced pipedrive engagements meetings !`);
+
+      return {
+        data: finalData,
+        message: 'Pipedrive engagements meetings retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Pipedrive',
+        CrmObject.engagement_meeting,
+        ActionType.GET,
+      );
+    }
+  }
+  private async syncEmails(linkedUserId: string) {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'pipedrive',
+        },
+      });
+
+      const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
+      //filter only calls
+      const finalData = resp.data.data.filter(
+        (item) => item.key_string == 'email',
+      );
+      this.logger.log(`Synced pipedrive engagements emails !`);
+
+      return {
+        data: finalData,
+        message: 'Pipedrive engagements emails retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Pipedrive',
+        CrmObject.engagement_email,
         ActionType.GET,
       );
     }

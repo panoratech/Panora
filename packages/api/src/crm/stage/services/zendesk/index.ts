@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IStageService } from '@crm/stage/types';
-import {
-  CrmObject,
-  ZendeskStageInput,
-  ZendeskStageOutput,
-} from '@crm/@utils/@types';
+import { CrmObject, ZendeskStageOutput } from '@crm/@utils/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -28,6 +24,7 @@ export class ZendeskService implements IStageService {
 
   async syncStages(
     linkedUserId: string,
+    deal_id: string,
   ): Promise<ApiResponse<ZendeskStageOutput[]>> {
     try {
       //TODO: check required scope  => crm.objects.stages.READ
@@ -37,6 +34,21 @@ export class ZendeskService implements IStageService {
           provider_slug: 'zendesk',
         },
       });
+      const res = await this.prisma.crm_deals.findUnique({
+        where: { id_crm_deal: deal_id },
+      });
+      const deal = await axios.get(
+        `https://api.getbase.com/v2/deals/${res.remote_id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+      const stage_remote_id: number = deal.data.data.stage_id;
       const resp = await axios.get(`https://api.getbase.com/v2/stages`, {
         headers: {
           'Content-Type': 'application/json',
@@ -45,13 +57,15 @@ export class ZendeskService implements IStageService {
           )}`,
         },
       });
-      const finalData = resp.data.items.map((item) => {
-        return item.data;
-      });
+      const finalData = resp.data.items
+        .filter((item) => item.data.stage_id === stage_remote_id)
+        .map((item) => {
+          return item.data;
+        });
       this.logger.log(`Synced zendesk stages !`);
 
       return {
-        data: finalData,
+        data: [finalData],
         message: 'Zendesk stages retrieved',
         statusCode: 200,
       };

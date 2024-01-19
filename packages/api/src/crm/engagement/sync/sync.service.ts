@@ -14,6 +14,7 @@ import { UnifiedEngagementOutput } from '../types/model.unified';
 import { IEngagementService } from '../types';
 import { crm_engagements as CrmEngagement } from '@prisma/client';
 import { OriginalEngagementOutput } from '@@core/utils/types/original/original.crm';
+import { ENGAGEMENTS_TYPE } from '../utils';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -29,7 +30,8 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.syncEngagements();
+      //TODO: to test after
+      //await this.syncEngagements();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -66,11 +68,14 @@ export class SyncService implements OnModuleInit {
           );
           for (const provider of providers) {
             try {
-              await this.syncEngagementsForLinkedUser(
-                provider,
-                linkedUser.id_linked_user,
-                id_project,
-              );
+              for (const type of ENGAGEMENTS_TYPE) {
+                await this.syncEngagementsForLinkedUser(
+                  provider,
+                  linkedUser.id_linked_user,
+                  id_project,
+                  type,
+                );
+              }
             } catch (error) {
               handleServiceError(error, this.logger);
             }
@@ -89,6 +94,7 @@ export class SyncService implements OnModuleInit {
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    engagement_type: string,
   ) {
     try {
       this.logger.log(
@@ -121,7 +127,11 @@ export class SyncService implements OnModuleInit {
       const service: IEngagementService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalEngagementOutput[]> =
-        await service.syncEngagements(linkedUserId, remoteProperties);
+        await service.syncEngagements(
+          linkedUserId,
+          engagement_type,
+          remoteProperties,
+        );
 
       const sourceObject: OriginalEngagementOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
@@ -218,10 +228,10 @@ export class SyncService implements OnModuleInit {
           if (engagement.end_time) {
             data = { ...data, end_time: engagement.end_time };
           }
-          if (engagement.engagement_type) {
+          if (engagement.type) {
             data = {
               ...data,
-              id_crm_engagement_type: engagement.engagement_type,
+              type: engagement.type,
             };
           }
           if (engagement.company_id) {
@@ -267,10 +277,10 @@ export class SyncService implements OnModuleInit {
           if (engagement.end_time) {
             data = { ...data, end_time: engagement.end_time };
           }
-          if (engagement.engagement_type) {
+          if (engagement.type) {
             data = {
               ...data,
-              id_crm_engagement_type: engagement.engagement_type,
+              type: engagement.type,
             };
           }
           if (engagement.company_id) {

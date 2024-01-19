@@ -16,13 +16,14 @@ export class ZohoEngagementMapper implements IEngagementMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: ZohoEngagementOutput | ZohoEngagementOutput[],
+    engagement_type: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEngagementOutput | UnifiedEngagementOutput[] {
+  ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleEngagementToUnified(source, customFieldMappings);
     }

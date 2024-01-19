@@ -16,6 +16,7 @@ import { ServiceRegistry } from './registry.service';
 import { OriginalEngagementOutput } from '@@core/utils/types/original/original.crm';
 import { unify } from '@@core/utils/unification/unify';
 import { IEngagementService } from '../types';
+import { ENGAGEMENTS_TYPE } from '../utils';
 
 @Injectable()
 export class EngagementService {
@@ -80,22 +81,17 @@ export class EngagementService {
         if (!search)
           throw new Error('You inserted a contact_id which does not exist');
       }
-      const engagement_type = unifiedEngagementData.engagement_type;
-      //check if contact_id and account_id refer to real uuids
-      if (engagement_type) {
-        const search = await this.prisma.crm_engagement_types.findUnique({
-          where: {
-            id_crm_engagement_type: engagement_type,
-          },
-        });
-        if (!search)
+      const type = unifiedEngagementData.type.toUpperCase();
+      if (type) {
+        if (!ENGAGEMENTS_TYPE.includes(type))
           throw new Error(
-            'You inserted a engagement_type which does not exist',
+            'You inserted a engagement type which does not exist',
           );
+      } else {
+        throw new Error('You didnt insert a type for your engagement');
       }
 
       const engagement_contacts = unifiedEngagementData.contacts;
-      //CHEK IF attachments contains valid Attachment uuids
       if (engagement_contacts && engagement_contacts.length > 0) {
         engagement_contacts.map(async (contact) => {
           const search = await this.prisma.crm_engagement_contacts.findUnique({
@@ -122,12 +118,19 @@ export class EngagementService {
         this.serviceRegistry.getService(integrationId);
 
       const resp: ApiResponse<OriginalEngagementOutput> =
-        await service.addEngagement(desunifiedObject, linkedUserId);
+        await service.addEngagement(desunifiedObject, linkedUserId, type);
+
+      const targetType =
+        type === 'CALL'
+          ? CrmObject.engagement_call
+          : type === 'MEETING'
+          ? CrmObject.engagement_meeting
+          : CrmObject.engagement_email;
 
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalEngagementOutput[]>({
         sourceObject: [resp.data],
-        targetType: CrmObject.engagement,
+        targetType: targetType,
         providerName: integrationId,
         customFieldMappings: [],
       })) as UnifiedEngagementOutput[];
@@ -169,10 +172,10 @@ export class EngagementService {
         if (target_engagement.end_time) {
           data = { ...data, end_time: target_engagement.end_time };
         }
-        if (target_engagement.engagement_type) {
+        if (target_engagement.type) {
           data = {
             ...data,
-            id_crm_engagement_type: target_engagement.engagement_type,
+            type: target_engagement.type,
           };
         }
         if (target_engagement.company_id) {
@@ -217,10 +220,10 @@ export class EngagementService {
         if (target_engagement.end_time) {
           data = { ...data, end_time: target_engagement.end_time };
         }
-        if (target_engagement.engagement_type) {
+        if (target_engagement.type) {
           data = {
             ...data,
-            id_crm_engagement_type: target_engagement.engagement_type,
+            type: target_engagement.type,
           };
         }
         if (target_engagement.company_id) {
@@ -288,7 +291,7 @@ export class EngagementService {
     }
   }
 
-  //TODO: include engagements contacts + type to handle
+  //TODO: include engagements contacts
   async getEngagement(
     id_engagement: string,
     remote_data?: boolean,
@@ -336,7 +339,7 @@ export class EngagementService {
         subject: engagement.subject,
         start_at: engagement.start_at,
         end_time: engagement.end_time,
-        engagement_type: engagement.id_crm_engagement_type, // uuid of Engagement Type object
+        type: engagement.type,
         company_id: engagement.id_crm_company,
         field_mappings: field_mappings,
       };
@@ -418,7 +421,7 @@ export class EngagementService {
             subject: engagement.subject,
             start_at: engagement.start_at,
             end_time: engagement.end_time,
-            engagement_type: engagement.id_crm_engagement_type, // uuid of Engagement Type object
+            type: engagement.type,
             company_id: engagement.id_crm_company,
             field_mappings: field_mappings,
           };

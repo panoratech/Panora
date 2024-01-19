@@ -54,23 +54,37 @@ export class SyncService implements OnModuleInit {
         },
       });
       const id_project = defaultProject.id_project;
-      const linkedStages = await this.prisma.linked_users.findMany({
+      const linkedUsers = await this.prisma.linked_users.findMany({
         where: {
           id_project: id_project,
         },
       });
-      linkedStages.map(async (linkedStage) => {
+      linkedUsers.map(async (linkedUser) => {
         try {
           const providers = CRM_PROVIDERS.filter(
             (provider) => provider !== 'zoho' && provider !== 'freshsales',
           );
           for (const provider of providers) {
             try {
-              await this.syncStagesForLinkedStage(
-                provider,
-                linkedStage.id_linked_user,
-                id_project,
-              );
+              try {
+                //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
+                const deals = await this.prisma.crm_deals.findMany({
+                  where: {
+                    remote_platform: provider,
+                    id_linked_user: linkedUser.id_linked_user,
+                  },
+                });
+                for (const deal of deals) {
+                  await this.syncStagesForLinkedUser(
+                    provider,
+                    linkedUser.id_linked_user,
+                    id_project,
+                    deal.id_crm_deal,
+                  );
+                }
+              } catch (error) {
+                handleServiceError(error, this.logger);
+              }
             } catch (error) {
               handleServiceError(error, this.logger);
             }
@@ -85,25 +99,26 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncStagesForLinkedStage(
+  async syncStagesForLinkedUser(
     integrationId: string,
-    linkedStageId: string,
+    linkedUserId: string,
     id_project: string,
+    deal_id: string,
   ) {
     try {
       this.logger.log(
-        `Syncing ${integrationId} stages for linkedStage ${linkedStageId}`,
+        `Syncing ${integrationId} stages for linkedUser ${linkedUserId}`,
       );
-      // check if linkedStage has a connection if not just stop sync
+      // check if linkedUser has a connection if not just stop sync
       const connection = await this.prisma.connections.findFirst({
         where: {
-          id_linked_user: linkedStageId,
+          id_linked_user: linkedUserId,
           provider_slug: integrationId,
         },
       });
       if (!connection) {
         this.logger.warn(
-          `Skipping stages syncing... No ${integrationId} connection was found for linked stage ${linkedStageId} `,
+          `Skipping stages syncing... No ${integrationId} connection was found for linked stage ${linkedUserId} `,
         );
         return;
       }
@@ -111,7 +126,7 @@ export class SyncService implements OnModuleInit {
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
-          linkedStageId,
+          linkedUserId,
           'stage',
         );
       const remoteProperties: string[] = customFieldMappings.map(
@@ -121,7 +136,8 @@ export class SyncService implements OnModuleInit {
       const service: IStageService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalStageOutput[]> = await service.syncStages(
-        linkedStageId,
+        linkedUserId,
+        deal_id,
         remoteProperties,
       );
 
@@ -142,10 +158,11 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const stages_data = await this.saveStagesInDb(
-        linkedStageId,
+        linkedUserId,
         unifiedObject,
         stageIds,
         integrationId,
+        deal_id,
         sourceObject,
       );
       const event = await this.prisma.events.create({
@@ -158,7 +175,7 @@ export class SyncService implements OnModuleInit {
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedStageId,
+          id_linked_user: linkedUserId,
         },
       });
       await this.webhook.handleWebhook(
@@ -173,10 +190,11 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveStagesInDb(
-    linkedStageId: string,
+    linkedUserId: string,
     stages: UnifiedStageOutput[],
     originIds: string[],
     originSource: string,
+    deal_id: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmStage[]> {
     try {
@@ -189,17 +207,18 @@ export class SyncService implements OnModuleInit {
           throw new NotFoundError(`Origin id not there, found ${originId}`);
         }
 
-        const existingStage = await this.prisma.crm_deals_stages.findFirst({
+        const existingStage = await this.prisma.crm_deals.findFirst({
           where: {
-            remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedStageId,
+            id_crm_deal: deal_id,
+          },
+          select: {
+            id_crm_deals_stage: true,
           },
         });
 
         let unique_crm_stage_id: string;
 
-        if (existingStage) {
+        if (existingStage.id_crm_deals_stage) {
           // Update the existing stage
           let data: any = {
             modified_at: new Date(),
@@ -218,28 +237,59 @@ export class SyncService implements OnModuleInit {
           unique_crm_stage_id = res.id_crm_deals_stage;
           stages_results = [...stages_results, res];
         } else {
-          // Create a new stage
-          this.logger.log('stage not exists');
-          let data: any = {
-            id_crm_stage: uuidv4(),
-            created_at: new Date(),
-            modified_at: new Date(),
-            id_linked_user: linkedStageId,
-            remote_id: originId,
-            remote_platform: originSource,
-          };
-
-          if (stage.stage_name) {
-            data = { ...data, stage_name: stage.stage_name };
-          }
-          const res = await this.prisma.crm_deals_stages.create({
-            data: data,
+          // it doesnt mean the stage does not exist as we know that 1 stage can have multiple deals associated
+          // so first we have to check if the stage exists or not inside our db
+          // if it exists we just have to map its id to the crm_deals table otherwise we cretae a new entry in crmdeals_stage
+          const isExistingStage = await this.prisma.crm_deals_stages.findFirst({
+            where: {
+              remote_id: originId,
+              remote_platform: originSource,
+            },
           });
-          unique_crm_stage_id = res.id_crm_deals_stage;
-          stages_results = [...stages_results, res];
+          if (isExistingStage) {
+            //we just have to update the crm_deals row by mapping it to its stage id
+            this.logger.log('stage already exists, just mapping it');
+            await this.prisma.crm_deals.update({
+              where: {
+                id_crm_deal: deal_id,
+              },
+              data: {
+                id_crm_deals_stage: isExistingStage.id_crm_deals_stage,
+              },
+            });
+            unique_crm_stage_id = isExistingStage.id_crm_deals_stage;
+            stages_results = [...stages_results, isExistingStage];
+          } else {
+            this.logger.log('stage not exists');
+            let data: any = {
+              id_crm_deals_stage: uuidv4(),
+              created_at: new Date(),
+              modified_at: new Date(),
+              id_linked_user: linkedUserId,
+              remote_id: originId || '',
+              remote_platform: originSource,
+            };
+
+            if (stage.stage_name) {
+              data = { ...data, stage_name: stage.stage_name };
+            }
+            const res = await this.prisma.crm_deals_stages.create({
+              data: data,
+            });
+            //now update the crm_deals table with the newly crated stage
+            await this.prisma.crm_deals.update({
+              where: {
+                id_crm_deal: deal_id,
+              },
+              data: {
+                id_crm_deals_stage: res.id_crm_deals_stage,
+              },
+            });
+            unique_crm_stage_id = res.id_crm_deals_stage;
+            stages_results = [...stages_results, res];
+          }
         }
 
-        //TODO:
         // check duplicate or existing values
         if (stage.field_mappings && stage.field_mappings.length > 0) {
           const entity = await this.prisma.entity.create({
@@ -254,7 +304,7 @@ export class SyncService implements OnModuleInit {
               where: {
                 slug: Object.keys(mapping)[0],
                 source: originSource,
-                id_consumer: linkedStageId,
+                id_consumer: linkedUserId,
               },
             });
 

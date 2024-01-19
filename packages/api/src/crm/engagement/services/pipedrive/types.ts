@@ -1,78 +1,86 @@
 export interface PipedriveEngagement {
-  id: string;
+  id: number;
   company_id: number;
-  owner_id: {
-    id: number;
-    name: string;
-    email: string;
-    has_pic: number;
-    pic_hash: string;
-    active_flag: boolean;
-    value: number;
-  };
-  org_id: {
-    name: string;
-    people_count: number;
-    owner_id: number;
-    address: string;
-    active_flag: boolean;
-    cc_email: string;
-    value: number;
-  };
-  name: string;
-  first_name: string;
-  last_name: string;
-  open_deals_count: number;
-  related_open_deals_count: number;
-  closed_deals_count: number;
-  related_closed_deals_count: number;
-  participant_open_deals_count: number;
-  participant_closed_deals_count: number;
-  email_messages_count: number;
-  activities_count: number;
-  done_activities_count: number;
-  undone_activities_count: number;
-  files_count: number;
-  notes_count: number;
-  followers_count: number;
-  won_deals_count: number;
-  related_won_deals_count: number;
-  lost_deals_count: number;
-  related_lost_deals_count: number;
+  user_id: number;
+  done: boolean;
+  type: string;
+  reference_type: string;
+  reference_id: number;
+  conference_meeting_client: string;
+  conference_meeting_url: string;
+  conference_meeting_id: string;
+  due_date: string;
+  due_time: string;
+  duration: string;
+  busy_flag: boolean;
+  add_time: string;
+  marked_as_done_time: string;
+  last_notification_time: string;
+  last_notification_user_id: number;
+  notification_language_id: number;
+  subject: string;
+  public_description: string;
+  calendar_sync_include_context: string;
+  location: string;
+  org_id: number;
+  person_id: number;
+  deal_id: number;
+  lead_id: string;
+  project_id?: any;
   active_flag: boolean;
-  phone: { value: string; primary: boolean; label: string }[];
-  email: { value: string; primary: boolean; label: string }[];
-  primary_email: string;
-  first_char: string;
-  update_time: Date;
-  add_time: Date;
-  visible_to: string;
-  marketing_status: string;
-  picture_id: {
-    item_type: string;
-    item_id: number;
-    active_flag: boolean;
-    add_time: string;
-    update_time: string;
-    added_by_user_id: number;
-    pictures: {
-      '128': string;
-      '512': string;
-    };
-    value: number;
-  };
-  next_activity_date: string;
-  next_activity_time: string;
-  next_activity_id: number;
-  last_activity_id: number;
-  last_activity_date: string;
-  last_incoming_mail_time: string;
-  last_outgoing_mail_time: string;
-  label: number;
+  update_time: string;
+  update_user_id: number;
+  gcal_event_id: string;
+  google_calendar_id: string;
+  google_calendar_etag: string;
+  source_timezone: string;
+  rec_rule: string;
+  rec_rule_extension: string;
+  rec_master_activity_id: number;
+  series: any[];
+  note: string;
+  created_by_user_id: number;
+  location_subpremise: string;
+  location_street_number: string;
+  location_route: string;
+  location_sublocality: string;
+  location_locality: string;
+  location_admin_area_level_1: string;
+  location_admin_area_level_2: string;
+  location_country: string;
+  location_postal_code: string;
+  location_formatted_address: string;
+  attendees: Attendee[];
+  participants: Participant[];
   org_name: string;
+  person_name: string;
+  deal_title: string;
   owner_name: string;
-  cc_email: string;
+  person_dropbox_bcc: string;
+  deal_dropbox_bcc: string;
+  assigned_to_user_id: number;
+  file: File;
   [key: string]: any;
+}
+
+interface Attendee {
+  email_address: string;
+  is_organizer: number;
+  name: string;
+  person_id: number;
+  status: string;
+  user_id?: any;
+}
+
+interface Participant {
+  person_id: number;
+  primary_flag: boolean;
+}
+
+interface File {
+  id: string;
+  clean_name: string;
+  url: string;
 }
 
 export type PipedriveEngagementInput = Partial<PipedriveEngagement>;

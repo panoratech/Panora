@@ -42,6 +42,16 @@ export async function unifyCrm<T extends UnifySourceType | UnifySourceType[]>({
     remote_id: string;
   }[];
 }): Promise<UnifyReturnType> {
+  if (targetType_.startsWith('engagement')) {
+    const mapping = unificationMapping[targetType_.split('_').shift()];
+    const engagementType = targetType_.split('_').pop();
+    return mapping[providerName]['unify'](
+      sourceObject,
+      engagementType,
+      customFieldMappings,
+    );
+  }
+
   const mapping = unificationMapping[targetType_];
 
   if (mapping && mapping[providerName]) {

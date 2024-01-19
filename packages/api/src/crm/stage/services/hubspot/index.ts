@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { IStageService } from '@crm/stage/types';
 import {
   CrmObject,
-  HubspotStageInput,
   HubspotStageOutput,
-  commonHubspotProperties,
+  commonStageHubspotProperties,
 } from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -27,51 +26,10 @@ export class HubspotService implements IStageService {
     );
     this.registry.registerService('hubspot', this);
   }
-  async addStage(
-    stageData: HubspotStageInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<HubspotStageOutput>> {
-    try {
-      //TODO: check required scope  => crm.objects.stages.write
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-        },
-      });
-      const dataBody = {
-        properties: stageData,
-      };
-      const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/stages/`,
-        JSON.stringify(dataBody),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      return {
-        data: resp.data,
-        message: 'Hubspot stage created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.stage,
-        ActionType.POST,
-      );
-    }
-  }
 
   async syncStages(
     linkedUserId: string,
+    deal_id: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotStageOutput[]>> {
     try {
@@ -83,9 +41,13 @@ export class HubspotService implements IStageService {
         },
       });
 
-      const commonPropertyNames = Object.keys(commonHubspotProperties);
+      const res = await this.prisma.crm_deals.findUnique({
+        where: { id_crm_deal: deal_id },
+      });
+
+      const commonPropertyNames = Object.keys(commonStageHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/stages/';
+      const baseURL = `https://api.hubapi.com/crm/v3/objects/deals/${res.remote_id}`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
@@ -104,7 +66,7 @@ export class HubspotService implements IStageService {
       this.logger.log(`Synced hubspot stages !`);
 
       return {
-        data: resp.data.results,
+        data: [resp.data],
         message: 'Hubspot stages retrieved',
         statusCode: 200,
       };

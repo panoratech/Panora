@@ -23,53 +23,10 @@ export class ZohoService implements IStageService {
     this.registry.registerService('zoho', this);
   }
 
-  async addStage(
-    stageData: ZohoStageInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoStageOutput>> {
-    try {
-      //TODO: check required scope  => crm.objects.stages.write
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
-        },
-      });
-      const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Stages`,
-        { data: [stageData] },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      //this.logger.log('zoho resp is ' + JSON.stringify(resp));
-      return {
-        data: resp.data.data,
-        message: 'Zoho stage created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.stage,
-        ActionType.POST,
-      );
-    }
-    return;
-  }
-
   async syncStages(
     linkedUserId: string,
   ): Promise<ApiResponse<ZohoStageOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.stages.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

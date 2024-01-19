@@ -26,7 +26,34 @@ export class ZendeskService implements IEngagementService {
     this.registry.registerService('zendesk', this);
   }
 
+  //ONLY CALLS FOR ZENDESK
   async addEngagement(
+    engagementData: ZendeskEngagementInput,
+    linkedUserId: string,
+    engagement_type: string,
+  ): Promise<ApiResponse<ZendeskEngagementOutput>> {
+    try {
+      switch (engagement_type) {
+        case 'CALL':
+          return this.addCall(engagementData, linkedUserId);
+        case 'MEETING':
+          return;
+        case 'EMAIL':
+          return;
+        default:
+          break;
+      }
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Zendesk',
+        CrmObject.engagement,
+        ActionType.POST,
+      );
+    }
+  }
+  private async addCall(
     engagementData: ZendeskEngagementInput,
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskEngagementOutput>> {
@@ -55,7 +82,7 @@ export class ZendeskService implements IEngagementService {
 
       return {
         data: resp.data.data,
-        message: 'Zendesk engagement created',
+        message: 'Zendesk engagement call created',
         statusCode: 201,
       };
     } catch (error) {
@@ -63,25 +90,48 @@ export class ZendeskService implements IEngagementService {
         error,
         this.logger,
         'Zendesk',
-        CrmObject.engagement,
+        CrmObject.engagement_call,
         ActionType.POST,
       );
     }
-    return;
   }
 
   async syncEngagements(
     linkedUserId: string,
+    engagement_type: string,
   ): Promise<ApiResponse<ZendeskEngagementOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.engagements.READ
+      switch (engagement_type) {
+        case 'CALL':
+          return this.syncCalls(linkedUserId);
+        case 'MEETING':
+          return;
+        case 'EMAIL':
+          return;
+        default:
+          break;
+      }
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Zendesk',
+        CrmObject.engagement,
+        ActionType.GET,
+      );
+    }
+  }
+
+  private async syncCalls(linkedUserId: string) {
+    try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
         },
       });
-      const resp = await axios.get(`https://api.getbase.com/v2/engagements`, {
+
+      const resp = await axios.get(`https://api.getbase.com/v2/calls`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -92,11 +142,11 @@ export class ZendeskService implements IEngagementService {
       const finalData = resp.data.items.map((item) => {
         return item.data;
       });
-      this.logger.log(`Synced zendesk engagements !`);
+      this.logger.log(`Synced zendesk engagements calls !`);
 
       return {
         data: finalData,
-        message: 'Zendesk engagements retrieved',
+        message: 'Zendesk deals retrieved',
         statusCode: 200,
       };
     } catch (error) {
@@ -104,7 +154,7 @@ export class ZendeskService implements IEngagementService {
         error,
         this.logger,
         'Zendesk',
-        CrmObject.engagement,
+        CrmObject.engagement_call,
         ActionType.GET,
       );
     }

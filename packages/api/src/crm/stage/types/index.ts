@@ -6,6 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 export interface IStageService {
   syncStages(
     linkedUserId: string,
+    deal_id: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalStageOutput[]>>;
 }

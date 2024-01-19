@@ -14,9 +14,10 @@ export class FreshsalesEngagementMapper implements IEngagementMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: FreshsalesEngagementOutput | FreshsalesEngagementOutput[],
-  ): UnifiedEngagementOutput | UnifiedEngagementOutput[] {
+    engagement_type: string,
+  ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
     // Handling single FreshsalesEngagementOutput
     if (!Array.isArray(source)) {
       return this.mapSingleFreshsalesEngagementToUnified(source);

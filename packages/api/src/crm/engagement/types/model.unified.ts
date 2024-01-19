@@ -6,7 +6,8 @@ export class UnifiedEngagementInput {
   subject?: string;
   start_at?: Date;
   end_time?: Date;
-  engagement_type?: string; //uuid of Engagemnt Type object
+  type: string;
+  user_id?: string;
   company_id?: string; // uuid of Company object
   contacts?: string[]; // array of uuids of Engagement Contacts objects
   @ApiPropertyOptional({

@@ -27,58 +27,29 @@ export class PipedriveService implements IStageService {
     this.registry.registerService('pipedrive', this);
   }
 
-  async addStage(
-    stageData: PipedriveStageInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<PipedriveStageOutput>> {
-    try {
-      //TODO: check required scope  => crm.objects.stages.write
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'pipedrive',
-        },
-      });
-      const resp = await axios.post(
-        `https://api.pipedrive.com/v1/stages`,
-        JSON.stringify(stageData),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      return {
-        data: resp.data.data,
-        message: 'Pipedrive stage created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.stage,
-        ActionType.POST,
-      );
-    }
-    return;
-  }
-
   async syncStages(
     linkedUserId: string,
+    deal_id: string,
   ): Promise<ApiResponse<PipedriveStageOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.stages.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
         },
       });
+      const res = await this.prisma.crm_deals.findUnique({
+        where: { id_crm_deal: deal_id },
+      });
+      const deals = await axios.get(`https://api.pipedrive.com/v1/deals`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
+      const deal = deals.data.data.find((item) => item.id === res.remote_id);
       const resp = await axios.get(`https://api.pipedrive.com/v1/stages`, {
         headers: {
           'Content-Type': 'application/json',
@@ -87,9 +58,13 @@ export class PipedriveService implements IStageService {
           )}`,
         },
       });
-
+      const remote_stage_id: number = deal.stage_id;
+      //filter stages for the specific deal_id
+      const finalRes = resp.data.data.find(
+        (item) => item.id === remote_stage_id,
+      );
       return {
-        data: resp.data.data,
+        data: [finalRes],
         message: 'Pipedrive stages retrieved',
         statusCode: 200,
       };

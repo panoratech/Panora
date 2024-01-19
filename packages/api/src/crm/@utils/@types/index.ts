@@ -57,7 +57,9 @@ export enum CrmObject {
   note = 'note',
   task = 'task',
   engagement = 'engagement',
-  engagementType = 'engagementType',
+  engagement_call = 'engagement_call',
+  engagement_meeting = 'engagement_meeting',
+  engagement_email = 'engagement_email',
   stage = 'stage',
   user = 'user',
 }

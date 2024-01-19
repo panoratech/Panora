@@ -1,4 +1,3 @@
-//TODO
 export interface HubspotStageInput {
   email?: string;
   firstname?: string;
@@ -18,5 +17,23 @@ export interface HubspotStageInput {
 }
 
 export interface HubspotStageOutput {
-  id: string;
+  id?: string;
+  properties: {
+    amount: string;
+    closedate: string;
+    createdate: string;
+    dealname: string;
+    dealstage: string;
+    hs_lastmodifieddate: string;
+    hubspot_owner_id: string;
+    pipeline: string;
+    [key: string]: any;
+  };
+  createdAt: string;
+  updatedAt: string;
+  archived: boolean;
 }
+
+export const commonStageHubspotProperties = {
+  dealstage: '',
+};
