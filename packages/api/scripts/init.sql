@@ -1,5 +1,4 @@
 
-
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -190,41 +189,19 @@ COMMENT ON COLUMN entity.ressource_owner_id IS 'uuid of the ressource owner - ca
 
 CREATE TABLE crm_users
 (
- id_crm_user    uuid NOT NULL,
- name           text NULL,
- email          text NULL,
- created_at     timestamp NOT NULL,
- modified_at    timestamp NOT NULL,
- id_linked_user uuid NULL,
+ id_crm_user     uuid NOT NULL,
+ name            text NULL,
+ email           text NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ id_linked_user  uuid NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
  CONSTRAINT PK_crm_users PRIMARY KEY ( id_crm_user )
 );
 
 
 
-
-
-
-
-
--- ************************************** crm_engagement_types
-
-CREATE TABLE crm_engagement_types
-(
- id_crm_engagement_type uuid NOT NULL,
- name                   text NULL,
- engagement_type        text NULL,
- remote_id              text NULL,
- created_at             timestamp NOT NULL,
- modified_at            timestamp NOT NULL,
- CONSTRAINT PK_crm_engagement_type PRIMARY KEY ( id_crm_engagement_type )
-);
-
-
-
-COMMENT ON COLUMN crm_engagement_types.name IS 'example: first call, or follow-up call';
-COMMENT ON COLUMN crm_engagement_types.engagement_type IS 'can be (but not restricted to)
-
-MEETING, CALL, EMAIL';
 
 
 
@@ -239,6 +216,8 @@ CREATE TABLE crm_deals_stages
  created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
  id_linked_user     uuid NULL,
+ remote_id          text NULL,
+ remote_platform    text NULL,
  CONSTRAINT PK_crm_deal_stages PRIMARY KEY ( id_crm_deals_stage )
 );
 
@@ -392,6 +371,8 @@ CREATE TABLE crm_deals
  amount             bigint NOT NULL,
  created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
+ remote_id          text NULL,
+ remote_platform    text NULL,
  id_crm_user        uuid NULL,
  id_crm_deals_stage uuid NULL,
  id_linked_user     uuid NULL,
@@ -458,6 +439,8 @@ CREATE TABLE crm_companies
  number_of_employees bigint NULL,
  created_at          timestamp NOT NULL,
  modified_at         timestamp NOT NULL,
+ remote_id           text NULL,
+ remote_platform     text NULL,
  id_crm_user         uuid NULL,
  id_linked_user      uuid NULL,
  CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
@@ -658,18 +641,20 @@ COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME c
 
 CREATE TABLE crm_tasks
 (
- id_crm_task    uuid NOT NULL,
- subject        text NULL,
- content        text NULL,
- status         text NULL,
- due_date       timestamp NULL,
- finished_date  timestamp NULL,
- created_at     timestamp NOT NULL,
- modified_at    timestamp NOT NULL,
- id_crm_user    uuid NULL,
- id_crm_company uuid NULL,
- id_crm_deal    uuid NULL,
- id_linked_user uuid NULL,
+ id_crm_task     uuid NOT NULL,
+ subject         text NULL,
+ content         text NULL,
+ status          text NULL,
+ due_date        timestamp NULL,
+ finished_date   timestamp NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ id_crm_user     uuid NULL,
+ id_crm_company  uuid NULL,
+ id_crm_deal     uuid NULL,
+ id_linked_user  uuid NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
  CONSTRAINT PK_crm_task PRIMARY KEY ( id_crm_task ),
  CONSTRAINT FK_26 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_25 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
@@ -737,14 +722,17 @@ COMMENT ON COLUMN crm_phone_numbers.owner_type IS 'can be ''COMPANY'' or ''CONTA
 
 CREATE TABLE crm_notes
 (
- id_crm_note    uuid NOT NULL,
- content        text NOT NULL,
- created_at     timestamp NOT NULL,
- modified_at    timestamp NOT NULL,
- id_crm_company uuid NULL,
- id_crm_contact uuid NULL,
- id_crm_deal    uuid NULL,
- id_linked_user uuid NULL,
+ id_crm_note     uuid NOT NULL,
+ content         text NOT NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ id_crm_company  uuid NULL,
+ id_crm_contact  uuid NULL,
+ id_crm_deal     uuid NULL,
+ id_linked_user  uuid NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
+ id_crm_user     uuid NULL,
  CONSTRAINT PK_crm_notes PRIMARY KEY ( id_crm_note ),
  CONSTRAINT FK_19 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_18 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
@@ -759,6 +747,11 @@ CREATE INDEX FK_crm_note_crm_companyID ON crm_notes
 CREATE INDEX FK_crm_note_crm_contactID ON crm_notes
 (
  id_crm_company
+);
+
+CREATE INDEX FK_crm_note_crm_userID ON crm_notes
+(
+ id_crm_user
 );
 
 CREATE INDEX FK_crm_notes_crm_dealID ON crm_notes
@@ -777,21 +770,28 @@ CREATE INDEX FK_crm_notes_crm_dealID ON crm_notes
 
 CREATE TABLE crm_engagements
 (
- id_crm_engagement      uuid NOT NULL,
- content                text NULL,
- direction              text NULL,
- subject                text NULL,
- start_at               timestamp NULL,
- end_time               timestamp NULL,
- created_at             timestamp NULL,
- modified_at            timestamp NULL,
- remote_id              text NULL,
- id_crm_engagement_type uuid NOT NULL,
- id_crm_company         uuid NULL,
- id_linked_user         uuid NULL,
+ id_crm_engagement uuid NOT NULL,
+ content           text NULL,
+ type              text NULL,
+ direction         text NULL,
+ subject           text NULL,
+ start_at          timestamp NULL,
+ end_time          timestamp NULL,
+ created_at        timestamp NULL,
+ modified_at       timestamp NULL,
+ remote_id         text NULL,
+ id_linked_user    uuid NULL,
+ remote_platform   text NULL,
+ id_crm_company    uuid NULL,
+ id_crm_user       uuid NULL,
  CONSTRAINT PK_crm_engagement PRIMARY KEY ( id_crm_engagement ),
- CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
- CONSTRAINT FK_28 FOREIGN KEY ( id_crm_engagement_type ) REFERENCES crm_engagement_types ( id_crm_engagement_type )
+ CONSTRAINT FK_crm_engagement_crm_user FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
+ CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
+);
+
+CREATE INDEX FK_crm_engagement_crm_user_ID ON crm_engagements
+(
+ id_crm_user
 );
 
 CREATE INDEX FK_crm_engagement_crmCompanyID ON crm_engagements
@@ -799,13 +799,11 @@ CREATE INDEX FK_crm_engagement_crmCompanyID ON crm_engagements
  id_crm_company
 );
 
-CREATE INDEX FK_crm_engagement_CrmEngagementTypeID ON crm_engagements
-(
- id_crm_engagement_type
-);
 
 
+COMMENT ON COLUMN crm_engagements.type IS 'can be (but not restricted to)
 
+MEETING, CALL, EMAIL';
 
 
 
