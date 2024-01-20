@@ -228,6 +228,7 @@
             "api-reference/passthrough/make-a-passthrough-request"
           ]
         },
+        
         {
           "group": "crm/contact",
           "pages": [
@@ -243,11 +244,66 @@
           "pages": [
             "api-reference/crmdeal/list-a-batch-of-deals",
             "api-reference/crmdeal/create-a-deal",
-            "api-reference/crmdeal/update-a-deal",
             "api-reference/crmdeal/retrieve-a-deal",
+            "api-reference/crmdeal/update-a-deal",
             "api-reference/crmdeal/add-a-batch-of-deals"
           ]
         },
+        {
+          "group": "crm/note",
+          "pages": [
+            "api-reference/crmnote/list-a-batch-of-notes",
+            "api-reference/crmnote/create-a-note",
+            "api-reference/crmnote/retrieve-a-note",
+            "api-reference/crmnote/add-a-batch-of-notes"
+          ]
+        },
+        {
+          "group": "crm/company",
+          "pages": [
+            "api-reference/crmcompany/list-a-batch-of-companies",
+            "api-reference/crmcompany/create-a-company",
+            "api-reference/crmcompany/update-a-company",
+            "api-reference/crmcompany/retrieve-a-company",
+            "api-reference/crmcompany/add-a-batch-of-companies"
+          ]
+        },
+        {
+          "group": "crm/engagement",
+          "pages": [
+            "api-reference/crmengagement/list-a-batch-of-engagements",
+            "api-reference/crmengagement/create-a-engagement",
+            "api-reference/crmengagement/update-a-engagement",
+            "api-reference/crmengagement/retrieve-a-engagement",
+            "api-reference/crmengagement/add-a-batch-of-engagements"
+          ]
+        },
+        {
+          "group": "crm/stage",
+          "pages": [
+            "api-reference/crmstage/list-a-batch-of-stages",
+            "api-reference/crmstage/retrieve-a-stage"
+          ]
+        },
+        {
+          "group": "crm/task",
+          "pages": [
+            "api-reference/crmtask/list-a-batch-of-tasks",
+            "api-reference/crmtask/create-a-task",
+            "api-reference/crmtask/update-a-task",
+            "api-reference/crmtask/retrieve-a-task",
+            "api-reference/crmtask/add-a-batch-of-tasks"
+          ]
+        },
+        {
+          "group": "crm/user",
+          "pages": [
+            "api-reference/crmuser/list-a-batch-of-users",
+            "api-reference/crmuser/retrieve-a-user"
+          ]
+        },
+
+        
         {
           "group": "ticketing/ticket",
           "pages": [
