@@ -21,11 +21,18 @@ We made a docker file that builds Panora from sources, specifically to help you 
     ```
   </Step>
 
+<Step title="Copy env variables">
+    ```bash
+      cp .env.example .env
+    ```
+  </Step>
+
+
     <Step title="Start the Dockerfile">
     ```bash
       docker compose -f docker-compose.dev.yml up  
     ```
-  That's all! You can find the backend and other services running at their usual location.
+  That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
   </Step>
 </Steps>
 
