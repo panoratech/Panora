@@ -51,6 +51,11 @@ services:
           condition: service_healthy
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   
   redis:
     image: "redis:7.2.3-alpine"
@@ -69,7 +74,8 @@ services:
     ports:
       - 80:80
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - backend
       - frontend
@@ -81,7 +87,8 @@ services:
     ports:
       - 81:80
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - backend
       - frontend

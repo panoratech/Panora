@@ -58,7 +58,12 @@ services:
       - backend
     volumes:
       - .:/app
-  
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
   redis:
     image: "redis:7.2.3-alpine"
     container_name: "Redis"
@@ -69,36 +74,43 @@ services:
     networks:
       - backend
   
-  # webapp:
-  #   build:
-  #     dockerfile: ./apps/webapp/Dockerfile
-  #     context: ./
-  #     args:
-  #       VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
-  #       VITE_FRONTEND_DOMAIN: ${VITE_FRONTEND_DOMAIN}
-  #   restart:
-  #     unless-stopped
-  #   ports:
-  #     - 80:80
-  #   depends_on:
-  #     - api
-  #   networks:
-  #     - backend
-  #     - frontend
+  webapp:
+    build:
+      dockerfile: ./apps/webapp/Dockerfile.dev
+      context: ./
+      args:
+        VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
+        VITE_FRONTEND_DOMAIN: ${VITE_FRONTEND_DOMAIN}
+    restart:
+      unless-stopped
+    ports:
+      - 80:80
+    depends_on:
+      api:
+        condition: service_healthy
+
+    volumes:
+      - .:/app
+    networks:
+      - backend
+      - frontend
   
-  # magic-link-frontend:
-  #   build:
-  #     dockerfile: ./apps/frontend-snippet/Dockerfile
-  #     context: ./
-  #   restart:
-  #     always
-  #   ports:
-  #     - 81:80
-  #   depends_on:
-  #     - api
-  #   networks:
-  #     - backend
-  #     - frontend
+  magic-link-frontend:
+    build:
+      dockerfile: ./apps/frontend-snippet/Dockerfile.dev
+      context: ./
+    restart:
+      always
+    ports:
+      - 81:80
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - .:/app
   
   panora-store:
     image: minio/minio
