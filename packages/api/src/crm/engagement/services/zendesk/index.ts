@@ -58,7 +58,6 @@ export class ZendeskService implements IEngagementService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskEngagementOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.engagements.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

@@ -203,6 +203,8 @@ export class SyncService implements OnModuleInit {
           // Update the existing deal
           let data: any = {
             modified_at: new Date(),
+            description: '',
+            amount: deal.amount,
           };
           if (deal.name) {
             data = { ...data, name: deal.name };
@@ -214,10 +216,13 @@ export class SyncService implements OnModuleInit {
             data = { ...data, amount: deal.amount };
           }
           if (deal.user_id) {
-            data = { ...data, user_id: deal.user_id };
+            data = { ...data, id_crm_user: deal.user_id };
           }
           if (deal.stage_id) {
-            data = { ...data, stage_id: deal.stage_id };
+            data = { ...data, id_crm_deals_stage: deal.stage_id };
+          }
+          if (deal.company_id) {
+            data = { ...data, id_crm_company: deal.company_id };
           }
 
           const res = await this.prisma.crm_deals.update({
@@ -236,6 +241,8 @@ export class SyncService implements OnModuleInit {
             created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
+            description: '',
+            amount: deal.amount,
             remote_id: originId,
             remote_platform: originSource,
           };
@@ -252,10 +259,13 @@ export class SyncService implements OnModuleInit {
             data = { ...data, amount: deal.amount };
           }
           if (deal.user_id) {
-            data = { ...data, user_id: deal.user_id };
+            data = { ...data, id_crm_user: deal.user_id };
           }
           if (deal.stage_id) {
-            data = { ...data, stage_id: deal.stage_id };
+            data = { ...data, id_crm_deals_stage: deal.stage_id };
+          }
+          if (deal.company_id) {
+            data = { ...data, id_crm_company: deal.company_id };
           }
           const res = await this.prisma.crm_deals.create({
             data: data,

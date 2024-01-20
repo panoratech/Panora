@@ -32,7 +32,6 @@ export class PipedriveService implements ICompanyService {
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveCompanyOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.companys.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -72,7 +71,6 @@ export class PipedriveService implements ICompanyService {
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveCompanyOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.companys.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

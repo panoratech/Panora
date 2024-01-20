@@ -32,7 +32,6 @@ export class PipedriveService implements ITaskService {
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveTaskOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.tasks.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -40,7 +39,7 @@ export class PipedriveService implements ITaskService {
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/tasks`,
+        `https://api.pipedrive.com/v1/activities`,
         JSON.stringify(taskData),
         {
           headers: {
@@ -72,21 +71,23 @@ export class PipedriveService implements ITaskService {
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveTaskOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.tasks.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/tasks`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const resp = await axios.get(
+        `https://api.pipedrive.com/v1/activities?type=task&user_id=${19156166}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
 
       return {
         data: resp.data.data,

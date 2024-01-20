@@ -21,16 +21,35 @@ export class PipedriveTaskMapper implements ITaskMapper {
     }[],
   ): Promise<PipedriveTaskInput> {
     const result: PipedriveTaskInput = {
-      title: source.subject || '',
-      description: source.content || '',
-      done: source.status === 'Completed' ? 1 : 0,
-      due_date: source.due_date ? source.due_date.toISOString() : '',
+      subject: source.subject || '',
+      public_description: source.content || '',
+      done: source.status === 'Completed',
+      due_date: source.due_date
+        ? source.due_date.toISOString().split('T')[0]
+        : '',
+      due_time: source.due_date
+        ? source.due_date.toISOString().split('T')[1]
+        : '',
     };
 
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {
-        result.creator_id = Number(owner_id);
+        result.user_id = Number(owner_id);
+      }
+    }
+    if (source.company_id) {
+      const company_id = await this.utils.getRemoteIdFromCompanyUuid(
+        source.company_id,
+      );
+      if (company_id) {
+        result.company_id = Number(company_id);
+      }
+    }
+    if (source.deal_id) {
+      const deal_id = await this.utils.getRemoteIdFromDealUuid(source.deal_id);
+      if (deal_id) {
+        result.deal_id = Number(deal_id);
       }
     }
 
@@ -78,10 +97,9 @@ export class PipedriveTaskMapper implements ITaskMapper {
 
     let opts: any = {};
 
-    //TODO; user or contact
-    if (task.creator_id) {
+    if (task.user_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
-        String(task.creator_id),
+        String(task.user_id),
         'pipedrive',
       );
       if (user_id) {
@@ -91,11 +109,37 @@ export class PipedriveTaskMapper implements ITaskMapper {
       }
     }
 
+    if (task.company_id) {
+      const company_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(task.company_id),
+        'pipedrive',
+      );
+      if (company_id) {
+        opts = {
+          company_id: company_id,
+        };
+      }
+    }
+    if (task.deal_id) {
+      const deal_id = await this.utils.getDealUuidFromRemoteId(
+        String(task.deal_id),
+        'pipedrive',
+      );
+      if (deal_id) {
+        opts = {
+          deal_id: deal_id,
+        };
+      }
+    }
+
     return {
-      subject: task.title,
-      content: task.description,
-      status: task.done === 1 ? 'Completed' : 'Pending',
+      subject: task.subject,
+      content: task.public_description,
+      status: task.done ? 'Completed' : 'Pending',
       due_date: task.due_date ? new Date(task.due_date) : undefined,
+      finished_date: task.marked_as_done_time
+        ? new Date(task.marked_as_done_time)
+        : undefined,
       field_mappings,
       ...opts,
     };

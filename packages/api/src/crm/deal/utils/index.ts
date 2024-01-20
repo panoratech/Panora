@@ -21,6 +21,38 @@ export class Utils {
     }
   }
 
+  async getRemoteIdFromCompanyUuid(uuid: string) {
+    try {
+      const res = await this.prisma.crm_companies.findFirst({
+        where: {
+          id_crm_company: uuid,
+        },
+      });
+      if (!res) return; //throw new Error(`crm_companies not found for uuid ${uuid}`);
+      return res.remote_id;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async getCompanyUuidFromRemoteId(remote_id: string, remote_platform: string) {
+    try {
+      const res = await this.prisma.crm_companies.findFirst({
+        where: {
+          remote_id: remote_id,
+          remote_platform: remote_platform,
+        },
+      });
+      if (!res) return;
+      /*throw new Error(
+          `crm_companies not found for remote_id ${remote_id} and integration ${remote_platform}`,
+        );*/
+      return res.id_crm_company;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async getUserUuidFromRemoteId(remote_id: string, remote_platform: string) {
     try {
       const res = await this.prisma.crm_users.findFirst({
@@ -61,10 +93,10 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res)
-        throw new Error(
+      if (!res) return;
+      /*TODO: throw new Error(
           `crm_deals_stages not found for remote_id ${remote_id} and integration ${remote_platform}`,
-        );
+        );*/
       return res.id_crm_deals_stage;
     } catch (error) {
       throw new Error(error);

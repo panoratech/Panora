@@ -31,7 +31,6 @@ export class HubspotService implements ICommentService {
     remoteIdTicket: string,
   ): Promise<ApiResponse<HubspotCommentOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.write
       /*const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

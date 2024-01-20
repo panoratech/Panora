@@ -77,10 +77,10 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res)
-        throw new Error(
+      if (!res) return;
+      /*TODO: throw new Error(
           `crm_user not found for remote_id ${remote_id} and integration ${remote_platform}`,
-        );
+        );*/
       return res.id_crm_user;
     } catch (error) {
       throw new Error(error);

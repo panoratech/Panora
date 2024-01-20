@@ -32,7 +32,6 @@ export class HubspotService implements IContactService {
     linkedUserId: string,
   ): Promise<ApiResponse<HubspotContactOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -76,7 +75,6 @@ export class HubspotService implements IContactService {
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotContactOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

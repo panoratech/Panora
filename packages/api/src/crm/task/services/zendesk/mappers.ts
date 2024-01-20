@@ -23,13 +23,11 @@ export class ZendeskTaskMapper implements ITaskMapper {
     const result: ZendeskTaskInput = {
       content: source.content,
       completed: source.status === 'Completed',
-      completed_at: source.finished_date
-        ? source.finished_date.toISOString()
-        : '',
-      due_date: source.due_date ? source.due_date.toISOString() : '',
-      remind_at: '', // Placeholder, adjust as needed
     };
 
+    if (source.due_date) {
+      result.due_date = source.due_date.toISOString();
+    }
     if (source.deal_id) {
       const deal_id = await this.utils.getRemoteIdFromDealUuid(source.deal_id);
       if (deal_id) {
@@ -44,26 +42,16 @@ export class ZendeskTaskMapper implements ITaskMapper {
       }
     }
 
-    /*if (source.company_id) {
+    if (source.company_id) {
       //then the resource mut be contact and nothign else
-      const contact_id = await this.utils.getRemoteIdFromContactUuid(
-        source.contact_id,
+      const company_id = await this.utils.getRemoteIdFromCompanyUuid(
+        source.company_id,
       );
-      if (contact_id) {
-        result.resource_id = Number(contact_id);
+      if (company_id) {
+        result.resource_id = Number(company_id);
         result.resource_type = 'contact';
       }
-    } else {
-      if (source.deal_id) {
-        const deal_id = await this.utils.getRemoteIdFromDealUuid(
-          source.deal_id,
-        );
-        if (deal_id) {
-          result.resource_id = Number(deal_id);
-          result.resource_type = 'deal';
-        }
-      }
-    }*/
+    }
 
     if (customFieldMappings && source.field_mappings) {
       customFieldMappings.forEach((mapping) => {
@@ -118,6 +106,18 @@ export class ZendeskTaskMapper implements ITaskMapper {
       if (deal_id) {
         opts = {
           deal_id: deal_id,
+        };
+      }
+    }
+
+    if (type == 'contact') {
+      const company_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(task.resource_id),
+        'zendesk',
+      );
+      if (company_id) {
+        opts = {
+          company_id: company_id,
         };
       }
     }

@@ -30,7 +30,6 @@ export class ZendeskService implements IUserService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskUserOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.users.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

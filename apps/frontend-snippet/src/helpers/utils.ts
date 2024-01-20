@@ -42,7 +42,7 @@ export const providersConfig: ProvidersConfig = {
       logoPath: 'assets/crm/freshsales_logo.webp',
     },
     'zendesk': {
-      clientId: '26cd23a81a8fefc134edec2c533a1cb1761d359cfcf438fc159543931e92fc93',
+      clientId: 'fbb3125a89f366daf02c09f201522245c4453c1310f07ec2223c614fac130c78',
       scopes: 'read write',
       authBaseUrl: 'https://api.getbase.com/oauth2/authorize',
       logoPath: 'assets/crm/zendesk_logo.png',

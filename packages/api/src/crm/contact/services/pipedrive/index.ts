@@ -32,7 +32,6 @@ export class PipedriveService implements IContactService {
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveContactOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -73,7 +72,6 @@ export class PipedriveService implements IContactService {
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveContactOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

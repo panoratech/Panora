@@ -73,7 +73,6 @@ export class FreshsalesService implements INoteService {
     linkedUserId: string,
   ): Promise<ApiResponse<FreshsalesNoteOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.notes.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

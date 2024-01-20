@@ -31,7 +31,6 @@ export class ZendeskService implements IContactService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskContactOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -74,7 +73,6 @@ export class ZendeskService implements IContactService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -89,9 +87,11 @@ export class ZendeskService implements IContactService {
           )}`,
         },
       });
-      const finalData = resp.data.items.map((item) => {
-        return item.data;
-      });
+      const finalData = resp.data.items
+        .filter((item) => item.is_organization === false)
+        .map((item) => {
+          return item.data;
+        });
       this.logger.log(`Synced zendesk contacts !`);
 
       return {

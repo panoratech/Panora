@@ -26,13 +26,11 @@ export class ZendeskService implements ICompanyService {
     this.registry.registerService('zendesk', this);
   }
 
-  //TODO: CANT ADD A COMPANY WITH ZENDESK
   async addCompany(
     companyData: ZendeskCompanyInput,
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskCompanyOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.companys.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -40,7 +38,7 @@ export class ZendeskService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `https://api.getbase.com/v2/accounts/self`,
+        `https://api.getbase.com/v2/contacts`,
         {
           data: companyData,
         },
@@ -75,14 +73,13 @@ export class ZendeskService implements ICompanyService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskCompanyOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.companys.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
         },
       });
-      const resp = await axios.get(`https://api.getbase.com/v2/accounts/self`, {
+      const resp = await axios.get(`https://api.getbase.com/v2/contacts`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -90,14 +87,16 @@ export class ZendeskService implements ICompanyService {
           )}`,
         },
       });
-      const finalData = resp.data.items.map((item) => {
-        return item.data;
-      });
-      this.logger.log(`Synced zendesk companys !`);
+      const finalData = resp.data.items
+        .filter((item) => item.data.is_organization === true)
+        .map((item) => {
+          return item.data;
+        });
+      this.logger.log(`Synced zendesk companies !`);
 
       return {
         data: finalData,
-        message: 'Zendesk companys retrieved',
+        message: 'Zendesk companies retrieved',
         statusCode: 200,
       };
     } catch (error) {

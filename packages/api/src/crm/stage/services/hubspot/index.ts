@@ -33,7 +33,6 @@ export class HubspotService implements IStageService {
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotStageOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.stages.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

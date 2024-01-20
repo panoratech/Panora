@@ -34,7 +34,8 @@ export class ZendeskConnectionService implements ICrmConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      //const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `http://localhost:3000/connections/oauth/callback`;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',

@@ -223,6 +223,8 @@ export class SyncContactsService implements OnModuleInit {
           // Update the existing contact
           let data: any = {
             modified_at: new Date(),
+            first_name: '',
+            last_name: '',
           };
 
           if (contact.first_name) {
@@ -327,6 +329,8 @@ export class SyncContactsService implements OnModuleInit {
           const uuid = uuidv4();
           let data: any = {
             id_crm_contact: uuid,
+            first_name: '',
+            last_name: '',
             created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,

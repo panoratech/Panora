@@ -73,7 +73,6 @@ export class FreshsalesService implements ITaskService {
     linkedUserId: string,
   ): Promise<ApiResponse<FreshsalesTaskOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.tasks.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

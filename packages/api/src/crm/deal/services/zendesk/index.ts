@@ -31,7 +31,6 @@ export class ZendeskService implements IDealService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskDealOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.deals.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -74,7 +73,6 @@ export class ZendeskService implements IDealService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskDealOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.deals.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

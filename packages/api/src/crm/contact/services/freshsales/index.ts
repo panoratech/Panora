@@ -73,7 +73,6 @@ export class FreshsalesService implements IContactService {
     linkedUserId: string,
   ): Promise<ApiResponse<FreshsalesContactOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

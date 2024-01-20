@@ -23,6 +23,9 @@ export class ZendeskDealMapper implements IDealMapper {
     const result: ZendeskDealInput = {
       name: source.name,
       value: source.amount,
+      contact_id: Number(
+        await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
+      ),
     };
 
     if (source.user_id) {
@@ -102,6 +105,18 @@ export class ZendeskDealMapper implements IDealMapper {
       if (stage_id) {
         opts = {
           stage_id: stage_id,
+        };
+      }
+    }
+
+    if (deal.contact_id) {
+      const contact_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(deal.contact_id),
+        'zendesk',
+      );
+      if (contact_id) {
+        opts = {
+          company_id: contact_id,
         };
       }
     }

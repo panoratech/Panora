@@ -34,7 +34,6 @@ export class PipedriveService implements IEngagementService {
     engagement_type: string,
   ): Promise<ApiResponse<PipedriveEngagementOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.engagements.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

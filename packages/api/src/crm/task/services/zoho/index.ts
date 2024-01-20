@@ -28,7 +28,6 @@ export class ZohoService implements ITaskService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZohoTaskOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.tasks.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -69,7 +68,6 @@ export class ZohoService implements ITaskService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZohoTaskOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.tasks.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

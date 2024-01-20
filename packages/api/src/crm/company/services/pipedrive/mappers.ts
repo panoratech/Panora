@@ -8,6 +8,7 @@ import {
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/contact/utils';
+import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 
 export class PipedriveCompanyMapper implements ICompanyMapper {
   private readonly utils: Utils;
@@ -15,6 +16,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
   constructor() {
     this.utils = new Utils();
   }
+
   async desunify(
     source: UnifiedCompanyInput,
     customFieldMappings?: {
@@ -24,33 +26,10 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
   ): Promise<PipedriveCompanyInput> {
     const result: PipedriveCompanyInput = {
       name: source.name,
-      email: source.email_addresses?.find(
-        (email) => email.email_address_type === 'primary',
-      )?.email_address
-        ? [
-            {
-              value: source.email_addresses.find(
-                (email) => email.email_address_type === 'primary',
-              )?.email_address,
-              primary: true,
-              label: 'Primary Email',
-            },
-          ]
-        : undefined,
-      phone: source.phone_numbers?.find(
-        (phone) => phone.phone_type === 'primary',
-      )?.phone_number
-        ? [
-            {
-              value: source.phone_numbers.find(
-                (phone) => phone.phone_type === 'primary',
-              )?.phone_number,
-              primary: true,
-              label: 'Primary Phone',
-            },
-          ]
-        : undefined,
-      // Add additional fields mapping here
+      address: source.addresses[0].street_1,
+      address_locality: source.addresses[0].city,
+      address_country: source.addresses[0].country,
+      address_postal_code: source.addresses[0].postal_code,
     };
 
     if (source.user_id) {
@@ -110,6 +89,16 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
         [mapping.slug]: company[mapping.remote_id],
       })) || [];
 
+    let res = {
+      name: company.name,
+      industry: '', // Pipedrive may not directly provide this, need custom mapping
+      number_of_employees: 0, // Placeholder, as there's no direct mapping provided
+      email_addresses: [],
+      phone_numbers: [],
+      addresses: [],
+      field_mappings,
+    };
+
     let opts: any = {};
     if (company.owner_id.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
@@ -122,26 +111,15 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
         };
       }
     }
-
-    return {
-      name: company.name,
-      industry: '', // Pipedrive may not directly provide this, need custom mapping
-      number_of_employees: 0, // Placeholder, as there's no direct mapping provided
-      email_addresses: [
-        {
-          email_address: company.primary_email,
-          email_address_type: 'primary',
-          owner_type: 'company',
-        },
-      ],
-      addresses: [], // Add address mapping if available
-      phone_numbers: company.phone?.map((phone) => ({
-        phone_number: phone.value,
-        phone_type: phone.primary ? 'primary' : 'secondary',
-        owner_type: 'company',
-      })),
-      field_mappings,
-      ...opts,
-    };
+    if (company.address) {
+      res.addresses[0] = {
+        street_1: company.address,
+        city: company.address_locality,
+        country: company.address_country,
+        postal_code: company.address_postal_code,
+      };
+    }
+    res = { ...res, ...opts };
+    return res;
   }
 }

@@ -31,7 +31,6 @@ export class ZendeskService implements INoteService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskNoteOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.notes.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -74,7 +73,6 @@ export class ZendeskService implements INoteService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskNoteOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.notes.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

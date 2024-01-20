@@ -31,7 +31,6 @@ export class GithubService implements ICommentService {
     remoteIdTicket: string,
   ): Promise<ApiResponse<GithubCommentOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.contacts.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

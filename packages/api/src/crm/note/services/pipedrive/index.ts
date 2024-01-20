@@ -32,7 +32,6 @@ export class PipedriveService implements INoteService {
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveNoteOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.notes.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -72,7 +71,6 @@ export class PipedriveService implements INoteService {
     linkedUserId: string,
   ): Promise<ApiResponse<PipedriveNoteOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.notes.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

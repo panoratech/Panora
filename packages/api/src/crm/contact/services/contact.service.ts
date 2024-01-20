@@ -140,6 +140,8 @@ export class ContactService {
       if (existingContact) {
         // Update the existing contact
         let data: any = {
+          first_name: '',
+          last_name: '',
           modified_at: new Date(),
         };
         if (target_contact.first_name) {
@@ -239,6 +241,8 @@ export class ContactService {
         this.logger.log('not existing contact ' + target_contact.first_name);
         let data: any = {
           id_crm_contact: uuidv4(),
+          first_name: '',
+          last_name: '',
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,

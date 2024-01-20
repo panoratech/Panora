@@ -73,7 +73,6 @@ export class FreshsalesService implements IDealService {
     linkedUserId: string,
   ): Promise<ApiResponse<FreshsalesDealOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.deals.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

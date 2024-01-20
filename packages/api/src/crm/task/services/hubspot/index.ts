@@ -32,7 +32,6 @@ export class HubspotService implements ITaskService {
     linkedUserId: string,
   ): Promise<ApiResponse<HubspotTaskOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.tasks.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -75,7 +74,6 @@ export class HubspotService implements ITaskService {
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotTaskOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.tasks.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

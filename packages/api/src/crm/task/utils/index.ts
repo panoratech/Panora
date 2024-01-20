@@ -61,10 +61,10 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res)
-        throw new Error(
+      if (!res) return;
+      /*throw new Error(
           `crm_companies not found for remote_id ${remote_id} and integration ${remote_platform}`,
-        );
+        );*/
       return res.id_crm_company;
     } catch (error) {
       throw new Error(error);

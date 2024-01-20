@@ -6,6 +6,7 @@ export class UnifiedDealInput {
   amount: number;
   user_id?: string;
   stage_id?: string;
+  company_id?: string;
   @ApiPropertyOptional({
     type: [{}],
     description:

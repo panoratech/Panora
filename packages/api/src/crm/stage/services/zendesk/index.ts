@@ -27,7 +27,6 @@ export class ZendeskService implements IStageService {
     deal_id: string,
   ): Promise<ApiResponse<ZendeskStageOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.stages.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -57,15 +56,15 @@ export class ZendeskService implements IStageService {
           )}`,
         },
       });
-      const finalData = resp.data.items
-        .filter((item) => item.data.stage_id === stage_remote_id)
-        .map((item) => {
-          return item.data;
-        });
+
+      const finalData = resp.data.items.find(
+        (item) => item.data.id === stage_remote_id,
+      );
+
       this.logger.log(`Synced zendesk stages !`);
 
       return {
-        data: [finalData],
+        data: [finalData.data],
         message: 'Zendesk stages retrieved',
         statusCode: 200,
       };

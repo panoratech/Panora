@@ -73,7 +73,6 @@ export class FreshsalesService implements IStageService {
     linkedUserId: string,
   ): Promise<ApiResponse<FreshsalesStageOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.stages.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

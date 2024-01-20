@@ -131,6 +131,7 @@ export class DealService {
       if (existingDeal) {
         // Update the existing deal
         let data: any = {
+          amount: target_deal.amount,
           modified_at: new Date(),
         };
         if (target_deal.name) {
@@ -143,10 +144,13 @@ export class DealService {
           data = { ...data, amount: target_deal.amount };
         }
         if (target_deal.user_id) {
-          data = { ...data, user_id: target_deal.user_id };
+          data = { ...data, id_crm_user: target_deal.user_id };
         }
         if (target_deal.stage_id) {
-          data = { ...data, stage_id: target_deal.stage_id };
+          data = { ...data, id_crm_deals_stage: target_deal.stage_id };
+        }
+        if (target_deal.company_id) {
+          data = { ...data, id_crm_company: target_deal.company_id };
         }
 
         const res = await this.prisma.crm_deals.update({
@@ -161,11 +165,13 @@ export class DealService {
         this.logger.log('deal not exists');
         let data: any = {
           id_crm_deal: uuidv4(),
+          amount: target_deal.amount,
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
           remote_id: originId,
           remote_platform: integrationId,
+          description: '',
         };
 
         if (target_deal.name) {
@@ -178,10 +184,13 @@ export class DealService {
           data = { ...data, amount: target_deal.amount };
         }
         if (target_deal.user_id) {
-          data = { ...data, user_id: target_deal.user_id };
+          data = { ...data, id_crm_user: target_deal.user_id };
         }
         if (target_deal.stage_id) {
-          data = { ...data, stage_id: target_deal.stage_id };
+          data = { ...data, id_crm_deals_stage: target_deal.stage_id };
+        }
+        if (target_deal.company_id) {
+          data = { ...data, id_crm_company: target_deal.company_id };
         }
         const res = await this.prisma.crm_deals.create({
           data: data,

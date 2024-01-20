@@ -41,6 +41,7 @@ export class PipedriveService implements IStageService {
       const res = await this.prisma.crm_deals.findUnique({
         where: { id_crm_deal: deal_id },
       });
+
       const deals = await axios.get(`https://api.pipedrive.com/v1/deals`, {
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +50,10 @@ export class PipedriveService implements IStageService {
           )}`,
         },
       });
-      const deal = deals.data.data.find((item) => item.id === res.remote_id);
+
+      const deal = deals.data.data.find(
+        (item) => String(item.id) === res.remote_id,
+      );
       const resp = await axios.get(`https://api.pipedrive.com/v1/stages`, {
         headers: {
           'Content-Type': 'application/json',

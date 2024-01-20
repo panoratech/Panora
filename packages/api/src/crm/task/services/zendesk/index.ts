@@ -12,6 +12,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { OriginalTaskOutput } from '@@core/utils/types/original/original.crm';
 @Injectable()
 export class ZendeskService implements ITaskService {
   constructor(
@@ -31,17 +32,20 @@ export class ZendeskService implements ITaskService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskTaskOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.tasks.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
         },
       });
+
       const resp = await axios.post(
         `https://api.getbase.com/v2/tasks`,
         {
           data: taskData,
+          meta: {
+            type: 'task',
+          },
         },
         {
           headers: {
@@ -74,7 +78,6 @@ export class ZendeskService implements ITaskService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZendeskTaskOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.tasks.READ
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

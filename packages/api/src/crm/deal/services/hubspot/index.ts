@@ -32,7 +32,6 @@ export class HubspotService implements IDealService {
     linkedUserId: string,
   ): Promise<ApiResponse<HubspotDealOutput>> {
     try {
-      //TODO: check required scope  => crm.objects.deals.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -75,7 +74,6 @@ export class HubspotService implements IDealService {
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotDealOutput[]>> {
     try {
-      //TODO: check required scope  => crm.objects.deals.READ
       //crm.schemas.deals.read","crm.objects.deals.read
       const connection = await this.prisma.connections.findFirst({
         where: {
