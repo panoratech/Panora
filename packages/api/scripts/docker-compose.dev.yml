@@ -62,7 +62,7 @@ services:
       test: ["CMD", "nc", "-z", "localhost", "3000"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
     
   redis:
     image: "redis:7.2.3-alpine"
@@ -84,7 +84,7 @@ services:
     restart:
       unless-stopped
     ports:
-      - 80:80
+      - 80:5173
     depends_on:
       api:
         condition: service_healthy
@@ -102,7 +102,7 @@ services:
     restart:
       always
     ports:
-      - 81:80
+      - 81:5173
     depends_on:
       api:
         condition: service_healthy

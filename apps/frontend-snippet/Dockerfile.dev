@@ -24,4 +24,4 @@ WORKDIR /app
 RUN pnpm add -g turbo
 
 # run the ML
-CMD cd apps/frontend-snippet && pnpm install && pnpm run dev 
+CMD cd apps/frontend-snippet && pnpm install && pnpm run dev --host
