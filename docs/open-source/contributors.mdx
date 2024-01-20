@@ -6,6 +6,30 @@ icon: 'star'
 
 ## Introduction 
 
+
+### Setup your environnement
+We made a docker file that builds Panora from sources, specifically to help you locally test your contributions. Here's how to use it. 
+
+<Info>
+  Execute these from your Panora's repo root folder
+</Info>
+
+<Steps>
+  <Step title="Get the right Dockerfile:">
+    ```bash
+      cp ./packages/api/scripts/docker-compose.dev.yml docker-compose-source.yml
+    ```
+  </Step>
+
+    <Step title="Start the Dockerfile">
+    ```bash
+      docker compose -f docker-compose-source.yml up  
+    ```
+  That's all! You can find the backend and other services running at their usual location.
+  </Step>
+</Steps>
+
+
 ## Adding new Integrations ✨
 
 Make sure you are inside `packages/api/src` where the server lives !

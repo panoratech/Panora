@@ -1,0 +1,19 @@
+# run directly from the repo root directory
+# docker build -f ./packages/api/Dockerfile.dev .
+FROM node:20-alpine AS base
+# =======================================================================
+FROM base AS builder
+RUN apk add --no-cache libc6-compat
+RUN apk update
+
+# Set pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+RUN pnpm add -g turbo
+
+# Start API
+CMD cd packages/api && pnpm install && pnpm run start:dev 
+
