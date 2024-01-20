@@ -22,4 +22,4 @@ WORKDIR /app
 RUN pnpm add -g turbo
 
 # Start the Webapp
-CMD cd apps/webapp && pnpm install && pnpm run dev 
+CMD cd apps/webapp && pnpm install && pnpm run dev --host
