@@ -3,7 +3,7 @@
 FROM node:20-alpine AS base
 # =======================================================================
 FROM base AS builder
-RUN apk add --no-cache libc6-compat netcat-openbsd
+RUN apk add --no-cache libc6-compat netcat-openbsd curl
 RUN apk update
 
 # Set pnpm
@@ -15,5 +15,4 @@ WORKDIR /app
 RUN pnpm add -g turbo
 
 # Start API
-CMD cd packages/api && pnpm install && npx prisma db pull && npx prisma generate && pnpm run start:dev 
-
+CMD pnpm install --frozen-lockfile && cd packages/api && npx prisma db pull && npx prisma generate && pnpm run start:dev 
