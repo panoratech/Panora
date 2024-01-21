@@ -76,6 +76,10 @@ export class CommentService {
         });
         if (!search)
           throw new Error('You inserted a ticket_id which does not exist');
+      } else {
+        throw new Error(
+          'You must attach your comment to a ticket, specify a ticket_id',
+        );
       }
 
       const contact = unifiedCommentData.contact_id;

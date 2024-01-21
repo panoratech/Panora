@@ -121,7 +121,6 @@ export class SyncService implements OnModuleInit {
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalAccountOutput[]> =
         await service.syncAccounts(linkedUserId, remoteProperties);
-      this.logger.log('bdbdbdbdbdb ');
 
       const sourceObject: OriginalAccountOutput[] = resp.data;
       this.logger.log('resp is ' + sourceObject);

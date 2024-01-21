@@ -54,21 +54,33 @@ export class SyncService implements OnModuleInit {
         },
       });
       const id_project = defaultProject.id_project;
-      const linkedContacts = await this.prisma.linked_users.findMany({
+      const linkedUsers = await this.prisma.linked_users.findMany({
         where: {
           id_project: id_project,
         },
       });
-      linkedContacts.map(async (linkedContact) => {
+      linkedUsers.map(async (linkedUser) => {
         try {
           const providers = TICKETING_PROVIDERS;
           for (const provider of providers) {
             try {
-              await this.syncContactsForLinkedContact(
-                provider,
-                linkedContact.id_linked_user,
-                id_project,
-              );
+              const accounts = await this.prisma.tcg_accounts.findMany();
+              if (accounts) {
+                for (const acc of accounts) {
+                  await this.syncContactsForLinkedUser(
+                    provider,
+                    linkedUser.id_linked_user,
+                    id_project,
+                    acc.remote_id,
+                  );
+                }
+              } else {
+                await this.syncContactsForLinkedUser(
+                  provider,
+                  linkedUser.id_linked_user,
+                  id_project,
+                );
+              }
             } catch (error) {
               handleServiceError(error, this.logger);
             }
@@ -83,16 +95,17 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncContactsForLinkedContact(
+  async syncContactsForLinkedUser(
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    remote_account_id?: string,
   ) {
     try {
       this.logger.log(
-        `Syncing ${integrationId} contacts for linkedContact ${linkedUserId}`,
+        `Syncing ${integrationId} contacts for linkedUser ${linkedUserId}`,
       );
-      // check if linkedContact has a connection if not just stop sync
+      // check if linkedUser has a connection if not just stop sync
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -119,10 +132,13 @@ export class SyncService implements OnModuleInit {
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalContactOutput[]> =
-        await service.syncContacts(linkedUserId, remoteProperties);
+        await service.syncContacts(
+          linkedUserId,
+          remoteProperties,
+          remote_account_id,
+        );
 
       const sourceObject: OriginalContactOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalContactOutput[]>({
         sourceObject,
@@ -143,6 +159,7 @@ export class SyncService implements OnModuleInit {
         contactIds,
         integrationId,
         sourceObject,
+        remote_account_id,
       );
       const event = await this.prisma.events.create({
         data: {
@@ -174,6 +191,7 @@ export class SyncService implements OnModuleInit {
     originIds: string[],
     originSource: string,
     remote_data: Record<string, any>[],
+    remote_account_id?: string,
   ): Promise<TicketingContact[]> {
     try {
       let contacts_results: TicketingContact[] = [];
@@ -196,25 +214,38 @@ export class SyncService implements OnModuleInit {
         let unique_ticketing_contact_id: string;
 
         if (existingContact) {
-          // Update the existing ticket
+          // Update the existing contact
+          const data: any = {
+            name: existingContact.name,
+            email_address: existingContact.email_address,
+            phone_number: existingContact.phone_number,
+            details: existingContact.details,
+            modified_at: new Date(),
+          };
+
+          if (remote_account_id) {
+            const res = await this.prisma.tcg_accounts.findFirst({
+              where: {
+                remote_id: remote_account_id,
+                remote_platform: originSource,
+              },
+            });
+            data.id_tcg_account = res.id_tcg_account;
+          }
+
           const res = await this.prisma.tcg_contacts.update({
             where: {
               id_tcg_contact: existingContact.id_tcg_contact,
             },
-            data: {
-              name: existingContact.name,
-              email_address: existingContact.email_address,
-              phone_number: existingContact.phone_number,
-              details: existingContact.details,
-              modified_at: new Date(),
-            },
+            data: data,
           });
+
           unique_ticketing_contact_id = res.id_tcg_contact;
           contacts_results = [...contacts_results, res];
         } else {
           // Create a new contact
           this.logger.log('not existing contact ' + contact.name);
-          const data = {
+          const data: any = {
             id_tcg_contact: uuidv4(),
             name: contact.name,
             email_address: contact.email_address,
@@ -226,6 +257,15 @@ export class SyncService implements OnModuleInit {
             remote_id: originId,
             remote_platform: originSource,
           };
+          if (remote_account_id) {
+            const res = await this.prisma.tcg_accounts.findFirst({
+              where: {
+                remote_id: remote_account_id,
+                remote_platform: originSource,
+              },
+            });
+            data.id_tcg_account = res.id_tcg_account;
+          }
           const res = await this.prisma.tcg_contacts.create({
             data: data,
           });

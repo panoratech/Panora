@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { WebhookService } from '@@core/webhook/webhook.service';
 
 export type ConnectionMetadata = {
   linkedUserId: string;
@@ -7,6 +8,7 @@ export type ConnectionMetadata = {
 
 export class ConnectionUtils {
   private readonly prisma: PrismaClient;
+  private readonly webhookService: WebhookService;
 
   constructor() {
     this.prisma = new PrismaClient();

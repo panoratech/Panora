@@ -27,9 +27,7 @@ import { BullModule } from '@nestjs/bull';
     FieldMappingService,
     ServiceRegistry,
     /* PROVIDERS SERVICES */
-
   ],
   exports: [SyncService],
 })
 export class AccountModule {}
-

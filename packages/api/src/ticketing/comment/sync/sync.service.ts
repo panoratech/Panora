@@ -133,7 +133,7 @@ export class SyncService implements OnModuleInit {
         await service.syncComments(linkedUserId, id_ticket, remoteProperties);
 
       const sourceObject: OriginalCommentOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalCommentOutput[]>({
         sourceObject,

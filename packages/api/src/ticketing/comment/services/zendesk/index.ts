@@ -39,52 +39,16 @@ export class ZendeskService implements ICommentService {
         },
       });
 
-      let dataBody = {
+      const author_id = commentData.author_id;
+
+      let dataBody: any = {
         ticket: {
-          comment: commentData,
+          comment: {
+            ...commentData,
+            author_id: author_id,
+          },
         },
       };
-
-      //first we retrieve the right author_id (it must be either a User or a Cntact)
-      const author_id = commentData.author_id; //uuid of either a User or a Contact
-      let author_data;
-
-      if (author_id) {
-        const res_user = await this.prisma.tcg_users.findUnique({
-          where: {
-            id_tcg_user: String(author_id),
-          },
-          select: { remote_id: true },
-        });
-        author_data = res_user; //it might be undefined but if it is i insert the right data below
-
-        if (!res_user) {
-          //try to see if there is a contact for this uuid
-          const res_contact = await this.prisma.tcg_contacts.findUnique({
-            where: {
-              id_tcg_contact: String(author_id),
-            },
-            select: { remote_id: true },
-          });
-          if (!res_contact) {
-            throw new Error(
-              'author_id is invalid, it must be a valid User or Contact',
-            );
-          }
-          author_data = res_contact;
-        }
-
-        const finalData = {
-          ticket: {
-            comment: {
-              ...commentData,
-              author_id: author_data.remote_id,
-            },
-          },
-        };
-        dataBody = finalData;
-      }
-
       // We must fetch tokens from zendesk with the commentData.uploads array of Attachment uuids
       const uuids = commentData.uploads;
       let uploads = [];

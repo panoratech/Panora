@@ -16,6 +16,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
   constructor() {
     this.utils = new Utils();
   }
+
   async desunify(
     source: UnifiedCommentInput,
     customFieldMappings?: {
@@ -27,12 +28,9 @@ export class ZendeskCommentMapper implements ICommentMapper {
       body: source.body,
       html_body: source.html_body,
       public: !source.is_private,
-      author_id: source.user_id
-        ? parseInt(source.user_id)
-        : parseInt(source.contact_id),
-      // TODO: this may be done here actually
-      // we let the Panora uuids on purpose (it will be modified in the given service on the fly where we'll retrieve the actual remote id for the given uuid!)
-      // either one must be passed
+      author_id: source.contact_id
+        ? Number(await this.utils.getContactRemoteIdFromUuid(source.contact_id))
+        : Number(await this.utils.getUserRemoteIdFromUuid(source.user_id)),
       type: 'Comment',
       uploads: source.attachments, //we let the array of uuids on purpose (it will be modified in the given service on the fly!)
     };
@@ -77,7 +75,6 @@ export class ZendeskCommentMapper implements ICommentMapper {
       opts = { ...opts, attachments: unifiedObject };
     }
 
-    /*TODO: uncomment when test for sync of users/contacts is done as right now we dont have any real users nor contacts inside our db
     if (comment.author_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.author_id),
@@ -91,9 +88,11 @@ export class ZendeskCommentMapper implements ICommentMapper {
           String(comment.author_id),
           'zendesk_tcg',
         );
-        opts = { creator_type: 'contact', contact_id: contact_id };
+        if (contact_id) {
+          opts = { creator_type: 'contact', contact_id: contact_id };
+        }
       }
-    }*/
+    }
 
     const res = {
       body: comment.body || '',

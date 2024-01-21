@@ -34,7 +34,6 @@ export class FrontService implements ICommentService {
     remoteIdTicket: string,
   ): Promise<ApiResponse<FrontCommentOutput>> {
     try {
-      // Check required scope => crm.objects.contacts.write
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -44,23 +43,10 @@ export class FrontService implements ICommentService {
 
       let dataBody = commentData;
 
-      //first we retrieve the right author_id (it must be either a User or a Cntact)
-      const author_id = commentData.author_id; //uuid of either a User or a Contact
-      let author_data;
+      const author_id = commentData.author_id;
 
       if (author_id) {
-        // Retrieve the right user for author
-        const user = await this.prisma.tcg_users.findUnique({
-          where: {
-            id_tcg_user: commentData.author_id,
-          },
-          select: { remote_id: true },
-        });
-        if (!user) {
-          throw new Error('author_id is invalid, it must be a valid User');
-        }
-        author_data = user; //it might be undefined but if it is i insert the right data below
-        dataBody = { ...dataBody, author_id: user.remote_id };
+        dataBody = { ...dataBody, author_id: author_id };
       }
 
       // Process attachments
@@ -89,8 +75,8 @@ export class FrontService implements ICommentService {
       let resp;
       if (uploads.length > 0) {
         const formData = new FormData();
-        if (author_data) {
-          formData.append('author_id', author_data.remote_id);
+        if (author_id) {
+          formData.append('author_id', author_id);
         }
         formData.append('body', commentData.body);
         uploads.forEach((fileStream, index) => {

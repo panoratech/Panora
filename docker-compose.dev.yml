@@ -1,0 +1,163 @@
+# this docker compose is for development purposes.
+# use it to run a development environnement locally without pulling pre-built images from cloud 
+
+name: panora
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16.1
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+      - ./packages/api/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./packages/api/scripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+    networks:
+      - backend
+
+  api:
+    build:
+      context: ./
+      dockerfile: ./packages/api/Dockerfile.dev
+    environment: 
+        DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
+        DISTRIBUTION: ${DISTRIBUTION}
+        JWT_SECRET: ${JWT_SECRET}
+        REDIS_HOST: redis
+        ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
+        HUBSPOT_CLIENT_ID: ${HUBSPOT_CLIENT_ID}
+        HUBSPOT_CLIENT_SECRET: ${HUBSPOT_CLIENT_SECRET}
+        ZOHOCRM_CLIENT_ID: ${ZOHOCRM_CLIENT_ID}
+        ZOHOCRM_CLIENT_SECRET: ${ZOHOCRM_CLIENT_SECRET}
+        PIPEDRIVE_CLIENT_ID: ${PIPEDRIVE_CLIENT_ID}
+        PIPEDRIVE_CLIENT_SECRET: ${PIPEDRIVE_CLIENT_SECRET}
+        ZENDESK_SELL_CLIENT_ID: ${ZENDESK_SELL_CLIENT_ID}
+        ZENDESK_SELL_CLIENT_SECRET: ${ZENDESK_SELL_CLIENT_SECRET}
+        OAUTH_REDIRECT_BASE: ${OAUTH_REDIRECT_BASE}
+        ZENDESK_TICKETING_SUBDOMAIN: ${ZENDESK_TICKETING_SUBDOMAIN}
+        ZENDESK_TICKETING_CLIENT_ID: ${ZENDESK_TICKETING_CLIENT_ID}
+        ZENDESK_TICKETING_CLIENT_SECRET: ${ZENDESK_TICKETING_CLIENT_SECRET}
+    restart:
+      unless-stopped
+    ports:
+      - 3000:3000
+    depends_on:
+        postgres:
+          condition: service_healthy
+    networks:
+      - backend
+    volumes:
+      - .:/app
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    
+  redis:
+    image: "redis:7.2.3-alpine"
+    container_name: "Redis"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    networks:
+      - backend
+  
+  webapp:
+    build:
+      dockerfile: ./apps/webapp/Dockerfile.dev
+      context: ./
+      args:
+        VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
+        VITE_FRONTEND_DOMAIN: ${VITE_FRONTEND_DOMAIN}
+    restart:
+      unless-stopped
+    ports:
+      - 80:5173
+    depends_on:
+      api:
+        condition: service_healthy
+
+    volumes:
+      - .:/app
+    networks:
+      - backend
+      - frontend
+  
+  magic-link-frontend:
+    build:
+      dockerfile: ./apps/frontend-snippet/Dockerfile.dev
+      context: ./
+    restart:
+      always
+    ports:
+      - 81:5173
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - .:/app
+  
+  panora-store:
+    image: minio/minio
+    container_name: panora-store
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: timeout 5s bash -c ':> /dev/tcp/127.0.0.1/9000' || exit 1
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    volumes:
+      - pnr-objstr:/data
+    restart:
+      unless-stopped
+
+  # Initialize s3 buckets
+  panora-store-init:
+    image: minio/minio
+    entrypoint: []
+    command: >
+      sh -c "
+        sleep 10 &&
+        mc alias set panora-store http://panora-store:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} &&
+        echo "****1****" &&
+        mc mb panora-store/${S3_TCG_ATTACHMENTS_BUCKETNAME} &&
+        echo "****2****" &&
+        mc admin user add panora-store ${BUCKET_TCG_ATTACHMENTS_USER} ${BUCKET_TCG_ATTACHMENTS_PW} &&
+        echo "****3****" &&
+        mc admin policy attach panora-store readwrite --user ${BUCKET_TCG_ATTACHMENTS_USER} &&
+        echo "****4****" &&
+        mc ls panora-store 
+      "
+    depends_on:
+      - postgres
+    volumes:
+      - pnr-objstr:/data
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  pnr-objstr:

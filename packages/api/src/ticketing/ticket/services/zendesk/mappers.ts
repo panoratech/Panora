@@ -130,8 +130,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
     }, [] as Record<string, any>[]);
     let opts: any;
 
-    /* TODO: uncomment when test for sync of users/contacts is done as right now we dont have any real users nor contacts inside our db
-
+    //TODO: contact or user ?
     if (ticket.assignee_id) {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
@@ -140,11 +139,8 @@ export class ZendeskTicketMapper implements ITicketMapper {
       );
       if (user_id) {
         opts = { assigned_to: [user_id] };
-      } else {
-        //TODO: in future we must throw an error ?
-        //throw new Error('user id not found for this ticket');
       }
-    }*/
+    }
 
     const unifiedTicket: UnifiedTicketOutput = {
       name: ticket.subject,

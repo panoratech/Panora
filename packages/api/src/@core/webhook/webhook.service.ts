@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { WebhookDto } from './dto/webhook.dto';
+import axios from 'axios';
 
 @Injectable()
 export class WebhookService {
@@ -105,6 +106,127 @@ export class WebhookService {
       const job = await this.queue.add({
         webhook_delivery_id: w_delivery.id_webhook_delivery_attempt,
       });
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
+  async handlePriorityWebhook(
+    data: any,
+    eventType: string,
+    projectId: string,
+    eventId: string,
+  ) {
+    try {
+      this.logger.log('handling webhook....');
+      //just create an entry in webhook
+      //search if an endpoint webhook exists for such a projectId and such a scope
+      const webhooks = await this.prisma.webhook_endpoints.findMany({
+        where: {
+          id_project: projectId,
+          active: true,
+        },
+      });
+      if (!webhooks) return;
+
+      const webhook = webhooks.find((wh) => {
+        const scopes = wh.scope;
+        return scopes.includes(eventType);
+      });
+
+      if (!webhook) return;
+
+      this.logger.log('handling webhook payload....');
+
+      const w_payload = await this.prisma.webhooks_payloads.create({
+        data: {
+          id_webhooks_payload: uuidv4(),
+          data: JSON.stringify(data),
+        },
+      });
+      this.logger.log('handling webhook delivery....');
+
+      const w_delivery = await this.prisma.webhook_delivery_attempts.create({
+        data: {
+          id_webhook_delivery_attempt: uuidv4(),
+          id_event: eventId,
+          timestamp: new Date(),
+          id_webhook_endpoint: webhook.id_webhook_endpoint,
+          status: 'processed', // queued | processed | failed | success
+          id_webhooks_payload: w_payload.id_webhooks_payload,
+          attempt_count: 0, //TODO
+        },
+      });
+      this.logger.log('sending the webhook to the client ');
+      // we send the delivery webhook to the queue so it can be processed by our dispatcher worker
+      // Retrieve the webhook delivery attempt details
+      const deliveryAttempt =
+        await this.prisma.webhook_delivery_attempts.findUnique({
+          where: {
+            id_webhook_delivery_attempt: w_delivery.id_webhook_delivery_attempt,
+          },
+          include: {
+            webhook_endpoints: true,
+            webhooks_payloads: true,
+          },
+        });
+
+      // Check if the endpoint is active
+      if (deliveryAttempt.webhook_endpoints.active) {
+        try {
+          // Send the payload to the endpoint URL
+          const response = await axios.post(
+            deliveryAttempt.webhook_endpoints.url,
+            {
+              id_event: deliveryAttempt.id_event,
+              data: deliveryAttempt.webhooks_payloads.data,
+            },
+            {
+              headers: {
+                'Panora-Signature': deliveryAttempt.webhook_endpoints.secret,
+              },
+            },
+          );
+
+          // Populate the webhooks_responses table
+          await this.prisma.webhooks_reponses.create({
+            data: {
+              id_webhooks_reponse: uuidv4(),
+              http_response_data: response.data,
+              http_status_code: response.status.toString(),
+            },
+          });
+          await this.prisma.webhook_delivery_attempts.update({
+            where: {
+              id_webhook_delivery_attempt:
+                w_delivery.id_webhook_delivery_attempt,
+            },
+            data: {
+              status: 'success',
+            },
+          });
+        } catch (error) {
+          // If the POST request fails, set a next retry time and reinsert the job in the queue
+          const nextRetry = new Date();
+          nextRetry.setSeconds(nextRetry.getSeconds() + 60); // Retry after 60 seconds
+
+          await this.prisma.webhook_delivery_attempts.update({
+            where: {
+              id_webhook_delivery_attempt:
+                w_delivery.id_webhook_delivery_attempt,
+            },
+            data: {
+              status: 'failed',
+              next_retry: nextRetry,
+            },
+          });
+
+          //re-insert the webhook in the queue
+          await this.handleFailedWebhook(
+            w_delivery.id_webhook_delivery_attempt,
+          );
+        }
+      }
     } catch (error) {
       handleServiceError(error, this.logger);
     }

@@ -72,7 +72,8 @@ export class CrmConnectionsService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      //directly send the webhook
+      await this.webhook.handlePriorityWebhook(
         data,
         'connection.created',
         projectId,

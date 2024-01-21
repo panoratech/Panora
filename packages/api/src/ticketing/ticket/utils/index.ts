@@ -14,28 +14,27 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res)
-        throw new Error(
+      if (!res) return;
+      /*throw new Error(
           `tcg_user not found for remote_id ${remote_id} and integration ${remote_platform}`,
-        );
+        );*/
       return res.id_tcg_user;
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async getAsigneeRemoteIdFromUserUuid(uuid: string, remote_platform: string) {
+  async getAsigneeRemoteIdFromUserUuid(uuid: string) {
     try {
       const res = await this.prisma.tcg_users.findFirst({
         where: {
           id_tcg_user: uuid,
-          remote_platform: remote_platform,
         },
       });
-      if (!res)
-        throw new Error(
+      if (!res) return;
+      /*throw new Error(
           `tcg_user not found for uuid ${uuid} and integration ${remote_platform}`,
-        );
+        );*/
       return res.remote_id;
     } catch (error) {
       throw new Error(error);

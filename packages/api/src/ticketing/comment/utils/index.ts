@@ -19,11 +19,24 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res)
-        throw new Error(
+      if (!res) return;
+      /*throw new Error(
           `tcg_user not found for remote_id ${remote_id} and integration ${remote_platform}`,
-        );
+        );¨*/
       return res.id_tcg_user;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  async getUserRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.tcg_users.findFirst({
+        where: {
+          id_tcg_user: uuid,
+        },
+      });
+      if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
+      return res.remote_id;
     } catch (error) {
       throw new Error(error);
     }
@@ -36,11 +49,24 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res)
-        throw new Error(
+      if (!res) return;
+      /*throw new Error(
           `tcg_contact not found for remote_id ${remote_id} and integration ${remote_platform}`,
-        );
+        );*/
       return res.id_tcg_contact;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  async getContactRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.tcg_contacts.findFirst({
+        where: {
+          id_tcg_contact: uuid,
+        },
+      });
+      if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
+      return res.remote_id;
     } catch (error) {
       throw new Error(error);
     }

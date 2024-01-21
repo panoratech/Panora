@@ -28,8 +28,10 @@ export class FrontTicketMapper implements ITicketMapper {
         body: source.comment.body,
         author_id:
           source.comment.creator_type === 'user'
-            ? source.comment.user_id
-            : source.comment.contact_id,
+            ? await this.utils.getAsigneeRemoteIdFromUserUuid(
+                source.comment.user_id,
+              )
+            : undefined,
         attachments: source.comment.attachments,
       },
     };
@@ -37,9 +39,10 @@ export class FrontTicketMapper implements ITicketMapper {
     if (source.assigned_to && source.assigned_to.length > 0) {
       const res: string[] = [];
       for (const assignee of source.assigned_to) {
-        res.push(
-          await this.utils.getAsigneeRemoteIdFromUserUuid(assignee, 'front'),
-        );
+        const data = await this.utils.getAsigneeRemoteIdFromUserUuid(assignee);
+        if (data) {
+          res.push(data);
+        }
       }
       result = {
         ...result,
@@ -108,8 +111,6 @@ export class FrontTicketMapper implements ITicketMapper {
       );
       if (user_id) {
         opts = { assigned_to: [user_id] };
-      } else {
-        throw new Error('user id not found for this ticket');
       }
     }
 

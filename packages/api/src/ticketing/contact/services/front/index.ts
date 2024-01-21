@@ -26,8 +26,12 @@ export class FrontService implements IContactService {
 
   async syncContacts(
     linkedUserId: string,
+    unused_,
+    remote_account_id: string,
   ): Promise<ApiResponse<FrontContactOutput[]>> {
     try {
+      if (!remote_account_id) throw new Error('remote account id not found');
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -35,14 +39,17 @@ export class FrontService implements IContactService {
         },
       });
 
-      const resp = await axios.get('https://api2.frontapp.com/teammates', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const resp = await axios.get(
+        `https://api2.frontapp.com/accounts/${remote_account_id}/contacts`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
       this.logger.log(`Synced front contacts !`);
 
       return {
