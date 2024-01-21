@@ -1,12 +1,14 @@
 import config from '@/utils/config';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation,useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 interface IProDto {
     name: string;
     id_organization: string;
 }
+
 const useProjectMutation = () => {
+    const queryClient = useQueryClient()
     const addProject = async (data: IProDto) => {
         const response = await fetch(`${config.API_URL}/projects/create`, {
             method: 'POST',
@@ -31,6 +33,10 @@ const useProjectMutation = () => {
             toast.error(`Error: ${error.message}`);
         },
         onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['projects'],
+                refetchType: 'active',
+            })
             toast.success('Project added successfully!');
         },
         onSettled: () => {
