@@ -51,7 +51,7 @@ export class DealController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedDealOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getDeals(
     @Headers('connection_token') connection_token: string,
@@ -86,7 +86,7 @@ export class DealController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedDealOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getDeal(
     @Param('id') id: string,
@@ -114,7 +114,7 @@ export class DealController {
   })
   @ApiBody({ type: UnifiedDealInput })
   @ApiCustomResponse(UnifiedDealOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addDeal(
     @Body() unifiedDealData: UnifiedDealInput,
@@ -155,7 +155,7 @@ export class DealController {
   })
   @ApiBody({ type: UnifiedDealInput, isArray: true })
   @ApiCustomResponse(UnifiedDealOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
   async addDeals(
     @Body() unfiedDealData: UnifiedDealInput[],
@@ -183,7 +183,7 @@ export class DealController {
     summary: 'Update a Deal',
   })
   @ApiCustomResponse(UnifiedDealOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Patch(':id')
   updateDeal(
     @Param('id') id: string,

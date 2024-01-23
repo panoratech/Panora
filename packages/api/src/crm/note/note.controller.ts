@@ -50,7 +50,7 @@ export class NoteController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedNoteOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getNotes(
     @Headers('connection_token') connection_token: string,
@@ -85,7 +85,7 @@ export class NoteController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedNoteOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getNote(
     @Param('id') id: string,
@@ -113,7 +113,7 @@ export class NoteController {
   })
   @ApiBody({ type: UnifiedNoteInput })
   @ApiCustomResponse(UnifiedNoteOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addNote(
     @Body() unifiedNoteData: UnifiedNoteInput,
@@ -154,7 +154,7 @@ export class NoteController {
   })
   @ApiBody({ type: UnifiedNoteInput, isArray: true })
   @ApiCustomResponse(UnifiedNoteOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
   async addNotes(
     @Body() unfiedNoteData: UnifiedNoteInput[],

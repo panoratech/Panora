@@ -54,7 +54,7 @@ export class EngagementController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedEngagementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEngagements(
     @Headers('connection_token') connection_token: string,
@@ -93,7 +93,7 @@ export class EngagementController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedEngagementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getEngagement(
     @Param('id') id: string,
@@ -121,7 +121,7 @@ export class EngagementController {
   })
   @ApiBody({ type: UnifiedEngagementInput })
   @ApiCustomResponse(UnifiedEngagementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addEngagement(
     @Body() unifiedEngagementData: UnifiedEngagementInput,
@@ -162,7 +162,7 @@ export class EngagementController {
   })
   @ApiBody({ type: UnifiedEngagementInput, isArray: true })
   @ApiCustomResponse(UnifiedEngagementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
   async addEngagements(
     @Body() unfiedEngagementData: UnifiedEngagementInput[],
@@ -190,7 +190,7 @@ export class EngagementController {
     summary: 'Update a Engagement',
   })
   @ApiCustomResponse(UnifiedEngagementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Patch()
   updateEngagement(
     @Query('id') id: string,

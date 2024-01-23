@@ -41,7 +41,7 @@ export class StageController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedStageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getStages(
     @Headers('connection_token') connection_token: string,
@@ -80,7 +80,7 @@ export class StageController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedStageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getStage(
     @Param('id') id: string,

@@ -41,7 +41,7 @@ export class UserController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getUsers(
     @Headers('connection_token') connection_token: string,
@@ -76,7 +76,7 @@ export class UserController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getUser(
     @Param('id') id: string,

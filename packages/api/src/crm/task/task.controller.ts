@@ -51,7 +51,7 @@ export class TaskController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedTaskOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTasks(
     @Headers('connection_token') connection_token: string,
@@ -86,7 +86,7 @@ export class TaskController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedTaskOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getTask(
     @Param('id') id: string,
@@ -114,7 +114,7 @@ export class TaskController {
   })
   @ApiBody({ type: UnifiedTaskInput })
   @ApiCustomResponse(UnifiedTaskOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addTask(
     @Body() unifiedTaskData: UnifiedTaskInput,
@@ -155,7 +155,7 @@ export class TaskController {
   })
   @ApiBody({ type: UnifiedTaskInput, isArray: true })
   @ApiCustomResponse(UnifiedTaskOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
   async addTasks(
     @Body() unfiedTaskData: UnifiedTaskInput[],
@@ -183,7 +183,7 @@ export class TaskController {
     summary: 'Update a Task',
   })
   @ApiCustomResponse(UnifiedTaskOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Patch()
   updateTask(
     @Query('id') id: string,

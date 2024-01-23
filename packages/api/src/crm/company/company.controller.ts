@@ -54,7 +54,7 @@ export class CompanyController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedCompanyOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCompanies(
     @Headers('connection_token') connection_token: string,
@@ -93,7 +93,7 @@ export class CompanyController {
     description: 'Set to true to include data from the original Crm software.',
   })
   @ApiCustomResponse(UnifiedCompanyOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getCompany(
     @Param('id') id: string,
@@ -121,7 +121,7 @@ export class CompanyController {
   })
   @ApiBody({ type: UnifiedCompanyInput })
   @ApiCustomResponse(UnifiedCompanyOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addCompany(
     @Body() unifiedCompanyData: UnifiedCompanyInput,
@@ -162,7 +162,7 @@ export class CompanyController {
   })
   @ApiBody({ type: UnifiedCompanyInput, isArray: true })
   @ApiCustomResponse(UnifiedCompanyOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
   async addCompanies(
     @Body() unfiedCompanyData: UnifiedCompanyInput[],
@@ -190,7 +190,7 @@ export class CompanyController {
     summary: 'Update a Company',
   })
   @ApiCustomResponse(UnifiedCompanyOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Patch()
   updateCompany(
     @Query('id') id: string,

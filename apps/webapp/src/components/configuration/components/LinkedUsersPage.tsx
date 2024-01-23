@@ -32,6 +32,7 @@ export function LinkedUsersPage({
         <div className="ml-auto font-medium">
           <Badge variant={"outline"}>{isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : linkedUser.linked_user_origin_id}</Badge>
         </div>
+       
       </div>
       )
       })}
