@@ -1,5 +1,5 @@
 import config from '@/utils/config';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 interface IOrgDto {
@@ -7,6 +7,7 @@ interface IOrgDto {
   stripe_customer_id: string;
 }
 const useOrganisationMutation = () => {
+    const queryClient = useQueryClient()
     const addOrg = async (data: IOrgDto) => {
         const response = await fetch(`${config.API_URL}/organisations/create`, {
             method: 'POST',
@@ -31,6 +32,10 @@ const useOrganisationMutation = () => {
             toast.error(`Error: ${error.message}`);
         },
         onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['organisations'],
+                refetchType: 'active',
+            })
             toast.success('Organisation added successfully!');
         },
         onSettled: () => {
