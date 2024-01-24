@@ -153,7 +153,7 @@ export class ContactService {
           status: 'success',
           type: 'ticketing.contact.pull',
           method: 'GET',
-          url: '/ticketing/contact',
+          url: '/ticketing/contacts',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

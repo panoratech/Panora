@@ -12,8 +12,8 @@ import { StageService } from './services/stage.service';
 import { UnifiedStageOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('crm/stage')
-@Controller('crm/stage')
+@ApiTags('crm/stages')
+@Controller('crm/stages')
 export class StageController {
   private readonly connectionUtils = new ConnectionUtils();
 

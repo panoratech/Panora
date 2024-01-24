@@ -26,8 +26,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
-@ApiTags('ticketing/comment')
-@Controller('ticketing/comment')
+@ApiTags('ticketing/comments')
+@Controller('ticketing/comments')
 export class CommentController {
   private readonly connectionUtils = new ConnectionUtils();
 

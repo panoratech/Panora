@@ -380,7 +380,7 @@ export class ContactService {
           status: status_resp,
           type: 'crm.contact.created', //sync, push or pull
           method: 'POST',
-          url: '/crm/contact',
+          url: '/crm/contacts',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -571,7 +571,7 @@ export class ContactService {
           status: 'success',
           type: 'crm.contact.pull',
           method: 'GET',
-          url: '/crm/contact',
+          url: '/crm/contacts',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

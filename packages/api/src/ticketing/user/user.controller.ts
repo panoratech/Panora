@@ -20,8 +20,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { UnifiedUserOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
-@ApiTags('ticketing/user')
-@Controller('ticketing/user')
+@ApiTags('ticketing/users')
+@Controller('ticketing/users')
 export class UserController {
   private readonly connectionUtils = new ConnectionUtils();
 

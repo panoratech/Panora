@@ -3,7 +3,7 @@ import { CrmConnectionModule } from './crm/crm.connection.module';
 import { ConnectionsController } from './connections.controller';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
+import { TicketingConnectionModule } from './ticketing/ticketsing.connection.module';
 
 @Module({
   controllers: [ConnectionsController],

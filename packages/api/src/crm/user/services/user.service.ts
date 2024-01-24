@@ -158,7 +158,7 @@ export class UserService {
           status: 'success',
           type: 'crm.user.pulled',
           method: 'GET',
-          url: '/crm/user',
+          url: '/crm/users',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

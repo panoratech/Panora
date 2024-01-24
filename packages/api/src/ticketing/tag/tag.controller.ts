@@ -20,8 +20,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { UnifiedTagOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
-@ApiTags('ticketing/tag')
-@Controller('ticketing/tag')
+@ApiTags('ticketing/tags')
+@Controller('ticketing/tags')
 export class TagController {
   private readonly connectionUtils = new ConnectionUtils();
 

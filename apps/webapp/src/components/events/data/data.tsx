@@ -11,16 +11,16 @@ import {
   
   export const labels = [
     {
-      value: "/crm/task",
-      label: "/crm/task",
+      value: "/crm/tasks",
+      label: "/crm/tasks",
     },
     {
-      value: "/crm/notes",
-      label: "/crm/notes",
+      value: "/crm/notess",
+      label: "/crm/notess",
     },
     {
-      value: "/crm/contact",
-      label: "/crm/contact",
+      value: "/crm/contacts",
+      label: "/crm/contacts",
     },
   ]
 

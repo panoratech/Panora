@@ -22,8 +22,8 @@ import { TaskService } from './services/task.service';
 import { UnifiedTaskInput, UnifiedTaskOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('crm/task')
-@Controller('crm/task')
+@ApiTags('crm/tasks')
+@Controller('crm/tasks')
 export class TaskController {
   private readonly connectionUtils = new ConnectionUtils();
 

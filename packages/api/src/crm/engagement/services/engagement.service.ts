@@ -272,7 +272,7 @@ export class EngagementService {
           status: status_resp,
           type: 'crm.engagement.push', //sync, push or pull
           method: 'POST',
-          url: '/crm/engagement',
+          url: '/crm/engagements',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -451,7 +451,7 @@ export class EngagementService {
           status: 'success',
           type: 'crm.engagement.pulled',
           method: 'GET',
-          url: '/crm/engagement',
+          url: '/crm/engagements',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

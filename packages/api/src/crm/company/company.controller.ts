@@ -25,8 +25,8 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('crm/company')
-@Controller('crm/company')
+@ApiTags('crm/companies')
+@Controller('crm/companies')
 export class CompanyController {
   private readonly connectionUtils = new ConnectionUtils();
 

@@ -116,7 +116,7 @@ export class AttachmentService {
           status: 'success',
           type: 'ticketing.attachment.push', //sync, push or pull
           method: 'POST',
-          url: '/ticketing/attachment',
+          url: '/ticketing/attachments',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -277,7 +277,7 @@ export class AttachmentService {
           status: 'success',
           type: 'ticketing.attachment.pull',
           method: 'GET',
-          url: '/ticketing/attachment',
+          url: '/ticketing/attachments',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

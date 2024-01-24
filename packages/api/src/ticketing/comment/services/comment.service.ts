@@ -275,7 +275,7 @@ export class CommentService {
           status: status_resp,
           type: 'ticketing.comment.push', //sync, push or pull
           method: 'POST',
-          url: '/ticketing/comment',
+          url: '/ticketing/comments',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -447,7 +447,7 @@ export class CommentService {
           status: 'success',
           type: 'ticketing.comment.pulled',
           method: 'GET',
-          url: '/ticketing/comment',
+          url: '/ticketing/comments',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

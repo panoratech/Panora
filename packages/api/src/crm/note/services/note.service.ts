@@ -241,7 +241,7 @@ export class NoteService {
           status: status_resp,
           type: 'crm.note.push', //sync, push or pull
           method: 'POST',
-          url: '/crm/note',
+          url: '/crm/notes',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -404,7 +404,7 @@ export class NoteService {
           status: 'success',
           type: 'crm.note.pulled',
           method: 'GET',
-          url: '/crm/note',
+          url: '/crm/notes',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

@@ -12,8 +12,8 @@ import { UserService } from './services/user.service';
 import { UnifiedUserOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('crm/user')
-@Controller('crm/user')
+@ApiTags('crm/users')
+@Controller('crm/users')
 export class UserController {
   private readonly connectionUtils = new ConnectionUtils();
 

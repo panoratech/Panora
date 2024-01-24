@@ -1,8 +1,7 @@
 ---
-title: 'Overview'
-description: 'Panora can send notifcations to your backend when the state of an object has changed. We use the concept of `events` to represent state changes in any object.'
+title: "Overview"
+description: "Panora can send notifcations to your backend when the state of an object has changed. We use the concept of `events` to represent state changes in any object."
 ---
-
 
 `Events` are our way of letting you know when something interesting happens in your projects. When an interesting event occurs, we create a new Event object. For example, when a contact is created in a crm, we create a `crm.contact.created` event, and when a contact is updated, we create an `crm.contact.updated` event. Certain API requests might create multiple events. For example, after we pull data from a CRM plaftorm you may receive both a `crm.contact.pulled` event and some `crm.contact.created` events.
 
@@ -10,7 +9,8 @@ Events occur when the state of another API resource changes. The event’s data 
 
 When creating webhook endpoints to retrieve events from Panora, you have the flexibilty to only retrieve some events, for each endpoint. We also have a separate webhooks system for sending the Event objects directly to an endpoint on your server. You can manage webhooks in your account settings. Learn how to listen for events so that your integration can automatically trigger reactions.
 
-## The *event* Object
+## The _event_ Object
+
 The `event` object is used to represent an existing change to an object.
 The typical implementation consists in listening for events and triggering worklows in your backend based on the content of the field **type** and data of the webhook.
 
@@ -63,7 +63,7 @@ The typical implementation consists in listening for events and triggering workl
     </ResponseField>
 
     <ResponseField name="data" type="json">
-      Expect a unified object in this field. A **crm.contact.created** event would for example contain a [`CRM Contact`](/crm/contacts/overview) object.
+      Expect a unified object in this field. A **crm.contact.created** event would for example contain a [`CRM Contact`](/crm/contactss/overview) object.
     </ResponseField>
 
   </Expandable>
@@ -71,5 +71,6 @@ The typical implementation consists in listening for events and triggering workl
 
 
 
-## Securing your webhooks 
+## Securing your webhooks
 We use secrets to make sure your endpoints do not receive data from third-parties usurpating Panora.
+```

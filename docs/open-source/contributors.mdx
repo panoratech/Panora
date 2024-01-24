@@ -1,18 +1,16 @@
 ---
-title: 'Build a connector'
-description: 'We welcome all contributions to Panora; from small UI enhancements to brand new integrations. We love seeing community members level up and give people power-ups!'
-icon: 'star'
+title: "Build a connector"
+description: "We welcome all contributions to Panora; from small UI enhancements to brand new integrations. We love seeing community members level up and give people power-ups!"
+icon: "star"
 ---
 
-## Introduction 
-
+## Introduction
 
 ### Setup your environnement
-We made a docker file that builds Panora from sources, specifically to help you locally test your contributions. Here's how to use it. 
 
-<Info>
-  Execute these from your Panora's repo root folder
-</Info>
+We made a docker file that builds Panora from sources, specifically to help you locally test your contributions. Here's how to use it.
+
+<Info>Execute these from your Panora's repo root folder</Info>
 
 <Steps>
   <Step title="Get the right Dockerfile:">
@@ -21,26 +19,22 @@ We made a docker file that builds Panora from sources, specifically to help you 
     ```
   </Step>
 
-<Step title="Copy env variables">
-    ```bash
-      cp .env.example .env
-    ```
-  </Step>
+<Step title="Copy env variables">```bash cp .env.example .env ```</Step>
 
-  <Step title="Mac Users only:">
-    ```bash
-      echo "node-linker=hoisted" > .npmrc
-    ```
-  </Step>
+{" "}
+<Step title="Mac Users only:">
+  ```bash echo "node-linker=hoisted" > .npmrc ```
+</Step>
 
     <Step title="Start the Dockerfile">
     ```bash
-      docker compose -f docker-compose.dev.yml up  
+      docker compose -f docker-compose.dev.yml up
     ```
-  That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
+
+That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
+
   </Step>
 </Steps>
-
 
 ## Adding new Integrations ✨
 
@@ -48,7 +42,7 @@ Make sure you are inside `packages/api/src` where the server lives !
 
 # You want to add a new 3rd Party not yet supported ? 🧑‍🎤
 
-*Ie: Slack, Hubspot, Jira, Shopify ...*
+_Ie: Slack, Hubspot, Jira, Shopify ..._
 
 First choose wisely which vertical the 3rd party belongs to among these:
 
@@ -64,7 +58,7 @@ For the sake of the guide, now on we'll consider adding a 3rd party belonging to
 
 ## 1. Adding a new connection service for your 3rd Party
 
-Create a new folder with the name of your 3rd party. Let's call it *my3rdParty*.
+Create a new folder with the name of your 3rd party. Let's call it _my3rdParty_.
 
 `cd @core/connections/crm/services/my3rdParty`
 
@@ -85,24 +79,26 @@ export type CallbackParams = {
   projectId: string;
   code: string;
   location?: string; //for zoho
-}
+};
 
 export type RefreshParams = {
   connectionId: string;
   refreshToken: string;
   account_url?: string;
-}
+};
 ```
 
 ```ts
-import { Injectable } from '@nestjs/common';
-import { CallbackParams, ICrmConnectionService, RefreshParams } from '../../types';
+import { Injectable } from "@nestjs/common";
+import {
+  CallbackParams,
+  ICrmConnectionService,
+  RefreshParams,
+} from "../../types";
 
 @Injectable()
 export class My3rdPartyConnectionService implements ICrmConnectionService {
-  async handleCallback(
-    opts: CallbackParams
-  ) {
+  async handleCallback(opts: CallbackParams) {
     return;
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -120,8 +116,8 @@ Now that you have the structure, check other 3rd parties implementations under `
 Add your new 3rd party service to the `registry` service.
 
 ```ts
-//ADD YOUR IMPORT 
-import { My3rdPartyConnectionService } from './my3rdParty/my3rdParty.service';
+//ADD YOUR IMPORT
+import { My3rdPartyConnectionService } from "./my3rdParty/my3rdParty.service";
 
 @Injectable()
 export class ServiceConnectionRegistry {
@@ -132,16 +128,16 @@ export class ServiceConnectionRegistry {
     hubspot: HubspotConnectionService,
     zoho: ZohoConnectionService,
     zendesk: ZendeskConnectionService,
-    pipedrive: PipedriveConnectionService,
+    pipedrive: PipedriveConnectionService
   ) {
     this.serviceMap = new Map<string, ICrmConnectionService>();
-    this.serviceMap.set('freshsales', freshsales);
-    this.serviceMap.set('hubspot', hubspot);
-    this.serviceMap.set('zoho', zoho);
-    this.serviceMap.set('zendesk', zendesk);
-    this.serviceMap.set('pipedrive', pipedrive);
+    this.serviceMap.set("freshsales", freshsales);
+    this.serviceMap.set("hubspot", hubspot);
+    this.serviceMap.set("zoho", zoho);
+    this.serviceMap.set("zendesk", zendesk);
+    this.serviceMap.set("pipedrive", pipedrive);
     //ADD YOUR SERVICE
-    this.serviceMap.set('my3rdParty', my3rdParty);
+    this.serviceMap.set("my3rdParty", my3rdParty);
   }
 }
 ```
@@ -165,7 +161,7 @@ Don't forget to ddd your service to the `CrmConnectionModule` module !
     ZendeskConnectionService,
     PipedriveConnectionService,
     //INSERT YOUR SERVICE HERE
-    My3rdPartyConnectionService
+    My3rdPartyConnectionService,
   ],
   exports: [CrmConnectionsService],
 })
@@ -174,19 +170,19 @@ export class CrmConnectionModule {}
 
 # You want to map a common object to your new 3rd Party ? 👩‍🎤
 
-*Ie: Contact, Ticket, Deal, Company ...*
+_Ie: Contact, Ticket, Deal, Company ..._
 
-For the sake of this guide, let's map the common object `contact` under `crm` vertical to *my3rdParty* just defined just before.
+For the sake of this guide, let's map the common object `contact` under `crm` vertical to _my3rdParty_ just defined just before.
 
 ## 1. Add a new service to map your common object to your 3rd party
 
-Create a new service folder with the name of your 3rd party. Let's call it *my3rdParty*.
+Create a new service folder with the name of your 3rd party. Let's call it _my3rdParty_.
 
 `cd crm/contact/services/my3rdParty`
 
 You'll now create 3 files.
 
-  `index.ts` *where your service is created and direct interaction with your 3rd party API is handled*
+`index.ts` _where your service is created and direct interaction with your 3rd party API is handled_
 
 It must implement the `IContactService` interface.
 
@@ -194,11 +190,11 @@ It must implement the `IContactService` interface.
 export interface IContactService {
   addContact(
     contactData: DesunifyReturnType,
-    linkedUserId: string,
+    linkedUserId: string
   ): Promise<ApiResponse<OriginalContactOutput>>;
 
   syncContacts(
-    linkedUserId: string, 
+    linkedUserId: string
   ): Promise<ApiResponse<OriginalContactOutput[]>>;
 }
 ```
@@ -229,7 +225,7 @@ export class My3rdPartyService implements IContactService {
 }
 ```
 
-Check other implementations under `/crm/contact/services` to fill the core functions.
+Check other implementations under `/crm/contacts/services` to fill the core functions.
 
 The keen readers may have noticed `3rdPartyContactInput` and `3rdPartyContactOutput`.
 
@@ -256,7 +252,7 @@ export interface IContactMapper {
     customFieldMappings?: {
       slug: string;
       remote_id: string;
-    }[],
+    }[]
   ): DesunifyReturnType;
 
   unify(
@@ -264,7 +260,7 @@ export interface IContactMapper {
     customFieldMappings?: {
       slug: string;
       remote_id: string;
-    }[],
+    }[]
   ): UnifiedContactOutput | UnifiedContactOutput[];
 }
 ```
@@ -289,7 +285,7 @@ export class My3rdPartyMapper implements IContactMapper {
 }
 ```
 
-Check other implementations under `/crm/contact/services` to fill the core functions.
+Check other implementations under `/crm/contacts/services` to fill the core functions.
 
 ## 2. Enable your service
 
@@ -333,13 +329,13 @@ export const contactUnificationMapping = {
 };
 ```
 
-Don't forget to add your service you've defined at step 1 inside the module under `/crm/contact/contact.module.ts`.
+Don't forget to add your service you've defined at step 1 inside the module under `/crm/contacts/contact.module.ts`.
 
 ```ts
 @Module({
   imports: [
     BullModule.registerQueue({
-      name: 'webhookDelivery',
+      name: "webhookDelivery",
     }),
   ],
   controllers: [ContactController],
@@ -359,12 +355,11 @@ Don't forget to add your service you've defined at step 1 inside the module unde
     PipedriveService,
     HubspotService,
     //INSERT YOUR SERVICE HERE
-    My3rdPartyService
+    My3rdPartyService,
   ],
   exports: [SyncService],
 })
 export class ContactModule {}
-
 ```
 
 ### Congrats Hero ! 🦸‍♀️

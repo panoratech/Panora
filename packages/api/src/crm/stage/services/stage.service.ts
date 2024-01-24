@@ -150,7 +150,7 @@ export class StageService {
           status: 'success',
           type: 'crm.stage.pulled',
           method: 'GET',
-          url: '/crm/stage',
+          url: '/crm/stages',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

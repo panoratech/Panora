@@ -26,8 +26,8 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
-@ApiTags('ticketing/attachment')
-@Controller('ticketing/attachment')
+@ApiTags('ticketing/attachments')
+@Controller('ticketing/attachments')
 export class AttachmentController {
   private readonly connectionUtils = new ConnectionUtils();
 

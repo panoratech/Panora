@@ -150,7 +150,7 @@ export class TeamService {
           status: 'success',
           type: 'ticketing.team.pull',
           method: 'GET',
-          url: '/ticketing/team',
+          url: '/ticketing/teams',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

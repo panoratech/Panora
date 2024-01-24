@@ -308,7 +308,7 @@ export class TicketService {
           status: status_resp,
           type: 'ticketing.ticket.push', //sync, push or pull
           method: 'PUSH',
-          url: '/ticketing/ticket',
+          url: '/ticketing/tickets',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -491,7 +491,7 @@ export class TicketService {
           status: 'success',
           type: 'ticketing.ticket.pulled',
           method: 'GET',
-          url: '/ticketing/ticket',
+          url: '/ticketing/tickets',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

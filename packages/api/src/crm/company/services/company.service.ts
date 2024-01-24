@@ -346,7 +346,7 @@ export class CompanyService {
           status: status_resp,
           type: 'crm.company.push', //sync, push or pull
           method: 'POST',
-          url: '/crm/company',
+          url: '/crm/companies',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -539,7 +539,7 @@ export class CompanyService {
           status: 'success',
           type: 'crm.company.pulled',
           method: 'GET',
-          url: '/crm/company',
+          url: '/crm/companies',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

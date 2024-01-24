@@ -147,7 +147,7 @@ export class TagService {
           status: 'success',
           type: 'ticketing.tag.pull',
           method: 'GET',
-          url: '/ticketing/tag',
+          url: '/ticketing/tags',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

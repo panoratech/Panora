@@ -247,7 +247,7 @@ export class TaskService {
           status: status_resp,
           type: 'crm.task.push', //sync, push or pull
           method: 'POST',
-          url: '/crm/task',
+          url: '/crm/tasks',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -414,7 +414,7 @@ export class TaskService {
           status: 'success',
           type: 'crm.task.pulled',
           method: 'GET',
-          url: '/crm/task',
+          url: '/crm/tasks',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

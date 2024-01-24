@@ -27,8 +27,8 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiCustomResponse } from '@@core/utils/types';
 
-@ApiTags('crm/contact')
-@Controller('crm/contact')
+@ApiTags('crm/contacts')
+@Controller('crm/contacts')
 export class ContactController {
   private readonly connectionUtils = new ConnectionUtils();
 

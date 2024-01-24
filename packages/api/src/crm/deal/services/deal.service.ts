@@ -226,7 +226,7 @@ export class DealService {
           status: status_resp,
           type: 'crm.deal.push', //sync, push or pull
           method: 'POST',
-          url: '/crm/deal',
+          url: '/crm/deals',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -389,7 +389,7 @@ export class DealService {
           status: 'success',
           type: 'crm.deal.pulled',
           method: 'GET',
-          url: '/crm/deal',
+          url: '/crm/deals',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

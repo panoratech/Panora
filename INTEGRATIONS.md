@@ -165,7 +165,7 @@ export class My3rdPartyService implements IContactService {
 }
 ```
 
-Check other implementations under `/crm/contact/services` to fill the core functions.
+Check other implementations under `/crm/contacts/services` to fill the core functions.
 
 The keen readers may have noticed `3rdPartyContactInput` and `3rdPartyContactOutput`.
 
@@ -225,7 +225,7 @@ export class My3rdPartyMapper implements IContactMapper {
 }
 ```
 
-Check other implementations under `/crm/contact/services` to fill the core functions.
+Check other implementations under `/crm/contacts/services` to fill the core functions.
 
 ## 2. Enable your service
 
@@ -269,7 +269,7 @@ export const contactUnificationMapping = {
 };
 ```
 
-Don't forget to add your service you've defined at step 1 inside the module under `/crm/contact/contact.module.ts`.
+Don't forget to add your service you've defined at step 1 inside the module under `/crm/contacts/contact.module.ts`.
 
 ```ts
 @Module({

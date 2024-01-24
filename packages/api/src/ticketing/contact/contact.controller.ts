@@ -20,8 +20,8 @@ import { UnifiedContactOutput } from './types/model.unified';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
-@ApiTags('ticketing/contact')
-@Controller('ticketing/contact')
+@ApiTags('ticketing/contacts')
+@Controller('ticketing/contacts')
 export class ContactController {
   private readonly connectionUtils = new ConnectionUtils();
 

@@ -25,8 +25,8 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('crm/engagement')
-@Controller('crm/engagement')
+@ApiTags('crm/engagements')
+@Controller('crm/engagements')
 export class EngagementController {
   private readonly connectionUtils = new ConnectionUtils();
 

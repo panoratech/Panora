@@ -52,10 +52,10 @@ export default function QuickStartPage() {
                 </p>
                 <div className="flex flex-col">
                 <Badge variant={"outline"} className="text-sm text-left mb-3">
-                  <Badge className="mr-2 my-2">GET</Badge> https://app.panora.dev/crm/contact?integrationId=hubspot&linkedUserId=your_linked_user_id
+                  <Badge className="mr-2 my-2">GET</Badge> https://app.panora.dev/crm/contacts?integrationId=hubspot&linkedUserId=your_linked_user_id
                 </Badge>
                 <Badge variant={"outline"} className="text-sm text-left">
-                  <Badge className="mr-2 my-2">POST</Badge> https://app.panora.dev/crm/contact?integrationId=hubspot&linkedUserId=your_linked_user_id
+                  <Badge className="mr-2 my-2">POST</Badge> https://app.panora.dev/crm/contacts?integrationId=hubspot&linkedUserId=your_linked_user_id
                   </Badge>
                 </div>
                 

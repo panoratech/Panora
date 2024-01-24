@@ -22,8 +22,8 @@ import { DealService } from './services/deal.service';
 import { UnifiedDealInput, UnifiedDealOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('crm/deal')
-@Controller('crm/deal')
+@ApiTags('crm/deals')
+@Controller('crm/deals')
 export class DealController {
   private readonly connectionUtils = new ConnectionUtils();
 

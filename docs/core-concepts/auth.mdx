@@ -1,17 +1,19 @@
 ---
-title: 'Authentication'
+title: "Authentication"
 description: "Learn how to authenticate your requests to the Panora API."
-icon: 'code'
+icon: "code"
 ---
 
-<Note>This guide assumes you have a Panora account, or a working self-hosted version</Note>
+<Note>
+  This guide assumes you have a Panora account, or a working self-hosted version
+</Note>
 
+### The Panora API uses uses two elements to indentify requests: API keys and a connection_token.
 
-### The Panora API uses uses two elements to indentify requests: API keys and a connection_token.  
 **API Keys** are used to authenticate yourself to our backend, while a **connection_token** serves to identify which of your user's you're making API calls for.
 
 Depending on your setup, you should make requests to one of those endpoints:
-    <Tabs>
+<Tabs>
 
         <Tab title="US Servers">
             `https://api.panora.dev/`
@@ -26,9 +28,9 @@ Depending on your setup, you should make requests to one of those endpoints:
         </Tab>
 
     </Tabs>
-   
 
 ## Learn how to generate your API Keys and catch connection tokens.
+
 <Steps>
 
     <Step title="Creating your API Key">
@@ -65,12 +67,12 @@ Depending on your setup, you should make requests to one of those endpoints:
     ```
     Congrats! You have everything you need to make authenticated requests.
     </Step>
-</Steps>
 
+</Steps>
 
 ## Make your first API request with your `API Key` and a `connection_token`
 
-Take a look at these examples to understand the concept. 
+Take a look at these examples to understand the concept.
 We also recommend practising by looking at the specific verticals you want to integrate.
 
 <Steps>
@@ -99,7 +101,7 @@ We also recommend practising by looking at the specific verticals you want to in
 
             ```curl curl
             curl --request POST \
-            --url https://api.panora.dev/crm/contact \
+            --url https://api.panora.dev/crm/contacts \
             --header 'Authorization: Bearer dfsdf' \
             --header 'Content-Type: application/json' \
             --header 'connection_token: <connection_token>' \
@@ -167,7 +169,6 @@ We also recommend practising by looking at the specific verticals you want to in
             ```
         </CodeGroup>
     </Step>
-
 
 </Steps>
 

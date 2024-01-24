@@ -21,8 +21,8 @@ import { NoteService } from './services/note.service';
 import { UnifiedNoteInput, UnifiedNoteOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('crm/note')
-@Controller('crm/note')
+@ApiTags('crm/notes')
+@Controller('crm/notes')
 export class NoteController {
   private readonly connectionUtils = new ConnectionUtils();
 

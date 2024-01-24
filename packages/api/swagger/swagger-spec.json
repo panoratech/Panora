@@ -644,7 +644,7 @@
         ]
       }
     },
-    "/crm/contact": {
+    "/crm/contacts": {
       "get": {
         "operationId": "getContacts",
         "summary": "List a batch of CRM Contacts",
@@ -779,7 +779,7 @@
         ]
       }
     },
-    "/crm/contact/{id}": {
+    "/crm/contacts/{id}": {
       "get": {
         "operationId": "getContact",
         "summary": "Retrieve a CRM Contact",
@@ -832,7 +832,7 @@
         ]
       }
     },
-    "/crm/contact/batch": {
+    "/crm/contacts/batch": {
       "post": {
         "operationId": "addContacts",
         "summary": "Add a batch of CRM Contacts",
@@ -897,7 +897,7 @@
         ]
       }
     },
-    "/crm/deal": {
+    "/crm/deals": {
       "get": {
         "operationId": "getDeals",
         "summary": "List a batch of Deals",
@@ -1010,7 +1010,7 @@
         ]
       }
     },
-    "/crm/deal/{id}": {
+    "/crm/deals/{id}": {
       "get": {
         "operationId": "getDeal",
         "summary": "Retrieve a Deal",
@@ -1103,7 +1103,7 @@
         ]
       }
     },
-    "/crm/deal/batch": {
+    "/crm/deals/batch": {
       "post": {
         "operationId": "addDeals",
         "summary": "Add a batch of Deals",
@@ -1168,7 +1168,7 @@
         ]
       }
     },
-    "/crm/note": {
+    "/crm/notes": {
       "get": {
         "operationId": "getNotes",
         "summary": "List a batch of Notes",
@@ -1281,7 +1281,7 @@
         ]
       }
     },
-    "/crm/note/{id}": {
+    "/crm/notes/{id}": {
       "get": {
         "operationId": "getNote",
         "summary": "Retrieve a Note",
@@ -1334,7 +1334,7 @@
         ]
       }
     },
-    "/crm/note/batch": {
+    "/crm/notes/batch": {
       "post": {
         "operationId": "addNotes",
         "summary": "Add a batch of Notes",
@@ -1399,7 +1399,7 @@
         ]
       }
     },
-    "/crm/company": {
+    "/crm/companies": {
       "get": {
         "operationId": "getCompanies",
         "summary": "List a batch of Companies",
@@ -1552,7 +1552,7 @@
         ]
       }
     },
-    "/crm/company/{id}": {
+    "/crm/companies/{id}": {
       "get": {
         "operationId": "getCompany",
         "summary": "Retrieve a Company",
@@ -1605,7 +1605,7 @@
         ]
       }
     },
-    "/crm/company/batch": {
+    "/crm/companies/batch": {
       "post": {
         "operationId": "addCompanies",
         "summary": "Add a batch of Companies",
@@ -1670,7 +1670,7 @@
         ]
       }
     },
-    "/crm/engagement": {
+    "/crm/engagements": {
       "get": {
         "operationId": "getEngagements",
         "summary": "List a batch of Engagements",
@@ -1823,7 +1823,7 @@
         ]
       }
     },
-    "/crm/engagement/{id}": {
+    "/crm/engagements/{id}": {
       "get": {
         "operationId": "getEngagement",
         "summary": "Retrieve a Engagement",
@@ -1876,7 +1876,7 @@
         ]
       }
     },
-    "/crm/engagement/batch": {
+    "/crm/engagements/batch": {
       "post": {
         "operationId": "addEngagements",
         "summary": "Add a batch of Engagements",
@@ -1941,7 +1941,7 @@
         ]
       }
     },
-    "/crm/stage": {
+    "/crm/stages": {
       "get": {
         "operationId": "getStages",
         "summary": "List a batch of Stages",
@@ -1993,7 +1993,7 @@
         ]
       }
     },
-    "/crm/stage/{id}": {
+    "/crm/stages/{id}": {
       "get": {
         "operationId": "getStage",
         "summary": "Retrieve a Stage",
@@ -2046,7 +2046,7 @@
         ]
       }
     },
-    "/crm/task": {
+    "/crm/tasks": {
       "get": {
         "operationId": "getTasks",
         "summary": "List a batch of Tasks",
@@ -2199,7 +2199,7 @@
         ]
       }
     },
-    "/crm/task/{id}": {
+    "/crm/tasks/{id}": {
       "get": {
         "operationId": "getTask",
         "summary": "Retrieve a Task",
@@ -2252,7 +2252,7 @@
         ]
       }
     },
-    "/crm/task/batch": {
+    "/crm/tasks/batch": {
       "post": {
         "operationId": "addTasks",
         "summary": "Add a batch of Tasks",
@@ -2317,7 +2317,7 @@
         ]
       }
     },
-    "/crm/user": {
+    "/crm/users": {
       "get": {
         "operationId": "getUsers",
         "summary": "List a batch of Users",
@@ -2369,7 +2369,7 @@
         ]
       }
     },
-    "/crm/user/{id}": {
+    "/crm/users/{id}": {
       "get": {
         "operationId": "getUser",
         "summary": "Retrieve a User",
@@ -2422,7 +2422,7 @@
         ]
       }
     },
-    "/ticketing/ticket": {
+    "/ticketing/tickets": {
       "get": {
         "operationId": "getTickets",
         "summary": "List a batch of Tickets",
@@ -2557,7 +2557,7 @@
         ]
       }
     },
-    "/ticketing/ticket/{id}": {
+    "/ticketing/tickets/{id}": {
       "get": {
         "operationId": "getTicket",
         "summary": "Retrieve a Ticket",
@@ -2610,7 +2610,7 @@
         ]
       }
     },
-    "/ticketing/ticket/batch": {
+    "/ticketing/tickets/batch": {
       "post": {
         "operationId": "addTickets",
         "summary": "Add a batch of Tickets",
@@ -2675,7 +2675,7 @@
         ]
       }
     },
-    "/ticketing/comment": {
+    "/ticketing/comments": {
       "get": {
         "operationId": "getComments",
         "summary": "List a batch of Comments",
@@ -2788,7 +2788,7 @@
         ]
       }
     },
-    "/ticketing/comment/{id}": {
+    "/ticketing/comments/{id}": {
       "get": {
         "operationId": "getComment",
         "summary": "Retrieve a Comment",
@@ -2841,7 +2841,7 @@
         ]
       }
     },
-    "/ticketing/comment/batch": {
+    "/ticketing/comments/batch": {
       "post": {
         "operationId": "addComments",
         "summary": "Add a batch of Comments",
@@ -2906,7 +2906,7 @@
         ]
       }
     },
-    "/ticketing/user": {
+    "/ticketing/users": {
       "get": {
         "operationId": "getUsers",
         "summary": "List a batch of Users",
@@ -2958,7 +2958,7 @@
         ]
       }
     },
-    "/ticketing/user/{id}": {
+    "/ticketing/users/{id}": {
       "get": {
         "operationId": "getUser",
         "summary": "Retrieve a User",
@@ -3011,7 +3011,7 @@
         ]
       }
     },
-    "/ticketing/attachment": {
+    "/ticketing/attachments": {
       "get": {
         "operationId": "getAttachments",
         "summary": "List a batch of Attachments",
@@ -3124,7 +3124,7 @@
         ]
       }
     },
-    "/ticketing/attachment/{id}": {
+    "/ticketing/attachments/{id}": {
       "get": {
         "operationId": "getAttachment",
         "summary": "Retrieve a Attachment",
@@ -3177,7 +3177,7 @@
         ]
       }
     },
-    "/ticketing/attachment/{id}/download": {
+    "/ticketing/attachments/{id}/download": {
       "get": {
         "operationId": "downloadAttachment",
         "summary": "Download a Attachment",
@@ -3230,7 +3230,7 @@
         ]
       }
     },
-    "/ticketing/attachment/batch": {
+    "/ticketing/attachments/batch": {
       "post": {
         "operationId": "addAttachments",
         "summary": "Add a batch of Attachments",
@@ -3295,7 +3295,7 @@
         ]
       }
     },
-    "/ticketing/contact": {
+    "/ticketing/contacts": {
       "get": {
         "operationId": "getContacts",
         "summary": "List a batch of Contacts",
@@ -3347,7 +3347,7 @@
         ]
       }
     },
-    "/ticketing/contact/{id}": {
+    "/ticketing/contacts/{id}": {
       "get": {
         "operationId": "getContact",
         "summary": "Retrieve a Contact",
@@ -3400,7 +3400,7 @@
         ]
       }
     },
-    "/ticketing/account": {
+    "/ticketing/accounts": {
       "get": {
         "operationId": "getAccounts",
         "summary": "List a batch of Accounts",
@@ -3452,7 +3452,7 @@
         ]
       }
     },
-    "/ticketing/account/{id}": {
+    "/ticketing/accounts/{id}": {
       "get": {
         "operationId": "getAccount",
         "summary": "Retrieve an Account",
@@ -3505,7 +3505,7 @@
         ]
       }
     },
-    "/ticketing/tag": {
+    "/ticketing/tags": {
       "get": {
         "operationId": "getTags",
         "summary": "List a batch of Tags",
@@ -3557,7 +3557,7 @@
         ]
       }
     },
-    "/ticketing/tag/{id}": {
+    "/ticketing/tags/{id}": {
       "get": {
         "operationId": "getTag",
         "summary": "Retrieve a Tag",
@@ -3610,7 +3610,7 @@
         ]
       }
     },
-    "/ticketing/team": {
+    "/ticketing/teams": {
       "get": {
         "operationId": "getTeams",
         "summary": "List a batch of Teams",
@@ -3662,7 +3662,7 @@
         ]
       }
     },
-    "/ticketing/team/{id}": {
+    "/ticketing/teams/{id}": {
       "get": {
         "operationId": "getTeam",
         "summary": "Retrieve a Team",

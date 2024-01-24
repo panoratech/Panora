@@ -150,7 +150,7 @@ export class AccountService {
           status: 'success',
           type: 'ticketing.account.pull',
           method: 'GET',
-          url: '/ticketing/account',
+          url: '/ticketing/accounts',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

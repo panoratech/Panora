@@ -24,8 +24,8 @@ import { UnifiedTicketInput, UnifiedTicketOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
-@ApiTags('ticketing/ticket')
-@Controller('ticketing/ticket')
+@ApiTags('ticketing/tickets')
+@Controller('ticketing/tickets')
 export class TicketController {
   private readonly connectionUtils = new ConnectionUtils();
 
