@@ -83,24 +83,28 @@
           "pages": [ "crm/contacts/overview", "crm/contacts/api/list", "crm/contacts/api/get", "crm/contacts/api/create", "crm/contacts/api/update" ]
         },
         {
+          "group": "Companies",
+          "pages": [ "crm/companies/overview", "crm/companies/api/list", "crm/companies/api/get", "crm/companies/api/create", "crm/companies/api/update" ]
+        },
+        {
           "group": "Deals",
-          "pages": [ "crm/deals/overview" ]
+          "pages": [ "crm/deals/overview", "crm/deals/api/list", "crm/deals/api/get", "crm/deals/api/create", "crm/deals/api/update" ]
         },
         {
           "group": "Notes",
-          "pages": [ "crm/notes/overview" ]
+          "pages": [ "crm/notes/overview", "crm/notes/api/list", "crm/notes/api/get", "crm/notes/api/create", "crm/notes/api/update" ]
         },
         {
           "group": "Engagements",
-          "pages": [ "crm/engagements/overview" ]
+          "pages": [ "crm/engagements/overview", "crm/engagements/api/list", "crm/engagements/api/get", "crm/engagements/api/create", "crm/engagements/api/update" ]
         },
         {
           "group": "Tasks",
-          "pages": [ "crm/tasks/overview" ]
+          "pages": [ "crm/tasks/overview", "crm/tasks/api/list", "crm/tasks/api/get"]
         },
         {
           "group": "Users",
-          "pages": [ "crm/users/overview" ]
+          "pages": [ "crm/users/overview", "crm/users/api/list", "crm/users/api/get" ]
         }
       ]
     },
@@ -117,31 +121,31 @@
         "ticketing/try",
         {
           "group": "Tickets",
-          "pages": [ "ticketing/tickets/overview", "ticketing/tickets/api/get", "ticketing/tickets/api/post" ]
+          "pages": [ "ticketing/tickets/overview", "ticketing/tickets/api/list" , "ticketing/tickets/api/get", "ticketing/tickets/api/create", "ticketing/tickets/api/update" ]
         },
         {
           "group": "Comments",
-          "pages": [ "ticketing/comments/overview", "ticketing/comments/api/get", "ticketing/comments/api/post" ]
+          "pages": [ "ticketing/comments/overview", "ticketing/comments/api/list", "ticketing/comments/api/get", "ticketing/comments/api/create", "ticketing/comments/api/update" ]
         },
         {
           "group": "Users",
-          "pages": [ "ticketing/users/overview", "ticketing/users/api/get", "ticketing/users/api/post" ]
+          "pages": [ "ticketing/users/overview", "ticketing/users/api/list", "ticketing/users/api/get" ]
         },
         {
           "group": "Contacts",
-          "pages": [ "ticketing/contacts/overview", "ticketing/contacts/api/get", "ticketing/contacts/api/post" ]
+          "pages": [ "ticketing/contacts/overview", "ticketing/contacts/api/list", "ticketing/contacts/api/get", "ticketing/contacts/api/create", "ticketing/contacts/api/update" ]
         },
         {
           "group": "Accounts",
-          "pages": [ "ticketing/accounts/overview", "ticketing/accounts/api/get", "ticketing/accounts/api/post" ]
+          "pages": [ "ticketing/accounts/overview", "ticketing/accounts/api/list", "ticketing/accounts/api/get", "ticketing/accounts/api/create", "ticketing/accounts/api/update" ]
         },
         {
           "group": "Tags",
-          "pages": [ "ticketing/tags/overview", "ticketing/tags/api/get", "ticketing/tags/api/post" ]
+          "pages": [ "ticketing/tags/overview", "ticketing/tags/api/list", "ticketing/tags/api/get" ]
         },
         {
           "group": "Teams",
-          "pages": [ "ticketing/teams/overview", "ticketing/teams/api/get", "ticketing/teams/api/post" ]
+          "pages": [ "ticketing/teams/overview", "ticketing/teams/api/list", "ticketing/teams/api/get" ]
         }
       ]
     },
@@ -149,226 +153,223 @@
     { 
       "group": "API Reference",
       "pages":
-      [
-        {
-          "group": "auth",
-          "pages": [
-            "api-reference/auth/register",
-            "api-reference/auth/log-in",
-            "api-reference/auth/get-users",
-            "api-reference/auth/retrieve-api-keys",
-            "api-reference/auth/create-api-key"
-          ]
-        },
-        {
-          "group": "connections",
-          "pages": [
-            "api-reference/connections/capture-oauth-callback",
-            "api-reference/connections/list-connections"
-          ]
-        },
-        {
-          "group": "webhook",
-          "pages": [
-            "api-reference/webhook/retrieve-webhooks-metadata",
-            "api-reference/webhook/add-webhook-metadata",
-            "api-reference/webhook/update-webhook-status"
-          ]
-        },
-        {
-          "group": "linked-users",
-          "pages": [
-            "api-reference/linked-users/add-linked-user",
-            "api-reference/linked-users/retrieve-linked-users",
-            "api-reference/linked-users/retrieve-a-linked-user"
-          ]
-        },
-        {
-          "group": "organisations",
-          "pages": [
-            "api-reference/organisations/retrieve-organisations",
-            "api-reference/organisations/create-an-organisation"
-          ]
-        },
-        {
-          "group": "projects",
-          "pages": [
-            "api-reference/projects/retrieve-projects",
-            "api-reference/projects/create-a-project"
-          ]
-        },
-        {
-          "group": "field-mapping",
-          "pages": [
-            "api-reference/field-mapping/retrieve-field-mapping-entities",
-            "api-reference/field-mapping/retrieve-field-mappings",
-            "api-reference/field-mapping/retrieve-field-mappings-values",
-            "api-reference/field-mapping/define-target-field",
-            "api-reference/field-mapping/map-custom-field",
-            "api-reference/field-mapping/retrieve-custom-properties"
-          ]
-        },
-        {
-          "group": "events",
-          "pages": [
-            "api-reference/events/retrieve-events"
-          ]
-        },
-        {
-          "group": "magic-link",
-          "pages": [
-            "api-reference/magic-link/create-a-magic-link",
-            "api-reference/magic-link/retrieve-magic-links",
-            "api-reference/magic-link/retrieve-a-magic-link"
-          ]
-        },
-        {
-          "group": "passthrough",
-          "pages": [
-            "api-reference/passthrough/make-a-passthrough-request"
-          ]
-        },
-        
-        {
-          "group": "crm/contact",
-          "pages": [
-            "api-reference/crmcontact/list-a-batch-of-crm-contacts",
-            "api-reference/crmcontact/create-crm-contact",
-            "api-reference/crmcontact/update-a-crm-contact",
-            "api-reference/crmcontact/retrieve-a-crm-contact",
-            "api-reference/crmcontact/add-a-batch-of-crm-contacts"
-          ]
-        },
-        {
-          "group": "crm/deal",
-          "pages": [
-            "api-reference/crmdeal/list-a-batch-of-deals",
-            "api-reference/crmdeal/create-a-deal",
-            "api-reference/crmdeal/retrieve-a-deal",
-            "api-reference/crmdeal/update-a-deal",
-            "api-reference/crmdeal/add-a-batch-of-deals"
-          ]
-        },
-        {
-          "group": "crm/note",
-          "pages": [
-            "api-reference/crmnote/list-a-batch-of-notes",
-            "api-reference/crmnote/create-a-note",
-            "api-reference/crmnote/retrieve-a-note",
-            "api-reference/crmnote/add-a-batch-of-notes"
-          ]
-        },
-        {
-          "group": "crm/company",
-          "pages": [
-            "api-reference/crmcompany/list-a-batch-of-companies",
-            "api-reference/crmcompany/create-a-company",
-            "api-reference/crmcompany/update-a-company",
-            "api-reference/crmcompany/retrieve-a-company",
-            "api-reference/crmcompany/add-a-batch-of-companies"
-          ]
-        },
-        {
-          "group": "crm/engagement",
-          "pages": [
-            "api-reference/crmengagement/list-a-batch-of-engagements",
-            "api-reference/crmengagement/create-a-engagement",
-            "api-reference/crmengagement/update-a-engagement",
-            "api-reference/crmengagement/retrieve-a-engagement",
-            "api-reference/crmengagement/add-a-batch-of-engagements"
-          ]
-        },
-        {
-          "group": "crm/stage",
-          "pages": [
-            "api-reference/crmstage/list-a-batch-of-stages",
-            "api-reference/crmstage/retrieve-a-stage"
-          ]
-        },
-        {
-          "group": "crm/task",
-          "pages": [
-            "api-reference/crmtask/list-a-batch-of-tasks",
-            "api-reference/crmtask/create-a-task",
-            "api-reference/crmtask/update-a-task",
-            "api-reference/crmtask/retrieve-a-task",
-            "api-reference/crmtask/add-a-batch-of-tasks"
-          ]
-        },
-        {
-          "group": "crm/user",
-          "pages": [
-            "api-reference/crmuser/list-a-batch-of-users",
-            "api-reference/crmuser/retrieve-a-user"
-          ]
-        },
-
-        
-        {
-          "group": "ticketing/ticket",
-          "pages": [
-            "api-reference/ticketingticket/list-a-batch-of-tickets",
-            "api-reference/ticketingticket/create-a-ticket",
-            "api-reference/ticketingticket/update-a-ticket",
-            "api-reference/ticketingticket/retrieve-a-ticket",
-            "api-reference/ticketingticket/add-a-batch-of-tickets"
-          ]
-        },
-        {
-          "group": "ticketing/comment",
-          "pages": [
-            "api-reference/ticketingcomment/list-a-batch-of-comments",
-            "api-reference/ticketingcomment/create-a-comment",
-            "api-reference/ticketingcomment/retrieve-a-comment",
-            "api-reference/ticketingcomment/add-a-batch-of-comments"
-          ]
-        },
-        {
-          "group": "ticketing/user",
-          "pages": [
-            "api-reference/ticketinguser/list-a-batch-of-users",
-            "api-reference/ticketinguser/retrieve-a-user"
-          ]
-        },
-        {
-          "group": "ticketing/attachment",
-          "pages": [
-            "api-reference/ticketingattachment/list-a-batch-of-attachments",
-            "api-reference/ticketingattachment/create-a-attachment",
-            "api-reference/ticketingattachment/retrieve-a-attachment",
-            "api-reference/ticketingattachment/download-a-attachment",
-            "api-reference/ticketingattachment/add-a-batch-of-attachments"
-          ]
-        },
-        {
-          "group": "ticketing/contact",
-          "pages": [
-            "api-reference/ticketingcontact/list-a-batch-of-contacts",
-            "api-reference/ticketingcontact/retrieve-a-contact"
-          ]
-        },
-        {
-          "group": "ticketing/account",
-          "pages": [
-            "api-reference/ticketingaccount/list-a-batch-of-accounts",
-            "api-reference/ticketingaccount/retrieve-an-account"
-          ]
-        },
-        {
-          "group": "ticketing/tag",
-          "pages": [
-            "api-reference/ticketingtag/list-a-batch-of-tags",
-            "api-reference/ticketingtag/retrieve-a-tag"
-          ]
-        },
-        {
-          "group": "ticketing/team",
-          "pages": [
-            "api-reference/ticketingteam/list-a-batch-of-teams",
-            "api-reference/ticketingteam/retrieve-a-team"
-          ]
-        }
-      ]
+     [
+      {
+        "group": "auth",
+        "pages": [
+          "api-reference/auth/register",
+          "api-reference/auth/log-in",
+          "api-reference/auth/get-users",
+          "api-reference/auth/retrieve-api-keys",
+          "api-reference/auth/create-api-key"
+        ]
+      },
+      {
+        "group": "connections",
+        "pages": [
+          "api-reference/connections/capture-oauth-callback",
+          "api-reference/connections/list-connections"
+        ]
+      },
+      {
+        "group": "webhook",
+        "pages": [
+          "api-reference/webhook/retrieve-webhooks-metadata",
+          "api-reference/webhook/add-webhook-metadata",
+          "api-reference/webhook/update-webhook-status"
+        ]
+      },
+      {
+        "group": "linked-users",
+        "pages": [
+          "api-reference/linked-users/add-linked-user",
+          "api-reference/linked-users/retrieve-linked-users",
+          "api-reference/linked-users/retrieve-a-linked-user"
+        ]
+      },
+      {
+        "group": "organisations",
+        "pages": [
+          "api-reference/organisations/retrieve-organisations",
+          "api-reference/organisations/create-an-organisation"
+        ]
+      },
+      {
+        "group": "projects",
+        "pages": [
+          "api-reference/projects/retrieve-projects",
+          "api-reference/projects/create-a-project"
+        ]
+      },
+      {
+        "group": "field-mapping",
+        "pages": [
+          "api-reference/field-mapping/retrieve-field-mapping-entities",
+          "api-reference/field-mapping/retrieve-field-mappings",
+          "api-reference/field-mapping/retrieve-field-mappings-values",
+          "api-reference/field-mapping/define-target-field",
+          "api-reference/field-mapping/map-custom-field",
+          "api-reference/field-mapping/retrieve-custom-properties"
+        ]
+      },
+      {
+        "group": "events",
+        "pages": [
+          "api-reference/events/retrieve-events"
+        ]
+      },
+      {
+        "group": "magic-link",
+        "pages": [
+          "api-reference/magic-link/create-a-magic-link",
+          "api-reference/magic-link/retrieve-magic-links",
+          "api-reference/magic-link/retrieve-a-magic-link"
+        ]
+      },
+      {
+        "group": "passthrough",
+        "pages": [
+          "api-reference/passthrough/make-a-passthrough-request"
+        ]
+      },
+      {
+        "group": "crm/contact",
+        "pages": [
+          "api-reference/crmcontact/list-a-batch-of-crm-contacts",
+          "api-reference/crmcontact/create-crm-contact",
+          "api-reference/crmcontact/update-a-crm-contact",
+          "api-reference/crmcontact/retrieve-a-crm-contact",
+          "api-reference/crmcontact/add-a-batch-of-crm-contacts"
+        ]
+      },
+      {
+        "group": "crm/deal",
+        "pages": [
+          "api-reference/crmdeal/list-a-batch-of-deals",
+          "api-reference/crmdeal/create-a-deal",
+          "api-reference/crmdeal/retrieve-a-deal",
+          "api-reference/crmdeal/update-a-deal",
+          "api-reference/crmdeal/add-a-batch-of-deals"
+        ]
+      },
+      {
+        "group": "crm/note",
+        "pages": [
+          "api-reference/crmnote/list-a-batch-of-notes",
+          "api-reference/crmnote/create-a-note",
+          "api-reference/crmnote/retrieve-a-note",
+          "api-reference/crmnote/add-a-batch-of-notes"
+        ]
+      },
+      {
+        "group": "crm/company",
+        "pages": [
+          "api-reference/crmcompany/list-a-batch-of-companies",
+          "api-reference/crmcompany/create-a-company",
+          "api-reference/crmcompany/update-a-company",
+          "api-reference/crmcompany/retrieve-a-company",
+          "api-reference/crmcompany/add-a-batch-of-companies"
+        ]
+      },
+      {
+        "group": "crm/engagement",
+        "pages": [
+          "api-reference/crmengagement/list-a-batch-of-engagements",
+          "api-reference/crmengagement/create-a-engagement",
+          "api-reference/crmengagement/update-a-engagement",
+          "api-reference/crmengagement/retrieve-a-engagement",
+          "api-reference/crmengagement/add-a-batch-of-engagements"
+        ]
+      },
+      {
+        "group": "crm/stage",
+        "pages": [
+          "api-reference/crmstage/list-a-batch-of-stages",
+          "api-reference/crmstage/retrieve-a-stage"
+        ]
+      },
+      {
+        "group": "crm/task",
+        "pages": [
+          "api-reference/crmtask/list-a-batch-of-tasks",
+          "api-reference/crmtask/create-a-task",
+          "api-reference/crmtask/update-a-task",
+          "api-reference/crmtask/retrieve-a-task",
+          "api-reference/crmtask/add-a-batch-of-tasks"
+        ]
+      },
+      {
+        "group": "crm/user",
+        "pages": [
+          "api-reference/crmuser/list-a-batch-of-users",
+          "api-reference/crmuser/retrieve-a-user"
+        ]
+      },
+      {
+        "group": "ticketing/ticket",
+        "pages": [
+          "api-reference/ticketingticket/list-a-batch-of-tickets",
+          "api-reference/ticketingticket/create-a-ticket",
+          "api-reference/ticketingticket/update-a-ticket",
+          "api-reference/ticketingticket/retrieve-a-ticket",
+          "api-reference/ticketingticket/add-a-batch-of-tickets"
+        ]
+      },
+      {
+        "group": "ticketing/comment",
+        "pages": [
+          "api-reference/ticketingcomment/list-a-batch-of-comments",
+          "api-reference/ticketingcomment/create-a-comment",
+          "api-reference/ticketingcomment/retrieve-a-comment",
+          "api-reference/ticketingcomment/add-a-batch-of-comments"
+        ]
+      },
+      {
+        "group": "ticketing/user",
+        "pages": [
+          "api-reference/ticketinguser/list-a-batch-of-users",
+          "api-reference/ticketinguser/retrieve-a-user"
+        ]
+      },
+      {
+        "group": "ticketing/attachment",
+        "pages": [
+          "api-reference/ticketingattachment/list-a-batch-of-attachments",
+          "api-reference/ticketingattachment/create-a-attachment",
+          "api-reference/ticketingattachment/retrieve-a-attachment",
+          "api-reference/ticketingattachment/download-a-attachment",
+          "api-reference/ticketingattachment/add-a-batch-of-attachments"
+        ]
+      },
+      {
+        "group": "ticketing/contact",
+        "pages": [
+          "api-reference/ticketingcontact/list-a-batch-of-contacts",
+          "api-reference/ticketingcontact/retrieve-a-contact"
+        ]
+      },
+      {
+        "group": "ticketing/account",
+        "pages": [
+          "api-reference/ticketingaccount/list-a-batch-of-accounts",
+          "api-reference/ticketingaccount/retrieve-an-account"
+        ]
+      },
+      {
+        "group": "ticketing/tag",
+        "pages": [
+          "api-reference/ticketingtag/list-a-batch-of-tags",
+          "api-reference/ticketingtag/retrieve-a-tag"
+        ]
+      },
+      {
+        "group": "ticketing/team",
+        "pages": [
+          "api-reference/ticketingteam/list-a-batch-of-teams",
+          "api-reference/ticketingteam/retrieve-a-team"
+        ]
+      }
+     ]
     },
     {
       "group": "Core Concepts",

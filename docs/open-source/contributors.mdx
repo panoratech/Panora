@@ -22,6 +22,13 @@ We made a docker file that builds Panora from sources, specifically to help you 
 <Step title="Copy env variables">```bash cp .env.example .env ```</Step>
 
 {" "}
+<Step title="Removed previously installed dependencies">
+  ```bash rm -rf node_modules .pnpm_store ./packages/api/dist
+  ./packages/api/node_modules ./apps/webapp/node_modules
+  ./apps/frontend_snippet/node_modules ```
+</Step>
+
+{" "}
 <Step title="Mac Users only:">
   ```bash echo "node-linker=hoisted" > .npmrc ```
 </Step>

@@ -152,7 +152,7 @@ export class UserService {
           status: 'success',
           type: 'ticketing.user.pull',
           method: 'GET',
-          url: '/ticketing/users',
+          url: '/ticketing/userss',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

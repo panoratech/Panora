@@ -2906,7 +2906,7 @@
         ]
       }
     },
-    "/ticketing/users": {
+    "/ticketing/userss": {
       "get": {
         "operationId": "getUsers",
         "summary": "List a batch of Users",
@@ -2958,7 +2958,7 @@
         ]
       }
     },
-    "/ticketing/users/{id}": {
+    "/ticketing/userss/{id}": {
       "get": {
         "operationId": "getUser",
         "summary": "Retrieve a User",
