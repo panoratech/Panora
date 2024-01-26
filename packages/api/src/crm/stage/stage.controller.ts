@@ -1,5 +1,6 @@
-import { Controller, Query, Get, Param, Headers } from '@nestjs/common';
+import { Controller, Query, Get, Param, Headers, UseGuards } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import {
   ApiOperation,
   ApiParam,

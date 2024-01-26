@@ -7,8 +7,10 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import {
   ApiBody,
   ApiOperation,

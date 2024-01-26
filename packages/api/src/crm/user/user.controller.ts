@@ -1,4 +1,4 @@
-import { Controller, Query, Get, Param, Headers } from '@nestjs/common';
+import { Controller, Query, Get, Param, Headers, UseGuards } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   ApiOperation,
@@ -11,6 +11,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { UserService } from './services/user.service';
 import { UnifiedUserOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('crm/users')
 @Controller('crm/users')
