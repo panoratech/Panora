@@ -23,6 +23,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { DealService } from './services/deal.service';
 import { UnifiedDealInput, UnifiedDealOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('crm/deals')
 @Controller('crm/deals')

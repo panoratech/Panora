@@ -22,6 +22,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { NoteService } from './services/note.service';
 import { UnifiedNoteInput, UnifiedNoteOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('crm/notes')
 @Controller('crm/notes')

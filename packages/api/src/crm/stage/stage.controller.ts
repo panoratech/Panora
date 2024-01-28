@@ -12,6 +12,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { StageService } from './services/stage.service';
 import { UnifiedStageOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('crm/stages')
 @Controller('crm/stages')

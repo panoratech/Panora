@@ -26,6 +26,7 @@ import {
   UnifiedCompanyOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('crm/companies')
 @Controller('crm/companies')
