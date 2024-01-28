@@ -79,7 +79,7 @@ export default function ConnectionTable() {
 
 
         </div>
-        {isGenerated ? <Dialog open={true}>
+        {isGenerated ? <Dialog open={isGenerated} onOpenChange={setIsGenerated}>
           <DialogTrigger asChild>
             <Button variant="outline" className="">
               <PlusCircledIcon className="mr-2 h-4 w-4" />
