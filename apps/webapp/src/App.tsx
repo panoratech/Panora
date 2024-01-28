@@ -1,24 +1,28 @@
-import './App.css'
-import { ThemeProvider } from '@/components/theme-provider'
-import DashboardPage from './components/homepage'
+import './App.css';
+import { ThemeProvider } from '@/components/theme-provider';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import JobsPage from './components/events';
 import ConnectionsPage from './components/connections';
 import TaskPage from './components/events/EventsTable';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
+import { RootLayout } from './components/root-layout';
+import QuickStartPage from './components/quickstart';
+import ConfigurationPage from './components/configuration';
+import ApiKeysPage from './components/api-keys';
+import DashboardPage from './components/dashboard';
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
         <Toaster
-          position="bottom-right"
+          position='bottom-right'
           reverseOrder={false}
           gutter={8}
-          containerClassName=""
+          containerClassName=''
           containerStyle={{}}
           toastOptions={{
             // Define default options
@@ -27,21 +31,26 @@ function App() {
             style: {
               background: '#0A0A0B',
               color: '#fff',
-              border: "0.03rem solid white"
+              border: '0.03rem solid white',
             },
           }}
         />
         <Router>
           <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/jobs" element={<JobsPage />} />
-            <Route path="/tasks" element={<TaskPage />} />
-            <Route path="/connections" element={<ConnectionsPage />} />
+            <Route path='/' element={<RootLayout />}>
+              <Route index element={<QuickStartPage />} />
+              <Route path='/dashboard' element={<DashboardPage />} />
+              <Route path='/jobs' element={<JobsPage />} />
+              <Route path='/tasks' element={<TaskPage />} />
+              <Route path='/configuration' element={<ConfigurationPage />} />
+              <Route path='/connections' element={<ConnectionsPage />} />
+              <Route path='api-keys' element={<ApiKeysPage />} />
+            </Route>
           </Routes>
         </Router>
       </ThemeProvider>
     </QueryClientProvider>
-  )
+  );
 }
 
-export default App
+export default App;
