@@ -1,7 +1,7 @@
 import './App.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import JobsPage from './components/events';
+import LogsPage from './components/events';
 import ConnectionsPage from './components/connections';
 import TaskPage from './components/events/EventsTable';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -40,11 +40,11 @@ function App() {
             <Route path='/' element={<RootLayout />}>
               <Route index element={<QuickStartPage />} />
               <Route path='/dashboard' element={<DashboardPage />} />
-              <Route path='/jobs' element={<JobsPage />} />
+              <Route path='/logs' element={<LogsPage />} />
               <Route path='/tasks' element={<TaskPage />} />
               <Route path='/configuration' element={<ConfigurationPage />} />
               <Route path='/connections' element={<ConnectionsPage />} />
-              <Route path='api-keys' element={<ApiKeysPage />} />
+              <Route path='/api-keys' element={<ApiKeysPage />} />
             </Route>
           </Routes>
         </Router>
