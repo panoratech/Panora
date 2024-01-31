@@ -38,7 +38,7 @@ function App() {
         <Router>
           <Routes>
             <Route path='/' element={<RootLayout />}>
-              <Route index element={<QuickStartPage />} />
+              <Route index element={<ConnectionsPage />} />
               <Route path='/dashboard' element={<DashboardPage />} />
               <Route path='/logs' element={<LogsPage />} />
               <Route path='/tasks' element={<TaskPage />} />

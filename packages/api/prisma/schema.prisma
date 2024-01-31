@@ -365,6 +365,7 @@ model projects {
   id_organization String         @db.Uuid
   sync_mode       String
   pull_frequency  BigInt?
+  redirect_url    String?
   api_keys        api_keys[]
   connections     connections[]
   linked_users    linked_users[]

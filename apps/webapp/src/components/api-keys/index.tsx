@@ -28,12 +28,8 @@ export default function ApiKeysPage() {
   const { mutate } = useApiKeyMutation();
 
   const {idProject} = useProjectStore();
-  const {profile} = useProfileStore();
+  const {profile} = useProfileStore(); 
   
-  if(isLoading){ 
-    return <LoadingSpinner className=""/>
-  }
-
   if(error){
     console.log("error apiKeys..");
   }
@@ -60,6 +56,9 @@ export default function ApiKeysPage() {
           <h2 className="text-3xl font-bold tracking-tight">Api Keys</h2>
           <h2 className="text-lg font-bold tracking-tight">Manage your api keys.</h2>
         </div>          
+        {isLoading ? (
+          <LoadingSpinner className=""/>
+        ) :
         <div className="flex space-y-8 md:flex pb-4">
           <div></div>
           <Dialog>
@@ -99,7 +98,7 @@ export default function ApiKeysPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </div>
+        </div>}
         {tsApiKeys && <DataTable data={tsApiKeys} columns={columns} />}
       </div>
     </div>
