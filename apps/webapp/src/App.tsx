@@ -7,7 +7,6 @@ import TaskPage from './components/events/EventsTable';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { RootLayout } from './components/root-layout';
-import QuickStartPage from './components/quickstart';
 import ConfigurationPage from './components/configuration';
 import ApiKeysPage from './components/api-keys';
 import DashboardPage from './components/dashboard';
@@ -38,7 +37,7 @@ function App() {
         <Router>
           <Routes>
             <Route path='/' element={<RootLayout />}>
-              <Route index element={<QuickStartPage />} />
+              <Route index element={<ConnectionsPage />} />
               <Route path='/dashboard' element={<DashboardPage />} />
               <Route path='/logs' element={<LogsPage />} />
               <Route path='/tasks' element={<TaskPage />} />

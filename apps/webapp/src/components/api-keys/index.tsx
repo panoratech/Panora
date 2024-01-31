@@ -30,9 +30,6 @@ export default function ApiKeysPage() {
   const {idProject} = useProjectStore();
   const {profile} = useProfileStore();
   
-  if(isLoading){ 
-    return <LoadingSpinner className=""/>
-  }
 
   if(error){
     console.log("error apiKeys..");
@@ -61,6 +58,7 @@ export default function ApiKeysPage() {
           <h2 className="text-lg font-bold tracking-tight">Manage your api keys.</h2>
         </div>          
         <div className="flex space-y-8 md:flex pb-4">
+          {isLoading ? ( <LoadingSpinner className=""/>) : <>
           <div></div>
           <Dialog>
             <DialogTrigger asChild>
@@ -99,6 +97,8 @@ export default function ApiKeysPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+          </>
+          }
         </div>
         {tsApiKeys && <DataTable data={tsApiKeys} columns={columns} />}
       </div>
