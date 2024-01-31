@@ -56,6 +56,8 @@ FROM nginx:stable-alpine as runner
 #ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
 #ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
 COPY --from=installer ./app/apps/frontend-snippet/dist/ /usr/share/nginx/html
+COPY apps/frontend-snippet/nginx.conf /etc/nginx/conf.d/default.conf
+
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

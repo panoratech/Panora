@@ -53,5 +53,11 @@ FROM nginx:stable-alpine as runner
 #ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
 COPY --from=installer ./app/apps/webapp/dist/ /usr/share/nginx/html
 
+RUN echo "***********************"
+RUN cat /etc/nginx/conf.d/default.conf
+RUN echo "***********************"
+
+COPY apps/webapp/nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

@@ -92,7 +92,7 @@
         },
         {
           "group": "Notes",
-          "pages": [ "crm/notes/overview", "crm/notes/api/list", "crm/notes/api/get", "crm/notes/api/create", "crm/notes/api/update" ]
+          "pages": [ "crm/notes/overview", "crm/notes/api/list", "crm/notes/api/get", "crm/notes/api/create" ]
         },
         {
           "group": "Engagements",
