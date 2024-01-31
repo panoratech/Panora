@@ -1,5 +1,5 @@
 # this docker compose is for development purposes.
-# use it to build locally instead of pulling pre-build images from cloud 
+# use it to build locally instead of pulling pre-build images from cloud
 
 name: panora
 version: '3.8'
@@ -29,7 +29,7 @@ services:
     build:
       context: ./
       dockerfile: ./packages/api/Dockerfile
-    environment: 
+    environment:
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
         DISTRIBUTION: ${DISTRIBUTION}
         JWT_SECRET: ${JWT_SECRET}
@@ -56,7 +56,7 @@ services:
           condition: service_healthy
     networks:
       - backend
-  
+
   redis:
     image: "redis:7.2.3-alpine"
     container_name: "Redis"
@@ -66,7 +66,7 @@ services:
       - ./redis-data:/data
     networks:
       - backend
-  
+
   webapp:
     build:
       dockerfile: ./apps/webapp/Dockerfile
@@ -83,7 +83,7 @@ services:
     networks:
       - backend
       - frontend
-  
+
   magic-link-frontend:
     build:
       dockerfile: ./apps/frontend-snippet/Dockerfile
@@ -97,7 +97,7 @@ services:
     networks:
       - backend
       - frontend
-  
+
   panora-store:
     image: minio/minio
     container_name: panora-store
@@ -134,7 +134,7 @@ services:
         echo "****3****" &&
         mc admin policy attach panora-store readwrite --user ${BUCKET_TCG_ATTACHMENTS_USER} &&
         echo "****4****" &&
-        mc ls panora-store 
+        mc ls panora-store
       "
     depends_on:
       - postgres

@@ -10,3 +10,5 @@ redis_data
 .env
 .DS_Store
 .pnpm-store/
+docker-compose.source.yml
+docker-compose.dev.yml
