@@ -65,7 +65,7 @@ export const providersConfig: ProvidersConfig = {
       scopes: '',
       authBaseUrl: 'https://app.frontapp.com/oauth/authorize',
       logoPath: 'assets/ticketing/front.png',
-      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users"
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
 
     },
     'zendesk_tcg': {
@@ -73,8 +73,7 @@ export const providersConfig: ProvidersConfig = {
       scopes: 'read write',
       authBaseUrl: 'https://panora7548.zendesk.com/oauth/authorizations/new',
       logoPath: 'assets/crm/zendesk_logo.png',
-      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users"
-
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
     },
   },
   'Accounting': {
