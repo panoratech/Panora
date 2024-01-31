@@ -28,6 +28,17 @@ export class LinkedUsersService {
       handleServiceError(error, this.logger);
     }
   }
+  async getLinkedUserV2(originId: string) {
+    try {
+      return await this.prisma.linked_users.findFirst({
+        where: {
+          linked_user_origin_id: originId,
+        },
+      });
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
   async addLinkedUser(data: CreateLinkedUserDto) {
     try {
       const { id_project, ...rest } = data;

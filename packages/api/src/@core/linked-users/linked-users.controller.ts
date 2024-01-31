@@ -48,4 +48,15 @@ export class LinkedUsersController {
   getLinkedUser(@Query('id') id: string) {
     return this.linkedUsersService.getLinkedUser(id);
   }
+
+  @ApiOperation({
+    operationId: 'getLinkedUser',
+    summary: 'Retrieve a Linked User',
+  })
+  @ApiQuery({ name: 'originId', required: true, type: String })
+  @ApiResponse({ status: 200 })
+  @Get('single')
+  getLinkedUserV2(@Query('originId') id: string) {
+    return this.linkedUsersService.getLinkedUserV2(id);
+  }
 }
