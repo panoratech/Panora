@@ -10,7 +10,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
       <div>
         <h1 className="text-sm">
-          <ProviderCard name={"Hubspot"} projectId={"1"} linkedUserIdOrRemoteUserInfo={"1"}  />
+          <ProviderCard name={"front"} projectId={"1"} linkedUserIdOrRemoteUserInfo={"1"}  />
         </h1>
       </div>
       </QueryClientProvider>

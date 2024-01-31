@@ -1,5 +1,5 @@
 import config from '@/helpers/config';
-import {  getDescription } from '@/helpers/utils';
+import {  findProviderVertical, getDescription } from '@/helpers/utils';
 import useLinkedUserMutation from '@/hooks/mutations/useLinkedUserMutation';
 import useLinkedUser from '@/hooks/queries/useLinkedUserId';
 import useOAuth from '@/hooks/useOAuth';
@@ -23,6 +23,8 @@ const ProviderCard = ({name, projectId, linkedUserIdOrRemoteUserInfo}: ProviderC
   const [originId, setOriginId] = useState("")
   const [loading, setLoading] = useState(false)
 
+  const vertical = findProviderVertical(name.toLowerCase())
+  console.log("vertical "+ vertical)
   const { mutate } = useLinkedUserMutation();
   const {data: linkedUser} = useLinkedUser(originId);
 
@@ -75,9 +77,9 @@ const ProviderCard = ({name, projectId, linkedUserIdOrRemoteUserInfo}: ProviderC
       >
         
           <div className="text-center flex items-center">
-            <img src={`public/assets/crm/${name}_logo.png`} width={"30px"} className="mx-auto mb-4 w-12 h-12 rounded-xl"/>
+            <img src={`public/assets/${vertical!.toLowerCase()}/${name}_logo.png`} width={"30px"} className="mx-auto mb-4 w-12 h-12 rounded-xl"/>
             <a href="#">
-              <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white pl-4">Integrate with {name}</h5>
+              <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Integrate with {name}</h5>
           </a>
           </div>
           
