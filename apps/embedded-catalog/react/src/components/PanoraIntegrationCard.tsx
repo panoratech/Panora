@@ -1,4 +1,3 @@
-import config from '@/helpers/config';
 import {  findProviderVertical, getDescription } from '@/helpers/utils';
 import useLinkedUserMutation from '@/hooks/mutations/useLinkedUserMutation';
 import useLinkedUser from '@/hooks/queries/useLinkedUserId';
@@ -15,10 +14,10 @@ interface RemoteUserInfo {
 interface ProviderCardProp {
   name: string;
   projectId: string;
+  returnUrl: string;
   linkedUserIdOrRemoteUserInfo: string | RemoteUserInfo;
-
 }
-const ProviderCard = ({name, projectId, linkedUserIdOrRemoteUserInfo}: ProviderCardProp) => {
+export const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdOrRemoteUserInfo}: ProviderCardProp) => {
   const [providerClicked, setProviderClicked] = useState(false);
   const [originId, setOriginId] = useState("")
   const [loading, setLoading] = useState(false)
@@ -46,7 +45,7 @@ const ProviderCard = ({name, projectId, linkedUserIdOrRemoteUserInfo}: ProviderC
 
   const { open, isReady } = useOAuth({
     providerName: name.toLowerCase(),
-    returnUrl: config.ML_FRONTEND_URL, // TODO: Replace with the actual return URL
+    returnUrl: returnUrl, // TODO: Replace with the actual return URL
     projectId: projectId,
     linkedUserId: linkedUserId,
     onSuccess: () => console.log('OAuth successful'),
@@ -73,19 +72,16 @@ const ProviderCard = ({name, projectId, linkedUserIdOrRemoteUserInfo}: ProviderC
     
   return (
       <div 
-      className="max-w-sm p-6 bg-white border-[0.007em] border-gray-200 rounded-lg shadow dark:bg-zinc-800 hover:border-zinc-900 hover:border-[0.1em] transition-colors duration-200"
+      className="max-w-sm p-6 bg-white border-[0.007em] border-gray-200 rounded-lg shadow dark:bg-zinc-800 hover:border-gray-200  transition-colors duration-200"
       >
-        
-          <div className="text-center flex items-center">
-            <img src={`public/assets/${vertical!.toLowerCase()}/${name}_logo.png`} width={"30px"} className="mx-auto mb-4 w-12 h-12 rounded-xl"/>
-            <a href="#">
-              <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Integrate with {name}</h5>
-          </a>
+          <div className=" flex items-center justify-center">
+            <img src={`public/assets/${vertical!.toLowerCase()}/${name}_logo.png`} width={"30px"} className="mx-3 mb-4 w-12 h-12 rounded-xl"/>
+            <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Integrate with {name}</h5>
+
           </div>
           
-        {!loading ? 
-          <>
           <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">{getDescription(name.toLowerCase())}</p>
+          {!loading ? 
           <a 
             href="#" className="inline-flex items-center text-indigo-600 hover:underline"
             onClick={handleClick}
@@ -95,7 +91,7 @@ const ProviderCard = ({name, projectId, linkedUserIdOrRemoteUserInfo}: ProviderC
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"/>
               </svg>
           </a>
-          </> 
+
         : 
          <>
           <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">Continue in {name} </p>
@@ -117,5 +113,3 @@ const ProviderCard = ({name, projectId, linkedUserIdOrRemoteUserInfo}: ProviderC
       </div> 
   )
 };
-  
-export default ProviderCard;

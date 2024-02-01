@@ -1,5 +1,5 @@
 import './App.css'
-import ProviderCard from './lib'
+import { PanoraIntegrationCard } from './components/PanoraIntegrationCard'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 
@@ -10,7 +10,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
       <div>
         <h1 className="text-sm">
-          <ProviderCard name={"front"} projectId={"1"} linkedUserIdOrRemoteUserInfo={"1"}  />
+          <PanoraIntegrationCard name={"Zoho"} projectId={"1"} returnUrl={""} linkedUserIdOrRemoteUserInfo={"1"}  />
         </h1>
       </div>
       </QueryClientProvider>

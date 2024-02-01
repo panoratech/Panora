@@ -1,0 +1,1 @@
+export { PanoraIntegrationCard } from './PanoraIntegrationCard'
