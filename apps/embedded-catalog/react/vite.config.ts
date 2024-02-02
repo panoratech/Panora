@@ -9,5 +9,20 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src')
     }
-  }
+  }, 
+  build: {
+    lib: {
+      entry: path.resolve("", 'src/components/index.ts'),
+      name: 'integration-card',
+      fileName: (format) => `integration-card.${format}.ts`
+    },
+    rollupOptions: {
+      external: ['react', 'react-dom'],
+      output: {
+        globals: {
+          react: 'React'
+        }
+      }
+    }
+  },
 })
