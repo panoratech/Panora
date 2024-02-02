@@ -12,15 +12,16 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "ci": "pnpm run lint && pnpm run build"
-  }, 
+  },
   "dependencies": {
+    "@panora/integration-card-react": "workspace:^",
+    "@panora/shared": "workspace:*",
     "@panora/typescript-sdk": "^1.0.3",
     "@tanstack/react-query": "^5.12.2",
     "api": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-loader-spinner": "^5.4.5",
-    "@panora/shared": "workspace:*",
     "tailwind-scrollbar-hide": "^1.1.7",
     "uuid": "^9.0.1"
   },

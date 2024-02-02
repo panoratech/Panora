@@ -12,7 +12,7 @@ export default defineConfig({
   }, 
   build: {
     lib: {
-      entry: path.resolve("", 'src/components/index.ts'),
+      entry: path.resolve("", 'src/components/PanoraIntegrationCard.tsx'),
       name: 'integration-card',
       fileName: (format) => `integration-card.${format}.ts`
     },
