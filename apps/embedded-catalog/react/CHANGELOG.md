@@ -1,5 +1,11 @@
 # integration-card-react
 
+## 4.0.0
+
+### Major Changes
+
+- ee210ea: fix
+
 ## 3.0.0
 
 ### Major Changes
