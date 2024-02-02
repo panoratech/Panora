@@ -1,5 +1,5 @@
 {
-  "name": "react",
+  "name": "integration-card-react",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -32,12 +32,12 @@
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   },
-  "main": "./dist/panora-integration-card.umd.js",
-  "module": "./dist/panora-integration-card.es.js",
+  "main": "./dist/integration-card.umd.js",
+  "module": "./dist/integration-card.es.js",
   "exports": {
     ".": {
-      "import": "./dist/panora-integration-card.es.js",
-      "require": "./dist/panora-integration-card.umd.js"
+      "import": "./dist/integration-card.es.js",
+      "require": "./dist/integration-card.umd.js"
     }
   }
 }

@@ -13,8 +13,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve("src", 'src/components/index.ts'),
-      name: 'panora-integration-card',
-      fileName: (format) => `panora-integration-card.${format}.ts`
+      name: 'integration-card',
+      fileName: (format) => `integration-card.${format}.ts`
     },
     rollupOptions: {
       external: ['react', 'react-dom'],
