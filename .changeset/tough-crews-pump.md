@@ -1,5 +1,0 @@
----
-"react": major
----
-
-react catalog
