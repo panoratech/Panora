@@ -26,16 +26,19 @@ export class Utils {
       }));
     }
     if (phone_numbers) {
-      normalizedPhones = phone_numbers.map((phone) => ({
-        ...phone,
-        owner_type: phone.owner_type ? phone.owner_type : '',
-        created_at: new Date(),
-        modified_at: new Date(),
-        id_crm_phone_number: uuidv4(), // This line is changed
-        phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
-      }));
-    }
+      phone_numbers.forEach((phone) => {
+        if (!phone.phone_number) return;
 
+        normalizedPhones.push({
+          ...phone,
+          owner_type: phone.owner_type ? phone.owner_type : '',
+          created_at: new Date(),
+          modified_at: new Date(),
+          id_crm_phone_number: uuidv4(), // This line is changed
+          phone_type: phone.phone_type === '' ? 'work' : phone.phone_type,
+        });
+      });
+    }
     return {
       normalizedEmails,
       normalizedPhones,
