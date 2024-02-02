@@ -17,6 +17,14 @@ export enum CrmProviders {
     FRESHSALES = 'freshsales',
 }
   
+export enum TicketingProviders {
+    ZENDESK = 'zendesk',
+    FRONT = 'front',
+    GITHUB = 'github',
+    JIRA = 'jira',
+    LINEAR = 'linear',
+}
+
 export enum AccountingProviders {
     PENNYLANE = 'pennylane',
     FRESHBOOKS = 'freshbooks',

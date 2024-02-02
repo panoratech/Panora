@@ -1,5 +1,5 @@
 {
-  "name": "frontend-snippet",
+  "name": "magic-link",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -20,7 +20,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-loader-spinner": "^5.4.5",
-    "shared-types": "workspace:*",
+    "shared": "workspace:*",
     "tailwind-scrollbar-hide": "^1.1.7",
     "uuid": "^9.0.1"
   },

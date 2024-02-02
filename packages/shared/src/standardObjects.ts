@@ -19,7 +19,16 @@ export enum FileStorageObject {}
 
 export enum MarketingAutomationObject {}
 
-export enum TicketingObject {}
+export enum TicketingObject {
+    ticket = 'ticket',
+    comment = 'comment',
+    user = 'user',
+    attachment = 'attachment',
+    contact = 'contact',
+    account = 'account',
+    tag = 'tag',
+    team = 'team',
+}
 
 export const standardOjects = [
     ...Object.values(CrmObject),

@@ -13,7 +13,7 @@ export const CRM_PROVIDERS = [
 export const HRIS_PROVIDERS = [''];
 export const ATS_PROVIDERS = [''];
 export const ACCOUNTING_PROVIDERS = [''];
-export const TICKETING_PROVIDERS = [''];
+export const TICKETING_PROVIDERS = ['zendesk', 'front', 'github', 'jira', 'linear'];
 export const MARKETING_AUTOMATION_PROVIDERS = [''];
 export const FILE_STORAGE_PROVIDERS = [''];
 
