@@ -14,8 +14,7 @@
     "ci": "pnpm run lint && pnpm run build"
   },
   "dependencies": {
-    "@panora/integration-card-react": "workspace:^",
-    "@panora/shared": "workspace:*",
+    "@panora/shared": "^0.0.1",
     "@panora/typescript-sdk": "^1.0.3",
     "@tanstack/react-query": "^5.12.2",
     "api": "workspace:*",

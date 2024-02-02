@@ -9,12 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@panora/shared": "workspace:*",
     "@tanstack/react-query": "^5.12.2",
     "api": "workspace:*",
-    "@panora/shared": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-loader-spinner": "^5.4.5"
+    "react-loader-spinner": "^5.4.5",
+    "vite-plugin-dts": "^3.7.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
@@ -31,8 +32,14 @@
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@tanstack/react-query": "^5.12.2"
+  },
   "main": "./dist/integration-card.umd.js",
   "module": "./dist/integration-card.es.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/integration-card.es.js",
