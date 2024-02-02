@@ -6,7 +6,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "paths": {
-      "integration-card": [ "./src/component/index.ts" ],
+      "integration-card-react": [ "./src/components/index.ts" ],
       "@/*": [
         "./src/*"
       ],
@@ -27,7 +27,7 @@
     "noFallthroughCasesInSwitch": true,
     "typeRoots": [
       "node_modules/@types",
-      "src/component/index.d.ts"
+      "src/components/index.d.ts"
     ]
   },
   "include": ["src"],

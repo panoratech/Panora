@@ -37,13 +37,16 @@
     "react-dom": "^18.2.0",
     "@tanstack/react-query": "^5.12.2"
   },
-  "main": "./dist/integration-card.umd.js",
-  "module": "./dist/integration-card.es.js",
+  "main": "./dist/integration-card-react.umd.js",
+  "module": "./dist/integration-card-react.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/integration-card.es.js",
-      "require": "./dist/integration-card.umd.js"
+      "import": "./dist/integration-card-react.es.js",
+      "require": "./dist/integration-card-react.umd.js"
     }
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }

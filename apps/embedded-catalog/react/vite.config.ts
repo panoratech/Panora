@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [
     react(), 
     dts({
-      include: ['src/component/'],
+      include: ['src/components/'],
     })
   ],
   resolve: {
@@ -20,9 +20,9 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve("src", 'components/index.ts'),
-      name: 'integration-card',
+      name: 'integration-card-react',
       formats: ['es', 'umd'],
-      fileName: (format) => `integration-card.${format}.js`
+      fileName: (format) => `integration-card-react.${format}.js`
     },
     rollupOptions: {
       external:[...Object.keys(packageJson.peerDependencies)],
