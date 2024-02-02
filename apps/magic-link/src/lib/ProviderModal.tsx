@@ -58,8 +58,8 @@ const ProviderModal = () => {
   const { open, isReady } = useOAuth({
     providerName: selectedProvider,
     returnUrl: config.ML_FRONTEND_URL!,
-    projectId: linkedUser?.id_project,
-    linkedUserId: linkedUser?.id_linked_user,
+    projectId: linkedUser?.id_project as string,
+    linkedUserId: linkedUser?.id_linked_user as string,
     onSuccess: () => console.log('OAuth successful'),
   });
 

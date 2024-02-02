@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
 import { findProviderVertical, getDescription } from 'shared';
 
-
 interface RemoteUserInfo {
   userIdInYourSystem: string;
   companyName: string;
@@ -42,7 +41,7 @@ export const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdO
     linkedUserId = linkedUser!.id_linked_user
   }
 
-  if(!projectId || !linkedUserId) return;
+  //if(!projectId || !linkedUserId) return;
 
 
   const { open, isReady } = useOAuth({
@@ -110,7 +109,6 @@ export const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdO
           />
           </div>
           </>
-          
         }
       </div> 
   )
