@@ -120,9 +120,9 @@ export const providersConfig: ProvidersConfig = {
   }
 };
 
-export function getDescription(name: string){
+export const getDescription = (name: string): string | null => {
   const vertical = findProviderVertical(name);
-  if(vertical== null){
+  if(vertical == null){
     return null;
   }
   return providersConfig[vertical][name].description;

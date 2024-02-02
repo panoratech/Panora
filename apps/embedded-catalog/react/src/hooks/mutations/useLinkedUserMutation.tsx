@@ -32,8 +32,6 @@ const useLinkedUserMutation = () => {
         onSuccess: () => {
             console.log('Linked user added successfully!');
         },
-        onSettled: () => {
-        },
     });
 };
 

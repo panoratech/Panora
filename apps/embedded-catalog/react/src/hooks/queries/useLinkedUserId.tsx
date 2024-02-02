@@ -1,6 +1,6 @@
+import config from '@/helpers/config';
 import { useQuery } from '@tanstack/react-query';
 import { linked_users as LinkedUser } from 'api';
-import config from '@/helpers/config';
 
 const useLinkedUser = (originId: string) => {
   return useQuery({

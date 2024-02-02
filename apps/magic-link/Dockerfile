@@ -1,5 +1,5 @@
 # run directly from the repo root directory
-# docker build -f ./apps/frontend-snippet/Dockerfile .
+# docker build -f ./apps/magic-link/Dockerfile .
 FROM node:20-alpine AS base
 # =======================================================================
 FROM base AS builder
@@ -14,8 +14,8 @@ RUN corepack enable
 WORKDIR /app
 RUN pnpm add -g turbo
 COPY . .
-RUN turbo prune frontend-snippet --docker
-RUN ls -la ./out/full/apps/frontend-snippet
+RUN turbo prune magic-link --docker
+RUN ls -la ./out/full/apps/magic-link
 
 # =======================================================================
 # Add lockfile and package.json's of isolated subworkspace
@@ -46,7 +46,7 @@ RUN pnpm install
 
 # Build the project
 COPY --from=builder ./app/out/full/ .
-RUN pnpm turbo run build --filter=frontend-snippet...
+RUN pnpm turbo run build --filter=magic-link...
 
 # ========================================================================
 FROM nginx:stable-alpine as runner
@@ -55,8 +55,8 @@ FROM nginx:stable-alpine as runner
 #ARG VITE_FRONTEND_DOMAIN
 #ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
 #ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
-COPY --from=installer ./app/apps/frontend-snippet/dist/ /usr/share/nginx/html
-COPY apps/frontend-snippet/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=installer ./app/apps/magic-link/dist/ /usr/share/nginx/html
+COPY apps/magic-link/nginx.conf /etc/nginx/conf.d/default.conf
 
 
 EXPOSE 80

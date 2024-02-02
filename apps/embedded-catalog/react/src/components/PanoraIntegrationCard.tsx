@@ -1,9 +1,9 @@
-import {  findProviderVertical, getDescription } from '@/helpers/utils';
 import useLinkedUserMutation from '@/hooks/mutations/useLinkedUserMutation';
 import useLinkedUser from '@/hooks/queries/useLinkedUserId';
 import useOAuth from '@/hooks/useOAuth';
 import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
+import { findProviderVertical, getDescription } from 'shared';
 
 
 interface RemoteUserInfo {
@@ -27,7 +27,6 @@ export const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdO
   const { mutate } = useLinkedUserMutation();
   const {data: linkedUser} = useLinkedUser(originId);
 
-
   let linkedUserId: string;
   if (typeof linkedUserIdOrRemoteUserInfo === 'string') {
     linkedUserId = linkedUserIdOrRemoteUserInfo;
@@ -43,9 +42,12 @@ export const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdO
     linkedUserId = linkedUser!.id_linked_user
   }
 
+  if(!projectId || !linkedUserId) return;
+
+
   const { open, isReady } = useOAuth({
     providerName: name.toLowerCase(),
-    returnUrl: returnUrl, // TODO: Replace with the actual return URL
+    returnUrl: returnUrl,
     projectId: projectId,
     linkedUserId: linkedUserId,
     onSuccess: () => console.log('OAuth successful'),

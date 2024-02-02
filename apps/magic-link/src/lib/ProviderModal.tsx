@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
 import useOAuth from '@/hooks/useOAuth';
-import { findProviderByName, providersArray } from '@/helpers/utils';
-import {categoriesVerticals} from 'shared-types';
+import { categoriesVerticals, findProviderByName, providersArray } from 'shared';
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
 import config from '@/helpers/config';
+
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
     const provider = findProviderByName(providerName);
@@ -54,11 +54,10 @@ const ProviderModal = () => {
   
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
   const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
-
-
+  
   const { open, isReady } = useOAuth({
     providerName: selectedProvider,
-    returnUrl: config.ML_FRONTEND_URL, // TODO: Replace with the actual return URL
+    returnUrl: config.ML_FRONTEND_URL!,
     projectId: linkedUser?.id_project,
     linkedUserId: linkedUser?.id_linked_user,
     onSuccess: () => console.log('OAuth successful'),

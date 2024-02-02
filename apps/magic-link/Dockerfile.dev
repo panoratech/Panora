@@ -1,5 +1,5 @@
 # run directly from the repo root directory
-# docker build -f ./apps/frontend-snippet/Dockerfile.dev .
+# docker build -f ./apps/magic-link/Dockerfile.dev .
 FROM node:20-alpine AS base
 # =======================================================================
 FROM base AS builder
@@ -24,4 +24,4 @@ WORKDIR /app
 RUN pnpm add -g turbo
 
 # run the ML
-CMD cd apps/frontend-snippet && pnpm install && pnpm run dev --host
+CMD cd apps/magic-link && pnpm install && pnpm run dev --host
