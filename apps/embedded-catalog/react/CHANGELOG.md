@@ -1,5 +1,11 @@
 # integration-card-react
 
+## 3.0.0
+
+### Major Changes
+
+- b8c39db: new fix
+
 ## 2.0.0
 
 ### Major Changes
