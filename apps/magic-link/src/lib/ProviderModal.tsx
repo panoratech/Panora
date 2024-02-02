@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
 import useOAuth from '@/hooks/useOAuth';
-import { categoriesVerticals, findProviderByName, providersArray } from 'shared';
+import { categoriesVerticals, findProviderByName, providersArray } from '@panora/shared';
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
 import config from '@/helpers/config';

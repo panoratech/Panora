@@ -3,7 +3,7 @@ import useLinkedUser from '@/hooks/queries/useLinkedUserId';
 import useOAuth from '@/hooks/useOAuth';
 import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
-import { findProviderVertical, getDescription } from 'shared';
+import { findProviderVertical, getDescription } from '@panora/shared';
 
 interface RemoteUserInfo {
   userIdInYourSystem: string;

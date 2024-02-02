@@ -11,7 +11,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.12.2",
     "api": "workspace:*",
-    "shared": "workspace:*",
+    "@panora/shared": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-loader-spinner": "^5.4.5"
