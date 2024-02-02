@@ -1,6 +1,7 @@
 {
   "name": "magic-link",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
   "engines": {
     "node": ">=20.9.0"

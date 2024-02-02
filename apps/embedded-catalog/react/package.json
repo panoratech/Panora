@@ -1,6 +1,5 @@
 {
-  "name": "integration-card-react",
-  "private": true,
+  "name": "@panora/integration-card-react",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
