@@ -31,5 +31,13 @@
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
+  },
+  "main": "./dist/panora-integration-card.umd.js",
+  "module": "./dist/panora-integration-card.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/panora-integration-card.es.js",
+      "require": "./dist/panora-integration-card.umd.js"
+    }
   }
 }

@@ -9,5 +9,20 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src')
     }
-  }
+  }, 
+  build: {
+    lib: {
+      entry: path.resolve("src", 'src/components/index.ts'),
+      name: 'panora-integration-card',
+      fileName: (format) => `panora-integration-card.${format}.ts`
+    },
+    rollupOptions: {
+      external: ['react', 'react-dom'],
+      output: {
+        globals: {
+          react: 'React'
+        }
+      }
+    }
+  },
 })
