@@ -1,5 +1,11 @@
 # integration-card-react
 
+## 5.0.0
+
+### Major Changes
+
+- 44abee2: new change
+
 ## 4.0.0
 
 ### Major Changes
