@@ -67,7 +67,9 @@ const AddConnectionButton = ({
     setShowNewLinkedUserDialog(prevState => ({ ...prevState, open }));
   };
 
-  const { mutate, isError, error } = useMagicLinkMutation();
+  const { mutateWithToast } = useMagicLinkMutation({
+    onSuccess: () => setIsGenerated(true),
+  });
 
   const {nameOrg} = useOrganisationStore();
   const {idProject} = useProjectStore();
@@ -81,19 +83,12 @@ const AddConnectionButton = ({
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    mutate({ 
-      linked_user_origin_id: values.linkedUserIdentifier, 
+    mutateWithToast({
+      linked_user_origin_id: values.linkedUserIdentifier,
       email: values.linkedUserMail,
       alias: nameOrg,
-      id_project: idProject
+      id_project: idProject,
     });
-
-    if(isError) {
-      console.log(error);
-    }
-    
-    setIsGenerated(true);
   }
   
   return (
