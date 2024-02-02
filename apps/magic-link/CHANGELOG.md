@@ -1,5 +1,12 @@
 # magic-link
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [b8c39db]
+  - @panora/integration-card-react@3.0.0
+
 ## 0.0.1
 
 ### Patch Changes
