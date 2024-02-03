@@ -89,6 +89,16 @@ importers:
         version: 5.0.8
 
   apps/embedded-catalog/react-v2:
+    dependencies:
+      '@panora/shared':
+        specifier: workspace:^
+        version: link:../../../packages/shared
+      '@tanstack/react-query':
+        specifier: ^5.12.2
+        version: 5.12.2(react@18.2.0)
+      react-loader-spinner:
+        specifier: ^5.4.5
+        version: 5.4.5(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@types/react':
         specifier: ^18.2.52
