@@ -5,6 +5,7 @@ import useOAuth from '@/hooks/useOAuth';
 import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
 import { findProviderVertical, getDescription } from '@panora/shared';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 interface RemoteUserInfo {
   userIdInYourSystem: string;
@@ -17,7 +18,7 @@ interface ProviderCardProp {
   returnUrl: string;
   linkedUserIdOrRemoteUserInfo: string | RemoteUserInfo;
 }
-export const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdOrRemoteUserInfo}: ProviderCardProp) => {
+const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdOrRemoteUserInfo}: ProviderCardProp) => {
   const [providerClicked, setProviderClicked] = useState(false);
   const [originId, setOriginId] = useState("")
   const [loading, setLoading] = useState(false)
@@ -114,5 +115,14 @@ export const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdO
       </div> 
   )
 };
+
+const FinalCard = ({name, projectId, returnUrl, linkedUserIdOrRemoteUserInfo}: ProviderCardProp) => {
+    const queryClient = new QueryClient();
+    return (
+        <QueryClientProvider client={queryClient}>
+            <PanoraIntegrationCard name={name} projectId={projectId} returnUrl={returnUrl} linkedUserIdOrRemoteUserInfo={linkedUserIdOrRemoteUserInfo}  />
+        </QueryClientProvider>
+    )
+}
   
-export default PanoraIntegrationCard;
+export default FinalCard;

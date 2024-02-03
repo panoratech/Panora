@@ -1,2 +1,3 @@
-import './../index.css';
+import './index.css';
+
 export { PanoraIntegrationCard } from './PanoraIntegrationCard'
