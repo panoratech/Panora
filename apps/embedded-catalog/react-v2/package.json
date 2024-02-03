@@ -1,6 +1,6 @@
 {
   "name": "@panora/embedded-card-react",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
