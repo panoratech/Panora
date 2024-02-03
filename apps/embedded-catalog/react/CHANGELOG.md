@@ -1,5 +1,11 @@
 # integration-card-react
 
+## 5.0.1
+
+### Patch Changes
+
+- f8499e0: little patch
+
 ## 5.0.0
 
 ### Major Changes
