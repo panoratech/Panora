@@ -4,7 +4,7 @@ import useLinkedUser from '@/hooks/queries/useLinkedUserId';
 import useOAuth from '@/hooks/useOAuth';
 import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
-import { findProviderVertical, getDescription } from '@panora/shared';
+import { findProviderVertical, getDescription, providersConfig } from '@panora/shared';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 interface RemoteUserInfo {
@@ -24,7 +24,6 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdOrRemote
   const [loading, setLoading] = useState(false)
 
   const vertical = findProviderVertical(name.toLowerCase())
-  console.log("vertical "+ vertical)
   const { mutate } = useLinkedUserMutation();
   const {data: linkedUser} = useLinkedUser(originId);
 
@@ -72,13 +71,15 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdOrRemote
     setProviderClicked(true);
     return;
   };
+
+  const img = providersConfig[vertical!.toLowerCase()][name.toLowerCase()].logoPath;
     
   return (
       <div 
       className="max-w-sm p-6 bg-white border-[0.007em] border-gray-200 rounded-lg shadow dark:bg-zinc-800 hover:border-gray-200  transition-colors duration-200"
       >
           <div className=" flex items-center justify-center">
-            <img src={`./assets/${vertical!.toLowerCase()}/${name}_logo.png`} width={"30px"} className="mx-3 mb-4 w-12 h-12 rounded-xl"/>
+            <img src={img} width={"30px"} className="mx-3 mb-4 w-12 h-12 rounded-xl"/>
             <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Integrate with {name}</h5>
 
           </div>

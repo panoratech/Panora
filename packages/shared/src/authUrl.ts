@@ -17,7 +17,7 @@ export const constructAuthUrl = ({ projectId, linkedUserId, providerName, return
     return null;
   }
 
-  const config_ = providersConfig[vertical][providerName];
+  const config_ = providersConfig[vertical.toLowerCase()][providerName];
   if (!config_) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
