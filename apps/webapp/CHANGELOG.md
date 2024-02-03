@@ -1,5 +1,12 @@
 # webapp
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [1245fa3]
+  - @panora/shared@2.0.0
+
 ## 0.0.1
 
 ### Patch Changes
