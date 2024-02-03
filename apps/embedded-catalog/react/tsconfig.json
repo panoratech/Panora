@@ -25,9 +25,11 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "declaration": true,
     "typeRoots": [
       "node_modules/@types",
-      "src/components/index.d.ts"
+      "src/components/index.d.ts",
+      "dist/index.d.ts"
     ]
   },
   "include": ["src"],
