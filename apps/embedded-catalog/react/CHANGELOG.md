@@ -1,5 +1,12 @@
 # integration-card-react
 
+## 5.0.2
+
+### Patch Changes
+
+- Updated dependencies [0606c93]
+  - @panora/shared@1.0.0
+
 ## 5.0.1
 
 ### Patch Changes
