@@ -117,7 +117,7 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdOrRemote
   )
 };
 
-const FinalCard = ({name, projectId, returnUrl, linkedUserIdOrRemoteUserInfo}: ProviderCardProp) => {
+const PanoraProviderCard = ({name, projectId, returnUrl, linkedUserIdOrRemoteUserInfo}: ProviderCardProp) => {
     const queryClient = new QueryClient();
     return (
         <QueryClientProvider client={queryClient}>
@@ -126,4 +126,4 @@ const FinalCard = ({name, projectId, returnUrl, linkedUserIdOrRemoteUserInfo}: P
     )
 }
   
-export default FinalCard;
+export default PanoraProviderCard;
