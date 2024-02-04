@@ -1,5 +1,16 @@
 # @panora/embedded-card-react
 
+## 7.0.0
+
+### Major Changes
+
+- 0cfef30: readme
+
+### Patch Changes
+
+- Updated dependencies [0cfef30]
+  - @panora/shared@3.0.0
+
 ## 6.0.0
 
 ### Major Changes
