@@ -12,6 +12,7 @@ import { Action, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { ServiceConnectionRegistry } from '../registry.service';
 
 @Injectable()
 export class HubspotConnectionService implements ICrmConnectionService {
@@ -20,8 +21,10 @@ export class HubspotConnectionService implements ICrmConnectionService {
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
+    private registry: ServiceConnectionRegistry,
   ) {
     this.logger.setContext(HubspotConnectionService.name);
+    this.registry.registerService('hubspot', this);
   }
 
   async handleCallback(opts: CallbackParams) {

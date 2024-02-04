@@ -12,6 +12,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { ServiceConnectionRegistry } from '../registry.service';
 
 @Injectable()
 export class PipedriveConnectionService implements ICrmConnectionService {
@@ -20,8 +21,10 @@ export class PipedriveConnectionService implements ICrmConnectionService {
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
+    private registry: ServiceConnectionRegistry,
   ) {
     this.logger.setContext(PipedriveConnectionService.name);
+    this.registry.registerService('pipedrive', this);
   }
 
   async handleCallback(opts: CallbackParams) {
