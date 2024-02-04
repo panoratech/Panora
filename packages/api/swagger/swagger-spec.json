@@ -323,7 +323,7 @@
         "summary": "Retrieve a Linked User",
         "parameters": [
           {
-            "name": "id",
+            "name": "originId",
             "required": true,
             "in": "query",
             "schema": {
