@@ -1,5 +1,11 @@
 # @panora/shared
 
+## 3.0.0
+
+### Major Changes
+
+- 0cfef30: readme
+
 ## 2.0.0
 
 ### Major Changes
