@@ -143,6 +143,8 @@ model crm_deals {
   crm_deals_stages   crm_deals_stages? @relation(fields: [id_crm_deals_stage], references: [id_crm_deals_stage], onDelete: NoAction, onUpdate: NoAction, map: "fk_21")
   crm_users          crm_users?        @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_22")
   crm_companies      crm_companies?    @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_47_1")
+  crm_notes          crm_notes[]
+  crm_tasks          crm_tasks[]
 
   @@index([id_crm_user], map: "crm_deal_crm_userid")
   @@index([id_crm_deals_stage], map: "crm_deal_deal_stageid")
@@ -225,6 +227,7 @@ model crm_notes {
   id_crm_user     String?        @db.Uuid
   crm_companies   crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_18")
   crm_contacts    crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_19")
+  crm_deals       crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_20")
 
   @@index([id_crm_contact], map: "fk_crm_note_crm_companyid")
   @@index([id_crm_company], map: "fk_crm_note_crm_contactid")
@@ -266,6 +269,7 @@ model crm_tasks {
   remote_platform String?
   crm_users       crm_users?     @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_25")
   crm_companies   crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_26")
+  crm_deals       crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_27")
 
   @@index([id_crm_company], map: "fk_crm_task_companyid")
   @@index([id_crm_user], map: "fk_crm_task_userid")

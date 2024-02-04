@@ -1,49 +1,22 @@
 import "./global.css";
-import useLinkedUserMutation from '@/hooks/mutations/useLinkedUserMutation';
-import useLinkedUser from '@/hooks/queries/useLinkedUserId';
 import useOAuth from '@/hooks/useOAuth';
 import { useEffect, useState } from 'react';
 import { TailSpin } from  'react-loader-spinner'
 import { findProviderVertical, getDescription, providersConfig } from '@panora/shared';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-interface RemoteUserInfo {
-  userIdInYourSystem: string;
-  companyName: string;
-}
-
 interface ProviderCardProp {
   name: string;
   projectId: string;
   returnUrl: string;
-  linkedUserIdOrRemoteUserInfo: string | RemoteUserInfo;
+  linkedUserId: string;
 }
-const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdOrRemoteUserInfo}: ProviderCardProp) => {
+const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId}: ProviderCardProp) => {
   const [providerClicked, setProviderClicked] = useState(false);
-  const [originId, setOriginId] = useState("")
   const [loading, setLoading] = useState(false)
 
   const vertical = findProviderVertical(name.toLowerCase())
-  const { mutate } = useLinkedUserMutation();
-  const {data: linkedUser} = useLinkedUser(originId);
-
-  let linkedUserId: string;
-  if (typeof linkedUserIdOrRemoteUserInfo === 'string') {
-    linkedUserId = linkedUserIdOrRemoteUserInfo;
-  } else {
-    //create a new linkedUser based on the user data of the saas
-    mutate({ 
-      linked_user_origin_id: linkedUserIdOrRemoteUserInfo.userIdInYourSystem, 
-      alias: linkedUserIdOrRemoteUserInfo.companyName,
-      id_project: projectId
-    });
-    setOriginId(linkedUserIdOrRemoteUserInfo?.userIdInYourSystem)
-    //fetch the linkedId
-    linkedUserId = linkedUser!.id_linked_user
-  }
-
   //if(!projectId || !linkedUserId) return;
-
 
   const { open, isReady } = useOAuth({
     providerName: name.toLowerCase(),
@@ -117,12 +90,12 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserIdOrRemote
   )
 };
 
-const PanoraProviderCard = ({name, projectId, returnUrl, linkedUserIdOrRemoteUserInfo}: ProviderCardProp) => {
+const PanoraProviderCard = ({name, projectId, returnUrl, linkedUserId}: ProviderCardProp) => {
     const queryClient = new QueryClient();
     return (
-        <QueryClientProvider client={queryClient}>
-            <PanoraIntegrationCard name={name} projectId={projectId} returnUrl={returnUrl} linkedUserIdOrRemoteUserInfo={linkedUserIdOrRemoteUserInfo}  />
-        </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+          <PanoraIntegrationCard name={name} projectId={projectId} returnUrl={returnUrl} linkedUserId={linkedUserId}  />
+      </QueryClientProvider>
     )
 }
   
