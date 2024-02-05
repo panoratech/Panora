@@ -34,7 +34,7 @@ cp .env.example .env
 
 <Step title="Mac Users only:">
   ```bash 
-  echo "node-linker=hoisted" > .npmrc
+  echo -e "node-linker=hoisted\npackage-import-method=clone-or-copy" > .npmrc
   ```
 </Step>
 

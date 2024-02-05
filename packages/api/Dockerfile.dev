@@ -15,4 +15,4 @@ WORKDIR /app
 RUN pnpm add -g turbo
 
 # Start API
-CMD pnpm install --frozen-lockfile && cd packages/api && npx prisma db pull && npx prisma generate && pnpm run start:dev 
+CMD pnpm install && cd packages/api && npx prisma db pull && npx prisma generate && pnpm run start:dev 
