@@ -73,12 +73,14 @@ Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start addin
 
 <a href="https://cal.com/rflih/30?utm_source=github&utm_campaign=readme"><img alt="Book us with Cal.com" src="https://cal.com/book-with-cal-dark.svg" /></a>
 
-## 🚀 Contributions
+## 🚀 Contributors
 
-This guide is intended for people willing to contribute to Panora.
-You can follow this guide to set up a Panora development environment on your machine.
-Visit our [guide](https://docs.panora.dev/open-source/contributors#setup-your-environnement) or check our detailed integrations guide [here.](https://github.com/panoratech/Panora/blob/main/INTEGRATIONS.md)
+<a href="https://github.com/panoratech/Panora/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=panoratech/Panora" />
+</a>
 
-You can also follow our [guidelines.](https://github.com/panoratech/Panora/blob/main/CONTRIBUTING.md)
+Want to contribute? Visit our [guide](https://docs.panora.dev/open-source/contributors#setup-your-environnement) or check our detailed integrations guide [here.](https://github.com/panoratech/Panora/blob/main/INTEGRATIONS.md)
+
+Our [guidelines.](https://github.com/panoratech/Panora/blob/main/CONTRIBUTING.md)
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=3be49a98-8805-45ca-bd15-99f5321ec235" />
