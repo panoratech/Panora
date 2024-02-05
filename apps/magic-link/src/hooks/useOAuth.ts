@@ -14,14 +14,14 @@ type UseOAuthProps = {
 const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
 
-
   useEffect(() => {
     // Perform any setup logic here
     setTimeout(() => setIsReady(true), 1000); // Simulating async operation
   }, []);
 
+
   const openModal = (onWindowClose: () => void) => {
-    const apiUrl = config.API_URL!;
+    const apiUrl = config.API_URL;
     const authUrl = constructAuthUrl({
       projectId, linkedUserId, providerName, returnUrl, apiUrl
     });

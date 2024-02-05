@@ -163,7 +163,7 @@
     "/connections/oauth/callback": {
       "get": {
         "operationId": "handleOAuthCallback",
-        "summary": "Capture oAuth Callback",
+        "summary": "Capture oAuth callback",
         "parameters": [
           {
             "name": "state",
@@ -323,7 +323,7 @@
         "summary": "Retrieve a Linked User",
         "parameters": [
           {
-            "name": "id",
+            "name": "originId",
             "required": true,
             "in": "query",
             "schema": {

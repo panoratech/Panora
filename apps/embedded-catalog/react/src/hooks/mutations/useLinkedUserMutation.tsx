@@ -1,5 +1,6 @@
 import config from '@/helpers/config';
 import { useMutation } from '@tanstack/react-query';
+
 interface ICreateTargetFieldDto {
     linked_user_origin_id: string;
     alias: string;
@@ -31,8 +32,6 @@ const useLinkedUserMutation = () => {
         },
         onSuccess: () => {
             console.log('Linked user added successfully!');
-        },
-        onSettled: () => {
         },
     });
 };

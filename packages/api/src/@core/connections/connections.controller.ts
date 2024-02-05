@@ -22,7 +22,7 @@ export class ConnectionsController {
 
   @ApiOperation({
     operationId: 'handleOAuthCallback',
-    summary: 'Capture oAuth Callback',
+    summary: 'Capture oAuth callback',
   })
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiQuery({ name: 'code', required: true, type: String })

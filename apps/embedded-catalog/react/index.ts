@@ -1,1 +1,0 @@
-export { PanoraIntegrationCard } from './src/components/PanoraIntegrationCard'

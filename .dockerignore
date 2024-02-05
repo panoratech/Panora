@@ -4,8 +4,8 @@ node_modules/
 apps/webapp/node_modules
 apps/webapp/dist
 
-apps/frontend-snippet/node_modules
-apps/frontend-snippet/dist
+apps/magic-link/node_modules
+apps/magic-link/dist
 
 packages/api/node_modules
 packages/api/dist

@@ -12,6 +12,7 @@ import { Action, NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { ServiceConnectionRegistry } from '../registry.service';
 
 const ZOHOLocations = {
   us: 'https://accounts.zoho.com',
@@ -27,8 +28,10 @@ export class ZohoConnectionService implements ICrmConnectionService {
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
+    private registry: ServiceConnectionRegistry,
   ) {
     this.logger.setContext(ZohoConnectionService.name);
+    this.registry.registerService('zoho', this);
   }
   async handleCallback(opts: CallbackParams) {
     try {

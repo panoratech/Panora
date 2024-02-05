@@ -12,6 +12,7 @@ import { Action, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { ServiceConnectionRegistry } from '../registry.service';
 
 @Injectable()
 export class HubspotConnectionService implements ICrmConnectionService {
@@ -20,8 +21,10 @@ export class HubspotConnectionService implements ICrmConnectionService {
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
+    private registry: ServiceConnectionRegistry,
   ) {
     this.logger.setContext(HubspotConnectionService.name);
+    this.registry.registerService('hubspot', this);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -37,13 +40,12 @@ export class HubspotConnectionService implements ICrmConnectionService {
         },
       });
       if (isNotUnique) return;
-
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: this.env.getHubspotAuth().CLIENT_ID,
-        client_secret: this.env.getHubspotAuth().CLIENT_SECRET,
+        client_id: 'ba591170-a7c7-4fca-8086-1bd178c6b14d', //this.env.getHubspotAuth().CLIENT_ID,
+        client_secret: '5553551a-2e5d-49da-a933-35a3d9d9e035', //this.env.getHubspotAuth().CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
       });

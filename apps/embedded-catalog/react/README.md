@@ -1,30 +1,53 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Embedded Catalog of Providers (React)
 
-Currently, two official plugins are available:
+It is a React component aimed to be used in any of your pages so end-users can connect their 3rd parties in 1-click !
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Installation
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+npm i @panora/embedded-card-react
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+or
+
+```bash
+pnpm i @panora/embedded-card-react
+```
+
+or
+
+```bash
+yarn add @panora/embedded-card-react
+```
+
+## Import the component
+
+```bash
+# Import the css file
+import "@panora/embedded-card-react/dist/index.css";
+
+import PanoraProviderCard from "@panora/embedded-card-react";
+```
+
+## Use the component
+
+```bash
+    <PanoraProviderCard 
+    name={"hubspot"} # name of the provider  
+    projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
+    returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
+    linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
+    />
+```
+
+```ts
+These are the types needed for the component.
+
+interface ProviderCardProp {
+  name: string;
+  projectId: string;
+  returnUrl: string;
+  linkedUserIdOrRemoteUserInfo: string;
+}
+```

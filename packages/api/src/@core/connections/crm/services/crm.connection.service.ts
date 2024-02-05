@@ -58,7 +58,7 @@ export class CrmConnectionsService {
         location: zohoLocation || null,
       };
       const data: Connection = await service.handleCallback(callbackOpts);
-
+      this.logger.log('data is ' + data);
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
