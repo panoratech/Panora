@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sheet"
 import { MenuIcon } from "lucide-react"
 import { useState } from "react"
+import { ThemeSwitcher } from "@/components/theme-switcher"
 
 
 export function SmallNav({ 
@@ -36,12 +37,13 @@ export function SmallNav({
           <Button variant="outline" onClick={()=> setOpen(true)}><MenuIcon className="h-6 w-6" /></Button>
         </SheetTrigger>
         <SheetContent side={"left"} className="p-0  w-[200px]">
-          <SheetHeader>
+          <SheetHeader className="flex items-center">
             <SheetTitle className="mx-4 my-4">
               <div className="flex flex-row items-center">
                 <img src="logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span>
               </div>
             </SheetTitle>
+            <ThemeSwitcher />
           </SheetHeader>
           <nav
               className={`flex flex-col items-start mt-6`}
