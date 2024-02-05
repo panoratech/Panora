@@ -77,6 +77,8 @@ Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start addin
 
 This guide is intended for people willing to contribute to Panora.
 You can follow this guide to set up a Panora development environment on your machine.
-You can contribute by following our [guidelines.](https://github.com/panoratech/Panora/blob/main/CONTRIBUTING.md)
+Visit our [guide](https://docs.panora.dev/open-source/contributors#setup-your-environnement) or check our detailed integrations guide [here.](https://github.com/panoratech/Panora/blob/main/INTEGRATIONS.md)
+
+You can also follow our [guidelines.](https://github.com/panoratech/Panora/blob/main/CONTRIBUTING.md)
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=3be49a98-8805-45ca-bd15-99f5321ec235" />
