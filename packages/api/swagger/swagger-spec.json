@@ -163,7 +163,7 @@
     "/connections/oauth/callback": {
       "get": {
         "operationId": "handleOAuthCallback",
-        "summary": "Capture oAuth Callback",
+        "summary": "Capture oAuth callback",
         "parameters": [
           {
             "name": "state",
