@@ -139,7 +139,7 @@ export const columns: ColumnDef<Event>[] = [
       return (
         <div className="flex w-[100px] items-center">
           {row.getValue("integration") ? 
-            <Badge variant={"outline"} className="bg-neutral-950 p-1 pr-2">
+            <Badge variant={"outline"} className="p-1 pr-2">
               <img src={
                 provider == "hubspot" ?
                 `/providers/crm/${provider}.jpg` : 
