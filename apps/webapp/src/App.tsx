@@ -10,10 +10,26 @@ import { RootLayout } from './components/root-layout';
 import ConfigurationPage from './components/configuration';
 import ApiKeysPage from './components/api-keys';
 import DashboardPage from './components/dashboard';
+import useProfileStore from './state/profileStore';
+import { usePostHog } from 'posthog-js/react';
+import { useEffect } from 'react';
 
 const queryClient = new QueryClient();
 
 function App() {
+  const {profile} = useProfileStore();
+  const posthog = usePostHog()
+
+  useEffect(() => {
+    if(profile){
+      posthog?.identify(
+        profile.id_user,
+        { email: profile.email }
+      );
+      posthog?.group('company', profile.id_organization)
+    }
+  }, [posthog, profile])
+  
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>

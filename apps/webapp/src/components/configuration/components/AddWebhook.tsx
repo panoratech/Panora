@@ -38,6 +38,8 @@ import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { usePostHog } from 'posthog-js/react'
+import config from "@/utils/config"
 
 
 const formSchema = z.object({
@@ -56,6 +58,7 @@ const AddWebhook = () => {
       setOpen(false);
     };
     //const [secret, setSecret] = useState('');
+    const posthog = usePostHog()
 
     const {idProject} = useProjectStore();
 
@@ -64,13 +67,13 @@ const AddWebhook = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-          description: "",
-          url: "",
-          event: scopes[0]
+            description: "",
+            url: "",
+            event: scopes[0]
         },
-      })
+    })
     
-      function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)
         mutate({ 
             url: values.url,
@@ -79,7 +82,11 @@ const AddWebhook = () => {
             scope: [values.event],
         });
         handleClose();  
-      }
+        posthog?.capture("webhook_created", {
+            id_project: idProject,
+            mode: config.DISTRIBUTION
+        })
+    }
   
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -89,6 +96,12 @@ const AddWebhook = () => {
             role="combobox"
             aria-expanded={open}
             className={cn("w-[160px] justify-between")}
+            onClick={ () => {
+                posthog?.capture("add_webhook_button_clicked", {
+                    id_project: idProject,
+                    mode: config.DISTRIBUTION
+                })
+            }}
           >
             <PlusCircledIcon className=" h-5 w-5" />
             Add Webhook

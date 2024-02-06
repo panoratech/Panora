@@ -39,6 +39,8 @@ import useMagicLinkMutation from "@/hooks/mutations/useMagicLinkMutation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { usePostHog } from 'posthog-js/react'
+import config from "@/utils/config"
 
 const formSchema = z.object({
   linkedUserIdentifier: z.string().min(2, {
@@ -67,6 +69,8 @@ const AddConnectionButton = ({
     setShowNewLinkedUserDialog(prevState => ({ ...prevState, open }));
   };
 
+  const posthog = usePostHog()
+
   const { mutate, isError, error } = useMagicLinkMutation();
 
   const {nameOrg} = useOrganisationStore();
@@ -92,6 +96,11 @@ const AddConnectionButton = ({
     if(isError) {
       console.log(error);
     }
+    
+    posthog?.capture("magic_link_created", {
+      id_project: idProject,
+      mode: config.DISTRIBUTION
+    })
     
     setIsGenerated(true);
   }
@@ -120,8 +129,12 @@ const AddConnectionButton = ({
                     onSelect={() => {
                       setOpen(false)
                       setShowNewLinkedUserDialog({
-                          open: true,
-                          import: false
+                        open: true,
+                        import: false
+                      })
+                      posthog?.capture("create_magic_link_button_clicked", {
+                        id_project: idProject,
+                        mode: config.DISTRIBUTION
                       })
                     }}
                   >
@@ -136,6 +149,10 @@ const AddConnectionButton = ({
                       setShowNewLinkedUserDialog({
                         open: true,
                         import: true
+                      })
+                      posthog?.capture("create_batch_magic_link_button_clicked", {
+                        id_project: idProject,
+                        mode: config.DISTRIBUTION
                       })
                     }}
                   >

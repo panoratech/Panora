@@ -20,6 +20,8 @@ import useProfileStore from "@/state/profileStore";
 import { useState } from "react";
 import { LoadingSpinner } from "../connections/components/LoadingSpinner";
 import { cn } from "@/lib/utils";
+import { usePostHog } from 'posthog-js/react'
+import config from "@/utils/config";
 
 export default function ApiKeysPage() {
   const [keyName, setKeyName] = useState('');
@@ -29,7 +31,8 @@ export default function ApiKeysPage() {
 
   const {idProject} = useProjectStore();
   const {profile} = useProfileStore();
-  
+
+  const posthog = usePostHog()
 
   if(error){
     console.log("error apiKeys..");
@@ -42,6 +45,10 @@ export default function ApiKeysPage() {
       projectId: idProject,
       keyName: keyName
     });
+    posthog?.capture('api_key_created', {
+      id_project: idProject,
+      mode: config.DISTRIBUTION
+    })
   };
 
   const tsApiKeys = apiKeys?.map((key) => ({
@@ -65,8 +72,13 @@ export default function ApiKeysPage() {
             <Button
               variant="outline"
               role="combobox"
-              aria-label="Select a team"
+              aria-label="Select an api key"
               className={cn("w-[180px] justify-between")}
+              onClick={() => {
+                posthog?.capture("add_new_api_key_button_clicked", {
+                  id_project: idProject,
+                  mode: config.DISTRIBUTION
+              })}}
             >
               <PlusCircledIcon className="mr-2 h-5 w-5" />
               Create New Key

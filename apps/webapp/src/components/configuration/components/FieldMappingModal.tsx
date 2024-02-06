@@ -42,6 +42,9 @@ import useLinkedUsers from "@/hooks/useLinkedUsers"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { usePostHog } from 'posthog-js/react'
+import config from "@/utils/config"
+
 
 const defineFormSchema = z.object({
   standardModel: z.string().min(2, {
@@ -107,6 +110,8 @@ export function FModal({ onClose }: {onClose: () => void}) {
   const { data: linkedUsers } = useLinkedUsers();
   const { data: sourceCustomFields, error, isLoading } = useProviderProperties(linkedUserId,sourceProvider);
   
+  const posthog = usePostHog()
+
   useEffect(() => {
     if (sourceCustomFields && sourceCustomFields.data.length > 0  && !isLoading && !error) {
       console.log("inside custom fields properties ");
@@ -123,6 +128,10 @@ export function FModal({ onClose }: {onClose: () => void}) {
       description: values.fieldDescription,
       data_type: values.fieldType,
     });
+    posthog?.capture("field_defined", {
+      id_project: idProject,
+      mode: config.DISTRIBUTION
+    })
     onClose();
   }
 
@@ -134,6 +143,10 @@ export function FModal({ onClose }: {onClose: () => void}) {
       source_provider: values.sourceProvider,
       linked_user_id: values.linkedUserId,
     });
+    posthog?.capture("field_mapped", {
+      id_project: idProject,
+      mode: config.DISTRIBUTION
+    })
     onClose();
   }
 
@@ -145,124 +158,124 @@ export function FModal({ onClose }: {onClose: () => void}) {
       </TabsList>
       <TabsContent value="define">
         <Card>
-        <Form {...defineForm}>
-          <form onSubmit={defineForm.handleSubmit(onDefineSubmit)}>
-            <CardHeader>
-              <CardTitle>Define Panora Field</CardTitle>
-              <CardDescription>
-                Define a Panora custom field to extend a unified model. Once done, you can map it to an existing field in your end-user's software.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">
-              <FormField
-                    control={defineForm.control}
-                    name="standardModel"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Standard Object</FormLabel>
-                        <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value} >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select an object" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                            {standardOjects && standardOjects
-                                .map(sObject => (
-                                  <SelectItem key={sObject} value={sObject}>{sObject}</SelectItem>
-                                ))
-                            }
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        </FormControl>
-                        <FormDescription>
-                          This is the common unified model (Contact, Company, Ticket...)
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                />
-              </div>
-              <div className="space-y-1">
+          <Form {...defineForm}>
+            <form onSubmit={defineForm.handleSubmit(onDefineSubmit)}>
+              <CardHeader>
+                <CardTitle>Define Panora Field</CardTitle>
+                <CardDescription>
+                  Define a Panora custom field to extend a unified model. Once done, you can map it to an existing field in your end-user's software.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="space-y-1">
                 <FormField
-                    control={defineForm.control}
-                    name="fieldName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="favorite_color" {...field} 
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          This will be the name of the field on Panora's side.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                />
-              </div>
-              <div className="space-y-1">
-                <FormField
-                    control={defineForm.control}
-                    name="fieldDescription"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Short Description</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="My customer's favorite color" {...field} 
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          A quick description of the field to remind you its context.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                />
-              </div>
-              <div className="space-y-1">
-                <FormField
-                    control={defineForm.control}
-                    name="fieldType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Field Type</FormLabel>
-                        <FormControl>
-                        <Select
-                          onValueChange={field.onChange} defaultValue={field.value}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select a type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="string">string</SelectItem>
-                              <SelectItem value="int">int</SelectItem>
-                              <SelectItem value="string[]">string[]</SelectItem>
-                              <SelectItem value="int[]">int[]</SelectItem>
-                              <SelectItem value="date">Date</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        </FormControl>
-                        <FormDescription>
-                          This is the type of the field.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                      control={defineForm.control}
+                      name="standardModel"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Standard Object</FormLabel>
+                          <FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value} >
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Select an object" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                              {standardOjects && standardOjects
+                                  .map(sObject => (
+                                    <SelectItem key={sObject} value={sObject}>{sObject}</SelectItem>
+                                  ))
+                              }
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          </FormControl>
+                          <FormDescription>
+                            This is the common unified model (Contact, Company, Ticket...)
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                   />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline">Define Field</Button>
-            </CardFooter>
-          </form>
+                </div>
+                <div className="space-y-1">
+                  <FormField
+                      control={defineForm.control}
+                      name="fieldName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="favorite_color" {...field} 
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            This will be the name of the field on Panora's side.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <FormField
+                      control={defineForm.control}
+                      name="fieldDescription"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Short Description</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="My customer's favorite color" {...field} 
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            A quick description of the field to remind you its context.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <FormField
+                      control={defineForm.control}
+                      name="fieldType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Field Type</FormLabel>
+                          <FormControl>
+                          <Select
+                            onValueChange={field.onChange} defaultValue={field.value}
+                          >
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Select a type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="string">string</SelectItem>
+                                <SelectItem value="int">int</SelectItem>
+                                <SelectItem value="string[]">string[]</SelectItem>
+                                <SelectItem value="int[]">int[]</SelectItem>
+                                <SelectItem value="date">Date</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          </FormControl>
+                          <FormDescription>
+                            This is the type of the field.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline">Define Field</Button>
+              </CardFooter>
+            </form>
           </Form>
         </Card> 
       </TabsContent>

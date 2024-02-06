@@ -11,12 +11,11 @@ const options = {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    {config.DISTRIBUTION === "managed" ? <PostHogProvider 
+    <PostHogProvider 
       apiKey={config.POSTHOG_KEY}
       options={options}
     >
       <App />
-    </PostHogProvider> : <App />
-    }
+    </PostHogProvider>
   </React.StrictMode>,
 )

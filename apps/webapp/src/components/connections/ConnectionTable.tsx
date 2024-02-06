@@ -18,13 +18,18 @@ import config from "@/utils/config";
 import useMagicLinkStore from "@/state/magicLinkStore";
 import { LoadingSpinner } from "./components/LoadingSpinner";
 import useOrganisationStore from "@/state/organisationStore";
+import { usePostHog } from 'posthog-js/react'
+import useProjectStore from "@/state/projectStore";
 
 export default function ConnectionTable() {
   const { data: connections, isLoading, error } = useConnections();
   const [isGenerated, setIsGenerated] = useState(false);
+
+  const posthog = usePostHog()
   
   const {uniqueLink} = useMagicLinkStore();
   const {nameOrg} = useOrganisationStore();
+  const {idProject} = useProjectStore();
 
   if (isLoading) {
     return <LoadingSpinner className=""/>
@@ -81,7 +86,12 @@ export default function ConnectionTable() {
         </div>
         {isGenerated ? <Dialog open={isGenerated} onOpenChange={setIsGenerated}>
           <DialogTrigger asChild>
-            <Button variant="outline" className="">
+            <Button variant="outline" className="" onClick={() => {
+              posthog?.capture("add_new_connection_button_clicked", {
+                id_project: idProject,
+                mode: config.DISTRIBUTION
+              })}}
+            >
               <PlusCircledIcon className="mr-2 h-4 w-4" />
               Add New Connection
             </Button>

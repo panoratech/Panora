@@ -32,6 +32,9 @@ import AddWebhook from "./components/AddWebhook";
 import { cn } from "@/lib/utils";
 import { WebhooksPage } from "./components/WebhooksPage";
 import useWebhooks from "@/hooks/useWebhooks";
+import { usePostHog } from 'posthog-js/react'
+import config from "@/utils/config";
+import useProjectStore from "@/state/projectStore";
 
 export default function ConfigurationPage() {
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
@@ -42,6 +45,10 @@ export default function ConfigurationPage() {
   const handleClose = () => {
     setOpen(false);
   };
+  const {idProject} = useProjectStore();
+
+
+  const posthog = usePostHog()
 
 
   if(error){
@@ -118,6 +125,11 @@ export default function ConfigurationPage() {
                     role="combobox"
                     aria-expanded={open}
                     className={cn("w-[200px] justify-between")}
+                    onClick={() => {
+                      posthog?.capture("add_field_mappings_button_clicked", {
+                        id_project: idProject,
+                        mode: config.DISTRIBUTION
+                    })}}
                   >
                     <PlusCircledIcon className="mr-2 h-5 w-5" />
                     Add Field Mappings
