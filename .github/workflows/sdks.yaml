@@ -27,5 +27,7 @@ jobs:
         run: npm install -g liblab
       - name: Start Build
         run: liblab build --yes
+        working-directory: packages/api
       - name: Create PRs to GitHub repos
         run: liblab pr
+        working-directory: packages/api
