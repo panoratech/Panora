@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "packages/api/swagger/swagger-spec.json"
+  # Add any other triggers you want here, such as a push to the spec file
   workflow_call:
   workflow_dispatch:
 
@@ -14,33 +15,17 @@ jobs:
     env:
       LIBLAB_TOKEN: ${{ secrets.LIBLAB_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.LIBLAB_GITHUB_TOKEN }}
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
+    environment: development
     steps:
-      - name: Check out code
+      - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.32.2
-
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-
+          node-version: "18" # Specify the node version you want to use
       - name: Install liblab
-        run: pnpm install -g liblab
-
+        run: npm install -g liblab
       - name: Start Build
         run: liblab build --yes
-        working-directory: packages/api
-
       - name: Create PRs to GitHub repos
         run: liblab pr
-        working-directory: packages/api
