@@ -97,7 +97,7 @@ services:
   
   magic-link-frontend:
     build:
-      dockerfile: ./apps/frontend-snippet/Dockerfile.dev
+      dockerfile: ./apps/magic-link/Dockerfile.dev
       context: ./
     restart:
       always
