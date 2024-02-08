@@ -19,4 +19,4 @@ jobs:
       - name: Install Konfig CLI
         run: npm install -g konfig-cli@$CLI_VERSION
       - name: Push OpenAPI Spec
-        run: konfig push -s packages/api/swagger/swagger-spec.json -o panoratech -r my-sdks
+        run: konfig push -s ./packages/api/swagger/swagger-spec.json -o panoratech -r my-sdks
