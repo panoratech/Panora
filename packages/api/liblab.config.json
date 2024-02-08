@@ -1,6 +1,6 @@
 {
   "sdkName": "PanoraSDK",
-  "baseUrl": "https://api-demo.panora.dev",
+  "baseUrl": "https://api-dev.panora.dev/",
   "specFilePath": "https://raw.githubusercontent.com/panoratech/Panora/main/packages/api/swagger/swagger-spec.json",
   "languages": [
     "typescript"
