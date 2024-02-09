@@ -3,7 +3,8 @@
   "paths": {
     "/": {
       "get": {
-        "operationId": "AppController_getHello",
+        "operationId": "getHello",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -21,7 +22,8 @@
     },
     "/health": {
       "get": {
-        "operationId": "AppController_health",
+        "operationId": "getHealth",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -39,7 +41,8 @@
     },
     "/protected": {
       "get": {
-        "operationId": "AppController_getHello2",
+        "operationId": "getHelloProtected",
+        "summary": "",
         "parameters": [],
         "responses": {
           "200": {
