@@ -1,6 +1,6 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from "sonner"
 
 interface IApiKeyDto {
     projectId: string;
@@ -44,13 +44,31 @@ const useApiKeyMutation = () => {
     return useMutation({
         mutationFn: addApiKey,
         onMutate: () => {
-            toast('Adding api key...');
+            toast("Api key is being generated !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onError: (error) => {
-            toast.error(`Error: ${error.message}`);
+            toast("Api key generation failed !", {
+                description: error.message,
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSuccess: () => {
-            toast.success('Api Key added successfully!');
+            toast("Api key has been generated !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSettled: () => {
         },

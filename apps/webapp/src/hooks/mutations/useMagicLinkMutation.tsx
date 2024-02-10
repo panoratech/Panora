@@ -1,7 +1,7 @@
 import useMagicLinkStore from '@/state/magicLinkStore';
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from "sonner"
 
 interface ILinkDto {
     email: string;
@@ -31,14 +31,32 @@ const useMagicLinkMutation = () => {
     return useMutation({
         mutationFn: generateLink,
         onMutate: () => {
-            toast('Generating link...');
+            toast("Magic link is being generated !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onError: (error) => {
-            toast.error(`Error: ${error.message}`);
+            toast("Magic link generation failed !", {
+                description: error.message,
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSuccess: (data) => {
             setUniqueLink(data.id_invite_link)
-            toast.success('Magic Link Generated successfully!');
+            toast("Magic link has been generated!", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSettled: () => {
         },

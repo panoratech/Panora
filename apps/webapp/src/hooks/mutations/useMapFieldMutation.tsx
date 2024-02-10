@@ -1,6 +1,6 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from "sonner"
 interface IMapTargetFieldDto {
   attributeId: string;
   source_custom_field_id: string;
@@ -27,13 +27,32 @@ const useMapFieldMutation = () => {
     return useMutation({
         mutationFn: mapField,
         onMutate: () => {
-            toast('Mapping field...');
+            toast("Field is being mapped !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onError: (error) => {
-            toast.error(`Error: ${error.message}`);
+            toast("Field mapping failed !", {
+                description: error.message,
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
+            
         },
         onSuccess: () => {
-            toast.success('Field mapping mapped successfully!');
+            toast("Field has been mapped !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSettled: () => {
         },

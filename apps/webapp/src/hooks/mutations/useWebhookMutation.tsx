@@ -1,6 +1,6 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from "sonner"
 
 interface IWebhookDto {
     url: string;
@@ -27,13 +27,31 @@ const useWebhookMutation = () => {
     return useMutation({
         mutationFn: addWebhookEndpoint,
         onMutate: () => {
-            toast('Adding webhook endpoint...');
+            toast("Webhook endpoint has been created !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onError: (error) => {
-            toast.error(`Error: ${error.message}`);
+            toast("Webhook endpoint creation has failed !", {
+                description: error.message,
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSuccess: () => {
-            toast.success('Webhook added successfully!');
+            toast("Webhook endpoint has been created! ", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSettled: () => {
         },

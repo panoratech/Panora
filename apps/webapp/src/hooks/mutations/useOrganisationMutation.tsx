@@ -1,6 +1,6 @@
 import config from '@/utils/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from "sonner"
 
 interface IOrgDto {
   name: string;
@@ -26,17 +26,35 @@ const useOrganisationMutation = () => {
     return useMutation({
         mutationFn: addOrg,
         onMutate: () => {
-            toast('Adding organisation...');
+            toast("Organisation is being created !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onError: (error) => {
-            toast.error(`Error: ${error.message}`);
+            toast("Organisation creation failed !", {
+                description: error.message,
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['organisations'],
                 refetchType: 'active',
             })
-            toast.success('Organisation added successfully!');
+            toast("Organisation has been created !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSettled: () => {
         },

@@ -1,6 +1,6 @@
 import config from '@/utils/config';
 import { useMutation,useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from "sonner"
 
 interface IProDto {
     name: string;
@@ -27,17 +27,35 @@ const useProjectMutation = () => {
     return useMutation({
         mutationFn: addProject,
         onMutate: () => {
-            toast('Adding project...');
+            toast("Project is being created !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onError: (error) => {
-            toast.error(`Error: ${error.message}`);
+            toast("Project creation has failed !", {
+                description: error.message,
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['projects'],
                 refetchType: 'active',
             })
-            toast.success('Project added successfully!');
+            toast("Project has been created !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSettled: () => {
         },

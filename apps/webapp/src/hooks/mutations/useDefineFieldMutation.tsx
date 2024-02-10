@@ -1,6 +1,6 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from "sonner"
 
 interface IDefineTargetFieldDto{
     object_type_owner: string;
@@ -28,13 +28,31 @@ const useDefineFieldMutation = () => {
     return useMutation({
         mutationFn: defineField,
         onMutate: () => {
-            toast('Defining field...');
+            toast("Field mapping is being defined !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onError: (error) => {
-            toast.error(`Error: ${error.message}`);
+            toast("Field mapping definition failed !", {
+                description: error.message,
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSuccess: () => {
-            toast.success('Field mapping defined successfully!');
+            toast("Field mapping has been defined !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSettled: () => {
         },

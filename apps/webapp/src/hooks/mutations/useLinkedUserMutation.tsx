@@ -1,6 +1,6 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from "sonner"
 interface ICreateTargetFieldDto {
     linked_user_origin_id: string;
     alias: string;
@@ -25,13 +25,31 @@ const useLinkedUserMutation = () => {
     return useMutation({
         mutationFn: addLinkedUser,
         onMutate: () => {
-            toast('Adding linked user...');
+            toast("Linked user is being created !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onError: (error) => {
-            toast.error(`Error: ${error.message}`);
+            toast("The creation of linked user has failed !", {
+                description: error.message,
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSuccess: () => {
-            toast.success('Linked user added successfully!');
+            toast("New linked user has been created !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSettled: () => {
         },

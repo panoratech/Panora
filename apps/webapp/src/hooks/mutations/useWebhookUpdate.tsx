@@ -1,6 +1,6 @@
 import config from '@/utils/config';
 import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from "sonner"
 
 interface IWebhookUpdateDto {
     id: string;
@@ -25,13 +25,31 @@ const useWebhookStatusMutation = () => {
     return useMutation({
         mutationFn: updateStatusWebhookEndpoint,
         onMutate: () => {
-            toast('Updating webhook endpoint...');
+            toast("Webhook endpoint is being updated !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onError: (error) => {
-            toast.error(`Error: ${error.message}`);
+            toast("Webhook endpoint update has failed !", {
+                description: error.message,
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSuccess: () => {
-            toast.success('Webhook updated successfully!');
+            toast("Webhook endpoint has been updated !", {
+                description: "",
+                action: {
+                  label: "Close",
+                  onClick: () => console.log("Close"),
+                },
+            })
         },
         onSettled: () => {
         },
