@@ -1,5 +1,11 @@
 # @panora/shared
 
+## 4.0.0
+
+### Major Changes
+
+- 3f5adb5: updated constants
+
 ## 3.0.0
 
 ### Major Changes
