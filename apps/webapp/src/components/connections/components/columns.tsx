@@ -7,7 +7,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 import { Connection } from "../data/schema"
 import { DataTableColumnHeader } from "../../shared/data-table-column-header"
-import { DataTableRowActions } from "../../shared/data-table-row-actions"
 
 function truncateMiddle(str: string, maxLength: number) {
   if (str.length <= maxLength) {
@@ -54,7 +53,7 @@ export const columns: ColumnDef<Connection>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "app",
+    accessorKey: "app", 
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="App" />
     ),
@@ -62,7 +61,7 @@ export const columns: ColumnDef<Connection>[] = [
       const provider = (row.getValue("app") as string).toLowerCase();
       return (
         <div className="flex space-x-2">
-          <Badge variant={"outline"} className="bg-neutral-950 p-1 pr-2">
+          <Badge variant={"outline"} className="p-1 pr-2">
               <img src={
                 provider == "hubspot" ?
                 `/providers/crm/${provider}.jpg` : 
@@ -158,9 +157,5 @@ export const columns: ColumnDef<Connection>[] = [
         </div>
       )
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
-  },
+  }
 ]

@@ -108,7 +108,7 @@ export class TicketService {
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
           linkedUserId,
-          'ticket',
+          'ticketing.ticket',
         );
       //desunify the data according to the target obj wanted
       const desunifiedObject = await desunify<UnifiedTicketInput>({

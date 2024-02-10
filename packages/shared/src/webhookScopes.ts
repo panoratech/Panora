@@ -1,1 +1,30 @@
-export const scopes = ["crm.contact.created", "crm.contact.pulled", "connection.created"]
+export const scopes = [
+    "crm.contact.created", 
+    "crm.contact.pulled", 
+    "crm.company.created", 
+    "crm.company.pulled", 
+    "crm.deal.created", 
+    "crm.deal.pulled", 
+    "crm.engagement.created", 
+    "crm.engagement.pulled", 
+    "crm.note.created", 
+    "crm.note.pulled", 
+    "crm.stage.pulled", 
+    "crm.task.pulled", 
+    "crm.task.created", 
+    "crm.user.pulled", 
+
+    "ticketing.ticket.created", 
+    "ticketing.ticket.pulled", 
+    "ticketing.comment.created", 
+    "ticketing.comment.pulled", 
+    "ticketing.attachment.created", 
+    "ticketing.attachment.pulled", 
+    "ticketing.account.pulled", 
+    "ticketing.contact.pulled", 
+    "ticketing.tag.pulled", 
+    "ticketing.team.pulled", 
+    "ticketing.user.pulled", 
+
+    "connection.created"
+]

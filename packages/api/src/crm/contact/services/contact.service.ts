@@ -77,7 +77,7 @@ export class ContactService {
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
           linkedUserId,
-          'contact',
+          'crm.contact',
         );
       //desunify the data according to the target obj wanted
       const desunifiedObject = await desunify<UnifiedContactInput>({

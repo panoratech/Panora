@@ -121,7 +121,7 @@ export class SyncService implements OnModuleInit {
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
           linkedUserId,
-          'tag',
+          'ticketing.tag',
         );
 
       const service: ITagService =

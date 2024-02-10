@@ -24,15 +24,6 @@ const useWebhookStatusMutation = () => {
     };
     return useMutation({
         mutationFn: updateStatusWebhookEndpoint,
-        onMutate: () => {
-            toast("Webhook endpoint is being updated !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
         onError: (error) => {
             toast("Webhook endpoint update has failed !", {
                 description: error.message,
@@ -41,17 +32,6 @@ const useWebhookStatusMutation = () => {
                   onClick: () => console.log("Close"),
                 },
             })
-        },
-        onSuccess: () => {
-            toast("Webhook endpoint has been updated !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
         },
     });
 };

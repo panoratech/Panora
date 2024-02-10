@@ -1,5 +1,5 @@
 import config from '@/utils/config';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 
 interface IDefineTargetFieldDto{
@@ -10,6 +10,8 @@ interface IDefineTargetFieldDto{
 }
 
 const useDefineFieldMutation = () => {
+    const queryClient = useQueryClient()
+
     const defineField = async (data: IDefineTargetFieldDto) => {
         const response = await fetch(`${config.API_URL}/field-mapping/define`, {
             method: 'POST',
@@ -45,7 +47,10 @@ const useDefineFieldMutation = () => {
                 },
             })
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            queryClient.setQueryData<IDefineTargetFieldDto[]>(['mappings'], (oldQueryData = []) => {
+                return [...oldQueryData, data];
+            });
             toast("Field mapping has been defined !", {
                 description: "",
                 action: {

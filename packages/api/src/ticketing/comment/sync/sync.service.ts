@@ -121,7 +121,7 @@ export class SyncService implements OnModuleInit {
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
           linkedUserId,
-          'comment',
+          'ticketing.comment',
         );
       const remoteProperties: string[] = customFieldMappings.map(
         (mapping) => mapping.remote_id,

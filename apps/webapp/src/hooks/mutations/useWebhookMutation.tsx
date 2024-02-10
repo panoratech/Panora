@@ -1,5 +1,5 @@
 import config from '@/utils/config';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 
 interface IWebhookDto {
@@ -9,6 +9,7 @@ interface IWebhookDto {
     scope: string[];
 }
 const useWebhookMutation = () => {
+    const queryClient = useQueryClient();
     const addWebhookEndpoint = async (data: IWebhookDto) => {
         const response = await fetch(`${config.API_URL}/webhook`, {
             method: 'POST',
@@ -44,7 +45,10 @@ const useWebhookMutation = () => {
                 },
             })
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            queryClient.setQueryData<IWebhookDto[]>(['webhooks'], (oldQueryData = []) => {
+                return [...oldQueryData, data];
+            });            
             toast("Webhook endpoint has been created! ", {
                 description: "",
                 action: {

@@ -17,7 +17,20 @@ export function WebhooksPage({
         mutate({ 
             id: webhook_id,
             active: status,
-        });
+        }, {
+          onSuccess: () => {
+              // Find the index of the webhook to update
+              const index = webhooks!.findIndex(webhook => webhook.id_webhook_endpoint === webhook_id);
+              if (index !== -1) {
+                  // Create a new array with all previous webhooks
+                  const updatedWebhooks = [...webhooks!];
+                  // Update the specific webhook's active status
+                  updatedWebhooks[index].active = status;
+                  // Set the updated webhooks array to state
+                  setWebhooks(updatedWebhooks);
+              }
+          }
+      });
     }
 
     useEffect(() => {
@@ -65,7 +78,8 @@ export function WebhooksPage({
                 id="necessary" 
                 checked={webhook.active}
                 onCheckedChange={() => disableWebhook(webhook.id_webhook_endpoint, !webhook.active)}
-            />}
+            />
+          }
         </div>
       </div>
       )

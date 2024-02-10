@@ -1,13 +1,15 @@
 import config from '@/utils/config';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
-interface ICreateTargetFieldDto {
+interface ILinkedUserDto {
     linked_user_origin_id: string;
     alias: string;
     id_project: string;
 }
 const useLinkedUserMutation = () => {
-    const addLinkedUser = async (linkedUserData: ICreateTargetFieldDto) => {
+    const queryClient = useQueryClient();
+    
+    const addLinkedUser = async (linkedUserData: ILinkedUserDto) => {
         const response = await fetch(`${config.API_URL}/linked-users/create`, {
             method: 'POST',
             body: JSON.stringify(linkedUserData),
@@ -42,7 +44,10 @@ const useLinkedUserMutation = () => {
                 },
             })
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            queryClient.setQueryData<ILinkedUserDto[]>(['linked-users'], (oldQueryData = []) => {
+                return [...oldQueryData, data];
+            });
             toast("New linked user has been created !", {
                 description: "",
                 action: {

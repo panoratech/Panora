@@ -36,7 +36,7 @@ import useMapFieldMutation from "@/hooks/mutations/useMapFieldMutation"
 import { useEffect, useState } from "react"
 import useFieldMappings from "@/hooks/useFieldMappings"
 import useProviderProperties from "@/hooks/useProviderProperties"
-import { standardOjects } from "@panora/shared"
+import { standardObjects } from "@panora/shared"
 import useProjectStore from "@/state/projectStore"
 import useLinkedUsers from "@/hooks/useLinkedUsers"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -181,8 +181,8 @@ export function FModal({ onClose }: {onClose: () => void}) {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                              {standardOjects && standardOjects
-                                  .map(sObject => (
+                              {standardObjects && standardObjects
+                                  .map((sObject: string) => (
                                     <SelectItem key={sObject} value={sObject}>{sObject}</SelectItem>
                                   ))
                               }

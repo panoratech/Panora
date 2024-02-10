@@ -1,5 +1,5 @@
 import config from '@/utils/config';
-import { useMutation,useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 
 interface IProDto {
@@ -8,7 +8,8 @@ interface IProDto {
 }
 
 const useProjectMutation = () => {
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
+    
     const addProject = async (data: IProDto) => {
         const response = await fetch(`${config.API_URL}/projects/create`, {
             method: 'POST',
@@ -44,11 +45,14 @@ const useProjectMutation = () => {
                 },
             })
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({
                 queryKey: ['projects'],
                 refetchType: 'active',
             })
+            queryClient.setQueryData<IProDto[]>(['projects'], (oldQueryData = []) => {
+                return [...oldQueryData, data];
+            });
             toast("Project has been created !", {
                 description: "",
                 action: {

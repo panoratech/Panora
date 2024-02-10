@@ -9,10 +9,11 @@ import { DataTableColumnHeader } from "../../shared/data-table-column-header"
 import { DataTableRowActions } from "../../shared/data-table-row-actions"
 
 function insertDots(originalString: string): string {
+  if(!originalString) return "";
   if (originalString.length <= 50) {
     return originalString;
-}
-return originalString.substring(0, 50 - 3) + '...';
+  }
+  return originalString.substring(0, 50 - 3) + '...';
 }
 
 export const columns: ColumnDef<ApiKey>[] = [

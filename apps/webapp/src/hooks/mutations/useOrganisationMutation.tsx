@@ -43,7 +43,10 @@ const useOrganisationMutation = () => {
                 },
             })
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            queryClient.setQueryData<IOrgDto[]>(['organisations'], (oldQueryData = []) => {
+                return [...oldQueryData, data];
+            });
             queryClient.invalidateQueries({
                 queryKey: ['organisations'],
                 refetchType: 'active',

@@ -1,5 +1,5 @@
 import config from '@/utils/config';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 
 interface IApiKeyDto {
@@ -8,9 +8,9 @@ interface IApiKeyDto {
     keyName?: string;
 }
 const useApiKeyMutation = () => {
-    const addApiKey = async (data: IApiKeyDto) => {
-        console.log("user id is " + data.userId )
+    const queryClient = useQueryClient();
 
+    const addApiKey = async (data: IApiKeyDto) => {
         //TODO: in cloud environment this step must be done when user logs in directly inside his dashboard
         // Fetch the token
         const loginResponse = await fetch(`${config.API_URL}/auth/login`, {
@@ -61,7 +61,10 @@ const useApiKeyMutation = () => {
                 },
             })
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            queryClient.setQueryData<IApiKeyDto[]>(['api-keys'], (oldQueryData = []) => {
+                return [...oldQueryData, data];
+            });
             toast("Api key has been generated !", {
                 description: "",
                 action: {
