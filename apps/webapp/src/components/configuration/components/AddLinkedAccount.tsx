@@ -76,6 +76,7 @@ const AddLinkedAccount = () => {
     defaultValues: {
       linkedUserIdentifier: "",
     },
+    
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -90,6 +91,7 @@ const AddLinkedAccount = () => {
       id_project: idProject,
       mode: config.DISTRIBUTION
     })
+    form.reset()
   }
 
 
@@ -161,7 +163,7 @@ const AddLinkedAccount = () => {
             {showNewLinkedUserDialog.import ? "You can upload a sheet of your existing linked users" : "Add a new linked user to your project"}
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
+        <Form {...form} >
         <form onSubmit={form.handleSubmit(onSubmit)}>
         <div>
           <div className="space-y-4 py-2 pb-4">
@@ -199,7 +201,7 @@ const AddLinkedAccount = () => {
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setShowNewLinkedUserDialog({open: false})}>
+          <Button variant="outline" type='reset' onClick={() => {form.reset();setShowNewLinkedUserDialog({open: false})}}>
             Cancel
           </Button>
           <Button variant="outline" type="submit">{showNewLinkedUserDialog.import ? "Import" : "Create"}</Button>
