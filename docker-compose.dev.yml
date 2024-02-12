@@ -101,6 +101,10 @@ services:
       context: ./
     restart:
       always
+      args:
+        VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
+        VITE_ML_FRONTEND_URL: ${VITE_ML_FRONTEND_URL}
+
     ports:
       - 81:5173
     depends_on:
