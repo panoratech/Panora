@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { TailSpin } from  'react-loader-spinner'
 import useOAuth from '@/hooks/useOAuth';
 import { categoriesVerticals, findProviderByName, providersArray } from '@panora/shared';
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
@@ -19,16 +18,7 @@ const LoadingOverlay = ({ providerName }: { providerName: string }) => {
           <h4 className="text-lg font-bold mb-2">Continue in {provider!.name}</h4>
           <p className="text-gray-400 mb-4">Accepting oAuth access to Panora</p>
           <div className='flex justify-center items-center'>
-            <TailSpin
-              height="40"
-              width="40"
-              color="white"
-              ariaLabel="tail-spin-loading"
-              radius="1"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
+            
            </div>
         </div>
       </div>
