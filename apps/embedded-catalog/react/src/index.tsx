@@ -1,7 +1,6 @@
 import "./global.css";
 import useOAuth from '@/hooks/useOAuth';
 import { useEffect, useState } from 'react';
-import { TailSpin } from  'react-loader-spinner'
 import { findProviderVertical, getDescription, providersConfig } from '@panora/shared';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -73,16 +72,7 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId}: Provi
          <>
           <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">Continue in {name} </p>
           <div className='flex justify-center items-center'>
-          <TailSpin
-            height="40"
-            width="70"
-            color="white"
-            ariaLabel="tail-spin-loading"
-            radius="1"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-          />
+          
           </div>
           </>
         }
