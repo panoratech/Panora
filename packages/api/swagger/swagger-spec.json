@@ -1149,7 +1149,7 @@
       },
       "patch": {
         "operationId": "updateDeal",
-        "summary": "Update a Deal",
+        "summary": "Update a deal",
         "parameters": [
           {
             "name": "id",
