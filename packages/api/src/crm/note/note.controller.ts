@@ -6,7 +6,7 @@ import {
   Get,
   Param,
   Headers,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -40,7 +40,7 @@ export class NoteController {
     summary: 'List a batch of Notes',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -55,7 +55,7 @@ export class NoteController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getNotes(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -102,7 +102,7 @@ export class NoteController {
     description: 'Create a note in any supported Crm software',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -119,7 +119,7 @@ export class NoteController {
   @Post()
   async addNote(
     @Body() unifiedNoteData: UnifiedNoteInput,
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -143,7 +143,7 @@ export class NoteController {
     summary: 'Add a batch of Notes',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -160,7 +160,7 @@ export class NoteController {
   @Post('batch')
   async addNotes(
     @Body() unfiedNoteData: UnifiedNoteInput[],
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {

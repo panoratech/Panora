@@ -695,7 +695,7 @@
         "summary": "List a batch of CRM Contacts",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -746,7 +746,7 @@
         "description": "Create a contact in any supported CRM",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -900,7 +900,7 @@
         "summary": "Add a batch of CRM Contacts",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -978,7 +978,7 @@
         "summary": "List a batch of Deals",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1029,7 +1029,7 @@
         "description": "Create a deal in any supported Crm software",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1194,7 +1194,7 @@
         "summary": "Add a batch of Deals",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1272,7 +1272,7 @@
         "summary": "List a batch of Notes",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1323,7 +1323,7 @@
         "description": "Create a note in any supported Crm software",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1448,7 +1448,7 @@
         "summary": "Add a batch of Notes",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1526,7 +1526,7 @@
         "summary": "List a batch of Companies",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1577,7 +1577,7 @@
         "description": "Create a company in any supported Crm software",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1742,7 +1742,7 @@
         "summary": "Add a batch of Companies",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1820,7 +1820,7 @@
         "summary": "List a batch of Engagements",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -1871,7 +1871,7 @@
         "description": "Create a engagement in any supported Crm software",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2036,7 +2036,7 @@
         "summary": "Add a batch of Engagements",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2114,7 +2114,7 @@
         "summary": "List a batch of Stages",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2219,7 +2219,7 @@
         "summary": "List a batch of Tasks",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2270,7 +2270,7 @@
         "description": "Create a task in any supported Crm software",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2435,7 +2435,7 @@
         "summary": "Add a batch of Tasks",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2513,7 +2513,7 @@
         "summary": "List a batch of Users",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2618,7 +2618,7 @@
         "summary": "List a batch of Tickets",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2669,7 +2669,7 @@
         "description": "Create a ticket in any supported Ticketing software",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2823,7 +2823,7 @@
         "summary": "Add a batch of Tickets",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2901,7 +2901,7 @@
         "summary": "List a batch of Comments",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -2952,7 +2952,7 @@
         "description": "Create a comment in any supported Ticketing software",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -3077,7 +3077,7 @@
         "summary": "Add a batch of Comments",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -3155,7 +3155,7 @@
         "summary": "List a batch of Users",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -3260,7 +3260,7 @@
         "summary": "List a batch of Attachments",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -3311,7 +3311,7 @@
         "description": "Create a attachment in any supported Ticketing software",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -3489,7 +3489,7 @@
         "summary": "Add a batch of Attachments",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -3567,7 +3567,7 @@
         "summary": "List a batch of Contacts",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -3672,7 +3672,7 @@
         "summary": "List a batch of Accounts",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -3777,7 +3777,7 @@
         "summary": "List a batch of Tags",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",
@@ -3882,7 +3882,7 @@
         "summary": "List a batch of Teams",
         "parameters": [
           {
-            "name": "connection_token",
+            "name": "x-connection-token",
             "required": true,
             "in": "header",
             "description": "The connection token",

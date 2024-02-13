@@ -7,7 +7,7 @@ import {
   Patch,
   Param,
   Headers,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -44,7 +44,7 @@ export class CompanyController {
     summary: 'List a batch of Companies',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -59,7 +59,7 @@ export class CompanyController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCompanies(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -110,7 +110,7 @@ export class CompanyController {
     description: 'Create a company in any supported Crm software',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -127,7 +127,7 @@ export class CompanyController {
   @Post()
   async addCompany(
     @Body() unifiedCompanyData: UnifiedCompanyInput,
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -151,7 +151,7 @@ export class CompanyController {
     summary: 'Add a batch of Companies',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -168,7 +168,7 @@ export class CompanyController {
   @Post('batch')
   async addCompanies(
     @Body() unfiedCompanyData: UnifiedCompanyInput[],
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {

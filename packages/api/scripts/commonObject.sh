@@ -702,7 +702,7 @@ export class ${ObjectCap}Controller {
     summary: 'List a batch of ${ObjectCap}s',
   })
    @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -718,7 +718,7 @@ export class ${ObjectCap}Controller {
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
   async get${ObjectCap}s(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try{
@@ -770,7 +770,7 @@ export class ${ObjectCap}Controller {
     description: 'Create a ${objectType} in any supported ${VerticalCap} software',
   })
    @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -788,7 +788,7 @@ export class ${ObjectCap}Controller {
   @Post()
   async add${ObjectCap}(
     @Body() unified${ObjectCap}Data: Unified${ObjectCap}Input,
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try{
@@ -812,7 +812,7 @@ export class ${ObjectCap}Controller {
     summary: 'Add a batch of ${ObjectCap}s',
   })
    @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',

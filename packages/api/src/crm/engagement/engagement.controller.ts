@@ -7,7 +7,7 @@ import {
   Patch,
   Param,
   Headers,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
@@ -44,7 +44,7 @@ export class EngagementController {
     summary: 'List a batch of Engagements',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -59,7 +59,7 @@ export class EngagementController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEngagements(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -110,7 +110,7 @@ export class EngagementController {
     description: 'Create a engagement in any supported Crm software',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -127,7 +127,7 @@ export class EngagementController {
   @Post()
   async addEngagement(
     @Body() unifiedEngagementData: UnifiedEngagementInput,
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -151,7 +151,7 @@ export class EngagementController {
     summary: 'Add a batch of Engagements',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -168,7 +168,7 @@ export class EngagementController {
   @Post('batch')
   async addEngagements(
     @Body() unfiedEngagementData: UnifiedEngagementInput[],
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {

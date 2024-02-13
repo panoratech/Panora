@@ -41,7 +41,7 @@ export class TicketController {
     summary: 'List a batch of Tickets',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -57,7 +57,7 @@ export class TicketController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTickets(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -109,7 +109,7 @@ export class TicketController {
     description: 'Create a ticket in any supported Ticketing software',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -127,7 +127,7 @@ export class TicketController {
   @Post()
   async addTicket(
     @Body() unfiedTicketData: UnifiedTicketInput,
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -151,7 +151,7 @@ export class TicketController {
     summary: 'Add a batch of Tickets',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -169,7 +169,7 @@ export class TicketController {
   @Post('batch')
   async addTickets(
     @Body() unfiedTicketData: UnifiedTicketInput[],
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {

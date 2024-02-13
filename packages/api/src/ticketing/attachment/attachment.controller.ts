@@ -43,7 +43,7 @@ export class AttachmentController {
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -59,7 +59,7 @@ export class AttachmentController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getAttachments(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -139,7 +139,7 @@ export class AttachmentController {
     description: 'Create a attachment in any supported Ticketing software',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -157,7 +157,7 @@ export class AttachmentController {
   @Post()
   async addAttachment(
     @Body() unfiedAttachmentData: UnifiedAttachmentInput,
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -181,7 +181,7 @@ export class AttachmentController {
     summary: 'Add a batch of Attachments',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -199,7 +199,7 @@ export class AttachmentController {
   @Post('batch')
   async addAttachments(
     @Body() unfiedAttachmentData: UnifiedAttachmentInput[],
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {

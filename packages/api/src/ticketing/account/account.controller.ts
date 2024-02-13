@@ -37,7 +37,7 @@ export class AccountController {
     summary: 'List a batch of Accounts',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -53,7 +53,7 @@ export class AccountController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getAccounts(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {

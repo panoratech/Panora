@@ -43,7 +43,7 @@ export class CommentController {
     summary: 'List a batch of Comments',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -59,7 +59,7 @@ export class CommentController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getComments(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -111,7 +111,7 @@ export class CommentController {
     description: 'Create a comment in any supported Ticketing software',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -129,7 +129,7 @@ export class CommentController {
   @Post()
   async addComment(
     @Body() unfiedCommentData: UnifiedCommentInput,
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -153,7 +153,7 @@ export class CommentController {
     summary: 'Add a batch of Comments',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -171,7 +171,7 @@ export class CommentController {
   @Post('batch')
   async addComments(
     @Body() unfiedCommentData: UnifiedCommentInput[],
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {

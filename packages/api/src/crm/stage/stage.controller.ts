@@ -1,4 +1,11 @@
-import { Controller, Query, Get, Param, Headers, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Query,
+  Get,
+  Param,
+  Headers,
+  UseGuards,
+} from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import {
@@ -30,7 +37,7 @@ export class StageController {
     summary: 'List a batch of Stages',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -45,7 +52,7 @@ export class StageController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getStages(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {

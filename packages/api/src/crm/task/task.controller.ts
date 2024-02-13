@@ -41,7 +41,7 @@ export class TaskController {
     summary: 'List a batch of Tasks',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -56,7 +56,7 @@ export class TaskController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTasks(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -103,7 +103,7 @@ export class TaskController {
     description: 'Create a task in any supported Crm software',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -120,7 +120,7 @@ export class TaskController {
   @Post()
   async addTask(
     @Body() unifiedTaskData: UnifiedTaskInput,
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -144,7 +144,7 @@ export class TaskController {
     summary: 'Add a batch of Tasks',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -161,7 +161,7 @@ export class TaskController {
   @Post('batch')
   async addTasks(
     @Body() unfiedTaskData: UnifiedTaskInput[],
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {

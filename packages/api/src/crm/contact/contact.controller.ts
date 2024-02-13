@@ -44,7 +44,7 @@ export class ContactController {
     summary: 'List a batch of CRM Contacts',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -59,7 +59,7 @@ export class ContactController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getContacts(
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
@@ -110,7 +110,7 @@ export class ContactController {
     description: 'Create a contact in any supported CRM',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -127,11 +127,11 @@ export class ContactController {
   @Post()
   async addContact(
     @Body() unfiedContactData: UnifiedContactInput,
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      this.logger.log('connection_token is ' + connection_token);
+      this.logger.log('x-connection-token is ' + connection_token);
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
@@ -152,7 +152,7 @@ export class ContactController {
     summary: 'Add a batch of CRM Contacts',
   })
   @ApiHeader({
-    name: 'connection_token',
+    name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
@@ -169,7 +169,7 @@ export class ContactController {
   @Post('batch')
   async addContacts(
     @Body() unfiedContactData: UnifiedContactInput[],
-    @Headers('connection_token') connection_token: string,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
