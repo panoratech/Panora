@@ -182,7 +182,7 @@ export class DealController {
 
   @ApiOperation({
     operationId: 'updateDeal',
-    summary: 'Update a deal',
+    summary: 'Update a Deal',
   })
   @ApiCustomResponse(UnifiedDealOutput)
   @UseGuards(ApiKeyAuthGuard)
