@@ -555,10 +555,53 @@
       "get": {
         "operationId": "getEvents",
         "summary": "Retrieve Events",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 10,
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
+          }
+        },
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/events/count": {
+      "get": {
+        "operationId": "getEventsCount",
+        "summary": "Retrieve Events Count",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "number"
+                }
+              }
+            }
           }
         },
         "tags": [
