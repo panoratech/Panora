@@ -1,5 +1,6 @@
 "use client"
 
+import { Link } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -39,9 +40,9 @@ export function SmallNav({
         <SheetContent side={"left"} className="p-0  w-[200px]">
           <SheetHeader className="flex items-center">
             <SheetTitle className="mx-4 my-4">
-              <div className="flex flex-row items-center">
+              <Link to="/" className="flex flex-row items-center" onClick={() => setOpen(false)}>
                 <img src="logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span>
-              </div>
+              </Link>
             </SheetTitle>
             <ThemeSwitcher />
           </SheetHeader>
