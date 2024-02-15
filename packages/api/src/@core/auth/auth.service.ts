@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -8,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
+import { users as User } from '@prisma/client';
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
@@ -38,6 +43,14 @@ export class AuthService {
 
   async register(user: CreateUserDto) {
     try {
+      const foundUser = await this.prisma.users.findUnique({
+        where: { email: user.email },
+      });
+
+      if (foundUser) {
+        throw new BadRequestException('email already exists');
+      }
+
       // Generate a salt and hash the password
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(user.password_hash, salt);
@@ -62,32 +75,42 @@ export class AuthService {
     }
   }
 
-  async login(user: LoginDto): Promise<{ access_token: string }> {
+  async login(user: LoginDto) {
     try {
-      const foundUser = await this.prisma.users.findUnique({
-        where: { id_user: user.id_user },
-      });
+      let foundUser: User;
+
+      if (user.id_user) {
+        foundUser = await this.prisma.users.findUnique({
+          where: { id_user: user.id_user },
+        });
+      }
+
+      if (!foundUser && user.email) {
+        foundUser = await this.prisma.users.findUnique({
+          where: { email: user.email },
+        });
+      }
+
       if (!foundUser) {
         throw new UnauthorizedException('user not found inside login function');
       }
-      if (
-        foundUser &&
-        (await bcrypt.compare(user.password_hash, foundUser.password_hash))
-      ) {
-        const { password_hash, ...result } = user;
 
-        if (!result) {
-          throw new UnauthorizedException('Invalid credentials.');
-        }
-      } else {
-        throw new Error('User not found.');
-      }
+      const isEq = await bcrypt.compare(
+        user.password_hash,
+        foundUser.password_hash,
+      );
+
+      if (!isEq) throw new UnauthorizedException('Invalid credentials.');
+
+      const { password_hash, ...userData } = foundUser;
+
       const payload = {
-        email: foundUser.email,
-        sub: foundUser.id_user,
+        email: userData.email,
+        sub: userData.id_user,
       };
 
       return {
+        user: userData,
         access_token: this.jwtService.sign(payload, {
           secret: process.env.JWT_SECRET,
         }), // token used to generate api keys

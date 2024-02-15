@@ -12,6 +12,8 @@ import DashboardPage from './components/dashboard';
 import useProfileStore from './state/profileStore';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
+import RegisterPage from './routes/auth_.register';
+import LoginPage from './routes/auth_.login';
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,9 @@ function App() {
       <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
         <Router>
           <Routes>
+            <Route path='/auth/register' element={<RegisterPage />} />
+            <Route path='/auth/login' element={<LoginPage />} />
+            
             <Route path='/' element={<RootLayout />}>
               <Route index element={<ConnectionsPage />} />
               <Route path='/dashboard' element={<DashboardPage />} />
