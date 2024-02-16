@@ -202,7 +202,7 @@ const AddLinkedAccount = () => {
           <Button variant="outline" onClick={() => setShowNewLinkedUserDialog({open: false})}>
             Cancel
           </Button>
-          <Button variant="outline" type="submit">{showNewLinkedUserDialog.import ? "Import" : "Create"}</Button>
+          <Button type="submit">{showNewLinkedUserDialog.import ? "Import" : "Create"}</Button>
         </DialogFooter>
         </form>
         </Form>
