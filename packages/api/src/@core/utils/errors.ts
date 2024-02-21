@@ -79,6 +79,15 @@ export function handleServiceError(
   } else {
     logger.error('An unknown error occurred...', errorMessage);
   }
+
+  if (error instanceof HttpException) {
+    throw error;
+  }
+
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    throw new HttpException(errorMessage, statusCode);
+  }
+
   return {
     data: null,
     error: errorMessage,
