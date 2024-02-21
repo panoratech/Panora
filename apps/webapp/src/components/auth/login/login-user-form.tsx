@@ -9,6 +9,7 @@ import { LoadingSpinner } from '@/components/connections/components/LoadingSpinn
 
 import useLoginMutation from '@/hooks/mutations/useLoginMutation';
 import { type LoginSchemaType, loginSchema } from './login-schema';
+import { toast } from 'sonner';
 
 export const LoginUserForm = () => {
   const navigate = useNavigate();
@@ -19,14 +20,12 @@ export const LoginUserForm = () => {
   });
 
   const onSubmit = async (data: LoginSchemaType) => {
-    const loginData = {
-      email: data.email,
-      password: data.password,
-    };
-
-    login(loginData, {
+    login(data, {
       onSuccess: () => {
         navigate('/');
+      },
+      onError: () => {
+        toast.error("Failed to log in. Please verify your email and password and try again.");
       },
     });
   };

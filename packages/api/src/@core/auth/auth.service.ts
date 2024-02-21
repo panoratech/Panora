@@ -13,6 +13,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
 import { users as User } from '@prisma/client';
+import { StytchService } from './stytch/stytch.service';
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
@@ -20,6 +21,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private stytchService: StytchService,
     private logger: LoggerService,
   ) {
     this.logger.setContext(AuthService.name);
@@ -51,25 +53,36 @@ export class AuthService {
         throw new BadRequestException('email already exists');
       }
 
-      // Generate a salt and hash the password
+      const stytchUser = await this.stytchService.passwords.create({
+        email: user.email,
+        password: user.password_hash,
+        name: {
+          first_name: user.first_name,
+          last_name: user.last_name,
+        },
+      });
+
+      const savedUser = await this.createUser(user, stytchUser.user_id);
+
+      const { password_hash, ...resp_user } = savedUser;
+      return resp_user;
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
+  async createUser(user: CreateUserDto, id_user?: string) {
+    try {
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(user.password_hash, salt);
 
-      const res = await this.prisma.users.create({
+      return await this.prisma.users.create({
         data: {
-          id_user: uuidv4(),
-          email: user.email,
+          ...user,
+          id_user: id_user || uuidv4(),
           password_hash: hashedPassword,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          id_organization: user.id_organisation || null,
         },
       });
-      if (!res) {
-        throw new UnauthorizedException('registering issue');
-      }
-      const { password_hash, ...resp_user } = res;
-      return resp_user;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -115,6 +128,17 @@ export class AuthService {
           secret: process.env.JWT_SECRET,
         }), // token used to generate api keys
       };
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
+  async validateStytchToken(token: string) {
+    try {
+      const { user } = await this.stytchService.oauth.authenticate({
+        token,
+      });
+      return user;
     } catch (error) {
       handleServiceError(error, this.logger);
     }

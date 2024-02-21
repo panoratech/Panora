@@ -16,6 +16,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 import RegisterPage from './routes/auth_.register';
 import LoginPage from './routes/auth_.login';
+import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
 
@@ -41,7 +42,7 @@ function App() {
             <Routes>
               <Route path='/auth/register' element={<RegisterPage />} />
               <Route path='/auth/login' element={<LoginPage />} />
-              
+
               <Route path='/' element={<RootLayout />}>
                   <Route index element={<ConnectionsPage />} />
                   <Route path='/dashboard' element={<DashboardPage />} />
@@ -50,8 +51,9 @@ function App() {
                   <Route path='/configuration' element={<ConfigurationPage />} />
                   <Route path='/connections' element={<ConnectionsPage />} />
                   <Route path='/api-keys' element={<ApiKeysPage />} />
-                </Route>
-              </Routes>
+              </Route>
+            </Routes>
+            <Toaster />
           </QueryParamProvider>
         </Router>
       </ThemeProvider>
