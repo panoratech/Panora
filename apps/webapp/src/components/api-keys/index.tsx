@@ -104,7 +104,6 @@ export default function ApiKeysPage() {
               <DialogFooter>
                 <Button 
                   onClick={handleSubmit}
-                  variant="outline"
                 >Create</Button>
               </DialogFooter>
             </DialogContent>

@@ -1,5 +1,6 @@
 "use client"
 
+import { Link } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -21,8 +22,8 @@ export function SmallNav({
   const [selectedItem, setSelectedItem] = useState<string>("dashboard");
   const [open, setOpen] = useState(false);
   const navItemClassName = (itemName: string) =>
-    `text-sm border-b font-medium w-full text-left mx-0 py-2 hover:bg-gray-900 cursor-pointer ${
-      selectedItem === itemName ? "bg-gray-900" : "text-muted-foreground"
+    `text-sm border-b font-medium w-full text-left mx-0 py-2 dark:hover:bg-zinc-900 hover:bg-zinc-200 cursor-pointer ${
+      selectedItem === itemName ? "dark:bg-zinc-800 bg-zinc-200" : "text-muted-foreground"
     } transition-colors`;
   
     function click(name: string) {
@@ -39,9 +40,9 @@ export function SmallNav({
         <SheetContent side={"left"} className="p-0  w-[200px]">
           <SheetHeader className="flex items-center">
             <SheetTitle className="mx-4 my-4">
-              <div className="flex flex-row items-center">
+              <Link to="/" className="flex flex-row items-center" onClick={() => setOpen(false)}>
                 <img src="logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span>
-              </div>
+              </Link>
             </SheetTitle>
             <ThemeSwitcher />
           </SheetHeader>

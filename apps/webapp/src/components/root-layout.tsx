@@ -3,7 +3,7 @@ import { MainNav } from './homepage/components/main-nav';
 import { SmallNav } from './homepage/components/main-nav-sm';
 import { UserNav } from './homepage/components/user-nav';
 import TeamSwitcher from './shared/team-switcher';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ThemeSwitcher } from './theme-switcher';
 import { Toaster } from "@/components/ui/sonner"
 
@@ -34,7 +34,9 @@ export const RootLayout = () => {
         <div className='items-center hidden lg:flex lg:flex-col border-r fixed left-0 bg-opacity-90 backdrop-filter backdrop-blur-lg w-[200px] h-screen'>
           <div className='flex lg:flex-col items-center py-4 space-y-4'>
             <div className='flex flex-row justify-between items-center w-full px-6'>
-              <img src='logo.png' className='w-14' />
+              <Link to='/'>
+                <img src='logo.png' className='w-14' />
+              </Link>
               <ThemeSwitcher />
             </div>
             <TeamSwitcher className='w-40 ml-3' />

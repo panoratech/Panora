@@ -51,6 +51,7 @@
     "sonner": "^1.4.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
+    "use-query-params": "^2.2.1",
     "zod": "^3.22.4",
     "zustand": "^4.4.7"
   },

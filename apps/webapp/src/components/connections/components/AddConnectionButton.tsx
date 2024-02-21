@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -230,10 +231,12 @@ const AddConnectionButton = ({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setShowNewLinkedUserDialog({open: false})}>
-            Cancel
-          </Button>
-          <Button variant="outline" type="submit">Generate</Button>
+          <DialogClose asChild>
+            <Button variant="outline" onClick={() => setShowNewLinkedUserDialog({open: false})}>
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button type="submit">Generate</Button>
         </DialogFooter>
         </form>
         </Form>
