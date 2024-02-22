@@ -165,7 +165,7 @@ export class AuthService {
         throw new UnauthorizedException('api keys issue to add to db');
       }
 
-      return { api_key: access_token };
+      return { api_key: access_token, ...new_api_key };
     } catch (error) {
       handleServiceError(error, this.logger);
     }

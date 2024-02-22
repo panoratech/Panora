@@ -26,7 +26,7 @@ import useApiKeys from "@/hooks/useApiKeys";
 import useProjectStore from "@/state/projectStore";
 import useApiKeyMutation from "@/hooks/mutations/useApiKeyMutation";
 import useProfileStore from "@/state/profileStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoadingSpinner } from "../connections/components/LoadingSpinner";
 import { cn } from "@/lib/utils";
 import { usePostHog } from 'posthog-js/react'
@@ -42,11 +42,30 @@ const formSchema = z.object({
   })
 })
 
+interface TSApiKeys {
+  name : string,
+  token : string,
+  created : string
+}
+
 export default function ApiKeysPage() {
   const [open,setOpen] = useState(false)
+  const [tsApiKeys,setTSApiKeys] = useState<TSApiKeys[] | undefined>([])
 
   const { data: apiKeys, isLoading, error } = useApiKeys();
   const { mutate } = useApiKeyMutation();
+
+  useEffect(() => {
+
+    const temp_tsApiKeys = apiKeys?.map((key) => ({
+      name: key.name || "",
+      token: key.api_key_hash,
+      created: new Date().toISOString()
+    }))
+
+    setTSApiKeys(temp_tsApiKeys)
+    
+  },[apiKeys])
 
   const {idProject} = useProjectStore();
   const {profile} = useProfileStore();
@@ -92,11 +111,9 @@ export default function ApiKeysPage() {
 
   };
 
-  const tsApiKeys = apiKeys?.map((key) => ({
-    name: key.name || "",
-    token: key.api_key_hash,
-    created: new Date().toISOString()
-  }))
+  
+
+  
 
   return (
     <div className="flex items-center justify-between space-y-2">
