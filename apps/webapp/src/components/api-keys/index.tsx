@@ -11,6 +11,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import useApiKeys from "@/hooks/useApiKeys";
@@ -22,9 +31,19 @@ import { LoadingSpinner } from "../connections/components/LoadingSpinner";
 import { cn } from "@/lib/utils";
 import { usePostHog } from 'posthog-js/react'
 import config from "@/utils/config";
+import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+
+
+const formSchema = z.object({
+  apiKeyIdentifier: z.string().min(2, {
+    message: "apiKeyIdentifier must be at least 2 characters.",
+  })
+})
 
 export default function ApiKeysPage() {
-  const [keyName, setKeyName] = useState('');
+  const [open,setOpen] = useState(false)
 
   const { data: apiKeys, isLoading, error } = useApiKeys();
   const { mutate } = useApiKeyMutation();
@@ -38,17 +57,39 @@ export default function ApiKeysPage() {
     console.log("error apiKeys..");
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      apiKeyIdentifier: "",
+    },
+    
+  })
+
+  const onCancel = () => {
+    setOpen(!open)
+  }
+
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open)
+    form.reset()
+  }
+
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    // e.preventDefault(); // Prevent default form submission
     mutate({ 
       userId: profile!.id_user,
       projectId: idProject,
-      keyName: keyName
+      keyName: values.apiKeyIdentifier
     });
     posthog?.capture('api_key_created', {
       id_project: idProject,
       mode: config.DISTRIBUTION
     })
+
+    setOpen(!open)
+
+
   };
 
   const tsApiKeys = apiKeys?.map((key) => ({
@@ -67,7 +108,7 @@ export default function ApiKeysPage() {
         <div className="flex space-y-8 md:flex pb-4">
           {isLoading ? ( <LoadingSpinner className=""/>) : <>
           <div></div>
-          <Dialog>
+          <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
             <Button
               variant="outline"
@@ -91,21 +132,41 @@ export default function ApiKeysPage() {
                   Never share this key, you must saved it it will be displayed once !
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="keyName">Name</Label>
-                  <Input 
-                    id="keyName" placeholder="My Best Key For Finance Data" 
-                    value={keyName}
-                    onChange={(e) => setKeyName(e.target.value)}
-                  />
+
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                  <FormField
+                        control={form.control}
+                        name="apiKeyIdentifier"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>API Key Identifier</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="My Best Key For Finance Data" {...field} 
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              This is the API Key Identifier of system.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                    />
+                  </div>
                 </div>
-              </div>
               <DialogFooter>
-                <Button 
-                  onClick={handleSubmit}
-                >Create</Button>
+                <Button variant='outline' type="reset" onClick={() => onCancel()}>Cancel</Button>
+                <Button type='submit'>Create</Button>
               </DialogFooter>
+
+                </form>
+              </Form>
+              
+              
             </DialogContent>
           </Dialog>
           </>
