@@ -232,8 +232,8 @@ CREATE TABLE crm_deals_stages
 
 CREATE TABLE users
 (
- id_user         uuid NOT NULL,
- email           text NOT NULL,
+ id_user         text NOT NULL,
+ email           text UNIQUE NOT NULL,
  password_hash   text NOT NULL,
  first_name      text NOT NULL,
  last_name       text NOT NULL,
@@ -895,7 +895,7 @@ CREATE TABLE api_keys
  api_key_hash text NOT NULL,
  name         text NULL,
  id_project   uuid NOT NULL,
- id_user      uuid NOT NULL,
+ id_user      text NOT NULL,
  CONSTRAINT id_ PRIMARY KEY ( id_api_key ),
  CONSTRAINT unique_api_keys UNIQUE ( api_key_hash ),
  CONSTRAINT FK_8 FOREIGN KEY ( id_user ) REFERENCES users ( id_user ),

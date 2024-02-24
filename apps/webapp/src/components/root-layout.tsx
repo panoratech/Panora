@@ -5,7 +5,6 @@ import { UserNav } from './homepage/components/user-nav';
 import TeamSwitcher from './shared/team-switcher';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ThemeSwitcher } from './theme-switcher';
-import { Toaster } from "@/components/ui/sonner"
 
 export const RootLayout = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -53,7 +52,6 @@ export const RootLayout = () => {
       <div className='flex-1 space-y-4 pt-6 px-10 lg:ml-[200px]'>
         <Outlet />
       </div>
-      <Toaster />
     </div>
   );
 };

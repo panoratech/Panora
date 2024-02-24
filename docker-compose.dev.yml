@@ -47,6 +47,10 @@ services:
         ZENDESK_TICKETING_SUBDOMAIN: ${ZENDESK_TICKETING_SUBDOMAIN}
         ZENDESK_TICKETING_CLIENT_ID: ${ZENDESK_TICKETING_CLIENT_ID}
         ZENDESK_TICKETING_CLIENT_SECRET: ${ZENDESK_TICKETING_CLIENT_SECRET}
+        STYTCH_PROJECT_ID: ${STYTCH_PROJECT_ID}
+        STYTCH_SECRET: ${STYTCH_SECRET}
+        FRONT_END_URL: ${FRONT_END_URL}
+
     restart:
       unless-stopped
     ports:
@@ -81,6 +85,8 @@ services:
       args:
         VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
         VITE_FRONTEND_DOMAIN: ${VITE_FRONTEND_DOMAIN}
+    environment:
+      VITE_STYTCH_TOKEN: ${VITE_STYTCH_TOKEN}
     restart:
       unless-stopped
     ports:

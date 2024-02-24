@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Query,
+  Res,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -59,5 +68,20 @@ export class AuthController {
       data.projectId,
       data.keyName,
     );
+  }
+
+  @Get('/callback')
+  async callback(@Query() query: { token: string }, @Res() res: Response) {
+    const user = await this.authService.validateStytchToken(query.token);
+
+    await this.authService.createUser({
+      email: user.emails[0].email,
+      first_name: user.name.first_name,
+      last_name: user.name.last_name,
+      password_hash: '',
+    });
+
+    //TODO make it dynamic
+    res.redirect('http://localhost/callback/?token=' + query.token);
   }
 }

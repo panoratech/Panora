@@ -14,6 +14,9 @@ import DashboardPage from './components/dashboard';
 import useProfileStore from './state/profileStore';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
+import RegisterPage from './routes/auth_.register';
+import LoginPage from './routes/auth_.login';
+import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
 
@@ -37,16 +40,20 @@ function App() {
         <Router>
           <QueryParamProvider adapter={ReactRouter6Adapter}>
             <Routes>
+              <Route path='/auth/register' element={<RegisterPage />} />
+              <Route path='/auth/login' element={<LoginPage />} />
+
               <Route path='/' element={<RootLayout />}>
-                <Route index element={<ConnectionsPage />} />
-                <Route path='/dashboard' element={<DashboardPage />} />
-                <Route path='/logs' element={<LogsPage />} />
-                <Route path='/tasks' element={<TaskPage />} />
-                <Route path='/configuration' element={<ConfigurationPage />} />
-                <Route path='/connections' element={<ConnectionsPage />} />
-                <Route path='/api-keys' element={<ApiKeysPage />} />
+                  <Route index element={<ConnectionsPage />} />
+                  <Route path='/dashboard' element={<DashboardPage />} />
+                  <Route path='/logs' element={<LogsPage />} />
+                  <Route path='/tasks' element={<TaskPage />} />
+                  <Route path='/configuration' element={<ConfigurationPage />} />
+                  <Route path='/connections' element={<ConnectionsPage />} />
+                  <Route path='/api-keys' element={<ApiKeysPage />} />
               </Route>
             </Routes>
+            <Toaster />
           </QueryParamProvider>
         </Router>
       </ThemeProvider>
