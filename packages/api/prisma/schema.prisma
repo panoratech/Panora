@@ -96,6 +96,7 @@ model crm_companies {
   id_linked_user      String?               @db.Uuid
   crm_addresses       crm_addresses[]
   crm_users           crm_users?            @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_24")
+  crm_deals           crm_deals[]
   crm_email_addresses crm_email_addresses[]
   crm_engagements     crm_engagements[]
   crm_notes           crm_notes[]
@@ -138,13 +139,16 @@ model crm_deals {
   id_crm_user        String?           @db.Uuid
   id_crm_deals_stage String?           @db.Uuid
   id_linked_user     String?           @db.Uuid
+  id_crm_company     String?           @db.Uuid
   crm_deals_stages   crm_deals_stages? @relation(fields: [id_crm_deals_stage], references: [id_crm_deals_stage], onDelete: NoAction, onUpdate: NoAction, map: "fk_21")
   crm_users          crm_users?        @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_22")
+  crm_companies      crm_companies?    @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_47_1")
   crm_notes          crm_notes[]
   crm_tasks          crm_tasks[]
 
   @@index([id_crm_user], map: "crm_deal_crm_userid")
   @@index([id_crm_deals_stage], map: "crm_deal_deal_stageid")
+  @@index([id_crm_company], map: "fk_crm_deal_crmcompanyid")
 }
 
 model crm_deals_stages {
@@ -365,6 +369,7 @@ model projects {
   id_organization String         @db.Uuid
   sync_mode       String
   pull_frequency  BigInt?
+  redirect_url    String?
   api_keys        api_keys[]
   connections     connections[]
   linked_users    linked_users[]
@@ -528,7 +533,7 @@ model tcg_users {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model users {
   id_user         String         @id(map: "pk_users") @db.Uuid
-  email           String         @unique
+  email           String
   password_hash   String
   first_name      String
   last_name       String

@@ -45,7 +45,7 @@ export class AuthService {
 
   async register(user: CreateUserDto) {
     try {
-      const foundUser = await this.prisma.users.findUnique({
+      const foundUser = await this.prisma.users.findFirst({
         where: { email: user.email },
       });
 
@@ -99,7 +99,7 @@ export class AuthService {
       }
 
       if (!foundUser && user.email) {
-        foundUser = await this.prisma.users.findUnique({
+        foundUser = await this.prisma.users.findFirst({
           where: { email: user.email },
         });
       }
