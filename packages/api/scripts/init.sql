@@ -1,4 +1,3 @@
-
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -232,8 +231,8 @@ CREATE TABLE crm_deals_stages
 
 CREATE TABLE users
 (
- id_user         text NOT NULL,
- email           text UNIQUE NOT NULL,
+ id_user         uuid NOT NULL,
+ email           text NOT NULL,
  password_hash   text NOT NULL,
  first_name      text NOT NULL,
  last_name       text NOT NULL,
@@ -341,6 +340,7 @@ CREATE TABLE projects
  id_organization uuid NOT NULL,
  sync_mode       text NOT NULL,
  pull_frequency  bigint NULL,
+ redirect_url    text NULL,
  CONSTRAINT PK_projects PRIMARY KEY ( id_project ),
  CONSTRAINT FK_6 FOREIGN KEY ( id_organization ) REFERENCES organizations ( id_organization )
 );
@@ -356,44 +356,6 @@ COMMENT ON COLUMN projects.sync_mode IS 'can be realtime or periodic_pull';
 COMMENT ON COLUMN projects.pull_frequency IS 'frequency in seconds for pulls
 
 ex 3600 for one hour';
-
-
-
-
-
--- ************************************** crm_deals
-
-CREATE TABLE crm_deals
-(
- id_crm_deal        uuid NOT NULL,
- name               text NOT NULL,
- description        text NOT NULL,
- amount             bigint NOT NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
- remote_id          text NULL,
- remote_platform    text NULL,
- id_crm_user        uuid NULL,
- id_crm_deals_stage uuid NULL,
- id_linked_user     uuid NULL,
- CONSTRAINT PK_crm_deal PRIMARY KEY ( id_crm_deal ),
- CONSTRAINT FK_22 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
- CONSTRAINT FK_21 FOREIGN KEY ( id_crm_deals_stage ) REFERENCES crm_deals_stages ( id_crm_deals_stage )
-);
-
-CREATE INDEX crm_deal_crm_userID ON crm_deals
-(
- id_crm_user
-);
-
-CREATE INDEX crm_deal_deal_stageID ON crm_deals
-(
- id_crm_deals_stage
-);
-
-
-
-COMMENT ON COLUMN crm_deals.amount IS 'AMOUNT IN CENTS';
 
 
 
@@ -637,52 +599,6 @@ COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME c
 
 
 
--- ************************************** crm_tasks
-
-CREATE TABLE crm_tasks
-(
- id_crm_task     uuid NOT NULL,
- subject         text NULL,
- content         text NULL,
- status          text NULL,
- due_date        timestamp NULL,
- finished_date   timestamp NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
- id_crm_user     uuid NULL,
- id_crm_company  uuid NULL,
- id_crm_deal     uuid NULL,
- id_linked_user  uuid NULL,
- remote_id       text NULL,
- remote_platform text NULL,
- CONSTRAINT PK_crm_task PRIMARY KEY ( id_crm_task ),
- CONSTRAINT FK_26 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
- CONSTRAINT FK_25 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
- CONSTRAINT FK_27 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )
-);
-
-CREATE INDEX FK_crm_task_companyID ON crm_tasks
-(
- id_crm_company
-);
-
-CREATE INDEX FK_crm_task_userID ON crm_tasks
-(
- id_crm_user
-);
-
-CREATE INDEX FK_crmtask_dealID ON crm_tasks
-(
- id_crm_deal
-);
-
-
-
-
-
-
-
-
 -- ************************************** crm_phone_numbers
 
 CREATE TABLE crm_phone_numbers
@@ -713,54 +629,6 @@ CREATE INDEX FK_phone_number_companyID ON crm_phone_numbers
 
 
 COMMENT ON COLUMN crm_phone_numbers.owner_type IS 'can be ''COMPANY'' or ''CONTACT'' - helps locate who to link the phone number to.';
-
-
-
-
-
--- ************************************** crm_notes
-
-CREATE TABLE crm_notes
-(
- id_crm_note     uuid NOT NULL,
- content         text NOT NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
- id_crm_company  uuid NULL,
- id_crm_contact  uuid NULL,
- id_crm_deal     uuid NULL,
- id_linked_user  uuid NULL,
- remote_id       text NULL,
- remote_platform text NULL,
- id_crm_user     uuid NULL,
- CONSTRAINT PK_crm_notes PRIMARY KEY ( id_crm_note ),
- CONSTRAINT FK_19 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
- CONSTRAINT FK_18 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
- CONSTRAINT FK_20 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )
-);
-
-CREATE INDEX FK_crm_note_crm_companyID ON crm_notes
-(
- id_crm_contact
-);
-
-CREATE INDEX FK_crm_note_crm_contactID ON crm_notes
-(
- id_crm_company
-);
-
-CREATE INDEX FK_crm_note_crm_userID ON crm_notes
-(
- id_crm_user
-);
-
-CREATE INDEX FK_crm_notes_crm_dealID ON crm_notes
-(
- id_crm_deal
-);
-
-
-
 
 
 
@@ -844,6 +712,51 @@ COMMENT ON COLUMN crm_email_addresses.owner_type IS 'can be ''COMPANY'' or ''CON
 
 
 
+-- ************************************** crm_deals
+
+CREATE TABLE crm_deals
+(
+ id_crm_deal        uuid NOT NULL,
+ name               text NOT NULL,
+ description        text NOT NULL,
+ amount             bigint NOT NULL,
+ created_at         timestamp NOT NULL,
+ modified_at        timestamp NOT NULL,
+ remote_id          text NULL,
+ remote_platform    text NULL,
+ id_crm_user        uuid NULL,
+ id_crm_deals_stage uuid NULL,
+ id_linked_user     uuid NULL,
+ id_crm_company     uuid NULL,
+ CONSTRAINT PK_crm_deal PRIMARY KEY ( id_crm_deal ),
+ CONSTRAINT FK_22 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
+ CONSTRAINT FK_21 FOREIGN KEY ( id_crm_deals_stage ) REFERENCES crm_deals_stages ( id_crm_deals_stage ),
+ CONSTRAINT FK_47_1 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
+);
+
+CREATE INDEX crm_deal_crm_userID ON crm_deals
+(
+ id_crm_user
+);
+
+CREATE INDEX crm_deal_deal_stageID ON crm_deals
+(
+ id_crm_deals_stage
+);
+
+CREATE INDEX FK_crm_deal_crmCompanyID ON crm_deals
+(
+ id_crm_company
+);
+
+
+
+COMMENT ON COLUMN crm_deals.amount IS 'AMOUNT IN CENTS';
+
+
+
+
+
 -- ************************************** crm_addresses
 
 CREATE TABLE crm_addresses
@@ -895,7 +808,7 @@ CREATE TABLE api_keys
  api_key_hash text NOT NULL,
  name         text NULL,
  id_project   uuid NOT NULL,
- id_user      text NOT NULL,
+ id_user      uuid NOT NULL,
  CONSTRAINT id_ PRIMARY KEY ( id_api_key ),
  CONSTRAINT unique_api_keys UNIQUE ( api_key_hash ),
  CONSTRAINT FK_8 FOREIGN KEY ( id_user ) REFERENCES users ( id_user ),
@@ -1009,6 +922,100 @@ CREATE INDEX FK_linkeduserID_projectID ON events
 
 COMMENT ON COLUMN events.status IS 'pending,, retry_scheduled, failed, success';
 COMMENT ON COLUMN events.type IS 'example crm_contact.created crm_contact.deleted';
+
+
+
+
+
+-- ************************************** crm_tasks
+
+CREATE TABLE crm_tasks
+(
+ id_crm_task     uuid NOT NULL,
+ subject         text NULL,
+ content         text NULL,
+ status          text NULL,
+ due_date        timestamp NULL,
+ finished_date   timestamp NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ id_crm_user     uuid NULL,
+ id_crm_company  uuid NULL,
+ id_crm_deal     uuid NULL,
+ id_linked_user  uuid NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
+ CONSTRAINT PK_crm_task PRIMARY KEY ( id_crm_task ),
+ CONSTRAINT FK_26 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
+ CONSTRAINT FK_25 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
+ CONSTRAINT FK_27 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )
+);
+
+CREATE INDEX FK_crm_task_companyID ON crm_tasks
+(
+ id_crm_company
+);
+
+CREATE INDEX FK_crm_task_userID ON crm_tasks
+(
+ id_crm_user
+);
+
+CREATE INDEX FK_crmtask_dealID ON crm_tasks
+(
+ id_crm_deal
+);
+
+
+
+
+
+
+
+
+-- ************************************** crm_notes
+
+CREATE TABLE crm_notes
+(
+ id_crm_note     uuid NOT NULL,
+ content         text NOT NULL,
+ created_at      timestamp NOT NULL,
+ modified_at     timestamp NOT NULL,
+ id_crm_company  uuid NULL,
+ id_crm_contact  uuid NULL,
+ id_crm_deal     uuid NULL,
+ id_linked_user  uuid NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
+ id_crm_user     uuid NULL,
+ CONSTRAINT PK_crm_notes PRIMARY KEY ( id_crm_note ),
+ CONSTRAINT FK_19 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
+ CONSTRAINT FK_18 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
+ CONSTRAINT FK_20 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )
+);
+
+CREATE INDEX FK_crm_note_crm_companyID ON crm_notes
+(
+ id_crm_contact
+);
+
+CREATE INDEX FK_crm_note_crm_contactID ON crm_notes
+(
+ id_crm_company
+);
+
+CREATE INDEX FK_crm_note_crm_userID ON crm_notes
+(
+ id_crm_user
+);
+
+CREATE INDEX FK_crm_notes_crm_dealID ON crm_notes
+(
+ id_crm_deal
+);
+
+
+
 
 
 
