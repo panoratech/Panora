@@ -2,7 +2,7 @@ import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRigh
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Button } from './ui/button';
 
-import { type UseQueryPaginationReturn } from '@/hooks/use-query-pagination';
+import { type UseQueryPaginationReturn } from '@/hooks/useQueryPagination';
 
 interface DataTablePaginationProps extends UseQueryPaginationReturn {
   selected: number;

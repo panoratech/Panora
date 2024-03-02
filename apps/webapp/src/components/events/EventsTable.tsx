@@ -3,8 +3,8 @@ import { ApiDataTable } from '../api-data-table';
 import useEvents from "@/hooks/useEvents";
 import { DataTableLoading } from "../shared/data-table-loading";
 import { events as Event } from "api";
-import { useEventsCount } from '@/hooks/use-events-count';
-import { useQueryPagination } from '@/hooks/use-query-pagination';
+import { useEventsCount } from '@/hooks/useEventsCount';
+import { useQueryPagination } from '@/hooks/useQueryPagination';
 
 export default function EventsTable() {
   const { data: eventsCount } = useEventsCount();

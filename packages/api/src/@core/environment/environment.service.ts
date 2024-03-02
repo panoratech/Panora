@@ -38,6 +38,18 @@ export class EnvironmentService {
     return this.configService.get<string>('ENCRYPT_CRYPTO_SECRET_KEY');
   }
 
+  getStytchProjectId(): string {
+    return this.configService.get<string>('STYTCH_PROJECT_ID');
+  }
+
+  getStytchSecret(): string {
+    return this.configService.get<string>('STYTCH_SECRET');
+  }
+
+  getWebappUrl(): string {
+    return this.configService.get<string>('WEBAPP_URL');
+  }
+
   /* CRM */
 
   getHubspotAuth(): OAuth {

@@ -8,7 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { LoggerService } from '@@core/logger/logger.service';
 import { AuthController } from './auth.controller';
-import { StytchModule } from './stytch/stytch.module';
+import { StytchService } from './stytch.service';
 
 @Module({
   controllers: [AuthController],
@@ -20,9 +20,9 @@ import { StytchModule } from './stytch/stytch.module';
     PrismaService,
     ConfigService,
     LoggerService,
+    StytchService,
   ],
   imports: [
-    StytchModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,

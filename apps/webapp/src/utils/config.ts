@@ -4,7 +4,9 @@ const config = {
     POSTHOG_HOST: import.meta.env.VITE_POSTHOG_HOST,
     POSTHOG_KEY: import.meta.env.VITE_POSTHOG_KEY,
     DISTRIBUTION: import.meta.env.VITE_DISTRIBUTION,
-    STYTCH_TOKEN: import.meta.env.VITE_STYTCH_TOKEN
+    STYTCH_PROJECT_ID: import.meta.env.VITE_STYTCH_PROJECT_ID,
+    STYTCH_SECRET:import.meta.env.VITE_STYTCH_SECRET,
+    STYTCH_PROJECT_ENV:import.meta.env.VITE_STYTCH_PROJECT_ENV,
 };
   
 export default config;

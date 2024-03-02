@@ -14,9 +14,12 @@ import DashboardPage from './components/dashboard';
 import useProfileStore from './state/profileStore';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
-import RegisterPage from './routes/auth_.register';
-import LoginPage from './routes/auth_.login';
 import { Toaster } from 'sonner';
+import { AuthPage } from './components/auth';
+import RegisterPage from './components/auth/register';
+import LoginPage from './components/auth/login';
+import Discovery from './components/auth/discovery';
+import { AuthProvider } from './context/auth';
 
 const queryClient = new QueryClient();
 
@@ -37,25 +40,30 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+      <AuthProvider>
         <Router>
           <QueryParamProvider adapter={ReactRouter6Adapter}>
             <Routes>
+              <Route path='/auth' element={<AuthPage />} />
               <Route path='/auth/register' element={<RegisterPage />} />
               <Route path='/auth/login' element={<LoginPage />} />
 
               <Route path='/' element={<RootLayout />}>
-                  <Route index element={<ConnectionsPage />} />
-                  <Route path='/dashboard' element={<DashboardPage />} />
-                  <Route path='/logs' element={<LogsPage />} />
-                  <Route path='/tasks' element={<TaskPage />} />
-                  <Route path='/configuration' element={<ConfigurationPage />} />
-                  <Route path='/connections' element={<ConnectionsPage />} />
-                  <Route path='/api-keys' element={<ApiKeysPage />} />
+                <Route index element={<ConnectionsPage />} />
+                <Route path='/dashboard' element={<DashboardPage />} />
+                <Route path='/logs' element={<LogsPage />} />
+                <Route path='/tasks' element={<TaskPage />} />
+                <Route path='/configuration' element={<ConfigurationPage />} />
+                <Route path='/connections' element={<ConnectionsPage />} />
+                <Route path='/api-keys' element={<ApiKeysPage />} />
+                <Route path="/discovery" element={<Discovery />} />
+
               </Route>
             </Routes>
             <Toaster />
           </QueryParamProvider>
         </Router>
+      </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
