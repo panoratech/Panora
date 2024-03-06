@@ -5,6 +5,11 @@
   "primaryTab": {
     "name": "Home"
   },
+  "analytics": {
+    "posthog": {
+        "apiKey": "phc_WhWJfNPOHAuWVdyTacGxrPa9JW54scnofA9KVEjFcFw"
+      }
+  },
   "api": {
     "baseUrl": "https://api.panora.dev",
     "auth": {
