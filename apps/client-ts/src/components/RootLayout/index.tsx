@@ -49,7 +49,7 @@ export const RootLayout = () => {
           <div className='flex lg:flex-col items-center py-4 space-y-4'>
             <div className='flex flex-row justify-between items-center w-full px-6'>
               <Link href='/'>
-                <img src="./../../public/logo.png" className='w-14' />
+                <img src="logo.png" className='w-14' />
               </Link>
             </div>
             <TeamSwitcher className='w-40 ml-3' />

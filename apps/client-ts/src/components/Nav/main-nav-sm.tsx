@@ -66,10 +66,10 @@ export function SmallNav({
               <p className="mx-4">Connections</p>
             </a>
             <a
-                className={navItemClassName('logs')}
-                onClick={() => click('logs')}
+                className={navItemClassName('events')}
+                onClick={() => click('events')}
               >
-              <p className="mx-4">Logs</p>
+              <p className="mx-4">Events</p>
 
             </a>
             <a

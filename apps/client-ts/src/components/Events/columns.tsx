@@ -142,10 +142,10 @@ export const columns: ColumnDef<Event>[] = [
             <Badge variant={"outline"} className="p-1 pr-2">
               <img src={
                 provider == "hubspot" ?
-                `../../../../public/providers/crm/${provider}.jpg` : 
+                `providers/crm/${provider}.jpg` : 
                 provider == "zoho" ? 
-                `../../../../public/providers/crm/${provider}.webp`
-                : `../../../../public/providers/crm/${provider}.png`
+                `providers/crm/${provider}.webp`
+                : `providers/crm/${provider}.png`
                 } className="w-5 h-5 rounded-sm mr-2" 
               />
               {provider}

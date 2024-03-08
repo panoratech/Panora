@@ -46,10 +46,10 @@ export function MainNav({
         Connections
       </a>
       <a
-        className={navItemClassName('logs')}
-        onClick={() => click('logs')}
+        className={navItemClassName('events')}
+        onClick={() => click('events')}
       >
-        Logs
+        Events
       </a>
       <a
         className={navItemClassName('configuration')}
