@@ -25,7 +25,7 @@ const TenantedLogin = async () => {
           <p>
             No organization with the domain <strong>{slug}</strong> was found.
           </p>
-          <Link href={"/login"}>Try again</Link>
+          <Link href={"/auth/login"}>Try again</Link>
         </div>
       </div>
     );
