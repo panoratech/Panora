@@ -19,12 +19,14 @@ const ContinueToTenantForm = ({ onBack }: { onBack: () => void }) => {
   return (
     <div>
       <h1>What is your Organization&apos;s Domain?</h1>
-      <p>
-        Don&apos;t know your organization&apos;s Domain? Find your{" "}
-        <Link href="" onClick={onBack}>
+      <p className="">
+        Don&apos;t know your organization&apos;s Domain? 
+      </p>
+      <p className="">
+      Login to find your{" "}
+        <Link href="" className="underline" onClick={onBack}>
           organizations
         </Link>
-        .
       </p>
       <form onSubmit={onSubmit}>
         <input
@@ -56,7 +58,7 @@ const LoginDiscoveryForm = ({domain}: Props) => {
             You&apos;ll be able to choose which organization you want to access.
             <br />
             Or you can{" "}
-            <Link href="" onClick={() => setIsDiscovery(false)}>
+            <Link href="" className="underline" onClick={() => setIsDiscovery(false)}>
               sign in manually instead
             </Link>
             .

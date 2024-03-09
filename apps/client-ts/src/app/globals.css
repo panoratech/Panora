@@ -98,3 +98,296 @@
 .read-the-docs {
   color: #888;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(25, 48, 61);
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 30px;
+  margin-bottom: 4px;
+}
+
+h3 {
+  font-size: 14px;
+  line-height: 30px;
+  margin-bottom: 4px;
+}
+
+p {
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+
+li {
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+main {
+  display: flex;
+  min-height: calc(100vh - 70px);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 36px 0;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.container {
+  max-width: 650px;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.card {
+  width: 100%;
+  padding: 24px 32px;
+  border: 1px solid rgb(173, 188, 197);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+button.primary {
+  width: 100%;
+  height: 45px;
+  cursor: pointer;
+  font-size: 18px;
+  color: white;
+  background-color: #4a37be;
+  border: none;
+  border-radius: 4px;
+}
+button.primary:disabled {
+  cursor: default;
+  pointer-events: none;
+  color: rgba(0, 0, 0, 0.26);
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+button.secondary {
+  width: 100%;
+  height: 45px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #4a37be;
+  background-color: white;
+  border: 1px solid #4a37be;
+  border-radius: 4px;
+}
+button.secondary:disabled {
+  cursor: default;
+  pointer-events: none;
+  color: rgba(0, 0, 0, 0.26);
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+pre.code-block {
+  max-height: 200px;
+  width: 100%;
+  overflow: scroll;
+  background-color: #10232e;
+  border: none;
+  border-radius: 4px;
+  padding: 16px 8px;
+  margin-bottom: 16px;
+}
+
+pre.code-block > code {
+  color: white;
+  font-family: monospace;
+}
+
+span.code {
+  font-family: monospace;
+  font-weight: 400;
+  line-height: 28px;
+  padding-left: 4px;
+  border-radius: 4px;
+  padding-right: 4px;
+  background-color: #ecfaff;
+}
+
+header {
+  width: 100%;
+  height: 70px;
+  background-color: #eeecff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 16px;
+}
+
+header > a > img {
+  max-width: 250px;
+  height: 100%;
+  overflow: hidden;
+}
+
+a.header {
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+a.header:hover {
+  background-color: #d4ceff;
+}
+
+header > .link-container {
+  display: flex;
+  gap: 16px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+}
+
+form.row {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+form.row > button {
+  width: auto;
+  min-width: 100px;
+}
+
+input[type="text"],
+input[type="email"] {
+  padding: 0 8px;
+  vertical-align: middle;
+  border-radius: 2px;
+  width: 100%;
+  min-height: 36px;
+  background-color: #ffffff;
+  border: 1px solid rgb(173, 188, 197);
+  transition: all 0.2s ease-in-out 0s;
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: normal;
+}
+input[type="text"]:focus,
+input[type="email"]:focus {
+  outline: none;
+  border: 1px solid rgb(255, 221, 66);
+  box-shadow: inset 0 0 0 1px rgb(255, 221, 66);
+}
+
+input[type="text"]:disabled,
+input[type="email"]:disabled {
+  background-color: lightgray;
+  opacity: 0.5;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+.accordion {
+  border-radius: 4px;
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.8s;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.active,
+.accordion:hover {
+  background-color: #ccc;
+}
+
+.panel {
+  display: none;
+  background-color: white;
+  overflow: hidden;
+}
+
+.panel-contents {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.radio-sso {
+  padding-top: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.oauth-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  background-color: #f8f8f8;
+  transition: background-color 0.2s;
+  min-width: 230px;
+}
+
+.oauth-button:hover {
+  background-color: #e8e8e8;
+}
+
+.oauth-button__icon {
+  margin-right: 8px;
+  width: 24px;
+  height: 24px;
+}
+
+.oauth-button__text {
+  vertical-align: middle;
+}

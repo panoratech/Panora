@@ -18,6 +18,10 @@ function redirectToSMSMFA(organization: Organization, member: Member, mfa_requir
 
 export async function middleware(request: NextRequest) {
 
+  if (request.nextUrl.pathname == '/'){
+    return NextResponse.redirect(new URL('/connections', request.url))
+  }
+
   if (request.nextUrl.pathname.startsWith('/api/callback')) {
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get('slug');
@@ -213,6 +217,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
+      '/',
       '/auth/[slug]/dashboard/:path*', 
       '/api/callback', 
       '/api/discovery/:path*', 

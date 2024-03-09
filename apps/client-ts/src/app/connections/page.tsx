@@ -2,7 +2,7 @@
 
 import ConnectionTable from "@/components/Connection/ConnectionTable";
 
-export default function Page() {
+export default function ConnectionPage() {
     return (
         <div className="flex flex-col pl-[50px] items-center justify-between space-y-2">
         <div className="flex-1 space-y-4 p-8 pt-6">
