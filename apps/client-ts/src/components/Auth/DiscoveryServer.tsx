@@ -2,6 +2,7 @@ import loadStytch, { DiscoveredOrganizations } from "@/lib/stytch/loadStytch";
 import { getDiscoverySessionData } from "@/lib/stytch/sessionService";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { CardTitle, CardHeader, CardContent, CardDescription, Card } from "../ui/card";
 
 async function getProps() {
     const discoverySessionData = getDiscoverySessionData(
@@ -48,21 +49,29 @@ const DiscoveredOrganizationsList = ({ discovered_organizations }: Props) => {
     };
   
     return (
-      <div className="section">
-        <h3>Your Organizations</h3>
-        {discovered_organizations.length === 0 && (
+      <Card className="m-10">
+      <CardHeader>
+        <img src="/logo.png" className='w-14 mb-5' />
+        <CardTitle>Your Organizations</CardTitle>
+        <CardDescription>{discovered_organizations.length === 0 && (
           <p>No existing organizations.</p>
-        )}
-        <ul>
-          {discovered_organizations.map(({ organization, membership }) => (
-            <li key={organization!.organization_id}>
-              <Link href={`/api/discovery/${organization!.organization_id}`}>
-                <span>{formatMembership({ organization, membership })}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+        )}</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4 focus:outline-none focus:border">
+        {discovered_organizations.map(({ organization, membership }) => (
+            <Link key={organization!.organization_id} href={`/api/discovery/${organization!.organization_id}`}>
+            <div className=" flex items-center space-x-4 rounded-md border p-4">
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-medium leading-none">
+                {formatMembership({ organization, membership })}
+                </p>
+              </div>
+            </div>
+            </Link>
+        ))}
+        
+      </CardContent>
+      </Card>
     );
   };
   

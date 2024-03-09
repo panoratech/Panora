@@ -19,7 +19,7 @@ export default async function Page() {
                 <LoginDiscoveryForm domain={domain}/>
             </div>       
             <div className='hidden lg:block relative flex-1'>
-                <img className='absolute inset-0 h-full w-full object-cover border-l' src="/bg-panora.jpeg" alt='Login Page Image' />
+                <img className='absolute inset-0 h-full w-full object-cover border-l' src="/bgbg.jpeg" alt='Login Page Image' />
             </div>
         </div>
     )

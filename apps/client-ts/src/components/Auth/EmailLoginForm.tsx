@@ -79,7 +79,7 @@ export const EmailLoginForm = ({ title, onSubmit, children }: EmailLoginProps) =
         <div className="section">
           <h2>Check your email</h2>
           <p>{`An email was sent to ${email}`}</p>
-          <a className="link" onClick={handleTryAgain}>
+          <a className="link underline" onClick={handleTryAgain}>
             Click here to try again.
           </a>
         </div>
@@ -88,7 +88,7 @@ export const EmailLoginForm = ({ title, onSubmit, children }: EmailLoginProps) =
         <div>
           <h2>Something went wrong!</h2>
           <p>{`Failed to send email to ${email}`}</p>
-          <a className="link" onClick={handleTryAgain}>
+          <a className="link underline" onClick={handleTryAgain}>
             Click here to try again.
           </a>
         </div>
