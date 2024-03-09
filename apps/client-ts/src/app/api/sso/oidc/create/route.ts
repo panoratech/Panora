@@ -1,18 +1,23 @@
 // This API route creates an OIDC connection
 import { NextRequest, NextResponse } from "next/server";
-import { adminOnlyAPIRoute } from "@/lib/stytch/sessionService";
-import { Member } from "@/lib/stytch/loadStytch";
 import { createOidc } from "@/lib/stytch/ssoService";
 
 export async function POST(
-  member: Member,
   req: NextRequest,
 ) {
   try {
-    const { display_name } = JSON.parse(await req.json());
+    const { display_name } = await req.json();
+    const organization_id = req.headers.get("x-member-org");
+    if(!organization_id){
+      return NextResponse.json({
+        message: "Error"
+      }, {
+        status: 400,
+      })
+    }
     const { connection } = await createOidc(
       display_name,
-      member.organization_id
+      organization_id
     );
     console.log(
       "Successfully created new OIDC connection",
@@ -32,5 +37,3 @@ export async function POST(
     })   
   }
 }
-
-export default adminOnlyAPIRoute(POST);

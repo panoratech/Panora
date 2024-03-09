@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import loadStytch, { Member, Organization } from '@/lib/stytch/loadStytch';
 import { clearIntermediateSession, clearSession, exchangeToken, getDiscoverySessionData, revokeSession, setIntermediateSession, setSession } from '@/lib/stytch/sessionService';
-import { toDomain } from '@/lib/utils';
 import { MfaRequired } from 'stytch';
+import { toDomain } from '@/lib/utils';
 
 const stytch = loadStytch();
 
@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
           setSession(response, exchangeResult.token); // Set session using response cookies.
           return response;
         } else {
-          const response = NextResponse.redirect(new URL(`/discovery`, request.url));
+          const response = NextResponse.redirect(new URL(`/auth/discovery`, request.url));
           setIntermediateSession(response, exchangeResult.token); // Set intermediate session using response cookies.
           return response;
         }
@@ -39,13 +39,21 @@ export async function middleware(request: NextRequest) {
       });
   }
 
+  if(request.nextUrl.pathname.startsWith('/api/discovery/start')){
+    return NextResponse.next();
+  }
+
   if(request.nextUrl.pathname.startsWith('/api/discovery/create')){
     const intermediateSession = request.cookies.get("intermediate_session")?.value;
+    console.log("intrm session => "+ intermediateSession);
     if (!intermediateSession) {
-      return NextResponse.redirect("/discovery");
+      return NextResponse.redirect(new URL("/auth/discovery", request.url));
     }
-    const { organization_name, require_mfa } = await request.json();
-
+    const body = await request.text();
+    const parts = body.split('=');
+    const organization_name = parts[1];
+    console.log("organization_name => "+ organization_name)
+    //const { organization_name, require_mfa } = body;
     try {
       const { member, organization, session_jwt, intermediate_session_token } =
         await stytch.discovery.organizations.create({
@@ -54,7 +62,7 @@ export async function middleware(request: NextRequest) {
           organization_slug: organization_name,
           organization_name: organization_name,
           session_duration_minutes: 60,
-          mfa_policy: require_mfa ? "REQUIRED_FOR_ALL" : "OPTIONAL"
+          mfa_policy: "OPTIONAL"
         });
 
       // Make the organization discoverable to other emails
@@ -87,77 +95,130 @@ export async function middleware(request: NextRequest) {
       setSession(response, session_jwt);
       return response;
     } catch (error) {
-      return NextResponse.redirect(new URL(`/discovery`, request.url));
+      return NextResponse.redirect(new URL(`/auth/discovery`, request.url));
     }
   }
 
-  if(request.nextUrl.pathname.startsWith('/api/discovery/:orgId')){
+  if(request.nextUrl.pathname.match(/^\/api\/discovery\/([^\/]+)$/)){
     const discoverySessionData = getDiscoverySessionData(request.cookies.get('session')?.value, request.cookies.get('intermediate_session')?.value);
     if (discoverySessionData.error) {
       console.log("No session tokens found...");
-      return { redirect: { statusCode: 307, destination: `/login` } };
+      return { redirect: { statusCode: 307, destination: `/auth/login` } };
     }
-    const searchParams = request.nextUrl.searchParams;
-    const orgId = searchParams.get('orgId');
+    const match = request.nextUrl.pathname.match(/^\/api\/discovery\/([^\/]+)$/);
+    if(!match) return NextResponse.redirect(new URL("/auth/discovery", request.url));
+    const orgId = match[1];
+    console.log(orgId)
     if (!orgId || Array.isArray(orgId)) {
-      return NextResponse.redirect("/discovery");
+      return NextResponse.redirect(new URL("/auth/discovery", request.url));
     }
 
-    const exchangeSession = () => {
+    const exchangeSession = async () => {
       if (discoverySessionData.isDiscovery) {
-        return stytch.discovery.intermediateSessions.exchange({
+        return await stytch.discovery.intermediateSessions.exchange({
           intermediate_session_token: discoverySessionData.intermediateSession,
           organization_id: orgId,
           session_duration_minutes: 60,
         });
       }
-      return stytch.sessions.exchange({
+      console.log('one '+ orgId);
+      console.log('two '+ discoverySessionData.sessionJWT);
+      const res = await stytch.sessions.exchange({
         organization_id: orgId,
         session_jwt: discoverySessionData.sessionJWT,
       });
+      console.log('res is '+ res);
+      
+      return res;
     };
 
     try {
       const { session_jwt, organization, member, intermediate_session_token, mfa_required } = await exchangeSession();
+      console.log(`DATA from exchange session: ${session_jwt} ${organization} ${member} ${intermediate_session_token} ${mfa_required}`)
       if(session_jwt === "") {
         const responseString = redirectToSMSMFA(organization, member, mfa_required!);
-        const response = NextResponse.redirect(responseString)
+        console.log(`response string: ${responseString}`)
+        const response = NextResponse.redirect(new URL(responseString, request.url))
         setIntermediateSession(response, intermediate_session_token)
         clearSession(response)
         return response;
       }
-      const response = NextResponse.redirect(`/${organization.organization_slug}/dashboard`);
+      const response = NextResponse.redirect(new URL(`/${organization.organization_slug}/dashboard`, request.url));
       setSession(response, session_jwt);
       clearIntermediateSession(response);
       return response;
     } catch (error) {
-      return NextResponse.redirect("/discovery");
+      console.log("error inside org "+ error)
+      return NextResponse.redirect(new URL('/auth/discovery', request.url));
     }
   }
 
-  if(request.nextUrl.pathname.startsWith('/logout')){
-    const response = NextResponse.redirect("/");
+  if(request.nextUrl.pathname.startsWith('/api/logout')){
+    const response = NextResponse.redirect(new URL("/", request.url));
     revokeSession(request, response);
     return response;
   }
 
-  const sessionJWT = request.cookies.get("session");
+  if(request.nextUrl.pathname.startsWith('/auth')){
+    const sessionJWT = request.cookies.get("session");
+
+    if (!sessionJWT) {
+      return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+  
+    try {
+      const sessionAuthRes = await stytch.sessions.authenticate({
+        session_duration_minutes: 30,
+        session_jwt: sessionJWT.value,
+      });
+      return NextResponse.next().cookies.set('x-session', JSON.stringify(sessionAuthRes));
+    } catch (err) {
+      return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+  }
+
+  const sessionJWT = request.cookies.get("session")?.value;
 
   if (!sessionJWT) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
 
   try {
-    const sessionAuthRes = await stytch.sessions.authenticate({
-      session_duration_minutes: 30,
-      session_jwt: sessionJWT.value,
-    });
-    return NextResponse.next().cookies.set('x-session', JSON.stringify(sessionAuthRes));
+    let sessionAuthRes;
+    try {
+      sessionAuthRes = await stytch.sessions.authenticate({
+        session_duration_minutes: 30, // extend the session a bit
+        session_jwt: sessionJWT,
+      });
+    } catch (err) {
+      console.error("Could not find member by session token", err);
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
+    console.log(sessionAuthRes);
+    const response = NextResponse.next();
+    // Stytch issues a new JWT on every authenticate call - store it on the UA for faster validation next time
+    setSession(response, sessionAuthRes.session_jwt);
+
+    const isAdmin = sessionAuthRes.member.trusted_metadata!.admin as boolean;
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
+    }
+    response.headers.set('x-member-org', sessionAuthRes.member.organization_id);
+
+    return response;
   } catch (err) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
+    return new Response(JSON.stringify({ error: "Session invalid" }), { status: 401 });
+  }  
 }
 
 export const config = {
-    matcher: ['/auth/[slug]/dashboard/:path*', '/api/callback', '/api/discovery/create', "/api/logout"],
+    matcher: [
+      '/auth/[slug]/dashboard/:path*', 
+      '/api/callback', 
+      '/api/discovery/:path*', 
+      '/api/logout', 
+      '/api/delete_member',
+      '/api/invite',
+      '/api/sso/:path*'
+    ],
 }

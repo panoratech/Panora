@@ -18,7 +18,7 @@ async function getProps(connection_id: string | null) {
 
   const org = await findByID(member.organization_id);
   if (org === null) {
-    return { redirect: { statusCode: 307, destination: `/login` } };
+    return { redirect: { statusCode: 307, destination: `/auth/login` } };
   }
 
   const connection = await list(org.organization_id).then((res) => {

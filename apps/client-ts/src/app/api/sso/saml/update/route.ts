@@ -1,10 +1,8 @@
 // This API route sends a magic link to the specified email address.
 import { NextRequest, NextResponse } from "next/server";
 import loadStytch, { Member } from "@/lib/stytch/loadStytch";
-import { adminOnlyAPIRoute } from "@/lib/stytch/sessionService";
 
 export async function POST(
-  member: Member,
   req: NextRequest,
 ) {
   try {
@@ -17,9 +15,17 @@ export async function POST(
       last_name_attribute,
       certificate,
       connection_id,
-    } = JSON.parse(await req.json());
+    } = await req.json();
+    const organization_id = req.headers.get("x-member-org");
+    if(!organization_id){
+      return NextResponse.json({
+        message: "Error"
+      }, {
+        status: 400,
+      })
+    }
     await loadStytch().sso.saml.updateConnection({
-      organization_id: member.organization_id,
+      organization_id: organization_id,
       connection_id,
       idp_entity_id: idp_entity_id,
       display_name: display_name,
@@ -45,5 +51,3 @@ export async function POST(
     }) 
   }
 }
-
-export default adminOnlyAPIRoute(POST);

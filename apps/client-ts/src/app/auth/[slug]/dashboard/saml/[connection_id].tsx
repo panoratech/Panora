@@ -1,7 +1,7 @@
 import { findByID } from "@/lib/stytch/orgService";
 import { FormEventHandler } from "react";
 import { updateSamlSSOConn } from "@/lib/stytch/api";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formatSSOStartURL } from "@/lib/stytch/loadStytch";
 import { getAuthData} from "@/lib/stytch/sessionService";
 import Link from "next/link";
@@ -16,7 +16,7 @@ async function getProps(connection_id: string) {
 
   const org = await findByID(member.organization_id);
   if (org === null) {
-    return { redirect: { statusCode: 307, destination: `/login` } };
+    return { redirect: { statusCode: 307, destination: `/auth/login` } };
   }
 
   const connection = await list(org.organization_id).then((res) =>
@@ -41,7 +41,11 @@ async function getProps(connection_id: string) {
 }
 async function ConnectionEditPage() {
   const router = useRouter();
-  const {connection, domain} = await getProps(router.query['connection_id'] as string);
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const connection_id = searchParams.get("connection_id");
+
+  const {connection, domain} = await getProps(connection_id as string);
 
   const onSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
@@ -59,7 +63,7 @@ async function ConnectionEditPage() {
     });
 
     // Force a reload to refresh the conn list
-    await router.replace(router.asPath);
+    router.replace(pathname);
   };
 
   return (
@@ -68,7 +72,7 @@ async function ConnectionEditPage() {
         <form onSubmit={onSubmit} style={{ minWidth: 400 }}>
           <h1>Edit SAML Connection</h1>
           <label htmlFor="display_name">Display Name</label>
-          <input
+          <input 
             type="text"
             name="display_name"
             value={connection!.display_name}
@@ -143,7 +147,7 @@ async function ConnectionEditPage() {
         </a>
         <Link
           style={{ marginRight: "auto" }}
-          href={`/${router.query.slug}/dashboard`}
+          href={`/${searchParams.get('slug')}/dashboard`}
         >
           Back
         </Link>

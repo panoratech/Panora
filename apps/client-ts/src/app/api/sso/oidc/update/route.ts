@@ -1,12 +1,9 @@
 // This API route updates the specified OIDC connection.
 import { NextRequest, NextResponse } from "next/server";
 import loadStytch, { Member } from "@/lib/stytch/loadStytch";
-import { adminOnlyAPIRoute } from "@/lib/stytch/sessionService";
 
 export async function POST(
-  member: Member,
   req: NextRequest,
-  res: NextResponse
 ) {
   try {
     const {
@@ -19,10 +16,18 @@ export async function POST(
       token_url,
       userinfo_url,
       jwks_url,
-    } = JSON.parse(await req.json());
-
+    } = await req.json();
+    
+    const organization_id = req.headers.get("x-member-org");
+    if(!organization_id){
+      return NextResponse.json({
+        message: "Error"
+      }, {
+        status: 400,
+      })
+    }
     await loadStytch().sso.oidc.updateConnection({
-      organization_id: member.organization_id,
+      organization_id: organization_id,
       connection_id,
       display_name: display_name,
       client_id: client_id,
@@ -47,5 +52,3 @@ export async function POST(
     }) 
   }
 }
-
-export default adminOnlyAPIRoute(POST);

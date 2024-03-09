@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const CreateNewOrganization = () => {
+/*const CreateNewOrganization = () => {
   const [orgName, setOrgName] = useState("");
   const [requireMFA, setRequireMFA] = useState(false);
   return (
@@ -34,10 +34,10 @@ const CreateNewOrganization = () => {
       </form>
     </div>
   );
-};
+};*/
 
 
-const DiscoveryClient = async ({
+const DiscoveryClient = ({
   children,
 }: {
   children: React.ReactNode
@@ -45,7 +45,7 @@ const DiscoveryClient = async ({
   return (
     <div className="card">
       {children}
-      <CreateNewOrganization />
+      {/*<CreateNewOrganization />*/}
     </div>
   );
 };

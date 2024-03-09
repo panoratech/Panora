@@ -16,10 +16,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const resp = await sendSMSMFAOTP();
-    return NextResponse.redirect(`/${resp.organization.organization_slug}/smsmfa?sent=true&org_id=${resp.organization.organization_id}&member_id=${resp.member.member_id}`)
+    return NextResponse.redirect(new URL(`/${resp.organization.organization_slug}/smsmfa?sent=true&org_id=${resp.organization.organization_id}&member_id=${resp.member.member_id}`, req.url));
   } catch (error) {
     console.error("Could not send in callback", error);
-    return NextResponse.redirect("/discovery")
+    return NextResponse.redirect(new URL("/auth/discovery", req.url))
   }
 }
 

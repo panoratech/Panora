@@ -10,7 +10,7 @@ async function getProps() {
     );
     if (discoverySessionData.error) {
       console.log("No session tokens found...");
-      return { redirect: { statusCode: 307, destination: `/login` } };
+      return { redirect: { statusCode: 307, destination: `/auth/login` } };
     }
   
     const { discovered_organizations } =

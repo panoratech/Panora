@@ -7,14 +7,14 @@ export async function POST(
   req: NextRequest,
 ) {
   const stytchClient = loadStytch();
-  const { email } = JSON.parse(await req.json());
+  const { email } = await req.json();
   const query = req.nextUrl.searchParams;
   const domain = getDomainFromRequest(query.get("host") as string,query.get("x-forwarded-proto") as string);
 
   try {
     await stytchClient.magicLinks.email.discovery.send({
       email_address: email,
-      discovery_redirect_url: `${domain}/api/callback`,
+      discovery_redirect_url: `http://localhost:3000/api/callback`, //${domain}
     });
     return NextResponse.json({
       message: "Success"

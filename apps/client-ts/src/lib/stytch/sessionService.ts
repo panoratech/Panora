@@ -202,57 +202,6 @@ type DiscoverySessionData =
     return { error: true };
   }
 
-type APIHandler = (
-  member: Member,
-  req: NextRequest,
-  res: NextResponse
-) => Promise<NextResponse | void>;
-
-/**
- * adminOnlyAPIRoute wraps an API handler and ensures that the caller has a valid session
- * The caller's member object is passed to the API handler
- * @param apiHandler
- */
-export function adminOnlyAPIRoute(apiHandler: APIHandler) {
-  return async function WrappedHandler(
-    req: NextRequest,
-    res: NextResponse
-  ): Promise<NextResponse | void> {
-    const sessionJWT = req.cookies.get(SESSION_COOKIE)?.value;
-
-    if (!sessionJWT) {
-      console.log("No session JWT found...");
-      return res.status(401).end();
-    }
-
-    console.log(sessionJWT);
-
-    let sessionAuthRes;
-    try {
-      sessionAuthRes = await stytch.sessions.authenticate({
-        session_duration_minutes: 30, // extend the session a bit
-        session_jwt: sessionJWT,
-      });
-    } catch (err) {
-      console.error("Could not find member by session token", err);
-      return res.status(401).end();
-    }
-
-    console.log(sessionAuthRes);
-    // Stytch issues a new JWT on every authenticate call - store it on the UA for faster validation next time
-    setSession(res, sessionAuthRes.session_jwt);
-
-    const isAdmin = sessionAuthRes.member.trusted_metadata!.admin as boolean;
-    if (!isAdmin) {
-      console.error("Member is not authorized to call route");
-      return res.status(403).end();
-    }
-
-    return apiHandler(sessionAuthRes.member, req, res);
-  };
-}
-
-
 /**
  * useAuth will return the authentication result for the logged-in user.
  * It can only be called in functions wrapped with {@link withSession}`

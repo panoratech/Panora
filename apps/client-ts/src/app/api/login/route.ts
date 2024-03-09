@@ -5,7 +5,7 @@ import loadStytch from "@/lib/stytch/loadStytch";
 
 export async function POST(req: NextRequest) {
   const stytchClient = loadStytch();
-  const { email, organization_id } = JSON.parse(await req.json());
+  const { email, organization_id } = await req.json();
   const query = req.nextUrl.searchParams;
   const domain = getDomainFromRequest(query.get("host") as string,query.get("x-forwarded-proto") as string);
   try {

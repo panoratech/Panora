@@ -1,13 +1,10 @@
-//'use client';
-
-import DiscoveryClient from "@/components/Auth/DiscoveryClient";
 import DiscoveryServer from "@/components/Auth/DiscoveryServer";
 
-const Page = async () => {
+const Page = () => {
   return (
-    <DiscoveryClient>
+    <div className="card">
       <DiscoveryServer />
-    </DiscoveryClient>
+    </div>
   )
 };
 

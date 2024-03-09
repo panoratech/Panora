@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import loadStytch from "@/lib/stytch/loadStytch";
 import {
-  clearIntermediateSession,
   getDiscoverySessionData,
-  setSession,
 } from "@/lib/stytch/sessionService";
 
 const stytchClient = loadStytch();
 
-export async function POST(req: NextRequest, res: NextResponse) {
-  const discoverySessionData = getDiscoverySessionData(req.cookies.get('session')?.value, req.cookies.get('intermediate_session')?.value);
+export async function POST(req: NextRequest) {
+  /*const discoverySessionData = getDiscoverySessionData(req.cookies.get('session')?.value, req.cookies.get('intermediate_session')?.value);
   if (discoverySessionData.error) {
     console.log("No session tokens found...");
     return { redirect: { statusCode: 307, destination: `/login` } };
@@ -26,7 +24,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     });
   };
 
-  try {
+  /*try {
     const { session_jwt, organization } = await authSMSMFAOTP();
     setSession(req, res, session_jwt);
     clearIntermediateSession(req, res);
@@ -35,5 +33,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     console.error("Could not authenticate in callback", error);
 
     return NextResponse.redirect("/discovery");
-  }
+  }*/
+  return NextResponse.redirect(new URL('/auth/login', req.url));
 }
