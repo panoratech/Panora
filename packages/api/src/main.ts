@@ -31,9 +31,11 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const frontEndUrl = configService.get<string>('FRONT_END_URL');
+  const frontEndUrlPort81 = configService.get<string>('VITE_FRONTEND_DOMAIN');
+
+  // console.log(frontEndUrl)
 
   app.enableCors({
-    origin: frontEndUrl.split(' '),
     credentials: true,
   });
   await app.listen(3000);
