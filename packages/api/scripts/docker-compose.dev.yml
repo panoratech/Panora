@@ -102,6 +102,9 @@ services:
     build:
       dockerfile: ./apps/magic-link/Dockerfile.dev
       context: ./
+      args:
+        VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
+        VITE_ML_FRONTEND_URL: ${VITE_ML_FRONTEND_URL}
     restart:
       always
     ports:
