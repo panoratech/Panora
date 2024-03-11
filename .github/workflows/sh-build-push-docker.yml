@@ -44,7 +44,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: ./apps/webapp/Dockerfile
+          file: ./apps/client-ts/Dockerfile
           push: true
           tags: panoradotdev/frontend-webapp:latest
           build-args: |

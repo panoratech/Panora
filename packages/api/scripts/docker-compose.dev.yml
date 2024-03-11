@@ -77,9 +77,9 @@ services:
     networks:
       - backend
   
-  webapp:
+  webapp-nextjs:
     build:
-      dockerfile: ./apps/webapp/Dockerfile.dev
+      dockerfile: ./apps/client-ts/Dockerfile.dev
       context: ./
       args:
         VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
