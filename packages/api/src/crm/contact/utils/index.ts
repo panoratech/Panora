@@ -12,7 +12,7 @@ export class Utils {
 
   normalizeEmailsAndNumbers(email_addresses: Email[], phone_numbers: Phone[]) {
     let normalizedEmails = [];
-    let normalizedPhones = [];
+    const normalizedPhones = [];
 
     if (email_addresses) {
       normalizedEmails = email_addresses.map((email) => ({
