@@ -45,6 +45,7 @@ RUN pnpm install
 # Build the project
 COPY --from=builder ./app/out/full/ .
 RUN pnpm turbo run build --filter=client-ts...
+RUN ls -l /app/apps/client-ts/dist/
 
 # ========================================================================
 FROM nginx:stable-alpine as runner
