@@ -1,4 +1,5 @@
 import { FormEventHandler, useEffect, useState } from "react";
+import { Input } from "@/components/ui/input"
 
 const STATUS = {
   INIT: 0,
@@ -57,7 +58,7 @@ export const EmailLoginForm = ({ title, onSubmit, children }: EmailLoginProps) =
       {emlSent === STATUS.INIT && (
         <div className="section">
           <form onSubmit={onSubmitFormHandler}>
-            <input
+            <Input
               name="email"
               placeholder="example@email.com"
               value={email}

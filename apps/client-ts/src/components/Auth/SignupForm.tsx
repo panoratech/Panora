@@ -8,6 +8,7 @@ import {
 } from "react";
 import { discoveryStart } from "@/lib/stytch/api";
 import {OAuthButton, OAuthProviders} from "./OAuthButton";
+import { Input } from "@/components/ui/input"
 
 const STATUS = {
   INIT: 0,
@@ -80,7 +81,7 @@ const SignupForm = ({ domain }: Props) => {
           <h1>Sign up</h1>
           <form onSubmit={onSubmit}>
             <label>Email address</label>
-            <input
+            <Input
               placeholder="example@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

@@ -49,8 +49,8 @@ export const formatOAuthStartURL = (redirectDomain: string, provider: string, or
 const loadStytch = () => {
   if (!client) {
     client = new stytch.B2BClient({
-      project_id: "project-test-ed65efd8-0a06-498b-81d0-ab00bd078ab3",
-      secret: "secret-test-MIHAfWctgaL5AnM4f2GqHnOFZJSC-e9DcQo=", 
+      project_id: process.env.NEXT_PUBLIC_STYTCH_PROJECT_ID || "",
+      secret: process.env.NEXT_PUBLIC_STYTCH_SECRET || "", 
       env: stytchEnv,
     });
   }

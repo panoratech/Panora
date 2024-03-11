@@ -6,6 +6,7 @@ import Link from "next/link";
 import {EmailLoginForm} from "./EmailLoginForm";
 import {discoveryStart} from "@/lib/stytch/api";
 import {OAuthButton, OAuthProviders} from "./OAuthButton";
+import { Input } from "@/components/ui/input"
 
 const ContinueToTenantForm = ({ onBack }: { onBack: () => void }) => {
   const [slug, setSlug] = useState<string>("");
@@ -29,7 +30,7 @@ const ContinueToTenantForm = ({ onBack }: { onBack: () => void }) => {
         </Link>
       </p>
       <form onSubmit={onSubmit}>
-        <input
+        <Input
           type="text"
           value={slug}
           onChange={(e) => setSlug(e.target.value)}

@@ -99,58 +99,6 @@
   color: #888;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  color: rgb(25, 48, 61);
-  box-sizing: border-box;
-}
-
-h1 {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-h2 {
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 30px;
-  margin-bottom: 4px;
-}
-
-h3 {
-  font-size: 14px;
-  line-height: 30px;
-  margin-bottom: 4px;
-}
-
-p {
-  font-size: 18px;
-  font-weight: 400;
-  margin-bottom: 16px;
-}
-
-li {
-  font-size: 18px;
-  font-weight: 400;
-  margin-bottom: 4px;
-}
-
-main {
-  display: flex;
-  min-height: calc(100vh - 70px);
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 36px 0;
-}
-
-ul {
-  list-style-type: none;
-}
-
 .container {
   max-width: 650px;
   width: 100%;
@@ -208,32 +156,6 @@ button.secondary:disabled {
   background-color: rgba(0, 0, 0, 0.12);
 }
 
-pre.code-block {
-  max-height: 200px;
-  width: 100%;
-  overflow: scroll;
-  background-color: #10232e;
-  border: none;
-  border-radius: 4px;
-  padding: 16px 8px;
-  margin-bottom: 16px;
-}
-
-pre.code-block > code {
-  color: white;
-  font-family: monospace;
-}
-
-span.code {
-  font-family: monospace;
-  font-weight: 400;
-  line-height: 28px;
-  padding-left: 4px;
-  border-radius: 4px;
-  padding-right: 4px;
-  background-color: #ecfaff;
-}
-
 header {
   width: 100%;
   height: 70px;
@@ -287,33 +209,6 @@ form.row {
 form.row > button {
   width: auto;
   min-width: 100px;
-}
-
-input[type="text"],
-input[type="email"] {
-  padding: 0 8px;
-  vertical-align: middle;
-  border-radius: 2px;
-  width: 100%;
-  min-height: 36px;
-  background-color: #ffffff;
-  border: 1px solid rgb(173, 188, 197);
-  transition: all 0.2s ease-in-out 0s;
-  font-size: 16px;
-  line-height: 18px;
-  font-weight: normal;
-}
-input[type="text"]:focus,
-input[type="email"]:focus {
-  outline: none;
-  border: 1px solid rgb(255, 221, 66);
-  box-shadow: inset 0 0 0 1px rgb(255, 221, 66);
-}
-
-input[type="text"]:disabled,
-input[type="email"]:disabled {
-  background-color: lightgray;
-  opacity: 0.5;
 }
 
 textarea {

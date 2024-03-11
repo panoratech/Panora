@@ -1,4 +1,5 @@
 import LoginDiscoveryForm from "@/components/Auth/LoginDiscoveryForm";
+import loadStytch from "@/lib/stytch/loadStytch";
 import {getDomainFromRequest} from "@/lib/stytch/urlUtils";
 import { headers } from 'next/headers'
 
@@ -10,8 +11,7 @@ async function getDomain() {
 }
 
 export default async function Page() {
-    const domain = await getDomain();
-    
+    const domain = await getDomain();    
     return (
         <div className='min-h-screen grid lg:grid-cols-2 mx-auto text-left'>
             <div className='flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>

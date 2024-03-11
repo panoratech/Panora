@@ -8,6 +8,7 @@ import Link from "next/link";
 import { list } from "@/lib/stytch/ssoService"; 
 import {getDomainFromRequest} from "@/lib/stytch/urlUtils";
 import { headers } from "next/headers";
+import { Input } from "@/components/ui/input"
 
 
 async function getProps(connection_id: string) {
@@ -72,58 +73,58 @@ async function ConnectionEditPage() {
         <form onSubmit={onSubmit} style={{ minWidth: 400 }}>
           <h1>Edit SAML Connection</h1>
           <label htmlFor="display_name">Display Name</label>
-          <input 
+          <Input 
             type="text"
             name="display_name"
             value={connection!.display_name}
             disabled
           />
           <label htmlFor="status">Status</label>
-          <input type="text" name="status" disabled value={connection!.status} />
+          <Input type="text" name="status" disabled value={connection!.status} />
           <label htmlFor="acs_url">ACS URL</label>
-          <input
+          <Input
             type="text"
             name="acs_url"
             disabled
             value={connection!.acs_url}
           />
           <label htmlFor="audience_uri">Audience URI</label>
-          <input
+          <Input
             type="text"
             name="audience_uri"
             disabled
             value={connection!.audience_uri}
           />
           <label htmlFor="idp_sso_url">SSO URL</label>
-          <input
+          <Input
             type="text"
             name="idp_sso_url"
             placeholder="https://idp.com/sso/start"
             defaultValue={connection!.idp_sso_url}
           />
           <label htmlFor="idp_entity_id">IDP Entity ID</label>
-          <input
+          <Input
             type="text"
             name="idp_entity_id"
             placeholder="https://idp.com/sso/start"
             defaultValue={connection!.idp_entity_id}
           />
           <label htmlFor="email_attribute">Email Attribute</label>
-          <input
+          <Input
             type="text"
             name="email_attribute"
             placeholder="NameID"
             defaultValue={connection!.attribute_mapping!["email"]}
           />
           <label htmlFor="first_name_attribute">First Name Attribute</label>
-          <input
+          <Input
             type="text"
             name="first_name_attribute"
             placeholder="firstName"
             defaultValue={connection!.attribute_mapping!["first_name"]}
           />
           <label htmlFor="last_name_attribute">Last Name Attribute</label>
-          <input
+          <Input
             type="text"
             name="last_name_attribute"
             placeholder="lastName"

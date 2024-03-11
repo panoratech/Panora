@@ -6,6 +6,7 @@ import {
 } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Input } from "@/components/ui/input"
 
 import {
   createOidcSSOConn,
@@ -120,7 +121,7 @@ const MemberList = ({
       <div className="section">
         <h3>Invite new member</h3>
         <form onSubmit={onInviteSubmit} className="row">
-          <input
+          <Input
             placeholder={`your-coworker@${org.email_allowed_domains[0] ?? "example.com"
               }`}
             value={email}
@@ -226,7 +227,7 @@ const IDPList = ({
             }
             className="row"
           >
-            <input
+            <Input
               type="text"
               placeholder={
                 ssoMethod === SSO_METHOD.SAML
@@ -253,7 +254,7 @@ const IDPList = ({
             </button>
           </form>
           <div className="radio-sso">
-            <input
+            <Input
               type="radio"
               id="saml"
               name="sso_method"
@@ -261,7 +262,7 @@ const IDPList = ({
               checked={ssoMethod === SSO_METHOD.SAML}
             />
             <label htmlFor="saml">SAML</label>
-            <input
+            <Input
               type="radio"
               id="oidc"
               onClick={(e) => setSsoMethod(SSO_METHOD.OIDC)}
