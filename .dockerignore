@@ -1,9 +1,6 @@
 pg_data/
 node_modules/
 
-apps/webapp/node_modules
-apps/webapp/dist
-
 apps/magic-link/node_modules
 apps/magic-link/dist
 
