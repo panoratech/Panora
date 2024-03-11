@@ -8,7 +8,7 @@ export default function RegisterPage() {
         <RegisterForm />
       </div>
       <div className='hidden lg:block relative flex-1'>
-        <img className='absolute inset-0 h-full w-full object-cover' src={RegisterImage} alt='Registration Page Image' />
+        <img className='absolute inset-0 h-full w-full object-cover' src={RegisterImage.src} alt='Registration Page Image' />
       </div>
     </div>
   );

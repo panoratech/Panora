@@ -41,7 +41,7 @@ export function SmallNav({
           <SheetHeader className="flex items-center">
             <SheetTitle className="mx-4 my-4">
               <Link to="/" className="flex flex-row items-center" onClick={() => setOpen(false)}>
-                <img src="logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span>
+                <img src="./../../../../public/logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span>
               </Link>
             </SheetTitle>
             <ThemeSwitcher />

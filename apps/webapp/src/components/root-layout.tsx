@@ -34,7 +34,7 @@ export const RootLayout = () => {
           <div className='flex lg:flex-col items-center py-4 space-y-4'>
             <div className='flex flex-row justify-between items-center w-full px-6'>
               <Link to='/'>
-                <img src='logo.png' className='w-14' />
+                <img src="./../../public/logo.png" className='w-14' />
               </Link>
               <ThemeSwitcher />
             </div>

@@ -20,6 +20,7 @@ import {
   organizationFormSchema,
 } from "./create-organization-schema";
 
+
 export const CreateOrganizationForm = () => {
   const navigate = useNavigate();
   const { mutate, isPending } = useOrganisationMutation();
@@ -41,7 +42,7 @@ export const CreateOrganizationForm = () => {
     <div className="mx-auto w-full max-w-sm lg:w-96">
       <div className="text-center">
         <Link to="/">
-          <img src="/logo.png" className="w-14 mx-auto" />
+          <img src="./../../../../public/logo.png" className="w-14 mx-auto" />
         </Link>
         <h2 className="mt-6 text-3xl font-extrabold">Create Organization</h2>
       </div>

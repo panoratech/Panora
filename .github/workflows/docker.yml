@@ -17,8 +17,8 @@ jobs:
       DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       REDIS_HOST: ${{ secrets.REDIS_HOST }}
-      VITE_BACKEND_DOMAIN: ${{ secrets.VITE_BACKEND_DOMAIN }}
-      VITE_FRONTEND_DOMAIN: ${{ secrets.VITE_FRONTEND_DOMAIN }}
+      NEXT_PUBLIC_BACKEND_DOMAIN: ${{ secrets.NEXT_PUBLIC_BACKEND_DOMAIN }}
+      NEXT_PUBLIC_FRONTEND_DOMAIN: ${{ secrets.NEXT_PUBLIC_FRONTEND_DOMAIN }}
     steps:
       - uses: actions/checkout@v3
       - uses: isbang/compose-action@v1.5.1

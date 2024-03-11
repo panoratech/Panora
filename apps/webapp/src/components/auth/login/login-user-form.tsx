@@ -11,6 +11,7 @@ import useLoginMutation from '@/hooks/mutations/useLoginMutation';
 import { type LoginSchemaType, loginSchema } from './login-schema';
 import { toast } from 'sonner';
 
+
 export const LoginUserForm = () => {
   const navigate = useNavigate();
   const { mutate: login, isPending: loginPending } = useLoginMutation();
@@ -34,7 +35,7 @@ export const LoginUserForm = () => {
     <div className='mx-auto w-full max-w-sm lg:w-96'>
       <div className='text-center'>
         <Link to='/'>
-          <img src='/logo.png' className='w-14 mx-auto' />
+          <img src="./../../../../public/logo.png" className='w-14 mx-auto' />
         </Link>
         <h2 className='mt-6 text-3xl font-extrabold'>Login</h2>
         <p className='mt-2 text-sm'>
