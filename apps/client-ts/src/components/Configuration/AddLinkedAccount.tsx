@@ -65,6 +65,7 @@ const AddLinkedAccount = () => {
 
   const handleOpenChange = (open: boolean) => {
     setShowNewLinkedUserDialog(prevState => ({ ...prevState, open }));
+    form.reset()
   };
 
   const posthog = usePostHog()
