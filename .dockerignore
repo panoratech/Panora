@@ -4,5 +4,8 @@ node_modules/
 apps/magic-link/node_modules
 apps/magic-link/dist
 
+apps/client-ts/node_modules
+apps/client-ts/.next
+
 packages/api/node_modules
 packages/api/dist
