@@ -67,6 +67,26 @@ services:
       - ./redis-data:/data
     networks:
       - backend
+      
+  webapp-next:
+    build:
+      dockerfile: ./apps/client-ts/Dockerfile
+      context: ./
+      args:
+        NEXT_PUBLIC_STYTCH_PROJECT_ID: ${NEXT_PUBLIC_STYTCH_PROJECT_ID}
+        NEXT_PUBLIC_STYTCH_SECRET: ${NEXT_PUBLIC_STYTCH_SECRET}
+        NEXT_PUBLIC_STYTCH_PROJECT_ENV: ${NEXT_PUBLIC_STYTCH_PROJECT_ENV}
+        NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN: ${NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN}
+        NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
+        NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+    restart: unless-stopped
+    ports:
+      - 80:3000
+    depends_on:
+      - api
+    networks:
+      - backend
+      - frontend
 
   magic-link-frontend:
     build:
