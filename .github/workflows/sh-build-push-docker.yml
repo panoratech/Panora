@@ -50,6 +50,11 @@ jobs:
           build-args: |
             NEXT_PUBLIC_BACKEND_DOMAIN=${{ secrets.NEXT_PUBLIC_BACKEND_DOMAIN }}
             NEXT_PUBLIC_FRONTEND_DOMAIN=${{ secrets.NEXT_PUBLIC_FRONTEND_DOMAIN }}
+            NEXT_PUBLIC_STYTCH_PROJECT_ID=${{ secrets.NEXT_PUBLIC_STYTCH_PROJECT_ID }}
+            NEXT_PUBLIC_STYTCH_SECRET=${{ secrets.NEXT_PUBLIC_STYTCH_SECRET }}
+            NEXT_PUBLIC_STYTCH_PROJECT_ENV=${{ secrets.NEXT_PUBLIC_STYTCH_PROJECT_ENV }}
+            NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN=${{ secrets.NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN }}
+            NEXT_PUBLIC_DISTRIBUTION=${{ env.DISTRIBUTION }}
 
       - name: Build and push Backend (API)
         uses: docker/build-push-action@v2
