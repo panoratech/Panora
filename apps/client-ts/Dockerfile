@@ -47,8 +47,9 @@ RUN corepack enable
 
 WORKDIR /app
 
-ENV node-linker="node-modules"
-ENV package-import-method="copy"
+ARG node-linker="hoisted"
+ARG package-import-method="copy"
+ARG symlink="false"
 
 RUN ls -la 
 
@@ -59,10 +60,8 @@ COPY --from=builder /app/out/json/ .
 # 🔴🔴🔴 possible bug due to missing dependencies here
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
-RUN echo -e "node-linker=node-modules\npackage-import-method=copy" > ./.npmrc 
-#package-import-method=copy
-
-RUN pnpm install
+# install dependencies
+RUN pnpm install --shamefully-hoist
 
 # Build the project
 COPY --from=builder ./app/out/full/ .
@@ -74,27 +73,28 @@ RUN ls -la /app/apps/client-ts/.next/
 RUN ls -la /app/apps/client-ts/.next/standalone
 
 
+CMD cd /app/apps/client-ts/.next/standalone && node server.js
 
-# Node.js server - serving dynamic content
-# # ========================================================================
-FROM node:20-alpine AS runner
-WORKDIR /app
+# # Node.js server - serving dynamic content
+# # # ========================================================================
+# FROM node:20-alpine AS runner
+# WORKDIR /app
 
-# set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
-ENV PORT 3000
+# # set hostname to localhost
+# ENV HOSTNAME "0.0.0.0"
+# ENV PORT 3000
 
-# Import Standalone files
-COPY --from=installer ./app/apps/client-ts/public ./public
-COPY --from=installer ./app/apps/client-ts/.next/static ./.next/static
-COPY --from=installer ./app/apps/client-ts/.next/standalone ./
+# # Import Standalone files
+# COPY --from=installer ./app/apps/client-ts/public ./public
+# COPY --from=installer ./app/apps/client-ts/.next/static ./.next/static
+# COPY --from=installer ./app/apps/client-ts/.next/standalone ./
 
-RUN ls -a ./
+# RUN ls -a ./
 
 
-# Expose port and run
-EXPOSE 3000
-CMD ["node", "server.js"]
+# # Expose port and run
+# EXPOSE 3000
+# CMD ["node", "server.js"]
 
 
 # # For serving static content - some nextjs features will be lost
