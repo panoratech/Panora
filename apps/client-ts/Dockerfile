@@ -47,9 +47,10 @@ RUN corepack enable
 
 WORKDIR /app
 
-ARG node-linker="hoisted"
-ARG package-import-method="copy"
-ARG symlink="false"
+
+#ARG node-linker="hoisted"
+#ARG package-import-method="copy"
+#ARG symlink="false"
 
 RUN ls -la 
 
@@ -57,7 +58,7 @@ RUN ls -la
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 
-# 🔴🔴🔴 possible bug due to missing dependencies here
+# 🔴🔴🔴 possible bug due to missing dependencies here, when using "standalone mode"
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # install dependencies
@@ -70,10 +71,11 @@ RUN pnpm run build
 # check content
 RUN ls -la /app/apps/client-ts/
 RUN ls -la /app/apps/client-ts/.next/
-RUN ls -la /app/apps/client-ts/.next/standalone
 
+CMD cd /app/apps/client-ts/ && pnpm run start
 
-CMD cd /app/apps/client-ts/.next/standalone && node server.js
+#RUN cd /app/apps/client-ts && node .next/standalone/server.js
+#RUN ls -la /app/apps/client-ts/.next/standalone
 
 # # Node.js server - serving dynamic content
 # # # ========================================================================
