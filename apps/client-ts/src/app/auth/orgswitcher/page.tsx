@@ -4,11 +4,30 @@ import {
   getAuthData,
   getDiscoverySessionData,
 } from "@/lib/stytch/sessionService";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
+import { DiscoveredOrganization, Member } from "stytch";
+
+const stytch = loadStytch();
 
 async function getProps() {
-  const authHeader = headers().get('x-session');
-  const { member } = getAuthData(authHeader);
+  const sessionJWT = cookies().get("session");
+
+  if (!sessionJWT) {
+    throw new Error("no jwt set");
+    //return NextResponse.redirect(new URL('/auth/login', request.url));
+  }
+  let sessionAuthRes;
+  try {
+    sessionAuthRes = await stytch.sessions.authenticate({
+      session_duration_minutes: 30,
+      session_jwt: sessionJWT.value,
+    });
+    console.log("sessionauthres is "+ JSON.stringify(sessionAuthRes));
+  } catch (err) {
+    console.log(err);
+    return err;
+  }  
+  const { member } = getAuthData(JSON.stringify(sessionAuthRes));
   const discoverySessionData = getDiscoverySessionData(
     cookies().get('session')?.value,
     cookies().get('intermediate_session')?.value,
@@ -29,9 +48,13 @@ async function getProps() {
     discovered_organizations,
   }
 }
-
+interface ResponseProps {
+  user: Member;
+  discovered_organizations: DiscoveredOrganization[];
+}
 const OrgSwitcherList = async () => {
-  const {user, discovered_organizations} = await getProps();
+  const {user, discovered_organizations} = await getProps() as ResponseProps;
+  
   return (
     <div className="section">
       <h3>Your Organizations</h3>

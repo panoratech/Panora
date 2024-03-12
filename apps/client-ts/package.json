@@ -31,7 +31,6 @@
     "@tanstack/react-query-next-experimental": "^5.25.0",
     "@tanstack/react-table": "^8.11.8",
     "antd": "^5.11.5",
-    "api": "workspace:*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
@@ -51,7 +50,8 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "api": "workspace:*"
   },
   "devDependencies": {
     "@types/cookies": "^0.9.0",

@@ -1,3 +1,5 @@
+'use client'
+
 import {
   FormEventHandler,
   MouseEventHandler,
@@ -23,7 +25,6 @@ import {
 } from "@/lib/stytch/loadStytch";
 import { findAllMembers, findByID } from "@/lib/stytch/orgService";
 import { list } from "@/lib/stytch/ssoService";
-import { headers } from "next/headers";
 
 type Props = {
   org: Organization;
@@ -276,45 +277,20 @@ const IDPList = ({
   );
 };
 
-async function getProps() {
-  const authHeader = headers().get('x-session');
-  const { member } = getAuthData(authHeader);
-  const org = await findByID(member.organization_id);
 
-  if (org === null) {
-    return { redirect: { statusCode: 307, destination: `/auth/login` } };
-  }
-
-  const [members, ssoConnections] = await Promise.all([
-    findAllMembers(org.organization_id),
-    list(org.organization_id),
-  ]); 
-
-  return {
-    props: {
-      org,
-      user: member,
-      members,
-      saml_connections: ssoConnections.saml_connections ?? [],
-      oidc_connections: ssoConnections.oidc_connections ?? [],
-    },
-  };
-}
-
-const Dashboard = async () => {
-  const result = await getProps();
-
-  if (!result.props) {
-    return null;
-  }
-
-  const {
+const Dashboard = ({
     org,
     user,
     members,
     saml_connections,
     oidc_connections,
-  }  = result.props;
+}: {
+    org: Organization,
+    user: Member,
+    members: Member[],
+    saml_connections: SAMLConnection[],
+    oidc_connections: OIDCConnection[]
+}) => {
   
   return (
     <div className="card">

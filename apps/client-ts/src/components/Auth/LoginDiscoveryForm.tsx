@@ -14,7 +14,7 @@ const ContinueToTenantForm = ({ onBack }: { onBack: () => void }) => {
 
   const onSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-    router.push(`${slug}/login`);
+    router.push(`/auth/${slug}/login`);
   };
 
   return (

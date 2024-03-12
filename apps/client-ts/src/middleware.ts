@@ -116,7 +116,9 @@ export async function middleware(request: NextRequest) {
     if (!orgId || Array.isArray(orgId)) {
       return NextResponse.redirect(new URL("/auth/discovery", request.url));
     }
-
+    if(discoverySessionData){
+      console.log(JSON.stringify("data : " + discoverySessionData))
+    }
     const exchangeSession = async () => {
       if (discoverySessionData.isDiscovery) {
         return await stytch.discovery.intermediateSessions.exchange({
@@ -147,7 +149,7 @@ export async function middleware(request: NextRequest) {
         clearSession(response)
         return response;
       }
-      const response = NextResponse.redirect(new URL(`/${organization.organization_slug}/dashboard`, request.url));
+      const response = NextResponse.redirect(new URL(`/auth/${organization.organization_slug}/dashboard`, request.url));
       setSession(response, session_jwt);
       clearIntermediateSession(response);
       return response;
@@ -161,24 +163,6 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(new URL("/auth/login", request.url));
     revokeSession(request, response);
     return response;
-  }
-
-  if(request.nextUrl.pathname.startsWith('/auth')){
-    const sessionJWT = request.cookies.get("session");
-
-    if (!sessionJWT) {
-      return NextResponse.redirect(new URL('/auth/login', request.url));
-    }
-  
-    try {
-      const sessionAuthRes = await stytch.sessions.authenticate({
-        session_duration_minutes: 30,
-        session_jwt: sessionJWT.value,
-      });
-      return NextResponse.next().cookies.set('x-session', JSON.stringify(sessionAuthRes));
-    } catch (err) {
-      return NextResponse.redirect(new URL('/auth/login', request.url));
-    }
   }
 
   const sessionJWT = request.cookies.get("session")?.value;

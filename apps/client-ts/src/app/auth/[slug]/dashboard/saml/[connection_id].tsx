@@ -2,18 +2,37 @@ import { findByID } from "@/lib/stytch/orgService";
 import { FormEventHandler } from "react";
 import { updateSamlSSOConn } from "@/lib/stytch/api";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { formatSSOStartURL } from "@/lib/stytch/loadStytch";
+import loadStytch, { formatSSOStartURL } from "@/lib/stytch/loadStytch";
 import { getAuthData} from "@/lib/stytch/sessionService";
 import Link from "next/link";
 import { list } from "@/lib/stytch/ssoService"; 
 import {getDomainFromRequest} from "@/lib/stytch/urlUtils";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { Input } from "@/components/ui/input"
+import { SAMLConnection } from "stytch";
 
+const stytch = loadStytch();
 
 async function getProps(connection_id: string) {
-  const authHeader = headers().get('x-session');
-  const { member } = getAuthData(authHeader);
+  const sessionJWT = cookies().get("session");
+
+  if (!sessionJWT) {
+    throw new Error("no jwt set");
+    //return NextResponse.redirect(new URL('/auth/login', request.url));
+  }
+  let sessionAuthRes;
+  try {
+    sessionAuthRes = await stytch.sessions.authenticate({
+      session_duration_minutes: 30,
+      session_jwt: sessionJWT.value,
+    });
+    console.log("sessionauthres is "+ JSON.stringify(sessionAuthRes));
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+  
+  const { member } = getAuthData(JSON.stringify(sessionAuthRes));
 
   const org = await findByID(member.organization_id);
   if (org === null) {
@@ -40,13 +59,17 @@ async function getProps(connection_id: string) {
     domain: getDomainFromRequest(host!, protocol!)
   };
 }
+interface ResponseProps {
+  connection: SAMLConnection;
+  domain: string;
+}
 async function ConnectionEditPage() {
   const router = useRouter();
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const connection_id = searchParams.get("connection_id");
 
-  const {connection, domain} = await getProps(connection_id as string);
+  const {connection, domain} = await getProps(connection_id as string) as ResponseProps;
 
   const onSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
