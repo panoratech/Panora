@@ -13,7 +13,13 @@ async function getProps(slug: string | string[] | undefined) {
   return {org, domain};
 }
 
-const TenantedLogin = async ({params}) => {
+interface Params {
+  params: {
+     slug: string;
+  };
+ }
+
+const TenantedLogin = async ({params}: Params) => {
   const slug = params.slug;
   console.log("slug is "+ slug)
   const {org, domain} = await getProps(slug as string)
