@@ -1,6 +1,10 @@
 'use client'
 import { FormEventHandler, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input"
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import Link from "next/link";
+import { Card } from "../ui/card";
 
 const STATUS = {
   INIT: 0,
@@ -53,9 +57,9 @@ export const EmailLoginForm = ({ title, onSubmit, children }: EmailLoginProps) =
   };
 
   return (
-    <>
-      <h1>{title}</h1>
-      {children}
+    <Card className="p-4">
+      <h1 className="text-2xl font-bold">{title}</h1>
+      {emlSent === STATUS.INIT && children}
       {emlSent === STATUS.INIT && (
         <div className="section">
           <form onSubmit={onSubmitFormHandler}>
@@ -65,29 +69,37 @@ export const EmailLoginForm = ({ title, onSubmit, children }: EmailLoginProps) =
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
+              className="mt-4"
             />
-            <button
+            <Button
               className="primary"
               disabled={isDisabled}
               id="button"
               type="submit"
             >
               Continue
-            </button>
+            </Button>
           </form>
         </div>
       )}
       {emlSent === STATUS.SENT && (
         <div className="section">
-          <h2>Check your email</h2>
-          <p>{`An email was sent to ${email}`}</p>
-          <a className="link underline" onClick={handleTryAgain}>
-            Click here to try again.
-          </a>
+          <Badge className="mb-2" variant={'outline'}>          
+            <h2 className="text-md font-semibold">Check your email</h2>
+          </Badge>
+          <Badge className="mb-2" variant={'outline'}>          
+          <p className="text-md font-semibold">{`An email was sent to ${email}`}</p>
+          </Badge>
+          <div>
+            <Link href="" className="link underline text-md font-semibold" onClick={handleTryAgain}>
+              Click here to try again.
+            </Link>
+          </div>
+          
         </div>
       )}
       {emlSent === STATUS.ERROR && (
-        <div>
+        <div className="text-md font-semibold">
           <h2>Something went wrong!</h2>
           <p>{`Failed to send email to ${email}`}</p>
           <a className="link underline" onClick={handleTryAgain}>
@@ -95,6 +107,6 @@ export const EmailLoginForm = ({ title, onSubmit, children }: EmailLoginProps) =
           </a>
         </div>
       )}
-    </>
+    </Card>
   );
 };

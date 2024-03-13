@@ -7,6 +7,9 @@ import {EmailLoginForm} from "./EmailLoginForm";
 import {discoveryStart} from "@/lib/stytch/api";
 import {OAuthButton, OAuthProviders} from "./OAuthButton";
 import { Input } from "@/components/ui/input"
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Card } from "../ui/card";
 
 const ContinueToTenantForm = ({ onBack }: { onBack: () => void }) => {
   const [slug, setSlug] = useState<string>("");
@@ -18,12 +21,12 @@ const ContinueToTenantForm = ({ onBack }: { onBack: () => void }) => {
   };
 
   return (
-    <div>
-      <h1>What is your Organization&apos;s Domain?</h1>
-      <p className="">
+    <Card className="p-4">
+      <h1 className="text-2xl font-bold">Enter your organization </h1>
+      <p className="text-md font-semibold">
         Don&apos;t know your organization&apos;s Domain? 
       </p>
-      <p className="">
+      <p className="text-md font-semibold">
       Login to find your{" "}
         <Link href="" className="underline" onClick={onBack}>
           organizations
@@ -35,12 +38,13 @@ const ContinueToTenantForm = ({ onBack }: { onBack: () => void }) => {
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
           placeholder="acme-corp"
+          className="mt-4"
         />
-        <button className="primary" id="button" type="submit" disabled={!slug}>
+        <Button className="primary" id="button" type="submit" disabled={!slug}>
           Continue
-        </button>
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 };
 
@@ -53,10 +57,8 @@ const LoginDiscoveryForm = ({domain}: Props) => {
     return (
       <>
         <EmailLoginForm title="Sign in" onSubmit={discoveryStart}>
-          <p>
+          <p className="text-md font-semibold">
             We&apos;ll email you a magic code for a password-free sign in.
-            <br />
-            You&apos;ll be able to choose which organization you want to access.
             <br />
             Or you can{" "}
             <Link href="" className="underline" onClick={() => setIsDiscovery(false)}>
@@ -65,7 +67,6 @@ const LoginDiscoveryForm = ({domain}: Props) => {
             .
           </p>
         </EmailLoginForm>
-        or
         <OAuthButton providerType={OAuthProviders.Google} hostDomain={domain} />
         <OAuthButton providerType={OAuthProviders.Microsoft} hostDomain={domain} />
       </>

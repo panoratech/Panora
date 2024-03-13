@@ -13,7 +13,6 @@ export function MainNav({
 }) {
   const [selectedItem, setSelectedItem] = useState<string>("connections");
   const pathname = usePathname();
-
   useEffect(() => {
     setSelectedItem(pathname.substring(1))
   }, [pathname])

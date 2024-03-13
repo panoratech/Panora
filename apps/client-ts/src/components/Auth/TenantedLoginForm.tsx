@@ -1,3 +1,5 @@
+"use client"
+
 import { login } from "@/lib/stytch/api";
 import {
     formatSSOStartURL,
@@ -5,6 +7,7 @@ import {
 } from "@/lib/stytch/loadStytch";
 import { EmailLoginForm } from "./EmailLoginForm";
 import {OAuthButton, OAuthProviders} from "./OAuthButton";
+import { Card } from "../ui/card";
 
 type Props = {
   org: Organization;
@@ -12,7 +15,7 @@ type Props = {
 };
 const TenantedLoginForm = ({ org, domain }: Props) => {
     return (
-    <div className="card">
+    <Card className="p-4 m-4">
       <EmailLoginForm
         title={`Log in to ${org.organization_name}`}
         onSubmit={(email) => login(email, org.organization_id)}
@@ -29,12 +32,11 @@ const TenantedLoginForm = ({ org, domain }: Props) => {
           </div>
         )}
       </EmailLoginForm>
-        or
         <OAuthButton providerType={OAuthProviders.Google} hostDomain={domain} orgSlug={org.organization_slug}/>
         <OAuthButton providerType={OAuthProviders.Microsoft} hostDomain={domain} orgSlug={org.organization_slug}/>
         {/*    Login with Google*/}
         {/*</Link>*/}
-    </div>
+    </Card>
   );
 };
 

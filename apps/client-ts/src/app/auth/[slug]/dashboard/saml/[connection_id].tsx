@@ -47,7 +47,7 @@ async function getProps(connection_id: string) {
     return {
       redirect: {
         statusCode: 307,
-        destination: `/${org.organization_slug}/dashboard`,
+        destination: `/auth/${org.organization_slug}/dashboard`,
       },
     };
   }
@@ -171,7 +171,7 @@ async function ConnectionEditPage() {
         </a>
         <Link
           style={{ marginRight: "auto" }}
-          href={`/${searchParams.get('slug')}/dashboard`}
+          href={`/auth/${searchParams.get('slug')}/dashboard`}
         >
           Back
         </Link>

@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
     return exchangeToken(request)
       .then((exchangeResult) => {
         if (exchangeResult.kind === "login") {
-          const response = NextResponse.redirect(new URL(`/${query}/dashboard`, request.url));
+          const response = NextResponse.redirect(new URL(`/auth/${query}/dashboard`, request.url));
           setSession(response, exchangeResult.token); // Set session using response cookies.
           return response;
         } else {
@@ -88,12 +88,12 @@ export async function middleware(request: NextRequest) {
       });
 
       if(session_jwt === "") {
-        const response = NextResponse.redirect(new URL(`/${organization!.organization_slug}/smsmfa?sent=false&org_id=${organization!.organization_id}&member_id=${member.member_id}`, request.url));
+        const response = NextResponse.redirect(new URL(`/auth/${organization!.organization_slug}/smsmfa?sent=false&org_id=${organization!.organization_id}&member_id=${member.member_id}`, request.url));
         setIntermediateSession(response, intermediate_session_token)
         clearSession(response)
         return response;
       }
-      const response = NextResponse.redirect(new URL(`/${organization!.organization_slug}/dashboard`, request.url));
+      const response = NextResponse.redirect(new URL(`/auth/${organization!.organization_slug}/dashboard`, request.url));
       clearIntermediateSession(response);
       setSession(response, session_jwt);
       return response;

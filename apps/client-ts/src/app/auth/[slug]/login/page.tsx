@@ -13,13 +13,13 @@ async function getProps(slug: string | string[] | undefined) {
   return {org, domain};
 }
 
-const TenantedLogin = async () => {
-  const searchParams = useSearchParams();
-  const slug = searchParams.get("slug");
+const TenantedLogin = async ({params}) => {
+  const slug = params.slug;
+  console.log("slug is "+ slug)
   const {org, domain} = await getProps(slug as string)
   if (org == null) {
     return (
-      <div className="card">
+      <div className="p-4">
         <div style={{ padding: "24px 40px" }}>
           <h2>Organization not found</h2>
           <p>

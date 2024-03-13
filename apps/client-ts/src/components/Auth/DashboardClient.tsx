@@ -213,7 +213,7 @@ const IDPList = ({
             {saml_connections.map((conn) => (
               <li key={conn!.connection_id}>
                 <Link
-                  href={`/${searchParams.get('slug')}/dashboard/saml/${conn!.connection_id}`}
+                  href={`/auth/${searchParams.get('slug')}/dashboard/saml/${conn!.connection_id}`}
                 >
                   <span>
                     {conn!.display_name} ({conn!.status})
@@ -228,7 +228,7 @@ const IDPList = ({
             {oidc_connections.map((conn) => (
               <li key={conn!.connection_id}>
                 <Link
-                  href={`/${searchParams.get('slug')}/dashboard/oidc/${conn!.connection_id}`}
+                  href={`/auth/${searchParams.get('slug')}/dashboard/oidc/${conn!.connection_id}`}
                 >
                   <span>
                     {conn!.display_name} ({conn!.status})

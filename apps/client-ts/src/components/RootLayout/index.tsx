@@ -33,9 +33,9 @@ const useDeviceSize = () => {
 export const RootLayout = () => {
   const [width, height] = useDeviceSize();
   const router = useRouter()
-
+  const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
   const handlePageChange = (page: string) => {
-    router.push(page);
+    router.push(`${base}/${page}`);
   };
 
   const lgBreakpoint = 1024; // Tailwind's 'lg' breakpoint

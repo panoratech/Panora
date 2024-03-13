@@ -32,7 +32,7 @@ export const OAuthButton = ({ providerType, hostDomain, orgSlug }: Props) => {
     const oAuthStartURL = isDiscovery ? formatOAuthDiscoveryStartURL(hostDomain, providerType) : formatOAuthStartURL(hostDomain, providerType, orgSlug);
 
     return (
-        <Link href={oAuthStartURL} className="oauth-button">
+        <Link href={oAuthStartURL} className="oauth-button mr-3">
                 <div className="oauth-button__icon">{providerInfo[providerType].providerIcon}</div>
                 <span className="oauth-button__text">{`Continue with ${providerInfo[providerType].providerTypeTitle}`}</span>
         </Link>
