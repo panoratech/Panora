@@ -13,11 +13,6 @@ We made a docker file that builds Panora from sources, specifically to help you 
 <Info>Execute these from your Panora's repo root folder</Info>
 
 <Steps>
-  <Step title="Get the right Dockerfile:">
-    ```bash
-      cp ./packages/api/scripts/docker-compose.dev.yml ./
-    ```
-  </Step>
 
 <Step title="Copy env variables">
 ```bash 
@@ -39,7 +34,7 @@ cp .env.example .env
 
     <Step title="Start the Dockerfile">
     ```bash
-      docker compose -f docker-compose.dev.yml up
+      docker compose -f docker-compose.source.yml up
     ```
 
 That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
