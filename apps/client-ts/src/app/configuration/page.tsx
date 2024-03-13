@@ -90,8 +90,7 @@ import {
             <div className="flex items-center justify-between space-y-2">
               <h2 className="text-3xl font-bold tracking-tight">Configuration</h2>
             </div>
-            {isLoading ? <LoadingSpinner className=""/>
-             : <Tabs defaultValue="linked-accounts" className="space-y-4">
+            <Tabs defaultValue="linked-accounts" className="space-y-4">
               <TabsList>
                 <TabsTrigger value="linked-accounts">Linked Accounts</TabsTrigger>
                 <TabsTrigger value="field-mappings">
@@ -118,6 +117,7 @@ import {
                   </Card>
                 </div>
               </TabsContent>
+
               <TabsContent value="field-mappings" className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
                 <Dialog open={open} onOpenChange={setOpen}>
@@ -173,7 +173,7 @@ import {
                   </Card>
                 </div>
               </TabsContent>
-            </Tabs>}
+            </Tabs>
           </div>
   
         </div>

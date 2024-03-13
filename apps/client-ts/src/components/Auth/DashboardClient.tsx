@@ -16,15 +16,29 @@ import {
   deleteMember,
   invite,
 } from "@/lib/stytch/api";
-import { getAuthData } from "@/lib/stytch/sessionService";
 import {
   Member,
   OIDCConnection,
   Organization,
   SAMLConnection,
 } from "@/lib/stytch/loadStytch";
-import { findAllMembers, findByID } from "@/lib/stytch/orgService";
-import { list } from "@/lib/stytch/ssoService";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+import { Separator } from "@/components/ui/separator"
+import { CircleIcon } from "@radix-ui/react-icons"
+
 
 type Props = {
   org: Organization;
@@ -51,10 +65,10 @@ const MemberRow = ({ member, user }: { member: Member; user: Member; }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isDisabled, setIsDisabled] = useState(false);
-  const doDelete: MouseEventHandler = async (e) => {
+  const doDelete: MouseEventHandler = (e) => {
     e.preventDefault();
     setIsDisabled(true);
-    await deleteMember(member.member_id);
+  //TODO: await deleteMember(member.member_id);
     // Force a reload to refresh the user list
     router.replace(pathname);
     // TODO: Success toast?
@@ -67,17 +81,29 @@ const MemberRow = ({ member, user }: { member: Member; user: Member; }) => {
     isAdmin(user);
 
   const deleteButton = (
-    <button disabled={isDisabled} onClick={doDelete}>
+    <Button disabled={isDisabled} onClick={doDelete}>
       Delete User
-    </button>
+    </Button>
   );
 
   return (
-    <li>
-      [{isAdmin(member) ? "admin" : "member"}] {member.email_address} (
-      {member.status}){/* Do not let members delete themselves! */}
+    <div className="flex items-center justify-between space-x-4">
+      <div className="flex items-center space-x-4">
+        <Avatar>
+          <AvatarImage src="/avatars/03.png" />
+          <AvatarFallback>OM</AvatarFallback>
+        </Avatar>
+        <div>
+          <p className="text-sm font-medium leading-none">
+          {member.email_address} (
+          {member.status})
+          </p>
+          <p className="text-sm text-muted-foreground">{isAdmin(member) ? "@admin" : "@member"}</p>
+        </div>
+      </div>
+      
       {canDelete ? deleteButton : null}
-    </li>
+    </div>
   );
 };
 
@@ -95,7 +121,7 @@ const MemberList = ({
     setIsDisabled(!isValidEmail(email));
   }, [email]);
 
-  const onInviteSubmit: FormEventHandler = async (e) => {
+  const onInviteSubmit: FormEventHandler = (e) => {
     e.preventDefault();
     // Disable button right away to prevent sending emails twice
     if (isDisabled) {
@@ -103,24 +129,24 @@ const MemberList = ({
     } else {
       setIsDisabled(true);
     }
-    await invite(email);
+    //TODO: await invite(email);
     // Force a reload to refresh the user list
     router.replace(pathname);
   };
 
   return (
     <>
-      <div className="section">
-        <h2>Members</h2>
-        <ul>
-          {members.map((member) => (
-            <MemberRow key={member.member_id} member={member} user={user} />
-          ))}
-        </ul>
+    <div className="space-y-4">
+      <h4 className="text-sm font-medium">People with access</h4>
+      <div className="grid gap-6">
+        {members.map((member) => (
+          <MemberRow key={member.member_id} member={member} user={user} />
+        ))}
       </div>
-
-      <div className="section">
-        <h3>Invite new member</h3>
+    </div>
+    <Separator className="my-4"/>
+    <div className="space-y-4">
+        <h3 className="text-sm font-medium">Invite new member</h3>
         <form onSubmit={onInviteSubmit} className="row">
           <Input
             placeholder={`your-coworker@${org.email_allowed_domains[0] ?? "example.com"
@@ -128,10 +154,11 @@ const MemberList = ({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             type="email"
+            className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
           />
-          <button className="primary" disabled={isDisabled} type="submit">
+          <Button disabled={isDisabled} type="submit">
             Invite
-          </button>
+          </Button>
         </form>
       </div>
     </>
@@ -149,9 +176,9 @@ const IDPList = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const onSamlCreate: FormEventHandler = async (e) => {
+  const onSamlCreate: FormEventHandler = (e) => {
     e.preventDefault();
-    const res = await createSamlSSOConn(idpNameSAML);
+    /*TODO const res = await createSamlSSOConn(idpNameSAML);
     if (res.status !== 200) {
       alert("Error creating connection");
       return;
@@ -159,12 +186,12 @@ const IDPList = ({
     const conn = await res.json();
     await router.push(
       `/${searchParams.get('slug')}/dashboard/saml/${conn.connection_id}`
-    );
+    );*/
   };
 
-  const onOidcCreate: FormEventHandler = async (e) => {
+  const onOidcCreate: FormEventHandler = (e) => {
     e.preventDefault();
-    const res = await createOidcSSOConn(idpNameOIDC);
+    /*const res = await createOidcSSOConn(idpNameOIDC);
     if (res.status !== 200) {
       alert("Error creating connection");
       return;
@@ -172,12 +199,7 @@ const IDPList = ({
     const conn = await res.json();
     await router.push(
       `/${searchParams.get('slug')}/dashboard/oidc/${conn.connection_id}`
-    );
-  };
-
-  const onSsoMethodChange: FormEventHandler = async (e) => {
-    // @ts-ignore
-    setIsSaml(e.target["value"] == "SAML");
+    );*/
   };
 
   return (
@@ -277,8 +299,20 @@ const IDPList = ({
   );
 };
 
+{/*<div className="card ml-[200px] ">
+      <p>
+        MFA Setting: <span className="code">{org.mfa_policy}</span>
+      </p>
 
-const Dashboard = ({
+      <IDPList
+        user={user}
+        saml_connections={saml_connections}
+        oidc_connections={oidc_connections}
+      />
+      </div>
+*/}
+
+const DashboardClient = ({
     org,
     user,
     members,
@@ -293,33 +327,47 @@ const Dashboard = ({
 }) => {
   
   return (
-    <div className="card">
-      <h1>Organization name: {org.organization_name}</h1>
-      <p>
-        Organization slug: <span className="code">{org.organization_slug}</span>
-      </p>
-      <p>
-        Current user: <span className="code">{user.email_address}</span>
-      </p>
-      <p>
-        MFA Setting: <span className="code">{org.mfa_policy}</span>
-      </p>
-      <MemberList org={org} members={members} user={user} />
-      <br />
-      <IDPList
-        user={user}
-        saml_connections={saml_connections}
-        oidc_connections={oidc_connections}
-      />
+    <div className="ml-[200px] p-10">
+    <Card>
+      <CardHeader>
+        <CardTitle>Organization</CardTitle>
+        <CardDescription>
+          <div className="flex items-center">
+            <CircleIcon className="mr-1 h-3 w-3 fill-yellow-600 text-yellow-400" />
+            {org.organization_name}
+          </div>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <h4 className="text-sm font-medium mb-2">Connected user</h4>
 
-      <div>
-        <Link href={"/orgswitcher"}>Switch Organizations</Link>
+        <div className="flex space-x-2">
+          <Input value={`${user.email_address}`} readOnly />
+          <Button variant="secondary" className="shrink-0">
+            Copy
+          </Button>
+        </div>
+        <Separator className="my-4" />
+        <MemberList org={org} members={members} user={user} />
+        <div className="pt-4">
+        <Button>
+          <Link href={"/auth/orgswitcher"}>
+            Switch Organizations
+          </Link>
+        </Button>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <Link href={"/api/logout"}>Log Out</Link>
-      </div>
-    </div>
+        <Button>
+          <Link href={"/api/logout"}>
+            Log Out
+          </Link>
+        </Button>
+        
+        </div>
+      </CardContent>
+    </Card>
+    </div> 
   ); 
 };
 
 
-export default Dashboard;
+export default DashboardClient;

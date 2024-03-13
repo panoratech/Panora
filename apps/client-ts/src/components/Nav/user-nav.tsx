@@ -16,6 +16,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import useProfile from "@/hooks/useProfile";
 import useProfileStore from "@/state/profileStore";
+import Link from "next/link";
 import { useEffect } from "react";
   
 export function UserNav() {
@@ -61,9 +62,11 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Profile
-          </DropdownMenuItem>
+          <Link href={"/api/logout"}>
+            <DropdownMenuItem>
+              Profile
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem>
             Billing
           </DropdownMenuItem>
@@ -73,7 +76,9 @@ export function UserNav() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          Log out
+          <Link href={"/api/logout"}>
+            Log out
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

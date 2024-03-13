@@ -11,33 +11,33 @@ export function WebhooksPage({
   webhooks: initialWebhooks,
   isLoading
 }: { webhooks: Record<string, any>[] | undefined; isLoading: boolean }) {
-    const [webhooks, setWebhooks] = useState(initialWebhooks);
-    const [showSecret, setShowSecret] = useState<Record<string, boolean>>({});
+  const [webhooks, setWebhooks] = useState(initialWebhooks);
+  const [showSecret, setShowSecret] = useState<Record<string, boolean>>({});
 
-    const {mutate} = useWebhookStatusMutation();
-    const disableWebhook = (webhook_id: string, status: boolean) => {
-        mutate({ 
-            id: webhook_id,
-            active: status,
-        }, {
-          onSuccess: () => {
-              // Find the index of the webhook to update
-              const index = webhooks!.findIndex(webhook => webhook.id_webhook_endpoint === webhook_id);
-              if (index !== -1) {
-                  // Create a new array with all previous webhooks
-                  const updatedWebhooks = [...webhooks!];
-                  // Update the specific webhook's active status
-                  updatedWebhooks[index].active = status;
-                  // Set the updated webhooks array to state
-                  setWebhooks(updatedWebhooks);
-              }
-          }
-      });
-    }
+  const {mutate} = useWebhookStatusMutation();
+  const disableWebhook = (webhook_id: string, status: boolean) => {
+      mutate({ 
+          id: webhook_id,
+          active: status,
+      }, {
+        onSuccess: () => {
+            // Find the index of the webhook to update
+            const index = webhooks!.findIndex(webhook => webhook.id_webhook_endpoint === webhook_id);
+            if (index !== -1) {
+                // Create a new array with all previous webhooks
+                const updatedWebhooks = [...webhooks!];
+                // Update the specific webhook's active status
+                updatedWebhooks[index].active = status;
+                // Set the updated webhooks array to state
+                setWebhooks(updatedWebhooks);
+            }
+        }
+    });
+  }
 
-    useEffect(() => {
-        setWebhooks(initialWebhooks);
-    }, [initialWebhooks]);
+  useEffect(() => {
+      setWebhooks(initialWebhooks);
+  }, [initialWebhooks]);
 
   return (
     <div className="space-y-8">

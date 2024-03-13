@@ -6,6 +6,14 @@ import {
 } from "@/lib/stytch/sessionService";
 import { cookies } from "next/headers";
 import { DiscoveredOrganization, Member } from "stytch";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge";
 
 const stytch = loadStytch();
 
@@ -55,28 +63,37 @@ interface ResponseProps {
 const OrgSwitcherList = async () => {
   const {user, discovered_organizations} = await getProps() as ResponseProps;
   
-  return (
-    <div className="section">
-      <h3>Your Organizations</h3>
-      <ul>
-        {discovered_organizations!.map(({ organization }) => (
-          <li key={organization!.organization_id}>
-            <Link href={`/api/discovery/${organization!.organization_id}`}>
-              <span>{organization!.organization_name}</span>
-              {organization!.organization_id === user!.organization_id && (
-                <span>&nbsp;(Active)</span>
-              )}
-            </Link>
-          </li>
-        ))}
-      </ul>
+  return ( 
+    <div className="ml-[200px] p-10">
+      <Card>
+      <CardHeader>
+        <CardTitle>Your Organizations</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+            <div className="grid gap-6">
+              {discovered_organizations!.map(({ organization }) => (
+                  <div key={organization?.organization_id} className="">
+                  <Link href={`/api/discovery/${organization!.organization_id}`}>
+                    <Badge>{organization!.organization_name}</Badge>
+                  </Link>
+                  {organization!.organization_id === user!.organization_id && (
+                      <Badge variant={"outline"} className="ml-2">active</Badge>
+                  )}
+                  </div>
+              ))}
+            </div>
+        </div>
+      </CardContent>
+      </Card>
+      
     </div>
   );
 };
 
 const OrgSwitcher = async () => {
   return (
-    <div className="card">
+    <div className="">
       <OrgSwitcherList />
     </div>
   );

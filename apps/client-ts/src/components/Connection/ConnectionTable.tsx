@@ -14,11 +14,10 @@ import { PlusCircledIcon } from "@radix-ui/react-icons";
 import CopyLinkInput from "./CopyLinkInput";
 import useConnections from "@/hooks/useConnections";
 import { DataTableLoading } from "../shared/data-table-loading";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import AddConnectionButton from "./AddConnectionButton";
 import config from "@/lib/config";
 import useMagicLinkStore from "@/state/magicLinkStore";
-import { LoadingSpinner } from "./LoadingSpinner";
 import useOrganisationStore from "@/state/organisationStore";
 import { usePostHog } from 'posthog-js/react'
 import useProjectStore from "@/state/projectStore";
@@ -33,8 +32,10 @@ export default function ConnectionTable() {
   const {nameOrg} = useOrganisationStore();
   const {idProject} = useProjectStore();
 
-  if (isLoading) {
-    return <LoadingSpinner className=""/>
+  if(isLoading){
+    return (
+      <DataTableLoading data={[]} columns={columns}/>
+    )
   }
 
   if (error) {
@@ -120,8 +121,9 @@ export default function ConnectionTable() {
         </Dialog> :
           <AddConnectionButton setIsGenerated={setIsGenerated} />
         }
-        {isLoading && <DataTableLoading data={[]} columns={columns} />}
-        {ts && <DataTable data={ts} columns={columns} />}
+        <Suspense>
+          {ts && <DataTable data={ts} columns={columns} />}
+        </Suspense>
       </div>
     </>
   )

@@ -22,7 +22,7 @@ export const columns: ColumnDef<ApiKey>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="w-[60px]"><Badge variant="outline">{row.getValue("name")}</Badge></div>,
+    cell: ({ row }) => <div className=""><Badge variant="outline">{row.getValue("name")}</Badge></div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -32,7 +32,7 @@ export const columns: ColumnDef<ApiKey>[] = [
       <DataTableColumnHeader column={column} title="Token" />
     ),
     cell: ({ row }) => 
-    <div className="w-[400px] flex">
+    <div className="flex">
       <div className=" truncate mr-2">
         <Badge variant="outline">{insertDots(row.getValue("token"))}</Badge>
       </div>
@@ -51,7 +51,7 @@ export const columns: ColumnDef<ApiKey>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Created" />
     ),
-    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{row.getValue("created")}</Badge></div>,
+    cell: ({ row }) => <div className=""><Badge variant="outline">{row.getValue("created")}</Badge></div>,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },

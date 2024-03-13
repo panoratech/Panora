@@ -25,7 +25,9 @@ export default function FieldMappingsTable({
 
   const countDefined = mappings?.filter(mapping => mapping.status === "defined").length;
   const countMapped = mappings?.filter(mapping => mapping.status === "mapped").length;
-
+  if(isLoading){
+    return <DataTableLoading data={[]} columns={columns}/>;
+  }
   return (
     <>
       <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
@@ -48,7 +50,6 @@ export default function FieldMappingsTable({
             </CardContent>
         </Card>                  
         </div>
-        {isLoading && <DataTableLoading data={[]} columns={columns}/>}
         {mappings && <DataTable data={mappings} columns={columns} />}
       </div>
     </>

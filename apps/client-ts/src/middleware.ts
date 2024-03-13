@@ -17,7 +17,6 @@ function redirectToSMSMFA(organization: Organization, member: Member, mfa_requir
 
 
 export async function middleware(request: NextRequest) {
-
   if (request.nextUrl.pathname == '/'){
     return NextResponse.redirect(new URL('/connections', request.url))
   }
@@ -192,7 +191,7 @@ export async function middleware(request: NextRequest) {
       return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
     }
     response.headers.set('x-member-org', sessionAuthRes.member.organization_id);
-
+ 
     return response;
   } catch (err) {
     return new Response(JSON.stringify({ error: "Session invalid" }), { status: 401 });

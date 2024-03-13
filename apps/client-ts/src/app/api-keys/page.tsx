@@ -27,14 +27,14 @@ import useApiKeys from "@/hooks/useApiKeys";
 import useProjectStore from "@/state/projectStore";
 import useApiKeyMutation from "@/hooks/mutations/useApiKeyMutation";
 import useProfileStore from "@/state/profileStore";
-import { useEffect, useState } from "react";
-import { LoadingSpinner } from "@/components/Connection/LoadingSpinner";
+import { Suspense, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePostHog } from 'posthog-js/react'
 import config from "@/lib/config";
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { DataTableLoading } from "../../components/shared/data-table-loading";
 
 
 const formSchema = z.object({
@@ -112,17 +112,14 @@ export default function Page() {
 
   };
 
-
   return (
-    <div className="flex flex-col items-center justify-between space-y-2">
-      <div className="flex-1 space-y-4 p-8 pt-6">
+    <div className="flex flex-col items-center justify-between space-y-2 w-full">
+      <div className="flex-1 space-y-4 pt-6">
         <div className="flex flex-col items-start justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Api Keys</h2>
           <h2 className="text-lg font-bold tracking-tight">Manage your api keys.</h2>
         </div>          
         <div className="flex space-y-8 md:flex pb-4">
-          {isLoading ? ( <LoadingSpinner className=""/>) : <>
-          <div></div>
           <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
             <Button
@@ -150,7 +147,6 @@ export default function Page() {
 
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
                   <FormField
@@ -161,7 +157,8 @@ export default function Page() {
                             <FormLabel>API Key Identifier</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="My Best Key For Finance Data" {...field} 
+                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                              placeholder="My Best Key For Finance Data" {...field}
                               />
                             </FormControl>
                             <FormDescription>
@@ -177,17 +174,15 @@ export default function Page() {
                 <Button variant='outline' type="reset" onClick={() => onCancel()}>Cancel</Button>
                 <Button type='submit'>Create</Button>
               </DialogFooter>
-
                 </form>
               </Form>
-              
-              
             </DialogContent>
           </Dialog>
-          </>
-          }
         </div>
-        {tsApiKeys && <DataTable data={tsApiKeys} columns={columns} />}
+        <Suspense>
+          {isLoading && <DataTableLoading data={[]} columns={columns}/>}
+          {tsApiKeys && <DataTable data={tsApiKeys} columns={columns} />}
+        </Suspense>
       </div>
     </div>
   );

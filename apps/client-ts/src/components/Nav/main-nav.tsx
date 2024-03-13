@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { MouseEvent, useEffect, useState } from "react";
 
 export function MainNav({
   onLinkClick,
@@ -10,15 +11,20 @@ export function MainNav({
   onLinkClick: (name: string) => void;
   className: string;
 }) {
-  const [selectedItem, setSelectedItem] = useState<string>("quickstart");
+  const [selectedItem, setSelectedItem] = useState<string>("connections");
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setSelectedItem(pathname.substring(1))
+  }, [pathname])
 
   const navItemClassName = (itemName: string) =>
     `text-sm border-b font-medium w-full text-left px-4 py-2 dark:hover:bg-zinc-900 hover:bg-zinc-200 cursor-pointer ${
       selectedItem === itemName ? 'dark:bg-zinc-800 bg-zinc-200' : 'text-muted-foreground'
     } transition-colors`;
   
-  function click(name: string) {
-    setSelectedItem(name);
+  function click(e: MouseEvent, name: string) {
+    e.preventDefault();
     onLinkClick(name);
   }
 
@@ -27,39 +33,27 @@ export function MainNav({
       className={`flex flex-col items-start ${className}`}
       {...props}
     >
-      {/*<a
-        className={navItemClassName('quickstart')}
-        onClick={() => click('quickstart')}
-      >
-        Quick Start
-      </a>*/}
-      {/*<a
-        className={navItemClassName('dashboard')}
-        onClick={() => click('dashboard')}
-      >
-        Dashboard
-    </a>*/}
     <a
         className={navItemClassName('connections')}
-        onClick={() => click('connections')}
+        onClick={(e) => click(e,'connections')}
       >
         Connections
       </a>
       <a
         className={navItemClassName('events')}
-        onClick={() => click('events')}
+        onClick={(e) => click(e, 'events')}
       >
         Events
       </a>
       <a
         className={navItemClassName('configuration')}
-        onClick={() => click('configuration')}
+        onClick={(e) => click(e,'configuration')}
       >
         Configuration
       </a>
       <a
         className={navItemClassName('api-keys')}
-        onClick={() => click('api-keys')}
+        onClick={(e) => click(e,'api-keys')}
       >
         API Keys
       </a>

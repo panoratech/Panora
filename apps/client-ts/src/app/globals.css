@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+textarea:focus,
+input:focus {
+  outline: none;
+}
 @layer base {
   :root {
     --background: 0 0% 100%;
