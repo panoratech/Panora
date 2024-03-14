@@ -20,7 +20,7 @@ import Link from "next/link";
 import { useEffect } from "react";
   
 export function UserNav() {
-  const {data, isLoading} = useProfile();
+  /*const {data, isLoading} = useProfile();
   if(!data) {
     console.log("loading profiles");
   }
@@ -36,7 +36,7 @@ export function UserNav() {
         id_organization: data[0].id_organization as string,
       })
     }
-  }, [data, setProfile]);
+  }, [data, setProfile]);*/
 
   return (
     <DropdownMenu>
@@ -49,7 +49,7 @@ export function UserNav() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 ml-10" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
+        {/*<DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
               {profile ? profile.first_name : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No profiles found"}
@@ -59,20 +59,19 @@ export function UserNav() {
             {profile ? profile.email : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No mail found"}
             </p>
           </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        </DropdownMenuLabel>*/}
         <DropdownMenuGroup>
-          <Link href={"/api/logout"}>
+          <Link href={"/profile"}>
             <DropdownMenuItem>
               Profile
             </DropdownMenuItem>
           </Link>
-          <DropdownMenuItem>
+          {/*<DropdownMenuItem>
             Billing
           </DropdownMenuItem>
           <DropdownMenuItem>
             Settings
-          </DropdownMenuItem>
+      </DropdownMenuItem>*/}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>

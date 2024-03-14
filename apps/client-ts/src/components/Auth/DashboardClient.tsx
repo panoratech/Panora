@@ -38,6 +38,10 @@ import {
 
 import { Separator } from "@/components/ui/separator"
 import { CircleIcon } from "@radix-ui/react-icons"
+import { useCreateSamlSso } from "@/hooks/stytch/useCreateSamlSso";
+import { useCreateOidcSso } from "@/hooks/stytch/useCreateOidcSso";
+import { useInvite } from "@/hooks/stytch/useInvite";
+import { useDeleteMember } from "@/hooks/stytch/useDeleteMember";
 
 
 type Props = {
@@ -65,10 +69,13 @@ const MemberRow = ({ member, user }: { member: Member; user: Member; }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isDisabled, setIsDisabled] = useState(false);
+
+  const { mutate, isLoading, error, data } = useDeleteMember();
+
   const doDelete: MouseEventHandler = (e) => {
     e.preventDefault();
     setIsDisabled(true);
-  //TODO: await deleteMember(member.member_id);
+    mutate(member.member_id);
     // Force a reload to refresh the user list
     router.replace(pathname);
     // TODO: Success toast?
@@ -121,6 +128,9 @@ const MemberList = ({
     setIsDisabled(!isValidEmail(email));
   }, [email]);
 
+  const { mutate, isLoading, error, data } = useInvite();
+
+
   const onInviteSubmit: FormEventHandler = (e) => {
     e.preventDefault();
     // Disable button right away to prevent sending emails twice
@@ -129,7 +139,7 @@ const MemberList = ({
     } else {
       setIsDisabled(true);
     }
-    //TODO: await invite(email);
+    mutate(email);
     // Force a reload to refresh the user list
     router.replace(pathname);
   };
@@ -176,30 +186,34 @@ const IDPList = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const { mutate: samlMutate, isLoading: samlLoading, error: samlError, data: samlData } = useCreateSamlSso();
+  const { mutate: oidcMutate, isLoading: oidcLoading, error: oidcError, data: oidcData } = useCreateOidcSso();
+
+
   const onSamlCreate: FormEventHandler = (e) => {
     e.preventDefault();
-    /*TODO const res = await createSamlSSOConn(idpNameSAML);
-    if (res.status !== 200) {
+    samlMutate(idpNameSAML);
+    if (samlError) {
       alert("Error creating connection");
       return;
     }
-    const conn = await res.json();
-    await router.push(
+    const conn = samlData as any;
+    router.push(
       `/${searchParams.get('slug')}/dashboard/saml/${conn.connection_id}`
-    );*/
+    );
   };
 
   const onOidcCreate: FormEventHandler = (e) => {
     e.preventDefault();
-    /*const res = await createOidcSSOConn(idpNameOIDC);
-    if (res.status !== 200) {
+    oidcMutate(idpNameOIDC);
+    if (oidcError) {
       alert("Error creating connection");
       return;
     }
-    const conn = await res.json();
-    await router.push(
+    const conn = oidcData as any;
+    router.push(
       `/${searchParams.get('slug')}/dashboard/oidc/${conn.connection_id}`
-    );*/
+    );
   };
 
   return (

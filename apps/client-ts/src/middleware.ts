@@ -167,7 +167,7 @@ export async function middleware(request: NextRequest) {
   const sessionJWT = request.cookies.get("session")?.value;
 
   if (!sessionJWT) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
   try {
@@ -179,10 +179,16 @@ export async function middleware(request: NextRequest) {
       });
     } catch (err) {
       console.error("Could not find member by session token", err);
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+      return NextResponse.redirect(new URL("/auth/login", request.url));
     }
     console.log(sessionAuthRes);
-    const response = NextResponse.next();
+    
+    let response;
+    if(request.nextUrl.pathname == '/profile'){
+      response = NextResponse.redirect(new URL(`/auth/${sessionAuthRes.organization.organization_slug}/dashboard`, request.url));
+    }else{
+      response = NextResponse.next();
+    }
     // Stytch issues a new JWT on every authenticate call - store it on the UA for faster validation next time
     setSession(response, sessionAuthRes.session_jwt);
 
@@ -190,6 +196,7 @@ export async function middleware(request: NextRequest) {
     if (!isAdmin) {
       return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
     }
+
     response.headers.set('x-member-org', sessionAuthRes.member.organization_id);
  
     return response;
@@ -201,6 +208,11 @@ export async function middleware(request: NextRequest) {
 export const config = {
     matcher: [
       '/',
+      '/profile',
+      '/api-keys',
+      '/connections',
+      '/configuration',
+      '/events',
       '/auth/[slug]/dashboard/:path*', 
       '/api/callback', 
       '/api/discovery/:path*', 
