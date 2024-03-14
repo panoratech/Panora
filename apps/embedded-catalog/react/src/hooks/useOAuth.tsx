@@ -8,10 +8,11 @@ type UseOAuthProps = {
   returnUrl: string;              // Return URL after OAuth flow
   projectId: string;              // Project ID
   linkedUserId: string;           // Linked User ID
+  optionalApiUrl?: string;                // URL of the User's Server
   onSuccess: () => void;
 };
 
-const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess }: UseOAuthProps) => {
+const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId,optionalApiUrl, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
 
 
@@ -21,7 +22,7 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId, onSuccess 
   }, []);
 
   const openModal = (onWindowClose: () => void) => {
-    const apiUrl = config.API_URL!;
+    const apiUrl = optionalApiUrl? optionalApiUrl : config.API_URL!;
     const authUrl = constructAuthUrl({
       projectId, linkedUserId, providerName, returnUrl, apiUrl
     });

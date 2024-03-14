@@ -9,8 +9,9 @@ interface ProviderCardProp {
   projectId: string;
   returnUrl: string;
   linkedUserId: string;
+  optionalApiUrl?: string,
 }
-const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId}: ProviderCardProp) => {
+const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId,optionalApiUrl}: ProviderCardProp) => {
   const [providerClicked, setProviderClicked] = useState(false);
   const [loading, setLoading] = useState(false)
 
@@ -22,6 +23,7 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId}: Provi
     returnUrl: returnUrl,
     projectId: projectId,
     linkedUserId: linkedUserId,
+    optionalApiUrl: optionalApiUrl,
     onSuccess: () => console.log('OAuth successful'),
   });
 
@@ -80,11 +82,11 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId}: Provi
   )
 };
 
-const PanoraProviderCard = ({name, projectId, returnUrl, linkedUserId}: ProviderCardProp) => {
+const PanoraProviderCard = ({name, projectId, returnUrl, linkedUserId,optionalApiUrl}: ProviderCardProp) => {
     const queryClient = new QueryClient();
     return (
       <QueryClientProvider client={queryClient}>
-          <PanoraIntegrationCard name={name} projectId={projectId} returnUrl={returnUrl} linkedUserId={linkedUserId}  />
+          <PanoraIntegrationCard name={name} projectId={projectId} returnUrl={returnUrl} linkedUserId={linkedUserId} optionalApiUrl={optionalApiUrl}  />
       </QueryClientProvider>
     )
 }
