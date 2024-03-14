@@ -65,7 +65,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:3000/"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 1000 # Try launching the API service as long as possible. Required for other services to start 
     
   redis:
     image: "redis:7.2.3-alpine"
@@ -84,10 +84,19 @@ services:
       args:
         VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
         VITE_FRONTEND_DOMAIN: ${VITE_FRONTEND_DOMAIN}
+    environment:
+      NEXT_PUBLIC_STYTCH_SECRET: ${NEXT_PUBLIC_STYTCH_SECRET}
+      NEXT_PUBLIC_STYTCH_PROJECT_ID: ${NEXT_PUBLIC_STYTCH_PROJECT_ID}
+      NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
+      NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+      NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN: ${NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN}
+      NEXT_PUBLIC_STYTCH_PROJECT_ENV: ${NEXT_PUBLIC_STYTCH_PROJECT_ENV}
+      NEXT_PUBLIC_FRONTEND_DOMAIN: ${NEXT_PUBLIC_FRONTEND_DOMAIN}
+      NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
     restart:
       unless-stopped
     ports:
-      - 80:5173
+      - 80:3000
     depends_on:
       api:
         condition: service_healthy

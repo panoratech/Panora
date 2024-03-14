@@ -14,30 +14,30 @@ We made a docker file that builds Panora from sources, specifically to help you 
 
 <Steps>
 
-<Step title="Copy env variables">
-```bash 
-cp .env.example .env 
-```
-</Step>
-
-<Step title="Removed previously installed dependencies">
+  <Step title="Copy env variables">
   ```bash 
-  rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
+  cp .env.example .env 
   ```
-</Step>
+  </Step>
 
-<Step title="Mac Users only:">
-  ```bash 
-  echo -e "node-linker=hoisted\npackage-import-method=clone-or-copy" > .npmrc 
-  ```
-</Step>
-
-    <Step title="Start the Dockerfile">
-    ```bash
-      docker compose -f docker-compose.source.yml up
+  <Step title="Removed previously installed dependencies">
+    ```bash 
+    rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
     ```
+  </Step>
 
-That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
+  <Step title="Mac Users only:">
+    ```bash 
+    echo -e "node-linker=hoisted\npackage-import-method=clone-or-copy" > .npmrc 
+    ```
+  </Step>
+
+  <Step title="Start the Dockerfile">
+      ```bash
+        docker compose -f docker-compose.dev.yml up
+      ```
+
+  That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
 
   </Step>
 </Steps>
