@@ -7,6 +7,7 @@ import { UserNav } from './../Nav/user-nav';
 import TeamSwitcher from './../shared/team-switcher';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
+import config from '@/lib/config';
 
 const useDeviceSize = () => {
 
@@ -57,9 +58,14 @@ export const RootLayout = () => {
               className='flex lg:flex-col mx-auto w-[200px] space-y-0'
               onLinkClick={handlePageChange}
             />
-            <div className='ml-auto flex lg:flex-col items-center space-x-4 w-full'>
-              <UserNav />
-            </div>
+            {
+              config.DISTRIBUTION == "managed" && 
+              (
+                <div className='ml-auto flex lg:flex-col items-center space-x-4 w-full'>
+                  <UserNav />
+                </div>
+              )
+            }
           </div>
         </div>
       )}

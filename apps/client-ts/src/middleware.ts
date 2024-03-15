@@ -4,6 +4,7 @@ import loadStytch, { Member, Organization } from '@/lib/stytch/loadStytch';
 import { clearIntermediateSession, clearSession, exchangeToken, getDiscoverySessionData, revokeSession, setIntermediateSession, setSession } from '@/lib/stytch/sessionService';
 import { MfaRequired } from 'stytch';
 import { toDomain } from '@/lib/utils';
+import CONFIG from "@/lib/config";
 
 const stytch = loadStytch();
 
@@ -19,6 +20,10 @@ function redirectToSMSMFA(organization: Organization, member: Member, mfa_requir
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname == '/'){
     return NextResponse.redirect(new URL('/connections', request.url))
+  }
+
+  if(CONFIG.DISTRIBUTION !== "managed"){
+    return NextResponse.next();
   }
 
   if (request.nextUrl.pathname.startsWith('/api/callback')) {
@@ -48,14 +53,14 @@ export async function middleware(request: NextRequest) {
 
   if(request.nextUrl.pathname.startsWith('/api/discovery/create')){
     const intermediateSession = request.cookies.get("intermediate_session")?.value;
-    console.log("intrm session => "+ intermediateSession);
+    //console.log("intrm session => "+ intermediateSession);
     if (!intermediateSession) {
       return NextResponse.redirect(new URL("/auth/discovery", request.url));
     }
     const body = await request.text();
     const parts = body.split('=');
     const organization_name = parts[1];
-    console.log("organization_name => "+ organization_name)
+    //console.log("organization_name => "+ organization_name)
     //const { organization_name, require_mfa } = body;
     try {
       const { member, organization, session_jwt, intermediate_session_token } =
@@ -116,7 +121,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/auth/discovery", request.url));
     }
     if(discoverySessionData){
-      console.log(JSON.stringify("data : " + discoverySessionData))
+      //console.log(JSON.stringify("data : " + discoverySessionData))
     }
     const exchangeSession = async () => {
       if (discoverySessionData.isDiscovery) {
@@ -126,23 +131,23 @@ export async function middleware(request: NextRequest) {
           session_duration_minutes: 60,
         });
       }
-      console.log('one '+ orgId);
-      console.log('two '+ discoverySessionData.sessionJWT);
+      //console.log('one '+ orgId);
+      //console.log('two '+ discoverySessionData.sessionJWT);
       const res = await stytch.sessions.exchange({
         organization_id: orgId,
         session_jwt: discoverySessionData.sessionJWT,
       });
-      console.log('res is '+ res);
+      //console.log('res is '+ res);
       
       return res;
     };
 
     try {
       const { session_jwt, organization, member, intermediate_session_token, mfa_required } = await exchangeSession();
-      console.log(`DATA from exchange session: ${session_jwt} ${organization} ${member} ${intermediate_session_token} ${mfa_required}`)
+      //console.log(`DATA from exchange session: ${session_jwt} ${organization} ${member} ${intermediate_session_token} ${mfa_required}`)
       if(session_jwt === "") {
         const responseString = redirectToSMSMFA(organization, member, mfa_required!);
-        console.log(`response string: ${responseString}`)
+        //console.log(`response string: ${responseString}`)
         const response = NextResponse.redirect(new URL(responseString, request.url))
         setIntermediateSession(response, intermediate_session_token)
         clearSession(response)
@@ -153,7 +158,7 @@ export async function middleware(request: NextRequest) {
       clearIntermediateSession(response);
       return response;
     } catch (error) {
-      console.log("error inside org "+ error)
+      //console.log("error inside org "+ error)
       return NextResponse.redirect(new URL('/auth/discovery', request.url));
     }
   }
@@ -181,7 +186,7 @@ export async function middleware(request: NextRequest) {
       console.error("Could not find member by session token", err);
       return NextResponse.redirect(new URL("/auth/login", request.url));
     }
-    console.log(sessionAuthRes);
+    //console.log(sessionAuthRes);
     
     let response;
     if(request.nextUrl.pathname == '/profile'){
