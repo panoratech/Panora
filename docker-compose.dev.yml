@@ -82,8 +82,8 @@ services:
       dockerfile: ./apps/client-ts/Dockerfile.dev
       context: ./
       args:
-        VITE_BACKEND_DOMAIN: ${VITE_BACKEND_DOMAIN}
-        VITE_FRONTEND_DOMAIN: ${VITE_FRONTEND_DOMAIN}
+        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+        VITE_FRONTEND_DOMAIN: ${NEXT_PUBLIC_FRONTEND_DOMAIN}
     environment:
       NEXT_PUBLIC_STYTCH_SECRET: ${NEXT_PUBLIC_STYTCH_SECRET}
       NEXT_PUBLIC_STYTCH_PROJECT_ID: ${NEXT_PUBLIC_STYTCH_PROJECT_ID}
@@ -111,6 +111,9 @@ services:
     build:
       dockerfile: ./apps/magic-link/Dockerfile.dev
       context: ./
+      args:
+        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+        VITE_ML_FRONTEND_URL: ${NEXT_PUBLIC_ML_FRONTED_DOMAIN}
     restart:
       always
     ports:
