@@ -17,15 +17,16 @@ type ProvidersConfig = {
 
 export const providersConfig: ProvidersConfig = {
   'crm': {
+    // Add client id in their respective crm
     'hubspot': {
-      clientId: 'clientid',
+      clientId: 'Add hubspot requested client id',
       scopes: 'crm.objects.contacts.read crm.objects.contacts.write crm.schemas.deals.read crm.schemas.deals.write crm.objects.deals.read crm.objects.deals.write crm.objects.companies.read crm.objects.companies.write crm.objects.owners.read settings.users.read settings.users.write settings.users.teams.read settings.users.teams.write',
       authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
       logoPath: "https://assets-global.website-files.com/6421a177cdeeaf3c6791b745/64d61202dd99e63d40d446f6_hubspot%20logo.png",
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users"
     },
     'attio': {
-      clientId: 'clientid',
+      clientId: '<Add Attio requested client id>',
       scopes: 'record_permission:read',
       authBaseUrl: 'https://app.attio.com/authorize',
       logoPath: "https://assets-global.website-files.com/6421a177cdeeaf3c6791b745/64d61202dd99e63d40d446f6_hubspot%20logo.png",

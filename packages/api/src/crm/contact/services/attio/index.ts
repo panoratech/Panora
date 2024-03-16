@@ -80,14 +80,22 @@ export class AttioService implements IContactService {
                     provider_slug: 'attio',
                 },
             });
-            const resp = await axios.get(`https://api.attio.com/v2/objects/people/records/query`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${this.cryptoService.decrypt(
-                        connection.access_token,
-                    )}`,
-                },
-            });
+            console.log("Before Axios")
+            console.log(this.cryptoService.decrypt(connection.access_token))
+
+            const resp = await axios.post(`https://api.attio.com/v2/objects/people/records/query`, {},
+                {
+                    headers: {
+                        accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${this.cryptoService.decrypt(connection.access_token)}`,
+                    },
+                }
+
+
+            );
+
+            console.log("After Axios")
 
             return {
                 data: resp.data.data,
