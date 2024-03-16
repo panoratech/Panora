@@ -41,8 +41,6 @@ export class CrmConnectionsService {
     zohoLocation?: string,
   ) {
     try {
-      this.logger.log("callback called")
-      console.log("callback called")
       if (!code) {
         throw new NotFoundError(`no ${providerName} code found, found ${code}`);
       }
