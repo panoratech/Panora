@@ -12,6 +12,7 @@ import { HubspotConnectionService } from './services/hubspot/hubspot.service';
 import { ZohoConnectionService } from './services/zoho/zoho.service';
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
 import { PipedriveConnectionService } from './services/pipedrive/pipedrive.service';
+import { AttioConnectionService } from './services/attio/attio.service';
 
 @Module({
   imports: [WebhookModule],
@@ -26,10 +27,11 @@ import { PipedriveConnectionService } from './services/pipedrive/pipedrive.servi
     // PROVIDERS SERVICES
     FreshsalesConnectionService,
     HubspotConnectionService,
+    AttioConnectionService,
     ZohoConnectionService,
     ZendeskConnectionService,
     PipedriveConnectionService,
   ],
   exports: [CrmConnectionsService],
 })
-export class CrmConnectionModule {}
+export class CrmConnectionModule { }

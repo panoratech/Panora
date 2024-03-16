@@ -13,7 +13,7 @@ export type RateLimit = {
 
 @Injectable()
 export class EnvironmentService {
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) { }
 
   getEnvMode(): string {
     return this.configService.get<string>('ENV');
@@ -46,6 +46,14 @@ export class EnvironmentService {
       CLIENT_SECRET: this.configService.get<string>('HUBSPOT_CLIENT_SECRET'),
     };
   }
+
+  getAttioAuth(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('ATTIO_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('ATTIO_CLIENT_SECRET'),
+    }
+  }
+
   getZohoSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('ZOHO_CLIENT_ID'),

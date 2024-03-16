@@ -41,11 +41,15 @@ export class CrmConnectionsService {
     zohoLocation?: string,
   ) {
     try {
+      this.logger.log("callback called")
+      console.log("callback called")
       if (!code) {
         throw new NotFoundError(`no ${providerName} code found, found ${code}`);
       }
 
       const serviceName = providerName.toLowerCase();
+      this.logger.log("callback in connection service - Mit")
+
       const service = this.serviceRegistry.getService(serviceName);
 
       if (!service) {
@@ -57,6 +61,7 @@ export class CrmConnectionsService {
         code: code,
         location: zohoLocation || null,
       };
+      console.log("In callback2")
       const data: Connection = await service.handleCallback(callbackOpts);
       this.logger.log('data is ' + data);
       const event = await this.prisma.events.create({

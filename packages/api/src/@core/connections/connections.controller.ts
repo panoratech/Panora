@@ -45,6 +45,9 @@ export class ConnectionsController {
           `No Callback Params found for code, found ${code}`,
         );
 
+      console.log("In connection controller - Mit")
+      this.logger.log("in connection controller - Mit")
+
       const stateData = JSON.parse(decodeURIComponent(state));
       const { projectId, linkedUserId, providerName, returnUrl } = stateData;
       switch (getProviderVertical(providerName.toLowerCase())) {
