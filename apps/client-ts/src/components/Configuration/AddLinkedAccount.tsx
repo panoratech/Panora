@@ -70,7 +70,7 @@ const AddLinkedAccount = () => {
 
   const posthog = usePostHog()
 
-  const {idOrg} = useOrganisationStore();
+  //const {idOrg} = useOrganisationStore();
   const {idProject} = useProjectStore();
 
 
@@ -86,7 +86,7 @@ const AddLinkedAccount = () => {
     console.log(values)
     mutate({ 
       linked_user_origin_id: values.linkedUserIdentifier, 
-      alias: idOrg,
+      alias: "", //TODO
       id_project: idProject
     });
     setShowNewLinkedUserDialog({open: false})  

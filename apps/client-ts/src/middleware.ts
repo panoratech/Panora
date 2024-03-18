@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import loadStytch, { Member, Organization } from '@/lib/stytch/loadStytch';
+import loadStytch, { Member, Organization, loadB2CStytch } from '@/lib/stytch/loadStytch';
 import { clearIntermediateSession, clearSession, exchangeToken, getDiscoverySessionData, revokeSession, setIntermediateSession, setSession } from '@/lib/stytch/sessionService';
 import { MfaRequired } from 'stytch';
 import { toDomain } from '@/lib/utils';
 import CONFIG from "@/lib/config";
 
+const OAUTH_TOKEN = 'oauth';
+const MAGIC_LINKS_TOKEN = 'magic_links';
+const RESET_LOGIN = 'login';
+
+const stytchB2C = loadB2CStytch();
 const stytch = loadStytch();
 
 function redirectToSMSMFA(organization: Organization, member: Member, mfa_required: MfaRequired | null ) {
@@ -169,7 +174,24 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  const sessionJWT = request.cookies.get("session")?.value;
+  const sessionJWT = request.cookies.get("stytch_session_jwt")?.value;
+  console.log(sessionJWT)
+  if (!sessionJWT) {
+    return NextResponse.redirect(new URL("/b2c/login", request.url));
+  }
+
+  // loadStytch() is a helper function for initalizing the Stytch Backend SDK. See the function definition for more details.
+  const stytchClient = loadB2CStytch();
+
+  try {
+    // Authenticate the session JWT. If an error is thrown the session authentication has failed.
+    await stytchClient.sessions.authenticateJwt({session_jwt: sessionJWT});
+    return { props: {} };
+  } catch (e) {
+    return NextResponse.redirect(new URL("/b2c/login", request.url));
+  }
+
+  /*const sessionJWT = request.cookies.get("session")?.value;
 
   if (!sessionJWT) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
@@ -207,7 +229,7 @@ export async function middleware(request: NextRequest) {
     return response;
   } catch (err) {
     return new Response(JSON.stringify({ error: "Session invalid" }), { status: 401 });
-  }  
+  }  */
 }
 
 export const config = {
