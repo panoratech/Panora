@@ -99,6 +99,26 @@ services:
     restart:
       unless-stopped
 
+  webapp-next:
+    image: panoradotdev/frontend-webapp:latest
+    environment:
+      NEXT_PUBLIC_STYTCH_PROJECT_ID: ${NEXT_PUBLIC_STYTCH_PROJECT_ID}
+      NEXT_PUBLIC_STYTCH_SECRET: ${NEXT_PUBLIC_STYTCH_SECRET}
+      NEXT_PUBLIC_STYTCH_PROJECT_ENV: ${NEXT_PUBLIC_STYTCH_PROJECT_ENV}
+      NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN: ${NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN}
+      NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
+      NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+      NEXT_PUBLIC_FRONTEND_DOMAIN: ${NEXT_PUBLIC_FRONTEND_DOMAIN}
+      NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
+    restart: unless-stopped
+    ports:
+      - 80:3000
+    depends_on:
+      - api
+    networks:
+      - backend
+      - frontend
+
   # Initialize s3 buckets
   panora-store-init:
     image: minio/minio
