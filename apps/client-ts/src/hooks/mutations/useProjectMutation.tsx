@@ -4,7 +4,7 @@ import { toast } from "sonner"
 
 interface IProDto {
     name: string;
-    id_organization: string;
+    id_user: string;
 }
 
 const useProjectMutation = () => {

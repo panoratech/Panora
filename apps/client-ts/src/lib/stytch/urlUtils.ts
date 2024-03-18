@@ -15,4 +15,3 @@ export const getDomainFromRequest = (host?: string, protocol?: string) => {
 
   return p + h;
 };
-

@@ -58,4 +58,17 @@ const loadStytch = () => {
   return client;
 };
 
+let clientB2C: stytch.Client;
+export const loadB2CStytch = () => {
+  if (!clientB2C) {
+    clientB2C = new stytch.Client({
+      project_id: process.env.NEXT_PUBLIC_STYTCH_PROJECT_ID || '',
+      secret: process.env.NEXT_PUBLIC_STYTCH_SECRET || '',
+      env: process.env.STYTCH_PROJECT_ENV === 'live' ? stytch.envs.live : stytch.envs.test,
+    });
+  }
+  return clientB2C;
+};
+
+
 export default loadStytch;
