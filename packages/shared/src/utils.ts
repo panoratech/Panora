@@ -29,7 +29,7 @@ export const providersConfig: ProvidersConfig = {
       clientId: '<Add Attio requested client id>',
       scopes: 'record_permission:read',
       authBaseUrl: 'https://app.attio.com/authorize',
-      logoPath: "https://assets-global.website-files.com/6421a177cdeeaf3c6791b745/64d61202dd99e63d40d446f6_hubspot%20logo.png",
+      logoPath: "https://asset.brandfetch.io/idZA7HYRWK/idYZS6Vp_r.png",
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users"
     },
     'zoho': {

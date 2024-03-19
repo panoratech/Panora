@@ -7,6 +7,7 @@ export const CRM_PROVIDERS = [
   'zendesk',
   'hubspot',
   'pipedrive',
+  'attio',
   'freshsales',
 ];
 
