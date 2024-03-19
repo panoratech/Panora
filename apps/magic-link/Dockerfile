@@ -49,7 +49,7 @@ COPY --from=builder ./app/out/full/ .
 RUN pnpm turbo run build --filter=magic-link...
 
 # ========================================================================
-FROM nginx:stable-alpine as runner
+FROM nginx:1.24-alpine3.17 as runner
 
 #ARG VITE_BACKEND_DOMAIN
 #ARG VITE_FRONTEND_DOMAIN
