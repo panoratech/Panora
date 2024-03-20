@@ -13,7 +13,6 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
 import { users as User } from '@prisma/client';
-import { StytchService } from './stytch/stytch.service';
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
@@ -21,7 +20,6 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    private stytchService: StytchService,
     private logger: LoggerService,
   ) {
     this.logger.setContext(AuthService.name);
@@ -53,16 +51,7 @@ export class AuthService {
         throw new BadRequestException('email already exists');
       }
 
-      const stytchUser = await this.stytchService.passwords.create({
-        email: user.email,
-        password: user.password_hash,
-        name: {
-          first_name: user.first_name,
-          last_name: user.last_name,
-        },
-      });
-
-      const savedUser = await this.createUser(user, stytchUser.user_id);
+      const savedUser = await this.createUser(user);
 
       const { password_hash, ...resp_user } = savedUser;
       return resp_user;
@@ -128,17 +117,6 @@ export class AuthService {
           secret: process.env.JWT_SECRET,
         }), // token used to generate api keys
       };
-    } catch (error) {
-      handleServiceError(error, this.logger);
-    }
-  }
-
-  async validateStytchToken(token: string) {
-    try {
-      const { user } = await this.stytchService.oauth.authenticate({
-        token,
-      });
-      return user;
     } catch (error) {
       handleServiceError(error, this.logger);
     }

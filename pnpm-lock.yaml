@@ -87,6 +87,12 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.0.7
         version: 1.0.7(@types/react-dom@18.2.19)(@types/react@18.2.55)(react-dom@18.2.0)(react@18.2.0)
+      '@stytch/nextjs':
+        specifier: ^18.0.0
+        version: 18.0.0(@stytch/vanilla-js@4.7.1)(react-dom@18.2.0)(react@18.2.0)
+      '@stytch/vanilla-js':
+        specifier: ^4.7.1
+        version: 4.7.1
       '@tanstack/react-query':
         specifier: ^5.12.2
         version: 5.25.0(react@18.2.0)
@@ -4214,6 +4220,31 @@ packages:
       '@sinonjs/commons': 3.0.1
     dev: true
 
+  /@stytch/core@2.9.0:
+    resolution: {integrity: sha512-RihIGGn+FBn5YJKEdsh2Te0ns8c09R4hJBQp2y8r67WbfiFhYbbGs+F/QiIGupn+879D3MQJ6BBqKH0G78Lgcw==}
+    dependencies:
+      uuid: 8.3.2
+    dev: false
+
+  /@stytch/nextjs@18.0.0(@stytch/vanilla-js@4.7.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-8maWCqL/zRe73WSSX0x4v51AP6lUBw2p9XHrDce4g4HwjyCOOdjdnBu3c9AgxQJuHfuBC1xldtp5+eft9SdCyw==}
+    peerDependencies:
+      '@stytch/vanilla-js': ^4.7.0
+      react: '>= 17.0.2'
+      react-dom: '>= 17.0.2'
+    dependencies:
+      '@stytch/vanilla-js': 4.7.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@stytch/vanilla-js@4.7.1:
+    resolution: {integrity: sha512-tpAAiWY1mtaO0HLYXFhJK6Lnf5EUmTvMaVBHZBcUCTuI3fYDH4VB+aPll/wS7JyFIl7EhjPsS9/eSQ2Jyd/39Q==}
+    dependencies:
+      '@stytch/core': 2.9.0
+      '@types/google-one-tap': 1.2.6
+    dev: false
+
   /@swc/helpers@0.5.2:
     resolution: {integrity: sha512-E4KcWTpoLHqwPHLxidpOqQbcrZVgi0rsmmZXUle1jXmJfuIf/UWpczUJ7MZZ5tlxytgJXyp0w4PGkkeLiuIdZw==}
     dependencies:
@@ -4455,6 +4486,10 @@ packages:
       '@types/qs': 6.9.11
       '@types/serve-static': 1.15.5
     dev: true
+
+  /@types/google-one-tap@1.2.6:
+    resolution: {integrity: sha512-REmJsXVHvKb/sgI8DF+7IesMbDbcsEokHBqxU01ENZ8d98UPWdRLhUCtxEm9bhNFFg6PJGy7PNFdvovp0hK3jA==}
+    dev: false
 
   /@types/graceful-fs@4.1.9:
     resolution: {integrity: sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==}

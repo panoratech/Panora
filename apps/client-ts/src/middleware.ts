@@ -186,7 +186,7 @@ export async function middleware(request: NextRequest) {
   try {
     // Authenticate the session JWT. If an error is thrown the session authentication has failed.
     await stytchClient.sessions.authenticateJwt({session_jwt: sessionJWT});
-    return { props: {} };
+    return NextResponse.next();
   } catch (e) {
     return NextResponse.redirect(new URL("/b2c/login", request.url));
   }

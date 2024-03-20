@@ -37,11 +37,16 @@ export class AttioContactMapper implements IContactMapper {
 
     const result: AttioContactInput = {
       values: {
-        name: [{ first_name: source.first_name, last_name: source.last_name, full_name: `${source.first_name} ${source.last_name}` }],
+        name: [
+          {
+            first_name: source.first_name,
+            last_name: source.last_name,
+            full_name: `${source.first_name} ${source.last_name}`,
+          },
+        ],
         email_addresses: [{ email_address: primaryEmail }],
-        phone_numbers: [{ phone_number: primaryPhone }]
-      }
-
+        phone_numbers: [{ original_phone_number: primaryPhone }],
+      },
     };
 
     // if (source.user_id) {
@@ -110,8 +115,7 @@ export class AttioContactMapper implements IContactMapper {
       postal_code: '',
       country: '',
     };
-    let opts: any = {};
-
+    const opts: any = {};
 
     return {
       first_name: contact.values.name[0].first_name,
@@ -121,7 +125,7 @@ export class AttioContactMapper implements IContactMapper {
         email_address_type: e.attribute_type ? e.attribute_type : '',
       })), // Map each email
       phone_numbers: contact.values.phone_numbers.map((p) => ({
-        phone_number: p.phone_number,
+        phone_number: p.original_phone_number,
         phone_type: p.attribute_type ? p.attribute_type : '',
       })), // Map each phone number,
       field_mappings,

@@ -42,7 +42,6 @@ export const constructAuthUrl = ({ projectId, linkedUserId, providerName, return
     finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&state=${state}`
   } else if (providerName == "attio") {
     finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&state=${state}`
-
   } else if (providerName == "zendesk_tcg" || providerName == "front") {
     finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
   } else {

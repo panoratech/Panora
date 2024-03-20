@@ -58,25 +58,6 @@
         }
       }
     },
-    "/stytch": {
-      "get": {
-        "operationId": "stytch protected",
-        "summary": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/auth/register": {
       "post": {
         "operationId": "signUp",
@@ -174,20 +155,6 @@
         },
         "responses": {
           "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "auth"
-        ]
-      }
-    },
-    "/auth/callback": {
-      "get": {
-        "operationId": "AuthController_callback",
-        "parameters": [],
-        "responses": {
-          "200": {
             "description": ""
           }
         },
