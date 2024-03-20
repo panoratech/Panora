@@ -36,7 +36,9 @@ export class GithubService implements ITeamService {
           provider_slug: 'github',
         },
       });
-      const resp = await axios.get(`https://api.github.com/teams`, {
+      const org = '';
+
+      const resp = await axios.get(`https://api.github.com/${org}/teams`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -36,10 +36,10 @@ export class GithubService implements ITicketService {
         },
       });
       const dataBody = ticketData;
-      const owner = '';
+      const org = '';
       const repo = '';
       const resp = await axios.post(
-        `https://api.github.com/repos/${owner}/${repo}/issues`,
+        `https://api.github.com/repos/${org}/${repo}/issues`,
         JSON.stringify(dataBody),
         {
           headers: {
