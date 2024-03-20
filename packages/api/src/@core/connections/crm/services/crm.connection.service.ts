@@ -46,6 +46,7 @@ export class CrmConnectionsService {
       }
 
       const serviceName = providerName.toLowerCase();
+
       const service = this.serviceRegistry.getService(serviceName);
 
       if (!service) {

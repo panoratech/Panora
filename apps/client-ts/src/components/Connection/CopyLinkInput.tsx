@@ -15,7 +15,7 @@ const CopyLinkInput = () => {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(`${config.FRONT_DOMAIN}/?uniqueLink=${uniqueLink}`);
+      await navigator.clipboard.writeText(`${config.MAGIC_LINK_DOMAIN}/?uniqueLink=${uniqueLink}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset copied state after 2 seconds
     } catch (err) {
@@ -28,7 +28,7 @@ const CopyLinkInput = () => {
       {uniqueLink !== 'https://' ? 
       <>
         <Input
-          defaultValue={`${config.FRONT_DOMAIN}/?uniqueLink=${uniqueLink}`}
+          defaultValue={`${config.MAGIC_LINK_DOMAIN}/?uniqueLink=${uniqueLink}`}
           readOnly
           className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
         /> 

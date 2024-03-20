@@ -15,8 +15,9 @@ export enum CrmProviders {
     HUBSPOT = 'hubspot',
     PIPEDRIVE = 'pipedrive',
     FRESHSALES = 'freshsales',
+    ATTIO = 'attio'
 }
-  
+
 export enum TicketingProviders {
     ZENDESK = 'zendesk',
     FRONT = 'front',
@@ -32,4 +33,3 @@ export enum AccountingProviders {
     FREEAGENT = 'freeagent',
     SAGE = 'sage',
 }
-  

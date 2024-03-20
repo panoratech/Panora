@@ -31,6 +31,7 @@ export type StandardObject = TargetObject;
 export const domains = {
   CRM: {
     hubspot: 'https://api.hubapi.com',
+    attio: 'https://developers.attio.com',
     zoho: 'https://www.zohoapis.eu/crm/v3',
     zendesk: 'https://api.getbase.com/v2',
     freshsales: '',
@@ -43,6 +44,7 @@ export const customPropertiesUrls = {
     hubspot: `${domains['CRM']['hubspot']}/properties/v1/contacts/properties`,
     zoho: `${domains['CRM']['zoho']}/settings/fields?module=Contact`,
     zendesk: `${domains['CRM']['zendesk']}/contact/custom_fields`,
+    attio: `${domains['CRM']['attio']}/docs/standard-objects-people`,
     freshsales: `${domains['CRM']['freshsales']}`, //TODO
     pipedrive: `${domains['CRM']['pipedrive']}/v1/personFields`,
   },
@@ -67,6 +69,7 @@ export enum CrmProviders {
   HUBSPOT = 'hubspot',
   PIPEDRIVE = 'pipedrive',
   FRESHSALES = 'freshsales',
+  ATTIO = 'attio',
 }
 
 export enum AccountingProviders {
@@ -85,6 +88,7 @@ export const CRM_PROVIDERS = [
   'hubspot',
   'pipedrive',
   'freshsales',
+  'attio',
 ];
 
 export const HRIS_PROVIDERS = [''];
