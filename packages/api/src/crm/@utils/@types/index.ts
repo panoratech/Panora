@@ -109,6 +109,7 @@ export * from '../../contact/services/zendesk/types';
 export * from '../../contact/services/hubspot/types';
 export * from '../../contact/services/zoho/types';
 export * from '../../contact/services/pipedrive/types';
+export * from '../../contact/services/attio/types'
 
 /* user */
 export * from '../../user/services/freshsales/types';
