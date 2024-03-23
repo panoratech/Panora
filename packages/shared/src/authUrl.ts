@@ -44,6 +44,14 @@ export const constructAuthUrl = ({ projectId, linkedUserId, providerName, return
     finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&state=${state}`
   } else if (providerName == "zendesk_tcg" || providerName == "front") {
     finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
+  } else if (providerName == "gorgias" || providerName == "linear") {
+    finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
+  } else if (providerName == "jira" || providerName == "jira_service_mgmt") {
+    finalAuth = `${baseUrl}?audience=api.atlassian.com&client_id=${encodeURIComponent(clientId)}&response_type=code&prompt=consent&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
+  } else if(providerName == "gitlab") {
+    finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}&code_challenge=&code_challenge_method=`
+  } else if(providerName == "clickup"){
+    finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`
   } else {
     finalAuth = addScope ?
       `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`

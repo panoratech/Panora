@@ -83,6 +83,53 @@ import {
   GithubUserOutput,
 } from '@ticketing/user/services/github/types';
 
+import {
+  GorgiasTicketInput,
+  GorgiasTicketOutput,
+} from '@ticketing/ticket/services/gorgias/types';
+import {
+  JiraTicketInput,
+  JiraTicketOutput,
+} from '@ticketing/ticket/services/jira/types';
+import {
+  GorgiasCommentInput,
+  GorgiasCommentOutput,
+} from '@ticketing/comment/services/gorgias/types';
+import {
+  JiraCommentInput,
+  JiraCommentOutput,
+} from '@ticketing/comment/services/jira/types';
+import {
+  GorgiasUserInput,
+  GorgiasUserOutput,
+} from '@ticketing/user/services/gorgias/types';
+import {
+  JiraUserInput,
+  JiraUserOutput,
+} from '@ticketing/user/services/jira/types';
+import {
+  GorgiasContactInput,
+  GorgiasContactOutput,
+} from '@ticketing/contact/services/gorgias/types';
+import {
+  GorgiasTagInput,
+  GorgiasTagOutput,
+} from '@ticketing/tag/services/gorgias/types';
+import {
+  GorgiasTeamInput,
+  GorgiasTeamOutput,
+} from '@ticketing/team/services/gorgias/types';
+import { GorgiasAttachmentOutput } from '@ticketing/attachment/services/gorgias/types';
+import { JiraAttachmentOutput } from '@ticketing/attachment/services/jira/types';
+import {
+  JiraTeamInput,
+  JiraTeamOutput,
+} from '@ticketing/team/services/JIRA/types';
+import {
+  JiraTagInput,
+  JiraTagOutput,
+} from '@ticketing/tag/services/jira/types';
+
 /* INPUT */
 
 /* ticket */
@@ -90,19 +137,28 @@ export type OriginalTicketInput =
   | ZendeskTicketInput
   | FrontTicketInput
   | GithubTicketInput
-  | HubspotTicketInput;
+  | HubspotTicketInput
+  | GorgiasTicketInput
+  | JiraTicketInput;
+//| JiraServiceMgmtTicketInput;
 
 /* comment */
 export type OriginalCommentInput =
   | ZendeskCommentInput
   | FrontCommentInput
   | GithubCommentInput
-  | HubspotCommentInput;
+  | HubspotCommentInput
+  | GorgiasCommentInput
+  | JiraCommentInput;
+//| JiraCommentServiceMgmtInput;
 /* user */
 export type OriginalUserInput =
   | ZendeskUserInput
   | GithubUserInput
-  | FrontUserInput;
+  | FrontUserInput
+  | GorgiasUserInput
+  | JiraUserInput;
+//| JiraServiceMgmtUserInput;
 /* account */
 export type OriginalAccountInput =
   | ZendeskAccountInput
@@ -112,15 +168,23 @@ export type OriginalAccountInput =
 export type OriginalContactInput =
   | ZendeskContactInput
   | GithubContactInput
-  | FrontContactInput;
+  | FrontContactInput
+  | GorgiasContactInput;
 
 /* tag */
-export type OriginalTagInput = ZendeskTagInput | GithubTagInput | FrontTagInput;
+export type OriginalTagInput =
+  | ZendeskTagInput
+  | GithubTagInput
+  | FrontTagInput
+  | GorgiasTagInput
+  | JiraTagInput;
 /* team */
 export type OriginalTeamInput =
   | ZendeskTeamInput
   | GithubTeamInput
-  | FrontTeamInput;
+  | FrontTeamInput
+  | GorgiasTeamInput
+  | JiraTeamInput;
 
 /* attachment */
 export type OriginalAttachmentInput = null;
@@ -142,19 +206,25 @@ export type OriginalTicketOutput =
   | ZendeskTicketOutput
   | FrontTicketOutput
   | GithubTicketOutput
-  | HubspotTicketOutput;
+  | HubspotTicketOutput
+  | GorgiasTicketOutput
+  | JiraTicketOutput;
+
 /* comment */
 export type OriginalCommentOutput =
   | ZendeskCommentOutput
   | FrontCommentOutput
   | GithubCommentOutput
-  | HubspotCommentOutput;
+  | HubspotCommentOutput
+  | GorgiasCommentOutput
+  | JiraCommentOutput;
 /* user */
 export type OriginalUserOutput =
   | ZendeskUserOutput
   | GithubUserOutput
-  | FrontUserOutput;
-
+  | FrontUserOutput
+  | GorgiasUserOutput
+  | JiraUserOutput;
 /* account */
 export type OriginalAccountOutput =
   | ZendeskAccountOutput
@@ -164,24 +234,32 @@ export type OriginalAccountOutput =
 export type OriginalContactOutput =
   | ZendeskContactOutput
   | GithubContactOutput
-  | FrontContactOutput;
+  | FrontContactOutput
+  | GorgiasContactOutput;
 
 /* tag */
 export type OriginalTagOutput =
   | ZendeskTagOutput
   | GithubTagOutput
-  | FrontTagOutput;
+  | FrontTagOutput
+  | GorgiasTagOutput
+  | JiraTagOutput;
+
 /* team */
 export type OriginalTeamOutput =
   | ZendeskTeamOutput
   | GithubTeamOutput
-  | FrontTeamOutput;
+  | FrontTeamOutput
+  | GorgiasTeamOutput
+  | JiraTeamOutput;
 
 /* attachment */
 export type OriginalAttachmentOutput =
   | ZendeskAttachmentOutput
   | FrontAttachmentOutput
-  | GithubAttachmentOutput;
+  | GithubAttachmentOutput
+  | GorgiasAttachmentOutput
+  | JiraAttachmentOutput;
 
 export type TicketingObjectOutput =
   | OriginalTicketOutput

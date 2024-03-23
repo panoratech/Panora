@@ -135,7 +135,11 @@ export class SyncService implements OnModuleInit {
 
       //TODO
       const userIds = sourceObject.map((user) =>
-        'id' in user ? String(user.id) : undefined,
+        'id' in user
+          ? String(user.id)
+          : 'accountId' in user
+          ? String(user.accountId)
+          : undefined,
       );
 
       //insert the data in the DB with the fieldMappings (value table)
@@ -208,6 +212,7 @@ export class SyncService implements OnModuleInit {
               email_address: user.email_address,
               teams: user.teams || [],
               modified_at: new Date(),
+              //TODO: id_tcg_account: user.account_id || '',
             },
           });
           unique_ticketing_user_id = res.id_tcg_user;
@@ -223,6 +228,7 @@ export class SyncService implements OnModuleInit {
             created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
+            id_tcg_account: user.account_id || '',
             remote_id: originId,
             remote_platform: originSource,
           };

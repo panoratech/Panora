@@ -82,6 +82,48 @@ export const providersConfig: ProvidersConfig = {
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
     },
+    'gorgias': {
+      clientId: '', //TODO
+      scopes: 'write:all openid email profile offline',
+      authBaseUrl: 'https://panora.gorgias.com/oauth/authorize',
+      logoPath: '',
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+    },
+    'jira': {
+      clientId: '1Xy0XSajM28HG7n9gufEyU0RO72SqEHW',
+      scopes: 'read:jira-work manage:jira-project manage:jira-data-provider manage:jira-webhook write:jira-work manage:jira-configuration read:jira-user offline_access',
+      authBaseUrl: 'https://auth.atlassian.com/authorize',
+      logoPath: '',
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+    },
+    'jira_service_mgmt': {
+      clientId: '1Xy0XSajM28HG7n9gufEyU0RO72SqEHW',
+      scopes: 'read:servicedesk-request manage:servicedesk-customer read:servicemanagement-insight-objects write:servicedesk-request offline_access',
+      authBaseUrl: 'https://auth.atlassian.com/authorize',
+      logoPath: '',
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+    },
+    'linear': {
+      clientId: '',
+      scopes: 'read,write',
+      authBaseUrl: 'https://linear.app/oauth/authorize',
+      logoPath: '',
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+    },
+    'gitlab': {
+      clientId: '',
+      scopes: '',
+      authBaseUrl: 'https://gitlab.example.com/oauth/authorize',
+      logoPath: '',
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+    },
+    'clickup': {
+      clientId: '',
+      scopes: '',
+      authBaseUrl: 'https://app.clickup.com/api',
+      logoPath: '',
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+    },
   },
   'accounting': {
     'pennylane': {

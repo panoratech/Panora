@@ -10,7 +10,6 @@ import { ServiceRegistry } from '../registry.service';
 import { IAccountService } from '@ticketing/account/types';
 import { GithubAccountOutput } from './types';
 
-//TODO
 @Injectable()
 export class GithubService implements IAccountService {
   constructor(
@@ -36,7 +35,7 @@ export class GithubService implements IAccountService {
           provider_slug: 'github',
         },
       });
-      const resp = await axios.get(`https://api.github.com/accounts`, {
+      const resp = await axios.get(`https://api.github.com/user/orgs`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -44,7 +43,7 @@ export class GithubService implements IAccountService {
           )}`,
         },
       });
-      this.logger.log(`Synced github accounts !`);
+      this.logger.log(`Synced github accounts (organizations) !`);
 
       return {
         data: resp.data,
