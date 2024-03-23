@@ -34,9 +34,6 @@ export class JiraService implements IUserService {
           provider_slug: 'jira',
         },
       });
-      // TODO: sync projects first inside /projects
-      // /rest/api/3/project/search
-
       const resp = await axios.get(
         `${connection.account_url}/rest/api/3/users/search`,
         {

@@ -2,20 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { ApiResponse } from '@@core/utils/types';
 import { handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import {
-  UnifiedCollectionInput,
-  UnifiedCollectionOutput,
-} from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
-import { TicketingObject } from '@ticketing/@utils/@types';
+import { UnifiedCollectionOutput } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
-import { OriginalCollectionOutput } from '@@core/utils/types/original/original.ticketing';
-import { unify } from '@@core/utils/unification/unify';
-import { ICollectionService } from '../types';
 
 @Injectable()
 export class CollectionService {
@@ -39,42 +30,12 @@ export class CollectionService {
         },
       });
 
-      // WE SHOULDNT HAVE FIELD MAPPINGS TO COMMENT
-
-      // Fetch field mappings for the collection
-      /*const values = await this.prisma.value.findMany({
-        where: {
-          entity: {
-            ressource_owner_id: collection.id_tcg_collection,
-          },
-        },
-        include: {
-          attribute: true,
-        },
-      });
-
-      Create a map to store unique field mappings
-      const fieldMappingsMap = new Map();
-
-      values.forEach((value) => {
-        fieldMappingsMap.set(value.attribute.slug, value.data);
-      });
-
-      // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));*/
-
       // Transform to UnifiedCollectionOutput format
       const unifiedCollection: UnifiedCollectionOutput = {
         id: collection.id_tcg_collection,
-        body: collection.body,
-        html_body: collection.html_body,
-        is_private: collection.is_private,
-        creator_type: collection.creator_type,
-        ticket_id: collection.id_tcg_ticket,
-        contact_id: collection.id_tcg_contact, // uuid of Contact object
-        user_id: collection.id_tcg_user, // uuid of User object
+        name: collection.name,
+        description: collection.description,
+        collection_type: collection.collection_type,
       };
 
       let res: UnifiedCollectionOutput = {
@@ -116,41 +77,11 @@ export class CollectionService {
 
       const unifiedCollections: UnifiedCollectionOutput[] = await Promise.all(
         collections.map(async (collection) => {
-          //WE SHOULDNT HAVE FIELD MAPPINGS FOR COMMENT
-          // Fetch field mappings for the ticket
-          /*const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: collection.id_tcg_ticket,
-              },
-            },
-            include: {
-              attribute: true,
-            },
-          });
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
-
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
-
-          // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );*/
-
-          // Transform to UnifiedCollectionOutput format
           return {
             id: collection.id_tcg_collection,
-            body: collection.body,
-            html_body: collection.html_body,
-            is_private: collection.is_private,
-            creator_type: collection.creator_type,
-            ticket_id: collection.id_tcg_ticket,
-            contact_id: collection.id_tcg_contact, // uuid of Contact object
-            user_id: collection.id_tcg_user, // uuid of User object
+            name: collection.name,
+            description: collection.description,
+            collection_type: collection.collection_type,
           };
         }),
       );

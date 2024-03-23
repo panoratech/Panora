@@ -9,6 +9,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
+import { JiraService } from './services/jira';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { BullModule } from '@nestjs/bull';
     FieldMappingService,
     ServiceRegistry,
     /* PROVIDERS SERVICES */
+    JiraService,
   ],
   exports: [SyncService],
 })

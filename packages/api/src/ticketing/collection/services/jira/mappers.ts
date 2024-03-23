@@ -40,6 +40,8 @@ export class JiraCollectionMapper implements ICollectionMapper {
   ): UnifiedCollectionOutput {
     const unifiedCollection: UnifiedCollectionOutput = {
       name: collection.name,
+      description: collection.name,
+      collection_type: 'PROJECT',
     };
 
     return unifiedCollection;

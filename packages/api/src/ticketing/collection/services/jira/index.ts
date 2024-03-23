@@ -36,7 +36,7 @@ export class JiraService implements ICollectionService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/rest/api/3/user/groups`,
+        `${connection.account_url}/rest/api/3/project/search`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export class JiraService implements ICollectionService {
       this.logger.log(`Synced jira collections !`);
 
       return {
-        data: resp.data._results,
+        data: resp.data,
         message: 'Jira collections retrieved',
         statusCode: 200,
       };
