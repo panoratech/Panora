@@ -129,6 +129,8 @@ import {
   JiraTagInput,
   JiraTagOutput,
 } from '@ticketing/tag/services/jira/types';
+import { GorgiasCollectionOutput } from '@ticketing/collection/services/gorgias/types';
+import { JiraCollectionOutput } from '@ticketing/collection/services/jira/types';
 
 /* INPUT */
 
@@ -188,6 +190,7 @@ export type OriginalTeamInput =
 
 /* attachment */
 export type OriginalAttachmentInput = null;
+export type OriginalCollectionInput = null;
 
 export type TicketingObjectInput =
   | OriginalTicketInput
@@ -197,7 +200,8 @@ export type TicketingObjectInput =
   | OriginalTagInput
   | OriginalTeamInput
   | OriginalContactInput
-  | OriginalAccountInput;
+  | OriginalAccountInput
+  | OriginalCollectionInput;
 
 /* OUTPUT */
 
@@ -261,6 +265,12 @@ export type OriginalAttachmentOutput =
   | GorgiasAttachmentOutput
   | JiraAttachmentOutput;
 
+/* collection */
+
+export type OriginalCollectionOutput =
+  | GorgiasCollectionOutput
+  | JiraCollectionOutput;
+
 export type TicketingObjectOutput =
   | OriginalTicketOutput
   | OriginalCommentOutput
@@ -269,4 +279,5 @@ export type TicketingObjectOutput =
   | OriginalTeamOutput
   | OriginalTagOutput
   | OriginalContactOutput
-  | OriginalAccountOutput;
+  | OriginalAccountOutput
+  | OriginalCollectionOutput;

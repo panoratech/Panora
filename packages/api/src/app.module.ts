@@ -18,6 +18,7 @@ import { CoreModule } from '@@core/core.module';
 import { BullModule } from '@nestjs/bull';
 import { TicketingModule } from '@ticketing/ticketing.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         port: 6379,
       },
     }),
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [
