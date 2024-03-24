@@ -14,6 +14,7 @@ import { HubspotService } from './services/hubspot';
 import { PipedriveService } from './services/pipedrive';
 import { ZendeskService } from './services/zendesk';
 import { ZohoService } from './services/zoho';
+import { AttioService } from './services/attio'
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { ZohoService } from './services/zoho';
     ZohoService,
     PipedriveService,
     HubspotService,
+    AttioService
   ],
   exports: [SyncService],
 })
-export class CompanyModule {}
+export class CompanyModule { }

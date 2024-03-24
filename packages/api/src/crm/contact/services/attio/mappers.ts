@@ -106,7 +106,7 @@ export class AttioContactMapper implements IContactMapper {
     }[],
   ): Promise<UnifiedContactOutput> {
     const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: contact[mapping.remote_id],
+      [mapping.slug]: contact.values[mapping.remote_id],
     }));
     const address: Address = {
       street_1: '',
@@ -118,13 +118,14 @@ export class AttioContactMapper implements IContactMapper {
     const opts: any = {};
 
     return {
-      first_name: contact.values.name[0].first_name,
-      last_name: contact.values.name[0].last_name,
-      email_addresses: contact.values.email_addresses.map((e) => ({
+      first_name: contact.values.name[0]?.first_name,
+      last_name: contact.values.name[0]?.last_name,
+      // user_id: contact.values.created_by[0]?.referenced_actor_id,
+      email_addresses: contact.values.email_addresses?.map((e) => ({
         email_address: e.email_address,
         email_address_type: e.attribute_type ? e.attribute_type : '',
       })), // Map each email
-      phone_numbers: contact.values.phone_numbers.map((p) => ({
+      phone_numbers: contact.values.phone_numbers?.map((p) => ({
         phone_number: p.original_phone_number,
         phone_type: p.attribute_type ? p.attribute_type : '',
       })), // Map each phone number,

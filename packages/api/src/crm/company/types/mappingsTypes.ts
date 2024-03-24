@@ -3,12 +3,15 @@ import { HubspotCompanyMapper } from '@crm/company/services/hubspot/mappers';
 import { PipedriveCompanyMapper } from '@crm/company/services/pipedrive/mappers';
 import { ZendeskCompanyMapper } from '@crm/company/services/zendesk/mappers';
 import { ZohoCompanyMapper } from '@crm/company/services/zoho/mappers';
+import { AttioCompanyMapper } from '@crm/company/services/attio/mappers';
+
 
 const hubspotCompanyMapper = new HubspotCompanyMapper();
 const zendeskCompanyMapper = new ZendeskCompanyMapper();
 const zohoCompanyMapper = new ZohoCompanyMapper();
 const pipedriveCompanyMapper = new PipedriveCompanyMapper();
 const freshSalesCompanyMapper = new FreshsalesCompanyMapper();
+const attioCompanyMapper = new AttioCompanyMapper();
 
 export const companyUnificationMapping = {
   hubspot: {
@@ -31,4 +34,8 @@ export const companyUnificationMapping = {
     unify: freshSalesCompanyMapper.unify.bind(freshSalesCompanyMapper),
     desunify: freshSalesCompanyMapper.desunify.bind(freshSalesCompanyMapper),
   },
+  attio: {
+    unify: attioCompanyMapper.unify.bind(attioCompanyMapper),
+    desunify: attioCompanyMapper.desunify.bind(attioCompanyMapper)
+  }
 };
