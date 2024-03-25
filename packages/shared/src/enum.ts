@@ -23,7 +23,7 @@ export enum TicketingProviders {
     FRONT = 'front',
     GITHUB = 'github',
     JIRA = 'jira',
-    LINEAR = 'linear',
+    GORGIAS = 'gorgias',
 }
 
 export enum AccountingProviders {

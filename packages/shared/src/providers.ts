@@ -14,15 +14,14 @@ export const CRM_PROVIDERS = [
 export const HRIS_PROVIDERS = [''];
 export const ATS_PROVIDERS = [''];
 export const ACCOUNTING_PROVIDERS = [''];
-export const TICKETING_PROVIDERS = ['zendesk', 'front', 'github', 'jira', 'linear'];
+export const TICKETING_PROVIDERS = ['zendesk', 'front', 'github', 'jira', 'gorgias'];
 export const MARKETING_AUTOMATION_PROVIDERS = [''];
 export const FILE_STORAGE_PROVIDERS = [''];
 
 
 export function getProviderVertical(providerName: string): ProviderVertical {
   if (CRM_PROVIDERS.includes(providerName)) {
-    return ProviderVertical.CRM;
-  }
+    return ProviderVertical.CRM;  }
   if (HRIS_PROVIDERS.includes(providerName)) {
     return ProviderVertical.HRIS;
   }

@@ -105,12 +105,3 @@ export type ITicketingService =
   | ITeamService
   | ITagService
   | ICollectionService;
-
-/*TODO: export all providers  */
-export * from '../../ticket/services/zendesk/types';
-export * from '../../comment/services/zendesk/types';
-export * from '../../user/services/zendesk/types';
-export * from '../../contact/services/zendesk/types';
-export * from '../../account/services/zendesk/types';
-export * from '../../team/services/zendesk/types';
-export * from '../../tag/services/zendesk/types';

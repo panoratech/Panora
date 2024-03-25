@@ -1,3 +1,4 @@
+import { ClickupService } from './services/clickup';
 import { Module } from '@nestjs/common';
 import { TeamController } from './team.controller';
 import { SyncService } from './sync/sync.service';
@@ -37,6 +38,7 @@ import { GorgiasService } from './services/gorgias';
     GithubService,
     JiraService,
     GorgiasService,
+    ClickupService,
   ],
   exports: [SyncService],
 })

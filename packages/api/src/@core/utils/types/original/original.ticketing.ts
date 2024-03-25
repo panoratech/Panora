@@ -1,19 +1,8 @@
 import {
-  ZendeskCommentInput,
-  ZendeskTicketInput,
-  ZendeskUserInput,
-  ZendeskTicketOutput,
-  ZendeskCommentOutput,
-  ZendeskUserOutput,
-  ZendeskAccountInput,
-  ZendeskAccountOutput,
-  ZendeskContactInput,
-  ZendeskContactOutput,
-  ZendeskTagInput,
-  ZendeskTagOutput,
-  ZendeskTeamInput,
-  ZendeskTeamOutput,
-} from '@ticketing/@utils/@types';
+  ClickupTeamInput,
+  ClickupTeamOutput,
+} from '@ticketing/team/services/clickup/types';
+
 import {
   FrontAccountInput,
   FrontAccountOutput,
@@ -129,8 +118,35 @@ import {
   JiraTagInput,
   JiraTagOutput,
 } from '@ticketing/tag/services/jira/types';
-import { GorgiasCollectionOutput } from '@ticketing/collection/services/gorgias/types';
 import { JiraCollectionOutput } from '@ticketing/collection/services/jira/types';
+import {
+  ZendeskTicketInput,
+  ZendeskTicketOutput,
+} from '@ticketing/ticket/services/zendesk/types';
+import {
+  ZendeskCommentInput,
+  ZendeskCommentOutput,
+} from '@ticketing/comment/services/zendesk/types';
+import {
+  ZendeskAccountInput,
+  ZendeskAccountOutput,
+} from '@ticketing/account/services/zendesk/types';
+import {
+  ZendeskTeamInput,
+  ZendeskTeamOutput,
+} from '@ticketing/team/services/zendesk/types';
+import {
+  ZendeskTagInput,
+  ZendeskTagOutput,
+} from '@ticketing/tag/services/zendesk/types';
+import {
+  ZendeskContactInput,
+  ZendeskContactOutput,
+} from '@ticketing/contact/services/zendesk/types';
+import {
+  ZendeskUserInput,
+  ZendeskUserOutput,
+} from '@ticketing/user/services/zendesk/types';
 
 /* INPUT */
 
@@ -182,6 +198,7 @@ export type OriginalTagInput =
   | JiraTagInput;
 /* team */
 export type OriginalTeamInput =
+  | ClickupTeamInput
   | ZendeskTeamInput
   | GithubTeamInput
   | FrontTeamInput
@@ -251,6 +268,7 @@ export type OriginalTagOutput =
 
 /* team */
 export type OriginalTeamOutput =
+  | ClickupTeamOutput
   | ZendeskTeamOutput
   | GithubTeamOutput
   | FrontTeamOutput
@@ -267,9 +285,7 @@ export type OriginalAttachmentOutput =
 
 /* collection */
 
-export type OriginalCollectionOutput =
-  | GorgiasCollectionOutput
-  | JiraCollectionOutput;
+export type OriginalCollectionOutput = JiraCollectionOutput;
 
 export type TicketingObjectOutput =
   | OriginalTicketOutput
