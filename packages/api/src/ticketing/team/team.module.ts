@@ -38,7 +38,6 @@ import { GorgiasService } from './services/gorgias';
     GithubService,
     JiraService,
     GorgiasService,
-    ClickupService,
   ],
   exports: [SyncService],
 })

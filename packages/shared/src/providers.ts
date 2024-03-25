@@ -21,7 +21,8 @@ export const FILE_STORAGE_PROVIDERS = [''];
 
 export function getProviderVertical(providerName: string): ProviderVertical {
   if (CRM_PROVIDERS.includes(providerName)) {
-    return ProviderVertical.CRM;  }
+    return ProviderVertical.CRM;
+  }
   if (HRIS_PROVIDERS.includes(providerName)) {
     return ProviderVertical.HRIS;
   }

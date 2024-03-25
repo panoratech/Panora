@@ -83,7 +83,12 @@ function updateFileContents(filePath, newContents) {
   fs.writeFileSync(filePath, newContents);
 }
 
-function updateMappingsFile(mappingsFile, newServiceDirs, objectType) {
+function updateMappingsFile(
+  mappingsFile,
+  newServiceDirs,
+  objectType,
+  vertical,
+) {
   let fileContent = fs.readFileSync(mappingsFile, 'utf8');
 
   // Identify where the existing content before the first import starts, to preserve any comments or metadata at the start of the file
@@ -106,32 +111,39 @@ function updateMappingsFile(mappingsFile, newServiceDirs, objectType) {
   let newImports = '';
   let newInstances = '';
   let newMappings = '';
-  newServiceDirs.forEach((newServiceName) => {
-    const serviceNameCapitalized =
-      newServiceName.charAt(0).toUpperCase() + newServiceName.slice(1);
-    const mapperClassName = `${serviceNameCapitalized}${objectType}Mapper`;
-    const mapperInstanceName = `${newServiceName.toLowerCase()}${objectType}Mapper`;
+  newServiceDirs
+    .filter(
+      (newServiceName) =>
+        !(
+          vertical === 'ticketing' && newServiceName.toLowerCase() === 'zendesk'
+        ),
+    )
+    .forEach((newServiceName) => {
+      const serviceNameCapitalized =
+        newServiceName.charAt(0).toUpperCase() + newServiceName.slice(1);
+      const mapperClassName = `${serviceNameCapitalized}${objectType}Mapper`;
+      const mapperInstanceName = `${newServiceName.toLowerCase()}${objectType}Mapper`;
 
-    // Prepare the import statement and instance declaration
-    const importStatement = `import { ${mapperClassName} } from '../services/${newServiceName}/mappers';\n`;
-    const instanceDeclaration = `const ${mapperInstanceName} = new ${mapperClassName}();\n`;
-    const mappingEntry = `  ${newServiceName.toLowerCase()}: {\n    unify: ${mapperInstanceName}.unify.bind(${mapperInstanceName}),\n    desunify: ${mapperInstanceName}.desunify,\n  },\n`;
+      // Prepare the import statement and instance declaration
+      const importStatement = `import { ${mapperClassName} } from '../services/${newServiceName}/mappers';\n`;
+      const instanceDeclaration = `const ${mapperInstanceName} = new ${mapperClassName}();\n`;
+      const mappingEntry = `  ${newServiceName.toLowerCase()}: {\n    unify: ${mapperInstanceName}.unify.bind(${mapperInstanceName}),\n    desunify: ${mapperInstanceName}.desunify,\n  },\n`;
 
-    // Check and append new import if it's not already present
-    if (!fileContent.includes(importStatement)) {
-      newImports += importStatement;
-    }
+      // Check and append new import if it's not already present
+      if (!fileContent.includes(importStatement)) {
+        newImports += importStatement;
+      }
 
-    // Append instance declaration if not already present before the mapping object
-    if (!beforeMappingObject.includes(instanceDeclaration)) {
-      newInstances += instanceDeclaration;
-    }
+      // Append instance declaration if not already present before the mapping object
+      if (!beforeMappingObject.includes(instanceDeclaration)) {
+        newInstances += instanceDeclaration;
+      }
 
-    // Prepare and append new mapping entry if not already present in the mapping object
-    if (!mappingObjectContent.includes(`  ${newServiceName}: {`)) {
-      newMappings += mappingEntry;
-    }
-  });
+      // Prepare and append new mapping entry if not already present in the mapping object
+      if (!mappingObjectContent.includes(`  ${newServiceName}: {`)) {
+        newMappings += mappingEntry;
+      }
+    });
 
   // Combine updates with the original sections of the file content
   const updatedContentBeforeMapping =
@@ -208,6 +220,50 @@ function updateModuleFile(moduleFile, newServiceDirs) {
   fs.writeFileSync(moduleFile, moduleFileContent);
 }
 
+function updateEnumFile(enumFilePath, newServiceDirs, vertical) {
+  let fileContent = fs.readFileSync(enumFilePath, 'utf8');
+  const base = vertical.substring(0, 1).toUpperCase() + vertical.substring(1);
+
+  // Define the enum name to be updated based on the vertical
+  let enumName = `${base}Providers`;
+  // Extract the enum content
+  const enumRegex = new RegExp(`export enum ${enumName} {([\\s\\S]*?)}\n`, 'm');
+  const match = fileContent.match(enumRegex);
+
+  if (match && match[1]) {
+    let enumEntries = match[1]
+      .trim()
+      .split(/\n/)
+      .map((e) => e.trim())
+      .filter((e) => e);
+    const existingEntries = enumEntries.map((entry) =>
+      entry.split('=')[0].trim(),
+    );
+
+    // Prepare new entries to be added
+    newServiceDirs.forEach((serviceName) => {
+      const enumEntryName = serviceName.toUpperCase(); // Assuming the enum entry name is the uppercase service name
+      if (!existingEntries.includes(enumEntryName)) {
+        // Format the new enum entry, assuming you want the name and value to be the same
+        enumEntries.push(`${enumEntryName} = '${serviceName}',`);
+      }
+    });
+
+    // Rebuild the enum content
+    const updatedEnumContent = `export enum ${enumName} {\n    ${enumEntries.join(
+      '\n    ',
+    )}\n}\n`;
+
+    // Replace the old enum content with the new one in the file content
+    fileContent = fileContent.replace(enumRegex, updatedEnumContent);
+
+    // Write the updated content back to the file
+    fs.writeFileSync(enumFilePath, fileContent);
+    //console.log(`Updated ${enumName} in ${enumFilePath}`);
+  } else {
+    console.error(`Could not find enum ${enumName} in file.`);
+  }
+}
 // Main script logic
 function updateObjectTypes(baseDir, objectType, vertical) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -228,19 +284,13 @@ function updateObjectTypes(baseDir, objectType, vertical) {
     providersFilePath,
     `${vertical.toUpperCase()}_PROVIDERS`,
   );
-  const currentEnum = extractArrayFromFile(enumFilePath, `ProviderVertical`);
 
   // Compare the extracted arrays with the new service names
   const newProviders = newServiceDirs.filter(
     (service) => !currentProviders.includes(service),
   );
-  const newEnum = newServiceDirs.filter(
-    (service) => !currentEnum.includes(service),
-  );
-
   // Add any new services to the arrays
   const updatedProviders = [...currentProviders, ...newProviders];
-  const updatedEnum = [...currentEnum, ...newEnum];
 
   // Update the arrays in the files
   updateArrayInFile(
@@ -248,11 +298,8 @@ function updateObjectTypes(baseDir, objectType, vertical) {
     `${vertical.toUpperCase()}_PROVIDERS`,
     updatedProviders,
   );
-  updateArrayInFile(
-    enumFilePath,
-    `${vertical.toUpperCase()}Providers`,
-    updatedEnum,
-  );
+
+  updateEnumFile(enumFilePath, newServiceDirs, vertical);
   const moduleFile = path.join(
     __dirname,
     `../src/${vertical}/${objectType.toLowerCase()}/${objectType.toLowerCase()}.module.ts`,
@@ -267,7 +314,7 @@ function updateObjectTypes(baseDir, objectType, vertical) {
   );
 
   // Call updateMappingsFile to update the mappings file with new services
-  updateMappingsFile(mappingsFile, newServiceDirs, objectType);
+  updateMappingsFile(mappingsFile, newServiceDirs, objectType, vertical);
 
   // Continue with the rest of the updateObjectTypes function...
   const importStatements = generateImportStatements(
