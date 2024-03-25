@@ -47,7 +47,7 @@ export class AttioService implements ICompanyService {
                 }),
                 {
                     headers: {
-                        Authorization: `Token token=${this.cryptoService.decrypt(
+                        Authorization: `Bearer ${this.cryptoService.decrypt(
                             connection.access_token,
                         )}`,
                         'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ export class AttioService implements ICompanyService {
                 },
             );
             return {
-                data: resp.data,
+                data: resp.data.data,
                 message: 'Attio company created',
                 statusCode: 201,
             };
