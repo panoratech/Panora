@@ -13,19 +13,20 @@ import {
   HubspotTicketOutput,
   commonHubspotProperties,
 } from './types';
+import { CommonTicketService } from '@ticketing/@utils/@services/common';
 
 @Injectable()
-export class HubspotService implements ITicketService {
+export class HubspotService
+  extends CommonTicketService<HubspotTicketOutput, HubspotTicketInput>
+  implements ITicketService
+{
   constructor(
-    private prisma: PrismaService,
-    private logger: LoggerService,
-    private cryptoService: EncryptionService,
-    private registry: ServiceRegistry,
+    prisma: PrismaService,
+    logger: LoggerService,
+    cryptoService: EncryptionService,
+    registry: ServiceRegistry,
   ) {
-    this.logger.setContext(
-      TicketingObject.ticket.toUpperCase() + ':' + HubspotService.name,
-    );
-    this.registry.registerService('hubspot_t', this);
+    super(prisma, logger, cryptoService, registry, 'Hubspot', 'hubspot_t');
   }
   async addTicket(
     ticketData: HubspotTicketInput,
@@ -66,50 +67,20 @@ export class HubspotService implements ITicketService {
       );
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotTicketOutput[]>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot_t',
-        },
-      });
 
-      const commonPropertyNames = Object.keys(commonHubspotProperties);
-      const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/tickets/';
+  protected constructApiEndpoint(custom_properties?: string[]): string {
+    const commonPropertyNames = Object.keys(commonHubspotProperties);
+    const allProperties = [...commonPropertyNames, ...custom_properties];
+    const baseURL = 'https://api.hubapi.com/crm/v3/objects/tickets/';
 
-      const queryString = allProperties
-        .map((prop) => `properties=${encodeURIComponent(prop)}`)
-        .join('&');
+    const queryString = allProperties
+      .map((prop) => `properties=${encodeURIComponent(prop)}`)
+      .join('&');
 
-      const url = `${baseURL}?${queryString}`;
-      const resp = await axios.get(url, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
-        },
-      });
-      this.logger.log(`Synced hubspot tickets !`);
+    return `${baseURL}?${queryString}`;
+  }
 
-      return {
-        data: resp.data.results,
-        message: 'Hubspot tickets retrieved',
-        statusCode: 200,
-      };
-    } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
-    }
+  protected mapResponse(data: any): HubspotTicketOutput[] {
+    return data.results;
   }
 }
