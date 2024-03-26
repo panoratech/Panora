@@ -3,11 +3,11 @@ import {
   HubspotEngagementCallOutput,
   HubspotEngagementEmailInput,
   HubspotEngagementEmailOutput,
+  HubspotEngagementInput,
   HubspotEngagementMeetingInput,
   HubspotEngagementMeetingOutput,
-  HubspotEngagementInput,
   HubspotEngagementOutput,
-} from '@crm/@utils/@types';
+} from './types';
 import {
   UnifiedEngagementInput,
   UnifiedEngagementOutput,

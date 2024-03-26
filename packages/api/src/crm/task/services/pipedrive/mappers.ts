@@ -1,4 +1,4 @@
-import { PipedriveTaskInput, PipedriveTaskOutput } from '@crm/@utils/@types';
+import { PipedriveTaskInput, PipedriveTaskOutput } from './types';
 import {
   UnifiedTaskInput,
   UnifiedTaskOutput,

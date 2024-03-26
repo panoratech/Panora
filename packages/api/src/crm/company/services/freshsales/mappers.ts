@@ -3,10 +3,7 @@ import {
   UnifiedCompanyInput,
   UnifiedCompanyOutput,
 } from '@crm/company/types/model.unified';
-import {
-  FreshsalesCompanyInput,
-  FreshsalesCompanyOutput,
-} from '@crm/@utils/@types';
+import { FreshsalesCompanyInput, FreshsalesCompanyOutput } from './types';
 
 //TODO
 export class FreshsalesCompanyMapper implements ICompanyMapper {

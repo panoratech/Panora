@@ -1,4 +1,4 @@
-import { HubspotStageInput, HubspotStageOutput } from '@crm/@utils/@types';
+import { HubspotStageOutput, HubspotStageInput } from './types';
 import {
   UnifiedStageInput,
   UnifiedStageOutput,

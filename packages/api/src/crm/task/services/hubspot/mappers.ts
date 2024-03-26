@@ -1,4 +1,4 @@
-import { HubspotTaskInput, HubspotTaskOutput } from '@crm/@utils/@types';
+import { HubspotTaskInput, HubspotTaskOutput } from './types';
 import {
   UnifiedTaskInput,
   UnifiedTaskOutput,

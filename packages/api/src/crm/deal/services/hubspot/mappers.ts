@@ -1,4 +1,4 @@
-import { HubspotDealInput, HubspotDealOutput } from '@crm/@utils/@types';
+import { HubspotDealInput, HubspotDealOutput } from './types';
 import {
   UnifiedDealInput,
   UnifiedDealOutput,

@@ -3,11 +3,8 @@ import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
-import {
-  Address,
-  FreshsalesContactInput,
-  FreshsalesContactOutput,
-} from '@crm/@utils/@types';
+import { Address } from '@crm/@utils/@types';
+import { FreshsalesContactInput, FreshsalesContactOutput } from './types';
 
 //TODO
 export class FreshsalesContactMapper implements IContactMapper {

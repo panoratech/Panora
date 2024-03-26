@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IContactService } from '@crm/contact/types';
-import {
-  CrmObject,
-  ZendeskContactInput,
-  ZendeskContactOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -12,6 +8,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { ZendeskContactInput, ZendeskContactOutput } from './types';
 @Injectable()
 export class ZendeskService implements IContactService {
   constructor(

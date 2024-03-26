@@ -1,4 +1,4 @@
-import { ZohoTaskInput, ZohoTaskOutput } from '@crm/@utils/@types';
+import { ZohoTaskInput, ZohoTaskOutput } from './types';
 import {
   UnifiedTaskInput,
   UnifiedTaskOutput,

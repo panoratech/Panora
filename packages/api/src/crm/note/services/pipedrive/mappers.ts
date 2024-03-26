@@ -1,4 +1,4 @@
-import { PipedriveNoteInput, PipedriveNoteOutput } from '@crm/@utils/@types';
+import { PipedriveNoteInput, PipedriveNoteOutput } from './types';
 import {
   UnifiedNoteInput,
   UnifiedNoteOutput,

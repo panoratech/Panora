@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { INoteService } from '@crm/note/types';
+import { CrmObject } from '@crm/@utils/@types';
 import {
-  CrmObject,
   HubspotNoteInput,
   HubspotNoteOutput,
-  commonHubspotProperties,
   commonNoteHubspotProperties,
-} from '@crm/@utils/@types';
+} from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
