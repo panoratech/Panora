@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { TicketingObject, ZendeskTeamOutput } from '@ticketing/@utils/@types';
+import { TicketingObject } from '@ticketing/@utils/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { ITeamService } from '@ticketing/team/types';
+import { ZendeskTeamOutput } from './types';
 
 @Injectable()
 export class ZendeskService implements ITeamService {
@@ -38,7 +39,7 @@ export class ZendeskService implements ITeamService {
       });
 
       const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/groups.json`,
+        `${connection.account_url}/api/v2/groups.json`,
         {
           headers: {
             'Content-Type': 'application/json',

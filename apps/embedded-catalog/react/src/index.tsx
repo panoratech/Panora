@@ -44,7 +44,7 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId,optiona
     setLoading(true);
     setProviderClicked(true);
     return;
-  };
+  }; 
 
   const img = providersConfig[vertical!.toLowerCase()][name.toLowerCase()].logoPath;
     

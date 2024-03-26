@@ -65,9 +65,7 @@ export class ZendeskService implements ICommentService {
 
             //TODO:; fetch the right file from AWS s3
             const s3File = '';
-            const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
-              res.file_name
-            }`;
+            const url = `${connection.account_url}/api/v2/uploads.json?filename=${res.file_name}`;
 
             const resp = await axios.get(url, {
               headers: {
@@ -93,7 +91,7 @@ export class ZendeskService implements ICommentService {
 
       //to add a comment on Zendesk you must update a ticket using the Ticket API
       const resp = await axios.put(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets/${remoteIdTicket}.json`,
+        `${connection.account_url}/api/v2/tickets/${remoteIdTicket}.json`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -144,9 +142,7 @@ export class ZendeskService implements ICommentService {
       });
 
       const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets/${
-          ticket.remote_id
-        }/comments.json`,
+        `${connection.account_url}/api/v2/tickets/${ticket.remote_id}/comments.json`,
         {
           headers: {
             'Content-Type': 'application/json',

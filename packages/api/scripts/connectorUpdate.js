@@ -327,5 +327,3 @@ function updateObjectTypes(baseDir, objectType, vertical) {
 
 // Example usage for ticketing/team
 updateObjectTypes('../src/ticketing/team/services', 'Team', 'ticketing');
-// Example usage for crm/contact
-//updateObjectTypes('path/to/crm/contact/services', 'Contact', 'crm');

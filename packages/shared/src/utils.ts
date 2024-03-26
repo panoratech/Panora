@@ -4,6 +4,7 @@ type ProviderConfig = {
   authBaseUrl: string;
   logoPath: string;
   description: string;
+  active?: boolean;
 };
 
 type VerticalConfig = {
@@ -83,17 +84,17 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
     },
     'gorgias': {
-      clientId: '', //TODO
+      clientId: '',
       scopes: 'write:all openid email profile offline',
       authBaseUrl: 'https://panora.gorgias.com/oauth/authorize',
-      logoPath: '',
+      logoPath: 'https://x5h8w2v3.rocketcdn.me/wp-content/uploads/2020/09/FS-AFFI-00660Gorgias.png',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
     },
     'jira': {
       clientId: '1Xy0XSajM28HG7n9gufEyU0RO72SqEHW',
       scopes: 'read:jira-work manage:jira-project manage:jira-data-provider manage:jira-webhook write:jira-work manage:jira-configuration read:jira-user offline_access',
       authBaseUrl: 'https://auth.atlassian.com/authorize',
-      logoPath: '',
+      logoPath: 'https://logowik.com/content/uploads/images/jira3124.jpg',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
     },
     'jira_service_mgmt': {
@@ -101,28 +102,32 @@ export const providersConfig: ProvidersConfig = {
       scopes: 'read:servicedesk-request manage:servicedesk-customer read:servicemanagement-insight-objects write:servicedesk-request offline_access',
       authBaseUrl: 'https://auth.atlassian.com/authorize',
       logoPath: '',
-      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
+      active: false
     },
     'linear': {
       clientId: '',
       scopes: 'read,write',
       authBaseUrl: 'https://linear.app/oauth/authorize',
       logoPath: '',
-      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
+      active: false
     },
     'gitlab': {
       clientId: '',
       scopes: '',
       authBaseUrl: 'https://gitlab.example.com/oauth/authorize',
       logoPath: '',
-      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
+      active: false
     },
     'clickup': {
       clientId: '',
       scopes: '',
       authBaseUrl: 'https://app.clickup.com/api',
       logoPath: '',
-      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users"
+      description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
+      active: false
     },
   },
   'accounting': {
@@ -131,51 +136,71 @@ export const providersConfig: ProvidersConfig = {
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://cdn-images-1.medium.com/max/1200/1*wk7CNGik_1Szbt7s1fNZxA.png',
-      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users"
-
+      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
+      active: false
     },
     'freshbooks': {
       clientId: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
-      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users"
-
+      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
+      active: false
     },
     'clearbooks': {
       clientId: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://s3-eu-west-1.amazonaws.com/clearbooks-marketing/media-centre/MediaCentre/clear-books/CMYK/icon/clear-books-icon-cmyk.png',
-      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users"
-
+      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
+      active: false
     },
     'freeagent': {
       clientId: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU-fob0b9pBNQdm80usnYa2yWdagm3eeBDH-870vSmfg&s',
-      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users"
-
+      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
+      active: false
     },
     'sage': {
       clientId: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/b7/Sage_Group_logo_2022.svg/2560px-Sage_Group_logo_2022.svg.png',
-      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users"
-
+      description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
+      active: false
     },
-  }
+  } 
 };
+
+function getActiveProvidersForVertical(vertical: string): VerticalConfig {
+  const verticalConfig = providersConfig[vertical.toLowerCase()];
+  if (!verticalConfig) {
+    return {};
+  }
+
+  const activeProviders: VerticalConfig = {};
+  for (const [providerName, config] of Object.entries(verticalConfig)) {
+    if (config.active !== false) { // Assuming undefined or true means active
+      activeProviders[providerName] = config;
+    }
+  }
+
+  return activeProviders;
+}
+
 
 export const getDescription = (name: string): string | null => {
   const vertical = findProviderVertical(name);
   if (vertical == null) {
     return null;
   }
-  return providersConfig[vertical.toLowerCase()][name].description;
+  const activeProviders = getActiveProvidersForVertical(vertical);
+  const provider = activeProviders[name];
+  return provider ? provider.description : null;
 }
+
 
 type Provider = {
   name: string;
@@ -187,19 +212,17 @@ type Provider = {
 };
 
 export function providersArray(vertical: string): Provider[] {
-  if (!providersConfig[vertical.toLowerCase()]) {
-    return [];
-  }
-  return Object.entries(providersConfig[vertical.toLowerCase()]).map(([providerName, config]) => {
-    return {
+  const activeProviders = getActiveProvidersForVertical(vertical);
+  return Object.entries(activeProviders).map(([providerName, config]) => ({
       name: providerName,
       clientId: config.clientId,
       scopes: config.scopes,
       authBaseUrl: config.authBaseUrl,
       logoPath: config.logoPath,
-    };
-  });
+      description: config.description,
+  }));
 }
+
 
 export const findProviderVertical = (providerName: string): string | null => {
   for (const [vertical, providers] of Object.entries(providersConfig)) {
@@ -213,9 +236,9 @@ export const findProviderVertical = (providerName: string): string | null => {
 export function findProviderByName(providerName: string): Provider | null {
   for (const vertical in providersConfig) {
     if (providersConfig.hasOwnProperty.call(providersConfig, vertical)) {
-      const providers = providersConfig[vertical.toLowerCase()];
-      if (providers.hasOwnProperty.call(providers, providerName)) {
-        const providerDetails = providers[providerName];
+      const activeProviders = getActiveProvidersForVertical(vertical);
+      if (activeProviders.hasOwnProperty.call(activeProviders, providerName)) {
+        const providerDetails = activeProviders[providerName];
         return {
           name: providerName,
           ...providerDetails,

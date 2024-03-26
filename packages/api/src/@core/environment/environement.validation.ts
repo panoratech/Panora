@@ -54,9 +54,6 @@ export class EnvVars {
   ZENDESK_SELL_CLIENT_SECRET: string;
 
   @IsString()
-  ZENDESK_TICKETING_SUBDOMAIN: string;
-
-  @IsString()
   ZENDESK_TICKETING_CLIENT_ID: string;
 
   @IsString()

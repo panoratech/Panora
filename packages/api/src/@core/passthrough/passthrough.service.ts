@@ -41,13 +41,15 @@ export class PassthroughService {
         },
       });
       const intId = integrationId.toLowerCase();
-      const URL = `${domains[getProviderVertical(intId)][intId]}${path}`;
-
+      const BASE_URL = `${domains[getProviderVertical(intId)][intId]}${path}`;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
         },
       });
+      const URL = connection.account_url
+        ? connection.account_url + BASE_URL
+        : BASE_URL;
 
       const response: AxiosResponse = await axios({
         method,

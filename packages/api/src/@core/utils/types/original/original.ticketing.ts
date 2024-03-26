@@ -1,3 +1,19 @@
+
+
+
+
+
+
+import { ClickupTeamInput, ClickupTeamOutput } from '@ticketing/team/services/clickup/types';
+
+
+
+
+
+
+
+
+
 import {
   FrontAccountInput,
   FrontAccountOutput,
@@ -193,6 +209,7 @@ export type OriginalTagInput =
   | JiraTagInput;
 /* team */
 export type OriginalTeamInput =
+  | ClickupTeamInput
   | ZendeskTeamInput
   | GithubTeamInput
   | FrontTeamInput
@@ -262,6 +279,7 @@ export type OriginalTagOutput =
 
 /* team */
 export type OriginalTeamOutput =
+  | ClickupTeamOutput
   | ZendeskTeamOutput
   | GithubTeamOutput
   | FrontTeamOutput

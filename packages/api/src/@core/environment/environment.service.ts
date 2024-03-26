@@ -93,10 +93,6 @@ export class EnvironmentService {
     };
   }
 
-  getZendeskTicketingSubdomain(): string {
-    return this.configService.get<string>('ZENDESK_TICKETING_SUBDOMAIN');
-  }
-
   getFrontSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('FRONT_CLIENT_ID'),

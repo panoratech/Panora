@@ -37,6 +37,12 @@ export const domains = {
     freshsales: '',
     pipedrive: 'https://api.pipedrive.com',
   },
+  TICKETING: {
+    zendesk: '/api/v2', //account-specific
+    front: 'https://api2.frontapp.com',
+    jira: '/rest/api/3', //account-specific
+    gorgias: '/api', //account-specific
+  },
 };
 
 export const customPropertiesUrls = {
