@@ -423,6 +423,9 @@ importers:
       uuid:
         specifier: ^9.0.1
         version: 9.0.1
+      yargs:
+        specifier: ^17.7.2
+        version: 17.7.2
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.0.0

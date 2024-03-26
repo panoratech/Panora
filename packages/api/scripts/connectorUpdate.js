@@ -2,6 +2,8 @@ import { log } from 'console';
 import * as fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 // Function to scan the directory for new service directories
 function scanDirectory(dir) {
@@ -326,4 +328,25 @@ function updateObjectTypes(baseDir, objectType, vertical) {
 }
 
 // Example usage for ticketing/team
-updateObjectTypes('../src/ticketing/team/services', 'Team', 'ticketing');
+//updateObjectTypes('../src/ticketing/team/services', 'Team', 'ticketing');
+
+// Check if the script is being run directly
+if (import.meta.url === process.argv[1]) {
+  // Get command-line arguments
+  const args = process.argv.slice(1);
+  const vertical = args[0];
+  const objectType = args[1];
+  const baseDir = `../src/${vertical.toLowerCase()}/${objectType.toLowerCase()}/services`;
+  updateObjectTypes(baseDir, objectType, vertical);
+}
+
+/*const options = yargs.usage('Usage: -vertical <vertical>').option('v', {
+  alias: 'vertical',
+  describe: 'Your vertical',
+  type: 'string',
+  demandOption: true,
+}).argv;*/
+const argv = yargs(hideBin(process.argv)).argv;
+
+const baseDir = `../src/${argv.vertical.toLowerCase()}/${argv.object.toLowerCase()}/services`;
+updateObjectTypes(baseDir, argv.object, argv.vertical);

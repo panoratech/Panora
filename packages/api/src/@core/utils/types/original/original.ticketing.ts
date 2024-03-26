@@ -1,18 +1,7 @@
-
-
-
-
-
-
-import { ClickupTeamInput, ClickupTeamOutput } from '@ticketing/team/services/clickup/types';
-
-
-
-
-
-
-
-
+import {
+  ClickupTeamInput,
+  ClickupTeamOutput,
+} from '@ticketing/team/services/clickup/types';
 
 import {
   FrontAccountInput,
