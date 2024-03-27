@@ -39,8 +39,10 @@ function generateImportStatements(serviceNames, basePath, objectType) {
 function updateTargetFile(file, importStatements, serviceNames, objectType) {
   let fileContent = fs.readFileSync(file, 'utf8');
 
-  // Append the import statements
-  fileContent = importStatements.join('\n') + '\n\n' + fileContent;
+  if (importStatements.length > 0) {
+    // Append the import statements
+    fileContent = importStatements.join('\n') + '\n\n' + fileContent;
+  }
 
   // Create updates for OriginalObjectTypeInput and OriginalObjectTypeOutput
   serviceNames.forEach((serviceName) => {
@@ -123,8 +125,11 @@ function updateMappingsFile(
     .forEach((newServiceName) => {
       const serviceNameCapitalized =
         newServiceName.charAt(0).toUpperCase() + newServiceName.slice(1);
-      const mapperClassName = `${serviceNameCapitalized}${objectType}Mapper`;
-      const mapperInstanceName = `${newServiceName.toLowerCase()}${objectType}Mapper`;
+      const objectCapitalized =
+        objectType.charAt(0).toUpperCase() + objectType.slice(1);
+
+      const mapperClassName = `${serviceNameCapitalized}${objectCapitalized}Mapper`;
+      const mapperInstanceName = `${newServiceName.toLowerCase()}${objectCapitalized}Mapper`;
 
       // Prepare the import statement and instance declaration
       const importStatement = `import { ${mapperClassName} } from '../services/${newServiceName}/mappers';\n`;
@@ -211,7 +216,7 @@ function updateModuleFile(moduleFile, newServiceDirs) {
     const providerRegex = /providers: \[\n([\s\S]*?)\n  \],/;
     const match = moduleFileContent.match(providerRegex);
     if (match && !match[1].includes(serviceClass)) {
-      const updatedProviders = match[1] + `    ${serviceClass},\n`;
+      const updatedProviders = match[1] + `\n    ${serviceClass},\n`;
       moduleFileContent = moduleFileContent.replace(
         providerRegex,
         `providers: [\n${updatedProviders}  ],`,

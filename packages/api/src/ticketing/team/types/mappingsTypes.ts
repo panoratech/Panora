@@ -1,3 +1,4 @@
+import { ClickupTeamMapper } from '../services/clickup/mappers';
 import { JiraTeamMapper } from '../services/jira/mappers';
 import { FrontTeamMapper } from '../services/front/mappers';
 import { GithubTeamMapper } from '../services/github/mappers';
@@ -9,6 +10,8 @@ const frontTeamMapper = new FrontTeamMapper();
 const githubTeamMapper = new GithubTeamMapper();
 const gorgiasTeamMapper = new GorgiasTeamMapper();
 const jiraTeamMapper = new JiraTeamMapper();
+
+const clickupTeamMapper = new ClickupTeamMapper();
 
 export const teamUnificationMapping = {
   zendesk_tcg: {
@@ -30,5 +33,9 @@ export const teamUnificationMapping = {
   jira: {
     unify: jiraTeamMapper.unify.bind(jiraTeamMapper),
     desunify: jiraTeamMapper.desunify,
+  },
+  clickup: {
+    unify: clickupTeamMapper.unify.bind(clickupTeamMapper),
+    desunify: clickupTeamMapper.desunify,
   },
 };

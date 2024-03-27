@@ -13,7 +13,7 @@ export enum CrmProviders {
     ZOHO = 'zoho',
     ZENDESK = 'zendesk',
     HUBSPOT = 'hubspot',
-    PIPEDRIVE = 'pipedrive',
+    PIPEDRIVE = 'pipedrive', 
     FRESHSALES = 'freshsales',
     ATTIO = 'attio'
 }

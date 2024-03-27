@@ -17,7 +17,7 @@ export const ACCOUNTING_PROVIDERS = [''];
 export const TICKETING_PROVIDERS = ['zendesk', 'front', 'github', 'jira', 'gorgias', 'clickup'];
 export const MARKETING_AUTOMATION_PROVIDERS = [''];
 export const FILE_STORAGE_PROVIDERS = [''];
-
+ 
 
 export function getProviderVertical(providerName: string): ProviderVertical {
   if (CRM_PROVIDERS.includes(providerName)) {
