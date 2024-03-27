@@ -159,7 +159,7 @@ export * from '../../company/services/zendesk/types';
 export * from '../../company/services/hubspot/types';
 export * from '../../company/services/zoho/types';
 export * from '../../company/services/pipedrive/types';
-
+export * from '../../company/services/attio/types'
 /* engagementType */
 
 export class Email {
