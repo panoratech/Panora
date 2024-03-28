@@ -62,7 +62,8 @@
     "rxjs": "^7.8.1",
     "stytch": "^10.5.0",
     "uuid": "^9.0.1",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "@panora/shared": "workspace:*"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
