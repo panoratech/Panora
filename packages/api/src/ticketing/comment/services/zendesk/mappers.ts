@@ -95,6 +95,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
     }
 
     const res = {
+      remote_id: comment.id,
       body: comment.body || '',
       html_body: comment.html_body || '',
       is_private: !comment.public,

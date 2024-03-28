@@ -90,6 +90,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       })) || [];
 
     let res = {
+      remote_id: company.id,
       name: company.name,
       industry: '', // Pipedrive may not directly provide this, need custom mapping
       number_of_employees: 0, // Placeholder, as there's no direct mapping provided

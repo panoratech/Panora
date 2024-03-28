@@ -39,6 +39,7 @@ export class ZendeskAccountMapper implements IAccountMapper {
     }[],
   ): UnifiedAccountOutput {
     const unifiedAccount: UnifiedAccountOutput = {
+      remote_id: account.id + "",
       name: account.name,
       domains: account.domain_names,
     };

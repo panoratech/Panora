@@ -43,6 +43,7 @@ export class FrontAccountMapper implements IAccountMapper {
     }));
 
     const unifiedAccount: UnifiedAccountOutput = {
+      remote_id: account.id,
       name: account.name,
       domains: account.domains.flat(),
       field_mappings: field_mappings,

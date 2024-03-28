@@ -46,6 +46,7 @@ export class PipedriveStageMapper implements IStageMapper {
       })) || [];
 
     return {
+      remote_id: stage.id + "",
       stage_name: stage.name,
       field_mappings,
     };

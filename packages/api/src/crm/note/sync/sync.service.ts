@@ -135,16 +135,12 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedNoteOutput[];
 
-      //TODO
-      const noteIds = sourceObject.map((note) =>
-        'id' in note ? String(note.id) : undefined,
-      );
+
 
       //insert the data in the DB with the fieldMappings (value table)
       const notes_data = await this.saveNotesInDb(
         linkedUserId,
         unifiedObject,
-        noteIds,
         integrationId,
         sourceObject,
       );
@@ -175,7 +171,6 @@ export class SyncService implements OnModuleInit {
   async saveNotesInDb(
     linkedUserId: string,
     notes: UnifiedNoteOutput[],
-    originIds: string[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmNote[]> {
@@ -183,7 +178,7 @@ export class SyncService implements OnModuleInit {
       let notes_results: CrmNote[] = [];
       for (let i = 0; i < notes.length; i++) {
         const note = notes[i];
-        const originId = originIds[i];
+        const originId = note.remote_id[i];
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

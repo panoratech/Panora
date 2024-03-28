@@ -91,6 +91,7 @@ export class HubspotTaskMapper implements ITaskMapper {
       }
     }
     return {
+      remote_id: task.id,
       subject: task.properties.hs_task_subject,
       content: task.properties.hs_task_body,
       status: this.mapStatusReverse(task.properties.hs_task_status),
@@ -113,8 +114,8 @@ export class HubspotTaskMapper implements ITaskMapper {
     return priority === 'High'
       ? 'HIGH'
       : priority === 'Medium'
-      ? 'MEDIUM'
-      : 'LOW';
+        ? 'MEDIUM'
+        : 'LOW';
   }
 
   private mapStatusReverse(status: string): string {

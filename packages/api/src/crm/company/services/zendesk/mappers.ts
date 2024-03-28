@@ -10,6 +10,9 @@ import {
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/contact/utils';
 
+
+//TODO - Zendesk does not have Company object
+
 export class ZendeskCompanyMapper implements ICompanyMapper {
   private readonly utils: Utils;
 
@@ -134,6 +137,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
     }
 
     return {
+      remote_id: company.id,
       name: company.name,
       email_addresses,
       phone_numbers,

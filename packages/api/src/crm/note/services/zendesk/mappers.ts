@@ -114,6 +114,7 @@ export class ZendeskNoteMapper implements INoteMapper {
     }
 
     return {
+      remote_id: note.id,
       content: note.content,
       field_mappings,
       ...opts,

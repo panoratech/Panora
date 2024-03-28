@@ -142,15 +142,11 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedCommentOutput[];
 
-      //TODO
-      const commentsIds = sourceObject.map((comment) =>
-        'id' in comment ? String(comment.id) : undefined,
-      );
+
       //insert the data in the DB with the fieldMappings (value table)
       const comments_data = await this.saveCommentsInDb(
         linkedUserId,
         unifiedObject,
-        commentsIds,
         integrationId,
         id_ticket,
         sourceObject,
@@ -192,7 +188,7 @@ export class SyncService implements OnModuleInit {
       let comments_results: TicketingComment[] = [];
       for (let i = 0; i < comments.length; i++) {
         const comment = comments[i];
-        const originId = originIds[i];
+        const originId = comment.remote_id[i];
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);
@@ -210,13 +206,13 @@ export class SyncService implements OnModuleInit {
         const opts =
           comment.creator_type === 'contact'
             ? {
-                id_tcg_contact: comment.contact_id,
-              }
+              id_tcg_contact: comment.contact_id,
+            }
             : comment.creator_type === 'user'
-            ? {
+              ? {
                 id_tcg_user: comment.user_id,
               }
-            : {}; //case where nothing is passed for creator or a not authorized value;
+              : {}; //case where nothing is passed for creator or a not authorized value;
 
         if (existingComment) {
           // Update the existing comment

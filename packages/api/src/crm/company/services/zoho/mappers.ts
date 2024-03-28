@@ -70,6 +70,7 @@ export class ZohoCompanyMapper implements ICompanyMapper {
       })) || [];
 
     return {
+      remote_id: company.id,
       name: company.Account_Name,
       phone_numbers: [
         {
