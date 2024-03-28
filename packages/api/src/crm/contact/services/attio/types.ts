@@ -40,17 +40,22 @@ interface LocationValueItem extends ValueItemBase {
   line_2: string | null;
   line_3: string | null;
   line_4: string | null;
-  locality: string;
-  region: string;
-  postcode: string;
-  country_code: string;
-  latitude: string;
-  longitude: string;
+  locality: string | null;
+  region: string | null;
+  postcode: string | null;
+  country_code: string | null;
+  latitude: string | null;
+  longitude: string | null;
 }
 
 interface RecordReferenceValueItem extends ValueItemBase {
   target_object: string;
   target_record_id: string;
+}
+
+interface RecordReferenceValueItem2 extends ValueItemBase {
+  target_object: string;
+  [key: string]: any;
 }
 
 interface ActorReferenceValueItem extends ValueItemBase {
@@ -69,6 +74,7 @@ interface EmailAddressValueItem extends ValueItemBase {
 interface PhoneValueItem extends ValueItemBase {
   country_code?: string;
   original_phone_number: string;
+  phone_number?: string;
 }
 
 interface PersonalNameValueItem extends ValueItemBase {
@@ -95,7 +101,7 @@ export interface AttioContact {
     avatar_url?: TextValueItem[];
     job_title?: TextValueItem[];
     next_calendar_interaction?: InteractionValueItem[];
-    company?: RecordReferenceValueItem[];
+    company?: RecordReferenceValueItem[] | RecordReferenceValueItem2[];
     primary_location?: LocationValueItem[];
     angellist?: TextValueItem[];
     description?: TextValueItem[];
@@ -111,6 +117,7 @@ export interface AttioContact {
     facebook?: TextValueItem[];
     name?: PersonalNameValueItem[];
     first_calendar_interaction?: InteractionValueItem[];
+    twitter_follower_count?: NumberValueItem[];
     instagram?: TextValueItem[];
     first_email_interaction?: InteractionValueItem[];
     phone_numbers?: PhoneValueItem[];

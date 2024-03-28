@@ -2,7 +2,6 @@ import {
   ClickupTeamInput,
   ClickupTeamOutput,
 } from '@ticketing/team/services/clickup/types';
-
 import {
   FrontAccountInput,
   FrontAccountOutput,
@@ -14,7 +13,6 @@ import {
 import { FrontAttachmentOutput } from '@ticketing/attachment/services/front/types';
 import { GithubAttachmentOutput } from '@ticketing/attachment/services/github/types';
 import { ZendeskAttachmentOutput } from '@ticketing/attachment/services/zendesk/types';
-
 import {
   FrontCommentInput,
   FrontCommentOutput,
