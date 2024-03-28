@@ -143,6 +143,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
+      remote_id: ticket.id,
       name: ticket.subject,
       status: ticket.status,
       description: ticket.description,

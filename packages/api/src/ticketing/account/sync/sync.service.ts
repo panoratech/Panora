@@ -133,16 +133,12 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedAccountOutput[];
 
-      //TODO
-      const accountIds = sourceObject.map((account) =>
-        'id' in account ? String(account.id) : undefined,
-      );
+
 
       //insert the data in the DB with the fieldMappings (value table)
       const account_data = await this.saveAccountsInDb(
         linkedUserId,
         unifiedObject,
-        accountIds,
         integrationId,
         sourceObject,
       );
@@ -173,7 +169,6 @@ export class SyncService implements OnModuleInit {
   async saveAccountsInDb(
     linkedUserId: string,
     accounts: UnifiedAccountOutput[],
-    originIds: string[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingAccount[]> {
@@ -181,7 +176,7 @@ export class SyncService implements OnModuleInit {
       let accounts_results: TicketingAccount[] = [];
       for (let i = 0; i < accounts.length; i++) {
         const account = accounts[i];
-        const originId = originIds[i];
+        const originId = account.id[i];
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

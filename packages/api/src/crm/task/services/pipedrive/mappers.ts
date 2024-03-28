@@ -133,10 +133,12 @@ export class PipedriveTaskMapper implements ITaskMapper {
     }
 
     return {
+      remote_id: task.id,
       subject: task.subject,
       content: task.public_description,
       status: task.done ? 'Completed' : 'Pending',
-      due_date: task.due_date ? new Date(task.due_date) : undefined,
+      due_date: task.due_date
+        ? new Date(task.due_date) : undefined,
       finished_date: task.marked_as_done_time
         ? new Date(task.marked_as_done_time)
         : undefined,

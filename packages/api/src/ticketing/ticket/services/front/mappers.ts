@@ -29,8 +29,8 @@ export class FrontTicketMapper implements ITicketMapper {
         author_id:
           source.comment.creator_type === 'user'
             ? await this.utils.getAsigneeRemoteIdFromUserUuid(
-                source.comment.user_id,
-              )
+              source.comment.user_id,
+            )
             : undefined,
         attachments: source.comment.attachments,
       },
@@ -115,6 +115,7 @@ export class FrontTicketMapper implements ITicketMapper {
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
+      remote_id: ticket.id,
       name: ticket.subject,
       status: ticket.status,
       description: ticket.subject, // todo: ?

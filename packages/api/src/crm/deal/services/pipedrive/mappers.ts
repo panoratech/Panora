@@ -109,6 +109,7 @@ export class PipedriveDealMapper implements IDealMapper {
     }
 
     return {
+      remote_id: deal.id,
       name: deal.title,
       amount: deal.value,
       description: '',

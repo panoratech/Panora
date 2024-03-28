@@ -61,6 +61,8 @@ export class ZohoDealMapper implements IDealMapper {
       })) || [];
 
     return {
+      //TODO - might be wrong deal.Owner
+      remote_id: deal.Owner,
       name: deal.Title,
       description: deal.Description,
       amount: 0, //todo;

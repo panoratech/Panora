@@ -133,16 +133,12 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedUserOutput[];
 
-      //TODO
-      const userIds = sourceObject.map((user) =>
-        'id' in user ? String(user.id) : undefined,
-      );
+
 
       //insert the data in the DB with the fieldMappings (value table)
       const user_data = await this.saveUsersInDb(
         linkedUserId,
         unifiedObject,
-        userIds,
         integrationId,
         sourceObject,
       );
@@ -173,7 +169,6 @@ export class SyncService implements OnModuleInit {
   async saveUsersInDb(
     linkedUserId: string,
     users: UnifiedUserOutput[],
-    originIds: string[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingUser[]> {
@@ -181,7 +176,7 @@ export class SyncService implements OnModuleInit {
       let users_results: TicketingUser[] = [];
       for (let i = 0; i < users.length; i++) {
         const user = users[i];
-        const originId = originIds[i];
+        const originId = user.remote_id[i];
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

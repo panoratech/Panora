@@ -66,6 +66,8 @@ export class ZohoNoteMapper implements INoteMapper {
       })) || [];
 
     return {
+      //TODO
+      remote_id: note.Owner,
       content: note.Description,
       field_mappings,
     };

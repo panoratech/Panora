@@ -95,6 +95,7 @@ export class HubspotCompanyMapper implements ICompanyMapper {
       })) || [];
 
     let opts: any = {};
+    //TODO - Logic needs to be reconsider
     if (company.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         company.properties.hubspot_owner_id,
@@ -108,6 +109,7 @@ export class HubspotCompanyMapper implements ICompanyMapper {
     }
 
     return {
+      remote_id: company.id,
       name: company.properties.name,
       industry: company.properties.industry,
       number_of_employees: 0, // Placeholder, as there's no direct mapping provided

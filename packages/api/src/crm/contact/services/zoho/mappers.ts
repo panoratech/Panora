@@ -118,6 +118,7 @@ export class ZohoContactMapper implements IContactMapper {
     };
 
     return {
+      remote_id: contact.id,
       first_name: contact.First_Name ? contact.First_Name : '',
       last_name: contact.Last_Name ? contact.Last_Name : '',
       email_addresses,

@@ -121,6 +121,7 @@ export class PipedriveContactMapper implements IContactMapper {
     }
 
     return {
+      remote_id: contact.id,
       first_name: contact.first_name,
       last_name: contact.last_name,
       email_addresses: contact.email.map((e) => ({

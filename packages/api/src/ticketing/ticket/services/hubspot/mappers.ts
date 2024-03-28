@@ -64,6 +64,7 @@ export class HubspotTicketMapper implements ITicketMapper {
     }));
 
     return {
+      remote_id: ticket.id,
       name: ticket.properties.name, //TODO
       status: ticket.properties.hs_pipeline_stage,
       description: ticket.properties.description, //TODO

@@ -60,6 +60,7 @@ export class ZendeskUserMapper implements IUserMapper {
       })) || [];
 
     return {
+      remote_id: user.id + "",
       name: user.name,
       email: user.email,
       field_mappings,

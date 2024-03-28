@@ -117,7 +117,10 @@ export class AttioContactMapper implements IContactMapper {
     };
     const opts: any = {};
 
+    console.log(JSON.stringify(contact.id))
+
     return {
+      remote_id: contact.id?.record_id,
       first_name: contact.values.name[0]?.first_name,
       last_name: contact.values.name[0]?.last_name,
       // user_id: contact.values.created_by[0]?.referenced_actor_id,

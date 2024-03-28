@@ -126,6 +126,8 @@ export class AttioCompanyMapper implements ICompanyMapper {
 
         let opts: any = {};
 
+
+        //TODO - Logic needs to be reconsider
         if (company.values.team[0]?.target_record_id) {
             const owner_id = await this.utils.getUserUuidFromRemoteId(
                 company.values.team[0].target_record_id,
@@ -139,6 +141,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
         }
 
         return {
+            remote_id: company.id?.record_id,
             name: company.values.name[0]?.value,
             industry: typeof company.values.categories[0]?.option === "string" ? company.values.categories[0]?.option : company.values.categories[0]?.option.title,
             number_of_employees: 0, // Placeholder, as there's no direct mapping provided

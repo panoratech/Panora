@@ -84,6 +84,7 @@ export class FrontCommentMapper implements ICommentMapper {
     }
 
     const res = {
+      remote_id: comment.id,
       body: comment.body,
       ...opts,
     };

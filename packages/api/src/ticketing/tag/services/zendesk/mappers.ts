@@ -38,6 +38,7 @@ export class ZendeskTagMapper implements ITagMapper {
     }[],
   ): UnifiedTagOutput {
     const unifiedTag: UnifiedTagOutput = {
+
       id: `zendesk_tag_uuid_${tag}`,
       // this is used so we can have a remote_id inside our Tag table
       //this id is a fake id put in place as Zendesk does not store any uuid for it,it must not be onsidered the same as the uuid from panora which is stored also in this id field

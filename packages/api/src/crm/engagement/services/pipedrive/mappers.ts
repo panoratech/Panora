@@ -174,6 +174,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     }
 
     return {
+      remote_id: engagement.id,
       content: engagement.note,
       subject: engagement.subject,
       start_at: new Date(engagement.due_date + ' ' + engagement.due_time), // Combine due_date and due_time

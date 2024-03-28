@@ -135,6 +135,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
     }
 
     return {
+      remote_id: task.id,
       content: task.content,
       status: task.completed ? 'Completed' : 'Pending',
       finished_date: task.completed_at
