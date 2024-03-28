@@ -12,52 +12,50 @@ export const constructAuthUrl = ({ projectId, linkedUserId, providerName, return
   const encodedRedirectUrl = encodeURIComponent(`${apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
 
-  console.log("State : ", JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }))
-  console.log("encodedRedirect URL : ", encodedRedirectUrl)
+  console.log("State : ", JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
+  console.log("encodedRedirect URL : ", encodedRedirectUrl);
 
   const vertical = findProviderVertical(providerName);
   if (vertical == null) {
     return null;
   }
 
-  const config_ = providersConfig[vertical.toLowerCase()][providerName];
-  if (!config_) {
+  const config = providersConfig[vertical.toLowerCase()][providerName];
+  if (!config) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
 
-  const { clientId, scopes } = config_;
-
-  const baseUrl = config_.authBaseUrl;
-
-
+  const { clientId, scopes, authBaseUrl: baseUrl } = config;
   if (!baseUrl) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
-  const addScope = providerName == "pipedrive" ? false : true;
-  let finalAuth = '';
-  if (providerName == 'zoho') {
-    finalAuth = `${baseUrl}?response_type=code&client_id=${encodeURIComponent(clientId)}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodedRedirectUrl}&access_type=offline&state=${state}`
-    console.log(finalAuth);
-  } else if (providerName == "zendesk") {
-    finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&state=${state}`
-  } else if (providerName == "attio") {
-    finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&state=${state}`
-  } else if (providerName == "zendesk_tcg" || providerName == "front") {
-    finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
-  } else if (providerName == "gorgias" || providerName == "linear") {
-    finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
-  } else if (providerName == "jira" || providerName == "jira_service_mgmt") {
-    finalAuth = `${baseUrl}?audience=api.atlassian.com&client_id=${encodeURIComponent(clientId)}&response_type=code&prompt=consent&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
-  } else if(providerName == "gitlab") {
-    finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}&code_challenge=&code_challenge_method=`
-  } else if(providerName == "clickup"){
-    finalAuth = `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`
-  } else {
-    finalAuth = addScope ?
-      `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&scope=${encodeURIComponent(scopes)}&state=${state}`
-      : `${baseUrl}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
+
+  // Default URL structure
+  let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
+
+  // Adding scope for providers that require it, except for 'pipedrive'
+  if (providerName !== "pipedrive") {
+    params += `&scope=${encodeURIComponent(scopes)}`;
   }
 
-  console.log("Final Authentication : ", finalAuth)
-  return finalAuth;
+  // Special cases for certain providers
+  switch (providerName) {
+    case "zoho":
+      params += "&response_type=code&access_type=offline";
+      break;
+    case "jira":
+    case "jira_service_mgmt":
+      params = `audience=api.atlassian.com&${params}&prompt=consent`;
+      break;
+    case "gitlab":
+      params += "&code_challenge=&code_challenge_method=";
+      break;
+    default:
+      // For most providers, response_type=code is common
+      params += "&response_type=code";
+  }
+
+  const finalAuthUrl = `${baseUrl}?${params}`;
+  console.log("Final Authentication : ", finalAuthUrl);
+  return finalAuthUrl;
 };
