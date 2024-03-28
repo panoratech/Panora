@@ -1,14 +1,20 @@
+import { EncryptionService } from '@@core/encryption/encryption.service';
 import { PrismaClient } from '@prisma/client';
+import * as fs from 'fs';
 
 export class Utils {
   private readonly prisma: PrismaClient;
+  private readonly cryptoService: EncryptionService;
+
   constructor() {
     this.prisma = new PrismaClient();
+    /*this.cryptoService = new EncryptionService(
+      new EnvironmentService(new ConfigService()),
+    );*/
   }
 
   async fetchFileStreamFromURL(file_url: string) {
-    //TODO;
-    return;
+    return fs.createReadStream(file_url);
   }
 
   async getUserUuidFromRemoteId(remote_id: string, remote_platform: string) {
@@ -28,6 +34,7 @@ export class Utils {
       throw new Error(error);
     }
   }
+
   async getUserRemoteIdFromUuid(uuid: string) {
     try {
       const res = await this.prisma.tcg_users.findFirst({
@@ -41,6 +48,7 @@ export class Utils {
       throw new Error(error);
     }
   }
+
   async getContactUuidFromRemoteId(remote_id: string, remote_platform: string) {
     try {
       const res = await this.prisma.tcg_contacts.findFirst({
@@ -58,6 +66,7 @@ export class Utils {
       throw new Error(error);
     }
   }
+
   async getContactRemoteIdFromUuid(uuid: string) {
     try {
       const res = await this.prisma.tcg_contacts.findFirst({

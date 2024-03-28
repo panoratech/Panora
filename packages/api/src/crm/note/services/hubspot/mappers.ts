@@ -1,4 +1,4 @@
-import { HubspotNoteInput, HubspotNoteOutput } from '@crm/@utils/@types';
+import { HubspotNoteInput, HubspotNoteOutput } from './types';
 import {
   UnifiedNoteInput,
   UnifiedNoteOutput,

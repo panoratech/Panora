@@ -3,7 +3,7 @@ import {
   UnifiedTaskInput,
   UnifiedTaskOutput,
 } from '@crm/task/types/model.unified';
-import { FreshsalesTaskInput, FreshsalesTaskOutput } from '@crm/@utils/@types';
+import { FreshsalesTaskInput, FreshsalesTaskOutput } from './types';
 
 //TODO
 export class FreshsalesTaskMapper implements ITaskMapper {

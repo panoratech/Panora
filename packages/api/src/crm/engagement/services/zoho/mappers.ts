@@ -1,4 +1,4 @@
-import { ZohoEngagementInput, ZohoEngagementOutput } from '@crm/@utils/@types';
+import { ZohoEngagementInput, ZohoEngagementOutput } from './types';
 import {
   UnifiedEngagementInput,
   UnifiedEngagementOutput,

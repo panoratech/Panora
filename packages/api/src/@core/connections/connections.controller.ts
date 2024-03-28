@@ -4,9 +4,9 @@ import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ProviderVertical, getProviderVertical } from '@@core/utils/types';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
+import { getProviderVertical, ProviderVertical } from '@panora/shared';
 
 @ApiTags('connections')
 @Controller('connections')

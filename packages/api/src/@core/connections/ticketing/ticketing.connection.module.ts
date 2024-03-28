@@ -10,6 +10,12 @@ import { TicketingConnectionsService } from './services/ticketing.connection.ser
 import { ServiceRegistry } from './services/registry.service';
 import { FrontConnectionService } from './services/front/front.service';
 import { GithubConnectionService } from './services/github/github.service';
+import { JiraConnectionService } from './services/jira/jira.service';
+import { JiraServiceMgmtConnectionService } from './services/jira_service_management/jira.service';
+import { LinearConnectionService } from './services/linear/linear.service';
+import { GitlabConnectionService } from './services/gitlab/gitlab.service';
+import { ClickupConnectionService } from './services/clickup/clickup.service';
+import { GorgiasConnectionService } from './services/gorgias/gorgias.service';
 
 @Module({
   imports: [WebhookModule],
@@ -25,6 +31,12 @@ import { GithubConnectionService } from './services/github/github.service';
     ZendeskConnectionService,
     FrontConnectionService,
     GithubConnectionService,
+    JiraConnectionService,
+    JiraServiceMgmtConnectionService,
+    LinearConnectionService,
+    GitlabConnectionService,
+    ClickupConnectionService,
+    GorgiasConnectionService,
   ],
   exports: [TicketingConnectionsService],
 })

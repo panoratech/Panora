@@ -35,6 +35,12 @@ export class UnifiedTicketInput {
   parent_ticket?: string;
 
   @ApiPropertyOptional({
+    type: String,
+    description: 'The uuid of the project the ticket belongs to',
+  })
+  project_id?: string;
+
+  @ApiPropertyOptional({
     type: [String],
     description: 'The tags names of the ticket',
   })
@@ -59,7 +65,7 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: [String],
-    description: 'The users uuids the ticket is assigned to',
+    description: 'The comments of the ticket',
   })
   comment?: UnifiedCommentInput;
 

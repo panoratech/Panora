@@ -48,8 +48,10 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
         client_secret: this.env.getZendeskTicketingSecret().CLIENT_SECRET,
         scope: 'read',
       });
+
+      const subdomain = 'panora7548';
       const res = await axios.post(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/oauth/tokens`,
+        `https://${subdomain}.zendesk.com/oauth/tokens`,
         formData.toString(),
         {
           headers: {
@@ -72,6 +74,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
+            account_url: `https://${subdomain}.zendesk.com`,
             refresh_token: '',
             expiration_timestamp: new Date(), //TODO
             status: 'valid',
@@ -85,6 +88,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'zendesk_tcg',
             token_type: 'oauth',
+            account_url: `https://${subdomain}.zendesk.com`,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
             expiration_timestamp: new Date(), //TODO

@@ -3,7 +3,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse, CRM_PROVIDERS } from '@@core/utils/types';
+import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
@@ -14,6 +14,7 @@ import { UnifiedNoteOutput } from '../types/model.unified';
 import { INoteService } from '../types';
 import { crm_notes as CrmNote } from '@prisma/client';
 import { OriginalNoteOutput } from '@@core/utils/types/original/original.crm';
+import { CRM_PROVIDERS } from '@panora/shared';
 
 @Injectable()
 export class SyncService implements OnModuleInit {

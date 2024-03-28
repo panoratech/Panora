@@ -3,10 +3,7 @@ import {
   UnifiedEngagementInput,
   UnifiedEngagementOutput,
 } from '@crm/engagement/types/model.unified';
-import {
-  FreshsalesEngagementInput,
-  FreshsalesEngagementOutput,
-} from '@crm/@utils/@types';
+import { FreshsalesEngagementInput, FreshsalesEngagementOutput } from './types';
 
 //TODO
 export class FreshsalesEngagementMapper implements IEngagementMapper {

@@ -33,6 +33,18 @@ export class AuthService {
     }
   }
 
+  async getUser(stytchId: string) {
+    try {
+      return await this.prisma.users.findUnique({
+        where: {
+          stytch_id: stytchId,
+        },
+      });
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
   async getApiKeys() {
     try {
       return await this.prisma.api_keys.findMany();
@@ -43,7 +55,7 @@ export class AuthService {
 
   async register(user: CreateUserDto) {
     try {
-      const foundUser = await this.prisma.users.findFirst({
+      /*const foundUser = await this.prisma.users.findFirst({
         where: { email: user.email },
       });
 
@@ -54,7 +66,8 @@ export class AuthService {
       const savedUser = await this.createUser(user);
 
       const { password_hash, ...resp_user } = savedUser;
-      return resp_user;
+      return resp_user;*/
+      return;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -62,7 +75,7 @@ export class AuthService {
 
   async createUser(user: CreateUserDto, id_user?: string) {
     try {
-      const salt = await bcrypt.genSalt();
+      /*const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(user.password_hash, salt);
 
       return await this.prisma.users.create({
@@ -70,6 +83,12 @@ export class AuthService {
           ...user,
           id_user: id_user || uuidv4(),
           password_hash: hashedPassword,
+        },
+      });*/
+      return await this.prisma.users.create({
+        data: {
+          ...user,
+          id_user: id_user || uuidv4(),
         },
       });
     } catch (error) {
@@ -79,7 +98,7 @@ export class AuthService {
 
   async login(user: LoginDto) {
     try {
-      let foundUser: User;
+      /*let foundUser: User;
 
       if (user.id_user) {
         foundUser = await this.prisma.users.findUnique({
@@ -116,7 +135,7 @@ export class AuthService {
         access_token: this.jwtService.sign(payload, {
           secret: process.env.JWT_SECRET,
         }), // token used to generate api keys
-      };
+      };*/
     } catch (error) {
       handleServiceError(error, this.logger);
     }

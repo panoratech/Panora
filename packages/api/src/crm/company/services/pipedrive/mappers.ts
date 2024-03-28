@@ -1,14 +1,10 @@
 import {
-  PipedriveCompanyInput,
-  PipedriveCompanyOutput,
-} from '@crm/@utils/@types';
-import {
   UnifiedCompanyInput,
   UnifiedCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/contact/utils';
-import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
+import { PipedriveCompanyInput, PipedriveCompanyOutput } from './types';
 
 export class PipedriveCompanyMapper implements ICompanyMapper {
   private readonly utils: Utils;

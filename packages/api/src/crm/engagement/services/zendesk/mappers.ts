@@ -1,7 +1,5 @@
-import {
-  ZendeskEngagementInput,
-  ZendeskEngagementOutput,
-} from '@crm/@utils/@types';
+import { ZendeskEngagementInput, ZendeskEngagementOutput } from './types';
+
 import {
   UnifiedEngagementInput,
   UnifiedEngagementOutput,

@@ -1,14 +1,11 @@
-import {
-  Address,
-  AttioContactInput,
-  AttioContactOutput,
-} from '@crm/@utils/@types';
+import { Address } from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
 import { Utils } from '@crm/contact/utils';
+import { AttioContactInput, AttioContactOutput } from './types';
 
 export class AttioContactMapper implements IContactMapper {
   private readonly utils: Utils;

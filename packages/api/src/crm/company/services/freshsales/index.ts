@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import {
-  CrmObject,
-  FreshsalesCompanyInput,
-  FreshsalesCompanyOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
@@ -13,6 +9,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ICompanyService } from '@crm/company/types';
 import { ServiceRegistry } from '../registry.service';
+import { FreshsalesCompanyInput, FreshsalesCompanyOutput } from './types';
 
 @Injectable()
 export class FreshsalesService implements ICompanyService {

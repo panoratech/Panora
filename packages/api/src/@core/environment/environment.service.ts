@@ -13,7 +13,7 @@ export type RateLimit = {
 
 @Injectable()
 export class EnvironmentService {
-  constructor(private configService: ConfigService) { }
+  constructor(private configService: ConfigService) {}
 
   getEnvMode(): string {
     return this.configService.get<string>('ENV');
@@ -47,11 +47,11 @@ export class EnvironmentService {
     };
   }
 
-  getAttioAuth(): OAuth {
+  getAttioSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('ATTIO_CLIENT_ID'),
       CLIENT_SECRET: this.configService.get<string>('ATTIO_CLIENT_SECRET'),
-    }
+    };
   }
 
   getZohoSecret(): OAuth {
@@ -93,10 +93,6 @@ export class EnvironmentService {
     };
   }
 
-  getZendeskTicketingSubdomain(): string {
-    return this.configService.get<string>('ZENDESK_TICKETING_SUBDOMAIN');
-  }
-
   getFrontSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('FRONT_CLIENT_ID'),
@@ -108,6 +104,48 @@ export class EnvironmentService {
     return {
       CLIENT_ID: this.configService.get<string>('GITHUB_CLIENT_ID'),
       CLIENT_SECRET: this.configService.get<string>('GITHUB_CLIENT_SECRET'),
+    };
+  }
+
+  getGorgiasSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('GORGIAS_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('GORGIAS_CLIENT_SECRET'),
+    };
+  }
+
+  getJiraSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('JIRA_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('JIRA_CLIENT_SECRET'),
+    };
+  }
+
+  getGitlabSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('GITLAB_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('GITLAB_CLIENT_SECRET'),
+    };
+  }
+
+  getJiraServiceManagementSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('JIRA_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('JIRA_CLIENT_SECRET'),
+    };
+  }
+
+  getLinearSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('LINEAR_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('LINEAR_CLIENT_SECRET'),
+    };
+  }
+
+  getClickupSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('CLICKUP_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('CLICKUP_CLIENT_SECRET'),
     };
   }
 

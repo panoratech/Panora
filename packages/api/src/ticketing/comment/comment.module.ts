@@ -13,6 +13,8 @@ import { ServiceRegistry } from './services/registry.service';
 import { GithubService } from './services/github';
 import { FrontService } from './services/front';
 import { HubspotService } from './services/hubspot';
+import { JiraService } from './services/jira';
+import { GorgiasService } from './services/gorgias';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { HubspotService } from './services/hubspot';
     HubspotService,
     FrontService,
     GithubService,
+    JiraService,
+    GorgiasService,
   ],
   exports: [SyncService],
 })

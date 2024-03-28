@@ -51,6 +51,7 @@ export default function ConnectionTable() {
     status: connection.status,
     linkedUser: connection.id_linked_user, 
     date: new Date().toISOString(), 
+    connectionToken: connection.connection_token!
   }))
 
 

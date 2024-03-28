@@ -8,7 +8,8 @@ export const connectionSchema = z.object({
   category: z.string(),
   status: z.string(),
   linkedUser: z.string(),
-  date: z.string()
+  date: z.string(),
+  connectionToken: z.string()
 })
 
 export type Connection = z.infer<typeof connectionSchema>

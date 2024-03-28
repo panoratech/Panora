@@ -1,4 +1,4 @@
-import { ZendeskTaskInput, ZendeskTaskOutput } from '@crm/@utils/@types';
+import { ZendeskTaskInput, ZendeskTaskOutput } from './types';
 import {
   UnifiedTaskInput,
   UnifiedTaskOutput,

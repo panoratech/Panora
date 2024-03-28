@@ -12,6 +12,8 @@ import { BullModule } from '@nestjs/bull';
 import { FrontService } from './services/front';
 import { GithubService } from './services/github';
 import { ZendeskService } from './services/zendesk';
+import { JiraService } from './services/jira';
+import { GorgiasService } from './services/gorgias';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { ZendeskService } from './services/zendesk';
     ZendeskService,
     FrontService,
     GithubService,
+    JiraService,
+    GorgiasService,
   ],
   exports: [SyncService],
 })

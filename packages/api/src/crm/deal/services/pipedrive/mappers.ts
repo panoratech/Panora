@@ -1,4 +1,4 @@
-import { PipedriveDealInput, PipedriveDealOutput } from '@crm/@utils/@types';
+import { PipedriveDealInput, PipedriveDealOutput } from './types';
 import {
   UnifiedDealInput,
   UnifiedDealOutput,

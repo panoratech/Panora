@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IDealService } from '@crm/deal/types';
-import {
-  CrmObject,
-  PipedriveDealInput,
-  PipedriveDealOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { PipedriveDealInput, PipedriveDealOutput } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';

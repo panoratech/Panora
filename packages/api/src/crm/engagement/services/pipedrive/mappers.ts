@@ -1,7 +1,4 @@
-import {
-  PipedriveEngagementInput,
-  PipedriveEngagementOutput,
-} from '@crm/@utils/@types';
+import { PipedriveEngagementInput, PipedriveEngagementOutput } from './types';
 import {
   UnifiedEngagementInput,
   UnifiedEngagementOutput,

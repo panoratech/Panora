@@ -1,4 +1,4 @@
-import { ZendeskDealInput, ZendeskDealOutput } from '@crm/@utils/@types';
+import { ZendeskDealInput, ZendeskDealOutput } from './types';
 import {
   UnifiedDealInput,
   UnifiedDealOutput,

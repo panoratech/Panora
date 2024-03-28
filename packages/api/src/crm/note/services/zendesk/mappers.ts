@@ -1,4 +1,4 @@
-import { ZendeskNoteInput, ZendeskNoteOutput } from '@crm/@utils/@types';
+import { ZendeskNoteInput, ZendeskNoteOutput } from './types';
 import {
   UnifiedNoteInput,
   UnifiedNoteOutput,

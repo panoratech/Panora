@@ -4,7 +4,7 @@ import { ContactController } from './contact.controller';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { FreshsalesService } from './services/freshsales';
 import { ZendeskService } from './services/zendesk';
-import { AttioService } from './services/attio'
+import { AttioService } from './services/attio';
 import { ZohoService } from './services/zoho';
 import { PipedriveService } from './services/pipedrive';
 import { HubspotService } from './services/hubspot';
@@ -42,4 +42,4 @@ import { ServiceRegistry } from './services/registry.service';
   ],
   exports: [SyncContactsService],
 })
-export class ContactModule { }
+export class ContactModule {}

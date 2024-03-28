@@ -1,4 +1,4 @@
-import { PipedriveUserInput, PipedriveUserOutput } from '@crm/@utils/@types';
+import { PipedriveUserInput, PipedriveUserOutput } from './types';
 import {
   UnifiedUserInput,
   UnifiedUserOutput,

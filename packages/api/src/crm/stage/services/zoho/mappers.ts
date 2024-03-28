@@ -1,4 +1,4 @@
-import { ZohoStageInput, ZohoStageOutput } from '@crm/@utils/@types';
+import { ZohoStageOutput, ZohoStageInput } from './types';
 import {
   UnifiedStageInput,
   UnifiedStageOutput,

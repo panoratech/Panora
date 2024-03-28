@@ -1,14 +1,10 @@
 import { CrmObject } from '@crm/@utils/@types';
-import {
-  ProviderVertical,
-  TargetObject,
-  UnifyReturnType,
-  getProviderVertical,
-} from '../types';
+import { TargetObject, UnifyReturnType } from '../types';
 import { unifyCrm } from '@crm/@utils/@unification';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { unifyTicketing } from '@ticketing/@utils/@unification';
 import { UnifySourceType } from '../types/unify.output';
+import { getProviderVertical, ProviderVertical } from '@panora/shared';
 
 /* to fetch data
 

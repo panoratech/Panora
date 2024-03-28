@@ -2,17 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  TicketingObject,
-  ZendeskTicketInput,
-  ZendeskTicketOutput,
-} from '@ticketing/@utils/@types';
+import { TicketingObject } from '@ticketing/@utils/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
+import { ZendeskTicketInput, ZendeskTicketOutput } from './types';
 
 @Injectable()
 export class ZendeskService implements ITicketService {
@@ -58,9 +55,7 @@ export class ZendeskService implements ITicketService {
 
             //TODO:; fetch the right file from AWS s3
             const s3File = '';
-            const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
-              res.file_name
-            }`;
+            const url = `${connection.account_url}/api/v2/uploads.json?filename=${res.file_name}`;
 
             const resp = await axios.get(url, {
               headers: {
@@ -86,7 +81,7 @@ export class ZendeskService implements ITicketService {
       }
 
       const resp = await axios.post(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets.json`,
+        `${connection.account_url}/api/v2/tickets.json`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -125,7 +120,7 @@ export class ZendeskService implements ITicketService {
       });
 
       const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets.json`,
+        `${connection.account_url}/api/v2/tickets.json`,
         {
           headers: {
             'Content-Type': 'application/json',

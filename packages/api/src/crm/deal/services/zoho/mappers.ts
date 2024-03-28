@@ -1,4 +1,4 @@
-import { ZohoDealInput, ZohoDealOutput } from '@crm/@utils/@types';
+import { ZohoDealInput, ZohoDealOutput } from './types';
 import {
   UnifiedDealInput,
   UnifiedDealOutput,

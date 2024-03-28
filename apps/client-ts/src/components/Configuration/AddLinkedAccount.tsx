@@ -70,7 +70,7 @@ const AddLinkedAccount = () => {
 
   const posthog = usePostHog()
 
-  //const {idOrg} = useOrganisationStore();
+  const {idOrg} = useOrganisationStore();
   const {idProject} = useProjectStore();
 
 

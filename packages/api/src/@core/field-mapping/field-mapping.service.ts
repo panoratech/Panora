@@ -6,11 +6,11 @@ import {
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { customPropertiesUrls, getProviderVertical } from '../utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { CrmObject } from '@crm/@utils/@types';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { getProviderVertical, providersConfig } from '@panora/shared';
 
 @Injectable()
 export class FieldMappingService {
@@ -124,9 +124,12 @@ export class FieldMappingService {
           provider_slug: providerId.toLowerCase(),
         },
       });
-
+      const provider =
+        providersConfig[getProviderVertical(providerId).toLowerCase()][
+          providerId.toLowerCase()
+        ];
       const resp = await axios.get(
-        customPropertiesUrls[getProviderVertical(providerId)][providerId],
+        provider.apiUrl + provider.customPropertiesUrl,
         {
           headers: {
             'Content-Type': 'application/json',
