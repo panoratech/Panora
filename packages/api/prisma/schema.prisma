@@ -532,16 +532,18 @@ model tcg_users {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model users {
-  id_user         String         @id(map: "pk_users") @db.Uuid
-  email           String
-  password_hash   String
-  first_name      String
-  last_name       String
-  created_at      DateTime       @default(now()) @db.Timestamp(6)
-  modified_at     DateTime       @default(now()) @db.Timestamp(6)
-  id_organization String?        @db.Uuid
-  api_keys        api_keys[]
-  organizations   organizations? @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
+  id_user                 String         @id(map: "pk_users") @db.Uuid
+  email                   String
+  password_hash           String
+  first_name              String
+  last_name               String
+  created_at              DateTime       @default(now()) @db.Timestamp(6)
+  modified_at             DateTime       @default(now()) @db.Timestamp(6)
+  id_organization         String?        @db.Uuid
+  id_stytch               String?
+  identification_strategy String?
+  api_keys                api_keys[]
+  organizations           organizations? @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
 
   @@index([id_organization], map: "fk_1_users")
 }

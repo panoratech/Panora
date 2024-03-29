@@ -3,8 +3,6 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import {
     CrmObject,
-    AttioCompanyInput,
-    AttioCompanyOutput,
 } from '@crm/@utils/@types';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -13,6 +11,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ICompanyService } from '@crm/company/types';
 import { ServiceRegistry } from '../registry.service';
+import { AttioCompanyInput, AttioCompanyOutput } from './types';
 
 @Injectable()
 export class AttioService implements ICompanyService {

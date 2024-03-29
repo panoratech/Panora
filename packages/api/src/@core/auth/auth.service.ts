@@ -32,12 +32,12 @@ export class AuthService {
       handleServiceError(error, this.logger);
     }
   }
-
-  async getUser(stytchId: string) {
+  async getUserByStytchId(stytchId: string) {
     try {
       return await this.prisma.users.findUnique({
         where: {
-          stytch_id: stytchId,
+          id_stytch: stytchId,
+          identification_strategy: 'b2c'
         },
       });
     } catch (error) {
@@ -87,7 +87,13 @@ export class AuthService {
       });*/
       return await this.prisma.users.create({
         data: {
-          ...user,
+          id_stytch: user.stytch_id_user,
+          identification_strategy: user.strategy,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          password_hash: '',
+          created_at: new Date(),
           id_user: id_user || uuidv4(),
         },
       });

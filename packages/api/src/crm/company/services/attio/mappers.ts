@@ -1,4 +1,4 @@
-import { AttioCompanyInput, AttioCompanyOutput } from '@crm/@utils/@types';
+import { AttioCompanyInput, AttioCompanyOutput } from './types';
 import {
     UnifiedCompanyInput,
     UnifiedCompanyOutput,

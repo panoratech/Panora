@@ -1,4 +1,3 @@
-import { AttioService } from './services/attio';
 import { Module } from '@nestjs/common';
 import { CompanyController } from './company.controller';
 import { SyncService } from './sync/sync.service';

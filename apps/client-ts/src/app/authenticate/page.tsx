@@ -57,6 +57,7 @@ const InnerAuthenticate = () => {
           last_name: user.name.last_name,
           email: user.emails[0].email,
           stytch_id_user: user.user_id,
+          strategy: 'b2c',
           id_organization: orgs && orgs[0].id_organization
         });
       }

@@ -7,6 +7,7 @@ interface IProfileDto {
     last_name: string;
     email: string;
     stytch_id_user: string;
+    strategy: string;
     id_organization?: string
 }
 

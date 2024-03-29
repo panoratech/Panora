@@ -67,7 +67,7 @@ export class AuthController {
   @ApiResponse({ status: 404, description: 'User not found.' })
   @Get('users/:stytchId')
   async getUser(@Param('stytchId') stytchId: string) {
-    return this.authService.getUser(stytchId);
+    return this.authService.getUserByStytchId(stytchId);
   }
 
   @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
