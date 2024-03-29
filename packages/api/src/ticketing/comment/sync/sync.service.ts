@@ -188,7 +188,7 @@ export class SyncService implements OnModuleInit {
       let comments_results: TicketingComment[] = [];
       for (let i = 0; i < comments.length; i++) {
         const comment = comments[i];
-        const originId = comment.remote_id[i];
+        const originId = comment.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

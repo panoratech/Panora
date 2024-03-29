@@ -176,7 +176,7 @@ export class SyncService implements OnModuleInit {
       let accounts_results: TicketingAccount[] = [];
       for (let i = 0; i < accounts.length; i++) {
         const account = accounts[i];
-        const originId = account.id[i];
+        const originId = account.id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

@@ -192,7 +192,7 @@ export class SyncService implements OnModuleInit {
       let tags_results: TicketingTag[] = [];
       for (let i = 0; i < tags.length; i++) {
         const tag = tags[i];
-        const originId = tag.remote_id[i];
+        const originId = tag.remote_id;
 
         if (!originId || originId == '') {
           return;

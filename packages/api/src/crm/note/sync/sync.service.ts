@@ -178,7 +178,7 @@ export class SyncService implements OnModuleInit {
       let notes_results: CrmNote[] = [];
       for (let i = 0; i < notes.length; i++) {
         const note = notes[i];
-        const originId = note.remote_id[i];
+        const originId = note.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

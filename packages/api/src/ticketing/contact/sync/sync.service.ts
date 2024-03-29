@@ -192,7 +192,7 @@ export class SyncService implements OnModuleInit {
       let contacts_results: TicketingContact[] = [];
       for (let i = 0; i < contacts.length; i++) {
         const contact = contacts[i];
-        const originId = contact.remote_id[i];
+        const originId = contact.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

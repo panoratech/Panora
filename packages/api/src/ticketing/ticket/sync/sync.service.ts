@@ -176,7 +176,7 @@ export class SyncService implements OnModuleInit {
       let tickets_results: TicketingTicket[] = [];
       for (let i = 0; i < tickets.length; i++) {
         const ticket = tickets[i];
-        const originId = ticket.remote_id[i];
+        const originId = ticket.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

@@ -196,7 +196,7 @@ export class SyncService implements OnModuleInit {
       let stages_results: CrmStage[] = [];
       for (let i = 0; i < stages.length; i++) {
         const stage = stages[i];
-        const originId = stage.remote_id[i];
+        const originId = stage.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);
