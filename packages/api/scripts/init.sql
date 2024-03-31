@@ -1,3 +1,4 @@
+
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -42,7 +43,7 @@ CREATE TABLE webhook_endpoints
  secret               text NOT NULL,
  active               boolean NOT NULL,
  created_at           timestamp NOT NULL,
- "scope"                text[] NULL,
+ "scope"              text[] NULL,
  id_project           uuid NOT NULL,
  last_update          timestamp NULL,
  CONSTRAINT PK_webhook_endpoint PRIMARY KEY ( id_webhook_endpoint )
@@ -54,6 +55,35 @@ COMMENT ON COLUMN webhook_endpoints.endpoint_description IS 'An optional descrip
 COMMENT ON COLUMN webhook_endpoints.secret IS 'a shared secret for secure communication';
 COMMENT ON COLUMN webhook_endpoints.active IS 'a flag indicating whether the webhook is active or not';
 COMMENT ON COLUMN webhook_endpoints."scope" IS 'stringified array with events,';
+
+
+
+
+
+-- ************************************** users
+
+CREATE TABLE users
+(
+ id_user                 uuid NOT NULL,
+ identification_strategy text NOT NULL,
+ email                   text NULL,
+ password_hash           text NULL,
+ first_name              text NOT NULL,
+ last_name               text NOT NULL,
+ id_stytch               text NULL,
+ created_at              timestamp NOT NULL DEFAULT NOW(),
+ modified_at             timestamp NOT NULL DEFAULT NOW(),
+ CONSTRAINT PK_users PRIMARY KEY ( id_user )
+);
+
+
+
+COMMENT ON COLUMN users.identification_strategy IS 'can be:
+
+PANORA_SELF_HOSTED
+STYTCH_B2B
+STYTCH_B2C';
+COMMENT ON COLUMN users.created_at IS 'DEFAULT NOW() to automatically insert a value if nothing supplied';
 
 
 
@@ -105,6 +135,28 @@ CREATE TABLE tcg_teams
 
 
 
+-- ************************************** tcg_collections
+
+CREATE TABLE tcg_collections
+(
+ id_tcg_collection uuid NOT NULL,
+ name              text NULL,
+ description       text NULL,
+ remote_id         text NULL,
+ collection_type   text NULL,
+ parent_collection uuid NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ CONSTRAINT PK_tcg_collections PRIMARY KEY ( id_tcg_collection )
+);
+
+
+
+
+
+
+
+
 -- ************************************** tcg_accounts
 
 CREATE TABLE tcg_accounts
@@ -134,7 +186,7 @@ CREATE TABLE remote_data
 (
  id_remote_data     uuid NOT NULL,
  ressource_owner_id uuid NULL,
- "format"             text NULL,
+ "format"           text NULL,
  data               text NULL,
  created_at         timestamp NULL,
  CONSTRAINT PK_remote_data PRIMARY KEY ( id_remote_data ),
@@ -145,23 +197,6 @@ CREATE TABLE remote_data
 
 COMMENT ON COLUMN remote_data.ressource_owner_id IS 'uuid of the unified object that owns this remote data. UUID of the contact, or deal , etc...';
 COMMENT ON COLUMN remote_data."format" IS 'can be json, xml';
-
-
-
-
-
--- ************************************** organizations
-
-CREATE TABLE organizations
-(
- id_organization    uuid NOT NULL,
- name               text NOT NULL,
- stripe_customer_id text NOT NULL,
- CONSTRAINT PK_organizations PRIMARY KEY ( id_organization )
-);
-
-
-
 
 
 
@@ -227,35 +262,6 @@ CREATE TABLE crm_deals_stages
 
 
 
--- ************************************** users
-
-CREATE TABLE users
-(
- id_user         uuid NOT NULL,
- email           text NOT NULL,
- password_hash   text NOT NULL,
- first_name      text NOT NULL,
- last_name       text NOT NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
- modified_at     timestamp NOT NULL DEFAULT NOW(),
- id_organization uuid NULL,
- CONSTRAINT PK_users PRIMARY KEY ( id_user ),
- CONSTRAINT FK_5 FOREIGN KEY ( id_organization ) REFERENCES organizations ( id_organization )
-);
-
-CREATE INDEX FK_1_users ON users
-(
- id_organization
-);
-
-
-
-COMMENT ON COLUMN users.created_at IS 'DEFAULT NOW() to automatically insert a value if nothing supplied';
-
-
-
-
-
 -- ************************************** tcg_tickets
 
 CREATE TABLE tcg_tickets
@@ -268,6 +274,7 @@ CREATE TABLE tcg_tickets
  ticket_type     text NULL,
  parent_ticket   uuid NULL,
  tags            text[] NULL,
+ collections     text[] NULL,
  completed_at    timestamp NULL,
  priority        text NULL,
  created_at      timestamp NOT NULL,
@@ -335,19 +342,14 @@ CREATE INDEX FK_tcg_contact_tcg_account_id ON tcg_contacts
 
 CREATE TABLE projects
 (
- id_project      uuid NOT NULL,
- name            text NOT NULL,
- id_organization uuid NOT NULL,
- sync_mode       text NOT NULL,
- pull_frequency  bigint NULL,
- redirect_url    text NULL,
+ id_project     uuid NOT NULL,
+ name           text NOT NULL,
+ sync_mode      text NOT NULL,
+ pull_frequency bigint NULL,
+ redirect_url   text NULL,
+ id_user        uuid NOT NULL,
  CONSTRAINT PK_projects PRIMARY KEY ( id_project ),
- CONSTRAINT FK_6 FOREIGN KEY ( id_organization ) REFERENCES organizations ( id_organization )
-);
-
-CREATE INDEX FK_1_projects ON projects
-(
- id_organization
+ CONSTRAINT FK_46_1 FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
 );
 
 
@@ -432,9 +434,9 @@ CREATE TABLE attribute
  description          text NOT NULL,
  data_type            text NOT NULL,
  remote_id            text NOT NULL,
- "source"               text NOT NULL,
+ "source"             text NOT NULL,
  id_entity            uuid NULL,
- "scope"                text NOT NULL,
+ "scope"              text NOT NULL,
  id_consumer          uuid NULL,
  CONSTRAINT PK_attribute PRIMARY KEY ( id_attribute ),
  CONSTRAINT FK_32 FOREIGN KEY ( id_entity ) REFERENCES entity ( id_entity )
@@ -765,7 +767,7 @@ CREATE TABLE crm_addresses
  street_1       text NULL,
  street_2       text NULL,
  city           text NULL,
- "state"          text NULL,
+ "state"        text NULL,
  postal_code    text NULL,
  country        text NULL,
  address_type   text NULL,
@@ -904,7 +906,7 @@ CREATE TABLE events
  status         text NOT NULL,
  type           text NOT NULL,
  direction      text NOT NULL,
- "timestamp"      timestamp NOT NULL DEFAULT NOW(),
+ "timestamp"    timestamp NOT NULL DEFAULT NOW(),
  method         text NOT NULL,
  url            text NOT NULL,
  provider       text NOT NULL,
@@ -1096,7 +1098,7 @@ COMMENT ON COLUMN connections.connection_token IS 'Connection token users will p
 CREATE TABLE webhook_delivery_attempts
 (
  id_webhook_delivery_attempt uuid NOT NULL,
- "timestamp"                   timestamp NOT NULL,
+ "timestamp"                 timestamp NOT NULL,
  status                      text NOT NULL,
  next_retry                  timestamp NULL,
  attempt_count               bigint NOT NULL,
@@ -1151,7 +1153,7 @@ can be 0 1 2 3 4 5 6';
 CREATE TABLE jobs_status_history
 (
  id_jobs_status_history uuid NOT NULL,
- "timestamp"              timestamp NOT NULL DEFAULT NOW(),
+ "timestamp"            timestamp NOT NULL DEFAULT NOW(),
  previous_status        text NOT NULL,
  new_status             text NOT NULL,
  id_event               uuid NOT NULL,
