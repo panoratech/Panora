@@ -60,6 +60,7 @@ export class EnvironmentService {
       CLIENT_SECRET: this.configService.get<string>('ZOHO_CLIENT_SECRET'),
     };
   }
+
   getZendeskSellSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('ZENDESK_SELL_CLIENT_ID'),
@@ -75,10 +76,18 @@ export class EnvironmentService {
       CLIENT_SECRET: this.configService.get<string>('FRESHSALES_CLIENT_SECRET'),
     };
   }
+
   getPipedriveSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('PIPEDRIVE_CLIENT_ID'),
       CLIENT_SECRET: this.configService.get<string>('PIPEDRIVE_CLIENT_SECRET'),
+    };
+  }
+
+  getAcceloSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('ACCELO_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('ACCELO_CLIENT_SECRET'),
     };
   }
 
@@ -153,6 +162,13 @@ export class EnvironmentService {
     return {
       ttl: this.configService.get<string>('THROTTLER_TTL'),
       limit: this.configService.get<string>('THROTTLER_LIMIT'),
+    };
+  }
+
+  getAffinitySecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('AFFINITY_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('AFFINITY_CLIENT_SECRET'),
     };
   }
 }

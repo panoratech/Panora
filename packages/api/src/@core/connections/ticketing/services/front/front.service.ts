@@ -10,9 +10,16 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  FrontOAuthResponse,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+
+export type FrontOAuthResponse = {
+  access_token: string;
+  refresh_token: string;
+  expires_at: string;
+  token_type: string;
+}
+
 
 @Injectable()
 export class FrontConnectionService implements ITicketingConnectionService {

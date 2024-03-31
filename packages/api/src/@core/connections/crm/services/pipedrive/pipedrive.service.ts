@@ -4,7 +4,6 @@ import axios from 'axios';
 import {
   CallbackParams,
   ICrmConnectionService,
-  PipeDriveOAuthResponse,
   RefreshParams,
 } from '../../types';
 import { Action, handleServiceError } from '@@core/utils/errors';
@@ -12,8 +11,16 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceConnectionRegistry } from '../registry.service';
+import { ServiceRegistry } from '../registry.service';
 
+export interface PipedriveOAuthResponse {
+  access_token: string;
+  token_type: string;
+  refresh_token: string;
+  scope: string[];
+  expires_in: number;
+  api_domain: string;
+}
 @Injectable()
 export class PipedriveConnectionService implements ICrmConnectionService {
   constructor(
@@ -21,7 +28,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
-    private registry: ServiceConnectionRegistry,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(PipedriveConnectionService.name);
     this.registry.registerService('pipedrive', this);
@@ -59,7 +66,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
           },
         },
       );
-      const data: PipeDriveOAuthResponse = res.data;
+      const data: PipedriveOAuthResponse = res.data;
       this.logger.log('OAuth credentials : pipedrive ');
       let db_res;
       const connection_token = uuidv4();
@@ -132,7 +139,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
           },
         },
       );
-      const data: PipeDriveOAuthResponse = res.data;
+      const data: PipedriveOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,

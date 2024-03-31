@@ -20,7 +20,7 @@ export class OrganisationsController {
   })
   @Get()
   getOragnisations() {
-    return this.organizationsService.getOrganisations();
+    return; //this.organizationsService.getOrganisations();
   }
 
   @ApiOperation({
@@ -31,6 +31,6 @@ export class OrganisationsController {
   @ApiResponse({ status: 201 })
   @Post('create')
   createOrg(@Body() orgCreateDto: CreateOrganizationDto) {
-    return this.organizationsService.createOrganization(orgCreateDto);
+    return; //this.organizationsService.createOrganization(orgCreateDto);
   }
 }

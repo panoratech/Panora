@@ -10,10 +10,14 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  ZendeskTicketingOAuthResponse,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 
+export interface ZendeskOAuthResponse {
+  access_token: string;
+  token_type: string;
+  scope: string;
+}
 @Injectable()
 export class ZendeskConnectionService implements ITicketingConnectionService {
   constructor(
@@ -59,7 +63,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
           },
         },
       );
-      const data: ZendeskTicketingOAuthResponse = res.data;
+      const data: ZendeskOAuthResponse = res.data;
       this.logger.log(
         'OAuth credentials : zendesk ticketing ' + JSON.stringify(data),
       );

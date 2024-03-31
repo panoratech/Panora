@@ -6,13 +6,21 @@ import {
   ICrmConnectionService,
   RefreshParams,
 } from '../../types';
-import { ZendeskSellOAuthResponse } from '../../types';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceConnectionRegistry } from '../registry.service';
+import { ServiceRegistry } from '../registry.service';
+
+export interface ZendeskSellOAuthResponse {
+  access_token: string;
+  token_type: string;
+  refresh_token: string;
+  scope: string;
+  expires_in: number;
+}
+
 
 @Injectable()
 export class ZendeskConnectionService implements ICrmConnectionService {
@@ -21,7 +29,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
-    private registry: ServiceConnectionRegistry,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
     this.registry.registerService('zendesk', this);

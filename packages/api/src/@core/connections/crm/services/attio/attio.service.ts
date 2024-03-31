@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import {
-  AttioOAuthResponse,
   CallbackParams,
   ICrmConnectionService,
   RefreshParams,
@@ -11,8 +10,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { Action, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceConnectionRegistry } from '../registry.service';
+import { ServiceRegistry } from '../registry.service';
 import { LoggerService } from '@@core/logger/logger.service';
+
+export interface AttioOAuthResponse {
+  access_token: string,
+  token_type: string;
+}
 
 @Injectable()
 export class AttioConnectionService implements ICrmConnectionService {
@@ -21,7 +25,7 @@ export class AttioConnectionService implements ICrmConnectionService {
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
-    private registry: ServiceConnectionRegistry,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(AttioConnectionService.name);
     this.registry.registerService('attio', this);

@@ -1,37 +1,26 @@
+
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from '../../types';
+import { Action, handleServiceError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
-import { Action, NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import {
+  CallbackParams,
+  RefreshParams,
+  ICrmConnectionService,
+} from '../../types';
 import { ServiceRegistry } from '../registry.service';
-
-const ZOHOLocations = {
-  us: 'https://accounts.zoho.com',
-  eu: 'https://accounts.zoho.eu',
-  in: 'https://accounts.zoho.in',
-  au: 'https://accounts.zoho.com.au',
-  jp: 'https://accounts.zoho.jp',
-};
-
-export interface ZohoOAuthResponse {
+export type AffinityOAuthResponse = {
   access_token: string;
   refresh_token: string;
-  api_domain: string;
-  token_type: string;
-  expires_in: number;
-}
-
+  expires_at: string;
+};
 
 @Injectable()
-export class ZohoConnectionService implements ICrmConnectionService {
+export class AffinityConnectionService implements ICrmConnectionService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -39,36 +28,33 @@ export class ZohoConnectionService implements ICrmConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
   ) {
-    this.logger.setContext(ZohoConnectionService.name);
-    this.registry.registerService('zoho', this);
+    this.logger.setContext(AffinityConnectionService.name);
+    this.registry.registerService('Affinity', this);
   }
+
   async handleCallback(opts: CallbackParams) {
     try {
-      const { linkedUserId, projectId, code, location } = opts;
-      if (!location) {
-        throw new NotFoundError(`no zoho location, found ${location}`);
-      }
+      const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
+          provider_slug: `affinity`,
         },
       });
 
-      //reconstruct the redirect URI that was passed in the frontend it must be the same
+      //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
 
       const formData = new URLSearchParams({
-        grant_type: 'authorization_code',
-        client_id: this.env.getZohoSecret().CLIENT_ID,
-        client_secret: this.env.getZohoSecret().CLIENT_SECRET,
+        client_id: this.env.getAffinitySecret().CLIENT_ID,
+        client_secret: this.env.getAffinitySecret().CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
+        grant_type: 'authorization_code',
       });
-      //no refresh token
-      const domain = ZOHOLocations[location];
+      const subdomain = 'panora';
       const res = await axios.post(
-        `${domain}/oauth/v2/token`,
+        "",
         formData.toString(),
         {
           headers: {
@@ -76,8 +62,11 @@ export class ZohoConnectionService implements ICrmConnectionService {
           },
         },
       );
-      const data: ZohoOAuthResponse = res.data;
-      this.logger.log('OAuth credentials : zoho ' + JSON.stringify(data));
+      const data: AffinityOAuthResponse = res.data;
+      this.logger.log(
+        'OAuth credentials : affinity ticketing ' + JSON.stringify(data),
+      );
+
       let db_res;
       const connection_token = uuidv4();
 
@@ -88,15 +77,13 @@ export class ZohoConnectionService implements ICrmConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: data.refresh_token
-              ? this.cryptoService.encrypt(data.refresh_token)
-              : '',
+            refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            account_url: "",
             expiration_timestamp: new Date(
-              new Date().getTime() + data.expires_in * 1000,
+              new Date().getTime() + Number(data.expires_at) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
-            account_url: domain,
           },
         });
       } else {
@@ -104,14 +91,13 @@ export class ZohoConnectionService implements ICrmConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'zoho',
+            provider_slug: 'affinity',
             token_type: 'oauth',
+            account_url: "",
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: data.refresh_token
-              ? this.cryptoService.encrypt(data.refresh_token)
-              : '',
+            refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + data.expires_in * 1000,
+              new Date().getTime() + Number(data.expires_at) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -121,52 +107,49 @@ export class ZohoConnectionService implements ICrmConnectionService {
             linked_users: {
               connect: { id_linked_user: linkedUserId },
             },
-            account_url: domain,
           },
         });
       }
-
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'zoho', Action.oauthCallback);
+      handleServiceError(error, this.logger, 'affinity', Action.oauthCallback);
     }
   }
+    
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken, account_url } = opts;
-      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const { connectionId, refreshToken } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
-        client_id: this.env.getZohoSecret().CLIENT_ID,
-        client_secret: this.env.getZohoSecret().CLIENT_SECRET,
-        redirect_uri: REDIRECT_URI,
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-
+      const subdomain = 'panora';
       const res = await axios.post(
-        `${account_url}/oauth/v2/token`,
+        "",
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic JHt0aGlzLmVudi5nZXRgQWZmaW5pdHlTZWNyZXRgKCkuQ0xJRU5UX0lEfTokewogICAgICAgICAgICAgICAgdGhpcy5lbnYuZ2V0YEFmZmluaXR5U2VjcmV0YCgpLkNMSUVOVF9TRUNSRVQKICAgICAgICAgICAgICB9`,
           },
         },
       );
-      const data: ZohoOAuthResponse = res.data;
+      const data: AffinityOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
         },
         data: {
           access_token: this.cryptoService.encrypt(data.access_token),
+          refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + data.expires_in * 1000,
+            new Date().getTime() + Number(data.expires_at) * 1000,
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : zoho ');
+      this.logger.log('OAuth credentials updated : affinity ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'zoho', Action.oauthRefresh);
+      handleServiceError(error, this.logger, 'affinity', Action.oauthRefresh);
     }
   }
-}
+} 

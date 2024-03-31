@@ -23,7 +23,8 @@
     "ci": "pnpm run lint && pnpm run build",
     "copy-types-to-shared": "cp ./exports.ts ../shared/index.ts",
     "prisma:seed": "ts-node ./scripts/seed.webapp.ts",
-    "validate-connectors": "node ./scripts/connectorUpdate.js"
+    "validate-connectors": "node ./scripts/connectorUpdate.js",
+    "prebuild-oauth-connector": "node ./scripts/oauthConnector.js"
   },
   "dependencies": {
     "@nestjs/bull": "^10.0.1",

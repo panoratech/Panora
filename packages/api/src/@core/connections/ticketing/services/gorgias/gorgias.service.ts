@@ -10,9 +10,17 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  GorgiasOAuthResponse,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+
+export type GorgiasOAuthResponse = {
+  access_token: string;
+  expires_in: 0;
+  id_token: string;
+  refresh_token: string;
+  scope: string;
+  token_type: string;
+}
 
 @Injectable()
 export class GorgiasConnectionService implements ITicketingConnectionService {

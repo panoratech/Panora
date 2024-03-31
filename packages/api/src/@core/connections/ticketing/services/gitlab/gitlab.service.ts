@@ -10,9 +10,16 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  GitlabOAuthResponse,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+
+export interface GitlabOAuthResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  refresh_token: string;
+  created_at: number;
+}
 
 @Injectable()
 export class GitlabConnectionService implements ITicketingConnectionService {

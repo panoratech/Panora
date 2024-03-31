@@ -72,11 +72,11 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       apiUrl: 'https://api.getbase.com/v2',
       customPropertiesUrl: '/contact/custom_fields'
-    },
+    }, 
     'accelo': {
       clientId: '',
       scopes: '',
-      authBaseUrl: '',
+      authBaseUrl: 'https://{deployment}.api.accelo.com/oauth2/v0/authorize', 
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false

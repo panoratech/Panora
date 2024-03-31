@@ -10,9 +10,15 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  LinearOAuthResponse,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+
+export type LinearOAuthResponse = {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  scope: string;
+}
 
 @Injectable()
 export class LinearConnectionService implements ITicketingConnectionService {

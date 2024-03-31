@@ -354,28 +354,18 @@ model linked_users {
   @@index([id_project], map: "fk_proectid_linked_users")
 }
 
-model organizations {
-  id_organization    String     @id(map: "pk_organizations") @db.Uuid
-  name               String
-  stripe_customer_id String
-  projects           projects[]
-  users              users[]
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model projects {
-  id_project      String         @id(map: "pk_projects") @db.Uuid
-  name            String
-  id_organization String         @db.Uuid
-  sync_mode       String
-  pull_frequency  BigInt?
-  redirect_url    String?
-  api_keys        api_keys[]
-  connections     connections[]
-  linked_users    linked_users[]
-  organizations   organizations  @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_6")
-
-  @@index([id_organization], map: "fk_1_projects")
+  id_project     String         @id(map: "pk_projects") @db.Uuid
+  name           String
+  sync_mode      String
+  pull_frequency BigInt?
+  redirect_url   String?
+  id_user        String         @db.Uuid
+  api_keys       api_keys[]
+  connections    connections[]
+  linked_users   linked_users[]
+  users          users          @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -499,6 +489,7 @@ model tcg_tickets {
   ticket_type     String?
   parent_ticket   String?           @db.Uuid
   tags            String[]
+  collections     String[]
   completed_at    DateTime?         @db.Timestamp(6)
   priority        String?
   created_at      DateTime          @db.Timestamp(6)
@@ -532,20 +523,17 @@ model tcg_users {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model users {
-  id_user                 String         @id(map: "pk_users") @db.Uuid
-  email                   String
-  password_hash           String
+  id_user                 String     @id(map: "pk_users") @db.Uuid
+  identification_strategy String
+  email                   String?
+  password_hash           String?
   first_name              String
   last_name               String
-  created_at              DateTime       @default(now()) @db.Timestamp(6)
-  modified_at             DateTime       @default(now()) @db.Timestamp(6)
-  id_organization         String?        @db.Uuid
   id_stytch               String?
-  identification_strategy String?
+  created_at              DateTime   @default(now()) @db.Timestamp(6)
+  modified_at             DateTime   @default(now()) @db.Timestamp(6)
   api_keys                api_keys[]
-  organizations           organizations? @relation(fields: [id_organization], references: [id_organization], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
-
-  @@index([id_organization], map: "fk_1_users")
+  projects                projects[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -609,4 +597,15 @@ model webhooks_reponses {
   http_response_data        String
   http_status_code          String
   webhook_delivery_attempts webhook_delivery_attempts[]
+}
+
+model tcg_collections {
+  id_tcg_collection String   @id(map: "pk_tcg_collections") @db.Uuid
+  name              String?
+  description       String?
+  remote_id         String?
+  collection_type   String?
+  parent_collection String?  @db.Uuid
+  created_at        DateTime @db.Timestamp(6)
+  modified_at       DateTime @db.Timestamp(6)
 }

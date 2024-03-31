@@ -42,15 +42,21 @@ export class SyncService implements OnModuleInit {
   async syncDeals() {
     try {
       this.logger.log(`Syncing deals....`);
-      const defaultOrg = await this.prisma.organizations.findFirst({
+      /*const defaultOrg = await this.prisma.organizations.findFirst({
         where: {
           name: 'Acme Inc',
+        },
+      });*/
+
+      const defaultUser = await this.prisma.users.findFirst({
+        where: {
+          email: "audrey@aubry.io"
         },
       });
 
       const defaultProject = await this.prisma.projects.findFirst({
         where: {
-          id_organization: defaultOrg.id_organization,
+          id_user: defaultUser.id_user,
           name: 'Project 1',
         },
       });

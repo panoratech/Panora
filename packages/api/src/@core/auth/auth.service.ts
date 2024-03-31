@@ -195,9 +195,9 @@ export class AuthService {
         );
       }
 
-      if (foundProject.id_organization !== foundUser.id_organization) {
+      /*if (foundProject.id_organization !== foundUser.id_organization) {
         throw new Error('User is not inside the project');
-      }
+      }*/
       // Generate a new API key (use a secure method for generation)
       const { access_token } = await this.generateApiKey(projectId, userId);
       // Store the API key in the database associated with the user

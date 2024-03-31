@@ -1,4 +1,3 @@
-import { log } from 'console';
 import * as fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -345,12 +344,6 @@ if (import.meta.url === process.argv[1]) {
   updateObjectTypes(baseDir, objectType, vertical);
 }
 
-/*const options = yargs.usage('Usage: -vertical <vertical>').option('v', {
-  alias: 'vertical',
-  describe: 'Your vertical',
-  type: 'string',
-  demandOption: true,
-}).argv;*/
 const argv = yargs(hideBin(process.argv)).argv;
 
 const baseDir = `../src/${argv.vertical.toLowerCase()}/${argv.object.toLowerCase()}/services`;

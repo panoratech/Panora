@@ -10,9 +10,12 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  ClickupOAuthResponse,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+
+export type ClickupOAuthResponse = {
+  access_token: string;
+}
 
 @Injectable()
 export class ClickupConnectionService implements ITicketingConnectionService {

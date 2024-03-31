@@ -11,7 +11,7 @@ export class OrganisationsService {
     this.logger.setContext(OrganisationsService.name);
   }
 
-  async getOrganisations() {
+  /*async getOrganisations() {
     try {
       return await this.prisma.organizations.findMany();
     } catch (error) {
@@ -30,5 +30,5 @@ export class OrganisationsService {
     } catch (error) {
       handleServiceError(error, this.logger);
     }
-  }
+  }*/
 }

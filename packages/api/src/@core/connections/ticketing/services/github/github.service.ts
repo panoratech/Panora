@@ -10,9 +10,17 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  GithubOAuthResponse,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+
+export type GithubOAuthResponse = {
+  access_token: string;
+  refresh_token: string;
+  expires_in: string;
+  refresh_token_expires_in: string; //TODO
+  token_type: string;
+  scope: string;
+}
 
 @Injectable()
 export class GithubConnectionService implements ITicketingConnectionService {

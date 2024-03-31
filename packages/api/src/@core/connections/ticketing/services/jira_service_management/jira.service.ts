@@ -10,10 +10,26 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  JiraOAuthResponse,
-  JiraCloudIdInformation,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+
+export type JiraCloudIdInformation = {
+  id: string;
+  name: string;
+  url: string;
+  scopes: Array<string>;
+  avatarUrl: string;
+}
+
+export type JiraServiceManagementOAuthResponse = {
+  access_token: string;
+}
+export type JiraOAuthResponse = {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number | Date;
+  scope: string;
+}
 
 @Injectable()
 export class JiraServiceMgmtConnectionService

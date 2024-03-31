@@ -3,7 +3,6 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
 import {
   CallbackParams,
-  HubspotOAuthResponse,
   ICrmConnectionService,
   RefreshParams,
 } from '../../types';
@@ -12,7 +11,13 @@ import { Action, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceConnectionRegistry } from '../registry.service';
+import { ServiceRegistry } from '../registry.service';
+
+export interface HubspotOAuthResponse {
+  refresh_token: string;
+  access_token: string;
+  expires_in: number;
+}
 
 @Injectable()
 export class HubspotConnectionService implements ICrmConnectionService {
@@ -21,7 +26,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
-    private registry: ServiceConnectionRegistry,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(HubspotConnectionService.name);
     this.registry.registerService('hubspot', this);
