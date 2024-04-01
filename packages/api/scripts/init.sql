@@ -73,7 +73,8 @@ CREATE TABLE users
  id_stytch               text NULL,
  created_at              timestamp NOT NULL DEFAULT NOW(),
  modified_at             timestamp NOT NULL DEFAULT NOW(),
- CONSTRAINT PK_users PRIMARY KEY ( id_user )
+ CONSTRAINT PK_users PRIMARY KEY ( id_user ),
+ CONSTRAINT force_stytch_id_unique UNIQUE ( id_stytch )
 );
 
 
@@ -84,6 +85,8 @@ PANORA_SELF_HOSTED
 STYTCH_B2B
 STYTCH_B2C';
 COMMENT ON COLUMN users.created_at IS 'DEFAULT NOW() to automatically insert a value if nothing supplied';
+
+COMMENT ON CONSTRAINT force_stytch_id_unique ON users IS 'force unique on stytch id';
 
 
 
@@ -143,6 +146,7 @@ CREATE TABLE tcg_collections
  name              text NULL,
  description       text NULL,
  remote_id         text NULL,
+ remote_platform   text NULL,
  collection_type   text NULL,
  parent_collection uuid NULL,
  created_at        timestamp NOT NULL,
@@ -219,6 +223,57 @@ COMMENT ON COLUMN entity.ressource_owner_id IS 'uuid of the ressource owner - ca
 
 
 
+-- ************************************** cs_values
+
+CREATE TABLE cs_values
+(
+ id_cs_value     uuid NOT NULL,
+ value           text NOT NULL,
+ id_ct_attribute uuid NOT NULL
+
+);
+
+
+
+
+
+
+
+
+-- ************************************** cs_entities
+
+CREATE TABLE cs_entities
+(
+ id_cs_entity           uuid NOT NULL,
+ id_connection_strategy uuid NOT NULL
+
+);
+
+
+
+
+
+
+
+
+-- ************************************** cs_attributes
+
+CREATE TABLE cs_attributes
+(
+ id_cs_attribute uuid NOT NULL,
+ id_cs_entity    uuid NOT NULL,
+ attribute_slug  text NOT NULL,
+ data_type       text NOT NULL
+
+);
+
+
+
+
+
+
+
+
 -- ************************************** crm_users
 
 CREATE TABLE crm_users
@@ -257,6 +312,24 @@ CREATE TABLE crm_deals_stages
 
 
 
+
+
+
+
+
+-- ************************************** connection_strategies
+
+CREATE TABLE connection_strategies
+(
+ id_connection_strategy uuid NOT NULL,
+ type                   text NOT NULL,
+ id_project             uuid NULL
+
+);
+
+
+
+COMMENT ON COLUMN connection_strategies.type IS 'OAUTH2, API_KEY, PIPEDRIVE_CLOUD_OAUTH, PIPEDRIVE_CLOUD_API, HUBSPOT_CLOUD';
 
 
 
