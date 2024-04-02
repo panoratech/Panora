@@ -152,6 +152,7 @@ CREATE TABLE tcg_collections
  parent_collection uuid NULL,
  created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
+ id_linked_user    uuid NOT NULL,
  CONSTRAINT PK_tcg_collections PRIMARY KEY ( id_tcg_collection )
 );
 
