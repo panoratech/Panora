@@ -1,4 +1,5 @@
 
+
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -229,8 +230,8 @@ CREATE TABLE cs_values
 (
  id_cs_value     uuid NOT NULL,
  value           text NOT NULL,
- id_ct_attribute uuid NOT NULL
-
+ id_ct_attribute uuid NOT NULL,
+ CONSTRAINT PK_ct_values PRIMARY KEY ( id_cs_value )
 );
 
 
@@ -245,8 +246,8 @@ CREATE TABLE cs_values
 CREATE TABLE cs_entities
 (
  id_cs_entity           uuid NOT NULL,
- id_connection_strategy uuid NOT NULL
-
+ id_connection_strategy uuid NOT NULL,
+ CONSTRAINT PK_ct_entities PRIMARY KEY ( id_cs_entity )
 );
 
 
@@ -263,8 +264,8 @@ CREATE TABLE cs_attributes
  id_cs_attribute uuid NOT NULL,
  id_cs_entity    uuid NOT NULL,
  attribute_slug  text NOT NULL,
- data_type       text NOT NULL
-
+ data_type       text NOT NULL,
+ CONSTRAINT PK_ct_attributes PRIMARY KEY ( id_cs_attribute )
 );
 
 
@@ -323,8 +324,8 @@ CREATE TABLE connection_strategies
 (
  id_connection_strategy uuid NOT NULL,
  type                   text NOT NULL,
- id_project             uuid NULL
-
+ id_project             uuid NULL,
+ CONSTRAINT PK_connection_strategies PRIMARY KEY ( id_connection_strategy )
 );
 
 
