@@ -1,30 +1,28 @@
+
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from '../../types';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import { Action, handleServiceError } from '@@core/utils/errors';
+import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import {
+  CallbackParams,
+  RefreshParams,
+  ICrmConnectionService,
+} from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
-import { AuthStrategy } from '@panora/shared';
 
-export interface HubspotOAuthResponse {
-  refresh_token: string;
+export type TeamleaderOAuthResponse = {
   access_token: string;
-  expires_in: number;
-}
+  refresh_token: string;
+  expires_in: string;
+  token_type: string;
+};
 
 @Injectable()
-export class HubspotConnectionService implements ICrmConnectionService {
-  private readonly type: string;
-
+export class TeamleaderConnectionService implements ICrmConnectionService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -32,38 +30,32 @@ export class HubspotConnectionService implements ICrmConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
   ) {
-    this.logger.setContext(HubspotConnectionService.name);
-    this.registry.registerService('hubspot', this);
-    this.type = providerToType('hubspot', AuthStrategy.oauth2);
+    this.logger.setContext(TeamleaderConnectionService.name);
+    this.registry.registerService('Teamleader', this);
   }
 
   async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
-      this.logger.log(
-        'linkeduserid is ' + linkedUserId + ' inside callback hubspot',
-      );
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
+          provider_slug: `teamleader`,
         },
       });
-      if (isNotUnique) return; 
-      //reconstruct the redirect URI that was passed in the frontend it must be the same
+
+      //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-  
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
-      
+
       const formData = new URLSearchParams({
-        grant_type: 'authorization_code',
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
+        client_id: this.env.getTeamleaderSecret().CLIENT_ID,
+        client_secret: this.env.getTeamleaderSecret().CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
+        grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        'https://api.hubapi.com/oauth/v1/token',
+        "https://focus.teamleader.eu/oauth2/access_token",
         formData.toString(),
         {
           headers: {
@@ -71,13 +63,15 @@ export class HubspotConnectionService implements ICrmConnectionService {
           },
         },
       );
-      const data: HubspotOAuthResponse = res.data;
-      // save tokens for this customer inside our db
+      const data: TeamleaderOAuthResponse = res.data;
+      this.logger.log(
+        'OAuth credentials : teamleader ticketing ' + JSON.stringify(data),
+      );
+
       let db_res;
       const connection_token = uuidv4();
 
       if (isNotUnique) {
-        // Update existing connection
         db_res = await this.prisma.connections.update({
           where: {
             id_connection: isNotUnique.id_connection,
@@ -85,25 +79,26 @@ export class HubspotConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            account_url: "",
             expiration_timestamp: new Date(
-              new Date().getTime() + data.expires_in * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
           },
         });
       } else {
-        // Create new connection
         db_res = await this.prisma.connections.create({
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'hubspot',
+            provider_slug: 'teamleader',
             token_type: 'oauth',
+            account_url: "",
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + data.expires_in * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -116,29 +111,23 @@ export class HubspotConnectionService implements ICrmConnectionService {
           },
         });
       }
-      this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'hubspot', Action.oauthCallback);
+      handleServiceError(error, this.logger, 'teamleader', Action.oauthCallback);
     }
   }
-
+    
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken, id_project: projectId } = opts;
-      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`; //tocheck
-      
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
-
+      const { connectionId, refreshToken } = opts;
       const formData = new URLSearchParams({
+        client_id: this.env.getTeamleaderSecret().CLIENT_ID,
+        client_secret: this.env.getTeamleaderSecret().CLIENT_SECRET,
         grant_type: 'refresh_token',
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-        redirect_uri: REDIRECT_URI,
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
       const res = await axios.post(
-        'https://api.hubapi.com/oauth/v1/token',
+        "https://focus.teamleader.eu/oauth2/access_token",
         formData.toString(),
         {
           headers: {
@@ -146,7 +135,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
           },
         },
       );
-      const data: HubspotOAuthResponse = res.data;
+      const data: TeamleaderOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
@@ -155,13 +144,13 @@ export class HubspotConnectionService implements ICrmConnectionService {
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + data.expires_in * 1000,
+            new Date().getTime() + Number(data.expires_in) * 1000,
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : hubspot ');
+      this.logger.log('OAuth credentials updated : teamleader ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'hubspot', Action.oauthRefresh);
+      handleServiceError(error, this.logger, 'teamleader', Action.oauthRefresh);
     }
   }
-}
+} 

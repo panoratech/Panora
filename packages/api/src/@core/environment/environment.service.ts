@@ -171,4 +171,67 @@ export class EnvironmentService {
       CLIENT_SECRET: this.configService.get<string>('AFFINITY_CLIENT_SECRET'),
     };
   }
-}
+
+  getCapsuleSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('CAPSULE_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('CAPSULE_CLIENT_SECRET'),
+    };
+  }
+
+  getCloseSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('CLOSE_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('CLOSE_CLIENT_SECRET'),
+    };
+  }
+
+  getCopperSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('COPPER_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('COPPER_CLIENT_SECRET'),
+    };
+  }
+  
+  getInsightlySecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('INSIGHTLY_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('INSIGHTLY_CLIENT_SECRET'),
+    };
+  }
+  
+  getKeapSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('KEAP_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('KEAP_CLIENT_SECRET'),
+    };
+  }
+  
+  getSugarcrmSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('SUGARCRM_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('SUGARCRM_CLIENT_SECRET'),
+    };
+  }
+  
+  getTeamleaderSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('TEAMLEADER_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('TEAMLEADER_CLIENT_SECRET'),
+    };
+  }
+  
+  getTeamworkSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('TEAMWORK_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('TEAMWORK_CLIENT_SECRET'),
+    };
+  }
+  
+  getAhaSecret(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('AHA_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('AHA_CLIENT_SECRET'),
+    };
+  }
+  }

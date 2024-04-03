@@ -11,6 +11,7 @@ export type RefreshParams = {
   connectionId: string;
   refreshToken: string;
   account_url?: string;
+  id_project: string;
 };
 
 export interface ITicketingConnectionService {

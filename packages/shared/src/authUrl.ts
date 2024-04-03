@@ -1,4 +1,5 @@
-import { findProviderVertical, providersConfig } from "./utils";
+import { getCredentials, OAuth2AuthData, providerToType } from "./envConfig";
+import { AuthStrategy, findProviderVertical, providersConfig, ProviderConfig } from "./utils";
 
 interface AuthParams {
   projectId: string;
@@ -8,7 +9,9 @@ interface AuthParams {
   apiUrl: string;
 }
 
-export const constructAuthUrl = ({ projectId, linkedUserId, providerName, returnUrl, apiUrl }: AuthParams) => {
+// make sure to check wether its api_key or oauth2 to build the right auth
+// make sure to check if client has own credentials to connect or panora managed ones
+export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl }: AuthParams) => {
   const encodedRedirectUrl = encodeURIComponent(`${apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
 
@@ -23,9 +26,60 @@ export const constructAuthUrl = ({ projectId, linkedUserId, providerName, return
   const config = providersConfig[vertical.toLowerCase()][providerName];
   if (!config) {
     throw new Error(`Unsupported provider: ${providerName}`);
-  }
+  } 
+  const authStrategy = config.authStrategy!;
 
-  const { clientId, scopes, authBaseUrl: baseUrl } = config;
+  switch(authStrategy){
+    case AuthStrategy.oauth2:
+      handleOAuth2Url({
+        providerName,
+        authStrategy,
+        projectId,
+        config,
+        encodedRedirectUrl,
+        state
+      });
+      break;
+    case AuthStrategy.api_key:
+      handleApiKeyUrl();
+      break;
+    case AuthStrategy.basic:
+      handleBasicUrl();
+      break;
+  }
+};
+
+type HandleOAuth2Url = {
+  providerName: string;
+  authStrategy: AuthStrategy;
+  projectId: string;
+  config: ProviderConfig;
+  encodedRedirectUrl: string;
+  state: string;
+}
+
+const handleOAuth2Url = async (input: HandleOAuth2Url) => {
+  const {
+    providerName,
+    authStrategy,
+    projectId,
+    config,
+    encodedRedirectUrl,
+    state
+  } = input;
+
+  const type = providerToType(providerName, authStrategy);
+
+  // 1. env if selfhost and no custom
+  // 2. backend if custom credentials
+  // same for authBaseUrl with subdomain
+  const data = (await getCredentials(projectId, type)) as OAuth2AuthData;
+
+  const clientId = data.CLIENT_ID;
+  if(!clientId) throw new Error(`No client id for type ${type}`)
+
+  const { scopes, authBaseUrl: baseUrl } = config;
+  
   if (!baseUrl) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
@@ -58,4 +112,12 @@ export const constructAuthUrl = ({ projectId, linkedUserId, providerName, return
   const finalAuthUrl = `${baseUrl}?${params}`;
   console.log("Final Authentication : ", finalAuthUrl);
   return finalAuthUrl;
-};
+}
+
+const handleApiKeyUrl = async () => {
+  return;
+}
+
+const handleBasicUrl = async () => {
+  return;
+}

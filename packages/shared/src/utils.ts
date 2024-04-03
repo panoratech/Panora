@@ -1,216 +1,242 @@
-type ProviderConfig = {
-  clientId: string;
+export enum AuthStrategy {
+  oauth2,
+  api_key,
+  basic
+}
+
+// TODO : remove clientId
+export type ProviderConfig = {
   scopes: string;
   authBaseUrl: string;
   logoPath: string;
   description: string;
   active?: boolean;
-  apiUrl?: string;
+  apiUrl: string;
   customPropertiesUrl?: string; 
+  authStrategy?: AuthStrategy;
 };
 
 type VerticalConfig = {
   [key: string]: ProviderConfig;
 };
 
-type ProvidersConfig = {
+export type ProvidersConfig = {
   [vertical: string]: VerticalConfig;
 };
- 
+
+
+//If authBaseUrl or apiUrl both start with / it means a subdomain is likely needed
 
 export const providersConfig: ProvidersConfig = {
   'crm': {
     'hubspot': {
-      clientId: 'ba591170-a7c7-4fca-8086-1bd178c6b14d',
       scopes: 'crm.objects.contacts.read crm.objects.contacts.write crm.schemas.deals.read crm.schemas.deals.write crm.objects.deals.read crm.objects.deals.write crm.objects.companies.read crm.objects.companies.write crm.objects.owners.read settings.users.read settings.users.write settings.users.teams.read settings.users.teams.write',
       authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
       logoPath: "https://assets-global.website-files.com/6421a177cdeeaf3c6791b745/64d61202dd99e63d40d446f6_hubspot%20logo.png",
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       apiUrl: 'https://api.hubapi.com',
       customPropertiesUrl: '/properties/v1/contacts/properties',
+      authStrategy: AuthStrategy.oauth2
     },
     'attio': {
-      clientId: '86cbbd35-e067-4353-940b-5abcdcb539dd',
       scopes: 'record_permission:read',
       authBaseUrl: 'https://app.attio.com/authorize',
       logoPath: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZsShi0G6mZ451MngEvQrmJ2JIGH-AF8JyFU-q-n3w&s",
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       apiUrl: 'https://developers.attio.com',
-      customPropertiesUrl: '/docs/standard-objects-people'
+      customPropertiesUrl: '/docs/standard-objects-people',
+      authStrategy: AuthStrategy.oauth2
     },
     'zoho': {
-      clientId: '1000.CWBWAO0XK6QNROXMA2Y0RUZYMGJIGT',
       scopes: 'ZohoCRM.modules.ALL',
       authBaseUrl: 'https://accounts.zoho.eu/oauth/v2/auth',
       logoPath: 'https://assets-global.website-files.com/64f68d43d25e5962af5f82dd/64f68d43d25e5962af5f9812_64ad8bbe47c78358489b29fc_645e3ccf636a8d659f320e25_Group%25252012.png',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       apiUrl: 'https://www.zohoapis.eu/crm/v3',
-      customPropertiesUrl: '/settings/fields?module=Contact'
+      customPropertiesUrl: '/settings/fields?module=Contact',
+      authStrategy: AuthStrategy.oauth2
     },
     'pipedrive': {
-      clientId: '8a60094f9108f085',
       scopes: 'Pipedrive_Scope',
       authBaseUrl: 'https://oauth.pipedrive.com/oauth/authorize',
       logoPath: 'https://asset.brandfetch.io/idZG_U1qqs/ideqSFbb2E.jpeg',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       apiUrl: 'https://api.pipedrive.com',
-      customPropertiesUrl: '/v1/personFields'
+      customPropertiesUrl: '/v1/personFields',
+      authStrategy: AuthStrategy.oauth2
     },
     'freshsales': {
-      clientId: '',
       scopes: '',
       authBaseUrl: '',
+      apiUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/Mwgb5c2sVHGHoDlthAYPnMGekEOzsvMR5zotxskrl0erKTW-xpZbuIXn7AEIqvrRHQ',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'zendesk': {
-      clientId: 'fbb3125a89f366daf02c09f201522245c4453c1310f07ec2223c614fac130c78',
       scopes: 'read write',
       authBaseUrl: 'https://api.getbase.com/oauth2/authorize',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       apiUrl: 'https://api.getbase.com/v2',
-      customPropertiesUrl: '/contact/custom_fields'
+      customPropertiesUrl: '/contact/custom_fields',
+      authStrategy: AuthStrategy.oauth2
     }, 
     'accelo': {
-      clientId: '',
       scopes: '',
       authBaseUrl: 'https://{deployment}.api.accelo.com/oauth2/v0/authorize', 
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      apiUrl: '',
+      logoPath: 'https://play-lh.googleusercontent.com/j63K2u8ZXukgPs8QPgyXfyoxuNBl_ST7gLx5DEFeczCTtM9e5JNpDjjBy32qLxFS7p0',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'active-campaign': {
-      clientId: '',
       scopes: '',
       authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      apiUrl: '',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSymrBOaXpQab_5RPRZfiOXU7h9dfsduGZeCaZZw59xJA&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'affinity': {
-      clientId: '',
       scopes: '',
       authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      apiUrl: 'https://api.affinity.co',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMRfcwBA9Jn9z9dJQgY3f_H-bBeUzl-jRHNOm8xrmwtA&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'capsule': {
-      clientId: '',
       scopes: '',
-      authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      authBaseUrl: 'https://api.capsulecrm.com/oauth/authorise',
+      apiUrl: 'https://api.capsulecrm.com/api/v2',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjS3qFlJJbQ802nGEV9w2GEgmnAIgJj6JJxe14cH6Wuw&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'close': {
-      clientId: '',
       scopes: '',
-      authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      authBaseUrl: 'https://app.close.com/oauth2/authorize',
+      apiUrl: 'https://api.close.com/api/v1',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEH77yPBUkStmoc1ZtgJS4XeBmQiaq_Q1vgF5oerOGbg&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'copper': {
-      clientId: '',
       scopes: '',
-      authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      authBaseUrl: 'https://app.copper.com/oauth/authorize',
+      apiUrl: 'https://api.copper.com/developer_api/v1',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVa1YDciibzviRJxGovqH4gNgPxpZUAHEz36Bwnj54uQ&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'insightly': {
-      clientId: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key,
+      apiUrl: ''
     },
     'keap': {
-      clientId: '',
       scopes: '',
-      authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      authBaseUrl: 'https://accounts.infusionsoft.com/app/oauth/authorize',
+      apiUrl: 'https://api.infusionsoft.com/crm/rest/v2',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPYsWSMe9KVWgCIQ8fw-vBOnfTlZaSS6p_43ZhEIx51A&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'microsoft-dynamics-sales': {
-      clientId: '',
       scopes: '',
       authBaseUrl: '',
+      apiUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
     'nutshell': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbCONyN9DCKfd4E8pzIdItl5VqPTEErpoEn9vHCgblRg&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'pipeliner': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      logoPath: 'https://play-lh.googleusercontent.com/rK9Qv_w9C8Py_aLZdQQDobNdHWSG8KL4dj3cBBQLcimVu-ctxwujA4VE442lIpZ65AE',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'salesflare': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTesqSVCSaCDrjedsKbepr14iJPySzUwrh7Fg9MhgKh9w&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'salesforce': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgL4FJb-GptGfxDDkWbIX2CjIM77t5q-d7eCFY6sGsHA&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'sugarcrm': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQftNERc1ImBHm8MXXuWdhQiFYwW-dXNcogRL1UV8JyHFQGY2BbsbpwKvERwKRB39RH6zw&usqp=CAU',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'teamleader': {
-      clientId: '',
       scopes: '',
-      authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      authBaseUrl: 'https://focus.teamleader.eu/oauth2/authorize',
+      apiUrl: 'https://api.focus.teamleader.eu',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTE99rDOwXdRYGET0oeSCqK2kB02slJxZtTeBC79pb8IQ&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'teamwork': {
-      clientId: '',
       scopes: '',
-      authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      authBaseUrl: 'https://www.teamwork.com/launchpad/login',
+      apiUrl: '',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr6gYDMNagMEicBb4dhKz4BC1fQs72In45QF7Ls6-moA&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'vtiger': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcUYrYD8lnaFaDN93vwjHhksKJUG3rqlb1TCFC__oPBw&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.basic
     },
     'twenty': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -220,87 +246,93 @@ export const providersConfig: ProvidersConfig = {
   },
   'ticketing': {
     'front': {
-      clientId: '5f1d8d963c77285f339a',
       scopes: '',
       authBaseUrl: 'https://app.frontapp.com/oauth/authorize',
       logoPath: 'https://i.pinimg.com/originals/43/a2/43/43a24316bd773798c7638ad98521eb81.png',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      apiUrl: 'https://api2.frontapp.com'
+      apiUrl: 'https://api2.frontapp.com',
+      authStrategy: AuthStrategy.oauth2
     },
     'zendesk_tcg': {
-      clientId: 'panora_bbb',
       scopes: 'read write',
       authBaseUrl: 'https://panora7548.zendesk.com/oauth/authorizations/new',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      apiUrl: '/api/v2'
+      apiUrl: '/api/v2',
+      authStrategy: AuthStrategy.oauth2
     },
     'gorgias': {
-      clientId: '',
       scopes: 'write:all openid email profile offline',
       authBaseUrl: 'https://panora.gorgias.com/oauth/authorize',
       logoPath: 'https://x5h8w2v3.rocketcdn.me/wp-content/uploads/2020/09/FS-AFFI-00660Gorgias.png',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      apiUrl: '/api'
+      apiUrl: '/api',
+      authStrategy: AuthStrategy.oauth2
     },
     'jira': {
-      clientId: '1Xy0XSajM28HG7n9gufEyU0RO72SqEHW',
       scopes: 'read:jira-work manage:jira-project manage:jira-data-provider manage:jira-webhook write:jira-work manage:jira-configuration read:jira-user offline_access',
       authBaseUrl: 'https://auth.atlassian.com/authorize',
       logoPath: 'https://logowik.com/content/uploads/images/jira3124.jpg',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      apiUrl: '/rest/api/3'
+      apiUrl: '/rest/api/3',
+      authStrategy: AuthStrategy.oauth2
     },
     'jira_service_mgmt': {
-      clientId: '1Xy0XSajM28HG7n9gufEyU0RO72SqEHW',
+      apiUrl: '',
       scopes: 'read:servicedesk-request manage:servicedesk-customer read:servicemanagement-insight-objects write:servicedesk-request offline_access',
       authBaseUrl: 'https://auth.atlassian.com/authorize',
       logoPath: '',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'linear': {
-      clientId: '',
+      apiUrl: '',
       scopes: 'read,write',
       authBaseUrl: 'https://linear.app/oauth/authorize',
       logoPath: '',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'gitlab': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://gitlab.example.com/oauth/authorize',
       logoPath: '',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'clickup': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://app.clickup.com/api',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRewJj9y5yKzSCf-qGgjmdLagEhxfnlZ7TUsvukbfZaIg&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'github': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'aha': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
-      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+      authBaseUrl: 'https://<subdomain>.aha.io/oauth/authorize',
+      logoPath: 'https://www.aha.io/aha-logo-2x.png',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'asana': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -308,7 +340,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'azure': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -316,7 +348,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'basecamp': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -324,7 +356,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'bitbucket': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -332,7 +364,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'dixa': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -340,7 +372,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'freshdesk': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -348,7 +380,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'freshservice': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -356,7 +388,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'gladly': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -364,7 +396,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'height': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -372,7 +404,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'help-scout': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -380,7 +412,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'hive': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -388,7 +420,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'intercom': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -396,7 +428,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'ironclad': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -404,7 +436,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'kustomer': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -412,7 +444,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'pivotal-tracker': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -420,7 +452,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'rally': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -428,7 +460,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'reamaze': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -436,7 +468,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'salesforce': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -444,7 +476,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'servicenow': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -452,7 +484,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'shortcut': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -460,7 +492,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'spotdraft': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -468,7 +500,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'teamwork': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -476,7 +508,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'trello': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -484,7 +516,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'wrike': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -492,7 +524,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'zoho-bugtracker': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -500,7 +532,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'zoho-desk': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -510,7 +542,7 @@ export const providersConfig: ProvidersConfig = {
   },
   'accounting': {
     'pennylane': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://cdn-images-1.medium.com/max/1200/1*wk7CNGik_1Szbt7s1fNZxA.png',
@@ -518,7 +550,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'freshbooks': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -526,7 +558,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'clearbooks': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://s3-eu-west-1.amazonaws.com/clearbooks-marketing/media-centre/MediaCentre/clear-books/CMYK/icon/clear-books-icon-cmyk.png',
@@ -534,7 +566,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'freeagent': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU-fob0b9pBNQdm80usnYa2yWdagm3eeBDH-870vSmfg&s',
@@ -542,7 +574,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'sage': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/b7/Sage_Group_logo_2022.svg/2560px-Sage_Group_logo_2022.svg.png',
@@ -550,7 +582,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'sage-intacct': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -558,7 +590,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'microsoft-dynamics': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -566,7 +598,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'moneybird': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -574,7 +606,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'netsuite': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -582,7 +614,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'quickbooks': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -590,7 +622,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'workday': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -598,7 +630,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'wave-financial': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -608,7 +640,7 @@ export const providersConfig: ProvidersConfig = {
   },
   'marketing-automation': {
     'active-campaign': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -616,7 +648,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'customerio': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -624,7 +656,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'getresponse': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -632,7 +664,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'hubspot-marketing-hub': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -640,7 +672,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'keap': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -648,7 +680,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'klaviyo': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -656,7 +688,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'mailchimp': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -664,7 +696,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'messagebird': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -672,7 +704,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'podium': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -680,7 +712,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'sendgrid': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -688,7 +720,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'sendinblue': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -698,7 +730,7 @@ export const providersConfig: ProvidersConfig = {
   },
   'ats': {
     'applicantstack': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -706,7 +738,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'ashby': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -714,7 +746,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'bamboohr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -722,7 +754,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'breezy': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -730,7 +762,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'bullhorn': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -738,7 +770,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'cats': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -746,7 +778,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'clayhr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -754,7 +786,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'clockwork': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -762,7 +794,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'comeet': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -770,7 +802,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'cornerstone-talentlink': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -778,7 +810,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'engage-ats': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -786,7 +818,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'eploy': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -794,7 +826,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'fountain': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -802,7 +834,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'freshteam': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -810,7 +842,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'greenhouse': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -818,7 +850,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'greenhouse-job-boards': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -826,7 +858,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'harbour-ats': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -834,7 +866,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'homerun': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -842,7 +874,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'hrcloud': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -850,7 +882,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'icims': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -858,7 +890,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'infinite-brassring': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -866,7 +898,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'jazzhr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -874,7 +906,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'jobadder': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -882,7 +914,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'jobscore': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -890,7 +922,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'jobvite': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -898,7 +930,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'lano': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -906,7 +938,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'lever': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -914,7 +946,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'occupop': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -922,7 +954,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'oracle-fusion': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -930,7 +962,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'oracle-taleo': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -938,7 +970,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'personio-recruiting': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -946,7 +978,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'pinpoint': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -954,7 +986,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'polymer': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -962,7 +994,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'recruiterflow': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -970,7 +1002,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'recruitive': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -978,7 +1010,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'sage-hr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -986,7 +1018,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'sap-successfactors': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -994,7 +1026,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'smartrecruiters': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1002,7 +1034,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'talentlyft': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1010,7 +1042,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'talentreef': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1018,7 +1050,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'teamtailor': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1026,7 +1058,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'tellent': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1034,7 +1066,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'tribepad': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1042,7 +1074,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'ukg-pro-recruiting': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1050,7 +1082,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'workable': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1058,7 +1090,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'workday': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1066,7 +1098,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'zoho-recruit': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1076,7 +1108,7 @@ export const providersConfig: ProvidersConfig = {
   },
   'hris': {
     '7shifts': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1084,7 +1116,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'adp-workforce-now': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1092,7 +1124,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'alexishr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1100,7 +1132,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'alliancehcm': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1108,7 +1140,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'altera-payroll': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1116,7 +1148,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'bamboohr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1124,7 +1156,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'breathe': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1132,7 +1164,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'ceridian-dayforce': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1140,7 +1172,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'charlie': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1148,7 +1180,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'charthop': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1156,7 +1188,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'clayhr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1164,7 +1196,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'cyberark': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1172,7 +1204,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'deel': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1180,7 +1212,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'employment-hero': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1188,7 +1220,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'factorial': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1196,7 +1228,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'freshteam': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1204,7 +1236,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'google-workspace': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1212,7 +1244,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'gusto': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1220,7 +1252,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'hibob': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1228,7 +1260,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'hrcloud': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1236,7 +1268,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'hrpartner': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1244,7 +1276,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'humaans': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1252,7 +1284,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'humi': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1260,7 +1292,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'insperity-premier': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1268,7 +1300,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'active-campaign': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1276,7 +1308,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'intellli-hr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1284,7 +1316,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'iris-cascade': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1292,7 +1324,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'jumpcloud': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1300,7 +1332,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'justworks': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1308,7 +1340,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'kallidus': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1316,7 +1348,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'keka': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1324,7 +1356,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'kenjo': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1332,7 +1364,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'lano': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1340,7 +1372,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'lucca': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1348,7 +1380,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'microsoft-entra-id': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1356,7 +1388,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'namely': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1364,7 +1396,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'nmbrs': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1372,7 +1404,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'officient': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1380,7 +1412,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'okta': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1388,7 +1420,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'onelogin': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1396,7 +1428,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'oracle-hcm': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1404,7 +1436,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'oyster-hr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1412,7 +1444,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'paycaptain': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1420,7 +1452,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'paychex': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1428,7 +1460,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'paycor': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1436,7 +1468,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'payfit': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1444,7 +1476,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'paylocity': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1452,7 +1484,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'people-hr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1460,7 +1492,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'personio': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1468,7 +1500,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'pingone': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1476,7 +1508,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'proliant': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1484,7 +1516,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'remote': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1492,7 +1524,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'sage-hr': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1500,7 +1532,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'sap-successfactors': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1508,7 +1540,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'sesame': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1516,7 +1548,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'square-payroll': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1524,7 +1556,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'trinet': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1532,7 +1564,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'trinet-hr-platform': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1540,7 +1572,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'ukg-pro': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1548,7 +1580,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'ukg-pro-workforce': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1556,7 +1588,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'ukg-ready': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1564,7 +1596,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'workday': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1572,7 +1604,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'zoho-people': {
-      clientId: '',
+      apiUrl: '',
       scopes: '',
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1610,7 +1642,7 @@ export const getDescription = (name: string): string | null => {
 
 type Provider = {
   name: string;
-  clientId: string;
+  apiUrl: string;
   scopes: string;
   authBaseUrl: string;
   logoPath: string;
@@ -1621,7 +1653,7 @@ export function providersArray(vertical: string): Provider[] {
   const activeProviders = getActiveProvidersForVertical(vertical);
   return Object.entries(activeProviders).map(([providerName, config]) => ({
       name: providerName,
-      clientId: config.clientId,
+      apiUrl: config.apiUrl,
       scopes: config.scopes,
       authBaseUrl: config.authBaseUrl,
       logoPath: config.logoPath,
@@ -1632,7 +1664,7 @@ export function providersArray(vertical: string): Provider[] {
 
 export const findProviderVertical = (providerName: string): string | null => {
   for (const [vertical, providers] of Object.entries(providersConfig)) {
-    if (providers.hasOwnProperty.call(providers, providerName)) {
+    if (providers.hasOwnProperty.call(providers, providerName.toLowerCase())) {
       return vertical;
     }
   }

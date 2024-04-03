@@ -50,6 +50,7 @@ import {
   I${verticalUpper}ConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+
 export type ${providerUpper}OAuthResponse = {
   access_token: string;
   refresh_token: string;
@@ -208,12 +209,12 @@ function addProviderToEnvironmentService(provider, envServicePath) {
     const providerEnvPrefix = provider.toUpperCase();
   
     const methodToAdd = `
-    ${providerMethodName}(): OAuth {
-      return {
-        CLIENT_ID: this.configService.get<string>('${providerEnvPrefix}_CLIENT_ID'),
-        CLIENT_SECRET: this.configService.get<string>('${providerEnvPrefix}_CLIENT_SECRET'),
-      };
-    }
+  ${providerMethodName}(): OAuth {
+    return {
+      CLIENT_ID: this.configService.get<string>('${providerEnvPrefix}_CLIENT_ID'),
+      CLIENT_SECRET: this.configService.get<string>('${providerEnvPrefix}_CLIENT_SECRET'),
+    };
+  }
   `;
   
     let content = fs.readFileSync(envServicePath, { encoding: 'utf8' });
@@ -235,7 +236,7 @@ function addProviderToDockerCompose(provider, dockerComposePath) {
     const newEnvVariables = `
         ${providerEnvPrefix}_CLIENT_ID: $\{${providerEnvPrefix}_CLIENT_ID}
         ${providerEnvPrefix}_CLIENT_SECRET: $\{${providerEnvPrefix}_CLIENT_SECRET}
-  `;
+  `; 
   
     let content = fs.readFileSync(dockerComposePath, { encoding: 'utf8' });
   

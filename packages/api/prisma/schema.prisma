@@ -529,7 +529,7 @@ model users {
   password_hash           String?
   first_name              String
   last_name               String
-  id_stytch               String?
+  id_stytch               String?    @unique(map: "force_stytch_id_unique")
   created_at              DateTime   @default(now()) @db.Timestamp(6)
   modified_at             DateTime   @default(now()) @db.Timestamp(6)
   api_keys                api_keys[]
@@ -604,8 +604,46 @@ model tcg_collections {
   name              String?
   description       String?
   remote_id         String?
+  remote_platform   String?
   collection_type   String?
   parent_collection String?  @db.Uuid
   created_at        DateTime @db.Timestamp(6)
   modified_at       DateTime @db.Timestamp(6)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model connection_strategies {
+  id_connection_strategy String  @db.Uuid
+  type                   String
+  id_project             String? @db.Uuid
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model cs_attributes {
+  id_cs_attribute String @db.Uuid
+  id_cs_entity    String @db.Uuid
+  attribute_slug  String
+  data_type       String
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model cs_entities {
+  id_cs_entity           String @db.Uuid
+  id_connection_strategy String @db.Uuid
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model cs_values {
+  id_cs_value     String @db.Uuid
+  value           String
+  id_ct_attribute String @db.Uuid
+
+  @@ignore
 }
