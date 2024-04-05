@@ -13,6 +13,9 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
+
 export type InsightlyOAuthResponse = {
   access_token: string;
   refresh_token: string;
@@ -21,6 +24,8 @@ export type InsightlyOAuthResponse = {
 
 @Injectable()
 export class InsightlyConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -29,7 +34,8 @@ export class InsightlyConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(InsightlyConnectionService.name);
-    this.registry.registerService('Insightly', this);
+    this.registry.registerService('insightly', this);
+    this.type = providerToType('insightly', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -44,15 +50,16 @@ export class InsightlyConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getInsightlySecret().CLIENT_ID,
-        client_secret: this.env.getInsightlySecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
       });
-      const subdomain = 'panora';
+      //const subdomain = 'panora';
       const res = await axios.post(
         "",
         formData.toString(),
@@ -118,11 +125,13 @@ export class InsightlyConnectionService implements ICrmConnectionService {
     
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
       const subdomain = 'panora';
       const res = await axios.post(
         "",

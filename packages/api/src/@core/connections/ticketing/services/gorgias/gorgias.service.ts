@@ -27,6 +27,7 @@ export type GorgiasOAuthResponse = {
 @Injectable()
 export class GorgiasConnectionService implements ITicketingConnectionService {
   private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -62,7 +63,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        `https://${CREDENTIALS.SUBDOMAIN!}.gorgias.com/oauth/token`,
+        `${CREDENTIALS.SUBDOMAIN!}/oauth/token`,
         formData.toString(), 
         {
           headers: {
@@ -126,15 +127,15 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken, id_project } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const CREDENTIALS = (await getCredentials(id_project, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const res = await axios.post(
-        `https://${CREDENTIALS.SUBDOMAIN!}.gorgias.com/oauth/token`,
+        `${CREDENTIALS.SUBDOMAIN!}/oauth/token`,
         formData.toString(),
         {
           headers: {

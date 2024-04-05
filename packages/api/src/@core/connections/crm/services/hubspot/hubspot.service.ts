@@ -125,7 +125,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken, id_project: projectId } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`; //tocheck
       
       const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;

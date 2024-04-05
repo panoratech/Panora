@@ -12,6 +12,8 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { AuthStrategy } from '@panora/shared';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
 
 export type FrontOAuthResponse = {
   access_token: string;
@@ -23,6 +25,8 @@ export type FrontOAuthResponse = {
 
 @Injectable()
 export class FrontConnectionService implements ITicketingConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -32,6 +36,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(FrontConnectionService.name);
     this.registry.registerService('front', this);
+    this.type = providerToType('front', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -46,6 +51,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
@@ -59,8 +65,8 @@ export class FrontConnectionService implements ITicketingConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getFrontSecret().CLIENT_ID}:${
-                this.env.getFrontSecret().CLIENT_SECRET
+              `${CREDENTIALS.CLIENT_ID}:${
+                CREDENTIALS.CLIENT_SECRET
               }`,
             ).toString('base64')}`,
           },
@@ -120,11 +126,12 @@ export class FrontConnectionService implements ITicketingConnectionService {
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
       const res = await axios.post(
         `https://app.frontapp.com/oauth/token`,
         formData.toString(),
@@ -132,8 +139,8 @@ export class FrontConnectionService implements ITicketingConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getFrontSecret().CLIENT_ID}:${
-                this.env.getFrontSecret().CLIENT_SECRET
+              `${CREDENTIALS.CLIENT_ID}:${
+                CREDENTIALS.CLIENT_SECRET
               }`,
             ).toString('base64')}`,
           },

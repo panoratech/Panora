@@ -12,6 +12,8 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { AuthStrategy } from '@panora/shared';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
 
 export interface ZendeskOAuthResponse {
   access_token: string;
@@ -20,6 +22,8 @@ export interface ZendeskOAuthResponse {
 }
 @Injectable()
 export class ZendeskConnectionService implements ITicketingConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -29,6 +33,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
     this.registry.registerService('zendesk_tcg', this);
+    this.type = providerToType('zendesk_tcg', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -43,19 +48,20 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
         code: code,
-        client_id: this.env.getZendeskTicketingSecret().CLIENT_ID,
-        client_secret: this.env.getZendeskTicketingSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         scope: 'read',
       });
 
-      const subdomain = 'panora7548';
+      //const subdomain = 'panora7548';
       const res = await axios.post(
-        `https://${subdomain}.zendesk.com/oauth/tokens`,
+        `${CREDENTIALS.SUBDOMAIN!}/oauth/tokens`,
         formData.toString(),
         {
           headers: {
@@ -78,7 +84,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: `https://${subdomain}.zendesk.com`,
+            account_url: CREDENTIALS.SUBDOMAIN!,
             refresh_token: '',
             expiration_timestamp: new Date(), //TODO
             status: 'valid',
@@ -92,7 +98,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'zendesk_tcg',
             token_type: 'oauth',
-            account_url: `https://${subdomain}.zendesk.com`,
+            account_url: CREDENTIALS.SUBDOMAIN!,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
             expiration_timestamp: new Date(), //TODO

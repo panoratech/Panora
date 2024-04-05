@@ -17,14 +17,14 @@ export class ConnectionsStrategiesService {
   constructor(private prisma: PrismaService) {} 
 
   async isCustomCredentials(projectId: string, type: string) {
-    const res = await this.prisma.connection_strategies.findMany({
+    const res = await this.prisma.connection_strategies.findFirst({
       where: {
         id_project: projectId,
         type: type
       }
     })
     if(!res) return false;
-    return res.active;
+    return res.status;
   }
 
   async createConnectionStrategy(projectId: string, type: string, attributes: string[], values: string[]) {
@@ -32,7 +32,8 @@ export class ConnectionsStrategiesService {
       data: {
         id_connection_strategy: uuidv4(),
         id_project: projectId,
-        type: type
+        type: type,
+        status: true
       }
     });
     const entity = await this.prisma.cs_entities.create({
@@ -49,8 +50,8 @@ export class ConnectionsStrategiesService {
         data: {
           id_cs_attribute: uuidv4(),
           id_cs_entity: entity.id_cs_entity,
-          id_connection_strategy: cs.id_connection_strategy,
-          attribute_slug: attribute_slug
+          attribute_slug: attribute_slug,
+          data_type: 'string' //TODO
         }
       }); 
       const value_ = await this.prisma.cs_values.create({
@@ -65,11 +66,10 @@ export class ConnectionsStrategiesService {
 
   async toggle(id_cs: string) {
     try{
-      const cs = await this.prisma.connection_strategies.upsert({
+      const cs = await this.prisma.connection_strategies.findFirst({
         where: {
           id_connection_strategy: id_cs,
         },
-
       });
       if(!cs) throw new Error("No connection strategies found !");
       // Toggle the 'active' value
@@ -78,7 +78,7 @@ export class ConnectionsStrategiesService {
           id_connection_strategy: id_cs,
         },
         data: {
-          active: !cs.active, // Toggle the 'active' value
+          status: !cs.status, // Toggle the 'active' value
         },
       });
 
@@ -124,5 +124,7 @@ export class ConnectionsStrategiesService {
     }
     return values;
   }
+
+  //TODO: update connection strategy
 
 }

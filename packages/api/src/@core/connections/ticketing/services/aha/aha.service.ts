@@ -13,6 +13,8 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { AuthStrategy } from '@panora/shared';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
 
 export type AhaOAuthResponse = {
   access_token: string;
@@ -21,6 +23,8 @@ export type AhaOAuthResponse = {
 
 @Injectable()
 export class AhaConnectionService implements ITicketingConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -29,7 +33,8 @@ export class AhaConnectionService implements ITicketingConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(AhaConnectionService.name);
-    this.registry.registerService('Aha', this);
+    this.registry.registerService('aha', this);
+    this.type = providerToType('aha', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -44,17 +49,18 @@ export class AhaConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getAhaSecret().CLIENT_ID,
-        client_secret: this.env.getAhaSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
       });
-      const subdomain = 'panora';
       const res = await axios.post(
-        `https://${subdomain}.aha.io/oauth/token`,
+        `${CREDENTIALS.SUBDOMAIN!}/oauth/token`,
         formData.toString(),
         {
           headers: {
@@ -77,7 +83,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: "",
+            account_url: CREDENTIALS.SUBDOMAIN!,
             status: 'valid',
             created_at: new Date(),
           },
@@ -89,7 +95,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'aha',
             token_type: 'oauth',
-            account_url: "",
+            account_url: CREDENTIALS.SUBDOMAIN!,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

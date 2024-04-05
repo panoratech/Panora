@@ -11,7 +11,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { FrontConnectionService } from './services/front/front.service';
 import { GithubConnectionService } from './services/github/github.service';
 import { JiraConnectionService } from './services/jira/jira.service';
-import { JiraServiceMgmtConnectionService } from './services/jira_service_management/jira.service';
+import { JiraServiceMgmtConnectionService } from './services/jira_service_mgmt/jira.service';
 import { LinearConnectionService } from './services/linear/linear.service';
 import { GitlabConnectionService } from './services/gitlab/gitlab.service';
 import { ClickupConnectionService } from './services/clickup/clickup.service';

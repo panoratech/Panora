@@ -13,6 +13,8 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 export type SugarcrmOAuthResponse = {
   access_token: string;
@@ -26,6 +28,8 @@ export type SugarcrmOAuthResponse = {
 
 @Injectable()
 export class SugarcrmConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -34,7 +38,9 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(SugarcrmConnectionService.name);
-    this.registry.registerService('Sugarcrm', this);
+    this.registry.registerService('sugarcrm', this);
+    this.type = providerToType('sugarcrm', AuthStrategy.oauth2);
+
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -49,18 +55,19 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getSugarcrmSecret().CLIENT_ID,
-        client_secret: this.env.getSugarcrmSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         grant_type: 'password',
         username: "",
         password: "",
         platform: "custom"
       });
-      const subdomain = 'panora';
+      //const subdomain = 'panora';
       const res = await axios.post(
-        `https://${subdomain}/rest/v11/oauth2/token`,
+        `${CREDENTIALS.SUBDOMAIN!}/rest/v11/oauth2/token`,
         formData.toString(),
         {
           headers: {
@@ -124,17 +131,19 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
     
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
-        client_id: this.env.getSugarcrmSecret().CLIENT_ID,
-        client_secret: this.env.getSugarcrmSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         grant_type: 'refresh_token',
         platform: "custom",
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
       const subdomain = 'panora';
       const res = await axios.post(
-        `https://${subdomain}/rest/v11/oauth2/token`,
+        `${CREDENTIALS.SUBDOMAIN!}/rest/v11/oauth2/token`,
         formData.toString(),
         {
           headers: {

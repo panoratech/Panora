@@ -13,6 +13,8 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 export type CapsuleOAuthResponse = {
   access_token: string;
@@ -25,6 +27,8 @@ export type CapsuleOAuthResponse = {
 
 @Injectable()
 export class CapsuleConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -33,7 +37,9 @@ export class CapsuleConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(CapsuleConnectionService.name);
-    this.registry.registerService('Capsule', this);
+    this.registry.registerService('capsule', this);
+    this.type = providerToType('capsule', AuthStrategy.oauth2);
+
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -47,6 +53,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: this.env.getCapsuleSecret().CLIENT_ID,
@@ -119,12 +126,14 @@ export class CapsuleConnectionService implements ICrmConnectionService {
     
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
-        client_id: this.env.getCapsuleSecret().CLIENT_ID,
-        client_secret: this.env.getCapsuleSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
       });
       const res = await axios.post(
         "https://api.capsulecrm.com/oauth/token",

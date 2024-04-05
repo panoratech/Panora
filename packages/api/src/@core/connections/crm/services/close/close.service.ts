@@ -13,6 +13,8 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 export type CloseOAuthResponse = {
   access_token: string;
@@ -26,6 +28,8 @@ export type CloseOAuthResponse = {
 
 @Injectable()
 export class CloseConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -34,7 +38,8 @@ export class CloseConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(CloseConnectionService.name);
-    this.registry.registerService('Close', this);
+    this.registry.registerService('close', this);
+    this.type = providerToType('close', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -49,15 +54,16 @@ export class CloseConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getCloseSecret().CLIENT_ID,
-        client_secret: this.env.getCloseSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret:CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
       });
-      const subdomain = 'panora';
+      //const subdomain = 'panora';
       const res = await axios.post(
         "https://api.close.com/oauth2/token",
         formData.toString(),
@@ -123,12 +129,14 @@ export class CloseConnectionService implements ICrmConnectionService {
     
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
-        client_id: this.env.getCloseSecret().CLIENT_ID,
-        client_secret: this.env.getCloseSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
       });
       const res = await axios.post(
         "https://api.close.com/oauth2/token",

@@ -609,41 +609,31 @@ model tcg_collections {
   parent_collection String?  @db.Uuid
   created_at        DateTime @db.Timestamp(6)
   modified_at       DateTime @db.Timestamp(6)
+  id_linked_user    String   @db.Uuid
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model connection_strategies {
-  id_connection_strategy String  @db.Uuid
+  id_connection_strategy String  @id(map: "pk_connection_strategies") @db.Uuid
+  status                 Boolean
   type                   String
   id_project             String? @db.Uuid
-
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model cs_attributes {
-  id_cs_attribute String @db.Uuid
-  id_cs_entity    String @db.Uuid
+  id_cs_attribute String @id(map: "pk_ct_attributes") @db.Uuid
   attribute_slug  String
   data_type       String
-
-  @@ignore
+  id_cs_entity    String @db.Uuid
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model cs_entities {
-  id_cs_entity           String @db.Uuid
+  id_cs_entity           String @id(map: "pk_ct_entities") @db.Uuid
   id_connection_strategy String @db.Uuid
-
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model cs_values {
-  id_cs_value     String @db.Uuid
+  id_cs_value     String @id(map: "pk_ct_values") @db.Uuid
   value           String
-  id_ct_attribute String @db.Uuid
-
-  @@ignore
+  id_cs_attribute String @db.Uuid
 }

@@ -13,6 +13,8 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 export type CopperOAuthResponse = {
   access_token: string;
@@ -22,6 +24,8 @@ export type CopperOAuthResponse = {
 
 @Injectable()
 export class CopperConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -30,7 +34,8 @@ export class CopperConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(CopperConnectionService.name);
-    this.registry.registerService('Copper', this);
+    this.registry.registerService('copper', this);
+    this.type = providerToType('copper', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -45,10 +50,11 @@ export class CopperConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getCopperSecret().CLIENT_ID,
-        client_secret: this.env.getCopperSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',

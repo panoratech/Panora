@@ -50,6 +50,8 @@ import {
   I${verticalUpper}ConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { AuthStrategy } from '@panora/shared';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
 
 export type ${providerUpper}OAuthResponse = {
   access_token: string;
@@ -59,6 +61,8 @@ export type ${providerUpper}OAuthResponse = {
 
 @Injectable()
 export class ${providerUpper}ConnectionService implements I${verticalUpper}ConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -67,7 +71,8 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(${providerUpper}ConnectionService.name);
-    this.registry.registerService('${providerUpper}', this);
+    this.registry.registerService('${provider.toLowerCase()}', this);
+    this.type = providerToType('${provider.toLowerCase()}', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -82,10 +87,11 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = \`\${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback\`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.get${providerUpper}Secret().CLIENT_ID,
-        client_secret: this.env.get${providerUpper}Secret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
@@ -169,8 +175,8 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: \`Basic ${Buffer.from(
-                `\${this.env.get\`${providerUpper}Secret\`().CLIENT_ID}:\${
-                this.env.get\`${providerUpper}Secret\`().CLIENT_SECRET
+                `CREDENTIALS.CLIENT_ID}:\${
+                  CREDENTIALS.CLIENT_SECRET
               }`,
             ).toString('base64')}\`,
           },
@@ -205,7 +211,8 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
 
 // Function to add provider to EnvironmentService.ts
 function addProviderToEnvironmentService(provider, envServicePath) {
-    const providerMethodName = `get${provider.charAt(0).toUpperCase() + provider.slice(1)}Secret`;
+    const providerMethodName_ = provider.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('_');
+    const providerMethodName = `get${providerMethodName_}Secret`;
     const providerEnvPrefix = provider.toUpperCase();
   
     const methodToAdd = `

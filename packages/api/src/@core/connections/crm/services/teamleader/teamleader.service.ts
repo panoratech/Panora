@@ -13,6 +13,8 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 export type TeamleaderOAuthResponse = {
   access_token: string;
@@ -23,6 +25,8 @@ export type TeamleaderOAuthResponse = {
 
 @Injectable()
 export class TeamleaderConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -31,7 +35,8 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(TeamleaderConnectionService.name);
-    this.registry.registerService('Teamleader', this);
+    this.registry.registerService('teamleader', this);
+    this.type = providerToType('teamleader', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -46,10 +51,11 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getTeamleaderSecret().CLIENT_ID,
-        client_secret: this.env.getTeamleaderSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
@@ -119,10 +125,12 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
     
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
-        client_id: this.env.getTeamleaderSecret().CLIENT_ID,
-        client_secret: this.env.getTeamleaderSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });

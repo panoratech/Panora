@@ -12,6 +12,8 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
 import { LoggerService } from '@@core/logger/logger.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 type AcceloOAuthResponse = {
   access_token: string;
@@ -24,6 +26,8 @@ type AcceloOAuthResponse = {
 
 @Injectable()
 export class AcceloConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -33,6 +37,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(AcceloConnectionService.name);
     this.registry.registerService('accelo', this);
+    this.type = providerToType('accelo', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -50,21 +55,23 @@ export class AcceloConnectionService implements ICrmConnectionService {
       if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
         code: code,
       }); 
-      const subdomain = 'panora'; //TODO: if custom oauth then get the actual domain from customer
+      //const subdomain = 'panora'; //TODO: if custom oauth then get the actual domain from customer
       const res = await axios.post(
-        `https://${subdomain}.api.accelo.com/oauth2/v0/token`,
+        `${CREDENTIALS.SUBDOMAIN}/oauth2/v0/token`,
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getAcceloSecret().CLIENT_ID}:${
-                this.env.getAcceloSecret().CLIENT_SECRET
+              `${CREDENTIALS.CLIENT_ID}:${
+                CREDENTIALS.CLIENT_SECRET
               }`,
             ).toString('base64')}`,
           },
@@ -85,7 +92,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: `https://${subdomain}.api.accelo.com`,
+            account_url: CREDENTIALS.SUBDOMAIN!,
             expiration_timestamp: new Date(
               new Date().getTime() + data.expires_in * 1000,
             ),
@@ -101,7 +108,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
             connection_token: connection_token,
             provider_slug: 'accelo',
             token_type: 'oauth',
-            account_url: `https://${subdomain}.api.accelo.com`,
+            account_url: CREDENTIALS.SUBDOMAIN!,
             access_token: this.cryptoService.encrypt(data.access_token),
             expiration_timestamp: new Date(
               new Date().getTime() + data.expires_in * 1000,
@@ -127,22 +134,23 @@ export class AcceloConnectionService implements ICrmConnectionService {
   // It is not required for Accelo as it does not provide refresh_token
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const subdomain = 'panora'; //TODO: if custom oauth then get the actual domain from customer
+      //const subdomain = 'panora'; //TODO: if custom oauth then get the actual domain from customer
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const res = await axios.post(
-        `https://${subdomain}.api.accelo.com/oauth2/v0/token`,
+        `${CREDENTIALS.SUBDOMAIN!}/oauth2/v0/token`,
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getAcceloSecret().CLIENT_ID}:${
-                this.env.getAcceloSecret().CLIENT_SECRET
+              `${CREDENTIALS.CLIENT_ID}:${
+                CREDENTIALS.CLIENT_SECRET
               }`,
             ).toString('base64')}`,
           },

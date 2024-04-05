@@ -61,7 +61,7 @@ export class EnvironmentService {
     };
   }
 
-  getZendeskSellSecret(): OAuth {
+  getZendeskSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('ZENDESK_SELL_CLIENT_ID'),
       CLIENT_SECRET: this.configService.get<string>(
@@ -93,7 +93,7 @@ export class EnvironmentService {
 
   /* TICKETING */
 
-  getZendeskTicketingSecret(): OAuth {
+  getZendesk_TcgSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('ZENDESK_TICKETING_CLIENT_ID'),
       CLIENT_SECRET: this.configService.get<string>(
@@ -137,7 +137,7 @@ export class EnvironmentService {
     };
   }
 
-  getJiraServiceManagementSecret(): OAuth {
+  getJiraServiceMgmtSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('JIRA_CLIENT_ID'),
       CLIENT_SECRET: this.configService.get<string>('JIRA_CLIENT_SECRET'),

@@ -13,6 +13,8 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 export type KeapOAuthResponse = {
   access_token: string;
@@ -22,6 +24,8 @@ export type KeapOAuthResponse = {
 
 @Injectable()
 export class KeapConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -30,7 +34,8 @@ export class KeapConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(KeapConnectionService.name);
-    this.registry.registerService('Keap', this);
+    this.registry.registerService('keap', this);
+    this.type = providerToType('keap', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -45,10 +50,11 @@ export class KeapConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getKeapSecret().CLIENT_ID,
-        client_secret: this.env.getKeapSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
@@ -116,11 +122,13 @@ export class KeapConnectionService implements ICrmConnectionService {
     
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
       const res = await axios.post(
         "https://api.infusionsoft.com/token",
         formData.toString(),
@@ -128,10 +136,11 @@ export class KeapConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getKeapSecret().CLIENT_ID}:${
-                this.env.getKeapSecret().CLIENT_SECRET
+              `${CREDENTIALS.CLIENT_ID}:${
+                CREDENTIALS.CLIENT_SECRET
               }`,
-            ).toString('base64')}`,          },
+            ).toString('base64')}`,          
+          },
         },
       );
       const data: KeapOAuthResponse = res.data;

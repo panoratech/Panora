@@ -102,7 +102,7 @@ export class CrmConnectionsService {
         connectionId: connectionId,
         refreshToken: refresh_token,
         account_url: account_url,
-        id_project: id_project,
+        projectId: id_project,
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {

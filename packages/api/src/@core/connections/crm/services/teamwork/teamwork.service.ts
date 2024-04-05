@@ -13,6 +13,8 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 export type TeamworkOAuthResponse = {
   access_token: string;
@@ -20,6 +22,8 @@ export type TeamworkOAuthResponse = {
 
 @Injectable()
 export class TeamworkConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,7 +32,8 @@ export class TeamworkConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(TeamworkConnectionService.name);
-    this.registry.registerService('Teamwork', this);
+    this.registry.registerService('teamwork', this);
+    this.type = providerToType('teamwork', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -43,10 +48,11 @@ export class TeamworkConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getTeamworkSecret().CLIENT_ID,
-        client_secret: this.env.getTeamworkSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
       });

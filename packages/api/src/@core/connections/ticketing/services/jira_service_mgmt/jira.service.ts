@@ -12,6 +12,8 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 export type JiraCloudIdInformation = {
   id: string;
@@ -35,6 +37,8 @@ export type JiraOAuthResponse = {
 export class JiraServiceMgmtConnectionService
   implements ITicketingConnectionService
 {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -44,6 +48,7 @@ export class JiraServiceMgmtConnectionService
   ) {
     this.logger.setContext(JiraServiceMgmtConnectionService.name);
     this.registry.registerService('jira_service_mgmt', this);
+    this.type = providerToType('jira_service_mgmt', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -58,10 +63,11 @@ export class JiraServiceMgmtConnectionService
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getJiraServiceManagementSecret().CLIENT_ID,
-        client_secret: this.env.getJiraServiceManagementSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
@@ -96,6 +102,7 @@ export class JiraServiceMgmtConnectionService
       const sites_scopes: JiraCloudIdInformation[] = res_.data;
       let cloud_id: string;
       for (const site of sites_scopes) {
+        //todo
         if (site.url == 'https://panora.atlassian.net') {
           cloud_id = site.id;
           break;
@@ -158,11 +165,12 @@ export class JiraServiceMgmtConnectionService
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
       const res = await axios.post(
         `https://auth.atlassian.com/oauth/token`,
         formData.toString(),
@@ -170,8 +178,8 @@ export class JiraServiceMgmtConnectionService
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getJiraSecret().CLIENT_ID}:${
-                this.env.getJiraSecret().CLIENT_SECRET
+              `${CREDENTIALS.CLIENT_ID}:${
+                CREDENTIALS.CLIENT_SECRET
               }`,
             ).toString('base64')}`,
           },

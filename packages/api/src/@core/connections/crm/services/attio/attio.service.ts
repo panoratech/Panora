@@ -12,6 +12,8 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
 import { LoggerService } from '@@core/logger/logger.service';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 export interface AttioOAuthResponse {
   access_token: string,
@@ -20,6 +22,8 @@ export interface AttioOAuthResponse {
 
 @Injectable()
 export class AttioConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+  
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -29,6 +33,7 @@ export class AttioConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(AttioConnectionService.name);
     this.registry.registerService('attio', this);
+    this.type = providerToType('attio', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -46,10 +51,12 @@ export class AttioConnectionService implements ICrmConnectionService {
       if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: this.env.getAttioSecret().CLIENT_ID,
-        client_secret: this.env.getAttioSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
       });

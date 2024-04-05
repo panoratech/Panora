@@ -12,6 +12,8 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { AuthStrategy } from '@panora/shared';
+import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
 
 export interface GitlabOAuthResponse {
   access_token: string;
@@ -23,6 +25,8 @@ export interface GitlabOAuthResponse {
 
 @Injectable()
 export class GitlabConnectionService implements ITicketingConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -32,6 +36,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(GitlabConnectionService.name);
     this.registry.registerService('gitlab', this);
+    this.type = providerToType('gitlab', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -46,10 +51,11 @@ export class GitlabConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getGitlabSecret().CLIENT_ID,
-        client_secret: this.env.getGitlabSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
@@ -117,11 +123,12 @@ export class GitlabConnectionService implements ITicketingConnectionService {
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
+      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
       const res = await axios.post(
         `https://api.gitlab.app/oauth/token`,
         formData.toString(),
@@ -129,8 +136,8 @@ export class GitlabConnectionService implements ITicketingConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getGitlabSecret().CLIENT_ID}:${
-                this.env.getGitlabSecret().CLIENT_SECRET
+              `${CREDENTIALS.CLIENT_ID}:${
+                CREDENTIALS.CLIENT_SECRET
               }`,
             ).toString('base64')}`,
           },
