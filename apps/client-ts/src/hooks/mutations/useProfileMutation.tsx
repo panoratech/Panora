@@ -15,12 +15,12 @@ const useProfileMutation = () => {
     const queryClient = useQueryClient();
     
     const addProfile = async (data: IProfileDto) => {
-        const response = await fetch(`${config.API_URL}/users/create`, {
+        const response = await fetch(`${config.API_URL}/auth/users/create`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
             'Content-Type': 'application/json',
-            },
+            }, 
         });
         
         if (!response.ok) {

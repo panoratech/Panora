@@ -32,10 +32,10 @@ export function UserNav() {
     if(data && data.length > 0 ){
       setProfile({
         id_user: data[0].id_user,
-        email: data[0].email,
+        email: data[0].email!,
         first_name: data[0].first_name,
         last_name: data[0].last_name,
-        id_organization: data[0].id_organization as string,
+        //id_organization: data[0].id_organization as string,
       })
     }
   }, [data, setProfile]);

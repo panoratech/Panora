@@ -5,8 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useStytchUser, useStytch } from "@stytch/nextjs";
 import useProfile from "@/hooks/useProfile";
 import useProfileMutation from "@/hooks/mutations/useProfileMutation";
-import useOrganisationStore from "@/state/organisationStore";
-import useOrganisations from "@/hooks/useOrganisations";
+//import useOrganisations from "@/hooks/useOrganisations";
 
 const OAUTH_TOKEN = "oauth";
 const MAGIC_LINKS_TOKEN = "magic_links";
@@ -27,7 +26,7 @@ const InnerAuthenticate = () => {
   const searchParams = useSearchParams();
   const { data, isLoading } = useProfile(user?.user_id!);
   const { mutate } = useProfileMutation();
-  const { data: orgs, isLoading: isloadingOrganisations } = useOrganisations();
+  //const { data: orgs, isLoading: isloadingOrganisations } = useOrganisations();
 
   useEffect(() => {
     if (stytch && !user && isInitialized) {
@@ -58,12 +57,12 @@ const InnerAuthenticate = () => {
           email: user.emails[0].email,
           stytch_id_user: user.user_id,
           strategy: 'b2c',
-          id_organization: orgs && orgs[0].id_organization
+          //id_organization: orgs && orgs[0].id_organization
         });
       }
       router.replace("/b2c/profile");
     }
-  }, [router, user, isInitialized, data, mutate, orgs]);
+  }, [router, user, isInitialized, data, mutate]);
 
   return null;
 };
