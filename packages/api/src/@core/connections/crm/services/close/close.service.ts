@@ -39,7 +39,7 @@ export class CloseConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(CloseConnectionService.name);
     this.registry.registerService('close', this);
-    this.type = providerToType('close', AuthStrategy.oauth2);
+    this.type = providerToType('close','crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -49,6 +49,7 @@ export class CloseConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: `close`,
+          vertical: 'crm',
         },
       });
 
@@ -103,6 +104,7 @@ export class CloseConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'close',
+            vertical: 'crm',
             token_type: 'oauth',
             account_url: "",
             access_token: this.cryptoService.encrypt(data.access_token),

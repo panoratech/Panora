@@ -33,6 +33,7 @@ export class AttioService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'attio',
+          vertical: 'crm'
         },
       });
 
@@ -75,6 +76,7 @@ export class AttioService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'attio',
+          vertical: 'crm'
         },
       });
       // console.log('Before Axios');

@@ -32,8 +32,8 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
-    this.registry.registerService('zendesk_tcg', this);
-    this.type = providerToType('zendesk_tcg', AuthStrategy.oauth2);
+    this.registry.registerService('zendesk', this);
+    this.type = providerToType('zendesk','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -42,7 +42,8 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_tcg',
+          provider_slug: 'zendesk',
+          vertical: 'ticketing',
         },
       });
 
@@ -96,7 +97,8 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'zendesk_tcg',
+            provider_slug: 'zendesk',
+            vertical: 'ticketing',
             token_type: 'oauth',
             account_url: CREDENTIALS.SUBDOMAIN!,
             access_token: this.cryptoService.encrypt(data.access_token),
@@ -118,7 +120,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       handleServiceError(
         error,
         this.logger,
-        'zendesk_tcg',
+        'zendesk',
         Action.oauthCallback,
       );
     }

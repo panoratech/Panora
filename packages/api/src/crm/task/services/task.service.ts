@@ -106,6 +106,7 @@ export class TaskService {
         sourceObject: unifiedTaskData,
         targetType: CrmObject.task,
         providerName: integrationId,
+        vertical: "crm",
         customFieldMappings: [],
       });
 
@@ -122,6 +123,7 @@ export class TaskService {
         sourceObject: [resp.data],
         targetType: CrmObject.task,
         providerName: integrationId,
+        vertical: "crm",
         customFieldMappings: [],
       })) as UnifiedTaskOutput[];
 

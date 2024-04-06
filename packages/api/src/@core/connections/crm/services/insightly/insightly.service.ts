@@ -35,7 +35,7 @@ export class InsightlyConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(InsightlyConnectionService.name);
     this.registry.registerService('insightly', this);
-    this.type = providerToType('insightly', AuthStrategy.oauth2);
+    this.type = providerToType('insightly','crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -45,6 +45,7 @@ export class InsightlyConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: `insightly`,
+          vertical: 'crm',
         },
       });
 
@@ -99,6 +100,7 @@ export class InsightlyConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'insightly',
+            vertical: 'crm',
             token_type: 'oauth',
             account_url: "",
             access_token: this.cryptoService.encrypt(data.access_token),

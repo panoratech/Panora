@@ -32,6 +32,7 @@ export class JiraService implements ITeamService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira',
+          vertical: 'ticketing'
         },
       });
 

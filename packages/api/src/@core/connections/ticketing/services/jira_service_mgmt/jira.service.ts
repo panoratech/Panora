@@ -48,7 +48,7 @@ export class JiraServiceMgmtConnectionService
   ) {
     this.logger.setContext(JiraServiceMgmtConnectionService.name);
     this.registry.registerService('jira_service_mgmt', this);
-    this.type = providerToType('jira_service_mgmt', AuthStrategy.oauth2);
+    this.type = providerToType('jira_service_mgmt','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -58,6 +58,7 @@ export class JiraServiceMgmtConnectionService
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira_service_mgmt',
+          vertical: 'ticketing',
         },
       });
 
@@ -134,6 +135,7 @@ export class JiraServiceMgmtConnectionService
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'jira_service_mgmt',
+            vertical: 'ticketing',
             token_type: 'oauth',
             account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
             access_token: this.cryptoService.encrypt(data.access_token),

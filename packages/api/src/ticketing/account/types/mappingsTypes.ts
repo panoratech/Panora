@@ -7,7 +7,7 @@ const frontAccountMapper = new FrontAccountMapper();
 const githubAccountMapper = new GithubAccountMapper();
 
 export const accountUnificationMapping = {
-  zendesk_tcg: {
+  zendesk: {
     unify: zendeskAccountMapper.unify.bind(zendeskAccountMapper),
     desunify: zendeskAccountMapper.desunify,
   },

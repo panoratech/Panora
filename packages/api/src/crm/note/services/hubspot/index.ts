@@ -36,6 +36,7 @@ export class HubspotService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm'
         },
       });
       const dataBody = {
@@ -78,6 +79,7 @@ export class HubspotService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm'
         },
       });
 

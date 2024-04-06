@@ -45,7 +45,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(ZohoConnectionService.name);
     this.registry.registerService('zoho', this);
-    this.type = providerToType('zoho', AuthStrategy.oauth2);
+    this.type = providerToType('zoho','crm', AuthStrategy.oauth2);
   }
   async handleCallback(opts: CallbackParams) {
     try {
@@ -57,6 +57,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
 
@@ -111,6 +112,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'zoho',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token

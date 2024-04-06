@@ -37,7 +37,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(GithubConnectionService.name);
     this.registry.registerService('github', this);
-    this.type = providerToType('github', AuthStrategy.oauth2);
+    this.type = providerToType('github','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -46,7 +46,8 @@ export class GithubConnectionService implements ITicketingConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'github', //TODO
+          provider_slug: 'github',
+          vertical: 'ticketing',
         },
       });
 
@@ -99,6 +100,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'github',
+            vertical: 'ticketing',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

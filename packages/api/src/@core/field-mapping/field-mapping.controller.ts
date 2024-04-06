@@ -76,10 +76,12 @@ export class FieldMappingController {
   getCustomProperties(
     @Query('linkedUserId') linkedUserId: string,
     @Query('providerId') providerId: string,
+    @Query('vertical') vertical: string,
   ) {
     return this.fieldMappingService.getCustomProperties(
       linkedUserId,
       providerId,
+      vertical
     );
   }
 }

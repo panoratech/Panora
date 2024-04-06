@@ -9,7 +9,7 @@ const frontAttachmentMapper = new FrontAttachmentMapper();
 const gorgiasAttachmentMapper = new GorgiasAttachmentMapper();
 
 export const attachmentUnificationMapping = {
-  zendesk_tcg: {
+  zendesk: {
     unify: zendeskAttachmentMapper.unify.bind(zendeskAttachmentMapper),
     desunify: zendeskAttachmentMapper.desunify,
   },

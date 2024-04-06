@@ -9,7 +9,7 @@ const frontCommentMapper = new FrontCommentMapper();
 const gorgiasCommentMapper = new GorgiasCommentMapper();
 
 export const commentUnificationMapping = {
-  zendesk_tcg: {
+  zendesk: {
     unify: zendeskCommentMapper.unify.bind(zendeskCommentMapper),
     desunify: zendeskCommentMapper.desunify,
   },

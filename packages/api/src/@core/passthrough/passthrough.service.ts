@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { getProviderVertical, providersConfig } from '@panora/shared';
+import { providersConfig } from '@panora/shared';
 
 @Injectable()
 export class PassthroughService {
@@ -23,6 +23,7 @@ export class PassthroughService {
     requestParams: PassThroughRequestDto,
     integrationId: string,
     linkedUserId: string,
+    vertical: string
   ): Promise<PassThroughResponse> {
     try {
       const { method, path, data, headers } = requestParams;
@@ -42,7 +43,7 @@ export class PassthroughService {
       });
       const intId = integrationId.toLowerCase();
       const providerUrl =
-        providersConfig[getProviderVertical(intId).toLowerCase()][intId].apiUrl;
+        providersConfig[vertical.toLowerCase()][intId].apiUrl;
       const BASE_URL = `${providerUrl}${path}`;
       const connection = await this.prisma.connections.findFirst({
         where: {

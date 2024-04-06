@@ -35,7 +35,7 @@ export class CopperConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(CopperConnectionService.name);
     this.registry.registerService('copper', this);
-    this.type = providerToType('copper', AuthStrategy.oauth2);
+    this.type = providerToType('copper','crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -45,6 +45,7 @@ export class CopperConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: `copper`,
+          vertical: 'crm',
         },
       });
 
@@ -93,6 +94,7 @@ export class CopperConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'copper',
+            vertical: 'crm',
             token_type: 'oauth',
             account_url: "",
             access_token: this.cryptoService.encrypt(data.access_token),

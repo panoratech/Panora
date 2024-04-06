@@ -33,6 +33,7 @@ export class JiraService implements ITagService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira',
+          vertical: 'ticketing'
         },
       });
 

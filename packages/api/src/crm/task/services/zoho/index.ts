@@ -33,6 +33,7 @@ export class ZohoService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm'
         },
       });
       const resp = await axios.post(
@@ -73,6 +74,7 @@ export class ZohoService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm'
         },
       });
       //TODO: handle fields

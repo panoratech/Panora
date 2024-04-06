@@ -32,7 +32,7 @@ export class ClickupConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(ClickupConnectionService.name);
     this.registry.registerService('clickup', this);
-    this.type = providerToType('clickup', AuthStrategy.oauth2);
+    this.type = providerToType('clickup','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -42,6 +42,7 @@ export class ClickupConnectionService implements ITicketingConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'clickup',
+          vertical: 'ticketing',
         },
       });
 
@@ -90,6 +91,7 @@ export class ClickupConnectionService implements ITicketingConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'clickup',
+            vertical: 'ticketing',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',

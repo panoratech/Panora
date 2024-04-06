@@ -111,6 +111,7 @@ export class SyncService implements OnModuleInit {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: integrationId,
+          vertical: 'crm'
         },
       });
       if (!connection) {
@@ -142,6 +143,7 @@ export class SyncService implements OnModuleInit {
         sourceObject,
         targetType: CrmObject.company,
         providerName: integrationId,
+        vertical: "crm",
         customFieldMappings,
       })) as UnifiedCompanyOutput[];
 

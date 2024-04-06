@@ -32,6 +32,7 @@ export class ClickupService implements ITeamService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing'
         },
       });
 

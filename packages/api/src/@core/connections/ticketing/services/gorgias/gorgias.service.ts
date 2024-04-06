@@ -37,7 +37,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(GorgiasConnectionService.name);
     this.registry.registerService('gorgias', this);
-    this.type = providerToType('gorgias', AuthStrategy.oauth2);
+    this.type = providerToType('gorgias','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -47,6 +47,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'gorgias',
+          vertical: 'ticketing',
         },
       });
 
@@ -101,6 +102,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'gorgias',
+            vertical: 'ticketing',
             token_type: 'oauth',
             account_url: CREDENTIALS.SUBDOMAIN!,
             access_token: this.cryptoService.encrypt(data.access_token),

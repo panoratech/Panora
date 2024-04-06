@@ -5,6 +5,7 @@ import { constructAuthUrl } from '@panora/shared';
 type UseOAuthProps = {
   clientId?: string;
   providerName: string;           // Name of the OAuth provider
+  vertical: string;
   returnUrl: string;              // Return URL after OAuth flow
   projectId: string;              // Project ID
   linkedUserId: string;           // Linked User ID
@@ -12,7 +13,7 @@ type UseOAuthProps = {
   onSuccess: () => void;
 };
 
-const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId,optionalApiUrl, onSuccess }: UseOAuthProps) => {
+const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, optionalApiUrl, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
 
 
@@ -21,11 +22,14 @@ const useOAuth = ({ providerName, returnUrl, projectId, linkedUserId,optionalApi
     setTimeout(() => setIsReady(true), 1000); // Simulating async operation
   }, []);
 
-  const openModal = (onWindowClose: () => void) => {
+  const openModal = async (onWindowClose: () => void) => {
     const apiUrl = optionalApiUrl? optionalApiUrl : config.API_URL!;
-    const authUrl = constructAuthUrl({
-      projectId, linkedUserId, providerName, returnUrl, apiUrl
+    const authUrl = await constructAuthUrl({
+      projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical
     });
+    if(!authUrl) {
+      throw new Error("Auth Url is Invalid "+ authUrl)
+    }
     const width = 600, height = 600;
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;

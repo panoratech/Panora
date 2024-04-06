@@ -1,3 +1,12 @@
+/* 
+(USED BY PANORA CONTRIBUTORS)
+
+THIS SCRIPT UPDATES ALL DEPENDENCIES WHEN A NEW SERVICE 3RD PARTY IS ADDED TO THE CODEBASE 
+AFTER ADDING THE NEW CONNECTOR, CONTRIBUTOR JUST HAS TO RUN (EXAMPLE FOR CRM VERTICAL AND CONTACT COMMON OBJECT)
+  pnpm run validate-connectors --vertical="crm" --objectType="contact"
+
+*/
+
 import * as fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

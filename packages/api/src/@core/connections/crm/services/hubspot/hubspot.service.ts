@@ -34,7 +34,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(HubspotConnectionService.name);
     this.registry.registerService('hubspot', this);
-    this.type = providerToType('hubspot', AuthStrategy.oauth2);
+    this.type = providerToType('hubspot','crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -47,6 +47,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
       if (isNotUnique) return; 
@@ -99,6 +100,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'hubspot',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

@@ -33,7 +33,7 @@ export class AttioConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(AttioConnectionService.name);
     this.registry.registerService('attio', this);
-    this.type = providerToType('attio', AuthStrategy.oauth2);
+    this.type = providerToType('attio','crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -46,6 +46,7 @@ export class AttioConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'attio',
+          vertical: 'crm',
         },
       });
       if (isNotUnique) return;
@@ -96,6 +97,7 @@ export class AttioConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'attio',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',

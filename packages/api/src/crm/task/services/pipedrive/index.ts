@@ -33,6 +33,7 @@ export class PipedriveService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm'
         },
       });
       const resp = await axios.post(
@@ -72,6 +73,7 @@ export class PipedriveService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm'
         },
       });
       const resp = await axios.get(

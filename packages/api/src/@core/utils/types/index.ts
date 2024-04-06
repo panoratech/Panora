@@ -2,9 +2,9 @@ import { CrmObject, UnifiedCrm } from '@crm/@utils/@types';
 import { HrisObject } from '@hris/@types';
 import { AtsObject, UnifiedAts } from '@ats/@types';
 import { AccountingObject } from '@accounting/@types';
-import { MarketingAutomationObject } from '@marketing-automation/@types';
+import { MarketingAutomationObject } from 'src/marketing_automation/@types';
 import { TicketingObject, UnifiedTicketing } from '@ticketing/@utils/@types';
-import { FileStorageObject } from '@file-storage/@types';
+import { FileStorageObject } from 'src/file_storage/@types';
 import {
   ApiExtraModels,
   ApiOkResponse,

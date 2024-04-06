@@ -37,6 +37,7 @@ export class JiraService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira',
+          vertical: 'ticketing'
         },
       });
 
@@ -80,6 +81,7 @@ export class JiraService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira',
+          vertical: 'ticketing'
         },
       });
       const resp = await axios.get(

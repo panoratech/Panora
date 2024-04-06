@@ -59,6 +59,7 @@ export class ZendeskService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm'
         },
       });
       const resp = await axios.post(
@@ -124,6 +125,7 @@ export class ZendeskService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm'
         },
       });
 

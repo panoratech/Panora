@@ -135,7 +135,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee_id),
-        'zendesk_tcg',
+        'zendesk',
       );
       if (user_id) {
         opts = { assigned_to: [user_id] };

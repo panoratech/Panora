@@ -117,6 +117,7 @@ export class SyncService implements OnModuleInit {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: integrationId,
+          vertical: 'ticketing'
         },
       });
       if (!connection) {
@@ -151,6 +152,7 @@ export class SyncService implements OnModuleInit {
         sourceObject,
         targetType: TicketingObject.contact,
         providerName: integrationId,
+        vertical: "ticketing",
         customFieldMappings,
       })) as UnifiedContactOutput[];
 

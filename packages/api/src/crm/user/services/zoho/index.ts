@@ -32,6 +32,7 @@ export class ZohoService implements IUserService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm'
         },
       });
       //TODO: handle fields

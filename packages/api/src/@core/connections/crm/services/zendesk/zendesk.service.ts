@@ -37,7 +37,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
     this.registry.registerService('zendesk', this);
-    this.type = providerToType('zendesk', AuthStrategy.oauth2);
+    this.type = providerToType('zendesk','crm', AuthStrategy.oauth2);
   }
   async handleCallback(opts: CallbackParams) {
     try {
@@ -46,6 +46,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
 
@@ -103,6 +104,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'zendesk',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token

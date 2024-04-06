@@ -1,10 +1,6 @@
 import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
-import { Response } from 'express';
 import { LoggerService } from '@@core/logger/logger.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { getProviderVertical, ProviderVertical } from '@panora/shared';
 import { ConnectionsStrategiesService } from './connections-strategies.service';
 import { CreateConnectionStrategyDto } from './dto/create-connections-strategies.dto';
 import { ToggleStrategyDto } from './dto/toggle.dto';
@@ -55,5 +51,9 @@ export class ConnectionsStrategiesController {
   async toggleConnectionStrategy(@Body() data: ToggleStrategyDto) {
     return await this.connectionsStrategiesService.toggle(data.id);
   }
+
+  //TODO: delete a connection strategy
+
+  //TODO: add scopes maybe for a provider ? 
 
 }

@@ -6,7 +6,15 @@ import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
-import { getProviderVertical, ProviderVertical } from '@panora/shared';
+import { ProviderVertical } from '@panora/shared';
+
+export type StateDataType = {
+  projectId: string;
+  vertical: string;
+  linkedUserId: string;
+  providerName: string; 
+  returnUrl: string;
+}
 
 @ApiTags('connections')
 @Controller('connections')
@@ -45,9 +53,9 @@ export class ConnectionsController {
           `No Callback Params found for code, found ${code}`,
         );
 
-      const stateData = JSON.parse(decodeURIComponent(state));
-      const { projectId, linkedUserId, providerName, returnUrl } = stateData;
-      switch (getProviderVertical(providerName.toLowerCase())) {
+      const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
+      const { projectId, vertical, linkedUserId, providerName, returnUrl } = stateData;
+      switch (vertical.toLowerCase()) {
         case ProviderVertical.CRM:
           const zohoLocation_ = zohoLocation ? zohoLocation : '';
           this.crmConnectionsService.handleCRMCallBack(

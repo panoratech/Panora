@@ -1,5 +1,5 @@
 import { getCredentials, OAuth2AuthData, providerToType } from "./envConfig";
-import { AuthStrategy, findProviderVertical, providersConfig, ProviderConfig } from "./utils";
+import { AuthStrategy, providersConfig, ProviderConfig } from "./utils";
 
 interface AuthParams {
   projectId: string;
@@ -7,20 +7,21 @@ interface AuthParams {
   providerName: string;
   returnUrl: string;
   apiUrl: string;
+  vertical: string;
 }
 
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
-export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl }: AuthParams) => {
+export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
   const encodedRedirectUrl = encodeURIComponent(`${apiUrl}/connections/oauth/callback`);
-  const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
+  const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
 
-  console.log("State : ", JSON.stringify({ projectId, linkedUserId, providerName, returnUrl }));
+  console.log("State : ", JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   console.log("encodedRedirect URL : ", encodedRedirectUrl);
 
-  const vertical = findProviderVertical(providerName);
+  //const vertical = findProviderVertical(providerName);
   if (vertical == null) {
-    return null;
+    throw new Error("vertical is null");
   }
 
   const config = providersConfig[vertical.toLowerCase()][providerName];
@@ -31,26 +32,25 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
 
   switch(authStrategy){
     case AuthStrategy.oauth2:
-      handleOAuth2Url({
+      return handleOAuth2Url({
         providerName,
+        vertical,
         authStrategy,
         projectId,
         config,
         encodedRedirectUrl,
         state
       });
-      break;
     case AuthStrategy.api_key:
-      handleApiKeyUrl();
-      break;
+      return handleApiKeyUrl();
     case AuthStrategy.basic:
-      handleBasicUrl();
-      break;
+      return handleBasicUrl();
   }
 };
 
 type HandleOAuth2Url = {
   providerName: string;
+  vertical: string;
   authStrategy: AuthStrategy;
   projectId: string;
   config: ProviderConfig;
@@ -61,6 +61,7 @@ type HandleOAuth2Url = {
 const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const {
     providerName,
+    vertical,
     authStrategy,
     projectId,
     config,
@@ -68,7 +69,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     state
   } = input;
 
-  const type = providerToType(providerName, authStrategy);
+  const type = providerToType(providerName, vertical, authStrategy);
 
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials

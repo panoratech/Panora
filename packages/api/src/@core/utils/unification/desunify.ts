@@ -4,7 +4,7 @@ import { desunifyCrm } from '@crm/@utils/@unification';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { desunifyTicketing } from '@ticketing/@utils/@unification';
 import { DesunifyReturnType } from '../types/desunify.input';
-import { getProviderVertical, ProviderVertical } from '@panora/shared';
+import { ProviderVertical } from '@panora/shared';
 
 /* to insert data
 
@@ -16,18 +16,20 @@ export async function desunify<T extends Unified>({
   sourceObject,
   targetType,
   providerName,
+  vertical,
   customFieldMappings,
 }: {
   sourceObject: T;
   targetType: TargetObject;
   providerName: string;
+  vertical: string
   customFieldMappings?: {
     slug: string;
     remote_id: string;
   }[];
 }): Promise<DesunifyReturnType> {
   let targetType_;
-  switch (getProviderVertical(providerName)) {
+  switch (vertical.toLowerCase()) {
     case ProviderVertical.CRM:
       targetType_ = targetType as CrmObject;
       return desunifyCrm({

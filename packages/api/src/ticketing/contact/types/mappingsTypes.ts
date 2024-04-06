@@ -9,7 +9,7 @@ const githubContactMapper = new GithubContactMapper();
 const gorgiasContactMapper = new GorgiasContactMapper();
 
 export const contactUnificationMapping = {
-  zendesk_tcg: {
+  zendesk: {
     unify: zendeskContactMapper.unify.bind(zendeskContactMapper),
     desunify: zendeskContactMapper.desunify,
   },

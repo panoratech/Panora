@@ -36,6 +36,7 @@ export class AttioService implements ICompanyService {
                 where: {
                     id_linked_user: linkedUserId,
                     provider_slug: 'attio',
+                    vertical: 'crm'
                 },
             });
 
@@ -77,6 +78,7 @@ export class AttioService implements ICompanyService {
                 where: {
                     id_linked_user: linkedUserId,
                     provider_slug: 'attio',
+                    vertical: 'crm'
                 },
             });
             const resp = await axios.post(

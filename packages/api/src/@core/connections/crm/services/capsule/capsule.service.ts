@@ -38,7 +38,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(CapsuleConnectionService.name);
     this.registry.registerService('capsule', this);
-    this.type = providerToType('capsule', AuthStrategy.oauth2);
+    this.type = providerToType('capsule','crm', AuthStrategy.oauth2);
 
   }
 
@@ -49,6 +49,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: `capsule`,
+          vertical: 'crm',
         },
       });
 
@@ -56,8 +57,8 @@ export class CapsuleConnectionService implements ICrmConnectionService {
       const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getCapsuleSecret().CLIENT_ID,
-        client_secret: this.env.getCapsuleSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         code: code,
         grant_type: 'authorization_code',
       });
@@ -100,6 +101,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'capsule',
+            vertical: 'crm',
             token_type: 'oauth',
             account_url: "",
             access_token: this.cryptoService.encrypt(data.access_token),

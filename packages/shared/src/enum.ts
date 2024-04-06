@@ -1,12 +1,12 @@
 export enum ProviderVertical {
-    CRM = 'CRM',
-    HRIS = 'HRIS',
-    ATS = 'ATS',
-    Accounting = 'Accounting',
-    Ticketing = 'Ticketing',
-    MarketingAutomation = 'Marketing Automation',
-    FileStorage = 'File Storage',
-    Unknown = 'Unknown',
+    CRM = 'crm',
+    HRIS = 'hris',
+    ATS = 'ats',
+    Accounting = 'accounting',
+    Ticketing = 'ticketing',
+    MarketingAutomation = 'marketing_automation',
+    FileStorage = 'file_storage',
+    Unknown = 'unknown',
 }
 
 export enum CrmProviders {

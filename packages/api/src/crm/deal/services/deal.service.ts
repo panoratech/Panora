@@ -95,6 +95,7 @@ export class DealService {
         sourceObject: unifiedDealData,
         targetType: CrmObject.deal,
         providerName: integrationId,
+        vertical: "crm",
         customFieldMappings: [],
       });
 
@@ -110,6 +111,7 @@ export class DealService {
         sourceObject: [resp.data],
         targetType: CrmObject.deal,
         providerName: integrationId,
+        vertical: "crm",
         customFieldMappings: [],
       })) as UnifiedDealOutput[];
 

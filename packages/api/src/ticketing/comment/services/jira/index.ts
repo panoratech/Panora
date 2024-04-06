@@ -39,6 +39,7 @@ export class JiraService implements ICommentService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira',
+          vertical: 'ticketing'
         },
       });
 
@@ -129,6 +130,7 @@ export class JiraService implements ICommentService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira',
+          vertical: 'ticketing'
         },
       });
       //retrieve ticket remote id so we can retrieve the comments in the original software

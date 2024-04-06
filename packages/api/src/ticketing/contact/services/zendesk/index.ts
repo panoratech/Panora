@@ -23,7 +23,7 @@ export class ZendeskService implements IContactService {
     this.logger.setContext(
       TicketingObject.contact.toUpperCase() + ':' + ZendeskService.name,
     );
-    this.registry.registerService('zendesk_tcg', this);
+    this.registry.registerService('zendesk', this);
   }
 
   async syncContacts(
@@ -34,7 +34,8 @@ export class ZendeskService implements IContactService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_tcg',
+          provider_slug: 'zendesk',
+          vertical: 'ticketing'
         },
       });
 

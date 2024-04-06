@@ -32,6 +32,7 @@ export class ZendeskService implements IStageService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm'
         },
       });
       const res = await this.prisma.crm_deals.findUnique({

@@ -36,7 +36,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(PipedriveConnectionService.name);
     this.registry.registerService('pipedrive', this);
-    this.type = providerToType('pipedrive', AuthStrategy.oauth2);
+    this.type = providerToType('pipedrive','crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -46,6 +46,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
 
@@ -98,6 +99,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'pipedrive',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

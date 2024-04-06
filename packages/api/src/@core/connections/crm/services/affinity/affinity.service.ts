@@ -35,7 +35,7 @@ export class AffinityConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(AffinityConnectionService.name);
     this.registry.registerService('affinity', this);
-    this.type = providerToType('affinity', AuthStrategy.oauth2);
+    this.type = providerToType('affinity', 'crm', AuthStrategy.oauth2);
 
   }
 
@@ -46,6 +46,7 @@ export class AffinityConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: `affinity`,
+          vertical: 'crm',
         },
       });
 
@@ -54,8 +55,8 @@ export class AffinityConnectionService implements ICrmConnectionService {
       const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getAffinitySecret().CLIENT_ID,
-        client_secret: this.env.getAffinitySecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
@@ -100,6 +101,7 @@ export class AffinityConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'affinity',
+            vertical: 'crm',
             token_type: 'oauth',
             account_url: "",
             access_token: this.cryptoService.encrypt(data.access_token),

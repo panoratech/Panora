@@ -34,6 +34,7 @@ export class GorgiasService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'gorgias',
+          vertical: 'ticketing'
         },
       });
 
@@ -111,6 +112,7 @@ export class GorgiasService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'gorgias',
+          vertical: 'ticketing'
         },
       });
 

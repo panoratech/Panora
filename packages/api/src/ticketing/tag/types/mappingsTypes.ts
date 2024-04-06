@@ -9,7 +9,7 @@ const githubTagMapper = new GithubTagMapper();
 const gorgiasTagMapper = new GorgiasTagMapper();
 
 export const tagUnificationMapping = {
-  zendesk_tcg: {
+  zendesk: {
     unify: zendeskTagMapper.unify.bind(zendeskTagMapper),
     desunify: zendeskTagMapper.desunify,
   },

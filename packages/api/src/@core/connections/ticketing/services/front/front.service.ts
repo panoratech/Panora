@@ -36,7 +36,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(FrontConnectionService.name);
     this.registry.registerService('front', this);
-    this.type = providerToType('front', AuthStrategy.oauth2);
+    this.type = providerToType('front','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -45,7 +45,8 @@ export class FrontConnectionService implements ITicketingConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'front', //TODO
+          provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 
@@ -101,6 +102,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'front',
+            vertical: 'ticketing',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

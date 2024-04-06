@@ -14,7 +14,7 @@ const jiraTeamMapper = new JiraTeamMapper();
 const clickupTeamMapper = new ClickupTeamMapper();
 
 export const teamUnificationMapping = {
-  zendesk_tcg: {
+  zendesk: {
     unify: zendeskTeamMapper.unify.bind(zendeskTeamMapper),
     desunify: zendeskTeamMapper.desunify,
   },

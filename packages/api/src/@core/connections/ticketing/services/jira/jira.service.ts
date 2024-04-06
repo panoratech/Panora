@@ -43,7 +43,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(JiraConnectionService.name);
     this.registry.registerService('jira', this);
-    this.type = providerToType('jira', AuthStrategy.oauth2);
+    this.type = providerToType('jira','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -53,6 +53,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira',
+          vertical: 'ticketing',
         },
       });
 
@@ -126,6 +127,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'jira',
+            vertical: 'ticketing',
             token_type: 'oauth',
             account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
             access_token: this.cryptoService.encrypt(data.access_token),

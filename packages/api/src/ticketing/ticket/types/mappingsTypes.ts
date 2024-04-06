@@ -11,7 +11,7 @@ const hubspotTicketMapper = new HubspotTicketMapper();
 const gorgiasTicketMapper = new GorgiasTicketMapper();
 
 export const ticketUnificationMapping = {
-  zendesk_tcg: {
+  zendesk: {
     unify: zendeskTicketMapper.unify.bind(zendeskTicketMapper),
     desunify: zendeskTicketMapper.desunify,
   },

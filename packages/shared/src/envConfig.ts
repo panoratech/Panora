@@ -1,5 +1,5 @@
 import config from "./config";
-import { AuthStrategy, findProviderVertical, providersConfig } from "./utils";
+import { AuthStrategy, providersConfig } from "./utils";
 import axios from 'axios';
 
 export type BasicAuthData = {
@@ -21,6 +21,10 @@ export type OAuth2AuthData = {
 
 export type AuthData =  BasicAuthData | ApiAuthData | OAuth2AuthData
 
+// type is of the form PROVIDERNAME_VERTICALNAME_SOFTWAREMODE_AUTHMODE
+// i.e HUBSPOT_CRM_CLOUD_OAUTH
+// i.e ZENDESK_TICKETING_CLOUD_OAUTH
+
 export function extractProvider(type: string): string {
     // Split the string at the first underscore
     const parts = type.split('_');
@@ -28,6 +32,14 @@ export function extractProvider(type: string): string {
     return parts[0];
 }
 
+export function extractVertical(type: string): string {
+    // Split the string at the first underscore
+    const parts = type.split('_');
+    // Return the second part of the split string
+    return parts[1];
+}
+
+//TODO: handle software mode 
 export function extractSoftwareMode(type: string): string {
     // Split the string at the first underscore
     const parts = type.split('_');
@@ -35,22 +47,24 @@ export function extractSoftwareMode(type: string): string {
     return parts[0];
 }
 
-export function providerToType(providerName: string, authMode: AuthStrategy){
+//TODO: handle software mode 
+export function providerToType(providerName: string, vertical: string, authMode: AuthStrategy){
     switch(authMode){
         case AuthStrategy.api_key:
-            return `${providerName.toUpperCase()}_API`
+            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_API`
         case AuthStrategy.oauth2:
-            return `${providerName.toUpperCase()}_OAUTH`
+            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_OAUTH`
         case AuthStrategy.basic:
-            return `${providerName.toUpperCase()}_BASIC`
+            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_BASIC`
     }
 }
 
 export function extractAuthMode(type: string): AuthStrategy {
     // Split the string at the first underscore
     const parts = type.split('_');
-    // Return the first part of the split string
-    switch(parts[0]){
+    const authMode = parts[parts.length - 1];
+
+    switch(authMode){
         case 'OAUTH':
             return AuthStrategy.oauth2;
         case 'API':
@@ -86,41 +100,42 @@ export function needsSubdomain(provider: string, vertical: string): boolean {
     return authBaseUrlStartsWithSlash && apiUrlStartsWithSlash;
 }
 
+//TODO: handle software mode
 export function getEnvData(provider: string, vertical: string, authStrategy: AuthStrategy){
     let data: AuthData;
     switch (authStrategy) {
         case AuthStrategy.oauth2:
             data = {
-                CLIENT_ID: process.env[`${provider.toUpperCase()}_CLIENT_ID`]!,
-                CLIENT_SECRET: process.env[`${provider.toUpperCase()}_CLIENT_SECRET`]!,
+                CLIENT_ID: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_CLIENT_ID`]!,
+                CLIENT_SECRET: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_CLIENT_SECRET`]!,
             };
             if(needsSubdomain(provider, vertical)){
                 data = {
                     ...data,
-                    SUBDOMAIN: process.env[`${provider.toUpperCase()}_SUBDOMAIN`]!
+                    SUBDOMAIN: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`]!
                 }
             }
             return data;
         case AuthStrategy.api_key:
             data = {
-                API_KEY: process.env[`${provider.toUpperCase()}_API_KEY`]!
+                API_KEY: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_API_KEY`]!
             }
             if(needsSubdomain(provider, vertical)){
                 data = {
                     ...data,
-                    SUBDOMAIN: process.env[`${provider.toUpperCase()}_SUBDOMAIN`]!
+                    SUBDOMAIN: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`]!
                 }
             }
             return data;
         case AuthStrategy.basic:
             data = {
-                USERNAME: process.env[`${provider.toUpperCase()}_USERNAME`]!,
-                SECRET: process.env[`${provider.toUpperCase()}_SECRET`]!
+                USERNAME: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_USERNAME`]!,
+                SECRET: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_SECRET`]!
             }
             if(needsSubdomain(provider, vertical)){
                 data = {
                     ...data,
-                    SUBDOMAIN: process.env[`${provider.toUpperCase()}_SUBDOMAIN`]!
+                    SUBDOMAIN: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`]!
                 }
             }
             return data;
@@ -162,7 +177,7 @@ export async function getCustomCredentialsData(projectId: string, type: string, 
         attributes
     }
     const res = await axios.post(
-        `${config.API_URL}/connections-strategies/get`, 
+        `${config.API_URL}/connections-strategies/get`,  
         JSON.stringify(body),
         {
             headers: {
@@ -182,7 +197,8 @@ export async function getCustomCredentialsData(projectId: string, type: string, 
 export async function getCredentials(projectId: string, type: string) {
     const isCustomCred = await axios.get(`${config.API_URL}/connections-strategies/isCustomCredentials?projectId=${projectId}&type=${type}`);
     const provider = extractProvider(type);
-    const vertical = findProviderVertical(provider);
+    const vertical = extractVertical(type);
+    //const vertical = findProviderVertical(provider);
     if(!vertical) throw new Error(`vertical not found for provider ${provider}`);
     const authStrategy = extractAuthMode(type);
     if(!authStrategy) throw new Error(`auth strategy not found for provider ${provider}`);
@@ -192,7 +208,7 @@ export async function getCredentials(projectId: string, type: string) {
         //fetch the right credentials
         return await getCustomCredentialsData(projectId, type, provider, vertical, authStrategy)
     }else{
-        // type is of form = HUBSPOT_CLOUD_OAUTH so we must extract the parts
+        // type is of form = HUBSPOT_CRM_CLOUD_OAUTH so we must extract the parts
         return getEnvData(provider, vertical, authStrategy);
     }
 }

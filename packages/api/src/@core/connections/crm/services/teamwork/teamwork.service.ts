@@ -33,7 +33,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(TeamworkConnectionService.name);
     this.registry.registerService('teamwork', this);
-    this.type = providerToType('teamwork', AuthStrategy.oauth2);
+    this.type = providerToType('teamwork','crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -43,6 +43,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: `teamwork`,
+          vertical: 'crm',
         },
       });
 
@@ -90,6 +91,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'teamwork',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',

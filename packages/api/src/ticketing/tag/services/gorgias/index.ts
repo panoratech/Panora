@@ -33,6 +33,7 @@ export class GorgiasService implements ITagService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'gorgias',
+          vertical: 'ticketing'
         },
       });
 

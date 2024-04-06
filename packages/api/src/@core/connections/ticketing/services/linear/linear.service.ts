@@ -35,7 +35,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(LinearConnectionService.name);
     this.registry.registerService('linear', this);
-    this.type = providerToType('linear', AuthStrategy.oauth2);
+    this.type = providerToType('linear','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -45,6 +45,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'linear',
+          vertical: 'ticketing',
         },
       });
 
@@ -97,6 +98,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'linear',
+            vertical: 'ticketing',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',

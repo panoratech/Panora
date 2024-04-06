@@ -34,7 +34,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(AhaConnectionService.name);
     this.registry.registerService('aha', this);
-    this.type = providerToType('aha', AuthStrategy.oauth2);
+    this.type = providerToType('aha','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -44,6 +44,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: `aha`,
+          vertical: 'ticketing',
         },
       });
 
@@ -94,6 +95,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'aha',
+            vertical: 'ticketing',
             token_type: 'oauth',
             account_url: CREDENTIALS.SUBDOMAIN!,
             access_token: this.cryptoService.encrypt(data.access_token),

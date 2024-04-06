@@ -23,7 +23,7 @@ export class ZendeskService implements ICommentService {
     this.logger.setContext(
       TicketingObject.comment.toUpperCase() + ':' + ZendeskService.name,
     );
-    this.registry.registerService('zendesk_tcg', this);
+    this.registry.registerService('zendesk', this);
   }
 
   async addComment(
@@ -35,7 +35,8 @@ export class ZendeskService implements ICommentService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_tcg',
+          provider_slug: 'zendesk',
+          vertical: 'ticketing'
         },
       });
 
@@ -128,7 +129,8 @@ export class ZendeskService implements ICommentService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_tcg',
+          provider_slug: 'zendesk',
+          vertical: 'ticketing'
         },
       });
       //retrieve ticket remote id so we can retrieve the comments in the original software

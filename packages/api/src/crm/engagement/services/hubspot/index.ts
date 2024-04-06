@@ -79,6 +79,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm'
         },
       });
       const dataBody = {
@@ -121,6 +122,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm'
         },
       });
       const dataBody = {
@@ -163,6 +165,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm'
         },
       });
       const dataBody = {
@@ -229,6 +232,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm'
         },
       });
 
@@ -277,6 +281,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm'
         },
       });
 
@@ -322,6 +327,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm'
         },
       });
 

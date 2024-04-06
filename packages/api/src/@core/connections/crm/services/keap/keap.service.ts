@@ -35,7 +35,7 @@ export class KeapConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(KeapConnectionService.name);
     this.registry.registerService('keap', this);
-    this.type = providerToType('keap', AuthStrategy.oauth2);
+    this.type = providerToType('keap','crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -45,6 +45,7 @@ export class KeapConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: `keap`,
+          vertical: 'crm',
         },
       });
 
@@ -97,6 +98,7 @@ export class KeapConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'keap',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

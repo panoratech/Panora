@@ -92,7 +92,7 @@ export const providersConfig: ProvidersConfig = {
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
-    'active-campaign': {
+    'active_campaign': {
       scopes: '',
       authBaseUrl: '',
       apiUrl: '',
@@ -155,7 +155,7 @@ export const providersConfig: ProvidersConfig = {
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
-    'microsoft-dynamics-sales': {
+    'microsoft_dynamics_sales': {
       scopes: '',
       authBaseUrl: '',
       apiUrl: '',
@@ -253,7 +253,7 @@ export const providersConfig: ProvidersConfig = {
       apiUrl: 'https://api2.frontapp.com',
       authStrategy: AuthStrategy.oauth2
     },
-    'zendesk_tcg': {
+    'zendesk': {
       scopes: 'read write',
       authBaseUrl: 'https://panora7548.zendesk.com/oauth/authorizations/new',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
@@ -263,7 +263,7 @@ export const providersConfig: ProvidersConfig = {
     },
     'gorgias': {
       scopes: 'write:all openid email profile offline',
-      authBaseUrl: 'https://panora.gorgias.com/oauth/authorize',
+      authBaseUrl: '/oauth/authorize',
       logoPath: 'https://x5h8w2v3.rocketcdn.me/wp-content/uploads/2020/09/FS-AFFI-00660Gorgias.png',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       apiUrl: '/api',
@@ -403,7 +403,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
-    'help-scout': {
+    'help_scout': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
@@ -443,7 +443,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
-    'pivotal-tracker': {
+    'pivotal_tracker': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
@@ -523,7 +523,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
-    'zoho-bugtracker': {
+    'zoho_bugtracker': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
@@ -531,7 +531,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
-    'zoho-desk': {
+    'zoho_desk': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: 'https://api.github.com',
@@ -581,7 +581,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'sage-intacct': {
+    'sage_intacct': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -589,7 +589,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'microsoft-dynamics': {
+    'microsoft_dynamics': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -629,7 +629,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'wave-financial': {
+    'wave_financial': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -638,8 +638,8 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
   },
-  'marketing-automation': {
-    'active-campaign': {
+  'marketing_automation': {
+    'active_campaign': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -663,7 +663,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'hubspot-marketing-hub': {
+    'hubspot_marketing_hub': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -801,7 +801,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'cornerstone-talentlink': {
+    'cornerstone_talentlink': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -809,7 +809,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'engage-ats': {
+    'engage_ats': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -849,7 +849,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'greenhouse-job-boards': {
+    'greenhouse_job_boards': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -857,7 +857,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'harbour-ats': {
+    'harbour_ats': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -889,7 +889,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'infinite-brassring': {
+    'infinite_brassring': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -953,7 +953,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'oracle-fusion': {
+    'oracle_fusion': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -961,7 +961,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'oracle-taleo': {
+    'oracle_taleo': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -969,7 +969,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'personio-recruiting': {
+    'personio_recruiting': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1009,7 +1009,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'sage-hr': {
+    'sage_hr': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1017,7 +1017,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'sap-successfactors': {
+    'sap_successfactors': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1073,7 +1073,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'ukg-pro-recruiting': {
+    'ukg_pro_recruiting': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1097,7 +1097,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'zoho-recruit': {
+    'zoho_recruit': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1115,7 +1115,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'adp-workforce-now': {
+    'adp_workforce_now': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1139,7 +1139,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'altera-payroll': {
+    'altera_payroll': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1163,7 +1163,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'ceridian-dayforce': {
+    'ceridian_dayforce': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1211,7 +1211,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'employment-hero': {
+    'employment_hero': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1235,7 +1235,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'google-workspace': {
+    'google_workspace': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1291,7 +1291,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'insperity-premier': {
+    'insperity_premier': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1299,7 +1299,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'active-campaign': {
+    'active_campaign': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1307,7 +1307,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'intellli-hr': {
+    'intellli_hr': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1315,7 +1315,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'iris-cascade': {
+    'iris_cascade': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1379,7 +1379,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'microsoft-entra-id': {
+    'microsoft_entra_id': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1427,7 +1427,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'oracle-hcm': {
+    'oracle_hcm': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1435,7 +1435,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'oyster-hr': {
+    'oyster_hr': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1483,7 +1483,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'people-hr': {
+    'people_hr': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1523,7 +1523,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'sage-hr': {
+    'sage_hr': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1531,7 +1531,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'sap-successfactors': {
+    'sap_successfactors': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1547,7 +1547,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'square-payroll': {
+    'square_payroll': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1563,7 +1563,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'trinet-hr-platform': {
+    'trinet_hr_platform': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1571,7 +1571,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'ukg-pro': {
+    'ukg_pro': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1579,7 +1579,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'ukg-pro-workforce': {
+    'ukg_pro_workforce': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1587,7 +1587,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'ukg-ready': {
+    'ukg_ready': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',
@@ -1603,7 +1603,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
-    'zoho-people': {
+    'zoho_people': {
       apiUrl: '',
       scopes: '',
       authBaseUrl: '',

@@ -111,6 +111,7 @@ export class SyncContactsService implements OnModuleInit {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: integrationId,
+          vertical: 'crm'
         },
       });
       if (!connection) {
@@ -142,6 +143,7 @@ export class SyncContactsService implements OnModuleInit {
         sourceObject,
         targetType: CrmObject.contact,
         providerName: integrationId,
+        vertical: "crm",
         customFieldMappings,
       })) as UnifiedContactOutput[];
 

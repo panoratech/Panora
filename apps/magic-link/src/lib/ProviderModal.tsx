@@ -3,7 +3,6 @@ import useOAuth from '@/hooks/useOAuth';
 import { categoriesVerticals, findProviderByName, providersArray } from '@panora/shared';
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
-import config from '@/helpers/config';
 
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
@@ -47,6 +46,7 @@ const ProviderModal = () => {
   
   const { open, isReady } = useOAuth({
     providerName: selectedProvider,
+    vertical: selectedCategory,
     returnUrl: "https://google.com", //TODO: handle the redirection URL (let customer put their confetti or success page redirect url ? )
     projectId: linkedUser?.id_project as string,
     linkedUserId: linkedUser?.id_linked_user as string,

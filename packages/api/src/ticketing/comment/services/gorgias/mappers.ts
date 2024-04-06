@@ -75,6 +75,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
         sourceObject: comment.attachments,
         targetType: TicketingObject.attachment,
         providerName: 'gorgias',
+        vertical: "ticketing",
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
 

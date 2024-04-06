@@ -1,3 +1,11 @@
+/* 
+(USED BY PANORA INTERNAL TEAM)
+
+THIS SCRIPT ADDS ALL DEPENDENCIES AND BOILERPLATE CODE WHEN A NEW 3RD PARTY AUTHENTICATION SERVICE HAS TO BE BUILT
+  pnpm run prebuild-oauth-connector --vertical="crm" --provider="hubspot"
+
+*/
+
 import * as fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -72,7 +80,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
   ) {
     this.logger.setContext(${providerUpper}ConnectionService.name);
     this.registry.registerService('${provider.toLowerCase()}', this);
-    this.type = providerToType('${provider.toLowerCase()}', AuthStrategy.oauth2);
+    this.type = providerToType('${provider.toLowerCase()}', '${vertical.toLowerCase()}', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -81,7 +89,8 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: \`${provider}\`,
+          provider_slug: '${provider.toLowerCase()}',
+          vertical: '${vertical.toLowerCase()}'
         },
       });
 
@@ -135,7 +144,8 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: '${provider}',
+            provider_slug: '${provider.toLowerCase()}',
+            vertical: '${vertical.toLowerCase()}',
             token_type: 'oauth',
             account_url: "",
             access_token: this.cryptoService.encrypt(data.access_token),
@@ -238,17 +248,17 @@ function addProviderToEnvironmentService(provider, envServicePath) {
 }
   
 // Function to add provider to docker-compose.dev.yml
-function addProviderToDockerCompose(provider, dockerComposePath) {
+function addProviderToDockerCompose(provider, vertical, dockerComposePath) {
     const providerEnvPrefix = provider.toUpperCase();
     const newEnvVariables = `
-        ${providerEnvPrefix}_CLIENT_ID: $\{${providerEnvPrefix}_CLIENT_ID}
-        ${providerEnvPrefix}_CLIENT_SECRET: $\{${providerEnvPrefix}_CLIENT_SECRET}
+        ${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_ID: $\{${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_ID}
+        ${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_SECRET: $\{${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_SECRET}
   `; 
   
     let content = fs.readFileSync(dockerComposePath, { encoding: 'utf8' });
   
-    if (content.includes(`${providerEnvPrefix}_CLIENT_ID`)) {
-      console.log(`${providerEnvPrefix}_CLIENT_ID already exists in docker-compose.dev.yml.`);
+    if (content.includes(`${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_ID`)) {
+      console.log(`${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_ID already exists in docker-compose.dev.yml.`);
       return;
     }
   
@@ -262,7 +272,7 @@ function handleUpdate(vertical, provider){
     createServiceFile(vertical, provider);
     addProviderToEnvironmentService(provider, envServiceFilePath)
     for (const path of paths) {
-        addProviderToDockerCompose(provider, path)
+        addProviderToDockerCompose(provider, vertical, path)
     }
 }
   

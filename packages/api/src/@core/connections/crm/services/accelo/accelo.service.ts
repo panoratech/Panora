@@ -37,7 +37,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(AcceloConnectionService.name);
     this.registry.registerService('accelo', this);
-    this.type = providerToType('accelo', AuthStrategy.oauth2);
+    this.type = providerToType('accelo', 'crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -50,6 +50,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'accelo',
+          vertical: 'crm',
         },
       });
       if (isNotUnique) return;
@@ -76,13 +77,13 @@ export class AcceloConnectionService implements ICrmConnectionService {
             ).toString('base64')}`,
           },
         },
-      );
+      ); 
 
       const data: AcceloOAuthResponse = res.data;
 
       // Saving the token of customer inside db
       let db_res;
-      const connection_token = uuidv4();
+      const connection_token = uuidv4(); 
 
       if (isNotUnique) {
         // Update existing connection
@@ -107,6 +108,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'accelo',
+            vertical: 'crm',
             token_type: 'oauth',
             account_url: CREDENTIALS.SUBDOMAIN!,
             access_token: this.cryptoService.encrypt(data.access_token),

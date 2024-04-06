@@ -32,6 +32,7 @@ export class ZendeskService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm'
         },
       });
       const resp = await axios.post(
@@ -74,6 +75,7 @@ export class ZendeskService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm'
         },
       });
       const resp = await axios.get(`https://api.getbase.com/v2/notes`, {

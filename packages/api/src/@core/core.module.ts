@@ -11,6 +11,7 @@ import { PassthroughModule } from './passthrough/passthrough.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { EnvironmentModule } from './environment/environment.module';
 import { EncryptionService } from './encryption/encryption.service';
+import { ConnectionsStrategiesModule } from './connections-strategies/connections-strategies.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EncryptionService } from './encryption/encryption.service';
     PassthroughModule,
     WebhookModule,
     EnvironmentModule,
+    ConnectionsStrategiesModule
   ],
   exports: [
     AuthModule,
@@ -38,6 +40,7 @@ import { EncryptionService } from './encryption/encryption.service';
     PassthroughModule,
     WebhookModule,
     EnvironmentModule,
+    ConnectionsStrategiesModule
   ],
   providers: [EncryptionService],
 })

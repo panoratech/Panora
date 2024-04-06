@@ -36,7 +36,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(GitlabConnectionService.name);
     this.registry.registerService('gitlab', this);
-    this.type = providerToType('gitlab', AuthStrategy.oauth2);
+    this.type = providerToType('gitlab','ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -46,6 +46,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'gitlab',
+          vertical: 'ticketing',
         },
       });
 
@@ -98,6 +99,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'gitlab',
+            vertical: 'ticketing',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
