@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IStageService } from '@crm/stage/types';
-import {
-  CrmObject,
-  PipedriveStageInput,
-  PipedriveStageOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { PipedriveStageOutput } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -36,6 +33,7 @@ export class PipedriveService implements IStageService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
       const res = await this.prisma.crm_deals.findUnique({

@@ -84,6 +84,7 @@ export class ContactService {
         sourceObject: unifiedContactData,
         targetType: CrmObject.contact,
         providerName: integrationId,
+        vertical: 'crm',
         customFieldMappings: unifiedContactData.field_mappings
           ? customFieldMappings
           : [],
@@ -101,6 +102,7 @@ export class ContactService {
         sourceObject: [resp.data],
         targetType: CrmObject.contact,
         providerName: integrationId,
+        vertical: 'crm',
         customFieldMappings: customFieldMappings,
       })) as UnifiedContactOutput[];
 

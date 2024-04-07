@@ -5,14 +5,19 @@ import {
   CallbackParams,
   ICrmConnectionService,
   RefreshParams,
-  ZohoOAuthResponse,
 } from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
 import { Action, NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceConnectionRegistry } from '../registry.service';
+import { ServiceRegistry } from '../registry.service';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
 
 const ZOHOLocations = {
   us: 'https://accounts.zoho.com',
@@ -21,17 +26,29 @@ const ZOHOLocations = {
   au: 'https://accounts.zoho.com.au',
   jp: 'https://accounts.zoho.jp',
 };
+
+export interface ZohoOAuthResponse {
+  access_token: string;
+  refresh_token: string;
+  api_domain: string;
+  token_type: string;
+  expires_in: number;
+}
+
 @Injectable()
 export class ZohoConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
-    private registry: ServiceConnectionRegistry,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(ZohoConnectionService.name);
     this.registry.registerService('zoho', this);
+    this.type = providerToType('zoho', 'crm', AuthStrategy.oauth2);
   }
   async handleCallback(opts: CallbackParams) {
     try {
@@ -43,16 +60,21 @@ export class ZohoConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: this.env.getZohoSecret().CLIENT_ID,
-        client_secret: this.env.getZohoSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
       });
@@ -96,6 +118,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'zoho',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token
@@ -124,12 +147,16 @@ export class ZohoConnectionService implements ICrmConnectionService {
   }
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken, account_url } = opts;
+      const { connectionId, refreshToken, account_url, projectId } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
-        client_id: this.env.getZohoSecret().CLIENT_ID,
-        client_secret: this.env.getZohoSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });

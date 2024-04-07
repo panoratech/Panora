@@ -32,6 +32,18 @@ export class AuthService {
       handleServiceError(error, this.logger);
     }
   }
+  async getUserByStytchId(stytchId: string) {
+    try {
+      return await this.prisma.users.findUnique({
+        where: {
+          id_stytch: stytchId,
+          identification_strategy: 'b2c',
+        },
+      });
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
 
   async getApiKeys() {
     try {
@@ -43,7 +55,7 @@ export class AuthService {
 
   async register(user: CreateUserDto) {
     try {
-      const foundUser = await this.prisma.users.findFirst({
+      /*const foundUser = await this.prisma.users.findFirst({
         where: { email: user.email },
       });
 
@@ -54,7 +66,8 @@ export class AuthService {
       const savedUser = await this.createUser(user);
 
       const { password_hash, ...resp_user } = savedUser;
-      return resp_user;
+      return resp_user;*/
+      return;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -62,7 +75,7 @@ export class AuthService {
 
   async createUser(user: CreateUserDto, id_user?: string) {
     try {
-      const salt = await bcrypt.genSalt();
+      /*const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(user.password_hash, salt);
 
       return await this.prisma.users.create({
@@ -70,6 +83,18 @@ export class AuthService {
           ...user,
           id_user: id_user || uuidv4(),
           password_hash: hashedPassword,
+        },
+      });*/
+      return await this.prisma.users.create({
+        data: {
+          id_stytch: user.stytch_id_user,
+          identification_strategy: user.strategy,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          password_hash: '',
+          created_at: new Date(),
+          id_user: id_user || uuidv4(),
         },
       });
     } catch (error) {
@@ -79,7 +104,7 @@ export class AuthService {
 
   async login(user: LoginDto) {
     try {
-      let foundUser: User;
+      /*let foundUser: User;
 
       if (user.id_user) {
         foundUser = await this.prisma.users.findUnique({
@@ -116,7 +141,7 @@ export class AuthService {
         access_token: this.jwtService.sign(payload, {
           secret: process.env.JWT_SECRET,
         }), // token used to generate api keys
-      };
+      };*/
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -170,9 +195,9 @@ export class AuthService {
         );
       }
 
-      if (foundProject.id_organization !== foundUser.id_organization) {
+      /*if (foundProject.id_organization !== foundUser.id_organization) {
         throw new Error('User is not inside the project');
-      }
+      }*/
       // Generate a new API key (use a secure method for generation)
       const { access_token } = await this.generateApiKey(projectId, userId);
       // Store the API key in the database associated with the user

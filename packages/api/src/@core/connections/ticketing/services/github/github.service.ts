@@ -10,12 +10,28 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  GithubOAuthResponse,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
+
+export type GithubOAuthResponse = {
+  access_token: string;
+  refresh_token: string;
+  expires_in: string;
+  refresh_token_expires_in: string; //TODO
+  token_type: string;
+  scope: string;
+};
 
 @Injectable()
 export class GithubConnectionService implements ITicketingConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -25,6 +41,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(GithubConnectionService.name);
     this.registry.registerService('github', this);
+    this.type = providerToType('github', 'ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -33,16 +50,21 @@ export class GithubConnectionService implements ITicketingConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'github', //TODO
+          provider_slug: 'github',
+          vertical: 'ticketing',
         },
       });
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: this.env.getGithubSecret().CLIENT_ID,
-        client_secret: this.env.getGithubSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         //repository_id: todo
@@ -85,6 +107,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'github',
+            vertical: 'ticketing',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
@@ -108,13 +131,18 @@ export class GithubConnectionService implements ITicketingConnectionService {
     }
   }
 
+  //TODO
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
       const res = await axios.post(
         `https://app.githubapp.com/oauth/token`,
         formData.toString(),
@@ -122,9 +150,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getGithubSecret().CLIENT_ID}:${
-                this.env.getGithubSecret().CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },

@@ -1,4 +1,4 @@
-import { ZohoNoteInput, ZohoNoteOutput } from '@crm/@utils/@types';
+import { ZohoNoteInput, ZohoNoteOutput } from './types';
 import {
   UnifiedNoteInput,
   UnifiedNoteOutput,

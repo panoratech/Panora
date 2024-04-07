@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ICompanyService } from '@crm/company/types';
-import {
-  CrmObject,
-  ZendeskCompanyInput,
-  ZendeskCompanyOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -12,6 +8,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { ZendeskCompanyInput, ZendeskCompanyOutput } from './types';
 @Injectable()
 export class ZendeskService implements ICompanyService {
   constructor(
@@ -35,6 +32,7 @@ export class ZendeskService implements ICompanyService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
@@ -77,6 +75,7 @@ export class ZendeskService implements ICompanyService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
       const resp = await axios.get(`https://api.getbase.com/v2/contacts`, {

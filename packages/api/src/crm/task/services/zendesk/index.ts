@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ITaskService } from '@crm/task/types';
-import {
-  CrmObject,
-  ZendeskTaskInput,
-  ZendeskTaskOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZendeskTaskInput, ZendeskTaskOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -36,6 +33,7 @@ export class ZendeskService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
 
@@ -82,6 +80,7 @@ export class ZendeskService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
       const resp = await axios.get(`https://api.getbase.com/v2/tasks`, {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { INoteService } from '@crm/note/types';
-import { CrmObject, ZohoNoteInput, ZohoNoteOutput } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZohoNoteInput, ZohoNoteOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -32,6 +33,7 @@ export class ZohoService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
@@ -72,6 +74,7 @@ export class ZohoService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       //TODO: handle fields

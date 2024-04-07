@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IEngagementService } from '@crm/engagement/types';
-import {
-  CrmObject,
-  ZohoEngagementInput,
-  ZohoEngagementOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZohoEngagementInput, ZohoEngagementOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -36,6 +33,7 @@ export class ZohoService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
@@ -76,6 +74,7 @@ export class ZohoService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       //TODO: handle fields

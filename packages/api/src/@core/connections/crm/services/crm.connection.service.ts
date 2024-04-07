@@ -6,12 +6,12 @@ import { connections as Connection } from '@prisma/client';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { CallbackParams, RefreshParams } from '../types';
-import { ServiceConnectionRegistry } from './registry.service';
+import { ServiceRegistry } from './registry.service';
 
 @Injectable()
 export class CrmConnectionsService {
   constructor(
-    private serviceRegistry: ServiceConnectionRegistry,
+    private serviceRegistry: ServiceRegistry,
     private webhook: WebhookService,
     private logger: LoggerService,
     private prisma: PrismaService,
@@ -89,6 +89,7 @@ export class CrmConnectionsService {
     connectionId: string,
     providerName: string,
     refresh_token: string,
+    id_project: string,
     account_url?: string,
   ) {
     try {
@@ -101,6 +102,7 @@ export class CrmConnectionsService {
         connectionId: connectionId,
         refreshToken: refresh_token,
         account_url: account_url,
+        projectId: id_project,
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {

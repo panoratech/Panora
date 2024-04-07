@@ -6,6 +6,7 @@ export const CONNECTIONS = [
       "category": "medium",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
 
     },
     {
@@ -16,6 +17,7 @@ export const CONNECTIONS = [
       "category": "medium",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-7839",
@@ -25,6 +27,7 @@ export const CONNECTIONS = [
       "category": "high",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-5562",
@@ -34,6 +37,7 @@ export const CONNECTIONS = [
       "category": "medium",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-8686",
@@ -43,6 +47,7 @@ export const CONNECTIONS = [
       "category": "medium",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-1280",
@@ -52,6 +57,7 @@ export const CONNECTIONS = [
       "category": "high",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-7262",
@@ -61,6 +67,7 @@ export const CONNECTIONS = [
       "category": "high",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-1138",
@@ -70,6 +77,7 @@ export const CONNECTIONS = [
       "category": "medium",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-7184",
@@ -79,6 +87,7 @@ export const CONNECTIONS = [
       "category": "low",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-5160",
@@ -88,6 +97,7 @@ export const CONNECTIONS = [
       "category": "high",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-5618",
@@ -97,6 +107,7 @@ export const CONNECTIONS = [
       "category": "medium",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-6699",
@@ -106,6 +117,7 @@ export const CONNECTIONS = [
       "category": "medium",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
     {
       "linkedUser": "TASK-2858",
@@ -115,5 +127,6 @@ export const CONNECTIONS = [
       "category": "medium",
       "date": "",
       "organisation": "",
+      "connectionToken": "",
     },
 ]

@@ -12,6 +12,7 @@ import { ContactService } from './services/contact.service';
 import { ContactController } from './contact.controller';
 import { FrontService } from './services/front';
 import { GithubService } from './services/github';
+import { GorgiasService } from './services/gorgias';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { GithubService } from './services/github';
     ZendeskService,
     FrontService,
     GithubService,
+    GorgiasService,
   ],
   exports: [SyncService],
 })

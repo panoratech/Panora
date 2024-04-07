@@ -1,14 +1,10 @@
 import { CrmObject } from '@crm/@utils/@types';
-import {
-  ProviderVertical,
-  TargetObject,
-  UnifyReturnType,
-  getProviderVertical,
-} from '../types';
+import { TargetObject, UnifyReturnType } from '../types';
 import { unifyCrm } from '@crm/@utils/@unification';
 import { TicketingObject } from '@ticketing/@utils/@types';
 import { unifyTicketing } from '@ticketing/@utils/@unification';
 import { UnifySourceType } from '../types/unify.output';
+import { ProviderVertical } from '@panora/shared';
 
 /* to fetch data
 
@@ -20,11 +16,13 @@ export async function unify<T extends UnifySourceType | UnifySourceType[]>({
   sourceObject,
   targetType,
   providerName,
+  vertical,
   customFieldMappings,
 }: {
   sourceObject: T;
   targetType: TargetObject;
   providerName: string;
+  vertical: string;
   customFieldMappings: {
     slug: string;
     remote_id: string;
@@ -32,7 +30,7 @@ export async function unify<T extends UnifySourceType | UnifySourceType[]>({
 }): Promise<UnifyReturnType> {
   if (sourceObject == null) return [];
   let targetType_;
-  switch (getProviderVertical(providerName)) {
+  switch (vertical.toLowerCase()) {
     case ProviderVertical.CRM:
       targetType_ = targetType as CrmObject;
       return unifyCrm({

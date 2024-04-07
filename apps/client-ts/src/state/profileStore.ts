@@ -5,7 +5,7 @@ interface User {
   email: string;
   first_name: string;
   last_name: string;
-  //id_organization: string;
+  id_organization?: string;
 }
 
 interface ProfileState {

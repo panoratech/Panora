@@ -53,7 +53,7 @@ import useOrganisationStore from "@/state/organisationStore"
 import useProfileStore from "@/state/profileStore"
 import useProjects from "@/hooks/useProjects"
 import { Skeleton } from "../ui/skeleton"
-import useOrganisations from "@/hooks/useOrganisations"
+//import useOrganisations from "@/hooks/useOrganisations"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -82,11 +82,10 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     open: false,
   })
 
-  const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
+  //const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
   const { data : projects, isLoading: isloadingProjects } = useProjects();
 
   const { idProject, setIdProject } = useProjectStore();
-  const { nameOrg, setOrganisationName } = useOrganisationStore();
   
   const { profile } = useProfileStore();
 
@@ -95,10 +94,12 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     if(projects && projects[0]){      
       setIdProject(projects[0].id_project);
     }
-    if(orgs && orgs[0]){
+    //TODO: display connected user
+    /*if(orgs && orgs[0]){
       setOrganisationName(orgs[0].name);
-    }
-  },[projects, orgs, setIdProject, setOrganisationName])
+      setIdOrg(orgs[0].id_organization);
+    }*/
+  },[projects, setIdProject])
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
@@ -189,7 +190,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CommandGroup>
                 {
                   config.DISTRIBUTION == "managed" && (
-                    <h4>{nameOrg}</h4>
+                    <h4>USER TO DISPLAY</h4>
                   )
                 }
                 <DialogTrigger asChild>

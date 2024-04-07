@@ -16,11 +16,13 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import useProfile from "@/hooks/useProfile";
 import useProfileStore from "@/state/profileStore";
+import { useStytchUser } from "@stytch/nextjs";
 import Link from "next/link";
 import { useEffect } from "react";
   
 export function UserNav() {
-  /*const {data, isLoading} = useProfile();
+  const { user } = useStytchUser();
+  const {data, isLoading} = useProfile(user?.user_id!);
   if(!data) {
     console.log("loading profiles");
   }
@@ -30,13 +32,13 @@ export function UserNav() {
     if(data && data.length > 0 ){
       setProfile({
         id_user: data[0].id_user,
-        email: data[0].email,
+        email: data[0].email!,
         first_name: data[0].first_name,
         last_name: data[0].last_name,
-        id_organization: data[0].id_organization as string,
+        //id_organization: data[0].id_organization as string,
       })
     }
-  }, [data, setProfile]);*/
+  }, [data, setProfile]);
 
   return (
     <DropdownMenu>
@@ -49,17 +51,13 @@ export function UserNav() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 ml-10" align="end" forceMount>
-        {/*<DropdownMenuLabel className="font-normal">
+        <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {profile ? profile.first_name : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No profiles found"}
-              
-            </p>
             <p className="text-xs leading-none text-muted-foreground">
-            {profile ? profile.email : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No mail found"}
+            {profile ? profile.first_name || profile.email : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No mail found"}
             </p>
           </div>
-        </DropdownMenuLabel>*/}
+        </DropdownMenuLabel>
         <DropdownMenuGroup>
           <Link href={"/profile"}>
             <DropdownMenuItem>

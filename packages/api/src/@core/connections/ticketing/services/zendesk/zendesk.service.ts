@@ -10,12 +10,24 @@ import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
-  ZendeskTicketingOAuthResponse,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { AuthStrategy } from '@panora/shared';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 
+export interface ZendeskOAuthResponse {
+  access_token: string;
+  token_type: string;
+  scope: string;
+}
 @Injectable()
 export class ZendeskConnectionService implements ITicketingConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -24,7 +36,8 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
-    this.registry.registerService('zendesk_tcg', this);
+    this.registry.registerService('zendesk', this);
+    this.type = providerToType('zendesk', 'ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -33,23 +46,30 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_tcg',
+          provider_slug: 'zendesk',
+          vertical: 'ticketing',
         },
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
         code: code,
-        client_id: this.env.getZendeskTicketingSecret().CLIENT_ID,
-        client_secret: this.env.getZendeskTicketingSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         scope: 'read',
       });
+
+      //const subdomain = 'panora7548';
       const res = await axios.post(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/oauth/tokens`,
+        `${CREDENTIALS.SUBDOMAIN!}/oauth/tokens`,
         formData.toString(),
         {
           headers: {
@@ -57,7 +77,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
           },
         },
       );
-      const data: ZendeskTicketingOAuthResponse = res.data;
+      const data: ZendeskOAuthResponse = res.data;
       this.logger.log(
         'OAuth credentials : zendesk ticketing ' + JSON.stringify(data),
       );
@@ -72,6 +92,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
+            account_url: CREDENTIALS.SUBDOMAIN!,
             refresh_token: '',
             expiration_timestamp: new Date(), //TODO
             status: 'valid',
@@ -83,8 +104,10 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'zendesk_tcg',
+            provider_slug: 'zendesk',
+            vertical: 'ticketing',
             token_type: 'oauth',
+            account_url: CREDENTIALS.SUBDOMAIN!,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
             expiration_timestamp: new Date(), //TODO
@@ -101,12 +124,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'zendesk_tcg',
-        Action.oauthCallback,
-      );
+      handleServiceError(error, this.logger, 'zendesk', Action.oauthCallback);
     }
   }
 

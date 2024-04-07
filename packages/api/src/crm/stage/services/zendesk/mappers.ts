@@ -1,4 +1,4 @@
-import { ZendeskStageInput, ZendeskStageOutput } from '@crm/@utils/@types';
+import { ZendeskStageOutput, ZendeskStageInput } from './types';
 import {
   UnifiedStageInput,
   UnifiedStageOutput,

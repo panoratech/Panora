@@ -3,7 +3,7 @@ import {
   UnifiedUserInput,
   UnifiedUserOutput,
 } from '@crm/user/types/model.unified';
-import { FreshsalesUserInput, FreshsalesUserOutput } from '@crm/@utils/@types';
+import { FreshsalesUserOutput, FreshsalesUserInput } from './types';
 
 //TODO
 export class FreshsalesUserMapper implements IUserMapper {

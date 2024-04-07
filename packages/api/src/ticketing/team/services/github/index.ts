@@ -34,6 +34,7 @@ export class GithubService implements ITeamService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'github',
+          vertical: 'ticketing',
         },
       });
       const org = '';

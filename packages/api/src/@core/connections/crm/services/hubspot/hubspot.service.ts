@@ -3,7 +3,6 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
 import {
   CallbackParams,
-  HubspotOAuthResponse,
   ICrmConnectionService,
   RefreshParams,
 } from '../../types';
@@ -12,19 +11,34 @@ import { Action, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceConnectionRegistry } from '../registry.service';
+import { ServiceRegistry } from '../registry.service';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
+import { AuthStrategy } from '@panora/shared';
+
+export interface HubspotOAuthResponse {
+  refresh_token: string;
+  access_token: string;
+  expires_in: number;
+}
 
 @Injectable()
 export class HubspotConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
-    private registry: ServiceConnectionRegistry,
+    private registry: ServiceRegistry,
   ) {
     this.logger.setContext(HubspotConnectionService.name);
     this.registry.registerService('hubspot', this);
+    this.type = providerToType('hubspot', 'crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -37,15 +51,22 @@ export class HubspotConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
       if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: this.env.getHubspotAuth().CLIENT_ID,
-        client_secret: this.env.getHubspotAuth().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
       });
@@ -86,6 +107,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'hubspot',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
@@ -112,12 +134,18 @@ export class HubspotConnectionService implements ICrmConnectionService {
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`; //tocheck
+
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
-        client_id: this.env.getHubspotAuth().CLIENT_ID,
-        client_secret: this.env.getHubspotAuth().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });

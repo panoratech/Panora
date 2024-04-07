@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IContactService } from '@crm/contact/types';
-import {
-  CrmObject,
-  PipedriveContactInput,
-  PipedriveContactOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -12,6 +8,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { PipedriveContactInput, PipedriveContactOutput } from './types';
 
 @Injectable()
 export class PipedriveService implements IContactService {
@@ -36,6 +33,7 @@ export class PipedriveService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
 
@@ -76,6 +74,7 @@ export class PipedriveService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
       const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {

@@ -1,4 +1,4 @@
-import { HubspotCompanyInput, HubspotCompanyOutput } from '@crm/@utils/@types';
+import { HubspotCompanyInput, HubspotCompanyOutput } from './types';
 import {
   UnifiedCompanyInput,
   UnifiedCompanyOutput,

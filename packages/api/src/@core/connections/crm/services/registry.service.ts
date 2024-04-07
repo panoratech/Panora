@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ICrmConnectionService } from '../types';
 
 @Injectable()
-export class ServiceConnectionRegistry {
+export class ServiceRegistry {
   private serviceMap: Map<string, ICrmConnectionService>;
 
   constructor() {

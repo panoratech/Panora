@@ -1,3 +1,7 @@
+# (USED BY PANORA INTERNAL TEAM)
+# THIS SCRIPT GENRATES THE BOILERPLATE FOR A NEW COMMON OBJECT
+#  ./commonObject.sh comment crm
+
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <object_type> <vertical_object>"
     exit 1
@@ -178,6 +182,7 @@ export class ${ObjectCap}Service {
         sourceObject: unified${ObjectCap}Data,
         targetType: ${VerticalCap}Object.${objectType},
         providerName: integrationId,
+        vertical: "${VerticalLow}",
         customFieldMappings: [],
       });
 
@@ -207,6 +212,7 @@ export class ${ObjectCap}Service {
         sourceObject: [resp.data],
         targetType: ${VerticalCap}Object.${objectType},
         providerName: integrationId, 
+        vertical: "${VerticalLow}",
         customFieldMappings: [],
       })) as Unified${ObjectCap}Output[];
 

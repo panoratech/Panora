@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IStageService } from '@crm/stage/types';
-import { CrmObject, ZendeskStageOutput } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZendeskStageOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -31,6 +32,7 @@ export class ZendeskService implements IStageService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
       const res = await this.prisma.crm_deals.findUnique({

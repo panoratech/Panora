@@ -90,6 +90,7 @@ export class CompanyService {
         sourceObject: unifiedCompanyData,
         targetType: CrmObject.company,
         providerName: integrationId,
+        vertical: 'crm',
         customFieldMappings: [],
       });
 
@@ -106,6 +107,7 @@ export class CompanyService {
         sourceObject: [resp.data],
         targetType: CrmObject.company,
         providerName: integrationId,
+        vertical: 'crm',
         customFieldMappings: [],
       })) as UnifiedCompanyOutput[];
 

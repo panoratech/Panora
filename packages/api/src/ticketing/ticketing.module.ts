@@ -7,6 +7,7 @@ import { ContactModule } from './contact/contact.module';
 import { AccountModule } from './account/account.module';
 import { TagModule } from './tag/tag.module';
 import { TeamModule } from './team/team.module';
+import { CollectionModule } from './collection/collection.module';
 
 @Module({
   imports: [
@@ -18,9 +19,20 @@ import { TeamModule } from './team/team.module';
     AccountModule,
     TagModule,
     TeamModule,
+    CollectionModule,
   ],
   providers: [],
   controllers: [],
-  exports: [UserModule, AttachmentModule, ContactModule],
+  exports: [
+    TicketModule,
+    CommentModule,
+    UserModule,
+    AttachmentModule,
+    ContactModule,
+    AccountModule,
+    TagModule,
+    TeamModule,
+    CollectionModule,
+  ],
 })
 export class TicketingModule {}

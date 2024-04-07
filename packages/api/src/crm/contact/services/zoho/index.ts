@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IContactService } from '@crm/contact/types';
-import {
-  CrmObject,
-  ZohoContactInput,
-  ZohoContactOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -12,6 +8,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { ZohoContactInput, ZohoContactOutput } from './types';
 
 @Injectable()
 export class ZohoService implements IContactService {
@@ -36,6 +33,7 @@ export class ZohoService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
@@ -76,6 +74,7 @@ export class ZohoService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       //TODO: handle fields

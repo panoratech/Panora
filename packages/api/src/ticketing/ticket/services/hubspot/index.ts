@@ -35,7 +35,8 @@ export class HubspotService implements ITicketService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'hubspot_t',
+          provider_slug: 'hubspot',
+          vertical: 'ticketing',
         },
       });
       const dataBody = { properties: ticketData };
@@ -74,7 +75,8 @@ export class HubspotService implements ITicketService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'hubspot_t',
+          provider_slug: 'hubspot',
+          vertical: 'ticketing',
         },
       });
 

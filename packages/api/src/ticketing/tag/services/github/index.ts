@@ -34,6 +34,7 @@ export class GithubService implements ITagService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'github',
+          vertical: 'ticketing',
         },
       });
       const resp = await axios.get(`https://api.github.com/tags`, {

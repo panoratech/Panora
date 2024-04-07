@@ -37,6 +37,7 @@ export class FrontService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 
@@ -168,6 +169,7 @@ export class FrontService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 

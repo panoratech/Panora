@@ -3,7 +3,7 @@ import {
   UnifiedNoteInput,
   UnifiedNoteOutput,
 } from '@crm/note/types/model.unified';
-import { FreshsalesNoteInput, FreshsalesNoteOutput } from '@crm/@utils/@types';
+import { FreshsalesNoteInput, FreshsalesNoteOutput } from './types';
 
 //TODO
 export class FreshsalesNoteMapper implements INoteMapper {

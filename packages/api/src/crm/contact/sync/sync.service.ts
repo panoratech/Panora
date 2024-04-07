@@ -2,7 +2,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-import { ApiResponse, CRM_PROVIDERS } from '@@core/utils/types';
+import { ApiResponse } from '@@core/utils/types';
 import { unify } from '@@core/utils/unification/unify';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '@crm/contact/types/model.unified';
@@ -16,6 +16,7 @@ import { OriginalContactOutput } from '@@core/utils/types/original/original.crm'
 import { ServiceRegistry } from '../services/registry.service';
 import { normalizeAddresses } from '@crm/company/utils';
 import { Utils } from '../utils';
+import { CRM_PROVIDERS } from '@panora/shared';
 
 @Injectable()
 export class SyncContactsService implements OnModuleInit {
@@ -46,15 +47,21 @@ export class SyncContactsService implements OnModuleInit {
   async syncContacts() {
     try {
       this.logger.log(`Syncing contacts....`);
-      const defaultOrg = await this.prisma.organizations.findFirst({
+      /*const defaultOrg = await this.prisma.organizations.findFirst({
         where: {
           name: 'Acme Inc',
+        },
+      });*/
+
+      const defaultUser = await this.prisma.users.findFirst({
+        where: {
+          email: 'audrey@aubry.io',
         },
       });
 
       const defaultProject = await this.prisma.projects.findFirst({
         where: {
-          id_organization: defaultOrg.id_organization,
+          id_user: defaultUser.id_user,
           name: 'Project 1',
         },
       });
@@ -104,6 +111,7 @@ export class SyncContactsService implements OnModuleInit {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: integrationId,
+          vertical: 'crm',
         },
       });
       if (!connection) {
@@ -135,6 +143,7 @@ export class SyncContactsService implements OnModuleInit {
         sourceObject,
         targetType: CrmObject.contact,
         providerName: integrationId,
+        vertical: 'crm',
         customFieldMappings,
       })) as UnifiedContactOutput[];
 

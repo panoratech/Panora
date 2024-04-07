@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IUserService } from '@crm/user/types';
-import {
-  CrmObject,
-  PipedriveUserInput,
-  PipedriveUserOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { PipedriveUserOutput } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -35,6 +32,7 @@ export class PipedriveService implements IUserService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
       const resp = await axios.get(`https://api.pipedrive.com/v1/users`, {

@@ -68,7 +68,8 @@ export class ZendeskCommentMapper implements ICommentMapper {
       const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
         sourceObject: comment.attachments,
         targetType: TicketingObject.attachment,
-        providerName: 'zendesk_tcg',
+        providerName: 'zendesk',
+        vertical: 'ticketing',
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
 
@@ -78,7 +79,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
     if (comment.author_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.author_id),
-        'zendesk_tcg',
+        'zendesk',
       );
 
       if (user_id) {
@@ -86,7 +87,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
       } else {
         const contact_id = await this.utils.getContactUuidFromRemoteId(
           String(comment.author_id),
-          'zendesk_tcg',
+          'zendesk',
         );
         if (contact_id) {
           opts = { creator_type: 'contact', contact_id: contact_id };

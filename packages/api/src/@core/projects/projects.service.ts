@@ -26,7 +26,8 @@ export class ProjectsService {
           ...rest,
           sync_mode: 'pool',
           id_project: uuidv4(),
-          id_organization: id_organization,
+          id_user: data.id_user,
+          //id_organization: id_organization,
         },
       });
       return res;

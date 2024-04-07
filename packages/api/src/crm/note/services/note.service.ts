@@ -117,6 +117,7 @@ export class NoteService {
         sourceObject: unifiedNoteData,
         targetType: CrmObject.note,
         providerName: integrationId,
+        vertical: 'crm',
         customFieldMappings: [],
       });
 
@@ -133,6 +134,7 @@ export class NoteService {
         sourceObject: [resp.data],
         targetType: CrmObject.note,
         providerName: integrationId,
+        vertical: 'crm',
         customFieldMappings: [],
       })) as UnifiedNoteOutput[];
 

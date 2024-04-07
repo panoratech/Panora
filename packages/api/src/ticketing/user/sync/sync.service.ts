@@ -3,7 +3,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse, TICKETING_PROVIDERS } from '@@core/utils/types';
+import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
@@ -14,6 +14,7 @@ import { IUserService } from '../types';
 import { OriginalUserOutput } from '@@core/utils/types/original/original.ticketing';
 import { tcg_users as TicketingUser } from '@prisma/client';
 import { UnifiedUserOutput } from '../types/model.unified';
+import { TICKETING_PROVIDERS } from '@panora/shared';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -41,15 +42,21 @@ export class SyncService implements OnModuleInit {
   async syncUsers() {
     try {
       this.logger.log(`Syncing users....`);
-      const defaultOrg = await this.prisma.organizations.findFirst({
+      /*const defaultOrg = await this.prisma.organizations.findFirst({
         where: {
           name: 'Acme Inc',
+        },
+      });*/
+
+      const defaultUser = await this.prisma.users.findFirst({
+        where: {
+          email: 'audrey@aubry.io',
         },
       });
 
       const defaultProject = await this.prisma.projects.findFirst({
         where: {
-          id_organization: defaultOrg.id_organization,
+          id_user: defaultUser.id_user,
           name: 'Project 1',
         },
       });
@@ -97,6 +104,7 @@ export class SyncService implements OnModuleInit {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: integrationId,
+          vertical: 'ticketing',
         },
       });
       if (!connection) {
@@ -130,12 +138,17 @@ export class SyncService implements OnModuleInit {
         sourceObject,
         targetType: TicketingObject.user,
         providerName: integrationId,
+        vertical: 'ticketing',
         customFieldMappings,
       })) as UnifiedUserOutput[];
 
       //TODO
       const userIds = sourceObject.map((user) =>
-        'id' in user ? String(user.id) : undefined,
+        'id' in user
+          ? String(user.id)
+          : 'accountId' in user
+          ? String(user.accountId)
+          : undefined,
       );
 
       //insert the data in the DB with the fieldMappings (value table)
@@ -208,6 +221,7 @@ export class SyncService implements OnModuleInit {
               email_address: user.email_address,
               teams: user.teams || [],
               modified_at: new Date(),
+              //TODO: id_tcg_account: user.account_id || '',
             },
           });
           unique_ticketing_user_id = res.id_tcg_user;
@@ -223,6 +237,7 @@ export class SyncService implements OnModuleInit {
             created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
+            id_tcg_account: user.account_id || '',
             remote_id: originId,
             remote_platform: originSource,
           };

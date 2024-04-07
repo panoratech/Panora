@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { IEngagementService } from '@crm/engagement/types';
+import { CrmObject } from '@crm/@utils/@types';
+import axios from 'axios';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/logger/logger.service';
+import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { EncryptionService } from '@@core/encryption/encryption.service';
+import { ApiResponse } from '@@core/utils/types';
+import { ServiceRegistry } from '../registry.service';
 import {
-  CrmObject,
   HubspotEngagementCallInput,
   HubspotEngagementCallOutput,
   HubspotEngagementEmailInput,
@@ -11,16 +18,8 @@ import {
   HubspotEngagementMeetingOutput,
   HubspotEngagementOutput,
   commonCallHubspotProperties,
-  commonHubspotProperties,
   commonMeetingHubspotProperties,
-} from '@crm/@utils/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
+} from './types';
 
 @Injectable()
 export class HubspotService implements IEngagementService {
@@ -80,6 +79,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
       const dataBody = {
@@ -122,6 +122,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
       const dataBody = {
@@ -164,6 +165,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
       const dataBody = {
@@ -230,6 +232,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
 
@@ -278,6 +281,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
 
@@ -323,6 +327,7 @@ export class HubspotService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
 

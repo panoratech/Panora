@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ITaskService } from '@crm/task/types';
+import { CrmObject } from '@crm/@utils/@types';
 import {
-  CrmObject,
   HubspotTaskInput,
   HubspotTaskOutput,
   commonTaskHubspotProperties,
-} from '@crm/@utils/@types';
+} from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -36,6 +36,7 @@ export class HubspotService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
       const dataBody = {
@@ -78,6 +79,7 @@ export class HubspotService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
 

@@ -3,10 +3,7 @@ import {
   UnifiedStageInput,
   UnifiedStageOutput,
 } from '@crm/stage/types/model.unified';
-import {
-  FreshsalesStageInput,
-  FreshsalesStageOutput,
-} from '@crm/@utils/@types';
+import { FreshsalesStageInput, FreshsalesStageOutput } from './types';
 
 //TODO
 export class FreshsalesStageMapper implements IStageMapper {

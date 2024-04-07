@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IUserService } from '@crm/user/types';
-import { CrmObject, ZohoUserInput, ZohoUserOutput } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZohoUserOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -31,6 +32,7 @@ export class ZohoService implements IUserService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       //TODO: handle fields

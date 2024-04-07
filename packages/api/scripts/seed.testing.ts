@@ -4,14 +4,14 @@ import { v4 as uuidv4 } from 'uuid';
 const prisma = new PrismaClient();
 
 async function main() {
-  const org = await prisma.organizations.create({
+  /*const org = await prisma.organizations.create({
     data: {
       id_organization: uuidv4(),
       name: `Acme Inc`,
       stripe_customer_id: `cust_stripe_acme_${uuidv4()}`,
     },
   });
-
+  */
   const user = await prisma.users.create({
     data: {
       id_user: uuidv4(),
@@ -19,6 +19,7 @@ async function main() {
       password_hash: 'password_hashed_her',
       first_name: 'audrey',
       last_name: 'aubry',
+      identification_strategy: 'b2c'
     },
   });
 
@@ -26,7 +27,8 @@ async function main() {
   const projectsData = Array.from({ length: 3 }).map((_, index) => ({
     id_project: uuidv4(),
     name: `Project ${index + 1}`,
-    id_organization: org.id_organization,
+    id_user: user.id_user,
+    //id_organization: org.id_organization,
     sync_mode: 'pool',
   }));
 

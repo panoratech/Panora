@@ -351,6 +351,9 @@ importers:
       '@ntegral/nestjs-sentry':
         specifier: ^4.0.0
         version: 4.0.1(@nestjs/common@10.3.2)(@nestjs/core@10.3.2)(@sentry/hub@7.100.1)(@sentry/node@7.100.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.8.1)(reflect-metadata@0.1.14)(rimraf@3.0.2)(rxjs@7.8.1)
+      '@panora/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@prisma/client':
         specifier: ^5.4.2
         version: 5.9.1(prisma@5.9.1)
@@ -423,6 +426,9 @@ importers:
       uuid:
         specifier: ^9.0.1
         version: 9.0.1
+      yargs:
+        specifier: ^17.7.2
+        version: 17.7.2
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.0.0
@@ -502,6 +508,9 @@ importers:
 
   packages/shared:
     dependencies:
+      axios:
+        specifier: ^1.5.1
+        version: 1.6.7
       dotenv:
         specifier: ^16.3.1
         version: 16.4.1

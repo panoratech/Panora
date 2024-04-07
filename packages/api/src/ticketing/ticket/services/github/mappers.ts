@@ -98,9 +98,6 @@ export class GithubTicketMapper implements ITicketMapper {
           ...opts,
         };
 
-        // Additional properties like due_date, priority, etc., can be mapped based on your application's logic.
-        // GitHub API may not directly provide equivalents for all UnifiedTicketInput fields.
-
         return unifiedTicket;
       }),
     );

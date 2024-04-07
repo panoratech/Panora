@@ -3,7 +3,7 @@ import {
   UnifiedDealInput,
   UnifiedDealOutput,
 } from '@crm/deal/types/model.unified';
-import { FreshsalesDealInput, FreshsalesDealOutput } from '@crm/@utils/@types';
+import { FreshsalesDealInput, FreshsalesDealOutput } from './types';
 
 //TODO
 export class FreshsalesDealMapper implements IDealMapper {

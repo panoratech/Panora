@@ -22,7 +22,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "ci": "pnpm run lint && pnpm run build",
     "copy-types-to-shared": "cp ./exports.ts ../shared/index.ts",
-    "prisma:seed": "ts-node ./scripts/seed.webapp.ts"
+    "prisma:seed": "ts-node ./scripts/seed.webapp.ts",
+    "validate-connectors": "node ./scripts/connectorUpdate.js",
+    "prebuild-oauth-connector": "node ./scripts/oauthConnector.js"
   },
   "dependencies": {
     "@nestjs/bull": "^10.0.1",
@@ -60,7 +62,9 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "stytch": "^10.5.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "yargs": "^17.7.2",
+    "@panora/shared": "workspace:*"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -105,5 +109,6 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "type": "module"
 }
