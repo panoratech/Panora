@@ -111,7 +111,7 @@ import { JiraAttachmentOutput } from '@ticketing/attachment/services/jira/types'
 import {
   JiraTeamInput,
   JiraTeamOutput,
-} from '@ticketing/team/services/JIRA/types';
+} from '@ticketing/team/services/jira/types';
 import {
   JiraTagInput,
   JiraTagOutput,

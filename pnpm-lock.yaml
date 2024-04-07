@@ -508,6 +508,9 @@ importers:
 
   packages/shared:
     dependencies:
+      axios:
+        specifier: ^1.5.1
+        version: 1.6.7
       dotenv:
         specifier: ^16.3.1
         version: 16.4.1
