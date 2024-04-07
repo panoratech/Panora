@@ -33,7 +33,7 @@ export class GithubService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'github',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
       const dataBody = ticketData;
@@ -75,7 +75,7 @@ export class GithubService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'github',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
       const owner = '';

@@ -126,7 +126,7 @@ export class CommentService {
         sourceObject: unifiedCommentData,
         targetType: TicketingObject.comment,
         providerName: integrationId,
-        vertical: "ticketing",
+        vertical: 'ticketing',
         customFieldMappings: [],
       });
 
@@ -156,7 +156,7 @@ export class CommentService {
         sourceObject: [resp.data],
         targetType: TicketingObject.comment,
         providerName: integrationId,
-        vertical: "ticketing",
+        vertical: 'ticketing',
         customFieldMappings: [],
       })) as UnifiedCommentOutput[];
 

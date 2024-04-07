@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -13,7 +12,11 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export type InsightlyOAuthResponse = {
@@ -25,7 +28,7 @@ export type InsightlyOAuthResponse = {
 @Injectable()
 export class InsightlyConnectionService implements ICrmConnectionService {
   private readonly type: string;
-  
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -35,7 +38,7 @@ export class InsightlyConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(InsightlyConnectionService.name);
     this.registry.registerService('insightly', this);
-    this.type = providerToType('insightly','crm', AuthStrategy.oauth2);
+    this.type = providerToType('insightly', 'crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -51,7 +54,10 @@ export class InsightlyConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
@@ -61,15 +67,11 @@ export class InsightlyConnectionService implements ICrmConnectionService {
         grant_type: 'authorization_code',
       });
       //const subdomain = 'panora';
-      const res = await axios.post(
-        "",
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
+      const res = await axios.post('', formData.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
         },
-      );
+      });
       const data: InsightlyOAuthResponse = res.data;
       this.logger.log(
         'OAuth credentials : insightly ticketing ' + JSON.stringify(data),
@@ -86,7 +88,7 @@ export class InsightlyConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: "",
+            account_url: '',
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_at) * 1000,
             ),
@@ -102,7 +104,7 @@ export class InsightlyConnectionService implements ICrmConnectionService {
             provider_slug: 'insightly',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: "",
+            account_url: '',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -124,7 +126,7 @@ export class InsightlyConnectionService implements ICrmConnectionService {
       handleServiceError(error, this.logger, 'insightly', Action.oauthCallback);
     }
   }
-    
+
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
@@ -132,19 +134,18 @@ export class InsightlyConnectionService implements ICrmConnectionService {
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const subdomain = 'panora';
-      const res = await axios.post(
-        "",
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic JHt0aGlzLmVudi5nZXRgSW5zaWdodGx5U2VjcmV0YCgpLkNMSUVOVF9JRH06JHsKICAgICAgICAgICAgICAgIHRoaXMuZW52LmdldGBJbnNpZ2h0bHlTZWNyZXRgKCkuQ0xJRU5UX1NFQ1JFVAogICAgICAgICAgICAgIH0=`,
-          },
+      const res = await axios.post('', formData.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          Authorization: `Basic JHt0aGlzLmVudi5nZXRgSW5zaWdodGx5U2VjcmV0YCgpLkNMSUVOVF9JRH06JHsKICAgICAgICAgICAgICAgIHRoaXMuZW52LmdldGBJbnNpZ2h0bHlTZWNyZXRgKCkuQ0xJRU5UX1NFQ1JFVAogICAgICAgICAgICAgIH0=`,
         },
-      );
+      });
       const data: InsightlyOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
@@ -163,4 +164,4 @@ export class InsightlyConnectionService implements ICrmConnectionService {
       handleServiceError(error, this.logger, 'insightly', Action.oauthRefresh);
     }
   }
-} 
+}

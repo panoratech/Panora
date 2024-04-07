@@ -32,7 +32,7 @@ export class JiraService implements ICollectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
 

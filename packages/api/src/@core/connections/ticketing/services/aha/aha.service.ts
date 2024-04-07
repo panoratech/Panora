@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -14,7 +13,11 @@ import {
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy } from '@panora/shared';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 
 export type AhaOAuthResponse = {
   access_token: string;
@@ -34,7 +37,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(AhaConnectionService.name);
     this.registry.registerService('aha', this);
-    this.type = providerToType('aha','ticketing', AuthStrategy.oauth2);
+    this.type = providerToType('aha', 'ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -50,8 +53,11 @@ export class AhaConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
@@ -115,8 +121,8 @@ export class AhaConnectionService implements ITicketingConnectionService {
       handleServiceError(error, this.logger, 'aha', Action.oauthCallback);
     }
   }
-    
+
   async handleTokenRefresh(opts: RefreshParams) {
     return;
   }
-} 
+}

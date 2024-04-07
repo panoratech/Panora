@@ -36,7 +36,7 @@ export class HubspotService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
 
@@ -80,7 +80,7 @@ export class HubspotService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
 

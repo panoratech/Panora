@@ -23,7 +23,7 @@ export class PassthroughService {
     requestParams: PassThroughRequestDto,
     integrationId: string,
     linkedUserId: string,
-    vertical: string
+    vertical: string,
   ): Promise<PassThroughResponse> {
     try {
       const { method, path, data, headers } = requestParams;
@@ -42,8 +42,7 @@ export class PassthroughService {
         },
       });
       const intId = integrationId.toLowerCase();
-      const providerUrl =
-        providersConfig[vertical.toLowerCase()][intId].apiUrl;
+      const providerUrl = providersConfig[vertical.toLowerCase()][intId].apiUrl;
       const BASE_URL = `${providerUrl}${path}`;
       const connection = await this.prisma.connections.findFirst({
         where: {

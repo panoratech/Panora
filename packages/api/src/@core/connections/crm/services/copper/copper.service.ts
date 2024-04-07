@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -13,7 +12,11 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export type CopperOAuthResponse = {
@@ -25,7 +28,7 @@ export type CopperOAuthResponse = {
 @Injectable()
 export class CopperConnectionService implements ICrmConnectionService {
   private readonly type: string;
-  
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -35,7 +38,7 @@ export class CopperConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(CopperConnectionService.name);
     this.registry.registerService('copper', this);
-    this.type = providerToType('copper','crm', AuthStrategy.oauth2);
+    this.type = providerToType('copper', 'crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -51,7 +54,10 @@ export class CopperConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
@@ -61,7 +67,7 @@ export class CopperConnectionService implements ICrmConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        "https://app.copper.com/oauth/token",
+        'https://app.copper.com/oauth/token',
         formData.toString(),
         {
           headers: {
@@ -96,7 +102,7 @@ export class CopperConnectionService implements ICrmConnectionService {
             provider_slug: 'copper',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: "",
+            account_url: '',
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),
@@ -114,8 +120,8 @@ export class CopperConnectionService implements ICrmConnectionService {
       handleServiceError(error, this.logger, 'copper', Action.oauthCallback);
     }
   }
-    
+
   async handleTokenRefresh(opts: RefreshParams) {
     return;
   }
-} 
+}

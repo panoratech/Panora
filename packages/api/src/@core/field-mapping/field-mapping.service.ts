@@ -116,19 +116,20 @@ export class FieldMappingService {
     }
   }
 
-  async getCustomProperties(linkedUserId: string, providerId: string, vertical: string) {
+  async getCustomProperties(
+    linkedUserId: string,
+    providerId: string,
+    vertical: string,
+  ) {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: providerId.toLowerCase(),
-          vertical: vertical.toLowerCase()
+          vertical: vertical.toLowerCase(),
         },
       });
-      const provider =
-        providersConfig[vertical][
-          providerId.toLowerCase()
-        ];
+      const provider = providersConfig[vertical][providerId.toLowerCase()];
       const resp = await axios.get(
         provider.apiUrl + provider.customPropertiesUrl,
         {

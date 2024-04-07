@@ -14,35 +14,40 @@ export type RateLimit = {
 
 @Injectable()
 export class ConnectionsStrategiesService {
-  constructor(private prisma: PrismaService) {} 
+  constructor(private prisma: PrismaService) {}
 
   async isCustomCredentials(projectId: string, type: string) {
     const res = await this.prisma.connection_strategies.findFirst({
       where: {
         id_project: projectId,
-        type: type
-      }
-    })
-    if(!res) return false;
+        type: type,
+      },
+    });
+    if (!res) return false;
     return res.status;
   }
 
-  async createConnectionStrategy(projectId: string, type: string, attributes: string[], values: string[]) {
+  async createConnectionStrategy(
+    projectId: string,
+    type: string,
+    attributes: string[],
+    values: string[],
+  ) {
     const cs = await this.prisma.connection_strategies.create({
       data: {
         id_connection_strategy: uuidv4(),
         id_project: projectId,
         type: type,
-        status: true
-      }
+        status: true,
+      },
     });
     const entity = await this.prisma.cs_entities.create({
       data: {
         id_cs_entity: uuidv4(),
         id_connection_strategy: cs.id_connection_strategy,
-      }
-    }); 
-    for(var i=0; i<attributes.length; i++){
+      },
+    });
+    for (let i = 0; i < attributes.length; i++) {
       const attribute_slug = attributes[i];
       const value = values[i];
       //create all attributes (for oauth =>  client_id, client_secret)
@@ -51,27 +56,27 @@ export class ConnectionsStrategiesService {
           id_cs_attribute: uuidv4(),
           id_cs_entity: entity.id_cs_entity,
           attribute_slug: attribute_slug,
-          data_type: 'string' //TODO
-        }
-      }); 
+          data_type: 'string', //TODO
+        },
+      });
       const value_ = await this.prisma.cs_values.create({
         data: {
           id_cs_value: uuidv4(),
           value: value,
-          id_cs_attribute: attribute_.id_cs_attribute
-        }
-      }); 
+          id_cs_attribute: attribute_.id_cs_attribute,
+        },
+      });
     }
   }
 
   async toggle(id_cs: string) {
-    try{
+    try {
       const cs = await this.prisma.connection_strategies.findFirst({
         where: {
           id_connection_strategy: id_cs,
         },
       });
-      if(!cs) throw new Error("No connection strategies found !");
+      if (!cs) throw new Error('No connection strategies found !');
       // Toggle the 'active' value
       const updatedCs = await this.prisma.connection_strategies.update({
         where: {
@@ -83,48 +88,51 @@ export class ConnectionsStrategiesService {
       });
 
       return updatedCs;
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
-  // one must provide an array of attributes to get the associated values i.e 
+  // one must provide an array of attributes to get the associated values i.e
   // [client_id, client_secret] or [client_id, client_secret, subdomain] or [api_key]
-  async getConnectionStrategyData(projectId: string, type: string, attributes: string[]) {
+  async getConnectionStrategyData(
+    projectId: string,
+    type: string,
+    attributes: string[],
+  ) {
     const cs = await this.prisma.connection_strategies.findFirst({
       where: {
         id_project: projectId,
-        type: type
-      }
+        type: type,
+      },
     });
-    if(!cs) throw new Error("No connection strategies found !");
+    if (!cs) throw new Error('No connection strategies found !');
     const entity = await this.prisma.cs_entities.findFirst({
       where: {
         id_connection_strategy: cs.id_connection_strategy,
-      }
+      },
     });
-    let values: string[] = [];
-    for(var i=0; i<attributes.length; i++){
+    const values: string[] = [];
+    for (let i = 0; i < attributes.length; i++) {
       const attribute_slug = attributes[i];
       //create all attributes (for oauth =>  client_id, client_secret)
       const attribute_ = await this.prisma.cs_attributes.findFirst({
         where: {
           id_cs_entity: entity.id_cs_entity,
-          attribute_slug: attribute_slug
-        }
-      }); 
-      if(!attribute_) throw new Error("No attribute found !");
+          attribute_slug: attribute_slug,
+        },
+      });
+      if (!attribute_) throw new Error('No attribute found !');
       const value_ = await this.prisma.cs_values.findFirst({
         where: {
-          id_cs_attribute: attribute_.id_cs_attribute
-        }
-      }); 
-      if(!value_) throw new Error("No value found !");
+          id_cs_attribute: attribute_.id_cs_attribute,
+        },
+      });
+      if (!value_) throw new Error('No value found !');
       values.push(value_.value);
     }
     return values;
   }
 
   //TODO: update connection strategy
-
 }

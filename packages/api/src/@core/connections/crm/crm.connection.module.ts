@@ -34,4 +34,4 @@ import { AttioConnectionService } from './services/attio/attio.service';
   ],
   exports: [CrmConnectionsService],
 })
-export class CrmConnectionModule { }
+export class CrmConnectionModule {}

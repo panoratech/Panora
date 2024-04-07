@@ -34,7 +34,7 @@ export class GithubService implements IUserService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'github',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
       const resp = await axios.get(`https://api.github.com/user`, {

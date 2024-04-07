@@ -50,7 +50,7 @@ export class SyncService implements OnModuleInit {
 
       const defaultUser = await this.prisma.users.findFirst({
         where: {
-          email: "audrey@aubry.io"
+          email: 'audrey@aubry.io',
         },
       });
 
@@ -104,7 +104,7 @@ export class SyncService implements OnModuleInit {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: integrationId,
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
       if (!connection) {
@@ -126,7 +126,7 @@ export class SyncService implements OnModuleInit {
         sourceObject,
         targetType: TicketingObject.collection,
         providerName: integrationId,
-        vertical: "ticketing",
+        vertical: 'ticketing',
         customFieldMappings: [],
       })) as UnifiedCollectionOutput[];
 
@@ -206,7 +206,7 @@ export class SyncService implements OnModuleInit {
               name: existingTeam.name,
               description: collection.description,
               collection_type: collection.collection_type,
-              modified_at: new Date(), 
+              modified_at: new Date(),
             },
           });
           unique_ticketing_collection_id = res.id_tcg_collection;

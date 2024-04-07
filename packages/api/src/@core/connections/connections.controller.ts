@@ -12,9 +12,9 @@ export type StateDataType = {
   projectId: string;
   vertical: string;
   linkedUserId: string;
-  providerName: string; 
+  providerName: string;
   returnUrl: string;
-}
+};
 
 @ApiTags('connections')
 @Controller('connections')
@@ -54,7 +54,8 @@ export class ConnectionsController {
         );
 
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
-      const { projectId, vertical, linkedUserId, providerName, returnUrl } = stateData;
+      const { projectId, vertical, linkedUserId, providerName, returnUrl } =
+        stateData;
       switch (vertical.toLowerCase()) {
         case ProviderVertical.CRM:
           const zohoLocation_ = zohoLocation ? zohoLocation : '';

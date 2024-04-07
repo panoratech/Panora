@@ -12,7 +12,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export interface PipedriveOAuthResponse {
@@ -26,7 +30,7 @@ export interface PipedriveOAuthResponse {
 @Injectable()
 export class PipedriveConnectionService implements ICrmConnectionService {
   private readonly type: string;
-  
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -36,7 +40,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(PipedriveConnectionService.name);
     this.registry.registerService('pipedrive', this);
-    this.type = providerToType('pipedrive','crm', AuthStrategy.oauth2);
+    this.type = providerToType('pipedrive', 'crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -52,7 +56,10 @@ export class PipedriveConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
@@ -66,9 +73,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },
@@ -127,7 +132,10 @@ export class PipedriveConnectionService implements ICrmConnectionService {
     try {
       const { connectionId, refreshToken, projectId } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
@@ -141,9 +149,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },

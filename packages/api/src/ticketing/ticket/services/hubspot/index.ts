@@ -36,7 +36,7 @@ export class HubspotService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
       const dataBody = { properties: ticketData };
@@ -76,7 +76,7 @@ export class HubspotService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
 

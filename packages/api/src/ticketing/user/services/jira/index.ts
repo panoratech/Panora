@@ -32,7 +32,7 @@ export class JiraService implements IUserService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'jira',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
       const resp = await axios.get(

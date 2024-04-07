@@ -34,7 +34,7 @@ export class ZendeskService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
       let dataBody = {
@@ -117,7 +117,7 @@ export class ZendeskService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
 

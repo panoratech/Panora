@@ -49,7 +49,7 @@ export class SyncService implements OnModuleInit {
 
       const defaultUser = await this.prisma.users.findFirst({
         where: {
-          email: "audrey@aubry.io"
+          email: 'audrey@aubry.io',
         },
       });
 
@@ -105,7 +105,7 @@ export class SyncService implements OnModuleInit {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: integrationId,
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
       if (!connection) {
@@ -139,7 +139,7 @@ export class SyncService implements OnModuleInit {
         sourceObject,
         targetType: CrmObject.user,
         providerName: integrationId,
-        vertical: "crm",
+        vertical: 'crm',
         customFieldMappings,
       })) as UnifiedUserOutput[];
 

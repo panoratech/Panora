@@ -12,7 +12,11 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export type GithubOAuthResponse = {
@@ -22,7 +26,7 @@ export type GithubOAuthResponse = {
   refresh_token_expires_in: string; //TODO
   token_type: string;
   scope: string;
-}
+};
 
 @Injectable()
 export class GithubConnectionService implements ITicketingConnectionService {
@@ -37,7 +41,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(GithubConnectionService.name);
     this.registry.registerService('github', this);
-    this.type = providerToType('github','ticketing', AuthStrategy.oauth2);
+    this.type = providerToType('github', 'ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -53,7 +57,10 @@ export class GithubConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
@@ -132,7 +139,10 @@ export class GithubConnectionService implements ITicketingConnectionService {
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
       const res = await axios.post(
         `https://app.githubapp.com/oauth/token`,
         formData.toString(),
@@ -140,9 +150,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },

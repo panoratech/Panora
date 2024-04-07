@@ -12,7 +12,11 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 type AcceloOAuthResponse = {
@@ -22,7 +26,7 @@ type AcceloOAuthResponse = {
   refresh_token: string;
   error: string;
   error_description: string;
-}
+};
 
 @Injectable()
 export class AcceloConnectionService implements ICrmConnectionService {
@@ -56,13 +60,16 @@ export class AcceloConnectionService implements ICrmConnectionService {
       if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         redirect_uri: REDIRECT_URI,
         code: code,
-      }); 
+      });
       //const subdomain = 'panora'; //TODO: if custom oauth then get the actual domain from customer
       const res = await axios.post(
         `${CREDENTIALS.SUBDOMAIN}/oauth2/v0/token`,
@@ -71,19 +78,17 @@ export class AcceloConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },
-      ); 
+      );
 
       const data: AcceloOAuthResponse = res.data;
 
       // Saving the token of customer inside db
       let db_res;
-      const connection_token = uuidv4(); 
+      const connection_token = uuidv4();
 
       if (isNotUnique) {
         // Update existing connection
@@ -142,7 +147,10 @@ export class AcceloConnectionService implements ICrmConnectionService {
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
       //const subdomain = 'panora'; //TODO: if custom oauth then get the actual domain from customer
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const res = await axios.post(
         `${CREDENTIALS.SUBDOMAIN!}/oauth2/v0/token`,
@@ -151,9 +159,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },

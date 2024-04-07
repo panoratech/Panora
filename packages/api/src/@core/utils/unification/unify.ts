@@ -22,7 +22,7 @@ export async function unify<T extends UnifySourceType | UnifySourceType[]>({
   sourceObject: T;
   targetType: TargetObject;
   providerName: string;
-  vertical: string,
+  vertical: string;
   customFieldMappings: {
     slug: string;
     remote_id: string;

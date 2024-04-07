@@ -12,7 +12,11 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export type GorgiasOAuthResponse = {
@@ -22,12 +26,12 @@ export type GorgiasOAuthResponse = {
   refresh_token: string;
   scope: string;
   token_type: string;
-}
+};
 
 @Injectable()
 export class GorgiasConnectionService implements ITicketingConnectionService {
   private readonly type: string;
-  
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -37,7 +41,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(GorgiasConnectionService.name);
     this.registry.registerService('gorgias', this);
-    this.type = providerToType('gorgias','ticketing', AuthStrategy.oauth2);
+    this.type = providerToType('gorgias', 'ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -53,8 +57,11 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
@@ -65,7 +72,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
       });
       const res = await axios.post(
         `${CREDENTIALS.SUBDOMAIN!}/oauth/token`,
-        formData.toString(), 
+        formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -134,7 +141,10 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const res = await axios.post(
         `${CREDENTIALS.SUBDOMAIN!}/oauth/token`,
@@ -143,9 +153,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },

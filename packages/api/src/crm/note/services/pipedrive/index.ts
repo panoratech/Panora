@@ -33,7 +33,7 @@ export class PipedriveService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
@@ -73,7 +73,7 @@ export class PipedriveService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
       const resp = await axios.get(`https://api.pipedrive.com/v1/notes`, {

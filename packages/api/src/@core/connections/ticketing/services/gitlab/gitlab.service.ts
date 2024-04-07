@@ -13,7 +13,11 @@ import {
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy } from '@panora/shared';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 
 export interface GitlabOAuthResponse {
   access_token: string;
@@ -36,7 +40,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(GitlabConnectionService.name);
     this.registry.registerService('gitlab', this);
-    this.type = providerToType('gitlab','ticketing', AuthStrategy.oauth2);
+    this.type = providerToType('gitlab', 'ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -52,7 +56,10 @@ export class GitlabConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
@@ -130,7 +137,10 @@ export class GitlabConnectionService implements ITicketingConnectionService {
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
       const res = await axios.post(
         `https://api.gitlab.app/oauth/token`,
         formData.toString(),
@@ -138,9 +148,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },

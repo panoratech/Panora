@@ -81,7 +81,7 @@ export class FieldMappingController {
     return this.fieldMappingService.getCustomProperties(
       linkedUserId,
       providerId,
-      vertical
+      vertical,
     );
   }
 }

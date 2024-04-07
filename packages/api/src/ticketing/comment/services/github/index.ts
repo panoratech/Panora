@@ -35,7 +35,7 @@ export class GithubService implements ICommentService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'github',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
       const dataBody = {
@@ -77,7 +77,7 @@ export class GithubService implements ICommentService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'github',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
       //retrieve ticket remote id so we can retrieve the comments in the original software

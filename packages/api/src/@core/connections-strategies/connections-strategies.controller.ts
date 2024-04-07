@@ -1,6 +1,12 @@
 import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ConnectionsStrategiesService } from './connections-strategies.service';
 import { CreateConnectionStrategyDto } from './dto/create-connections-strategies.dto';
 import { ToggleStrategyDto } from './dto/toggle.dto';
@@ -18,33 +24,62 @@ export class ConnectionsStrategiesController {
 
   @ApiOperation({
     operationId: 'isCustomCredentials',
-    summary: 'Fetch info on whether the customer uses custom credentials for connections',
+    summary:
+      'Fetch info on whether the customer uses custom credentials for connections',
   })
   @ApiResponse({ status: 200 })
   @Get('isCustomCredentials')
-  async isCustomCredentials(@Query('projectId') projectId: string, @Query('type') type: string) {
-    return await this.connectionsStrategiesService.isCustomCredentials(projectId, type);
+  async isCustomCredentials(
+    @Query('projectId') projectId: string,
+    @Query('type') type: string,
+  ) {
+    return await this.connectionsStrategiesService.isCustomCredentials(
+      projectId,
+      type,
+    );
   }
 
-  @ApiOperation({ operationId: 'createConnectionStrategy', summary: 'Create Connection Strategy' })
+  @ApiOperation({
+    operationId: 'createConnectionStrategy',
+    summary: 'Create Connection Strategy',
+  })
   @ApiBody({ type: CreateConnectionStrategyDto })
   @ApiResponse({ status: 201 })
   @Post('create')
-  async createConnectionStrategy(@Body() connectionStrategyCreateDto: CreateConnectionStrategyDto) {
-    const {projectId, type , attributes, values} = connectionStrategyCreateDto;
-    return await this.connectionsStrategiesService.createConnectionStrategy(projectId, type , attributes, values);
+  async createConnectionStrategy(
+    @Body() connectionStrategyCreateDto: CreateConnectionStrategyDto,
+  ) {
+    const { projectId, type, attributes, values } = connectionStrategyCreateDto;
+    return await this.connectionsStrategiesService.createConnectionStrategy(
+      projectId,
+      type,
+      attributes,
+      values,
+    );
   }
 
-  @ApiOperation({ operationId: 'getConnectionStrategyData', summary: 'Get Connection Strategy Data' })
+  @ApiOperation({
+    operationId: 'getConnectionStrategyData',
+    summary: 'Get Connection Strategy Data',
+  })
   @ApiBody({ type: GetConnectionStrategyDto })
   @ApiResponse({ status: 201 })
   @Post('get')
-  async getConnectionStrategyData(@Body() connectionStrategyCreateDto: GetConnectionStrategyDto) {
-    const {projectId, type , attributes} = connectionStrategyCreateDto;
-    return await this.connectionsStrategiesService.getConnectionStrategyData(projectId, type , attributes);
+  async getConnectionStrategyData(
+    @Body() connectionStrategyCreateDto: GetConnectionStrategyDto,
+  ) {
+    const { projectId, type, attributes } = connectionStrategyCreateDto;
+    return await this.connectionsStrategiesService.getConnectionStrategyData(
+      projectId,
+      type,
+      attributes,
+    );
   }
 
-  @ApiOperation({ operationId: 'toggleConnectionStrategy', summary: 'Activate/Deactivate Connection Strategy' })
+  @ApiOperation({
+    operationId: 'toggleConnectionStrategy',
+    summary: 'Activate/Deactivate Connection Strategy',
+  })
   @ApiBody({ type: ToggleStrategyDto })
   @ApiResponse({ status: 201 })
   @Post('toggle')
@@ -54,6 +89,5 @@ export class ConnectionsStrategiesController {
 
   //TODO: delete a connection strategy
 
-  //TODO: add scopes maybe for a provider ? 
-
+  //TODO: add scopes maybe for a provider ?
 }

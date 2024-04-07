@@ -33,7 +33,7 @@ export class FrontService implements ITagService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
 

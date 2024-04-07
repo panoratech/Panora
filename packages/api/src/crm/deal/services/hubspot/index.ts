@@ -35,7 +35,7 @@ export class HubspotService implements IDealService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
       const dataBody = {
@@ -79,7 +79,7 @@ export class HubspotService implements IDealService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
 

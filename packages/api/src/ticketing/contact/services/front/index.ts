@@ -36,7 +36,7 @@ export class FrontService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
 

@@ -65,7 +65,7 @@ export class FrontCommentMapper implements ICommentMapper {
         sourceObject: comment.attachments,
         targetType: TicketingObject.attachment,
         providerName: 'front',
-        vertical: "ticketing",
+        vertical: 'ticketing',
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
 

@@ -12,7 +12,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export interface ZendeskSellOAuthResponse {
@@ -23,11 +27,10 @@ export interface ZendeskSellOAuthResponse {
   expires_in: number;
 }
 
-
 @Injectable()
 export class ZendeskConnectionService implements ICrmConnectionService {
   private readonly type: string;
-  
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -37,7 +40,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
     this.registry.registerService('zendesk', this);
-    this.type = providerToType('zendesk','crm', AuthStrategy.oauth2);
+    this.type = providerToType('zendesk', 'crm', AuthStrategy.oauth2);
   }
   async handleCallback(opts: CallbackParams) {
     try {
@@ -54,7 +57,10 @@ export class ZendeskConnectionService implements ICrmConnectionService {
       //const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
       //TODO
       const REDIRECT_URI = `http://localhost:3000/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
@@ -68,9 +74,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },
@@ -136,7 +140,10 @@ export class ZendeskConnectionService implements ICrmConnectionService {
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const res = await axios.post(
         'https://api.getbase.com/oauth2/token',
@@ -145,9 +152,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },

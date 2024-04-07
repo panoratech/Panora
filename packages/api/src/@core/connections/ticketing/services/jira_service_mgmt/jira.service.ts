@@ -12,7 +12,11 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export type JiraCloudIdInformation = {
@@ -21,17 +25,17 @@ export type JiraCloudIdInformation = {
   url: string;
   scopes: Array<string>;
   avatarUrl: string;
-}
+};
 
 export type JiraServiceManagementOAuthResponse = {
   access_token: string;
-}
+};
 export type JiraOAuthResponse = {
   access_token: string;
   refresh_token: string;
   expires_in: number | Date;
   scope: string;
-}
+};
 
 @Injectable()
 export class JiraServiceMgmtConnectionService
@@ -48,7 +52,11 @@ export class JiraServiceMgmtConnectionService
   ) {
     this.logger.setContext(JiraServiceMgmtConnectionService.name);
     this.registry.registerService('jira_service_mgmt', this);
-    this.type = providerToType('jira_service_mgmt','ticketing', AuthStrategy.oauth2);
+    this.type = providerToType(
+      'jira_service_mgmt',
+      'ticketing',
+      AuthStrategy.oauth2,
+    );
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -64,7 +72,10 @@ export class JiraServiceMgmtConnectionService
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
@@ -172,7 +183,10 @@ export class JiraServiceMgmtConnectionService
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
       const res = await axios.post(
         `https://auth.atlassian.com/oauth/token`,
         formData.toString(),
@@ -180,9 +194,7 @@ export class JiraServiceMgmtConnectionService
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${
-                CREDENTIALS.CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },

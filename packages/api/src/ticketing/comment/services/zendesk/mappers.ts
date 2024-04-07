@@ -69,7 +69,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
         sourceObject: comment.attachments,
         targetType: TicketingObject.attachment,
         providerName: 'zendesk',
-        vertical: "ticketing",
+        vertical: 'ticketing',
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
 

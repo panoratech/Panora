@@ -41,7 +41,7 @@ export class PassthroughController {
       requestParams,
       integrationId,
       linkedUserId,
-      vertical
+      vertical,
     );
   }
 }

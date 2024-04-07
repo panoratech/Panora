@@ -33,7 +33,7 @@ export class PipedriveService implements IStageService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
       const res = await this.prisma.crm_deals.findUnique({

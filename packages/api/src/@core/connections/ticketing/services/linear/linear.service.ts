@@ -13,14 +13,18 @@ import {
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy } from '@panora/shared';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 
 export type LinearOAuthResponse = {
   access_token: string;
   token_type: string;
   expires_in: number;
   scope: string;
-}
+};
 
 @Injectable()
 export class LinearConnectionService implements ITicketingConnectionService {
@@ -35,7 +39,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(LinearConnectionService.name);
     this.registry.registerService('linear', this);
-    this.type = providerToType('linear','ticketing', AuthStrategy.oauth2);
+    this.type = providerToType('linear', 'ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -51,7 +55,10 @@ export class LinearConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,

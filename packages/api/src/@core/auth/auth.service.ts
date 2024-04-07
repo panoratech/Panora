@@ -37,7 +37,7 @@ export class AuthService {
       return await this.prisma.users.findUnique({
         where: {
           id_stytch: stytchId,
-          identification_strategy: 'b2c'
+          identification_strategy: 'b2c',
         },
       });
     } catch (error) {

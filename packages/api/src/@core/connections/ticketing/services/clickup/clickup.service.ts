@@ -12,17 +12,21 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export type ClickupOAuthResponse = {
   access_token: string;
-}
+};
 
 @Injectable()
 export class ClickupConnectionService implements ITicketingConnectionService {
   private readonly type: string;
- 
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -32,7 +36,7 @@ export class ClickupConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(ClickupConnectionService.name);
     this.registry.registerService('clickup', this);
-    this.type = providerToType('clickup','ticketing', AuthStrategy.oauth2);
+    this.type = providerToType('clickup', 'ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -48,7 +52,10 @@ export class ClickupConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       //const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,

@@ -13,7 +13,11 @@ import {
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy } from '@panora/shared';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 
 export interface ZendeskOAuthResponse {
   access_token: string;
@@ -33,7 +37,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
     this.registry.registerService('zendesk', this);
-    this.type = providerToType('zendesk','ticketing', AuthStrategy.oauth2);
+    this.type = providerToType('zendesk', 'ticketing', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -49,7 +53,10 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
@@ -117,12 +124,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        Action.oauthCallback,
-      );
+      handleServiceError(error, this.logger, 'zendesk', Action.oauthCallback);
     }
   }
 

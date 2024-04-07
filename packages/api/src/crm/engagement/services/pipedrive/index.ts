@@ -34,7 +34,7 @@ export class PipedriveService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
       return;
@@ -86,7 +86,7 @@ export class PipedriveService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
 
@@ -125,7 +125,7 @@ export class PipedriveService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
-          vertical: 'crm'
+          vertical: 'crm',
         },
       });
 
@@ -164,8 +164,8 @@ export class PipedriveService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
-          vertical: 'crm'
-        }
+          vertical: 'crm',
+        },
       });
 
       const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {

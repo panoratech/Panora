@@ -48,7 +48,7 @@ export class EnvironmentService {
   }
 
   /* CRM */
- /*
+  /*
   getHubspotCrmAuth(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('HUBSPOT_CRM_CLIENT_ID'),
@@ -101,7 +101,7 @@ export class EnvironmentService {
   }*/
 
   /* TICKETING */
-/*
+  /*
   getZendeskTicketingSecret(): OAuth {
     return {
       CLIENT_ID: this.configService.get<string>('ZENDESK_TICKETING_CLIENT_ID'),
@@ -237,4 +237,4 @@ export class EnvironmentService {
     };
   }
   */
-  }
+}

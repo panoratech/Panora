@@ -26,7 +26,7 @@ import { ConnectionsStrategiesModule } from './connections-strategies/connection
     PassthroughModule,
     WebhookModule,
     EnvironmentModule,
-    ConnectionsStrategiesModule
+    ConnectionsStrategiesModule,
   ],
   exports: [
     AuthModule,
@@ -40,7 +40,7 @@ import { ConnectionsStrategiesModule } from './connections-strategies/connection
     PassthroughModule,
     WebhookModule,
     EnvironmentModule,
-    ConnectionsStrategiesModule
+    ConnectionsStrategiesModule,
   ],
   providers: [EncryptionService],
 })

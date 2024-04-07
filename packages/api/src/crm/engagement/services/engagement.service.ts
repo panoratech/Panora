@@ -111,7 +111,7 @@ export class EngagementService {
         sourceObject: unifiedEngagementData,
         targetType: CrmObject.engagement,
         providerName: integrationId,
-        vertical: "crm",
+        vertical: 'crm',
         customFieldMappings: [],
       });
 
@@ -133,7 +133,7 @@ export class EngagementService {
         sourceObject: [resp.data],
         targetType: targetType,
         providerName: integrationId,
-        vertical: "crm",
+        vertical: 'crm',
         customFieldMappings: [],
       })) as UnifiedEngagementOutput[];
 

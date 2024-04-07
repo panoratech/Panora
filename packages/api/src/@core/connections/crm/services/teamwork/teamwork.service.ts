@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -13,7 +12,11 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export type TeamworkOAuthResponse = {
@@ -23,7 +26,7 @@ export type TeamworkOAuthResponse = {
 @Injectable()
 export class TeamworkConnectionService implements ICrmConnectionService {
   private readonly type: string;
-  
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -33,7 +36,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(TeamworkConnectionService.name);
     this.registry.registerService('teamwork', this);
-    this.type = providerToType('teamwork','crm', AuthStrategy.oauth2);
+    this.type = providerToType('teamwork', 'crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -49,7 +52,10 @@ export class TeamworkConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
@@ -58,7 +64,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
         code: code,
       });
       const res = await axios.post(
-        "https://www.teamwork.com/launchpad/v1/token.json",
+        'https://www.teamwork.com/launchpad/v1/token.json',
         formData.toString(),
         {
           headers: {
@@ -110,8 +116,8 @@ export class TeamworkConnectionService implements ICrmConnectionService {
       handleServiceError(error, this.logger, 'teamwork', Action.oauthCallback);
     }
   }
-    
+
   async handleTokenRefresh(opts: RefreshParams) {
     return;
   }
-} 
+}

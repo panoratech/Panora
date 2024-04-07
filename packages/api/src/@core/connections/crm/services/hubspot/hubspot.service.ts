@@ -12,7 +12,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
-import { getCredentials, OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import {
+  getCredentials,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
 
 export interface HubspotOAuthResponse {
@@ -34,7 +38,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
   ) {
     this.logger.setContext(HubspotConnectionService.name);
     this.registry.registerService('hubspot', this);
-    this.type = providerToType('hubspot','crm', AuthStrategy.oauth2);
+    this.type = providerToType('hubspot', 'crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -50,12 +54,15 @@ export class HubspotConnectionService implements ICrmConnectionService {
           vertical: 'crm',
         },
       });
-      if (isNotUnique) return; 
+      if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-  
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
-      
+
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: CREDENTIALS.CLIENT_ID,
@@ -129,8 +136,11 @@ export class HubspotConnectionService implements ICrmConnectionService {
     try {
       const { connectionId, refreshToken, projectId } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`; //tocheck
-      
-      const CREDENTIALS = (await getCredentials(projectId, this.type)) as OAuth2AuthData;
+
+      const CREDENTIALS = (await getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
