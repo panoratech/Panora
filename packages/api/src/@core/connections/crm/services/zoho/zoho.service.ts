@@ -12,12 +12,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
-import {
-  getCredentials,
-  OAuth2AuthData,
-  providerToType,
-} from '@panora/shared/src/envConfig';
+import { OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 const ZOHOLocations = {
   us: 'https://accounts.zoho.com',
@@ -45,6 +42,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private cService: ConnectionsStrategiesService,
   ) {
     this.logger.setContext(ZohoConnectionService.name);
     this.registry.registerService('zoho', this);
@@ -66,7 +64,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(
+      const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
@@ -149,7 +147,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
     try {
       const { connectionId, refreshToken, account_url, projectId } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(
+      const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;

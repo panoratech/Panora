@@ -12,12 +12,9 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import {
-  getCredentials,
-  OAuth2AuthData,
-  providerToType,
-} from '@panora/shared/src/envConfig';
+import { OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 export type JiraCloudIdInformation = {
   id: string;
@@ -44,6 +41,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private cService: ConnectionsStrategiesService,
   ) {
     this.logger.setContext(JiraConnectionService.name);
     this.registry.registerService('jira', this);
@@ -63,7 +61,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(
+      const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
@@ -166,7 +164,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const CREDENTIALS = (await getCredentials(
+      const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;

@@ -13,11 +13,8 @@ import {
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy } from '@panora/shared';
-import {
-  getCredentials,
-  OAuth2AuthData,
-  providerToType,
-} from '@panora/shared/src/envConfig';
+import { OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 export interface ZendeskOAuthResponse {
   access_token: string;
@@ -34,6 +31,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private cService: ConnectionsStrategiesService,
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
     this.registry.registerService('zendesk', this);
@@ -53,7 +51,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(
+      const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;

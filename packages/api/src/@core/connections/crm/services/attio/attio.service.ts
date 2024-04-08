@@ -12,12 +12,9 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import {
-  getCredentials,
-  OAuth2AuthData,
-  providerToType,
-} from '@panora/shared/src/envConfig';
+import { OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 export interface AttioOAuthResponse {
   access_token: string;
@@ -34,6 +31,7 @@ export class AttioConnectionService implements ICrmConnectionService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private cService: ConnectionsStrategiesService,
   ) {
     this.logger.setContext(AttioConnectionService.name);
     this.registry.registerService('attio', this);
@@ -56,7 +54,7 @@ export class AttioConnectionService implements ICrmConnectionService {
       if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(
+      const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;

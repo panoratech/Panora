@@ -12,12 +12,9 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import {
-  getCredentials,
-  OAuth2AuthData,
-  providerToType,
-} from '@panora/shared/src/envConfig';
+import { OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
 import { AuthStrategy } from '@panora/shared';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 export type TeamleaderOAuthResponse = {
   access_token: string;
@@ -36,6 +33,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private cService: ConnectionsStrategiesService,
   ) {
     this.logger.setContext(TeamleaderConnectionService.name);
     this.registry.registerService('teamleader', this);
@@ -55,7 +53,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await getCredentials(
+      const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
@@ -139,7 +137,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const CREDENTIALS = (await getCredentials(
+      const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
