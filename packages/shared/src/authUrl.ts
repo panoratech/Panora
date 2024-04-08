@@ -1,4 +1,5 @@
-import { getCredentials, OAuth2AuthData, providerToType } from "./envConfig";
+import axios from "axios";
+import { OAuth2AuthData, providerToType } from "./envConfig";
 import { AuthStrategy, providersConfig, ProviderConfig } from "./utils";
 
 interface AuthParams {
@@ -39,7 +40,8 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
         projectId,
         config,
         encodedRedirectUrl,
-        state
+        state,
+        apiUrl
       });
     case AuthStrategy.api_key:
       return handleApiKeyUrl();
@@ -56,6 +58,7 @@ type HandleOAuth2Url = {
   config: ProviderConfig;
   encodedRedirectUrl: string;
   state: string;
+  apiUrl: string;
 }
 
 const handleOAuth2Url = async (input: HandleOAuth2Url) => {
@@ -66,7 +69,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     projectId,
     config,
     encodedRedirectUrl,
-    state
+    state,
+    apiUrl
   } = input;
 
   const type = providerToType(providerName, vertical, authStrategy);
@@ -74,7 +78,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
-  const data = (await getCredentials(projectId, type)) as OAuth2AuthData;
+  const data_ = await axios.get(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
+  const data = data_.data as OAuth2AuthData;
 
   const clientId = data.CLIENT_ID;
   if(!clientId) throw new Error(`No client id for type ${type}`)

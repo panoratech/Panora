@@ -1,5 +1,14 @@
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import {
+  AuthData,
+  AuthStrategy,
+  extractAuthMode,
+  extractProvider,
+  extractVertical,
+  needsSubdomain,
+} from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 
 export type OAuth = {
@@ -14,7 +23,10 @@ export type RateLimit = {
 
 @Injectable()
 export class ConnectionsStrategiesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private configService: ConfigService,
+  ) {}
 
   async isCustomCredentials(projectId: string, type: string) {
     const res = await this.prisma.connection_strategies.findFirst({
@@ -134,5 +146,134 @@ export class ConnectionsStrategiesService {
     return values;
   }
 
+  async getCustomCredentialsData(
+    projectId: string,
+    type: string,
+    provider: string,
+    vertical: string,
+    authStrategy: AuthStrategy,
+  ) {
+    let attributes: string[] = [];
+    switch (authStrategy) {
+      case AuthStrategy.oauth2:
+        attributes = ['client_id', 'client_secret'];
+        if (needsSubdomain(provider, vertical)) {
+          attributes.push('subdomain');
+        }
+        break;
+      case AuthStrategy.api_key:
+        attributes = ['api_key'];
+
+        if (needsSubdomain(provider, vertical)) {
+          attributes.push('subdomain');
+        }
+        break;
+      case AuthStrategy.basic:
+        attributes = ['username', 'secret'];
+        if (needsSubdomain(provider, vertical)) {
+          attributes.push('subdomain');
+        }
+        break;
+      default:
+        break;
+    }
+    const values = await this.getConnectionStrategyData(
+      projectId,
+      type,
+      attributes,
+    );
+    const data = attributes.reduce((acc, attr, index) => {
+      acc[attr] = values[index];
+      return acc;
+    }, {} as Record<string, string>);
+
+    return data as AuthData;
+  }
+
+  getEnvData(provider: string, vertical: string, authStrategy: AuthStrategy) {
+    let data: AuthData;
+    switch (authStrategy) {
+      case AuthStrategy.oauth2:
+        data = {
+          CLIENT_ID: this.configService.get<string>(
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_CLIENT_ID`,
+          ),
+          CLIENT_SECRET: this.configService.get<string>(
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_CLIENT_SECRET`,
+          ),
+        };
+        if (needsSubdomain(provider, vertical)) {
+          data = {
+            ...data,
+            SUBDOMAIN: this.configService.get<string>(
+              `${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`,
+            ),
+          };
+        }
+        return data;
+      case AuthStrategy.api_key:
+        data = {
+          API_KEY: this.configService.get<string>(
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_API_KEY`,
+          ),
+        };
+        if (needsSubdomain(provider, vertical)) {
+          data = {
+            ...data,
+            SUBDOMAIN: this.configService.get<string>(
+              `${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`,
+            ),
+          };
+        }
+        return data;
+      case AuthStrategy.basic:
+        data = {
+          USERNAME: this.configService.get<string>(
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_USERNAME`,
+          ),
+          SECRET: this.configService.get<string>(
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_SECRET`,
+          ),
+        };
+        if (needsSubdomain(provider, vertical)) {
+          data = {
+            ...data,
+            SUBDOMAIN: this.configService.get<string>(
+              `${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`,
+            ),
+          };
+        }
+        return data;
+    }
+  }
+
+  async getCredentials(projectId: string, type: string) {
+    const isCustomCred = await this.isCustomCredentials(projectId, type);
+    const provider = extractProvider(type);
+    const vertical = extractVertical(type);
+    //const vertical = findProviderVertical(provider);
+    if (!vertical)
+      throw new Error(`vertical not found for provider ${provider}`);
+    const authStrategy = extractAuthMode(type);
+    if (!authStrategy)
+      throw new Error(`auth strategy not found for provider ${provider}`);
+
+    if (isCustomCred) {
+      //customer is using custom credentials (set in the webapp UI)
+      //fetch the right credentials
+      return await this.getCustomCredentialsData(
+        projectId,
+        type,
+        provider,
+        vertical,
+        authStrategy,
+      );
+    } else {
+      // type is of form = HUBSPOT_CRM_CLOUD_OAUTH so we must extract the parts
+      return this.getEnvData(provider, vertical, authStrategy);
+    }
+  }
+
   //TODO: update connection strategy
+  //TODO: delete
 }

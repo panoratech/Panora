@@ -1,5 +1,4 @@
 import { AuthStrategy, providersConfig } from "./utils";
-import axios from 'axios';
 
 export type BasicAuthData = {
     USERNAME: string;
@@ -20,8 +19,9 @@ export type OAuth2AuthData = {
 
 export type AuthData =  BasicAuthData | ApiAuthData | OAuth2AuthData
 
+// IMPORTANT ! 
 // type is of the form PROVIDERNAME_VERTICALNAME_SOFTWAREMODE_AUTHMODE
-// i.e HUBSPOT_CRM_CLOUD_OAUTH
+// i.e HUBSPOT_CRM_CLOUD_OAUTH 
 // i.e ZENDESK_TICKETING_CLOUD_OAUTH
 
 export function extractProvider(type: string): string {
@@ -43,7 +43,7 @@ export function extractSoftwareMode(type: string): string {
     // Split the string at the first underscore
     const parts = type.split('_');
     // Return the first part of the split string
-    return parts[0];
+    return parts[2];
 }
 
 //TODO: handle software mode 
@@ -97,119 +97,4 @@ export function needsSubdomain(provider: string, vertical: string): boolean {
    
     // Return true if both URLs start with a '/', otherwise false
     return authBaseUrlStartsWithSlash && apiUrlStartsWithSlash;
-}
-
-//TODO: handle software mode
-export function getEnvData(provider: string, vertical: string, authStrategy: AuthStrategy){
-    let data: AuthData;
-    switch (authStrategy) {
-        case AuthStrategy.oauth2:
-            data = {
-                CLIENT_ID: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_CLIENT_ID`]!,
-                CLIENT_SECRET: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_CLIENT_SECRET`]!,
-            };
-            if(needsSubdomain(provider, vertical)){
-                data = {
-                    ...data,
-                    SUBDOMAIN: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`]!
-                }
-            }
-            return data;
-        case AuthStrategy.api_key:
-            data = {
-                API_KEY: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_API_KEY`]!
-            }
-            if(needsSubdomain(provider, vertical)){
-                data = {
-                    ...data,
-                    SUBDOMAIN: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`]!
-                }
-            }
-            return data;
-        case AuthStrategy.basic:
-            data = {
-                USERNAME: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_USERNAME`]!,
-                SECRET: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_SECRET`]!
-            }
-            if(needsSubdomain(provider, vertical)){
-                data = {
-                    ...data,
-                    SUBDOMAIN: process.env[`${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`]!
-                }
-            }
-            return data;
-    }
-}
-
-export async function getCustomCredentialsData(projectId: string, type: string, provider: string, vertical: string, authStrategy: AuthStrategy) {
-    let body = {
-        projectId,
-        type,
-        attributes: [] as string[]
-    }
-    let attributes : string[] = [];
-    switch (authStrategy) {
-        case AuthStrategy.oauth2:
-            attributes = ['client_id', 'client_secret'];
-            if(needsSubdomain(provider, vertical)){
-                attributes.push("subdomain")
-            }
-            break;
-        case AuthStrategy.api_key:
-            attributes = ['api_key'];
-
-            if(needsSubdomain(provider, vertical)){
-                attributes.push("subdomain")
-            }
-            break;
-        case AuthStrategy.basic:
-            attributes = ['username', 'secret'];
-            if(needsSubdomain(provider, vertical)){
-                attributes.push("subdomain")
-            }
-            break;
-        default:
-            break;
-    }
-    body = {
-        ...body,
-        attributes
-    }
-    const res = await axios.post(
-        //TODO: handle hardcode
-        `http://localhost:3000/connections-strategies/get`,  
-        JSON.stringify(body),
-        {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }
-    )
-    const values = res.data;
-    const data = attributes.reduce((acc, attr, index) => {
-        acc[attr] = values[index];
-        return acc;
-    }, {} as Record<string, string>);
-    
-    return data as AuthData;
-}
-
-export async function getCredentials(projectId: string, type: string) {
-    //TODO: Handle hardocde api env
-    const isCustomCred = await axios.get(`http://localhost:3000/connections-strategies/isCustomCredentials?projectId=${projectId}&type=${type}`);
-    const provider = extractProvider(type);
-    const vertical = extractVertical(type);
-    //const vertical = findProviderVertical(provider);
-    if(!vertical) throw new Error(`vertical not found for provider ${provider}`);
-    const authStrategy = extractAuthMode(type);
-    if(!authStrategy) throw new Error(`auth strategy not found for provider ${provider}`);
-
-    if(isCustomCred.data){
-        //customer is using custom credentials (set in the webapp UI)
-        //fetch the right credentials
-        return await getCustomCredentialsData(projectId, type, provider, vertical, authStrategy)
-    }else{
-        // type is of form = HUBSPOT_CRM_CLOUD_OAUTH so we must extract the parts
-        return getEnvData(provider, vertical, authStrategy);
-    }
 }

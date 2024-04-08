@@ -22,7 +22,7 @@ export class ConnectionsStrategiesController {
     this.logger.setContext(ConnectionsStrategiesController.name);
   }
 
-  @ApiOperation({
+  /*@ApiOperation({
     operationId: 'isCustomCredentials',
     summary:
       'Fetch info on whether the customer uses custom credentials for connections',
@@ -37,7 +37,7 @@ export class ConnectionsStrategiesController {
       projectId,
       type,
     );
-  }
+  }*/
 
   @ApiOperation({
     operationId: 'createConnectionStrategy',
@@ -58,7 +58,7 @@ export class ConnectionsStrategiesController {
     );
   }
 
-  @ApiOperation({
+  /*@ApiOperation({
     operationId: 'getConnectionStrategyData',
     summary: 'Get Connection Strategy Data',
   })
@@ -74,7 +74,7 @@ export class ConnectionsStrategiesController {
       type,
       attributes,
     );
-  }
+  }*/
 
   @ApiOperation({
     operationId: 'toggleConnectionStrategy',
@@ -85,6 +85,22 @@ export class ConnectionsStrategiesController {
   @Post('toggle')
   async toggleConnectionStrategy(@Body() data: ToggleStrategyDto) {
     return await this.connectionsStrategiesService.toggle(data.id);
+  }
+
+  @ApiOperation({
+    operationId: 'getCredentials',
+    summary: 'Fetch credentials info needed for connections',
+  })
+  @ApiResponse({ status: 200 })
+  @Get('getCredentials')
+  async getCredentials(
+    @Query('projectId') projectId: string,
+    @Query('type') type: string,
+  ) {
+    return await this.connectionsStrategiesService.getCredentials(
+      projectId,
+      type,
+    );
   }
 
   //TODO: delete a connection strategy
