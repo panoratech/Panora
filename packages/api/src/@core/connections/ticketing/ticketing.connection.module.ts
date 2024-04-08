@@ -16,6 +16,7 @@ import { LinearConnectionService } from './services/linear/linear.service';
 import { GitlabConnectionService } from './services/gitlab/gitlab.service';
 import { ClickupConnectionService } from './services/clickup/clickup.service';
 import { GorgiasConnectionService } from './services/gorgias/gorgias.service';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 @Module({
   imports: [WebhookModule],
@@ -27,6 +28,7 @@ import { GorgiasConnectionService } from './services/gorgias/gorgias.service';
     EnvironmentService,
     EncryptionService,
     ServiceRegistry,
+    ConnectionsStrategiesService,
     //PROVIDERS SERVICES
     ZendeskConnectionService,
     FrontConnectionService,

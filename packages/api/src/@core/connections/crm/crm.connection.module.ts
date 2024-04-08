@@ -13,6 +13,7 @@ import { ZohoConnectionService } from './services/zoho/zoho.service';
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
 import { PipedriveConnectionService } from './services/pipedrive/pipedrive.service';
 import { AttioConnectionService } from './services/attio/attio.service';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 @Module({
   imports: [WebhookModule],
@@ -24,6 +25,7 @@ import { AttioConnectionService } from './services/attio/attio.service';
     WebhookService,
     EnvironmentService,
     EncryptionService,
+    ConnectionsStrategiesService,
     // PROVIDERS SERVICES
     FreshsalesConnectionService,
     HubspotConnectionService,
