@@ -1,4 +1,3 @@
-import config from "./config";
 import { AuthStrategy, providersConfig } from "./utils";
 import axios from 'axios';
 
@@ -177,7 +176,8 @@ export async function getCustomCredentialsData(projectId: string, type: string, 
         attributes
     }
     const res = await axios.post(
-        `${config.API_URL}/connections-strategies/get`,  
+        //TODO: handle hardcode
+        `http://localhost:3000/connections-strategies/get`,  
         JSON.stringify(body),
         {
             headers: {
@@ -195,7 +195,8 @@ export async function getCustomCredentialsData(projectId: string, type: string, 
 }
 
 export async function getCredentials(projectId: string, type: string) {
-    const isCustomCred = await axios.get(`${config.API_URL}/connections-strategies/isCustomCredentials?projectId=${projectId}&type=${type}`);
+    //TODO: Handle hardocde api env
+    const isCustomCred = await axios.get(`http://localhost:3000/connections-strategies/isCustomCredentials?projectId=${projectId}&type=${type}`);
     const provider = extractProvider(type);
     const vertical = extractVertical(type);
     //const vertical = findProviderVertical(provider);
