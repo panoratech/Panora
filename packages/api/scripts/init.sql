@@ -1,5 +1,4 @@
 
-
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -1135,6 +1134,7 @@ CREATE TABLE connections
  id_connection        uuid NOT NULL,
  status               text NOT NULL,
  provider_slug        text NOT NULL,
+ vertical             text NOT NULL,
  account_url          text NULL,
  token_type           text NOT NULL,
  access_token         text NULL,
