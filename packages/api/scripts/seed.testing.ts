@@ -19,7 +19,7 @@ async function main() {
       password_hash: 'password_hashed_her',
       first_name: 'audrey',
       last_name: 'aubry',
-      identification_strategy: 'b2c'
+      identification_strategy: 'b2c',
     },
   });
 

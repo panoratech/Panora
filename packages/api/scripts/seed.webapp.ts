@@ -20,7 +20,7 @@ async function main() {
         '$2b$10$Nxcp3x0yDaCrMrhZQ6IiNeqk0BxxDTnfn9iGG2UK5nWMh/UB6LgZu',
       first_name: 'audrey',
       last_name: 'aubry',
-      identification_strategy: 'b2c'
+      identification_strategy: 'b2c',
       //id_organization: '55222419-795d-4183-8478-361626363e58',
     },
   });

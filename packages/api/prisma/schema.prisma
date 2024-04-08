@@ -600,19 +600,6 @@ model webhooks_reponses {
   webhook_delivery_attempts webhook_delivery_attempts[]
 }
 
-model tcg_collections {
-  id_tcg_collection String   @id(map: "pk_tcg_collections") @db.Uuid
-  name              String?
-  description       String?
-  remote_id         String?
-  remote_platform   String?
-  collection_type   String?
-  parent_collection String?  @db.Uuid
-  created_at        DateTime @db.Timestamp(6)
-  modified_at       DateTime @db.Timestamp(6)
-  id_linked_user    String   @db.Uuid
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model connection_strategies {
   id_connection_strategy String  @id(map: "pk_connection_strategies") @db.Uuid
@@ -637,4 +624,17 @@ model cs_values {
   id_cs_value     String @id(map: "pk_ct_values") @db.Uuid
   value           String
   id_cs_attribute String @db.Uuid
+}
+
+model tcg_collections {
+  id_tcg_collection String   @id(map: "pk_tcg_collections") @db.Uuid
+  name              String?
+  description       String?
+  remote_id         String?
+  remote_platform   String?
+  collection_type   String?
+  parent_collection String?  @db.Uuid
+  created_at        DateTime @db.Timestamp(6)
+  modified_at       DateTime @db.Timestamp(6)
+  id_linked_user    String   @db.Uuid
 }

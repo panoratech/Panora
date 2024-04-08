@@ -231,7 +231,7 @@ CREATE TABLE cs_values
 (
  id_cs_value     uuid NOT NULL,
  value           text NOT NULL,
- id_ct_attribute uuid NOT NULL,
+ id_cs_attribute uuid NOT NULL,
  CONSTRAINT PK_ct_values PRIMARY KEY ( id_cs_value )
 );
 
@@ -1140,6 +1140,7 @@ CREATE TABLE connections
  expiration_timestamp timestamp NULL,
  created_at           timestamp NOT NULL,
  connection_token     text NULL,
+ vertical             text NOT NULL,
  id_project           uuid NOT NULL,
  id_linked_user       uuid NOT NULL,
  CONSTRAINT PK_connections PRIMARY KEY ( id_connection ),
