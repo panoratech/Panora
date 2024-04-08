@@ -75,9 +75,9 @@ Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start addin
 
 ## 🚀 Contributors
 
-<a href="https://github.com/panoratech/Panora/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=panoratech/Panora" />
-</a>
+<p>
+  <img src="https://api.vaunt.dev/v1/github/entities/panoratech/repositories/panora/contributors?format=svg&limit=12" width="600" />
+</p>
 
 Want to contribute? Visit our [guide](https://docs.panora.dev/open-source/contributors#setup-your-environnement) or check our detailed integrations guide [here.](https://github.com/panoratech/Panora/blob/main/INTEGRATIONS.md)
 
