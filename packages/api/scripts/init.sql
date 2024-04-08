@@ -1,5 +1,4 @@
 
-
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -263,9 +262,9 @@ CREATE TABLE cs_entities
 CREATE TABLE cs_attributes
 (
  id_cs_attribute uuid NOT NULL,
- id_cs_entity    uuid NOT NULL,
  attribute_slug  text NOT NULL,
  data_type       text NOT NULL,
+ id_cs_entity    uuid NOT NULL,
  CONSTRAINT PK_ct_attributes PRIMARY KEY ( id_cs_attribute )
 );
 
@@ -324,6 +323,7 @@ CREATE TABLE crm_deals_stages
 CREATE TABLE connection_strategies
 (
  id_connection_strategy uuid NOT NULL,
+ status                 boolean NOT NULL,
  type                   text NOT NULL,
  id_project             uuid NULL,
  CONSTRAINT PK_connection_strategies PRIMARY KEY ( id_connection_strategy )
@@ -331,6 +331,7 @@ CREATE TABLE connection_strategies
 
 
 
+COMMENT ON COLUMN connection_strategies.status IS 'if the connection strategy should overwrite default strategy (from env)';
 COMMENT ON COLUMN connection_strategies.type IS 'OAUTH2, API_KEY, PIPEDRIVE_CLOUD_OAUTH, PIPEDRIVE_CLOUD_API, HUBSPOT_CLOUD';
 
 
@@ -1133,6 +1134,7 @@ CREATE TABLE connections
  id_connection        uuid NOT NULL,
  status               text NOT NULL,
  provider_slug        text NOT NULL,
+ vertical             text NOT NULL,
  account_url          text NULL,
  token_type           text NOT NULL,
  access_token         text NULL,
