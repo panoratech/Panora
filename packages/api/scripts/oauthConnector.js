@@ -220,7 +220,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
 }
 
 // Function to add provider to EnvironmentService.ts
-function addProviderToEnvironmentService(provider, envServicePath) {
+/*function addProviderToEnvironmentService(provider, envServicePath) {
   const providerMethodName_ = provider
     .split('_')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
@@ -250,23 +250,25 @@ function addProviderToEnvironmentService(provider, envServicePath) {
   fs.writeFileSync(envServicePath, content);
 
   console.log(`Added ${providerMethodName}() to EnvironmentService.`);
-}
+}*/
 
 // Function to add provider to docker-compose.dev.yml
 function addProviderToDockerCompose(provider, vertical, dockerComposePath) {
   const providerEnvPrefix = provider.toUpperCase();
   const newEnvVariables = `
-        ${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_ID: $\{${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_ID}
-        ${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_SECRET: $\{${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_SECRET}
+        ${providerEnvPrefix}_${vertical.toUpperCase()}_CLOUD_CLIENT_ID: $\{${providerEnvPrefix}_${vertical.toUpperCase()}_CLOUD_CLIENT_ID}
+        ${providerEnvPrefix}_${vertical.toUpperCase()}_CLOUD_CLIENT_SECRET: $\{${providerEnvPrefix}_${vertical.toUpperCase()}_CLOUD_CLIENT_SECRET}
   `;
 
   let content = fs.readFileSync(dockerComposePath, { encoding: 'utf8' });
 
   if (
-    content.includes(`${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_ID`)
+    content.includes(
+      `${providerEnvPrefix}_${vertical.toUpperCase()}_CLOUD_CLIENT_ID`,
+    )
   ) {
     console.log(
-      `${providerEnvPrefix}_${vertical.toUpperCase()}_CLIENT_ID already exists in docker-compose.dev.yml.`,
+      `${providerEnvPrefix}_${vertical.toUpperCase()}_CLOUD_CLIENT_ID already exists in docker-compose.dev.yml.`,
     );
     return;
   }
