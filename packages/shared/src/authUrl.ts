@@ -27,10 +27,10 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   const config = providersConfig[vertical.toLowerCase()][providerName];
   if (!config) {
     throw new Error(`Unsupported provider: ${providerName}`);
-  } 
+  }
   const authStrategy = config.authStrategy!;
 
-  switch(authStrategy){
+  switch (authStrategy) {
     case AuthStrategy.oauth2:
       return handleOAuth2Url({
         providerName,
@@ -81,10 +81,10 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const data = await data_.json() as OAuth2AuthData;
 
   const clientId = data.CLIENT_ID;
-  if(!clientId) throw new Error(`No client id for type ${type}`)
+  if (!clientId) throw new Error(`No client id for type ${type}`)
 
   const { scopes, authBaseUrl: baseUrl } = config;
-  
+
   if (!baseUrl) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }

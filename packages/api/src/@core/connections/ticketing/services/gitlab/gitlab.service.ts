@@ -13,7 +13,7 @@ import {
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy } from '@panora/shared';
-import { OAuth2AuthData, providerToType } from '@panora/shared/src/envConfig';
+import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 export interface GitlabOAuthResponse {

@@ -83,6 +83,31 @@
         ]
       }
     },
+    "/auth/users/create": {
+      "post": {
+        "operationId": "createUser",
+        "summary": "Create User",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "signIn",
@@ -116,6 +141,33 @@
         "responses": {
           "200": {
             "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/users/{stytchId}": {
+      "get": {
+        "operationId": "getUser",
+        "summary": "Get a specific user by ID",
+        "parameters": [
+          {
+            "name": "stytchId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the user data."
+          },
+          "404": {
+            "description": "User not found."
           }
         },
         "tags": [
@@ -539,6 +591,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "vertical",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -693,6 +753,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "vertical",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -729,6 +797,88 @@
         },
         "tags": [
           "passthrough"
+        ]
+      }
+    },
+    "/connections-strategies/create": {
+      "post": {
+        "operationId": "createConnectionStrategy",
+        "summary": "Create Connection Strategy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConnectionStrategyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/toggle": {
+      "post": {
+        "operationId": "toggleConnectionStrategy",
+        "summary": "Activate/Deactivate Connection Strategy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleStrategyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/getCredentials": {
+      "get": {
+        "operationId": "getCredentials",
+        "summary": "Fetch credentials info needed for connections",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
         ]
       }
     },
@@ -4023,6 +4173,111 @@
           "ticketing/teams"
         ]
       }
+    },
+    "/ticketing/collection": {
+      "get": {
+        "operationId": "getCollections",
+        "summary": "List a batch of Collections",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCollectionOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/collection"
+        ]
+      }
+    },
+    "/ticketing/collection/{id}": {
+      "get": {
+        "operationId": "getCollection",
+        "summary": "Retrieve a Collection",
+        "description": "Retrieve a collection from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the collection you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCollectionOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/collection"
+        ]
+      }
     }
   },
   "info": {
@@ -4047,6 +4302,12 @@
           "email": {
             "type": "string"
           },
+          "stytch_id_user": {
+            "type": "string"
+          },
+          "strategy": {
+            "type": "string"
+          },
           "password_hash": {
             "type": "string"
           },
@@ -4058,7 +4319,8 @@
           "first_name",
           "last_name",
           "email",
-          "password_hash"
+          "stytch_id_user",
+          "strategy"
         ]
       },
       "LoginDto": {
@@ -4164,11 +4426,15 @@
           },
           "id_organization": {
             "type": "string"
+          },
+          "id_user": {
+            "type": "string"
           }
         },
         "required": [
           "name",
-          "id_organization"
+          "id_organization",
+          "id_user"
         ]
       },
       "DefineTargetFieldDto": {
@@ -4285,6 +4551,46 @@
           "url",
           "status",
           "data"
+        ]
+      },
+      "CreateConnectionStrategyDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "projectId",
+          "type",
+          "attributes",
+          "values"
+        ]
+      },
+      "ToggleStrategyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
         ]
       },
       "ApiResponse": {
@@ -4714,6 +5020,13 @@
               "type": "string"
             }
           },
+          "account_id": {
+            "description": "The account or organization the user is part of",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
@@ -4769,6 +5082,10 @@
             "type": "string",
             "description": "The uuid of the parent ticket"
           },
+          "project_id": {
+            "type": "string",
+            "description": "The uuid of the project the ticket belongs to"
+          },
           "tags": {
             "description": "The tags names of the ticket",
             "type": "array",
@@ -4793,7 +5110,7 @@
             }
           },
           "comment": {
-            "description": "The users uuids the ticket is assigned to",
+            "description": "The comments of the ticket",
             "type": "array",
             "items": {
               "type": "string"
@@ -4862,6 +5179,10 @@
             "type": "string",
             "description": "The uuid of the parent ticket"
           },
+          "project_id": {
+            "type": "string",
+            "description": "The uuid of the project the ticket belongs to"
+          },
           "tags": {
             "description": "The tags names of the ticket",
             "type": "array",
@@ -4886,7 +5207,7 @@
             }
           },
           "comment": {
-            "description": "The users uuids the ticket is assigned to",
+            "description": "The comments of the ticket",
             "type": "array",
             "items": {
               "type": "string"
@@ -5175,6 +5496,39 @@
         "required": [
           "name",
           "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedCollectionOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the collection"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the collection"
+          },
+          "collection_type": {
+            "type": "string",
+            "description": "The type of the collection, either PROJECT or LIST "
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the collection"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the collection in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
           "remote_data"
         ]
       }
