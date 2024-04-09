@@ -1,13 +1,22 @@
 {
     "name": "@panora/shared",
-    "main": "index.ts",
-    "types": "index.ts",
+    "main": "dist/entry.cjs.js",
+    "module": "dist/entry.esm.js",
+    "types": "dist/entry.d.ts",
+    "scripts": {
+        "build": "rimraf dist && rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript"
+    },
     "version": "4.0.0",
     "devDependencies": {
-        "@types/node": "^20.3.1",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-typescript": "^11.1.6",
+        "@types/node": "^20.11.17",
         "@typescript-eslint/eslint-plugin": "^6.13.2",
         "@typescript-eslint/parser": "^6.13.2",
         "eslint": "^8.55.0",
+        "rimraf": "^5.0.5",
+        "rollup": "^4.14.1",
+        "rollup-plugin-dts": "^6.1.0",
         "typescript": "^5.3.3"
     },
     "dependencies": {
