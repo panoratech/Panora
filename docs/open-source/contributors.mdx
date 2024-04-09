@@ -14,30 +14,31 @@ We made a docker file that builds Panora from sources, specifically to help you 
 
 <Steps>
 
-  <Step title="Copy env variables">
-  ```bash 
-  cp .env.example .env 
-  ```
-  </Step>
+{" "}
 
-  <Step title="Removed previously installed dependencies">
-    ```bash 
-    rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
-    ```
-  </Step>
+<Step title="Copy env variables">```bash cp .env.example .env ```</Step>
 
-  <Step title="Mac Users only:">
-    ```bash 
-    echo -e "node-linker=hoisted\npackage-import-method=clone-or-copy" > .npmrc 
-    ```
-  </Step>
+{" "}
+
+<Step title="Removed previously installed dependencies">
+  ```bash rm -rf node_modules .pnpm-store ./packages/api/dist
+  ./packages/api/node_modules ./apps/webapp/node_modules
+  ./apps/frontend_snippet/node_modules ```
+</Step>
+
+{" "}
+
+<Step title="Mac Users only:">
+  ```bash echo -e "node-linker=hoisted\npackage-import-method=clone-or-copy" >
+  .npmrc ```
+</Step>
 
   <Step title="Start the Dockerfile">
       ```bash
         docker compose -f docker-compose.dev.yml up
       ```
 
-  That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
+That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
 
   </Step>
 </Steps>
@@ -56,109 +57,30 @@ First choose wisely which vertical the 3rd party belongs to among these:
 - ticketing
 - accounting
 - ats
-- file-storage
+- file_storage
 - hris
-- marketing-automation
+- marketing_automation
 
 For the sake of the guide, now on we'll consider adding a 3rd party belonging to the `crm` vertical.
 
-## 1. Adding a new connection service for your 3rd Party
+## 1. Look into the `packages/shared/src/utils.ts` file and check if the provider you want to build has its metadata set inside the `providersConfig` object.
 
-Create a new folder with the name of your 3rd party. Let's call it _my3rdParty_.
+It should be available (if not contact Panora team) with active field set to false meaning the integration has not been built.
 
-`cd @core/connections/crm/services/my3rdParty`
+Actually an integration is built in 2 parts :
 
-Create a new file containing the core logic of your service.
+- the authentication part (oauth, api key, basic etc) which is built by the Panora team
+- the service integration where the mapping is created with our unified model which is what you'll build
 
-`cd @core/connections/crm/services/my3rdParty/my3rdParty.service.ts`
-
-It must implement the `ICrmConnectionService` interface.
-
-```ts
-export interface ICrmConnectionService {
-  handleCallback(opts: CallbackParams): Promise<Connection>;
-  handleTokenRefresh(opts: RefreshParams): Promise<any>;
-}
-
-export type CallbackParams = {
-  linkedUserId: string;
-  projectId: string;
-  code: string;
-  location?: string; //for zoho
-};
-
-export type RefreshParams = {
-  connectionId: string;
-  refreshToken: string;
-  account_url?: string;
-};
-```
-
-```ts
-import { Injectable } from "@nestjs/common";
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from "../../types";
-
-@Injectable()
-export class My3rdPartyConnectionService implements ICrmConnectionService {
-  constructor(
-    private prisma: PrismaService,
-    private logger: LoggerService,
-    private env: EnvironmentService,
-    private cryptoService: EncryptionService,
-    private registry: ServiceRegistry
-  ) {
-    this.logger.setContext(My3rdPartyConnectionService.name);
-    this.registry.registerService("insert_the_name_of_your_3rd_party", this);
-  }
-
-  async handleCallback(opts: CallbackParams) {
-    return;
-  }
-  async handleTokenRefresh(opts: RefreshParams) {
-    return;
-  }
-}
-```
-
-Now that you have the structure, check other 3rd parties implementations under `/@core/connections/crm/services` to build your functions.
-
-## 2. Enable your connection service to handle oAuth granting access
-
-Add your service to the `CrmConnectionModule` under @core/connections/crm/crm.connection.module.ts module !
-
-```ts
-@Module({
-  imports: [WebhookModule],
-  providers: [
-    CrmConnectionsService,
-    PrismaService,
-    ServiceConnectionRegistry,
-    LoggerService,
-    WebhookService,
-    EnvironmentService,
-    EncryptionService,
-    FreshsalesConnectionService,
-    HubspotConnectionService,
-    ZohoConnectionService,
-    ZendeskConnectionService,
-    PipedriveConnectionService,
-    //INSERT YOUR SERVICE HERE
-    My3rdPartyConnectionService,
-  ],
-  exports: [CrmConnectionsService],
-})
-export class CrmConnectionModule {}
-```
+## 2. Build your provider service
 
 # You want to map a common object to your new 3rd Party ? 👩‍🎤
 
 _Ie: Contact, Ticket, Deal, Company ..._
 
-For the sake of this guide, let's map the common object `contact` under `crm` vertical to _my3rdParty_ just defined just before.
+For the sake of this guide, let's map the common object `contact` under `crm` vertical to _my3rdParty_ (in reality it would be a real 3rd party name).
+
+### DISCLAIMER: an integration is considered valid when all common objects have been mapped. Then, after the PR is accepted we'll be able to set `active` field to `true` inside `providersConfig`.
 
 ## 1. Add a new service to map your common object to your 3rd party
 
@@ -168,7 +90,7 @@ Create a new service folder with the name of your 3rd party. Let's call it _my3r
 
 You'll now create 3 files.
 
-`index.ts` _where your service is created and direct interaction with your 3rd party API is handled_
+`index.ts` \_where your service is created and direct interaction with your 3rd party API is handled
 
 It must implement the `IContactService` interface.
 
@@ -197,8 +119,7 @@ export class My3rdPartyService implements IContactService {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + My3rdPartyService.name,
     );
-    this.registry.registerService('my3rdPartyService', this);
-
+    this.registry.registerService('my3rdParty', this);
   }
   async addContact(
     contactData: 3rdPartyContactInput,
@@ -273,80 +194,14 @@ export class My3rdPartyMapper implements IContactMapper {
 
 Check other implementations under `/crm/contacts/services` to fill the core functions.
 
-## 2. Enable your service
+## 2. Enable your new service
 
-`cd crm/contact/types/mappingsTypes.ts`
+To make sure the service is enabled, dependencies and imports must be added.
+W ebuilt a script that does it in seconds.
 
-Add your new 3rd party service to the `contactUnificationMapping` object.
+`pnpm run validate-connectors --vertical="crm" --objectType="contact"`
 
-```ts
-// ADD YOUR IMPORT HERE
-import { My3rdPartyContactMapper } from '@contact/services/my3rdParty/mappers';
-
-const hubspotContactMapper = new HubspotContactMapper();
-const zendeskContactMapper = new ZendeskContactMapper();
-const zohoContactMapper = new ZohoContactMapper();
-const pipedriveContactMapper = new PipedriveContactMapper();
-const freshSalesContactMapper = new FreshsalesContactMapper();
-// INSERT BELOW YOUR 3rd PARTY HERE
-const my3rdPartyContactMapper = new My3rdPartyContactMapper();
-
-
-export const contactUnificationMapping = {
-  hubspot: {
-    unify: hubspotContactMapper.unify,
-    desunify: hubspotContactMapper.desunify,
-  },
-  pipedrive: {
-    unify: pipedriveContactMapper.unify,
-    desunify: pipedriveContactMapper.desunify,
-  },
-  zoho: {
-    unify: zohoContactMapper.unify,
-    desunify: zohoContactMapper.desunify,
-  },
-  ....,
-  ....,
-  // INSERT BELOW YOUR 3rd PARTY HERE
-  my3rdParty: {
-    unify: my3rdPartyContactMapper.unify,
-    desunify: my3rdPartyContactMapper.desunify,
-  },
-};
-```
-
-Don't forget to add your service you've defined at step 1 inside the module under `/crm/contacts/contact.module.ts`.
-
-```ts
-@Module({
-  imports: [
-    BullModule.registerQueue({
-      name: "webhookDelivery",
-    }),
-  ],
-  controllers: [ContactController],
-  providers: [
-    ContactService,
-    PrismaService,
-    LoggerService,
-    FieldMappingService,
-    SyncService,
-    WebhookService,
-    EncryptionService,
-    ServiceRegistry,
-    /* PROVIDERS SERVICES */
-    FreshSalesService,
-    ZendeskService,
-    ZohoService,
-    PipedriveService,
-    HubspotService,
-    //INSERT YOUR SERVICE HERE
-    My3rdPartyService,
-  ],
-  exports: [SyncService],
-})
-export class ContactModule {}
-```
+The script will automatically scan the `/crm/contact/services` folder and detect any new service folder so all dependencies and imports are updated across the codebase.
 
 ### Congrats Hero ! 🦸‍♀️
 
