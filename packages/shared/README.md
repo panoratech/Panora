@@ -1,28 +1,41 @@
+<h1 align="center"></h1>
 
-## Package of shared code across the Panora project
+<div align="center">
+  <a href="http://nestjs.com/" target="_blank">
+    <img src="https://nestjs.com/img/logo_text.svg" width="150" alt="Nest Logo" />
+  </a>
+</div>
 
-It mainly contains all providers metadata (Hubspot, Zendesk etc) and code useful for enabling embedded connections for end-users.
+<h3 align="center">NestJS npm Package Starter</h3>
 
-# authUrl.ts
+<div align="center">
+  <a href="https://nestjs.com" target="_blank">
+    <img src="https://img.shields.io/badge/built%20with-NestJs-red.svg" alt="Built with NestJS">
+  </a>
+</div>
 
-The logic needed for magic-link and embedded-catalog components.
+### Installation
 
-# enum.ts
+1. Clone the repo
+2. Run npm/yarn install
 
-Enums of all providers used.
+```bash
+cd nestjs-package-starter
+npm install
+```
 
-# provider.ts
+## Change Log
 
-Arrays of all providers used.
+See [Changelog](CHANGELOG.md) for more information.
 
-# standardObjects.ts
+## Contributing
 
-All standard objects used by each vertical.
+Contributions welcome! See [Contributing](CONTRIBUTING.md).
 
-# utils.ts
+## Author
 
-All providers metadata (logo, name, clientId ...)
+**John Biundo (Y Prospect on [Discord](https://discord.gg/G7Qnnhy))**
 
-# webhookScopes.ts
+## License
 
-Scopes used for webhooks.
+Licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
