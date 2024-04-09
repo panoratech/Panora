@@ -1,4 +1,4 @@
-name: Run Docker containers
+name: docker-compose.yml - Healthcheck
 
 on:
   push:
