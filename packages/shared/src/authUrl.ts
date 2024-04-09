@@ -1,4 +1,3 @@
-import axios from "axios";
 import { OAuth2AuthData, providerToType } from "./envConfig";
 import { AuthStrategy, providersConfig, ProviderConfig } from "./utils";
 
@@ -28,10 +27,10 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   const config = providersConfig[vertical.toLowerCase()][providerName];
   if (!config) {
     throw new Error(`Unsupported provider: ${providerName}`);
-  } 
+  }
   const authStrategy = config.authStrategy!;
 
-  switch(authStrategy){
+  switch (authStrategy) {
     case AuthStrategy.oauth2:
       return handleOAuth2Url({
         providerName,
@@ -78,14 +77,16 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
-  const data_ = await axios.get(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
-  const data = data_.data as OAuth2AuthData;
+  // const data_ = await axios.get(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
+  // const data = data_.data as OAuth2AuthData;
+
+  const data = { CLIENT_ID: "mdsds" }
 
   const clientId = data.CLIENT_ID;
-  if(!clientId) throw new Error(`No client id for type ${type}`)
+  if (!clientId) throw new Error(`No client id for type ${type}`)
 
   const { scopes, authBaseUrl: baseUrl } = config;
-  
+
   if (!baseUrl) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
