@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: ["main"]
 
-jobs:
+jobs: 
   docker:
     name: Run containers
     runs-on: ubuntu-latest
@@ -28,3 +28,4 @@ jobs:
       - uses: isbang/compose-action@v1.5.1
         with:
             compose-file: "./docker-compose.dev.yml"
+            up-flags: "--env-file ./env.example"

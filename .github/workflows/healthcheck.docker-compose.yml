@@ -26,3 +26,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: isbang/compose-action@v1.5.1
+        with:
+          up-flags: "--env-file ./env.example"
