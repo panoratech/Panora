@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import useOAuth from '@/hooks/useOAuth';
-import { categoriesVerticals, findProviderByName, providersArray } from '@panora/shared';
+// import { categoriesVerticals, findProviderByName, providersArray } from '@panora/shared';
+import {categoriesVerticals} from '@panora/shared/src/providers'
+import {findProviderByName,providersArray} from '@panora/shared/src/utils'
+
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
 
