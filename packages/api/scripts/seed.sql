@@ -4,6 +4,17 @@
 INSERT INTO users (id_user, identification_strategy, email, password_hash, first_name, last_name) VALUES
 ('0ce39030-2901-4c56-8db0-5e326182ec6b', 'b2c','audrey@aubry.io', '$2b$10$Nxcp3x0yDaCrMrhZQ6IiNeqk0BxxDTnfn9iGG2UK5nWMh/UB6LgZu', 'Audrey', 'Aubry');
 
+DO $$
+DECLARE
+    user_id UUID;
+BEGIN
+    SELECT id_user INTO user_id FROM users WHERE email = 'audrey@aubry.io';
+    INSERT INTO projects (id_project, name, id_organization, sync_mode, id_user) VALUES
+    ('1e468c15-aa57-4448-aa2b-7fed640d1e3d', 'Project 1', 'pool', user_id),
+    ('4c641a21-a7f8-4ffe-b7e8-e7d32db87557', 'Project 2', 'pool', user_id),
+    ('2b198012-c79c-4bb6-971e-9635830e8c15', 'Project 3', 'pool', user_id);
+END $$;
+
 -- DO $$
 -- DECLARE
     --org_id UUID;
