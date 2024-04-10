@@ -1,6 +1,6 @@
 import config from '@/helpers/config';
 import { useState, useEffect } from 'react';
-import { constructAuthUrl } from '@panora/shared';
+import { constructAuthUrl } from '@panora/shared/src/test';
 
 type UseOAuthProps = {
   clientId?: string;
