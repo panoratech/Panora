@@ -9,7 +9,7 @@ DECLARE
     user_id UUID;
 BEGIN
     SELECT id_user INTO user_id FROM users WHERE email = 'audrey@aubry.io';
-    INSERT INTO projects (id_project, name, id_organization, sync_mode, id_user) VALUES
+    INSERT INTO projects (id_project, name, sync_mode, id_user) VALUES
     ('1e468c15-aa57-4448-aa2b-7fed640d1e3d', 'Project 1', 'pool', user_id),
     ('4c641a21-a7f8-4ffe-b7e8-e7d32db87557', 'Project 2', 'pool', user_id),
     ('2b198012-c79c-4bb6-971e-9635830e8c15', 'Project 3', 'pool', user_id);
