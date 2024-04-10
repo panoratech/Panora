@@ -106,7 +106,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:3000/"]
       interval: 10s
       timeout: 5s
-      retries: 1000 # Try launching the API service as long as possible. Required for other services to start 
+      retries: 99 # Try launching the API service as long as possible. Required for other services to start 
     
   redis:
     image: "redis:7.2.3-alpine"
