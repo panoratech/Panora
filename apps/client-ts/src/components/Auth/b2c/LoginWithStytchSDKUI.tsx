@@ -3,6 +3,7 @@
 import { StytchLogin } from '@stytch/nextjs';
 import { StytchLoginConfig, OAuthProviders, Products, StyleConfig, StytchEvent, StytchError } from '@stytch/vanilla-js';
 import { getDomainFromWindow } from '@/lib/stytch/urlUtils';
+import { Button } from '@/components/ui/button';
 
 const sdkStyle: StyleConfig = {
   fontFamily: '"Helvetica New", Helvetica, sans-serif',
@@ -15,26 +16,14 @@ const sdkStyle: StyleConfig = {
 };
 
 const sdkConfig: StytchLoginConfig = {
-  products: [Products.oauth, Products.emailMagicLinks],
+  products: [Products.emailMagicLinks],
   emailMagicLinksOptions: {
     loginRedirectURL: getDomainFromWindow() + '/authenticate',
     loginExpirationMinutes: 30,
     signupRedirectURL: getDomainFromWindow() + '/authenticate',
     signupExpirationMinutes: 30,
     createUserAsPending: false,
-  },
-  oauthOptions: {
-    providers: [
-      { type: OAuthProviders.Google },
-      { type: OAuthProviders.Apple },
-      { type: OAuthProviders.Microsoft },
-      { type: OAuthProviders.Facebook },
-      { type: OAuthProviders.Github },
-      { type: OAuthProviders.GitLab },
-    ],
-    loginRedirectURL: getDomainFromWindow() + '/authenticate',
-    signupRedirectURL: getDomainFromWindow() + '/authenticate',
-  },
+  }
 };
 
 const callbackConfig = {
@@ -44,7 +33,17 @@ const callbackConfig = {
 
 const LoginWithStytchSDKUI = () => {
   return (
+    <>
+    <div className='flex flex-row mb-2'>
+      <a href='https://test.stytch.com/v1/public/oauth/google/start?public_token=public-token-test-1881250c-afb6-4c09-b284-95592cf2fd62' target='_blank'>
+        <Button>Log In With Google</Button>
+      </a>
+      <a className='pl-3' href='https://test.stytch.com/v1/public/oauth/github/start?public_token=public-token-test-1881250c-afb6-4c09-b284-95592cf2fd62' target='_blank'>
+        <Button>Log In With Github</Button>
+      </a>
+    </div>
     <StytchLogin config={sdkConfig} styles={sdkStyle} callbacks={callbackConfig} />
+    </>
   )
 }
 

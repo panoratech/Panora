@@ -653,7 +653,7 @@ export const providersConfig: ProvidersConfig = {
       authBaseUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: true
+      active: false
     },
     'getresponse': {
       apiUrl: '',

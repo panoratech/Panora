@@ -324,7 +324,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -658,7 +665,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "number"
+                  "type": "object"
                 }
               }
             }

@@ -85,10 +85,22 @@ export class AuthService {
           password_hash: hashedPassword,
         },
       });*/
-      return await this.prisma.users.create({
-        data: {
+      return await this.prisma.users.upsert({
+        where: {
           id_stytch: user.stytch_id_user,
-          identification_strategy: user.strategy,
+        },
+        update: {
+          identification_strategy: 'b2c',
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          password_hash: '',
+          created_at: new Date(),
+          id_user: id_user || uuidv4(),
+        },
+        create: {
+          id_stytch: user.stytch_id_user,
+          identification_strategy: 'b2c',
           first_name: user.first_name,
           last_name: user.last_name,
           email: user.email,

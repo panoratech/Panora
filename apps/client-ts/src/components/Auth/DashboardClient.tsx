@@ -375,7 +375,6 @@ const DashboardClient = ({
             Log Out
           </Link>
         </Button>
-        
         </div>
       </CardContent>
     </Card>
