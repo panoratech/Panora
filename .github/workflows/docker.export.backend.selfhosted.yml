@@ -1,4 +1,4 @@
-name: Build Docker Images (Selfhosted)
+name: Export Docker Images (Backend Selfhosted)
 
 on:
   push:
@@ -27,34 +27,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Frontend (Magic Links)
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64,linux/arm64
-          context: .
-          file: ./apps/magic-link/Dockerfile
-          push: true
-          tags: panoradotdev/frontend-magic-links:latest
-          build-args: |
-            VITE_BACKEND_DOMAIN=${{ secrets.VITE_BACKEND_DOMAIN }}
-
-      - name: Build and push Frontend (Dashboard)
-        uses: docker/build-push-action@v2
-        with:
-          platforms: linux/amd64,linux/arm64
-          context: .
-          file: ./apps/client-ts/Dockerfile
-          push: true
-          tags: panoradotdev/frontend-webapp:latest
-          build-args: |
-            NEXT_PUBLIC_BACKEND_DOMAIN=${{ secrets.NEXT_PUBLIC_BACKEND_DOMAIN }}
-            NEXT_PUBLIC_MAGIC_LINK_DOMAIN=${{ secrets.NEXT_PUBLIC_MAGIC_LINK_DOMAIN }}
-            NEXT_PUBLIC_STYTCH_PROJECT_ID=${{ secrets.NEXT_PUBLIC_STYTCH_PROJECT_ID }}
-            NEXT_PUBLIC_STYTCH_SECRET=${{ secrets.NEXT_PUBLIC_STYTCH_SECRET }}
-            NEXT_PUBLIC_STYTCH_PROJECT_ENV=${{ secrets.NEXT_PUBLIC_STYTCH_PROJECT_ENV }}
-            NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN=${{ secrets.NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN }}
-            NEXT_PUBLIC_DISTRIBUTION=${{ env.DISTRIBUTION }}
-
       - name: Build and push Backend (API)
         uses: docker/build-push-action@v2
         with:
@@ -62,7 +34,7 @@ jobs:
           context: .
           file: ./packages/api/Dockerfile
           push: true
-          tags: panoradotdev/backend-api:latest
+          tags: panoradotdev/backend-api:selfhosted
           build-args: |
             OAUTH_REDIRECT_BASE=${{ env.OAUTH_REDIRECT_BASE }}
             DISTRIBUTION=${{ env.DISTRIBUTION }}
