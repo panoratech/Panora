@@ -56,7 +56,7 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
 export type ${providerUpper}OAuthResponse = {
   access_token: string;
   refresh_token: string;
-  expires_at: string;
+  expires_in: string;
 };
 
 @Injectable()
@@ -126,7 +126,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url: "",
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -144,7 +144,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -198,7 +198,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_at) * 1000,
+            new Date().getTime() + Number(data.expires_in) * 1000,
           ),
         },
       });

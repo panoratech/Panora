@@ -12,14 +12,15 @@ import {
   IAccountingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy } from '@panora/shared';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 export type PennylaneOAuthResponse = {
   access_token: string;
   refresh_token: string;
-  expires_at: string;
+  expires_in: number;
+  token_type: string;
 };
 
 @Injectable()
@@ -66,12 +67,15 @@ export class PennylaneConnectionService
         code: code,
         grant_type: 'authorization_code',
       });
-      const subdomain = 'panora';
-      const res = await axios.post('', formData.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      const res = await axios.post(
+        'https://app.pennylane.com/oauth/token',
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
         },
-      });
+      );
       const data: PennylaneOAuthResponse = res.data;
       this.logger.log(
         'OAuth credentials : pennylane ticketing ' + JSON.stringify(data),
@@ -88,9 +92,9 @@ export class PennylaneConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: '',
+            account_url: providersConfig['accounting']['pennylane'].apiUrl,
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -104,11 +108,11 @@ export class PennylaneConnectionService
             provider_slug: 'pennylane',
             vertical: 'accounting',
             token_type: 'oauth',
-            account_url: '',
+            account_url: providersConfig['accounting']['pennylane'].apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -130,21 +134,28 @@ export class PennylaneConnectionService
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
+
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
-      const res = await axios.post('', formData.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          Authorization: `Basic Q1JFREVOVElBTFMuQ0xJRU5UX0lEfTokewogICAgICAgICAgICAgICAgICBDUkVERU5USUFMUy5DTElFTlRfU0VDUkVUCiAgICAgICAgICAgICAgfQ==`,
-        },
+      const formData = new URLSearchParams({
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
+        grant_type: 'refresh_token',
+        refresh_token: this.cryptoService.decrypt(refreshToken),
       });
+      const res = await axios.post(
+        'https://app.pennylane.com/oauth/token',
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic Q1JFREVOVElBTFMuQ0xJRU5UX0lEfTokewogICAgICAgICAgICAgICAgICBDUkVERU5USUFMUy5DTElFTlRfU0VDUkVUCiAgICAgICAgICAgICAgfQ==`,
+          },
+        },
+      );
       const data: PennylaneOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
@@ -154,7 +165,7 @@ export class PennylaneConnectionService
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_at) * 1000,
+            new Date().getTime() + Number(data.expires_in) * 1000,
           ),
         },
       });
