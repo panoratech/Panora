@@ -72,7 +72,6 @@ export class AcceloConnectionService implements ICrmConnectionService {
         redirect_uri: REDIRECT_URI,
         code: code,
       });
-      //const subdomain = 'panora'; //TODO: if custom oauth then get the actual domain from customer
       const res = await axios.post(
         `${CREDENTIALS.SUBDOMAIN}/oauth2/v0/token`,
         formData.toString(),
