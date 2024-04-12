@@ -84,6 +84,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if (!clientId) throw new Error(`No client id for type ${type}`)
 
   const { scopes, authBaseUrl: baseUrl } = config;
+
+  if(!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
   
   //construct the baseAuthUrl based on the fact that client may use custom subdomain
   const BASE_URL: string = data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;

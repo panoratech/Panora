@@ -1692,7 +1692,7 @@ type Provider = {
   name: string;
   apiUrl: string;
   scopes: string;
-  authBaseUrl: string;
+  authBaseUrl: string | null;
   logoPath: string;
   description?: string;
 };
