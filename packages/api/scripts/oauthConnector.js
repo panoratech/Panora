@@ -43,7 +43,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
+import { 
   CallbackParams,
   RefreshParams,
   I${verticalUpper}ConnectionService,
@@ -165,7 +165,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
     
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
@@ -286,7 +286,7 @@ function addProviderToDockerCompose(provider, vertical, dockerComposePath) {
 
 function handleUpdate(vertical, provider) {
   createServiceFile(vertical, provider);
-  addProviderToEnvironmentService(provider, envServiceFilePath);
+  //addProviderToEnvironmentService(provider, envServiceFilePath);
   for (const path of paths) {
     addProviderToDockerCompose(provider, vertical, path);
   }
@@ -298,7 +298,7 @@ if (import.meta.url === process.argv[1]) {
   const vertical = args[0];
   const provider = args[1];
   createServiceFile(vertical, provider);
-  addProviderToEnvironmentService(provider, envServiceFilePath);
+  //addProviderToEnvironmentService(provider, envServiceFilePath);
   for (const path of paths) {
     addProviderToDockerCompose(argv.provider, path);
   }

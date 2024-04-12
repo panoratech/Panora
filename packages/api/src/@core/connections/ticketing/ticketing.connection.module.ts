@@ -17,6 +17,9 @@ import { GitlabConnectionService } from './services/gitlab/gitlab.service';
 import { ClickupConnectionService } from './services/clickup/clickup.service';
 import { GorgiasConnectionService } from './services/gorgias/gorgias.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { AhaConnectionService } from './services/aha/aha.service';
+import { AsanaConnectionService } from './services/asana/asana.service';
+import { WrikeConnectionService } from './services/wrike/wrike.service';
 
 @Module({
   imports: [WebhookModule],
@@ -39,6 +42,9 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
     GitlabConnectionService,
     ClickupConnectionService,
     GorgiasConnectionService,
+    AhaConnectionService,
+    AsanaConnectionService,
+    WrikeConnectionService,
   ],
   exports: [TicketingConnectionsService],
 })
