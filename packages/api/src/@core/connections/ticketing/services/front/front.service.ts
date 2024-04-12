@@ -106,7 +106,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
             provider_slug: 'front',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: providersConfig['ticketing']['front'].apiUrl,
+            account_url: providersConfig['ticketing']['front'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

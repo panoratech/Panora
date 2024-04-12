@@ -83,7 +83,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
       let db_res;
       const connection_token = uuidv4();
       const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['gitlab'].apiUrl;
+        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['gitlab'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({

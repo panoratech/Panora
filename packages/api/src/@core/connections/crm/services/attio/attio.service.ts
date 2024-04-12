@@ -108,7 +108,7 @@ export class AttioConnectionService implements ICrmConnectionService {
             provider_slug: 'attio',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: providersConfig['crm']['attio'].apiUrl,
+            account_url: providersConfig['crm']['attio'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

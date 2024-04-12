@@ -112,7 +112,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
             provider_slug: 'zendesk',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: providersConfig['crm']['zendesk'].apiUrl,
+            account_url: providersConfig['crm']['zendesk'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token
               ? this.cryptoService.encrypt(data.refresh_token)

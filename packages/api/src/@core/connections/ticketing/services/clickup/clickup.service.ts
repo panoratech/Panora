@@ -102,7 +102,7 @@ export class ClickupConnectionService implements ITicketingConnectionService {
             provider_slug: 'clickup',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: providersConfig['ticketing']['clickup'].apiUrl,
+            account_url: providersConfig['ticketing']['clickup'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
             expiration_timestamp: '',

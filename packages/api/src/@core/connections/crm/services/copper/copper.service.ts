@@ -104,7 +104,7 @@ export class CopperConnectionService implements ICrmConnectionService {
             provider_slug: 'copper',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: providersConfig['crm']['copper'].apiUrl,
+            account_url: providersConfig['crm']['copper'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

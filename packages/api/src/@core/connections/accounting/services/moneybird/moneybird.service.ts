@@ -94,7 +94,7 @@ export class MoneybirdConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: providersConfig['accounting']['moneybird'].apiUrl,
+            account_url: providersConfig['accounting']['moneybird'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -110,7 +110,7 @@ export class MoneybirdConnectionService
             provider_slug: 'moneybird',
             vertical: 'accounting',
             token_type: 'oauth',
-            account_url: providersConfig['accounting']['moneybird'].apiUrl,
+            account_url: providersConfig['accounting']['moneybird'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

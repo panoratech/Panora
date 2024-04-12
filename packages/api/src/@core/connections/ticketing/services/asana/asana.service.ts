@@ -96,7 +96,7 @@ export class AsanaConnectionService implements ITicketingConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: providersConfig['ticketing']['asana'].apiUrl,
+            account_url: providersConfig['ticketing']['asana'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -112,7 +112,7 @@ export class AsanaConnectionService implements ITicketingConnectionService {
             provider_slug: 'asana',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: providersConfig['ticketing']['asana'].apiUrl,
+            account_url: providersConfig['ticketing']['asana'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

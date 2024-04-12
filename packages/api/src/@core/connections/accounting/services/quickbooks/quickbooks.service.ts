@@ -94,7 +94,7 @@ export class QuickbooksConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: providersConfig['accounting']['quickbooks'].apiUrl,
+            account_url: providersConfig['accounting']['quickbooks'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -110,7 +110,7 @@ export class QuickbooksConnectionService
             provider_slug: 'quickbooks',
             vertical: 'accounting',
             token_type: 'oauth',
-            account_url: providersConfig['accounting']['quickbooks'].apiUrl,
+            account_url: providersConfig['accounting']['quickbooks'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

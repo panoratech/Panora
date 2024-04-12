@@ -93,7 +93,7 @@ export class WrikeConnectionService implements ITicketingConnectionService {
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url:
               `https://${data.host}` +
-              providersConfig['ticketing']['wriker'].apiUrl,
+              providersConfig['ticketing']['wriker'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -111,7 +111,7 @@ export class WrikeConnectionService implements ITicketingConnectionService {
             token_type: 'oauth',
             account_url:
               `https://${data.host}` +
-              providersConfig['ticketing']['wriker'].apiUrl,
+              providersConfig['ticketing']['wriker'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

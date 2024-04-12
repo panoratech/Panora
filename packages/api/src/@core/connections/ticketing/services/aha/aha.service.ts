@@ -82,7 +82,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
       const connection_token = uuidv4();
       //get the right BASE URL API
       const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['aha'].apiUrl;
+        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['aha'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({

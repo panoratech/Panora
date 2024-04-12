@@ -94,7 +94,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: providersConfig['crm']['capsule'].apiUrl,
+            account_url: providersConfig['crm']['capsule'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -110,7 +110,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
             provider_slug: 'capsule',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: providersConfig['crm']['capsule'].apiUrl,
+            account_url: providersConfig['crm']['capsule'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

@@ -105,7 +105,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
             provider_slug: 'linear',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: providersConfig['ticketing']['linear'].apiUrl,
+            account_url: providersConfig['ticketing']['linear'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
             expiration_timestamp: new Date(

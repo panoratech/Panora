@@ -110,7 +110,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'github',
             vertical: 'ticketing',
-            account_url: providersConfig['ticketing']['github'].apiUrl,
+            account_url: providersConfig['ticketing']['github'].urls.apiUrl,
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

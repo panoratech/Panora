@@ -84,7 +84,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       const connection_token = uuidv4();
       //get the right BASE URL API
       const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['zendesk'].apiUrl;
+        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['zendesk'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({

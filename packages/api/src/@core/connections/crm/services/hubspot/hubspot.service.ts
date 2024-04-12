@@ -111,7 +111,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
             provider_slug: 'hubspot',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: providersConfig['crm']['hubspot'].apiUrl,
+            account_url: providersConfig['crm']['hubspot'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

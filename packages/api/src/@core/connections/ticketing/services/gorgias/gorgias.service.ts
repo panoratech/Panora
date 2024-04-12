@@ -92,7 +92,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
 
       //get the right BASE URL API
       const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['gorgias'].apiUrl;
+        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['gorgias'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({

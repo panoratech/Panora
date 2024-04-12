@@ -131,8 +131,10 @@ export class FieldMappingService {
       });
       const provider = providersConfig[vertical][providerId.toLowerCase()];
       //TODO: handle case where apiUrl is == "" or starts with "/"
+      if (!provider.urls.apiUrl || !provider.urls.customPropertiesUrl)
+        throw new Error('proivder urls are invalid');
       const resp = await axios.get(
-        provider.apiUrl + provider.customPropertiesUrl,
+        provider.urls.apiUrl + provider.urls.customPropertiesUrl,
         {
           headers: {
             'Content-Type': 'application/json',

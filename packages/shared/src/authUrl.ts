@@ -1,7 +1,15 @@
-import { needsSubdomain, OAuth2AuthData, providerToType } from "./envConfig";
+import { OAuth2AuthData, providerToType } from "./envConfig";
 import { AuthStrategy, providersConfig, ProviderConfig } from "./utils";
-import randomstring from "randomstring";
 
+const randomString = () => {
+  const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+     const randomIndex = Math.floor(Math.random() * charSet.length);
+     result += charSet[randomIndex];
+  }
+  return result;
+}
 interface AuthParams {
   projectId: string;
   linkedUserId: string;
@@ -84,7 +92,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new Error(`No client id for type ${type}`)
 
-  const { scopes, authBaseUrl: baseUrl } = config;
+  const { scopes, urls: urls } = config;
+  const { authBaseUrl: baseUrl } = urls;
 
   if(!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
   
@@ -114,7 +123,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       params = `audience=api.atlassian.com&${params}&prompt=consent`;
       break;
     case "gorgias":
-      params = `&response_type=code&nonce=${randomstring.generate()}`
+      params = `&response_type=code&nonce=${randomString()}`;
+      break;
     default:
       // For most providers, response_type=code is common
       params += "&response_type=code";
