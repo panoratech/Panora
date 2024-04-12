@@ -51,9 +51,9 @@ model connections {
   expiration_timestamp DateTime?    @db.Timestamp(6)
   created_at           DateTime     @db.Timestamp(6)
   connection_token     String?
+  vertical             String
   id_project           String       @db.Uuid
   id_linked_user       String       @db.Uuid
-  vertical             String?
   linked_users         linked_users @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_11")
   projects             projects     @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_9")
 
