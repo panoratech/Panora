@@ -7,7 +7,7 @@ export enum AuthStrategy {
 // TODO : remove clientId
 export type ProviderConfig = {
   scopes: string;
-  authBaseUrl: string; //url used to authorize an application on behalf of the user (only when authStrategy is oauth2)
+  authBaseUrl: string | null; //url used to authorize an application on behalf of the user (only when authStrategy is oauth2)
   logoPath: string;
   description: string;
   active?: boolean;
