@@ -37,7 +37,7 @@ export class ZohoService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Companys`,
+        `${connection.account_url}/Companys`,
         { data: [companyData] },
         {
           headers: {
@@ -80,7 +80,7 @@ export class ZohoService implements ICompanyService {
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Companys?fields=${fields}`,
+        `${connection.account_url}/Companys?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

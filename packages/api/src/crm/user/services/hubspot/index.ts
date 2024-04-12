@@ -39,7 +39,7 @@ export class HubspotService implements IUserService {
 
       const commonPropertyNames = Object.keys(commonUserHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/owners';
+      const baseURL = '${connection.account_url}/owners';
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

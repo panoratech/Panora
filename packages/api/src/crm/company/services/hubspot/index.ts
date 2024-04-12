@@ -43,7 +43,7 @@ export class HubspotService implements ICompanyService {
         properties: companyData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/companies`,
+        `${connection.account_url}/objects/companies`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -85,7 +85,7 @@ export class HubspotService implements ICompanyService {
 
       const commonPropertyNames = Object.keys(commonCompanyHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/companies';
+      const baseURL = '${connection.account_url}/objects/companies';
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

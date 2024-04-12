@@ -86,7 +86,7 @@ export class HubspotService implements IEngagementService {
         properties: engagementData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/calls`,
+        `${connection.account_url}/objects/calls`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -129,7 +129,7 @@ export class HubspotService implements IEngagementService {
         properties: engagementData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/calls`,
+        `${connection.account_url}/objects/calls`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -172,7 +172,7 @@ export class HubspotService implements IEngagementService {
         properties: engagementData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/emails`,
+        `${connection.account_url}/objects/emails`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -238,7 +238,7 @@ export class HubspotService implements IEngagementService {
 
       const commonPropertyNames = Object.keys(commonCallHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/calls';
+      const baseURL = '${connection.account_url}/objects/calls';
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
@@ -287,7 +287,7 @@ export class HubspotService implements IEngagementService {
 
       const commonPropertyNames = Object.keys(commonMeetingHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/meetings';
+      const baseURL = '${connection.account_url}/objects/meetings';
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
@@ -333,7 +333,7 @@ export class HubspotService implements IEngagementService {
 
       const commonPropertyNames = Object.keys(commonCallHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/emails';
+      const baseURL = '${connection.account_url}/objects/emails';
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

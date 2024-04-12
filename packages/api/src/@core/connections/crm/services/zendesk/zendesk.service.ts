@@ -12,7 +12,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
+import {
+  OAuth2AuthData,
+  providersConfig,
+  providerToType,
+} from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -108,6 +112,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
             provider_slug: 'zendesk',
             vertical: 'crm',
             token_type: 'oauth',
+            account_url: providersConfig['crm']['zendesk'].apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token
               ? this.cryptoService.encrypt(data.refresh_token)

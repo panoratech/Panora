@@ -12,7 +12,11 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
+import {
+  OAuth2AuthData,
+  providersConfig,
+  providerToType,
+} from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -71,7 +75,7 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
       });
       //const subdomain = 'panora';
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN!}/rest/v11/oauth2/token`,
+        `${CREDENTIALS.SUBDOMAIN}/rest/v11/oauth2/token`,
         formData.toString(),
         {
           headers: {
@@ -86,6 +90,9 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
 
       let db_res;
       const connection_token = uuidv4();
+      //get the right BASE URL API
+      const BASE_API_URL =
+        CREDENTIALS.SUBDOMAIN + providersConfig['crm']['sugarcrm'].apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -95,7 +102,7 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: '',
+            account_url: BASE_API_URL,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -111,7 +118,7 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
             provider_slug: 'sugarcrm',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: '',
+            account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -149,9 +156,9 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
         platform: 'custom',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const subdomain = 'panora';
+      //const subdomain = 'panora';
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN!}/rest/v11/oauth2/token`,
+        `${CREDENTIALS.SUBDOMAIN}/rest/v11/oauth2/token`,
         formData.toString(),
         {
           headers: {

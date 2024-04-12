@@ -37,7 +37,7 @@ export class JiraService implements ITeamService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/rest/api/3/user/groups`,
+        `${connection.account_url}/user/groups`,
         {
           headers: {
             'Content-Type': 'application/json',

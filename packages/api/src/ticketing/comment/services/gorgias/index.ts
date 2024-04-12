@@ -76,7 +76,7 @@ export class GorgiasService implements ICommentService {
       };
 
       const resp = await axios.post(
-        `${connection.account_url}/api/tickets/${remoteIdTicket}/messages`,
+        `${connection.account_url}/tickets/${remoteIdTicket}/messages`,
         JSON.stringify(data),
         {
           headers: {

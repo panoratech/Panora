@@ -12,7 +12,11 @@ import {
   ICrmConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
+import {
+  OAuth2AuthData,
+  providersConfig,
+  providerToType,
+} from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -77,6 +81,9 @@ export class TeamworkConnectionService implements ICrmConnectionService {
 
       let db_res;
       const connection_token = uuidv4();
+      //get the right BASE URL API
+      const BASE_API_URL =
+        CREDENTIALS.SUBDOMAIN + providersConfig['crm']['teamwork'].apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -97,6 +104,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
             provider_slug: 'teamwork',
             vertical: 'crm',
             token_type: 'oauth',
+            account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

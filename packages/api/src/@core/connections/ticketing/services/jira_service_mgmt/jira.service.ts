@@ -113,7 +113,7 @@ export class JiraServiceMgmtConnectionService
       let cloud_id: string;
       for (const site of sites_scopes) {
         //todo
-        if (site.url == 'https://panora.atlassian.net') {
+        if (site.url == CREDENTIALS.SUBDOMAIN) {
           cloud_id = site.id;
           break;
         }

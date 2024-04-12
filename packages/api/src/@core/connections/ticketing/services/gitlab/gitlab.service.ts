@@ -12,7 +12,7 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy } from '@panora/shared';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -82,6 +82,8 @@ export class GitlabConnectionService implements ITicketingConnectionService {
 
       let db_res;
       const connection_token = uuidv4();
+      const BASE_API_URL =
+        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['gitlab'].apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -106,6 +108,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
             provider_slug: 'gitlab',
             vertical: 'ticketing',
             token_type: 'oauth',
+            account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

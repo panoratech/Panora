@@ -130,6 +130,7 @@ export class FieldMappingService {
         },
       });
       const provider = providersConfig[vertical][providerId.toLowerCase()];
+      //TODO: handle case where apiUrl is == "" or starts with "/"
       const resp = await axios.get(
         provider.apiUrl + provider.customPropertiesUrl,
         {

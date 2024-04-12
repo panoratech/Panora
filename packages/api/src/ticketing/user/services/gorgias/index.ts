@@ -36,7 +36,7 @@ export class GorgiasService implements IUserService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/api/users`, {
+      const resp = await axios.get(`${connection.account_url}/users`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -43,6 +43,7 @@ export class PassthroughService {
       });
       const intId = integrationId.toLowerCase();
       const providerUrl = providersConfig[vertical.toLowerCase()][intId].apiUrl;
+      //TODO: handle case where apiUrl is == "" or starts with "/"
       const BASE_URL = `${providerUrl}${path}`;
       const connection = await this.prisma.connections.findFirst({
         where: {

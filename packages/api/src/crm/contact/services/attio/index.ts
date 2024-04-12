@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { AttioContactInput, AttioContactOutput } from './types';
+import { providersConfig } from '@panora/shared';
 
 @Injectable()
 export class AttioService implements IContactService {
@@ -36,9 +37,8 @@ export class AttioService implements IContactService {
           vertical: 'crm',
         },
       });
-
       const resp = await axios.post(
-        `https://api.attio.com/v2/objects/people/records`,
+        `${connection.account_url}/objects/people/records`,
         JSON.stringify({
           data: contactData,
         }),

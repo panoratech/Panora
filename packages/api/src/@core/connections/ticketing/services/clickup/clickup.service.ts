@@ -12,7 +12,11 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
+import {
+  OAuth2AuthData,
+  providersConfig,
+  providerToType,
+} from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -98,6 +102,7 @@ export class ClickupConnectionService implements ITicketingConnectionService {
             provider_slug: 'clickup',
             vertical: 'ticketing',
             token_type: 'oauth',
+            account_url: providersConfig['ticketing']['clickup'].apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
             expiration_timestamp: '',

@@ -41,7 +41,7 @@ export class FrontService implements IContactService {
       });
 
       const resp = await axios.get(
-        `https://api2.frontapp.com/accounts/${remote_account_id}/contacts`,
+        `${connection.account_url}/accounts/${remote_account_id}/contacts`,
         {
           headers: {
             'Content-Type': 'application/json',

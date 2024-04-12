@@ -37,7 +37,7 @@ export class PipedriveService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/organizations`,
+        `${connection.account_url}/organizations`,
         JSON.stringify(companyData),
         {
           headers: {
@@ -76,17 +76,14 @@ export class PipedriveService implements ICompanyService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(
-        `https://api.pipedrive.com/v1/organizations`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const resp = await axios.get(`${connection.account_url}/organizations`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
 
       return {
         data: resp.data.data,

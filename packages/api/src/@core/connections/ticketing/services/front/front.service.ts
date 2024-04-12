@@ -12,7 +12,7 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy } from '@panora/shared';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -106,6 +106,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
             provider_slug: 'front',
             vertical: 'ticketing',
             token_type: 'oauth',
+            account_url: providersConfig['ticketing']['front'].apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

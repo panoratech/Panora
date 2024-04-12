@@ -12,7 +12,11 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
+import {
+  OAuth2AuthData,
+  providersConfig,
+  providerToType,
+} from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -106,6 +110,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'github',
             vertical: 'ticketing',
+            account_url: providersConfig['ticketing']['github'].apiUrl,
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

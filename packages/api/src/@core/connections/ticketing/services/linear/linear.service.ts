@@ -12,7 +12,7 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy } from '@panora/shared';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -105,6 +105,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
             provider_slug: 'linear',
             vertical: 'ticketing',
             token_type: 'oauth',
+            account_url: providersConfig['ticketing']['linear'].apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
             expiration_timestamp: new Date(

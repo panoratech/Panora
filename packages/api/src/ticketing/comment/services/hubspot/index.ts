@@ -41,7 +41,7 @@ export class HubspotService implements ICommentService {
         comment: commentData,
       };
       const resp = await axios.post(
-        `https://api2.frontapp.com/conversations/${remoteIdTicket}/comments`,
+        `${connection.account_url}/conversations/${remoteIdTicket}/comments`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -90,7 +90,7 @@ export class HubspotService implements ICommentService {
       });
 
       const resp = await axios.get(
-        `https://api2.frontapp.com/conversations/${ticket.remote_id}/comments`,
+        `${connection.account_url}/conversations/${ticket.remote_id}/comments`,
         {
           headers: {
             'Content-Type': 'application/json',

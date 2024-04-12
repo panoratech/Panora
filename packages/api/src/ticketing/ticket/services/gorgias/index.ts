@@ -76,7 +76,7 @@ export class GorgiasService implements ITicketService {
       );
 
       const resp = await axios.post(
-        `${connection.account_url}/api/tickets`,
+        `${connection.account_url}/tickets`,
         JSON.stringify({ ...ticketData, messages: modifiedComments }),
         {
           headers: {
@@ -116,7 +116,7 @@ export class GorgiasService implements ITicketService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/api/tickets`, {
+      const resp = await axios.get(`${connection.account_url}/tickets`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

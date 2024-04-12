@@ -12,7 +12,11 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
+import {
+  OAuth2AuthData,
+  providersConfig,
+  providerToType,
+} from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -87,6 +91,9 @@ export class AcceloConnectionService implements ICrmConnectionService {
       // Saving the token of customer inside db
       let db_res;
       const connection_token = uuidv4();
+      //get the right BASE URL API
+      const BASE_API_URL =
+        CREDENTIALS.SUBDOMAIN + providersConfig['crm']['accelo'].apiUrl;
 
       if (isNotUnique) {
         // Update existing connection
@@ -96,7 +103,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: CREDENTIALS.SUBDOMAIN!,
+            account_url: BASE_API_URL,
             expiration_timestamp: new Date(
               new Date().getTime() + data.expires_in * 1000,
             ),
@@ -113,7 +120,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
             provider_slug: 'accelo',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CREDENTIALS.SUBDOMAIN!,
+            account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
             expiration_timestamp: new Date(
               new Date().getTime() + data.expires_in * 1000,
@@ -151,7 +158,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
       )) as OAuth2AuthData;
 
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN!}/oauth2/v0/token`,
+        `${CREDENTIALS.SUBDOMAIN}/oauth2/v0/token`,
         formData.toString(),
         {
           headers: {

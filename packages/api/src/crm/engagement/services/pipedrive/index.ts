@@ -90,7 +90,7 @@ export class PipedriveService implements IEngagementService {
         },
       });
 
-      const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {
+      const resp = await axios.get(`${connection.account_url}/activities`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -129,7 +129,7 @@ export class PipedriveService implements IEngagementService {
         },
       });
 
-      const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {
+      const resp = await axios.get(`${connection.account_url}/activities`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -168,7 +168,7 @@ export class PipedriveService implements IEngagementService {
         },
       });
 
-      const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {
+      const resp = await axios.get(`${connection.account_url}/activities`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

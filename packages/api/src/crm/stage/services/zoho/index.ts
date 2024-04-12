@@ -38,7 +38,7 @@ export class ZohoService implements IStageService {
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Stages?fields=${fields}`,
+        `${connection.account_url}/Stages?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

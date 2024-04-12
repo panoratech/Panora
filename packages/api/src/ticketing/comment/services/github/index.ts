@@ -12,6 +12,7 @@ import { OriginalCommentOutput } from '@@core/utils/types/original/original.tick
 import { ServiceRegistry } from '../registry.service';
 import { GithubCommentInput, GithubCommentOutput } from './types';
 
+//TODO;
 @Injectable()
 export class GithubService implements ICommentService {
   constructor(
@@ -42,7 +43,7 @@ export class GithubService implements ICommentService {
         comment: commentData,
       };
       const resp = await axios.post(
-        `https://api2.frontapp.com/conversations/${remoteIdTicket}/comments`,
+        `${connection.account_url}/conversations/${remoteIdTicket}/comments`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -91,7 +92,7 @@ export class GithubService implements ICommentService {
       });
 
       const resp = await axios.get(
-        `https://api2.frontapp.com/conversations/${ticket.remote_id}/comments`,
+        `${connection.account_url}/conversations/${ticket.remote_id}/comments`,
         {
           headers: {
             'Content-Type': 'application/json',

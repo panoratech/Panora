@@ -1,4 +1,4 @@
-import { OAuth2AuthData, providerToType } from "./envConfig";
+import { needsSubdomain, OAuth2AuthData, providerToType } from "./envConfig";
 import { AuthStrategy, providersConfig, ProviderConfig } from "./utils";
 
 interface AuthParams {
@@ -84,6 +84,9 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if (!clientId) throw new Error(`No client id for type ${type}`)
 
   const { scopes, authBaseUrl: baseUrl } = config;
+  
+  //construct the baseAuthUrl based on the fact that client may use custom subdomain
+  const BASE_URL: string = data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
 
   if (!baseUrl) {
     throw new Error(`Unsupported provider: ${providerName}`);
@@ -114,7 +117,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       params += "&response_type=code";
   }
 
-  const finalAuthUrl = `${baseUrl}?${params}`;
+  const finalAuthUrl = `${BASE_URL}?${params}`;
   console.log("Final Authentication : ", finalAuthUrl);
   return finalAuthUrl;
 }

@@ -36,8 +36,9 @@ export class ZohoService implements IContactService {
           vertical: 'crm',
         },
       });
+      //todo
       const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Contacts`,
+        `${connection.account_url}/Contacts`,
         { data: [contactData] },
         {
           headers: {
@@ -80,7 +81,7 @@ export class ZohoService implements IContactService {
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Contacts?fields=${fields}`,
+        `${connection.account_url}/Contacts?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

@@ -44,7 +44,7 @@ export class JiraService implements ITicketService {
       //Add comment by calling the unified comment function but first insert the ticket base data
 
       const resp = await axios.post(
-        `${connection.account_url}/rest/api/3/issue`,
+        `${connection.account_url}/issue`,
         JSON.stringify(ticketData),
         {
           headers: {
@@ -85,7 +85,7 @@ export class JiraService implements ITicketService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/rest/api/3/search`,
+        `${connection.account_url}/search`,
         {
           headers: {
             'Content-Type': 'application/json',

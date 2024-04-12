@@ -56,7 +56,7 @@ export class ZendeskService implements ITicketService {
 
             //TODO:; fetch the right file from AWS s3
             const s3File = '';
-            const url = `${connection.account_url}/api/v2/uploads.json?filename=${res.file_name}`;
+            const url = `${connection.account_url}/uploads.json?filename=${res.file_name}`;
 
             const resp = await axios.get(url, {
               headers: {
@@ -82,7 +82,7 @@ export class ZendeskService implements ITicketService {
       }
 
       const resp = await axios.post(
-        `${connection.account_url}/api/v2/tickets.json`,
+        `${connection.account_url}/tickets.json`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -122,7 +122,7 @@ export class ZendeskService implements ITicketService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/api/v2/tickets.json`,
+        `${connection.account_url}/tickets.json`,
         {
           headers: {
             'Content-Type': 'application/json',

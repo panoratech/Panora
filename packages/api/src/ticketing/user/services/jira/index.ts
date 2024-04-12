@@ -36,7 +36,7 @@ export class JiraService implements IUserService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/rest/api/3/users/search`,
+        `${connection.account_url}/users/search`,
         {
           headers: {
             'Content-Type': 'application/json',

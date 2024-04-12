@@ -43,7 +43,7 @@ export class HubspotService implements ITaskService {
         properties: taskData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/tasks`,
+        `${connection.account_url}/objects/tasks`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -85,7 +85,7 @@ export class HubspotService implements ITaskService {
 
       const commonPropertyNames = Object.keys(commonTaskHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/tasks';
+      const baseURL = '${connection.account_url}/objects/tasks';
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

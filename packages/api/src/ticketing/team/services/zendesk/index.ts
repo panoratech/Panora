@@ -40,7 +40,7 @@ export class ZendeskService implements ITeamService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/api/v2/groups.json`,
+        `${connection.account_url}/groups.json`,
         {
           headers: {
             'Content-Type': 'application/json',
