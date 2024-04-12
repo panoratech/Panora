@@ -4,16 +4,19 @@ export enum AuthStrategy {
   basic
 }
 
-// TODO : remove clientId
 export type ProviderConfig = {
   scopes: string;
-  authBaseUrl: string | null; //url used to authorize an application on behalf of the user (only when authStrategy is oauth2)
   logoPath: string;
   description: string;
   active?: boolean;
-  apiUrl: string;
   customPropertiesUrl?: string; 
   authStrategy?: AuthStrategy;
+  urls: {
+    docsUrl: string;
+    apiUrl: string;
+    authBaseUrl?: string; //url used to authorize an application on behalf of the user (only when authStrategy is oauth2)
+    customPropertiesUrl?: string; 
+  }
 };
 
 type VerticalConfig = {
@@ -31,44 +34,60 @@ export const providersConfig: ProvidersConfig = {
   'crm': {
     'hubspot': {
       scopes: 'crm.objects.contacts.read crm.objects.contacts.write crm.schemas.deals.read crm.schemas.deals.write crm.objects.deals.read crm.objects.deals.write crm.objects.companies.read crm.objects.companies.write crm.objects.owners.read settings.users.read settings.users.write settings.users.teams.read settings.users.teams.write',
-      authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
+      urls: {
+        docsUrl: "https://developers.hubspot.com/docs/api/crm/understanding-the-crm",
+        authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
+        apiUrl: 'https://api.hubapi.com/crm/v3',
+        customPropertiesUrl: '/properties/v1/contacts/properties',
+      },
       logoPath: "https://assets-global.website-files.com/6421a177cdeeaf3c6791b745/64d61202dd99e63d40d446f6_hubspot%20logo.png",
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      apiUrl: 'https://api.hubapi.com/crm/v3',
-      customPropertiesUrl: '/properties/v1/contacts/properties',
       authStrategy: AuthStrategy.oauth2
     },
     'attio': {
       scopes: 'record_permission:read',
-      authBaseUrl: 'https://app.attio.com/authorize',
+      urls: {
+        docsUrl: "https://developers.attio.com/reference",
+        authBaseUrl: 'https://app.attio.com/authorize',
+        apiUrl: 'https://api.attio.com/v2',
+        customPropertiesUrl: '/docs/standard-objects-people',
+      },
       logoPath: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZsShi0G6mZ451MngEvQrmJ2JIGH-AF8JyFU-q-n3w&s",
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      apiUrl: 'https://api.attio.com/v2',
-      customPropertiesUrl: '/docs/standard-objects-people',
       authStrategy: AuthStrategy.oauth2
     },
     'zoho': {
       scopes: 'ZohoCRM.modules.ALL',
-      authBaseUrl: '/oauth/v2/auth',
+      urls: {
+        docsUrl: "https://www.zoho.com/crm/developer/docs/api/v5/",
+        authBaseUrl: '/oauth/v2/auth',
+        apiUrl: '/crm/v3',
+        customPropertiesUrl: '/settings/fields?module=Contact',
+      },
       logoPath: 'https://assets-global.website-files.com/64f68d43d25e5962af5f82dd/64f68d43d25e5962af5f9812_64ad8bbe47c78358489b29fc_645e3ccf636a8d659f320e25_Group%25252012.png',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      apiUrl: '/crm/v3',
-      customPropertiesUrl: '/settings/fields?module=Contact',
       authStrategy: AuthStrategy.oauth2
     },
     'pipedrive': {
       scopes: 'Pipedrive_Scope',
-      authBaseUrl: 'https://oauth.pipedrive.com/oauth/authorize',
+      urls: {
+        docsUrl: "https://developers.pipedrive.com/docs/api/v1",
+        authBaseUrl: 'https://oauth.pipedrive.com/oauth/authorize',
+        apiUrl: 'https://api.pipedrive.com/v1',
+        customPropertiesUrl: '/v1/personFields',
+      },
       logoPath: 'https://asset.brandfetch.io/idZG_U1qqs/ideqSFbb2E.jpeg',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      apiUrl: 'https://api.pipedrive.com/v1',
-      customPropertiesUrl: '/v1/personFields',
       authStrategy: AuthStrategy.oauth2
     },
+    //todo
     'freshsales': {
       scopes: '',
-      authBaseUrl: '',
-      apiUrl: '',
+      urls: {
+        docsUrl: "",
+        authBaseUrl: '',
+        apiUrl: '',
+      },
       logoPath: 'https://play-lh.googleusercontent.com/Mwgb5c2sVHGHoDlthAYPnMGekEOzsvMR5zotxskrl0erKTW-xpZbuIXn7AEIqvrRHQ',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -76,17 +95,23 @@ export const providersConfig: ProvidersConfig = {
     },
     'zendesk': {
       scopes: 'read write',
-      authBaseUrl: 'https://api.getbase.com/oauth2/authorize',
+      urls: {
+        docsUrl: "https://developer.zendesk.com/api-reference/sales-crm/introduction/",
+        authBaseUrl: 'https://api.getbase.com/oauth2/authorize',
+        apiUrl: 'https://api.getbase.com/v2',
+        customPropertiesUrl: '/contact/custom_fields',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      apiUrl: 'https://api.getbase.com/v2',
-      customPropertiesUrl: '/contact/custom_fields',
       authStrategy: AuthStrategy.oauth2
     }, 
     'accelo': {
       scopes: '',
-      authBaseUrl: '/oauth2/v0/authorize', 
-      apiUrl: '/api/v0',
+      urls: {
+        docsUrl: "https://api.accelo.com/docs/#introduction",
+        authBaseUrl: '/oauth2/v0/authorize', 
+        apiUrl: '/api/v0',
+      },
       logoPath: 'https://play-lh.googleusercontent.com/j63K2u8ZXukgPs8QPgyXfyoxuNBl_ST7gLx5DEFeczCTtM9e5JNpDjjBy32qLxFS7p0',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -94,8 +119,10 @@ export const providersConfig: ProvidersConfig = {
     },
     'active_campaign': {
       scopes: '',
-      authBaseUrl: null, 
-      apiUrl: '/api/3',
+      urls: {
+        docsUrl: "https://developers.activecampaign.com/reference/overview",
+        apiUrl: '/api/3',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSymrBOaXpQab_5RPRZfiOXU7h9dfsduGZeCaZZw59xJA&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -103,8 +130,10 @@ export const providersConfig: ProvidersConfig = {
     },
     'affinity': {
       scopes: '',
-      authBaseUrl: null,
-      apiUrl: 'https://api.affinity.co',
+      urls: {
+        docsUrl: "https://api-docs.affinity.co/#getting-started",
+        apiUrl: 'https://api.affinity.co',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMRfcwBA9Jn9z9dJQgY3f_H-bBeUzl-jRHNOm8xrmwtA&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -112,8 +141,11 @@ export const providersConfig: ProvidersConfig = {
     },
     'capsule': {
       scopes: '',
-      authBaseUrl: 'https://api.capsulecrm.com/oauth/authorise',
-      apiUrl: 'https://api.capsulecrm.com/api/v2',
+      urls: {
+        docsUrl: "https://developer.capsulecrm.com/",
+        authBaseUrl: 'https://api.capsulecrm.com/oauth/authorise',
+        apiUrl: 'https://api.capsulecrm.com/api/v2',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjS3qFlJJbQ802nGEV9w2GEgmnAIgJj6JJxe14cH6Wuw&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -121,8 +153,11 @@ export const providersConfig: ProvidersConfig = {
     },
     'close': {
       scopes: '',
-      authBaseUrl: 'https://app.close.com/oauth2/authorize',
-      apiUrl: 'https://api.close.com/api/v1',
+      urls: {
+        docsUrl: "https://developer.close.com/",
+        authBaseUrl: 'https://app.close.com/oauth2/authorize',
+        apiUrl: 'https://api.close.com/api/v1',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEH77yPBUkStmoc1ZtgJS4XeBmQiaq_Q1vgF5oerOGbg&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -130,8 +165,11 @@ export const providersConfig: ProvidersConfig = {
     },
     'copper': {
       scopes: '',
-      authBaseUrl: 'https://app.copper.com/oauth/authorize',
-      apiUrl: 'https://api.copper.com/developer_api/v1',
+      urls: {
+        docsUrl: "https://developer.copper.com/index.html",
+        authBaseUrl: 'https://app.copper.com/oauth/authorize',
+        apiUrl: 'https://api.copper.com/developer_api/v1',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVa1YDciibzviRJxGovqH4gNgPxpZUAHEz36Bwnj54uQ&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -139,8 +177,10 @@ export const providersConfig: ProvidersConfig = {
     },
     'insightly': {
       scopes: '',
-      authBaseUrl: null,
-      apiUrl: '/v3.1',
+      urls: {
+        docsUrl: "https://api.insightly.com/v3.1/Help#!/Overview/Introduction",
+        apiUrl: '/v3.1',
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -148,8 +188,11 @@ export const providersConfig: ProvidersConfig = {
     },
     'keap': {
       scopes: '',
-      authBaseUrl: 'https://accounts.infusionsoft.com/app/oauth/authorize',
-      apiUrl: 'https://api.infusionsoft.com/crm/rest/v2',
+      urls: {
+        docsUrl: "https://developer.infusionsoft.com/docs/restv2/",
+        authBaseUrl: 'https://accounts.infusionsoft.com/app/oauth/authorize',
+        apiUrl: 'https://api.infusionsoft.com/crm/rest/v2',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPYsWSMe9KVWgCIQ8fw-vBOnfTlZaSS6p_43ZhEIx51A&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -158,36 +201,44 @@ export const providersConfig: ProvidersConfig = {
     //todo
     'microsoft_dynamics_sales': {
       scopes: '',
-      authBaseUrl: '',
-      apiUrl: '',
+      urls: {
+        docsUrl: "",
+        authBaseUrl: '',
+        apiUrl: '',
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
     //todo
     'nutshell': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: null,
-      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbCONyN9DCKfd4E8pzIdItl5VqPTEErpoEn9vHCgblRg&s',
+      urls: {
+        docsUrl: "",
+        authBaseUrl: '',
+        apiUrl: '',
+      },      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbCONyN9DCKfd4E8pzIdItl5VqPTEErpoEn9vHCgblRg&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
       authStrategy: AuthStrategy.basic
     },
     //todo
     'pipeliner': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: '',
-      logoPath: 'https://play-lh.googleusercontent.com/rK9Qv_w9C8Py_aLZdQQDobNdHWSG8KL4dj3cBBQLcimVu-ctxwujA4VE442lIpZ65AE',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },      logoPath: 'https://play-lh.googleusercontent.com/rK9Qv_w9C8Py_aLZdQQDobNdHWSG8KL4dj3cBBQLcimVu-ctxwujA4VE442lIpZ65AE',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
       authStrategy: AuthStrategy.api_key
     },
     'salesflare': {
-      apiUrl: 'https://api.salesflare.com',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "https://api.salesflare.com/docs#section/Introduction/Getting-Started",
+        apiUrl: 'https://api.salesflare.com',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTesqSVCSaCDrjedsKbepr14iJPySzUwrh7Fg9MhgKh9w&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -195,9 +246,12 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'salesforce': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: '',
+      urls: {
+        docsUrl: "",
+        authBaseUrl: '',
+        apiUrl: '',
+      },      
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgL4FJb-GptGfxDDkWbIX2CjIM77t5q-d7eCFY6sGsHA&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -205,9 +259,12 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'sugarcrm': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: '',
+      urls: {
+        docsUrl: "",
+        authBaseUrl: '',
+        apiUrl: '',
+      },      
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQftNERc1ImBHm8MXXuWdhQiFYwW-dXNcogRL1UV8JyHFQGY2BbsbpwKvERwKRB39RH6zw&usqp=CAU',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -215,8 +272,11 @@ export const providersConfig: ProvidersConfig = {
     },
     'teamleader': {
       scopes: '',
-      authBaseUrl: 'https://focus.teamleader.eu/oauth2/authorize',
-      apiUrl: 'https://api.focus.teamleader.eu',
+      urls: {
+        docsUrl: "https://developer.teamleader.eu/#/introduction/ap-what?",
+        authBaseUrl: 'https://focus.teamleader.eu/oauth2/authorize',
+        apiUrl: 'https://api.focus.teamleader.eu',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTE99rDOwXdRYGET0oeSCqK2kB02slJxZtTeBC79pb8IQ&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -224,8 +284,11 @@ export const providersConfig: ProvidersConfig = {
     },
     'teamwork': {
       scopes: '',
-      authBaseUrl: 'https://www.teamwork.com/launchpad/login',
-      apiUrl: '', //everything is contained inside the accountUrl(subdomain)
+      urls: {
+        docsUrl: "https://apidocs.teamwork.com/guides/teamwork/getting-started-with-the-teamwork-com-api",
+        authBaseUrl: 'https://www.teamwork.com/launchpad/login',
+        apiUrl: '', //on purpose blank => everything is contained inside the accountUrl(subdomain)
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr6gYDMNagMEicBb4dhKz4BC1fQs72In45QF7Ls6-moA&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -233,9 +296,12 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'vtiger': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "",
+        authBaseUrl: null,
+        apiUrl: '',
+      },      
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcUYrYD8lnaFaDN93vwjHhksKJUG3rqlb1TCFC__oPBw&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
@@ -243,9 +309,12 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'twenty': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: '',
+      urls: {
+        docsUrl: "",
+        authBaseUrl: '',
+        apiUrl: '',
+      },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
@@ -254,95 +323,128 @@ export const providersConfig: ProvidersConfig = {
   'ticketing': {
     'front': {
       scopes: '',
-      authBaseUrl: 'https://app.frontapp.com/oauth/authorize',
-      apiUrl: 'https://api2.frontapp.com',
+      urls: {
+        docsUrl: "",
+        authBaseUrl: 'https://app.frontapp.com/oauth/authorize',
+        apiUrl: 'https://api2.frontapp.com',
+      },
       logoPath: 'https://i.pinimg.com/originals/43/a2/43/43a24316bd773798c7638ad98521eb81.png',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       authStrategy: AuthStrategy.oauth2
     },
     'zendesk': {
       scopes: 'read write',
-      authBaseUrl: '/oauth/authorizations/new',
-      apiUrl: '/api/v2',
+      urls: {
+        docsUrl: "",
+        authBaseUrl: '/oauth/authorizations/new',
+        apiUrl: '/api/v2',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       authStrategy: AuthStrategy.oauth2
     },
     'gorgias': {
       scopes: 'write:all openid email profile offline',
-      authBaseUrl: '/oauth/authorize',
+      urls: {
+        docsUrl: "",
+        apiUrl: '/api',
+        authBaseUrl: '/oauth/authorize',
+      },
       logoPath: 'https://x5h8w2v3.rocketcdn.me/wp-content/uploads/2020/09/FS-AFFI-00660Gorgias.png',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      apiUrl: '/api',
       authStrategy: AuthStrategy.oauth2
     },
     'jira': {
       scopes: 'read:jira-work manage:jira-project manage:jira-data-provider manage:jira-webhook write:jira-work manage:jira-configuration read:jira-user offline_access',
-      authBaseUrl: 'https://auth.atlassian.com/authorize',
+      urls: {
+        docsUrl: "",
+        apiUrl: '/rest/api/3',
+        authBaseUrl: 'https://auth.atlassian.com/authorize',
+      },
       logoPath: 'https://logowik.com/content/uploads/images/jira3124.jpg',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      apiUrl: '/rest/api/3',
       authStrategy: AuthStrategy.oauth2
     },
     //todo
     'jira_service_mgmt': {
-      apiUrl: '',
       scopes: 'read:servicedesk-request manage:servicedesk-customer read:servicemanagement-insight-objects write:servicedesk-request offline_access',
-      authBaseUrl: 'https://auth.atlassian.com/authorize',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+        authBaseUrl: 'https://auth.atlassian.com/authorize'
+      },
       logoPath: '',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
     'linear': {
-      apiUrl: 'https://api.linear.app/graphql',
       scopes: 'read,write',
-      authBaseUrl: 'https://linear.app/oauth/authorize',
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://api.linear.app/graphql',
+        authBaseUrl: 'https://linear.app/oauth/authorize',
+      },
       logoPath: '',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
     'gitlab': {
-      apiUrl: '/api/v4',
       scopes: '',
-      authBaseUrl: '/oauth/authorize',
+      urls: {
+        docsUrl: "",
+        apiUrl: '/api/v4',
+        authBaseUrl: '/oauth/authorize',
+      },
       logoPath: '',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
     'clickup': {
-      apiUrl: 'https://api.clickup.com/v2',
       scopes: '',
-      authBaseUrl: 'https://app.clickup.com/api',
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://api.clickup.com/v2',
+        authBaseUrl: 'https://app.clickup.com/api',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRewJj9y5yKzSCf-qGgjmdLagEhxfnlZ7TUsvukbfZaIg&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
     'github': {
-      apiUrl: 'https://api.github.com',
       scopes: '',
-      authBaseUrl: 'https://github.com/login/oauth/authorize',
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://api.github.com',
+        authBaseUrl: 'https://github.com/login/oauth/authorize',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
     'aha': {
-      apiUrl: '/api/v1',
       scopes: '',
-      authBaseUrl: '/oauth/authorize',
+      urls: {
+        docsUrl: "",
+        apiUrl: '/api/v1',
+        authBaseUrl: '/oauth/authorize',
+      },
       logoPath: 'https://www.aha.io/aha-logo-2x.png',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
     'asana': {
-      apiUrl: 'https://app.asana.com/api/1.0',
       scopes: '',
-      authBaseUrl: 'https://app.asana.com/-/oauth_authorize',
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://app.asana.com/api/1.0',
+        authBaseUrl: 'https://app.asana.com/-/oauth_authorize',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
@@ -350,35 +452,44 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'azure': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+        authBaseUrl: '',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     //todo
     'basecamp': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
-      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+        authBaseUrl: '',
+      },      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     //todo
     'bitbucket': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
-      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+        authBaseUrl: '',
+      },      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     'dixa': {
-      apiUrl: 'https://dev.dixa.io',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://dev.dixa.io',
+      },      
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
@@ -386,26 +497,34 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'freshdesk': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+        authBaseUrl: '',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     //todo
     'freshservice': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+        authBaseUrl: '',
+      },      
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     'gladly': {
-      apiUrl: '/api/v1',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "",
+        apiUrl: '/api/v1',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
@@ -413,26 +532,33 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'height': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+        authBaseUrl: '',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     'help_scout': {
-      apiUrl: 'https://docsapi.helpscout.net/v1',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://docsapi.helpscout.net/v1',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
       authStrategy: AuthStrategy.api_key
     },
     'hive': {
-      apiUrl: 'https://app.hive.com/api/v1',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://app.hive.com/api/v1',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
@@ -440,27 +566,33 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'intercom': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     //todo
     'ironclad': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
       authStrategy: AuthStrategy.api_key
     },
     'kustomer': {
-      apiUrl: 'https://api.kustomerapp.com',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://api.kustomerapp.com',
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
@@ -468,26 +600,32 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'pivotal_tracker': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },      
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     //todo
     'rally': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },        
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     'reamaze': {
-      apiUrl: '/api/v1',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "",
+        apiUrl: '/api/v1',
+      },  
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
@@ -495,26 +633,32 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'salesforce': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },  
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     //todo
     'servicenow': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },  
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     'shortcut': {
-      apiUrl: 'https://api.app.shortcut.com',
       scopes: '',
-      authBaseUrl: null,
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://api.app.shortcut.com',
+      },  
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
@@ -522,52 +666,65 @@ export const providersConfig: ProvidersConfig = {
     },
     //todo
     'spotdraft': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },        
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     //todo
     'teamwork': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },        
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     //todo
     'trello': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://api.app.shortcut.com',
+      },  
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     'wrike': {
-      apiUrl: '/api/v4',
       scopes: '',
-      authBaseUrl: 'https://login.wrike.com/oauth2/authorize/v4',
+      urls: {
+        docsUrl: "",
+        apiUrl: '/api/v4',
+        authBaseUrl: 'https://login.wrike.com/oauth2/authorize/v4',
+      },  
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
     'zoho_bugtracker': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },        
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
     'zoho_desk': {
-      apiUrl: '',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      urls: {
+        docsUrl: "",
+        apiUrl: '',
+      },        
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
@@ -656,9 +813,12 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'quickbooks': {
-      apiUrl: 'https://quickbooks.api.intuit.com/v3',
       scopes: '',
-      authBaseUrl: 'https://appcenter.intuit.com/connect/oauth2',
+      urls: {
+        docsUrl: "",
+        apiUrl: 'https://quickbooks.api.intuit.com/v3',
+        authBaseUrl: 'https://appcenter.intuit.com/connect/oauth2',
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,

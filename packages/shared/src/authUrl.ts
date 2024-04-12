@@ -1,5 +1,6 @@
 import { needsSubdomain, OAuth2AuthData, providerToType } from "./envConfig";
 import { AuthStrategy, providersConfig, ProviderConfig } from "./utils";
+import randomstring from "randomstring";
 
 interface AuthParams {
   projectId: string;
@@ -97,8 +98,9 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // Default URL structure
   let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
+  const providersWithoutScopes = ["pipedrive", "clickup", "aha", "freeagent", "teamwork", "attio", "close", "teamleader"]
   // Adding scope for providers that require it, except for 'pipedrive'
-  if (providerName !== "pipedrive") {
+  if (!providersWithoutScopes.includes(providerName) ) {
     params += `&scope=${encodeURIComponent(scopes)}`;
   }
 
@@ -111,9 +113,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     case "jira_service_mgmt":
       params = `audience=api.atlassian.com&${params}&prompt=consent`;
       break;
-    case "gitlab":
-      params += "&code_challenge=&code_challenge_method=";
-      break;
+    case "gorgias":
+      params = `&response_type=code&nonce=${randomstring.generate()}`
     default:
       // For most providers, response_type=code is common
       params += "&response_type=code";
