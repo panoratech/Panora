@@ -57,6 +57,7 @@ export type ${providerUpper}OAuthResponse = {
   access_token: string;
   refresh_token: string;
   expires_in: string;
+  token_type: string;
 };
 
 @Injectable()
@@ -166,14 +167,15 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
+
+      const formData = new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+      });
       
       const res = await axios.post(
         "",

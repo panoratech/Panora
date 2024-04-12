@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -7,20 +6,27 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { 
+import {
   CallbackParams,
   RefreshParams,
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy } from '@panora/shared';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 export type AsanaOAuthResponse = {
   access_token: string;
   refresh_token: string;
-  expires_at: string;
+  expires_in: number;
+  token_type: string;
+  data: {
+    id: number;
+    gid: string;
+    name: string;
+    email: string;
+  };
 };
 
 @Injectable()
@@ -47,13 +53,16 @@ export class AsanaConnectionService implements ITicketingConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'asana',
-          vertical: 'ticketing'
+          vertical: 'ticketing',
         },
       });
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
-      const CREDENTIALS = (await this.cService.getCredentials(projectId, this.type)) as OAuth2AuthData;
+      const CREDENTIALS = (await this.cService.getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
@@ -62,9 +71,8 @@ export class AsanaConnectionService implements ITicketingConnectionService {
         code: code,
         grant_type: 'authorization_code',
       });
-      const subdomain = 'panora';
       const res = await axios.post(
-        "",
+        'https://app.asana.com/-/oauth_token',
         formData.toString(),
         {
           headers: {
@@ -88,9 +96,9 @@ export class AsanaConnectionService implements ITicketingConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: "",
+            account_url: providersConfig['ticketing']['asana'].apiUrl,
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -104,11 +112,11 @@ export class AsanaConnectionService implements ITicketingConnectionService {
             provider_slug: 'asana',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: "",
+            account_url: providersConfig['ticketing']['asana'].apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -126,21 +134,22 @@ export class AsanaConnectionService implements ITicketingConnectionService {
       handleServiceError(error, this.logger, 'asana', Action.oauthCallback);
     }
   }
-    
+
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
-      
+      const formData = new URLSearchParams({
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
+        grant_type: 'refresh_token',
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+      });
       const res = await axios.post(
-        "",
+        'https://app.asana.com/-/oauth_token',
         formData.toString(),
         {
           headers: {
@@ -158,7 +167,7 @@ export class AsanaConnectionService implements ITicketingConnectionService {
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_at) * 1000,
+            new Date().getTime() + Number(data.expires_in) * 1000,
           ),
         },
       });
@@ -167,4 +176,4 @@ export class AsanaConnectionService implements ITicketingConnectionService {
       handleServiceError(error, this.logger, 'asana', Action.oauthRefresh);
     }
   }
-} 
+}

@@ -12,14 +12,16 @@ import {
   IAccountingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy } from '@panora/shared';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 export type FreeagentOAuthResponse = {
   access_token: string;
   refresh_token: string;
-  expires_at: string;
+  expires_in: string | number;
+  refresh_token_expires_in: number;
+  token_type: string;
 };
 
 @Injectable()
@@ -60,18 +62,22 @@ export class FreeagentConnectionService
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
         grant_type: 'authorization_code',
       });
-      const subdomain = 'panora';
-      const res = await axios.post('', formData.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      const res = await axios.post(
+        'https://api.freeagent.com/v2/token_endpoint',
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic ${Buffer.from(
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+            ).toString('base64')}`,
+          },
         },
-      });
+      );
       const data: FreeagentOAuthResponse = res.data;
       this.logger.log(
         'OAuth credentials : freeagent ticketing ' + JSON.stringify(data),
@@ -88,9 +94,9 @@ export class FreeagentConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: '',
+            account_url: providersConfig['accounting']['freshagent'].apiUrl,
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -104,11 +110,11 @@ export class FreeagentConnectionService
             provider_slug: 'freeagent',
             vertical: 'accounting',
             token_type: 'oauth',
-            account_url: '',
+            account_url: providersConfig['accounting']['freshagent'].apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -139,12 +145,18 @@ export class FreeagentConnectionService
         this.type,
       )) as OAuth2AuthData;
 
-      const res = await axios.post('', formData.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          Authorization: `Basic Q1JFREVOVElBTFMuQ0xJRU5UX0lEfTokewogICAgICAgICAgICAgICAgICBDUkVERU5USUFMUy5DTElFTlRfU0VDUkVUCiAgICAgICAgICAgICAgfQ==`,
+      const res = await axios.post(
+        'https://api.freeagent.com/v2/token_endpoint',
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic ${Buffer.from(
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+            ).toString('base64')}`,
+          },
         },
-      });
+      );
       const data: FreeagentOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
@@ -154,7 +166,7 @@ export class FreeagentConnectionService
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_at) * 1000,
+            new Date().getTime() + Number(data.expires_in) * 1000,
           ),
         },
       });
