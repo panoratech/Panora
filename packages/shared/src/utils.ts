@@ -475,6 +475,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
+    //todo
     'rally': {
       apiUrl: '',
       scopes: '',
@@ -484,13 +485,15 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'reamaze': {
-      apiUrl: '',
+      apiUrl: '/api/v1',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      authBaseUrl: null,
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
+    //todo
     'salesforce': {
       apiUrl: '',
       scopes: '',
@@ -499,6 +502,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
+    //todo
     'servicenow': {
       apiUrl: '',
       scopes: '',
@@ -508,13 +512,15 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'shortcut': {
-      apiUrl: '',
+      apiUrl: 'https://api.app.shortcut.com',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      authBaseUrl: null,
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
+    //todo
     'spotdraft': {
       apiUrl: '',
       scopes: '',
@@ -523,6 +529,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
+    //todo
     'teamwork': {
       apiUrl: '',
       scopes: '',
@@ -531,6 +538,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
       active: false
     },
+    //todo
     'trello': {
       apiUrl: '',
       scopes: '',
@@ -540,12 +548,13 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'wrike': {
-      apiUrl: '',
+      apiUrl: '/api/v4',
       scopes: '',
-      authBaseUrl: 'https://api.github.com',
+      authBaseUrl: 'https://login.wrike.com/oauth2/authorize/v4',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: "Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'zoho_bugtracker': {
       apiUrl: '',
@@ -566,21 +575,24 @@ export const providersConfig: ProvidersConfig = {
   },
   'accounting': {
     'pennylane': {
-      apiUrl: '',
+      apiUrl: 'https://app.pennylane.com/api/external/v1',
       scopes: '',
-      authBaseUrl: '',
+      authBaseUrl: 'https://app.pennylane.com/oauth/authorize',
       logoPath: 'https://cdn-images-1.medium.com/max/1200/1*wk7CNGik_1Szbt7s1fNZxA.png',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'freshbooks': {
-      apiUrl: '',
+      apiUrl: 'https://api.freshbooks.com',
       scopes: '',
-      authBaseUrl: '',
+      authBaseUrl: 'https://auth.freshbooks.com/oauth/authorize',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
+    //todo
     'clearbooks': {
       apiUrl: '',
       scopes: '',
@@ -590,21 +602,24 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'freeagent': {
-      apiUrl: '',
+      apiUrl: 'https://api.freeagent.com/v2',
       scopes: '',
-      authBaseUrl: '',
+      authBaseUrl: 'https://api.freeagent.com/v2/approve_app',
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU-fob0b9pBNQdm80usnYa2yWdagm3eeBDH-870vSmfg&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'sage': {
-      apiUrl: '',
+      apiUrl: 'https://api.accounting.sage.com/v3.1',
       scopes: '',
-      authBaseUrl: '',
+      authBaseUrl: 'https://www.sageone.com/oauth2/auth/central?filter=apiv3.1',
       logoPath: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/b7/Sage_Group_logo_2022.svg/2560px-Sage_Group_logo_2022.svg.png',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
+    //todo
     'sage_intacct': {
       apiUrl: '',
       scopes: '',
@@ -613,6 +628,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
+    //todo
     'microsoft_dynamics': {
       apiUrl: '',
       scopes: '',
@@ -622,13 +638,15 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'moneybird': {
-      apiUrl: '',
+      apiUrl: 'https://moneybird.com/api/v2',
       scopes: '',
-      authBaseUrl: '',
+      authBaseUrl: 'https://moneybird.com/oauth/authorize',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
+    //todo
     'netsuite': {
       apiUrl: '',
       scopes: '',
@@ -638,13 +656,15 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'quickbooks': {
-      apiUrl: '',
+      apiUrl: 'https://quickbooks.api.intuit.com/v3',
       scopes: '',
-      authBaseUrl: '',
+      authBaseUrl: 'https://appcenter.intuit.com/connect/oauth2',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
+    //todo
     'workday': {
       apiUrl: '',
       scopes: '',
@@ -654,14 +674,16 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
     'wave_financial': {
-      apiUrl: '',
+      apiUrl: 'https://gql.waveapps.com/graphql/public',
       scopes: '',
-      authBaseUrl: '',
+      authBaseUrl: 'https://api.waveapps.com/oauth2/authorize/',
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
   },
+  //TODO
   'marketing_automation': {
     'active_campaign': {
       apiUrl: '',
@@ -752,6 +774,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
   },
+  //TODO
   'ats': {
     'applicantstack': {
       apiUrl: '',
@@ -1130,6 +1153,7 @@ export const providersConfig: ProvidersConfig = {
       active: false
     },
   },
+  //TODO
   'hris': {
     '7shifts': {
       apiUrl: '',
