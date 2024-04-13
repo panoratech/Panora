@@ -23,7 +23,7 @@ services:
       - backend
 
   api:
-    image: panoradotdev/backend-api:latest
+    image: panoradotdev/backend-api:selfhosted
     environment: 
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
         DISTRIBUTION: ${DISTRIBUTION}
@@ -97,7 +97,7 @@ services:
       - backend
   
   redis:
-    image: "redis:7.2.3-alpine"
+    image: valkey/valkey:7.2-alpine
     container_name: "Redis"
     ports:
       - "6379:6379"
@@ -107,7 +107,7 @@ services:
       - backend
   
   magic-link-frontend:
-    image: panoradotdev/frontend-magic-links:latest
+    image: panoradotdev/frontend-magic-links:selfhosted
     restart:
       always
     ports:
@@ -120,7 +120,7 @@ services:
   
 
   webapp-next:
-    image: panoradotdev/frontend-webapp:latest
+    image: panoradotdev/frontend-webapp:selfhosted
     environment:
       NEXT_PUBLIC_STYTCH_PROJECT_ID: ${NEXT_PUBLIC_STYTCH_PROJECT_ID}
       NEXT_PUBLIC_STYTCH_SECRET: ${NEXT_PUBLIC_STYTCH_SECRET}

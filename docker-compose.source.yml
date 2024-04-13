@@ -101,7 +101,7 @@ services:
       - backend
 
   redis:
-    image: 'redis:7.2.3-alpine'
+    image: valkey/valkey:7.2-alpine
     container_name: 'Redis'
     ports:
       - '6379:6379'
