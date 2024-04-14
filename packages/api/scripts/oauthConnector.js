@@ -56,7 +56,8 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
 export type ${providerUpper}OAuthResponse = {
   access_token: string;
   refresh_token: string;
-  expires_at: string;
+  expires_in: string;
+  token_type: string;
 };
 
 @Injectable()
@@ -126,7 +127,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url: "",
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_ina) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -144,7 +145,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_ina) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -170,11 +171,16 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
+
+      const { connectionId, refreshToken, projectId } = opts;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
-      
+      const formData = new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+      });
       const res = await axios.post(
         "",
         formData.toString(),
@@ -198,7 +204,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_at) * 1000,
+            new Date().getTime() + Number(data.expires_ina) * 1000,
           ),
         },
       });
@@ -286,7 +292,7 @@ function addProviderToDockerCompose(provider, vertical, dockerComposePath) {
 
 function handleUpdate(vertical, provider) {
   createServiceFile(vertical, provider);
-  addProviderToEnvironmentService(provider, envServiceFilePath);
+  //addProviderToEnvironmentService(provider, envServiceFilePath);
   for (const path of paths) {
     addProviderToDockerCompose(provider, vertical, path);
   }
@@ -298,7 +304,7 @@ if (import.meta.url === process.argv[1]) {
   const vertical = args[0];
   const provider = args[1];
   createServiceFile(vertical, provider);
-  addProviderToEnvironmentService(provider, envServiceFilePath);
+  //addProviderToEnvironmentService(provider, envServiceFilePath);
   for (const path of paths) {
     addProviderToDockerCompose(argv.provider, path);
   }

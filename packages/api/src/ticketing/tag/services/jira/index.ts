@@ -47,7 +47,7 @@ export class JiraService implements ITagService {
       });
 
       //todo: TAGS
-      const resp = await axios.get('https://api2.jiraapp.com/conversations', {
+      const resp = await axios.get(`${connection.account_url}/conversations`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

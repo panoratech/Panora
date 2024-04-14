@@ -86,7 +86,7 @@ export class HubspotService implements IEngagementService {
         properties: engagementData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/calls`,
+        `${connection.account_url}/objects/calls`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -129,7 +129,7 @@ export class HubspotService implements IEngagementService {
         properties: engagementData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/calls`,
+        `${connection.account_url}/objects/calls`,
         JSON.stringify(dataBody),
         {
           headers: {

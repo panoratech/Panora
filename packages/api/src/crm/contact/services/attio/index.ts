@@ -38,7 +38,7 @@ export class AttioService implements IContactService {
       });
 
       const resp = await axios.post(
-        `https://api.attio.com/v2/objects/people/records`,
+        `${connection.account_url}/objects/people/records`,
         JSON.stringify({
           data: contactData,
         }),
@@ -83,7 +83,7 @@ export class AttioService implements IContactService {
       // console.log(this.cryptoService.decrypt(connection.access_token));
 
       const resp = await axios.post(
-        `https://api.attio.com/v2/objects/people/records/query`,
+        `${connection.account_url}/objects/people/records/query`,
         {},
         {
           headers: {

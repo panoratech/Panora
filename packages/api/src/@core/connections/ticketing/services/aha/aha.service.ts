@@ -12,7 +12,7 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy } from '@panora/shared';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -65,7 +65,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN!}/oauth/token`,
+        `${CREDENTIALS.SUBDOMAIN}/oauth/token`,
         formData.toString(),
         {
           headers: {
@@ -80,6 +80,9 @@ export class AhaConnectionService implements ITicketingConnectionService {
 
       let db_res;
       const connection_token = uuidv4();
+      //get the right BASE URL API
+      const BASE_API_URL =
+        CREDENTIALS.SUBDOMAIN + providersConfig['ticketing']['aha'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -88,7 +91,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: CREDENTIALS.SUBDOMAIN!,
+            account_url: BASE_API_URL,
             status: 'valid',
             created_at: new Date(),
           },
@@ -101,7 +104,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
             provider_slug: 'aha',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: CREDENTIALS.SUBDOMAIN!,
+            account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

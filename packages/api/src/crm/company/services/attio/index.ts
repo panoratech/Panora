@@ -39,7 +39,7 @@ export class AttioService implements ICompanyService {
       });
 
       const resp = await axios.post(
-        'https://api.attio.com/v2/objects/companies/records',
+        `${connection.account_url}/objects/companies/records`,
         JSON.stringify({
           data: companyData,
         }),
@@ -80,7 +80,7 @@ export class AttioService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `https://api.attio.com/v2/objects/companies/records/query`,
+        `${connection.account_url}/objects/companies/records/query`,
         {},
         {
           headers: {

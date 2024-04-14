@@ -36,7 +36,7 @@ export class GorgiasService implements ITeamService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/api/teams`, {
+      const resp = await axios.get(`${connection.account_url}/teams`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

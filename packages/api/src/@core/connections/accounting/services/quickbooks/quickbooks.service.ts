@@ -9,25 +9,25 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import {
   CallbackParams,
   RefreshParams,
-  ICrmConnectionService,
+  IAccountingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
-import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
-export type SugarcrmOAuthResponse = {
+export type QuickbooksOAuthResponse = {
   access_token: string;
-  expires_in: number;
-  token_type: string;
-  scope: string;
   refresh_token: string;
-  refresh_expires_in: number;
-  download_token: string;
+  expires_in: string;
+  token_type: string;
+  x_refresh_token_expires_in: number;
 };
 
 @Injectable()
-export class SugarcrmConnectionService implements ICrmConnectionService {
+export class QuickbooksConnectionService
+  implements IAccountingConnectionService
+{
   private readonly type: string;
 
   constructor(
@@ -38,9 +38,9 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
   ) {
-    this.logger.setContext(SugarcrmConnectionService.name);
-    this.registry.registerService('sugarcrm', this);
-    this.type = providerToType('sugarcrm', 'crm', AuthStrategy.oauth2);
+    this.logger.setContext(QuickbooksConnectionService.name);
+    this.registry.registerService('quickbooks', this);
+    this.type = providerToType('quickbooks', 'accounting', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -49,8 +49,8 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: `sugarcrm`,
-          vertical: 'crm',
+          provider_slug: 'quickbooks',
+          vertical: 'accounting',
         },
       });
 
@@ -62,26 +62,25 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-        grant_type: 'password',
-        username: '',
-        password: '',
-        platform: 'custom',
+        redirect_uri: REDIRECT_URI,
+        code: code,
+        grant_type: 'authorization_code',
       });
-      //const subdomain = 'panora';
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN!}/rest/v11/oauth2/token`,
+        'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic ${Buffer.from(
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+            ).toString('base64')}`,
           },
         },
       );
-      const data: SugarcrmOAuthResponse = res.data;
+      const data: QuickbooksOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : sugarcrm ticketing ' + JSON.stringify(data),
+        'OAuth credentials : quickbooks ticketing ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -95,7 +94,7 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: '',
+            account_url: providersConfig['accounting']['quickbooks'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -108,10 +107,10 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'sugarcrm',
-            vertical: 'crm',
+            provider_slug: 'quickbooks',
+            vertical: 'accounting',
             token_type: 'oauth',
-            account_url: '',
+            account_url: providersConfig['accounting']['quickbooks'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -130,36 +129,36 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'sugarcrm', Action.oauthCallback);
+      handleServiceError(
+        error,
+        this.logger,
+        'quickbooks',
+        Action.oauthCallback,
+      );
     }
   }
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
+      const formData = new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+      });
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
-      const formData = new URLSearchParams({
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-        grant_type: 'refresh_token',
-        platform: 'custom',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
-      const subdomain = 'panora';
-      const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN!}/rest/v11/oauth2/token`,
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
+      const res = await axios.post('', formData.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          Authorization: `Basic ${Buffer.from(
+            `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+          ).toString('base64')}`,
         },
-      );
-      const data: SugarcrmOAuthResponse = res.data;
+      });
+      const data: QuickbooksOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
@@ -172,9 +171,9 @@ export class SugarcrmConnectionService implements ICrmConnectionService {
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : sugarcrm ');
+      this.logger.log('OAuth credentials updated : quickbooks ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'sugarcrm', Action.oauthRefresh);
+      handleServiceError(error, this.logger, 'quickbooks', Action.oauthRefresh);
     }
   }
 }

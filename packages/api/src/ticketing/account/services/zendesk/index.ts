@@ -40,7 +40,7 @@ export class ZendeskService implements IAccountService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/api/v2/organizations.json`,
+        `${connection.account_url}/organizations.json`,
         {
           headers: {
             'Content-Type': 'application/json',

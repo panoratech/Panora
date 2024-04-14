@@ -44,7 +44,7 @@ export class HubspotService implements IStageService {
 
       const commonPropertyNames = Object.keys(commonStageHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `https://api.hubapi.com/crm/v3/objects/deals/${res.remote_id}`;
+      const baseURL = `${connection.account_url}/objects/deals/${res.remote_id}`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

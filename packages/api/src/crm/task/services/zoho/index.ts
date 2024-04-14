@@ -37,7 +37,7 @@ export class ZohoService implements ITaskService {
         },
       });
       const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Tasks`,
+        `${connection.account_url}/Tasks`,
         { data: [taskData] },
         {
           headers: {
@@ -80,7 +80,7 @@ export class ZohoService implements ITaskService {
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Tasks?fields=${fields}`,
+        `${connection.account_url}/Tasks?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

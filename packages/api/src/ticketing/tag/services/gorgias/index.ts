@@ -46,7 +46,7 @@ export class GorgiasService implements ITagService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/api/tags`, {
+      const resp = await axios.get(`${connection.account_url}/tags`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

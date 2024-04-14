@@ -40,7 +40,7 @@ export class GithubService implements ITicketService {
       const org = '';
       const repo = '';
       const resp = await axios.post(
-        `https://api.github.com/repos/${org}/${repo}/issues`,
+        `${connection.account_url}/repos/${org}/${repo}/issues`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -80,7 +80,7 @@ export class GithubService implements ITicketService {
       });
       const owner = '';
       const repo = '';
-      const resp = await axios.get(`https://api.github.com/repos/issues`, {
+      const resp = await axios.get(`${connection.account_url}/repos/issues`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
