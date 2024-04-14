@@ -103,6 +103,18 @@ export class ConnectionsStrategiesController {
     );
   }
 
+  @ApiOperation({
+    operationId: 'getConnectionStrategiesForProject',
+    summary: 'Fetch All Connection Strategies for Project'
+  })
+  @ApiResponse({ status: 200 })
+  @Get('GetConnectionStrategiesForProject')
+  async getConnectionStrategiesForProject(
+    @Query('projectId') projectId: string,
+  ) {
+    return await this.connectionsStrategiesService.getConnectionStrategiesForProject(projectId)
+  }
+
   //TODO: delete a connection strategy
 
   //TODO: add scopes maybe for a provider ?

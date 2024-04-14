@@ -10,7 +10,7 @@ export const ACCOUNTING_PROVIDERS = [''];
 export const TICKETING_PROVIDERS = ['zendesk', 'front', 'github', 'jira', 'gorgias', 'clickup'];
 export const MARKETING_AUTOMATION_PROVIDERS = [''];
 export const FILE_STORAGE_PROVIDERS = [''];
- 
+
 
 export function getProviderVertical(providerName: string): ProviderVertical {
   if (CRM_PROVIDERS.includes(providerName)) {
@@ -36,3 +36,5 @@ export function getProviderVertical(providerName: string): ProviderVertical {
   }
   return ProviderVertical.Unknown;
 }
+
+export const ALL_PROVIDERS: string[] = [].concat(CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETING_AUTOMATION_PROVIDERS, FILE_STORAGE_PROVIDERS).filter(Boolean)

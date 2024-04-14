@@ -324,14 +324,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -665,7 +658,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "number"
                 }
               }
             }
@@ -872,6 +865,30 @@
           },
           {
             "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/GetConnectionStrategiesForProject": {
+      "get": {
+        "operationId": "getConnectionStrategiesForProject",
+        "summary": "Fetch All Connection Strategies for Project",
+        "parameters": [
+          {
+            "name": "projectId",
             "required": true,
             "in": "query",
             "schema": {

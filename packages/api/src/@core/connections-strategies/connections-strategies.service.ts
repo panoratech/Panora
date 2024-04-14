@@ -11,6 +11,7 @@ import {
 } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 
+
 export type OAuth = {
   CLIENT_ID: string;
   CLIENT_SECRET: string;
@@ -26,7 +27,7 @@ export class ConnectionsStrategiesService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async isCustomCredentials(projectId: string, type: string) {
     const res = await this.prisma.connection_strategies.findFirst({
@@ -45,6 +46,7 @@ export class ConnectionsStrategiesService {
     attributes: string[],
     values: string[],
   ) {
+    console.log({ projectID: projectId, type: type, attributes: attributes, values: values })
     const cs = await this.prisma.connection_strategies.create({
       data: {
         id_connection_strategy: uuidv4(),
@@ -273,6 +275,21 @@ export class ConnectionsStrategiesService {
       return this.getEnvData(provider, vertical, authStrategy);
     }
   }
+
+  // Fetching all connection strategies for Project
+  async getConnectionStrategiesForProject(projectId: string) {
+    try {
+      return await this.prisma.connection_strategies.findMany({
+        where: {
+          id_project: projectId
+        }
+      });
+    } catch (error) {
+      throw new Error("Connection Strategies for projectID is not found!")
+    }
+  }
+
+
 
   //TODO: update connection strategy
   //TODO: delete
