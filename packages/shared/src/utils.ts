@@ -876,7 +876,6 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
   },
-  //TODO
   'marketing_automation': {
     'active_campaign': {
       scopes: '',
@@ -1004,6 +1003,7 @@ export const providersConfig: ProvidersConfig = {
   },
   //TODO
   'ats': {
+    //todo
     'applicantstack': {
       scopes: '',
       urls: {
@@ -1017,37 +1017,42 @@ export const providersConfig: ProvidersConfig = {
     'ashby': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://developers.ashbyhq.com",
+        apiUrl: "https://api.ashbyhq.com"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
+    //todo
     'bamboohr': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://documentation.bamboohr.com/docs/getting-started",
         apiUrl: ""
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'breezy': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://developer.breezy.hr/reference/overview",
+        apiUrl: "https://api.breezy.hr/v3"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
+    //todo
     'bullhorn': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://bullhorn.github.io/rest-api-docs/",
         apiUrl: ""
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -1057,23 +1062,26 @@ export const providersConfig: ProvidersConfig = {
     'cats': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://docs.catsone.com/api/v3/",
+        apiUrl: "https://api.catsone.com/v3"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'clayhr': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://clayhr.readme.io/",
+        apiUrl: "/rm/api/v3"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
+    //todo
     'clockwork': {
       scopes: '',
       urls: {
@@ -1084,6 +1092,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
+    //todo
     'comeet': {
       scopes: '',
       urls: {
@@ -1097,12 +1106,13 @@ export const providersConfig: ProvidersConfig = {
     'cornerstone_talentlink': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://developer.lumesse-talenthub.com/rest-api-developers-guide/1.21.33/index.html?page=rest-api&subpage=introduction",
+        apiUrl: "https://apiproxy.shared.lumessetalentlink.com/tlk/rest"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'engage_ats': {
       scopes: '',
