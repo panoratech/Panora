@@ -214,10 +214,10 @@ export const providersConfig: ProvidersConfig = {
     'nutshell': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        authBaseUrl: '',
-        apiUrl: '',
-      },      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbCONyN9DCKfd4E8pzIdItl5VqPTEErpoEn9vHCgblRg&s',
+        docsUrl: "https://developers.nutshell.com/",
+        apiUrl: '/api/v1/json',
+      },      
+      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbCONyN9DCKfd4E8pzIdItl5VqPTEErpoEn9vHCgblRg&s',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
       authStrategy: AuthStrategy.basic
@@ -226,9 +226,10 @@ export const providersConfig: ProvidersConfig = {
     'pipeliner': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://pipeliner.stoplight.io/docs/api-docs",
         apiUrl: '',
-      },      logoPath: 'https://play-lh.googleusercontent.com/rK9Qv_w9C8Py_aLZdQQDobNdHWSG8KL4dj3cBBQLcimVu-ctxwujA4VE442lIpZ65AE',
+      },      
+      logoPath: 'https://play-lh.googleusercontent.com/rK9Qv_w9C8Py_aLZdQQDobNdHWSG8KL4dj3cBBQLcimVu-ctxwujA4VE442lIpZ65AE',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false,
       authStrategy: AuthStrategy.api_key
@@ -334,7 +335,7 @@ export const providersConfig: ProvidersConfig = {
     'zendesk': {
       scopes: 'read write',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developer.zendesk.com/api-reference/sales-crm/introduction/",
         authBaseUrl: '/oauth/authorizations/new',
         apiUrl: '/api/v2',
       },
@@ -345,7 +346,7 @@ export const providersConfig: ProvidersConfig = {
     'gorgias': {
       scopes: 'write:all openid email profile offline',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developers.gorgias.com/reference/introduction",
         apiUrl: '/api',
         authBaseUrl: '/oauth/authorize',
       },
@@ -380,7 +381,7 @@ export const providersConfig: ProvidersConfig = {
     'linear': {
       scopes: 'read,write',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developers.linear.app/docs",
         apiUrl: 'https://api.linear.app/graphql',
         authBaseUrl: 'https://linear.app/oauth/authorize',
       },
@@ -392,7 +393,7 @@ export const providersConfig: ProvidersConfig = {
     'gitlab': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://docs.gitlab.com/ee/api/rest/#",
         apiUrl: '/api/v4',
         authBaseUrl: '/oauth/authorize',
       },
@@ -404,7 +405,7 @@ export const providersConfig: ProvidersConfig = {
     'clickup': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://clickup.com/api/",
         apiUrl: 'https://api.clickup.com/v2',
         authBaseUrl: 'https://app.clickup.com/api',
       },
@@ -416,7 +417,7 @@ export const providersConfig: ProvidersConfig = {
     'github': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://docs.github.com/fr/rest",
         apiUrl: 'https://api.github.com',
         authBaseUrl: 'https://github.com/login/oauth/authorize',
       },
@@ -428,7 +429,7 @@ export const providersConfig: ProvidersConfig = {
     'aha': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://www.aha.io/api",
         apiUrl: '/api/v1',
         authBaseUrl: '/oauth/authorize',
       },
@@ -440,7 +441,7 @@ export const providersConfig: ProvidersConfig = {
     'asana': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developers.asana.com/docs/overview",
         apiUrl: 'https://app.asana.com/api/1.0',
         authBaseUrl: 'https://app.asana.com/-/oauth_authorize',
       },
@@ -486,7 +487,7 @@ export const providersConfig: ProvidersConfig = {
     'dixa': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://docs.dixa.io/docs/",
         apiUrl: 'https://dev.dixa.io',
       },      
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -521,7 +522,7 @@ export const providersConfig: ProvidersConfig = {
     'gladly': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developer.gladly.com/rest/",
         apiUrl: '/api/v1',
       },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -544,7 +545,7 @@ export const providersConfig: ProvidersConfig = {
     'help_scout': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developer.helpscout.com/docs-api/",
         apiUrl: 'https://docsapi.helpscout.net/v1',
       },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -555,7 +556,7 @@ export const providersConfig: ProvidersConfig = {
     'hive': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developers.hive.com/reference/introduction",
         apiUrl: 'https://app.hive.com/api/v1',
       },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -589,7 +590,7 @@ export const providersConfig: ProvidersConfig = {
     'kustomer': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developer.kustomer.com/kustomer-api-docs/reference/introduction",
         apiUrl: 'https://api.kustomerapp.com',
       },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -622,7 +623,7 @@ export const providersConfig: ProvidersConfig = {
     'reamaze': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://www.reamaze.com/api",
         apiUrl: '/api/v1',
       },  
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -655,7 +656,7 @@ export const providersConfig: ProvidersConfig = {
     'shortcut': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developer.shortcut.com/api/rest/v3",
         apiUrl: 'https://api.app.shortcut.com',
       },  
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
@@ -699,7 +700,7 @@ export const providersConfig: ProvidersConfig = {
     'wrike': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developers.wrike.com/overview/",
         apiUrl: '/api/v4',
         authBaseUrl: 'https://login.wrike.com/oauth2/authorize/v4',
       },  
@@ -733,7 +734,7 @@ export const providersConfig: ProvidersConfig = {
     'pennylane': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://pennylane.readme.io/docs/getting-started",
         apiUrl: 'https://app.pennylane.com/api/external/v1',
         authBaseUrl: 'https://app.pennylane.com/oauth/authorize',
       },
@@ -745,7 +746,7 @@ export const providersConfig: ProvidersConfig = {
     'freshbooks': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://www.freshbooks.com/api/start",
         apiUrl: 'https://api.freshbooks.com',
         authBaseUrl: 'https://auth.freshbooks.com/oauth/authorize',
       },
@@ -769,7 +770,7 @@ export const providersConfig: ProvidersConfig = {
     'freeagent': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://dev.freeagent.com/docs/quick_start",
         apiUrl: 'https://api.freeagent.com/v2',
         authBaseUrl: 'https://api.freeagent.com/v2/approve_app',
       },
@@ -781,7 +782,7 @@ export const providersConfig: ProvidersConfig = {
     'sage': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developer.sage.com/accounting/reference/",
         apiUrl: 'https://api.accounting.sage.com/v3.1',
         authBaseUrl: 'https://www.sageone.com/oauth2/auth/central?filter=apiv3.1',
       },
@@ -817,7 +818,7 @@ export const providersConfig: ProvidersConfig = {
     'moneybird': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developer.moneybird.com/",
         apiUrl: 'https://moneybird.com/api/v2',
         authBaseUrl: 'https://moneybird.com/oauth/authorize',
       },
@@ -841,7 +842,7 @@ export const providersConfig: ProvidersConfig = {
     'quickbooks': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developer.intuit.com/app/developer/qbo/docs/develop",
         apiUrl: 'https://quickbooks.api.intuit.com/v3',
         authBaseUrl: 'https://appcenter.intuit.com/connect/oauth2',
       },
@@ -865,7 +866,7 @@ export const providersConfig: ProvidersConfig = {
     'wave_financial': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        docsUrl: "https://developer.waveapps.com/hc/en-us/articles/360019968212-API-Reference",
         apiUrl: 'https://gql.waveapps.com/graphql/public',
         authBaseUrl: 'https://api.waveapps.com/oauth2/authorize/',
       },
@@ -880,18 +881,19 @@ export const providersConfig: ProvidersConfig = {
     'active_campaign': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://developers.activecampaign.com/reference/overview",
+        apiUrl: "/api/3"
       },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'customerio': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://customer.io/docs/api/track/",
+        apiUrl: "https://track.customer.io/api/"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
@@ -900,12 +902,14 @@ export const providersConfig: ProvidersConfig = {
     'getresponse': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        authBaseUrl: 'https://app.getresponse.com/oauth2_authorize.html',
+        docsUrl: "https://apidocs.getresponse.com/v3",
+        apiUrl: "https://api.getresponse.com/v3"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'hubspot_marketing_hub': {
       scopes: '',
@@ -920,72 +924,82 @@ export const providersConfig: ProvidersConfig = {
     'keap': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        authBaseUrl: 'https://accounts.infusionsoft.com/app/oauth/authorize',
+        docsUrl: "https://developer.infusionsoft.com/docs/rest/",
+        apiUrl: "https://api.infusionsoft.com/crm/rest/v1/account/profile"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'klaviyo': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://developers.klaviyo.com/en/reference/api_overview",
+        apiUrl: "https://a.klaviyo.com/api"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'mailchimp': {
       scopes: '',
       urls: {
-        docsUrl: "",
+        authBaseUrl: "https://login.mailchimp.com/oauth2/authorize",
+        docsUrl: "https://mailchimp.com/developer/marketing/api/",
         apiUrl: ""
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'messagebird': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://developers.messagebird.com/api/",
+        apiUrl: "https://rest.messagebird.com"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
     'podium': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        authBaseUrl: "https://api.podium.com/oauth/authorize",
+        docsUrl: "https://docs.podium.com/reference/introduction",
+        apiUrl: "https://api.podium.com/v4"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.oauth2
     },
     'sendgrid': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://docs.sendgrid.com/for-developers/sending-email/api-getting-started",
+        apiUrl: "https://api.sendgrid.com/v3"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
-    'sendinblue': {
+    'brevo': {
       scopes: '',
       urls: {
-        docsUrl: "",
-        apiUrl: ""
+        docsUrl: "https://developers.brevo.com/docs/getting-started",
+        apiUrl: "https://api.brevo.com/v3"
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
-      active: false
+      active: false,
+      authStrategy: AuthStrategy.api_key
     },
   },
   //TODO
