@@ -46,7 +46,19 @@ FROM base AS runner
 WORKDIR /app
 
 COPY --from=installer ./app .
+WORKDIR /app/packages/api 
 
+# # # # # # # # # # # # 
 # Launching the backend 
-# Maintain the root api folder as context (Breaking)
-CMD cd /app/packages/api && node dist/src/main.js
+# # # # # # # # # # # # 
+# DEV: Maintain the /app/packages/api folder as context (Breaking)
+# # # # # # # # # # # # 
+CMD node dist/src/main.js
+
+# # # # # # # # # # # # 
+# Production: Injects env vars via Doppler - DOPPLER_TOKEN variable must be set
+# Install Doppler CLI
+# RUN wget -q -t3 'https://packages.doppler.com/public/cli/rsa.8004D9FF50437357.key' -O /etc/apk/keys/cli@doppler-8004D9FF50437357.rsa.pub && \
+#     echo 'https://packages.doppler.com/public/cli/alpine/any-version/main' | tee -a /etc/apk/repositories && \
+#     apk add doppler
+# CMD doppler run --command="node dist/src/main.js"
