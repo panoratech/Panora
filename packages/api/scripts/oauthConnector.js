@@ -127,7 +127,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url: "",
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_ina) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -145,7 +145,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_ina) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -166,12 +166,6 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
     
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
-
       const { connectionId, refreshToken, projectId } = opts;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
@@ -204,7 +198,7 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_ina) * 1000,
+            new Date().getTime() + Number(data.expires_in) * 1000,
           ),
         },
       });

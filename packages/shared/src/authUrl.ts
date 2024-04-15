@@ -108,7 +108,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // Default URL structure
   let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
-  const providersWithoutScopes = ["pipedrive", "clickup", "aha", "freeagent", "teamwork", "attio", "close", "teamleader"]
+  const providersWithoutScopes = ["pipedrive", "clickup", "aha", "freeagent", "teamwork", "attio", "close", "teamleader", 'getresponse']
 
   // Adding scope for providers that require it, except for 'pipedrive'
   if (!providersWithoutScopes.includes(providerName) ) {

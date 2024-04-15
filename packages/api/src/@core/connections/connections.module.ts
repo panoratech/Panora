@@ -5,6 +5,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
 import { AccountingConnectionModule } from './accounting/accounting.connection.module';
+import { MarketingAutomationConnectionsModule } from './marketing_automation/marketing_automation.connection.module';
 
 @Module({
   controllers: [ConnectionsController],
@@ -12,12 +13,14 @@ import { AccountingConnectionModule } from './accounting/accounting.connection.m
     CrmConnectionModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
+    MarketingAutomationConnectionsModule,
   ],
   providers: [LoggerService, PrismaService],
   exports: [
     CrmConnectionModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
+    MarketingAutomationConnectionsModule,
   ],
 })
 export class ConnectionsModule {}

@@ -888,6 +888,7 @@ export const providersConfig: ProvidersConfig = {
       active: false,
       authStrategy: AuthStrategy.api_key
     },
+    //todo
     'customerio': {
       scopes: '',
       urls: {
@@ -910,6 +911,7 @@ export const providersConfig: ProvidersConfig = {
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
+    //todo
     'hubspot_marketing_hub': {
       scopes: '',
       urls: {
@@ -920,6 +922,7 @@ export const providersConfig: ProvidersConfig = {
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
       active: false
     },
+    //todo
     'keap': {
       scopes: '',
       urls: {
@@ -932,7 +935,7 @@ export const providersConfig: ProvidersConfig = {
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
-    'klaviyo': {
+    'klaviyo': { 
       scopes: '',
       urls: {
         docsUrl: "https://developers.klaviyo.com/en/reference/api_overview",
@@ -948,7 +951,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         authBaseUrl: "https://login.mailchimp.com/oauth2/authorize",
         docsUrl: "https://mailchimp.com/developer/marketing/api/",
-        apiUrl: ""
+        apiUrl: "" //todo
       },      
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
