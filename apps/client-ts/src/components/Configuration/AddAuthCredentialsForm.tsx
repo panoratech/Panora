@@ -54,6 +54,8 @@ import { cn } from "@/lib/utils"
 import useProjectStore from "@/state/projectStore"
 import useConnectionStrategyMutation from '@/hooks/mutations/useConnectionStrategy'
 import { usePostHog } from 'posthog-js/react'
+import useConnectionStrategyAuthCredentialsMutation from '@/hooks/mutations/useConnectionStrategyAuthCredentials'
+import useUpdateConnectionStrategyMutation from '@/hooks/mutations/useUpdateConnectionStrategy'
 
 
 
@@ -90,7 +92,7 @@ const formSchema = z.object({
     closeDialog?: () => void,
     data?:{
         provider_name: string,
-        auth_type: number,
+        auth_type: string,
         status: boolean,
         id_cs: string,
         vertical: string,
@@ -111,19 +113,74 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
     const [copied, setCopied] = useState(false);
     const [popoverOpen,setPopOverOpen] = useState(false);
-    const [olddata,setOldData] = useState(prop.data)
+    // const [olddata,setOldData] = useState(prop.data)
+    const {idProject} = useProjectStore()
+    const {mutate : createCS} = useConnectionStrategyMutation();
+    const {mutate :updateCS} = useUpdateConnectionStrategyMutation()
+    const {mutateAsync : fetchCredentials,data : fetchedData} = useConnectionStrategyAuthCredentialsMutation();
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            provider_name: prop.data?.provider_name? prop.data?.provider_name.toLowerCase() : "",
+            auth_type: prop.data?.auth_type? prop.data?.auth_type : "",
+            client_id:"",
+            client_secret:"",
+            scope:"",
+            api_key:"",
+            username:"",
+            secret:"",       
+        },
+        
+    })
+
+
 
     const posthog = usePostHog()
 
     useEffect(() => {
 
-        
+        if(prop.performUpdate)
+            {
 
+                console.log(prop.data)
 
+                fetchCredentials({
+                    projectId:idProject,
+                    type: prop.data?.type,
+                    attributes: prop.data?.auth_type===AuthStrategy.oauth2 ? ["client_id","client_secret"]
+                    : prop.data?.auth_type===AuthStrategy.api_key ? ["api_key"] : ["username","secret"]
+                },
+                {
+                    onSuccess(data, variables, context) {
 
-    },[])
+                        if(prop.data?.auth_type===AuthStrategy.oauth2)
+                            {
+                                form.setValue("client_id",data[0])
+                                form.setValue("client_secret",data[1])
+    
+                            }
+                            else if(prop.data?.auth_type===AuthStrategy.api_key)
+                            {
+                                form.setValue("api_key",data[0])
+    
+                            }
+                            else
+                            {
+                                form.setValue("username",data[0])
+                                form.setValue("secret",data[0])
+    
+                            }
+                        
+                    },
+                }
+            )
+            }
 
-    const {idProject} = useProjectStore();
+},[])
+
+    
+
 
 
     const handlePopOverClose = () => {
@@ -140,20 +197,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
         }
       };
 
-      const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            provider_name: prop.data?.provider_name? prop.data?.provider_name : "",
-            auth_type: prop.data?.auth_type? prop.data?.auth_type : "",
-            client_id:"",
-            client_secret:"",
-            scope:"",
-            api_key:"",
-            username:"",
-            secret:"",       
-        },
-        
-    })
+      
 
     const Watch = form.watch()
     
@@ -163,13 +207,12 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
 
         const {client_id,client_secret,scope,provider_name,api_key,auth_type,secret,username} = values
-        const {mutate} = useConnectionStrategyMutation();
 
 
 
         switch(values.auth_type)
         {
-            case "oauth2":
+            case AuthStrategy.oauth2:
                 if(client_id==="" || client_secret==="" || scope==="")
                 {
                     if(client_id==="")
@@ -186,16 +229,34 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         }
                         break;
                 }
-                mutate({
-                    projectId:idProject,
-                    type: providerToType(provider_name,getProviderVertical(provider_name),AuthStrategy.oauth2),
-                    attributes:["client_id","client_secret"],
-                    values:[client_id,client_secret]
-                });
-                posthog?.capture("Connection_strategy_0Auth2_created", {
-                    id_project: idProject,
-                    mode: config.DISTRIBUTION
-                  });
+                if(prop.performUpdate)
+                {
+                    updateCS({
+                        id_cs:prop.data?.id_cs,
+                        ToUpdateToggle: false,
+                        status:prop.data?.status,
+                        attributes:["client_id","client_secret"],
+                        values:[client_id,client_secret]
+                    })
+                    posthog?.capture("Connection_strategy_0Auth2_updated", {
+                        id_project: idProject,
+                        mode: config.DISTRIBUTION
+                      });
+                }
+                else
+                {
+                    createCS({
+                        projectId:idProject,
+                        type: providerToType(provider_name,getProviderVertical(provider_name),AuthStrategy.oauth2),
+                        attributes:["client_id","client_secret"],
+                        values:[client_id,client_secret]
+                    });
+                    posthog?.capture("Connection_strategy_0Auth2_created", {
+                        id_project: idProject,
+                        mode: config.DISTRIBUTION
+                      });
+                }
+                
                 form.reset();
                 console.log(values)
                 if(prop.closeDialog!=undefined)
@@ -204,22 +265,40 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 }
                 break;
             
-            case "api_key":
+            case AuthStrategy.api_key:
                 if(values.api_key==="")
                 {
                     form.setError("api_key",{"message":"Please Enter API Key"});
                     break;
                 }
-                mutate({
-                    projectId:idProject,
-                    type: providerToType(provider_name,getProviderVertical(provider_name),AuthStrategy.api_key),
-                    attributes:["api_key"],
-                    values:[api_key]
-                });
-                posthog?.capture("Connection_strategy_API_KEY_created", {
-                    id_project: idProject,
-                    mode: config.DISTRIBUTION
-                });
+                if(prop.performUpdate)
+                    {
+                        updateCS({
+                            id_cs:prop.data?.id_cs,
+                            ToUpdateToggle: false,
+                            status:prop.data?.status,
+                            attributes:["api_key"],
+                            values:[api_key]
+                        })
+                        posthog?.capture("Connection_strategy_API_KEY_updated", {
+                            id_project: idProject,
+                            mode: config.DISTRIBUTION
+                          });
+                    }
+                    else
+                    {
+                        createCS({
+                            projectId:idProject,
+                            type: providerToType(provider_name,getProviderVertical(provider_name),AuthStrategy.api_key),
+                            attributes:["api_key"],
+                            values:[api_key]
+                        });
+                        posthog?.capture("Connection_strategy_API_KEY_created", {
+                            id_project: idProject,
+                            mode: config.DISTRIBUTION
+                        });
+                    }
+                
                 form.reset();
                 console.log(values)
                 if(prop.closeDialog!=undefined)
@@ -228,7 +307,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 }
                 break;
 
-            case "basic":
+            case AuthStrategy.basic:
                 if(values.username==="" || values.secret==="")
                     {
                         if(values.username==="")
@@ -242,16 +321,34 @@ const AddAuthCredentialsForm = (prop : propType) => {
                             break;
 
                     }
-                    mutate({
-                        projectId:idProject,
-                        type: providerToType(provider_name,getProviderVertical(provider_name),AuthStrategy.basic),
-                        attributes:["username","secret"],
-                        values:[username,secret]
-                    });
-                    posthog?.capture("Connection_strategy_BASIC_AUTH_created", {
-                        id_project: idProject,
-                        mode: config.DISTRIBUTION
-                    });
+                    if(prop.performUpdate)
+                        {
+                            updateCS({
+                                id_cs:prop.data?.id_cs,
+                                ToUpdateToggle: false,
+                                status:prop.data?.status,
+                                attributes:["username","secret"],
+                                values:[username,secret]
+                            })
+                            posthog?.capture("Connection_strategy_BASIC_AUTH_updated", {
+                                id_project: idProject,
+                                mode: config.DISTRIBUTION
+                              });
+                        }
+                        else
+                        {
+                            createCS({
+                                projectId:idProject,
+                                type: providerToType(provider_name,getProviderVertical(provider_name),AuthStrategy.basic),
+                                attributes:["username","secret"],
+                                values:[username,secret]
+                            });
+                            posthog?.capture("Connection_strategy_BASIC_AUTH_created", {
+                                id_project: idProject,
+                                mode: config.DISTRIBUTION
+                            });
+                        }
+                    
                     form.reset();
                     console.log(values)
                     if(prop.closeDialog!=undefined)
@@ -401,7 +498,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
         {/* If Authentication Method is 0Auth2 */}
 
-        {Watch.auth_type==="oauth2" ? 
+        {Watch.auth_type===AuthStrategy.oauth2 ? 
             <>
             <div className="flex flex-col">
                 <FormField
@@ -474,7 +571,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
             :
             <></>}
 
-        {Watch.auth_type==="api_key" ? 
+        {Watch.auth_type===AuthStrategy.api_key ? 
             <>
             <div className="flex flex-col">
                 <FormField
@@ -495,7 +592,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
             :
             <></>}
 
-        {Watch.auth_type==="basic" ? 
+        {Watch.auth_type===AuthStrategy.basic ? 
             <>
             <div className="flex flex-col">
                 <FormField

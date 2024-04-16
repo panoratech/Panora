@@ -4,7 +4,7 @@ import { toast } from "sonner"
 import { connection_strategies as ConnectionStrategies } from 'api';
 
 interface IUpdateConnectionStrategyDto {
-    id_cs: string
+    id_cs?: string
     ToUpdateToggle: boolean,
     projectId?: string,
     type?: string,

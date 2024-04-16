@@ -156,6 +156,13 @@ export const authColumns: ColumnDef<Mapping>[] = [
     ),
     cell: ({ row }) => {
 
+      const [open,setOpen] = useState(false)
+
+      const handleOpenChange = (open: boolean) => {
+        setOpen(open)
+        // form.reset()
+      };
+
       const {mutate} = useDeleteConnectionStrategyMutation()
 
       const deleteConnectionStrategy = () => {
@@ -168,7 +175,7 @@ export const authColumns: ColumnDef<Mapping>[] = [
 
 
       return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -186,7 +193,7 @@ export const authColumns: ColumnDef<Mapping>[] = [
         </DropdownMenu>
 
         <DialogContent className="sm:w-[450px] lg:max-w-screen-lg overflow-y-scroll max-h-screen">
-            <AddAuthCredentialsForm data={row.original} />
+            <AddAuthCredentialsForm data={row.original} closeDialog={() => setOpen(false)}  performUpdate={true} />
         </DialogContent>
         </Dialog>
 

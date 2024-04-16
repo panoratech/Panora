@@ -8,15 +8,15 @@ interface IFetchedData {
 
 interface IGetCSCredentialsData {
     projectId : string,
-    type:string,
+    type?:string,
     attributes:string[]
   }
 
 
-const useConnectionStrategyMutation = () => {
+const useConnectionStrategyAuthCredentialsMutation = () => {
     // const queryClient = useQueryClient();
     
-    const getCSCredentials = async (GetCSCredentialsData : IGetCSCredentialsData): Promise<IFetchedData> => {
+    const getCSCredentials = async (GetCSCredentialsData : IGetCSCredentialsData): Promise<string[]> => {
         const response = await fetch(`${config.API_URL}/connections-strategies/credentials`,{
           method: 'POST',
           body: JSON.stringify(GetCSCredentialsData),
@@ -60,11 +60,13 @@ const useConnectionStrategyMutation = () => {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            });
+
+            return data
         },
         onSettled: () => {
         },
     });
 };
 
-export default useConnectionStrategyMutation;
+export default useConnectionStrategyAuthCredentialsMutation;
