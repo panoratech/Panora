@@ -170,7 +170,7 @@ export class ConnectionsStrategiesService {
     let attributes: string[] = [];
     switch (authStrategy) {
       case AuthStrategy.oauth2:
-        attributes = ['client_id', 'client_secret'];
+        attributes = ['client_id', 'client_secret', "scope"];
         if (needsSubdomain(provider, vertical)) {
           attributes.push('subdomain');
         }

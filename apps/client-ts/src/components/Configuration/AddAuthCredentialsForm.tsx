@@ -148,7 +148,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 fetchCredentials({
                     projectId:idProject,
                     type: prop.data?.type,
-                    attributes: prop.data?.auth_type===AuthStrategy.oauth2 ? ["client_id","client_secret"]
+                    attributes: prop.data?.auth_type===AuthStrategy.oauth2 ? ["client_id","client_secret","scope"]
                     : prop.data?.auth_type===AuthStrategy.api_key ? ["api_key"] : ["username","secret"]
                 },
                 {
@@ -158,6 +158,8 @@ const AddAuthCredentialsForm = (prop : propType) => {
                             {
                                 form.setValue("client_id",data[0])
                                 form.setValue("client_secret",data[1])
+                                form.setValue("scope",data[2])
+
     
                             }
                             else if(prop.data?.auth_type===AuthStrategy.api_key)
@@ -234,8 +236,8 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         id_cs:prop.data?.id_cs,
                         ToUpdateToggle: false,
                         status:prop.data?.status,
-                        attributes:["client_id","client_secret"],
-                        values:[client_id,client_secret]
+                        attributes:["client_id","client_secret","scope"],
+                        values:[client_id,client_secret,scope]
                     })
                     posthog?.capture("Connection_strategy_0Auth2_updated", {
                         id_project: idProject,
@@ -247,8 +249,8 @@ const AddAuthCredentialsForm = (prop : propType) => {
                     createCS({
                         projectId:idProject,
                         type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.oauth2),
-                        attributes:["client_id","client_secret"],
-                        values:[client_id,client_secret]
+                        attributes:["client_id","client_secret","scope"],
+                        values:[client_id,client_secret,scope]
                     });
                     posthog?.capture("Connection_strategy_0Auth2_created", {
                         id_project: idProject,
