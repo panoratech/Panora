@@ -8,6 +8,7 @@ import {
   extractProvider,
   extractVertical,
   needsSubdomain,
+  providersConfig,
 } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -34,6 +35,7 @@ export class ConnectionsStrategiesService {
       where: {
         id_project: projectId,
         type: type,
+        status: true
       },
     });
     if (!res) return false;
@@ -197,7 +199,7 @@ export class ConnectionsStrategiesService {
       attributes,
     );
     const data = attributes.reduce((acc, attr, index) => {
-      acc[attr] = values[index];
+      acc[attr.toUpperCase()] = values[index];
       return acc;
     }, {} as Record<string, string>);
 
@@ -215,6 +217,7 @@ export class ConnectionsStrategiesService {
           CLIENT_SECRET: this.configService.get<string>(
             `${provider.toUpperCase()}_${vertical.toUpperCase()}_CLIENT_SECRET`,
           ),
+          SCOPE: providersConfig[vertical.toLowerCase()][provider.toLowerCase()].scopes
         };
         if (needsSubdomain(provider, vertical)) {
           data = {

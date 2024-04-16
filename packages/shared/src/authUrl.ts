@@ -80,10 +80,13 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const data_ = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
   const data = await data_.json() as OAuth2AuthData;
 
+  console.log("Fetched Data ", JSON.stringify(data))
+
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new Error(`No client id for type ${type}`)
+  const scopes = data.SCOPE
 
-  const { scopes, authBaseUrl: baseUrl } = config;
+  const { authBaseUrl: baseUrl } = config;
 
   if (!baseUrl) {
     throw new Error(`Unsupported provider: ${providerName}`);
