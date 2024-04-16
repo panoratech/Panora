@@ -39,7 +39,6 @@ import {
   import useProjectStore from "@/state/projectStore";
 import AddAuthCredentials from "@/components/Configuration/AddAuthCredentials";
 import AuthCredentialsTable from "@/components/Configuration/AuthCredentialsTable";
-import {AUTH_CREDENTIALS_MAPPINGS} from '@/components/Configuration/data/authCredentialsDemo'
 import useConnectionStrategies from "@/hooks/useConnectionStrategies";
 import { extractAuthMode,extractProvider,extractVertical} from '@panora/shared'
   

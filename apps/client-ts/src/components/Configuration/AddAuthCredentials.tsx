@@ -19,18 +19,6 @@ import config from "@/lib/config"
 
 import AddAuthCredentialsForm from "./AddAuthCredentialsForm"
 
-const sampleData = {
-    "provider_name": "Zoho",
-    "auth_type": "Basic_Auth",
-    "activate": false,
-    "credentials": {
-      "username": "dsdsdsdsdsd",
-      "secret": "dddsddsdsdsdsdsdd",
-    },
-    "action": "sas",
-    "logoPath": 'https://assets-global.website-files.com/64f68d43d25e5962af5f82dd/64f68d43d25e5962af5f9812_64ad8bbe47c78358489b29fc_645e3ccf636a8d659f320e25_Group%25252012.png',
- 
-}
 
 
 
