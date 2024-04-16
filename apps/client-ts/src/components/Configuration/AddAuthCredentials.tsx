@@ -69,7 +69,7 @@ const AddAuthCredentials = () => {
         </Button>
         </DialogTrigger>
         <DialogContent className="sm:w-[450px] lg:max-w-screen-lg overflow-y-scroll max-h-screen">
-            <AddAuthCredentialsForm closeDialog={() => setOpen(false)} />
+            <AddAuthCredentialsForm performUpdate={false} closeDialog={() => setOpen(false)} />
         </DialogContent>
     </Dialog>   
   )

@@ -12,19 +12,20 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-import { PasswordInput } from '@/components/ui/password-input'
-import { Input } from '@/components/ui/input'
+import useProjectStore from "@/state/projectStore";
+import { Input } from '@/components/ui/input';
+import {Skeleton} from '@/components/ui/skeleton'
+import useAuthCredentials from '@/hooks/useAuthCredentials';
+import { AuthStrategy } from '@panora/shared';
 
 interface propType {
-    auth_type:string,
-    authCredentials:{
-        clientID?:string,
-        clientSecret?:string,
-        scope?:string,
-        apiKey?:string,
-        username?:string,
-        secret?:string,
-
+    data: {
+        status: boolean;
+        provider_name: string;
+        auth_type: number;
+        id_cs: string;
+        vertical: string;
+        type: string;
     }
 
 
@@ -32,9 +33,29 @@ interface propType {
 
 const RevealCredentialsCard = (data : propType) => {
 
-    const {authCredentials,auth_type} = data
+    const {type,auth_type} = data.data
+    const {idProject} = useProjectStore();
+
+    const {data: authCredentialsData, isLoading: isAuthCredentialsLoading,error: isAuthCredentialsError} = useAuthCredentials(
+        idProject,
+        type,
+        auth_type===AuthStrategy.oauth2? ["client_id","client_secret"] : auth_type===AuthStrategy.api_key? ["api_key"] : ["username","secret"]
+    )
+
+    if(authCredentialsData)
+        {
+            console.log(authCredentialsData)
+        }
+    
+
+    if(isAuthCredentialsError)
+        {
+            console.log("error in AuthCredentials Fetching!!")
+        }
+
 
     const [open, setOpen] = useState(false);
+    // const [loading,setLoading] = useState(true);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -46,49 +67,31 @@ const RevealCredentialsCard = (data : propType) => {
                 <CardTitle>Credentials</CardTitle>
             </CardHeader>
             <CardContent className='grid gap-5'>
-                {/* <div>{JSON.stringify(data.authCredentials)}</div> */}
+
+                {/* <div>{JSON.stringify(data.data)}</div> */}
+
+            {isAuthCredentialsLoading && (
+                <div className="flex flex-col items-center space-x-4">
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[100px]" />
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[100px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+
+                </div>
+            </div>
+            )}
+
+
+
+                {authCredentialsData && (
+                    <>
+                    <div>{authCredentialsData.authValues}</div>
+                    </>
+                )}
                 
-                {data.auth_type==="0Auth2" && (
-                    <>
-                    <div className='flex flex-col'>
-                        <div className="flex flex-col">Client ID</div>
-                        <Input type="text" value={authCredentials.clientID} readOnly />
-                    </div>
-                    <div className='flex flex-col'>
-                        <div className="flex flex-col">Client Secret</div>
-                        <Input type="text" value={authCredentials.clientSecret} readOnly />
-                    </div>
-                    <div className='flex flex-col'>
-                        <div className="flex flex-col">Scopes</div>
-                        <Input type="text" value={authCredentials.scope} readOnly />
-                    </div>
-                    </>
-                )}
-
-
-                {data.auth_type==="API" && (
-                    <>
-                    <div className='flex flex-col'>
-                        <div className="flex flex-col">API</div>
-                        <Input type="text" value={authCredentials.apiKey} readOnly />
-                    </div>
-                    
-                    </>
-                )}
-
-                {data.auth_type==="Basic_Auth" && (
-                    <>
-                    <div className='flex flex-col'>
-                        <div className="flex flex-col">Username</div>
-                        <Input type="text" value={authCredentials.username} readOnly />
-                    </div>
-                    <div className='flex flex-col'>
-                        <div className="flex flex-col">Secret</div>
-                        <Input type="text" value={authCredentials.secret} readOnly />
-                    </div>
-                   
-                    </>
-                )}
+               
 
 
 

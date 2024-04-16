@@ -9,6 +9,14 @@ interface IConnectionStrategyDto {
     values: string[],
 }
 
+interface IFetchConnectionStrategyDto {
+    id_cs:string,
+    projectId: string,
+    type: string,
+    attributes: string[],
+    values: string[],
+}
+
 
 const useConnectionStrategyMutation = () => {
     const queryClient = useQueryClient();
@@ -22,13 +30,13 @@ const useConnectionStrategyMutation = () => {
             },
         });
 
-        console.log(response.status)
+        // console.log(response.status)
         
         if (!response.ok) {
             throw new Error('Failed to add linked user');
         }
         
-        return response.status;
+        return response.json();
     };
     return useMutation({
         mutationFn: addConnectionStrategy,
@@ -51,7 +59,7 @@ const useConnectionStrategyMutation = () => {
             })
         },
         onSuccess: (data) => {
-            queryClient.setQueryData<IConnectionStrategyDto[]>(['connection-strategy'], (oldQueryData = []) => {
+            queryClient.setQueryData<IFetchConnectionStrategyDto[]>(['connection-strategies'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });
             toast("New Connection Strategy has been created !", {

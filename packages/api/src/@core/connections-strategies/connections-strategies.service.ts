@@ -46,7 +46,6 @@ export class ConnectionsStrategiesService {
     attributes: string[],
     values: string[],
   ) {
-    console.log({ projectID: projectId, type: type, attributes: attributes, values: values })
     const cs = await this.prisma.connection_strategies.create({
       data: {
         id_connection_strategy: uuidv4(),
@@ -81,6 +80,8 @@ export class ConnectionsStrategiesService {
         },
       });
     }
+
+    return cs;
   }
 
   async toggle(id_cs: string) {
@@ -126,7 +127,7 @@ export class ConnectionsStrategiesService {
         id_connection_strategy: cs.id_connection_strategy,
       },
     });
-    const values: string[] = [];
+    const authValues: string[] = [];
     for (let i = 0; i < attributes.length; i++) {
       const attribute_slug = attributes[i];
       //create all attributes (for oauth =>  client_id, client_secret)
@@ -143,9 +144,9 @@ export class ConnectionsStrategiesService {
         },
       });
       if (!value_) throw new Error('No value found !');
-      values.push(value_.value);
+      authValues.push(value_.value);
     }
-    return values;
+    return authValues;
   }
 
   async getCustomCredentialsData(
@@ -291,6 +292,130 @@ export class ConnectionsStrategiesService {
 
 
 
-  //TODO: update connection strategy
-  //TODO: delete
+  // update connection strategy
+  async updateConnectionStrategy(
+    id_cs: string,
+    status: boolean,
+    attributes: string[],
+    values: string[],
+  ) {
+    try {
+      const cs = await this.prisma.connection_strategies.findFirst({
+        where: {
+          id_connection_strategy: id_cs,
+        },
+      });
+      if (!cs) throw new Error('No connection strategies found !');
+      const updateCS = await this.prisma.connection_strategies.update({
+        where: {
+          id_connection_strategy: id_cs,
+        },
+        data: {
+          status: status
+        },
+      });
+
+      const { id_cs_entity } = await this.prisma.cs_entities.findFirst({
+        where: {
+          id_connection_strategy: id_cs,
+        },
+      });
+
+      for (let i = 0; i < attributes.length; i++) {
+        const attribute_slug = attributes[i];
+        const value = values[i];
+
+        // Updating attributes' values
+        const { id_cs_attribute } = await this.prisma.cs_attributes.findFirst({
+          where: {
+            id_cs_entity: id_cs_entity,
+            attribute_slug: attribute_slug,
+            data_type: 'string', //TODO
+          },
+        });
+        const value_ = await this.prisma.cs_values.updateMany({
+          where: {
+            id_cs_attribute: id_cs_attribute,
+
+          },
+          data: {
+            value: value
+          }
+        });
+      }
+      return cs
+    }
+    catch (error) {
+      throw new Error("Update Failed");
+    }
+  }
+
+
+  // Delete connection strategy
+  async deleteConnectionStrategy(
+    id_cs: string,
+  ) {
+    try {
+      const cs = await this.prisma.connection_strategies.findFirst({
+        where: {
+          id_connection_strategy: id_cs,
+        },
+      });
+      if (!cs) throw new Error('No connection strategies found !');
+
+
+      const { id_cs_entity } = await this.prisma.cs_entities.findFirst({
+        where: {
+          id_connection_strategy: id_cs,
+        },
+      });
+
+      const attributes = await this.prisma.cs_attributes.findMany(
+        {
+          where: {
+            id_cs_entity: id_cs_entity
+          }
+        }
+      )
+
+      // Deleting all attributes' values
+      for (let i = 0; i < attributes.length; i++) {
+        const attributeObj = attributes[i];
+
+        const deleteValue = await this.prisma.cs_values.deleteMany(
+          {
+            where: {
+              id_cs_attribute: attributeObj.id_cs_attribute
+            }
+          }
+        );
+      }
+
+      // Delete All Attribute
+      const deleteAllAttributes = await this.prisma.cs_attributes.deleteMany({
+        where: {
+          id_cs_entity: id_cs_entity
+        }
+      });
+
+      // Delete cs_entity
+      const delete_cs_entity = await this.prisma.cs_entities.deleteMany({
+        where: {
+          id_connection_strategy: id_cs
+        }
+      });
+
+      const deleteCS = await this.prisma.connection_strategies.delete({
+        where: {
+          id_connection_strategy: id_cs
+        }
+      })
+
+
+      return deleteCS
+    }
+    catch (error) {
+      throw new Error("Update Failed");
+    }
+  }
 }

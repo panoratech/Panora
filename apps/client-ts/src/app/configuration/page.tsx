@@ -40,17 +40,22 @@ import {
 import AddAuthCredentials from "@/components/Configuration/AddAuthCredentials";
 import AuthCredentialsTable from "@/components/Configuration/AuthCredentialsTable";
 import {AUTH_CREDENTIALS_MAPPINGS} from '@/components/Configuration/data/authCredentialsDemo'
+import useConnectionStrategies from "@/hooks/useConnectionStrategies";
+import { extractAuthMode,extractProvider,extractVertical} from '@panora/shared'
   
   export default function Page() {
+    const {idProject} = useProjectStore();
+
+
     const { data: linkedUsers, isLoading, error } = useLinkedUsers();
     const { data: webhooks, isLoading: isWebhooksLoading, error: isWebhooksError } = useWebhooks();
+    const {data: ConnectionStrategies, isLoading: isConnectionStrategiesLoading,error: isConnectionStategiesError} = useConnectionStrategies(idProject)
   
     const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
     const [open, setOpen] = useState(false);
     const handleClose = () => {
       setOpen(false);
     };
-    const {idProject} = useProjectStore();
   
   
     const posthog = usePostHog()
@@ -75,6 +80,18 @@ import {AUTH_CREDENTIALS_MAPPINGS} from '@/components/Configuration/data/authCre
     if(isWebhooksError){
       console.log("error fetching webhooks..");
     }
+
+    if(isConnectionStrategiesLoading)
+    {
+      console.log("loading Connection Strategies...");
+    }
+
+    if(isConnectionStategiesError)
+    {
+      console.log("error Fetching connection Strategies!")
+    }
+
+
   
     const mappingTs = mappings?.map(mapping => ({
       standard_object: mapping.ressource_owner_type,
@@ -85,6 +102,19 @@ import {AUTH_CREDENTIALS_MAPPINGS} from '@/components/Configuration/data/authCre
       destination_field: mapping.slug,
       data_type: mapping.data_type,
     }))
+
+    // console.log(ConnectionStrategies)
+
+    const mappingConnectionStrategies = ConnectionStrategies?.map(cs => ({
+      id_cs : cs.id_connection_strategy,
+      provider_name : extractProvider(cs.type),
+      auth_type: extractAuthMode(cs.type),
+      vertical: extractVertical(cs.type),
+      type: cs.type,
+      status: cs.status
+    }))
+
+    console.log(mappingConnectionStrategies)
   
     return (
       
@@ -192,7 +222,7 @@ import {AUTH_CREDENTIALS_MAPPINGS} from '@/components/Configuration/data/authCre
                     </CardHeader>
                     <Separator className="mb-10"/>
                     <CardContent>
-                      <AuthCredentialsTable mappings={AUTH_CREDENTIALS_MAPPINGS} isLoading={false} />
+                      <AuthCredentialsTable mappings={mappingConnectionStrategies} isLoading={false} />
                     </CardContent>
                   </Card>
                 </div>

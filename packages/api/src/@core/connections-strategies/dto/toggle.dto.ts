@@ -2,5 +2,5 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ToggleStrategyDto {
   @ApiProperty()
-  id: string;
+  id_cs: string;
 }

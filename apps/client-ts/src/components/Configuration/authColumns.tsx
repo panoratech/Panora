@@ -30,6 +30,9 @@ import {
 } from "@radix-ui/react-icons"
 import RevealCredentialsCard from "./RevealCredentialsCard";
 import AddAuthCredentialsForm from "./AddAuthCredentialsForm";
+import {getLogoURL,AuthStrategy} from '@panora/shared'
+import useUpdateConnectionStrategyMutation from "@/hooks/mutations/useUpdateConnectionStrategy";
+import useDeleteConnectionStrategyMutation from "@/hooks/mutations/useDeleteConnectionStrategy";
 
 export const authColumns: ColumnDef<Mapping>[] = [
   {
@@ -46,7 +49,7 @@ export const authColumns: ColumnDef<Mapping>[] = [
       return (
         <div className="flex w-[100px] items-center">
           <Badge variant="outline">
-            <img className="w-4 h-4 rounded-lg mr-3" src={row.original.logoPath} alt={row.original.provider_name}/>
+            <img className="w-4 h-4 rounded-lg mr-3" src={getLogoURL(row.original.provider_name.toLowerCase())} alt={row.original.provider_name}/>
             {row.original.provider_name}
             </Badge>
         </div>
@@ -60,23 +63,64 @@ export const authColumns: ColumnDef<Mapping>[] = [
       <DataTableColumnHeader column={column} title="Authentication Type" />
     ),
     cell: ({ row }) => {
+
+      const Auth_Type = AuthStrategy.oauth2===row.getValue("auth_type") ? "OAuth2" : AuthStrategy.api_key===row.getValue("auth_type") ? "API Key" : "Basic Auth"
+
       return (
         <div className="flex space-x-2">
-          <Badge variant="outline">{row.getValue("auth_type")}</Badge>
+          <Badge variant="outline">{Auth_Type}</Badge>
         </div>
       )
     },
   },
   {
-    accessorKey: "activate",
+    accessorKey: "vertical",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Vertical" />
+    ),
+    cell: ({ row }) => {
+
+
+      return (
+        <div className="flex space-x-2">
+          <Badge variant="outline">{row.getValue("vertical")}</Badge>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "status",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
+
+      const [isDisable,setDisable] = useState(false)
+
+      const {mutate} = useUpdateConnectionStrategyMutation()
+
+
+
+      const onSwitchChange = () => {
+        setDisable(true)
+        mutate(
+          {
+            id_cs:row.original.id_cs,
+            ToUpdateToggle:true
+          }, {
+            onSuccess : () => setDisable(false),
+            onError : () => setDisable(false)
+          })
+        // console.log("Changed switch")
+      }
+
+
+
+
       return (
         <div className="flex w-[100px] items-center">
           {/* <Badge variant={row.getValue("activate")==false ? "destructive" : "primary"}>{row.getValue("activate")==false ? "Deactivated" : "Activated"}</Badge> */}
-          <Switch  checked={row.getValue("activate")}/>
+          <Switch onCheckedChange={() => onSwitchChange()} disabled={isDisable} value={row.getValue("status")}  defaultChecked={row.getValue("status")}/>
         </div>
       )
     },
@@ -84,40 +128,45 @@ export const authColumns: ColumnDef<Mapping>[] = [
     //   return value.includes(row.getValue(id))
     // },
   },
-  {
-    // accessorFn: row => `${row}`,
-    id:"data",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Credentials" />
-    ),
-    cell: ({ row }) => {
+  // {
+  //   // accessorFn: row => `${row}`,
+  //   id:"id_cs",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Credentials" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="flex items-center">
 
-      
+  //         {/* <RevealCredentialsCard  data={row.original}  /> */}
+
+  //         <Badge variant="outline">Reveal Credentials</Badge>
+  //         {/* <Link href={""} onClick={() => showData()} className={badgeVariants({ variant: "outline" })}>Reveal Credentials</Link> */}
+  //         {/* <Button variant='outline'>Reveal Credentials</Button> */}
+  //       </div>
+  //     )
+  //   },
+  // },
 
 
-
-
-      return (
-        <div className="flex items-center">
-
-          <RevealCredentialsCard auth_type={row.original.auth_type} authCredentials={row.original.credentials} />
-
-          {/* <Badge variant="outline">Reveal Credentials</Badge> */}
-          {/* <Link href={""} onClick={() => showData()} className={badgeVariants({ variant: "outline" })}>Reveal Credentials</Link> */}
-          {/* <Button variant='outline'>Reveal Credentials</Button> */}
-        </div>
-      )
-    },
-    // filterFn: (row, id, value) => {
-    //   return value.includes(row.getValue(id))
-    // },
-  },
   {
     accessorKey: "action",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Action" />
     ),
     cell: ({ row }) => {
+
+      const {mutate} = useDeleteConnectionStrategyMutation()
+
+      const deleteConnectionStrategy = () => {
+        mutate(
+          {
+            id_cs:row.original.id_cs
+          }
+        )
+      }
+
+
       return (
         <Dialog>
         <DropdownMenu>
@@ -132,7 +181,7 @@ export const authColumns: ColumnDef<Mapping>[] = [
                 <DropdownMenuItem>Edit</DropdownMenuItem>    
               </DialogTrigger>
               
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => deleteConnectionStrategy()}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 

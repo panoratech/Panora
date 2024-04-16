@@ -1,7 +1,7 @@
 export enum AuthStrategy {
-  oauth2,
-  api_key,
-  basic
+  oauth2 = "0Auth2",
+  api_key = "API Key",
+  basic = "Basic Auth"
 }
 
 // TODO : remove clientId
@@ -12,7 +12,7 @@ export type ProviderConfig = {
   description: string;
   active?: boolean;
   apiUrl: string;
-  customPropertiesUrl?: string; 
+  customPropertiesUrl?: string;
   authStrategy?: AuthStrategy;
 };
 
@@ -82,10 +82,10 @@ export const providersConfig: ProvidersConfig = {
       apiUrl: 'https://api.getbase.com/v2',
       customPropertiesUrl: '/contact/custom_fields',
       authStrategy: AuthStrategy.oauth2
-    }, 
+    },
     'accelo': {
       scopes: '',
-      authBaseUrl: 'https://{deployment}.api.accelo.com/oauth2/v0/authorize', 
+      authBaseUrl: 'https://{deployment}.api.accelo.com/oauth2/v0/authorize',
       apiUrl: '',
       logoPath: 'https://play-lh.googleusercontent.com/j63K2u8ZXukgPs8QPgyXfyoxuNBl_ST7gLx5DEFeczCTtM9e5JNpDjjBy32qLxFS7p0',
       description: "Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users",
@@ -1652,12 +1652,12 @@ type Provider = {
 export function providersArray(vertical: string): Provider[] {
   const activeProviders = getActiveProvidersForVertical(vertical);
   return Object.entries(activeProviders).map(([providerName, config]) => ({
-      name: providerName,
-      apiUrl: config.apiUrl,
-      scopes: config.scopes,
-      authBaseUrl: config.authBaseUrl,
-      logoPath: config.logoPath,
-      description: config.description,
+    name: providerName,
+    apiUrl: config.apiUrl,
+    scopes: config.scopes,
+    authBaseUrl: config.authBaseUrl,
+    logoPath: config.logoPath,
+    description: config.description,
   }));
 }
 
@@ -1685,4 +1685,13 @@ export function findProviderByName(providerName: string): Provider | null {
     }
   }
   return null;
+}
+
+
+export function getLogoURL(providerName: string): string {
+
+  const vertical = findProviderVertical(providerName);
+  return providersConfig[vertical][providerName].logoPath
+
+
 }

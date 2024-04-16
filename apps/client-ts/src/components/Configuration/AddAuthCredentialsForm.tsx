@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
 import {ScrollArea} from '@/components/ui/scrollbar'
 import { Input } from "@/components/ui/input"
@@ -86,23 +86,24 @@ const formSchema = z.object({
 })
 
   interface propType {
+    performUpdate: boolean,
+    closeDialog?: () => void,
     data?:{
-        provider_name:string,
-        auth_type: string,
-        activate: boolean,
-        credentials: {
-            client_id?:string,
-            client_secret?: string
-            scope?: string,
-            api_key?: string,
-            username?: string,
-            secret?: string
+        provider_name: string,
+        auth_type: number,
+        status: boolean,
+        id_cs: string,
+        vertical: string,
+        type: string,
+        // client_id?:string,
+        // client_secret?:string,
+        // scope?:string,
+        // api_key?:string,
+        // username?:string,
+        // secret?:string,
 
-        },
-        action?: string,
-        logoPath?: string,
+
     }
-    closeDialog?: () => void
 
   }
 
@@ -110,9 +111,17 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
     const [copied, setCopied] = useState(false);
     const [popoverOpen,setPopOverOpen] = useState(false);
+    const [olddata,setOldData] = useState(prop.data)
 
-    const {mutate} = useConnectionStrategyMutation();
     const posthog = usePostHog()
+
+    useEffect(() => {
+
+        
+
+
+
+    },[])
 
     const {idProject} = useProjectStore();
 
@@ -136,22 +145,26 @@ const AddAuthCredentialsForm = (prop : propType) => {
         defaultValues: {
             provider_name: prop.data?.provider_name? prop.data?.provider_name : "",
             auth_type: prop.data?.auth_type? prop.data?.auth_type : "",
-            client_id:prop.data?.credentials.client_id? prop.data?.credentials.client_id : "",
-            client_secret:prop.data?.credentials.client_secret? prop.data?.credentials.client_secret : "",
-            scope:prop.data?.credentials.scope? prop.data?.credentials.scope : "",
-            api_key:prop.data?.credentials.api_key? prop.data?.credentials.api_key : "",
-            username:prop.data?.credentials.username? prop.data?.credentials.username : "",
-            secret:prop.data?.credentials.secret? prop.data?.credentials.secret : "",       
+            client_id:"",
+            client_secret:"",
+            scope:"",
+            api_key:"",
+            username:"",
+            secret:"",       
         },
         
     })
 
     const Watch = form.watch()
+    
 
 
     function onSubmit(values: z.infer<typeof formSchema>) {
 
+
         const {client_id,client_secret,scope,provider_name,api_key,auth_type,secret,username} = values
+        const {mutate} = useConnectionStrategyMutation();
+
 
 
         switch(values.auth_type)
@@ -373,9 +386,9 @@ const AddAuthCredentialsForm = (prop : propType) => {
                                 <SelectValue placeholder="Select Authentication Method" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="oauth2">0Auth2</SelectItem>
-                                <SelectItem value="api_key">API</SelectItem>
-                                <SelectItem value="basic">Basic Auth</SelectItem>
+                                <SelectItem value={AuthStrategy.oauth2}>0Auth2</SelectItem>
+                                <SelectItem value={AuthStrategy.api_key}>API</SelectItem>
+                                <SelectItem value={AuthStrategy.basic}>Basic Auth</SelectItem>
                             </SelectContent>
                             </Select>
                         </FormControl>
