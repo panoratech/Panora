@@ -13,13 +13,14 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { session } = useStytchSession();
+  const { session, isInitialized} = useStytchSession();
   const router = useRouter();
-  // useEffect(() => {
-  //   if (!session) {
-  //     router.replace("/b2c/login");
-  //   }
-  // }, [session, router]);
+  useEffect(() => {
+    if (!isInitialized) {
+
+      router.replace("/b2c/login");
+    }
+  }, [session, router]);
   
   return (
     <>
