@@ -124,29 +124,9 @@ export const authColumns: ColumnDef<Mapping>[] = [
         </div>
       )
     },
-    // filterFn: (row, id, value) => {
-    //   return value.includes(row.getValue(id))
-    // },
+  
   },
-  // {
-  //   // accessorFn: row => `${row}`,
-  //   id:"id_cs",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Credentials" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     return (
-  //       <div className="flex items-center">
 
-  //         {/* <RevealCredentialsCard  data={row.original}  /> */}
-
-  //         <Badge variant="outline">Reveal Credentials</Badge>
-  //         {/* <Link href={""} onClick={() => showData()} className={badgeVariants({ variant: "outline" })}>Reveal Credentials</Link> */}
-  //         {/* <Button variant='outline'>Reveal Credentials</Button> */}
-  //       </div>
-  //     )
-  //   },
-  // },
 
 
   {

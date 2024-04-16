@@ -37,4 +37,17 @@ export function getProviderVertical(providerName: string): ProviderVertical {
   return ProviderVertical.Unknown;
 }
 
-export const ALL_PROVIDERS: string[] = [].concat(CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETING_AUTOMATION_PROVIDERS, FILE_STORAGE_PROVIDERS).filter(Boolean)
+function mergeAllProviders(...arrays) {
+  const result = [];
+  arrays.forEach((arr, index) => {
+    const arrayName = Object.keys({ CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETING_AUTOMATION_PROVIDERS, FILE_STORAGE_PROVIDERS })[index];
+    arr.forEach(item => {
+      if (item !== '') {
+        result.push({ vertical: arrayName.split('_')[0], value: item });
+      }
+    });
+  });
+  return result;
+}
+
+export const ALL_PROVIDERS: { vertical: string, value: string }[] = mergeAllProviders(CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETING_AUTOMATION_PROVIDERS, FILE_STORAGE_PROVIDERS)

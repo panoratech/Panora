@@ -33,7 +33,7 @@ const useConnectionStrategyMutation = () => {
         // console.log(response.status)
         
         if (!response.ok) {
-            throw new Error('Failed to add linked user');
+            throw new Error('Failed to add Connection Strategy');
         }
         
         return response.json();

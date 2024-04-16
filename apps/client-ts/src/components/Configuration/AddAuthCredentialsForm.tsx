@@ -122,7 +122,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            provider_name: prop.data?.provider_name? prop.data?.provider_name.toLowerCase() : "",
+            provider_name: prop.data?.provider_name? `${prop.data?.provider_name.toLowerCase()}-${prop.data?.vertical.toUpperCase()}` : "",
             auth_type: prop.data?.auth_type? prop.data?.auth_type : "",
             client_id:"",
             client_secret:"",
@@ -209,7 +209,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
         const {client_id,client_secret,scope,provider_name,api_key,auth_type,secret,username} = values
 
 
-
         switch(values.auth_type)
         {
             case AuthStrategy.oauth2:
@@ -247,7 +246,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 {
                     createCS({
                         projectId:idProject,
-                        type: providerToType(provider_name,getProviderVertical(provider_name),AuthStrategy.oauth2),
+                        type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.oauth2),
                         attributes:["client_id","client_secret"],
                         values:[client_id,client_secret]
                     });
@@ -289,7 +288,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                     {
                         createCS({
                             projectId:idProject,
-                            type: providerToType(provider_name,getProviderVertical(provider_name),AuthStrategy.api_key),
+                            type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.api_key),
                             attributes:["api_key"],
                             values:[api_key]
                         });
@@ -339,7 +338,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         {
                             createCS({
                                 projectId:idProject,
-                                type: providerToType(provider_name,getProviderVertical(provider_name),AuthStrategy.basic),
+                                type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.basic),
                                 attributes:["username","secret"],
                                 values:[username,secret]
                             });
@@ -380,6 +379,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
             {/* <div className="grip gap-4"> */}
             <FormField
             control={form.control}
+            // disabled={prop.performUpdate}
             name="provider_name"
             render={({ field }) => (
                 <FormItem className="flex flex-col">
@@ -390,15 +390,14 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         <Button
                         variant="outline"
                         role="combobox"
+                        disabled={prop.performUpdate}
                         className={cn(
                             "justify-between",
                             !field.value && "text-muted-foreground"
                         )}
                         >
                         {field.value
-                            ? ALL_PROVIDERS.find(
-                                (provider) => provider === field.value
-                            )?.charAt(0).toUpperCase() + field.value.slice(1)
+                            ? field.value.charAt(0).toUpperCase()+field.value.slice(1)
                             : "Select provider"}
                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
@@ -412,19 +411,19 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         
                         />
                         <CommandEmpty>No Provider found.</CommandEmpty>
-                        <ScrollArea className="h-40">
+                        <ScrollArea className="h-40 w-full">
 
                         <CommandGroup>
                         {ALL_PROVIDERS.map((provider) => (
                             <CommandItem
-                            value={provider.charAt(0).toUpperCase() + provider.slice(1)}
-                            key={provider}
+                            value={provider.value+'-'+provider.vertical}
+                            key={provider.vertical+"-"+provider.value}
                             onSelect={() => {
-                                form.setValue("provider_name", provider)
+                                form.setValue("provider_name", `${provider.value}-${provider.vertical}`)
                                 form.clearErrors("provider_name")
                                 handlePopOverClose();
                             }}
-                            className={field.value===provider ? "bg-gray-200 w-full" : "w-full"}
+                            className={field.value===`${provider.value}-${provider.vertical}` ? "bg-gray-200 w-full" : "w-full"}
                             
                             >
                             <div
@@ -433,8 +432,8 @@ const AddAuthCredentialsForm = (prop : propType) => {
                             // onClick={() => handleWalletClick(provider.name)}
                             >
                             <div className="flex items-center w-full">
-                                <img className="w-4 h-4 rounded-lg mr-3" src={getLogoURL(provider)} alt={provider} />
-                                <span>{provider.charAt(0).toUpperCase() + provider.slice(1)}</span>
+                                <img className="w-4 h-4 rounded-lg mr-3" src={getLogoURL(provider.value)} alt={provider.value} />
+                                <span className='w-full'>{provider.value.charAt(0).toUpperCase() + provider.value.slice(1)} - {provider.vertical}</span>
                                 
                             </div>
                             {/* <CheckIcon
@@ -472,11 +471,13 @@ const AddAuthCredentialsForm = (prop : propType) => {
             <FormField
             control={form.control}
             name="auth_type"
+            // disabled={prop.performUpdate}
             render={({field}) => (
                     <FormItem>
                         <FormLabel className="flex flex-col">Authentication Method</FormLabel>
                         <FormControl>
                             <Select 
+                            disabled={prop.performUpdate}
                                 onValueChange={field.onChange} defaultValue={field.value}
                             >
                             <SelectTrigger>

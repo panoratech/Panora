@@ -46,6 +46,17 @@ export class ConnectionsStrategiesService {
     attributes: string[],
     values: string[],
   ) {
+
+    const checkCSDuplicate = await this.prisma.connection_strategies.findFirst({
+      where: {
+        id_project: projectId,
+        type: type,
+      },
+    });
+    if (checkCSDuplicate) throw new Error('The Connection Strategy already exists!');
+
+
+
     const cs = await this.prisma.connection_strategies.create({
       data: {
         id_connection_strategy: uuidv4(),
