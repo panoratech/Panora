@@ -30,6 +30,7 @@ services:
       context: ./
       dockerfile: ./packages/api/Dockerfile
     environment:
+      DOPPLER_TOKEN: ${DOPPLER_TOKEN_API}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       JWT_SECRET: ${JWT_SECRET}
@@ -101,7 +102,7 @@ services:
       - backend
 
   redis:
-    image: 'redis:7.2.3-alpine'
+    image: valkey/valkey:7.2-alpine
     container_name: 'Redis'
     ports:
       - '6379:6379'
@@ -125,7 +126,7 @@ services:
         NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
     restart: unless-stopped
     ports:
-      - 80:3000
+      - 80:8090
     depends_on:
       - api
     networks:
@@ -137,7 +138,7 @@ services:
       dockerfile: ./apps/magic-link/Dockerfile
       context: ./
       args:
-        NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
+        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
     restart: always
     ports:
       - 81:80

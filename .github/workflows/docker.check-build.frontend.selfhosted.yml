@@ -1,7 +1,7 @@
-name: Export Docker Images (Frontend Selfhosted)
+name: Compile Docker Images (Frontend Selfhosted)
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -30,7 +30,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           context: .
           file: ./apps/magic-link/Dockerfile
-          push: true
+          push: false
           tags: panoradotdev/frontend-magic-links:selfhosted
           build-args: |
             VITE_BACKEND_DOMAIN=${{ secrets.VITE_BACKEND_DOMAIN }}
