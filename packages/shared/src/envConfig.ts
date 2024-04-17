@@ -1,4 +1,4 @@
-import { AuthStrategy, providersConfig } from "./utils";
+import { AuthStrategy, providersConfig, SoftwareMode } from "./utils";
 
 export type BasicAuthData = {
     USERNAME: string;
@@ -39,7 +39,6 @@ export function extractVertical(type: string): string {
     return parts[1];
 }
 
-//TODO: handle software mode 
 export function extractSoftwareMode(type: string): string {
     // Split the string at the first underscore
     const parts = type.split('_');
@@ -47,15 +46,16 @@ export function extractSoftwareMode(type: string): string {
     return parts[2];
 }
 
-//TODO: handle software mode 
-export function providerToType(providerName: string, vertical: string, authMode: AuthStrategy) {
-    switch (authMode) {
+
+export function providerToType(providerName: string, vertical: string, authMode: AuthStrategy, softwareMode?: SoftwareMode){
+    const software = softwareMode ? softwareMode.toUpperCase() : SoftwareMode.cloud;
+    switch(authMode){
         case AuthStrategy.api_key:
-            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_API`
+            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_API_KEY`
         case AuthStrategy.oauth2:
-            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_OAUTH`
+            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_OAUTH`
         case AuthStrategy.basic:
-            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_BASIC`
+            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_BASIC`
     }
 }
 
@@ -67,7 +67,7 @@ export function extractAuthMode(type: string): AuthStrategy {
     switch (authMode) {
         case 'OAUTH':
             return AuthStrategy.oauth2;
-        case 'API':
+        case 'API_KEY':
             return AuthStrategy.api_key;
         case 'BASIC':
             return AuthStrategy.basic;

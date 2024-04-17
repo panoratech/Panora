@@ -4,6 +4,10 @@ export enum AuthStrategy {
   basic = "Basic Auth"
 }
 
+export enum SoftwareMode {
+  cloud = "CLOUD",
+}
+
 export type ProviderConfig = {
   scopes: string;
   logoPath: string;
@@ -878,7 +882,7 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
   },
-  'marketing_automation': {
+  'marketingautomation': {
     'active_campaign': {
       scopes: '',
       urls: {

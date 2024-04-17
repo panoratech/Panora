@@ -2,9 +2,7 @@ import { CrmObject, UnifiedCrm } from '@crm/@utils/@types';
 import { HrisObject } from '@hris/@types';
 import { AtsObject, UnifiedAts } from '@ats/@types';
 import { AccountingObject } from '@accounting/@types';
-import { MarketingAutomationObject } from 'src/marketing_automation/@types';
 import { TicketingObject, UnifiedTicketing } from '@ticketing/@utils/@types';
-import { FileStorageObject } from 'src/file_storage/@types';
 import {
   ApiExtraModels,
   ApiOkResponse,
@@ -13,6 +11,8 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { Type, applyDecorators } from '@nestjs/common';
+import { FileStorageObject } from '@filestorage/@types';
+import { MarketingAutomationObject } from '@marketingautomation/@types';
 
 export type Unified = UnifiedCrm | UnifiedAts | UnifiedTicketing;
 export type UnifyReturnType = Unified | Unified[];

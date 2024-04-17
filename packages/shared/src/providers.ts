@@ -2,15 +2,14 @@ import { ProviderVertical } from "./enum";
 
 export const categoriesVerticals = Object.values(ProviderVertical);
 
-export const CRM_PROVIDERS = ['zoho', 'zendesk', 'hubspot', 'pipedrive', 'attio', 'freshsales'];
+export const CRM_PROVIDERS = ['zoho', 'zendesk', 'hubspot', 'pipedrive', 'attio'];
 
 export const HRIS_PROVIDERS = [''];
 export const ATS_PROVIDERS = [''];
 export const ACCOUNTING_PROVIDERS = [''];
 export const TICKETING_PROVIDERS = ['zendesk', 'front', 'github', 'jira', 'gorgias'];
-export const MARKETING_AUTOMATION_PROVIDERS = [''];
-export const FILE_STORAGE_PROVIDERS = [''];
-
+export const MARKETINGAUTOMATION_PROVIDERS = [''];
+export const FILESTORAGE_PROVIDERS = [''];
 
 export function getProviderVertical(providerName: string): ProviderVertical {
   if (CRM_PROVIDERS.includes(providerName)) {
@@ -28,10 +27,10 @@ export function getProviderVertical(providerName: string): ProviderVertical {
   if (TICKETING_PROVIDERS.includes(providerName)) {
     return ProviderVertical.Ticketing;
   }
-  if (MARKETING_AUTOMATION_PROVIDERS.includes(providerName)) {
+  if (MARKETINGAUTOMATION_PROVIDERS.includes(providerName)) {
     return ProviderVertical.MarketingAutomation;
   }
-  if (FILE_STORAGE_PROVIDERS.includes(providerName)) {
+  if (FILESTORAGE_PROVIDERS.includes(providerName)) {
     return ProviderVertical.FileStorage;
   }
   return ProviderVertical.Unknown;

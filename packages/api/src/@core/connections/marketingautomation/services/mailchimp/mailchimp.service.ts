@@ -12,17 +12,19 @@ import {
   IMarketingAutomationConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy, providersConfig } from '@panora/shared';
+import { AuthStrategy } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
-export type PodiumOAuthResponse = {
+export type MailchimpOAuthResponse = {
   access_token: string;
   refresh_token: string;
+  expires_in: string;
+  token_type: string;
 };
 
 @Injectable()
-export class PodiumConnectionService
+export class MailchimpConnectionService
   implements IMarketingAutomationConnectionService
 {
   private readonly type: string;
@@ -35,22 +37,23 @@ export class PodiumConnectionService
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
   ) {
-    this.logger.setContext(PodiumConnectionService.name);
-    this.registry.registerService('podium', this);
+    this.logger.setContext(MailchimpConnectionService.name);
+    this.registry.registerService('mailchimp', this);
     this.type = providerToType(
-      'podium',
-      'marketing_automation',
+      'mailchimp',
+      'marketingautomation',
       AuthStrategy.oauth2,
     );
   }
+
   async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'podium',
-          vertical: 'marketing_automation',
+          provider_slug: 'mailchimp',
+          vertical: 'marketingautomation',
         },
       });
 
@@ -69,7 +72,7 @@ export class PodiumConnectionService
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        'https://api.podium.com/oauth/token',
+        'https://login.mailchimp.com/oauth2/token',
         formData.toString(),
         {
           headers: {
@@ -77,11 +80,22 @@ export class PodiumConnectionService
           },
         },
       );
-      const data: PodiumOAuthResponse = res.data;
+      const data: MailchimpOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : podium ticketing ' + JSON.stringify(data),
+        'OAuth credentials : mailchimp ticketing ' + JSON.stringify(data),
       );
 
+      //get right server to make right api calls
+      const res_ = await axios.post(
+        'https://login.mailchimp.com/oauth2/metadata',
+        formData.toString(),
+        {
+          headers: {
+            Authorization: `OAuth ${data.access_token}`,
+          },
+        },
+      );
+      const server_url = res_.data;
       let db_res;
       const connection_token = uuidv4();
 
@@ -93,10 +107,9 @@ export class PodiumConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url:
-              providersConfig['marketing_automation']['podium'].urls.apiUrl,
+            account_url: server_url,
             expiration_timestamp: new Date(
-              new Date().getTime() + 10 * 60 * 60 * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -107,15 +120,14 @@ export class PodiumConnectionService
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'podium',
-            vertical: 'marketing_automation',
+            provider_slug: 'mailchimp',
+            vertical: 'marketingautomation',
             token_type: 'oauth',
-            account_url:
-              providersConfig['marketing_automation']['pdoum'].urls.apiUrl,
+            account_url: server_url,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + 10 * 60 * 60 * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -130,48 +142,11 @@ export class PodiumConnectionService
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'podium', Action.oauthCallback);
+      handleServiceError(error, this.logger, 'mailchimp', Action.oauthCallback);
     }
   }
 
   async handleTokenRefresh(opts: RefreshParams) {
-    try {
-      const { connectionId, refreshToken, projectId } = opts;
-      const CREDENTIALS = (await this.cService.getCredentials(
-        projectId,
-        this.type,
-      )) as OAuth2AuthData;
-      const formData = new URLSearchParams({
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
-      const res = await axios.post(
-        'https://api.podium.com/oauth/token',
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
-        },
-      );
-      const data: PodiumOAuthResponse = res.data;
-      await this.prisma.connections.update({
-        where: {
-          id_connection: connectionId,
-        },
-        data: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + 10 * 60 * 60 * 1000,
-          ),
-        },
-      });
-      this.logger.log('OAuth credentials updated : podium ');
-    } catch (error) {
-      handleServiceError(error, this.logger, 'podium', Action.oauthRefresh);
-    }
+    return;
   }
 }

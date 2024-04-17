@@ -7,7 +7,6 @@ import { WebhookModule } from '@@core/webhook/webhook.module';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from './services/registry.service';
-import { FreshsalesConnectionService } from './services/freshsales/freshsales.service';
 import { HubspotConnectionService } from './services/hubspot/hubspot.service';
 import { ZohoConnectionService } from './services/zoho/zoho.service';
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
@@ -27,7 +26,6 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
     EncryptionService,
     ConnectionsStrategiesService,
     // PROVIDERS SERVICES
-    FreshsalesConnectionService,
     HubspotConnectionService,
     AttioConnectionService,
     ZohoConnectionService,

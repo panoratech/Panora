@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { ContactController } from './contact.controller';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { FreshsalesService } from './services/freshsales';
 import { ZendeskService } from './services/zendesk';
 import { AttioService } from './services/attio';
 import { ZohoService } from './services/zoho';
@@ -33,7 +32,6 @@ import { ServiceRegistry } from './services/registry.service';
     EncryptionService,
     ServiceRegistry,
     /* PROVIDERS SERVICES */
-    FreshsalesService,
     AttioService,
     ZendeskService,
     ZohoService,
