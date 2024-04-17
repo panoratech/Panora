@@ -8,7 +8,7 @@ import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
 import { ProviderVertical } from '@panora/shared';
 import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
-import { MarketingAutomationConnectionsService } from './marketing_automation/services/marketing_automation.connection.service';
+import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 
 export type StateDataType = {
   projectId: string;

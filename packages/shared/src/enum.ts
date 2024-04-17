@@ -4,8 +4,8 @@ export enum ProviderVertical {
     ATS = 'ats',
     Accounting = 'accounting',
     Ticketing = 'ticketing',
-    MarketingAutomation = 'marketing_automation',
-    FileStorage = 'file_storage',
+    MarketingAutomation = 'marketingautomation',
+    FileStorage = 'filestorage',
     Unknown = 'unknown',
 }
 
