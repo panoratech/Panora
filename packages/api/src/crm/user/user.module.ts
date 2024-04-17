@@ -9,7 +9,6 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
-import { FreshsalesService } from './services/freshsales';
 import { HubspotService } from './services/hubspot';
 import { PipedriveService } from './services/pipedrive';
 import { ZendeskService } from './services/zendesk';
@@ -32,7 +31,6 @@ import { ZohoService } from './services/zoho';
     FieldMappingService,
     ServiceRegistry,
     /* PROVIDERS SERVICES */
-    FreshsalesService,
     ZendeskService,
     ZohoService,
     PipedriveService,

@@ -1,4 +1,3 @@
-import { FreshsalesNoteMapper } from '../services/freshsales/mappers';
 import { HubspotNoteMapper } from '../services/hubspot/mappers';
 import { PipedriveNoteMapper } from '../services/pipedrive/mappers';
 import { ZendeskNoteMapper } from '../services/zendesk/mappers';
@@ -8,7 +7,6 @@ const hubspotNoteMapper = new HubspotNoteMapper();
 const zendeskNoteMapper = new ZendeskNoteMapper();
 const zohoNoteMapper = new ZohoNoteMapper();
 const pipedriveNoteMapper = new PipedriveNoteMapper();
-const freshSalesNoteMapper = new FreshsalesNoteMapper();
 
 export const noteUnificationMapping = {
   hubspot: {
@@ -26,9 +24,5 @@ export const noteUnificationMapping = {
   zendesk: {
     unify: zendeskNoteMapper.unify.bind(zendeskNoteMapper),
     desunify: zendeskNoteMapper.desunify.bind(zendeskNoteMapper),
-  },
-  freshsales: {
-    unify: freshSalesNoteMapper.unify.bind(freshSalesNoteMapper),
-    desunify: freshSalesNoteMapper.desunify.bind(freshSalesNoteMapper),
   },
 };

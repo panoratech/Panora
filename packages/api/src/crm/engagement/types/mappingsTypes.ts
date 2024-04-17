@@ -1,4 +1,3 @@
-import { FreshsalesEngagementMapper } from '../services/freshsales/mappers';
 import { HubspotEngagementMapper } from '../services/hubspot/mappers';
 import { PipedriveEngagementMapper } from '../services/pipedrive/mappers';
 import { ZendeskEngagementMapper } from '../services/zendesk/mappers';
@@ -8,7 +7,6 @@ const hubspotEngagementMapper = new HubspotEngagementMapper();
 const zendeskEngagementMapper = new ZendeskEngagementMapper();
 const zohoEngagementMapper = new ZohoEngagementMapper();
 const pipedriveEngagementMapper = new PipedriveEngagementMapper();
-const freshSalesEngagementMapper = new FreshsalesEngagementMapper();
 
 export const engagementUnificationMapping = {
   hubspot: {
@@ -28,11 +26,5 @@ export const engagementUnificationMapping = {
   zendesk: {
     unify: zendeskEngagementMapper.unify.bind(zendeskEngagementMapper),
     desunify: zendeskEngagementMapper.desunify.bind(zendeskEngagementMapper),
-  },
-  freshsales: {
-    unify: freshSalesEngagementMapper.unify.bind(freshSalesEngagementMapper),
-    desunify: freshSalesEngagementMapper.desunify.bind(
-      freshSalesEngagementMapper,
-    ),
   },
 };
