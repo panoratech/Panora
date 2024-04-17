@@ -172,7 +172,7 @@ export const authColumns: ColumnDef<Mapping>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Action" />
     ),
-    cell: ({ row }) => ActionCellComponent
+    cell: ActionCellComponent
   
   },
 

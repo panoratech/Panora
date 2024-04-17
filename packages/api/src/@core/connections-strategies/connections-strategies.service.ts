@@ -10,7 +10,7 @@ import {
   needsSubdomain,
   providersConfig,
 } from '@panora/shared';
-import { SoftwareMode } from '@panora/shared/src/utils';
+import { SoftwareMode } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 
 

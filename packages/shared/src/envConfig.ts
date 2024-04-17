@@ -47,11 +47,11 @@ export function extractSoftwareMode(type: string): string {
 }
 
 
-export function providerToType(providerName: string, vertical: string, authMode: AuthStrategy, softwareMode?: SoftwareMode){
+export function providerToType(providerName: string, vertical: string, authMode: AuthStrategy, softwareMode?: SoftwareMode) {
     const software = softwareMode ? softwareMode.toUpperCase() : SoftwareMode.cloud;
-    switch(authMode){
+    switch (authMode) {
         case AuthStrategy.api_key:
-            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_API_KEY`
+            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_APIKEY`
         case AuthStrategy.oauth2:
             return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_OAUTH`
         case AuthStrategy.basic:
@@ -67,7 +67,7 @@ export function extractAuthMode(type: string): AuthStrategy {
     switch (authMode) {
         case 'OAUTH':
             return AuthStrategy.oauth2;
-        case 'API_KEY':
+        case 'APIKEY':
             return AuthStrategy.api_key;
         case 'BASIC':
             return AuthStrategy.basic;
@@ -91,7 +91,7 @@ export function needsSubdomain(provider: string, vertical: string): boolean {
 
     // Extract the provider's config
     const providerConfig = providersConfig[vertical][provider];
-   
+
     const authBaseUrlStartsWithSlash = providerConfig.urls.authBaseUrl!.startsWith('/');
     const apiUrlStartsWithSlash = providerConfig.urls.apiUrl!.startsWith('/');
     const apiUrlIsBlank = providerConfig.urls.apiUrl! == "";

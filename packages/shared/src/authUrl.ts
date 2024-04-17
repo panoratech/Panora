@@ -14,8 +14,8 @@ const randomString = () => {
   const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
-     const randomIndex = Math.floor(Math.random() * charSet.length);
-     result += charSet[randomIndex];
+    const randomIndex = Math.floor(Math.random() * charSet.length);
+    result += charSet[randomIndex];
   }
   return result;
 }
@@ -39,6 +39,8 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
     throw new Error(`Unsupported provider: ${providerName}`);
   }
   const authStrategy = config.authStrategy!;
+
+  console.log(authStrategy)
 
   switch (authStrategy) {
     case AuthStrategy.oauth2:
@@ -100,7 +102,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const { urls: urls } = config;
   const { authBaseUrl: baseUrl } = urls;
 
-  if(!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
+  if (!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
 
   //construct the baseAuthUrl based on the fact that client may use custom subdomain
   const BASE_URL: string = data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
@@ -115,7 +117,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const providersWithoutScopes = ["pipedrive", "clickup", "aha", "freeagent", "teamwork", "attio", "close", "teamleader", 'getresponse']
 
   // Adding scope for providers that require it, except for 'pipedrive'
-  if (!providersWithoutScopes.includes(providerName) ) {
+  if (!providersWithoutScopes.includes(providerName)) {
     params += `&scope=${encodeURIComponent(scopes)}`;
   }
 
