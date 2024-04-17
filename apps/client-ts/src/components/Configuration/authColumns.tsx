@@ -28,11 +28,80 @@ import {
 import {
   DotsHorizontalIcon,
 } from "@radix-ui/react-icons"
-import RevealCredentialsCard from "./RevealCredentialsCard";
 import AddAuthCredentialsForm from "./AddAuthCredentialsForm";
 import {getLogoURL,AuthStrategy} from '@panora/shared'
 import useUpdateConnectionStrategyMutation from "@/hooks/mutations/useUpdateConnectionStrategy";
 import useDeleteConnectionStrategyMutation from "@/hooks/mutations/useDeleteConnectionStrategy";
+
+const UpdateStatusCellComponent = ({row}:{row:any}) => {
+  const [isDisable,setDisable] = useState(false)
+      const {mutate} = useUpdateConnectionStrategyMutation()
+      const onSwitchChange = () => {
+        setDisable(true)
+        mutate(
+          {
+            id_cs:row.original.id_cs,
+            ToUpdateToggle:true
+          }, {
+            onSuccess : () => setDisable(false),
+            onError : () => setDisable(false)
+          })
+        // console.log("Changed switch")
+      }
+
+      return (
+        <div className="flex w-[100px] items-center">
+          {/* <Badge variant={row.getValue("activate")==false ? "destructive" : "primary"}>{row.getValue("activate")==false ? "Deactivated" : "Activated"}</Badge> */}
+          <Switch onCheckedChange={() => onSwitchChange()} disabled={isDisable} value={row.getValue("status")}  defaultChecked={row.getValue("status")}/>
+        </div>
+      )
+}
+
+const ActionCellComponent = ({row}:{row:any}) => {
+
+  const [open,setOpen] = useState(false)
+
+      const handleOpenChange = (open: boolean) => {
+        setOpen(open)
+        // form.reset()
+      };
+
+      const {mutate} = useDeleteConnectionStrategyMutation()
+
+      const deleteConnectionStrategy = () => {
+        mutate(
+          {
+            id_cs:row.original.id_cs
+          }
+        )
+      }
+
+      return (
+        <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <DotsHorizontalIcon className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>           
+              <DialogTrigger asChild>
+                <DropdownMenuItem>Edit</DropdownMenuItem>    
+              </DialogTrigger>
+              
+            <DropdownMenuItem onClick={() => deleteConnectionStrategy()}>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DialogContent className="sm:w-[450px] lg:max-w-screen-lg overflow-y-scroll max-h-screen">
+            <AddAuthCredentialsForm data={row.original} closeDialog={() => setOpen(false)}  performUpdate={true} />
+        </DialogContent>
+        </Dialog>
+
+      )
+
+}
 
 export const authColumns: ColumnDef<Mapping>[] = [
   {
@@ -93,38 +162,7 @@ export const authColumns: ColumnDef<Mapping>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
-    cell: ({ row }) => {
-
-      const [isDisable,setDisable] = useState(false)
-
-      const {mutate} = useUpdateConnectionStrategyMutation()
-
-
-
-      const onSwitchChange = () => {
-        setDisable(true)
-        mutate(
-          {
-            id_cs:row.original.id_cs,
-            ToUpdateToggle:true
-          }, {
-            onSuccess : () => setDisable(false),
-            onError : () => setDisable(false)
-          })
-        // console.log("Changed switch")
-      }
-
-
-
-
-      return (
-        <div className="flex w-[100px] items-center">
-          {/* <Badge variant={row.getValue("activate")==false ? "destructive" : "primary"}>{row.getValue("activate")==false ? "Deactivated" : "Activated"}</Badge> */}
-          <Switch onCheckedChange={() => onSwitchChange()} disabled={isDisable} value={row.getValue("status")}  defaultChecked={row.getValue("status")}/>
-        </div>
-      )
-    },
-  
+    cell: UpdateStatusCellComponent
   },
 
 
@@ -134,54 +172,9 @@ export const authColumns: ColumnDef<Mapping>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Action" />
     ),
-    cell: ({ row }) => {
-
-      const [open,setOpen] = useState(false)
-
-      const handleOpenChange = (open: boolean) => {
-        setOpen(open)
-        // form.reset()
-      };
-
-      const {mutate} = useDeleteConnectionStrategyMutation()
-
-      const deleteConnectionStrategy = () => {
-        mutate(
-          {
-            id_cs:row.original.id_cs
-          }
-        )
-      }
-
-
-      return (
-        <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>           
-              <DialogTrigger asChild>
-                <DropdownMenuItem>Edit</DropdownMenuItem>    
-              </DialogTrigger>
-              
-            <DropdownMenuItem onClick={() => deleteConnectionStrategy()}>Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <DialogContent className="sm:w-[450px] lg:max-w-screen-lg overflow-y-scroll max-h-screen">
-            <AddAuthCredentialsForm data={row.original} closeDialog={() => setOpen(false)}  performUpdate={true} />
-        </DialogContent>
-        </Dialog>
-
-      )
-    },
-    // filterFn: (row, id, value) => {
-    //   return value.includes(row.getValue(id))
-    // },
+    cell: ({ row }) => ActionCellComponent
+  
   },
- 
+
 ]
+

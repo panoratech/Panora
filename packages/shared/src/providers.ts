@@ -37,8 +37,8 @@ export function getProviderVertical(providerName: string): ProviderVertical {
   return ProviderVertical.Unknown;
 }
 
-function mergeAllProviders(...arrays) {
-  const result = [];
+function mergeAllProviders(...arrays: string[][]): { vertical: string, value: string }[] {
+  const result: { vertical: string, value: string }[] = [];
   arrays.forEach((arr, index) => {
     const arrayName = Object.keys({ CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETING_AUTOMATION_PROVIDERS, FILE_STORAGE_PROVIDERS })[index];
     arr.forEach(item => {

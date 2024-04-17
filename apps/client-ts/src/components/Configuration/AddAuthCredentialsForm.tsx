@@ -373,7 +373,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
     <CardHeader>
         <CardTitle>Add 0Auth Credentials</CardTitle>
         <CardDescription>
-        Add your provider's credentials for connection.
+        Add your provider&apos; credentials for connection.
         </CardDescription>
     </CardHeader>
     <CardContent className="grid gap-5">

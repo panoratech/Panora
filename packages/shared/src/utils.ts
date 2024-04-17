@@ -1691,7 +1691,11 @@ export function findProviderByName(providerName: string): Provider | null {
 export function getLogoURL(providerName: string): string {
 
   const vertical = findProviderVertical(providerName);
-  return providersConfig[vertical][providerName].logoPath
+  if (vertical !== null) {
+    return providersConfig[vertical][providerName].logoPath
+  }
+
+  return ""
 
 
 }
