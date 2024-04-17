@@ -36,7 +36,7 @@ export class FrontService implements IAccountService {
         },
       });
 
-      const resp = await axios.get('https://api2.frontapp.com/accounts', {
+      const resp = await axios.get(`${connection.account_url}/accounts`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -63,7 +63,7 @@ export class ZendeskService implements IEngagementService {
         },
       });
       const resp = await axios.post(
-        `https://api.getbase.com/v2/engagements`,
+        `${connection.account_url}/engagements`,
         {
           data: engagementData,
         },
@@ -129,7 +129,7 @@ export class ZendeskService implements IEngagementService {
         },
       });
 
-      const resp = await axios.get(`https://api.getbase.com/v2/calls`, {
+      const resp = await axios.get(`${connection.account_url}/calls`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

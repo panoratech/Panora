@@ -42,7 +42,8 @@ export class PassthroughService {
         },
       });
       const intId = integrationId.toLowerCase();
-      const providerUrl = providersConfig[vertical.toLowerCase()][intId].apiUrl;
+      const providerUrl =
+        providersConfig[vertical.toLowerCase()][intId].urls.apiUrl;
       const BASE_URL = `${providerUrl}${path}`;
       const connection = await this.prisma.connections.findFirst({
         where: {

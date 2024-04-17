@@ -39,17 +39,14 @@ export class ZendeskService implements ITeamService {
         },
       });
 
-      const resp = await axios.get(
-        `${connection.account_url}/api/v2/groups.json`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const resp = await axios.get(`${connection.account_url}/groups.json`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
       this.logger.log(`Synced zendesk teams !`);
 
       return {

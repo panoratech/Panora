@@ -36,7 +36,7 @@ export class ZohoService implements IDealService {
         },
       });
       const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Deals`,
+        `${connection.account_url}/Deals`,
         { data: [dealData] },
         {
           headers: {
@@ -79,7 +79,7 @@ export class ZohoService implements IDealService {
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Deals?fields=${fields}`,
+        `${connection.account_url}/Deals?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

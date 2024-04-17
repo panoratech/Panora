@@ -38,7 +38,7 @@ export class ZohoService implements IUserService {
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Users?fields=${fields}`,
+        `${connection.account_url}/Users?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

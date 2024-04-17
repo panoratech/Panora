@@ -35,7 +35,7 @@ export class PipedriveService implements IUserService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/users`, {
+      const resp = await axios.get(`${connection.account_url}/users`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -38,7 +38,7 @@ export class ZendeskService implements ITaskService {
       });
 
       const resp = await axios.post(
-        `https://api.getbase.com/v2/tasks`,
+        `${connection.account_url}/tasks`,
         {
           data: taskData,
           meta: {
@@ -83,7 +83,7 @@ export class ZendeskService implements ITaskService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`https://api.getbase.com/v2/tasks`, {
+      const resp = await axios.get(`${connection.account_url}/tasks`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

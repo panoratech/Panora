@@ -35,17 +35,14 @@ export class JiraService implements IUserService {
           vertical: 'ticketing',
         },
       });
-      const resp = await axios.get(
-        `${connection.account_url}/rest/api/3/users/search`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const resp = await axios.get(`${connection.account_url}/users/search`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
       this.logger.log(`Synced jira users !`);
 
       return {
