@@ -1,4 +1,3 @@
-import { FreshsalesTaskMapper } from '../services/freshsales/mappers';
 import { HubspotTaskMapper } from '../services/hubspot/mappers';
 import { PipedriveTaskMapper } from '../services/pipedrive/mappers';
 import { ZendeskTaskMapper } from '../services/zendesk/mappers';
@@ -8,7 +7,6 @@ const hubspotTaskMapper = new HubspotTaskMapper();
 const zendeskTaskMapper = new ZendeskTaskMapper();
 const zohoTaskMapper = new ZohoTaskMapper();
 const pipedriveTaskMapper = new PipedriveTaskMapper();
-const freshSalesTaskMapper = new FreshsalesTaskMapper();
 
 export const taskUnificationMapping = {
   hubspot: {
@@ -26,9 +24,5 @@ export const taskUnificationMapping = {
   zendesk: {
     unify: zendeskTaskMapper.unify.bind(zendeskTaskMapper),
     desunify: zendeskTaskMapper.desunify.bind(zendeskTaskMapper),
-  },
-  freshsales: {
-    unify: freshSalesTaskMapper.unify.bind(freshSalesTaskMapper),
-    desunify: freshSalesTaskMapper.desunify.bind(freshSalesTaskMapper),
   },
 };

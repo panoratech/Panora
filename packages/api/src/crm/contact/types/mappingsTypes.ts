@@ -1,5 +1,4 @@
 import { AttioContactMapper } from '../services/attio/mappers';
-import { FreshsalesContactMapper } from '../services/freshsales/mappers';
 import { HubspotContactMapper } from '../services/hubspot/mappers';
 import { PipedriveContactMapper } from '../services/pipedrive/mappers';
 import { ZendeskContactMapper } from '../services/zendesk/mappers';
@@ -10,7 +9,6 @@ const zendeskContactMapper = new ZendeskContactMapper();
 const zohoContactMapper = new ZohoContactMapper();
 const pipedriveContactMapper = new PipedriveContactMapper();
 const attioContactMapper = new AttioContactMapper();
-const freshsalesContactMapper = new FreshsalesContactMapper();
 
 export const contactUnificationMapping = {
   hubspot: {
@@ -28,10 +26,6 @@ export const contactUnificationMapping = {
   zendesk: {
     unify: zendeskContactMapper.unify.bind(zendeskContactMapper),
     desunify: zendeskContactMapper.desunify.bind(zendeskContactMapper),
-  },
-  freshsales: {
-    unify: freshsalesContactMapper.unify.bind(freshsalesContactMapper),
-    desunify: freshsalesContactMapper.desunify.bind(freshsalesContactMapper),
   },
   attio: {
     unify: attioContactMapper.unify.bind(attioContactMapper),

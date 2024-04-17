@@ -5,6 +5,7 @@ import { RootLayout } from "@/components/RootLayout";
 import { useStytchSession } from "@stytch/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import config from "@/lib/config";
 
 export default function Layout({
   children,
@@ -14,7 +15,7 @@ export default function Layout({
   const { session } = useStytchSession();
   const router = useRouter();
   useEffect(() => {
-    if (!session) {
+    if(config.DISTRIBUTION !== "selfhost" && !session){
       router.replace("/b2c/login");
     }
   }, [session, router]);

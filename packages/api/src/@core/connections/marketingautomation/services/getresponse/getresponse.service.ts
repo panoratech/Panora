@@ -42,7 +42,7 @@ export class GetresponseConnectionService
     this.registry.registerService('getresponse', this);
     this.type = providerToType(
       'getresponse',
-      'marketing_automation',
+      'marketingautomation',
       AuthStrategy.oauth2,
     );
   }
@@ -54,7 +54,7 @@ export class GetresponseConnectionService
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'getresponse',
-          vertical: 'marketing_automation',
+          vertical: 'marketingautomation',
         },
       });
 
@@ -98,8 +98,7 @@ export class GetresponseConnectionService
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url:
-              providersConfig['marketing_automation']['getresponse'].urls
-                .apiUrl,
+              providersConfig['marketingautomation']['getresponse'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -113,11 +112,10 @@ export class GetresponseConnectionService
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'getresponse',
-            vertical: 'marketing_automation',
+            vertical: 'marketingautomation',
             token_type: 'oauth',
             account_url:
-              providersConfig['marketing_automation']['getresponse'].urls
-                .apiUrl,
+              providersConfig['marketingautomation']['getresponse'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

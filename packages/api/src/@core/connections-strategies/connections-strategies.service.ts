@@ -9,6 +9,7 @@ import {
   extractVertical,
   needsSubdomain,
 } from '@panora/shared';
+import { SoftwareMode } from '@panora/shared/src/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 export type OAuth = {
@@ -190,23 +191,28 @@ export class ConnectionsStrategiesService {
     return data as AuthData;
   }
 
-  getEnvData(provider: string, vertical: string, authStrategy: AuthStrategy) {
+  getEnvData(
+    provider: string,
+    vertical: string,
+    authStrategy: AuthStrategy,
+    softwareMode?: SoftwareMode,
+  ) {
     let data: AuthData;
     switch (authStrategy) {
       case AuthStrategy.oauth2:
         data = {
           CLIENT_ID: this.configService.get<string>(
-            `${provider.toUpperCase()}_${vertical.toUpperCase()}_CLIENT_ID`,
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_CLIENT_ID`,
           ),
           CLIENT_SECRET: this.configService.get<string>(
-            `${provider.toUpperCase()}_${vertical.toUpperCase()}_CLIENT_SECRET`,
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_CLIENT_SECRET`,
           ),
         };
         if (needsSubdomain(provider, vertical)) {
           data = {
             ...data,
             SUBDOMAIN: this.configService.get<string>(
-              `${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`,
+              `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_SUBDOMAIN`,
             ),
           };
         }
@@ -214,14 +220,14 @@ export class ConnectionsStrategiesService {
       case AuthStrategy.api_key:
         data = {
           API_KEY: this.configService.get<string>(
-            `${provider.toUpperCase()}_${vertical.toUpperCase()}_API_KEY`,
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_API_KEY`,
           ),
         };
         if (needsSubdomain(provider, vertical)) {
           data = {
             ...data,
             SUBDOMAIN: this.configService.get<string>(
-              `${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`,
+              `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_SUBDOMAIN`,
             ),
           };
         }
@@ -229,17 +235,17 @@ export class ConnectionsStrategiesService {
       case AuthStrategy.basic:
         data = {
           USERNAME: this.configService.get<string>(
-            `${provider.toUpperCase()}_${vertical.toUpperCase()}_USERNAME`,
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_USERNAME`,
           ),
           SECRET: this.configService.get<string>(
-            `${provider.toUpperCase()}_${vertical.toUpperCase()}_SECRET`,
+            `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_SECRET`,
           ),
         };
         if (needsSubdomain(provider, vertical)) {
           data = {
             ...data,
             SUBDOMAIN: this.configService.get<string>(
-              `${provider.toUpperCase()}_${vertical.toUpperCase()}_SUBDOMAIN`,
+              `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_SUBDOMAIN`,
             ),
           };
         }
@@ -251,7 +257,7 @@ export class ConnectionsStrategiesService {
     const isCustomCred = await this.isCustomCredentials(projectId, type);
     const provider = extractProvider(type);
     const vertical = extractVertical(type);
-    //const vertical = findProviderVertical(provider);
+    //TODO: extract sofwtaremode
     if (!vertical)
       throw new Error(`vertical not found for provider ${provider}`);
     const authStrategy = extractAuthMode(type);
@@ -270,7 +276,12 @@ export class ConnectionsStrategiesService {
       );
     } else {
       // type is of form = HUBSPOT_CRM_CLOUD_OAUTH so we must extract the parts
-      return this.getEnvData(provider, vertical, authStrategy);
+      return this.getEnvData(
+        provider,
+        vertical,
+        authStrategy,
+        SoftwareMode.cloud,
+      );
     }
   }
 
