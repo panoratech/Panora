@@ -9,21 +9,26 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import {
   CallbackParams,
   RefreshParams,
-  ICrmConnectionService,
+  IAccountingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
-import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
-export type AffinityOAuthResponse = {
+export type MoneybirdOAuthResponse = {
   access_token: string;
   refresh_token: string;
-  expires_at: string;
+  expires_in: string;
+  token_type: string;
+  scope: string;
+  created_at: number;
 };
 
 @Injectable()
-export class AffinityConnectionService implements ICrmConnectionService {
+export class MoneybirdConnectionService
+  implements IAccountingConnectionService
+{
   private readonly type: string;
 
   constructor(
@@ -34,9 +39,9 @@ export class AffinityConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
   ) {
-    this.logger.setContext(AffinityConnectionService.name);
-    this.registry.registerService('affinity', this);
-    this.type = providerToType('affinity', 'crm', AuthStrategy.oauth2);
+    this.logger.setContext(MoneybirdConnectionService.name);
+    this.registry.registerService('moneybird', this);
+    this.type = providerToType('moneybird', 'accounting', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -45,8 +50,8 @@ export class AffinityConnectionService implements ICrmConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: `affinity`,
-          vertical: 'crm',
+          provider_slug: 'moneybird',
+          vertical: 'accounting',
         },
       });
 
@@ -64,15 +69,18 @@ export class AffinityConnectionService implements ICrmConnectionService {
         code: code,
         grant_type: 'authorization_code',
       });
-      const subdomain = 'panora';
-      const res = await axios.post('', formData.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      const res = await axios.post(
+        '  https://moneybird.com/oauth/token',
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
         },
-      });
-      const data: AffinityOAuthResponse = res.data;
+      );
+      const data: MoneybirdOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : affinity ticketing ' + JSON.stringify(data),
+        'OAuth credentials : moneybird ticketing ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -86,9 +94,9 @@ export class AffinityConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: '',
+            account_url: providersConfig['accounting']['moneybird'].urls.apiUrl,
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -99,14 +107,14 @@ export class AffinityConnectionService implements ICrmConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'affinity',
-            vertical: 'crm',
+            provider_slug: 'moneybird',
+            vertical: 'accounting',
             token_type: 'oauth',
-            account_url: '',
+            account_url: providersConfig['accounting']['moneybird'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -121,30 +129,33 @@ export class AffinityConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'affinity', Action.oauthCallback);
+      handleServiceError(error, this.logger, 'moneybird', Action.oauthCallback);
     }
   }
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
-
-      //const subdomain = 'panora';
-      const res = await axios.post('', formData.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          Authorization: `Basic JHt0aGlzLmVudi5nZXRgQWZmaW5pdHlTZWNyZXRgKCkuQ0xJRU5UX0lEfTokewogICAgICAgICAgICAgICAgdGhpcy5lbnYuZ2V0YEFmZmluaXR5U2VjcmV0YCgpLkNMSUVOVF9TRUNSRVQKICAgICAgICAgICAgICB9`,
-        },
+      const formData = new URLSearchParams({
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_SECRET: CREDENTIALS.CLIENT_SECRET,
+        grant_type: 'refresh_token',
+        refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const data: AffinityOAuthResponse = res.data;
+      const res = await axios.post(
+        'https://moneybird.com/oauth/token',
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        },
+      );
+      const data: MoneybirdOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
@@ -153,13 +164,13 @@ export class AffinityConnectionService implements ICrmConnectionService {
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_at) * 1000,
+            new Date().getTime() + Number(data.expires_in) * 1000,
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : affinity ');
+      this.logger.log('OAuth credentials updated : moneybird ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'affinity', Action.oauthRefresh);
+      handleServiceError(error, this.logger, 'moneybird', Action.oauthRefresh);
     }
   }
 }

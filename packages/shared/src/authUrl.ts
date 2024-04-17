@@ -10,6 +10,16 @@ interface AuthParams {
   vertical: string;
 }
 
+const randomString = () => {
+  const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+     const randomIndex = Math.floor(Math.random() * charSet.length);
+     result += charSet[randomIndex];
+  }
+  return result;
+}
+
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
 export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
@@ -83,17 +93,25 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new Error(`No client id for type ${type}`)
 
-  const { scopes, authBaseUrl: baseUrl } = config;
+  const { scopes, urls: urls } = config;
+  const { authBaseUrl: baseUrl } = urls;
 
-  if (!baseUrl) {
+  if(!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
+
+  //construct the baseAuthUrl based on the fact that client may use custom subdomain
+  const BASE_URL: string = data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
+
+  if (!baseUrl || !BASE_URL) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
 
   // Default URL structure
   let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
+  const providersWithoutScopes = ["pipedrive", "clickup", "aha", "freeagent", "teamwork", "attio", "close", "teamleader", 'getresponse']
+
   // Adding scope for providers that require it, except for 'pipedrive'
-  if (providerName !== "pipedrive") {
+  if (!providersWithoutScopes.includes(providerName) ) {
     params += `&scope=${encodeURIComponent(scopes)}`;
   }
 
@@ -109,12 +127,15 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     case "gitlab":
       params += "&code_challenge=&code_challenge_method=";
       break;
+    case "gorgias":
+      params = `&response_type=code&nonce=${randomString()}`;
+      break;
     default:
       // For most providers, response_type=code is common
       params += "&response_type=code";
   }
 
-  const finalAuthUrl = `${baseUrl}?${params}`;
+  const finalAuthUrl = `${BASE_URL}?${params}`;
   console.log("Final Authentication : ", finalAuthUrl);
   return finalAuthUrl;
 }

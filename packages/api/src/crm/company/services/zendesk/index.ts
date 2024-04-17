@@ -36,7 +36,7 @@ export class ZendeskService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `https://api.getbase.com/v2/contacts`,
+        `${connection.account_url}/contacts`,
         {
           data: companyData,
         },
@@ -78,7 +78,7 @@ export class ZendeskService implements ICompanyService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`https://api.getbase.com/v2/contacts`, {
+      const resp = await axios.get(`${connection.account_url}/contacts`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

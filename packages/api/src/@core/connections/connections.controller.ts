@@ -7,6 +7,8 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
 import { ProviderVertical } from '@panora/shared';
+import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
+import { MarketingAutomationConnectionsService } from './marketing_automation/services/marketing_automation.connection.service';
 
 export type StateDataType = {
   projectId: string;
@@ -22,6 +24,8 @@ export class ConnectionsController {
   constructor(
     private readonly crmConnectionsService: CrmConnectionsService,
     private readonly ticketingConnectionsService: TicketingConnectionsService,
+    private readonly accountingConnectionsService: AccountingConnectionsService,
+    private readonly marketingAutomationConnectionsService: MarketingAutomationConnectionsService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
@@ -70,12 +74,24 @@ export class ConnectionsController {
         case ProviderVertical.ATS:
           break;
         case ProviderVertical.Accounting:
+          this.accountingConnectionsService.handleAccountingCallBack(
+            projectId,
+            linkedUserId,
+            providerName,
+            code,
+          );
           break;
         case ProviderVertical.FileStorage:
           break;
         case ProviderVertical.HRIS:
           break;
         case ProviderVertical.MarketingAutomation:
+          this.marketingAutomationConnectionsService.handleMarketingAutomationCallBack(
+            projectId,
+            linkedUserId,
+            providerName,
+            code,
+          );
           break;
         case ProviderVertical.Ticketing:
           this.ticketingConnectionsService.handleTicketingCallBack(

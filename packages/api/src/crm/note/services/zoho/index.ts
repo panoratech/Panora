@@ -37,7 +37,7 @@ export class ZohoService implements INoteService {
         },
       });
       const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Notes`,
+        `${connection.account_url}/Notes`,
         { data: [noteData] },
         {
           headers: {
@@ -80,7 +80,7 @@ export class ZohoService implements INoteService {
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Notes?fields=${fields}`,
+        `${connection.account_url}/Notes?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

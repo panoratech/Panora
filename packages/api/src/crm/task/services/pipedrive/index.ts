@@ -37,7 +37,7 @@ export class PipedriveService implements ITaskService {
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/activities`,
+        `${connection.account_url}/activities`,
         JSON.stringify(taskData),
         {
           headers: {
@@ -77,7 +77,7 @@ export class PipedriveService implements ITaskService {
         },
       });
       const resp = await axios.get(
-        `https://api.pipedrive.com/v1/activities?type=task&user_id=${19156166}`,
+        `${connection.account_url}/activities?type=task&user_id=${19156166}`,
         {
           headers: {
             'Content-Type': 'application/json',

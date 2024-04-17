@@ -37,7 +37,7 @@ export class ZohoService implements IEngagementService {
         },
       });
       const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Engagements`,
+        `${connection.account_url}/Engagements`,
         { data: [engagementData] },
         {
           headers: {
@@ -80,7 +80,7 @@ export class ZohoService implements IEngagementService {
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Engagements?fields=${fields}`,
+        `${connection.account_url}/Engagements?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

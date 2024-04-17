@@ -9,21 +9,25 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import {
   CallbackParams,
   RefreshParams,
-  ICrmConnectionService,
+  IAccountingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
-import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
-export type InsightlyOAuthResponse = {
+export type FreshbooksOAuthResponse = {
   access_token: string;
   refresh_token: string;
-  expires_at: string;
+  expires_in: string;
+  created_at: number;
+  token_type: string;
 };
 
 @Injectable()
-export class InsightlyConnectionService implements ICrmConnectionService {
+export class FreshbooksConnectionService
+  implements IAccountingConnectionService
+{
   private readonly type: string;
 
   constructor(
@@ -34,9 +38,9 @@ export class InsightlyConnectionService implements ICrmConnectionService {
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
   ) {
-    this.logger.setContext(InsightlyConnectionService.name);
-    this.registry.registerService('insightly', this);
-    this.type = providerToType('insightly', 'crm', AuthStrategy.oauth2);
+    this.logger.setContext(FreshbooksConnectionService.name);
+    this.registry.registerService('freshbooks', this);
+    this.type = providerToType('freshbooks', 'accounting', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -45,8 +49,8 @@ export class InsightlyConnectionService implements ICrmConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: `insightly`,
-          vertical: 'crm',
+          provider_slug: 'freshbooks',
+          vertical: 'accounting',
         },
       });
 
@@ -64,15 +68,18 @@ export class InsightlyConnectionService implements ICrmConnectionService {
         code: code,
         grant_type: 'authorization_code',
       });
-      //const subdomain = 'panora';
-      const res = await axios.post('', formData.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      const res = await axios.post(
+        'https://api.freshbooks.com/auth/oauth/token',
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
         },
-      });
-      const data: InsightlyOAuthResponse = res.data;
+      );
+      const data: FreshbooksOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : insightly ticketing ' + JSON.stringify(data),
+        'OAuth credentials : freshbooks ticketing ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -86,9 +93,9 @@ export class InsightlyConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: '',
+            account_url: providersConfig['accounting']['freshbooks'].urls.apiUrl,
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -99,14 +106,14 @@ export class InsightlyConnectionService implements ICrmConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'insightly',
-            vertical: 'crm',
+            provider_slug: 'freshbooks',
+            vertical: 'accounting',
             token_type: 'oauth',
-            account_url: '',
+            account_url: providersConfig['accounting']['freshbooks'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
+              new Date().getTime() + Number(data.expires_in) * 1000,
             ),
             status: 'valid',
             created_at: new Date(),
@@ -121,30 +128,41 @@ export class InsightlyConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'insightly', Action.oauthCallback);
+      handleServiceError(
+        error,
+        this.logger,
+        'freshbooks',
+        Action.oauthCallback,
+      );
     }
   }
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
+
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
-      const subdomain = 'panora';
-      const res = await axios.post('', formData.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          Authorization: `Basic JHt0aGlzLmVudi5nZXRgSW5zaWdodGx5U2VjcmV0YCgpLkNMSUVOVF9JRH06JHsKICAgICAgICAgICAgICAgIHRoaXMuZW52LmdldGBJbnNpZ2h0bHlTZWNyZXRgKCkuQ0xJRU5UX1NFQ1JFVAogICAgICAgICAgICAgIH0=`,
-        },
+      const formData = new URLSearchParams({
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
+        grant_type: 'refresh_token',
+        refresh_token: this.cryptoService.decrypt(refreshToken),
       });
-      const data: InsightlyOAuthResponse = res.data;
+
+      const res = await axios.post(
+        'https://api.freshbooks.com/auth/oauth/token',
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        },
+      );
+      const data: FreshbooksOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
@@ -153,13 +171,13 @@ export class InsightlyConnectionService implements ICrmConnectionService {
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_at) * 1000,
+            new Date().getTime() + Number(data.expires_in) * 1000,
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : insightly ');
+      this.logger.log('OAuth credentials updated : freshbooks ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'insightly', Action.oauthRefresh);
+      handleServiceError(error, this.logger, 'freshbooks', Action.oauthRefresh);
     }
   }
 }

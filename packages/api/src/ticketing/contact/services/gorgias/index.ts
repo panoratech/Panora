@@ -40,7 +40,7 @@ export class GorgiasService implements IContactService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/api/customers`, {
+      const resp = await axios.get(`${connection.account_url}/customers`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

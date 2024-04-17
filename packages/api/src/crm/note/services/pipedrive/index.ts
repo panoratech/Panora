@@ -37,7 +37,7 @@ export class PipedriveService implements INoteService {
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/notes`,
+        `${connection.account_url}/notes`,
         JSON.stringify(noteData),
         {
           headers: {
@@ -76,7 +76,7 @@ export class PipedriveService implements INoteService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/notes`, {
+      const resp = await axios.get(`${connection.account_url}/notes`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

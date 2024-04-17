@@ -42,7 +42,7 @@ export class HubspotService implements IDealService {
         properties: dealData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/deals`,
+        `${connection.account_url}/objects/deals`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -85,7 +85,7 @@ export class HubspotService implements IDealService {
 
       const commonPropertyNames = Object.keys(commonDealHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/deals';
+      const baseURL = `${connection.account_url}/objects/deals`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

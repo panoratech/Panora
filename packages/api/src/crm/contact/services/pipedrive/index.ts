@@ -38,7 +38,7 @@ export class PipedriveService implements IContactService {
       });
 
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/persons`,
+        `${connection.account_url}/persons`,
         JSON.stringify(contactData),
         {
           headers: {
@@ -77,7 +77,7 @@ export class PipedriveService implements IContactService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/persons`, {
+      const resp = await axios.get(`${connection.account_url}/persons`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -36,7 +36,7 @@ export class GithubService implements IAccountService {
           vertical: 'ticketing',
         },
       });
-      const resp = await axios.get(`https://api.github.com/user/orgs`, {
+      const resp = await axios.get(`${connection.account_url}/user/orgs`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

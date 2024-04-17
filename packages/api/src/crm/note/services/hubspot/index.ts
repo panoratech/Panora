@@ -43,7 +43,7 @@ export class HubspotService implements INoteService {
         properties: noteData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/notes`,
+        `${connection.account_url}/objects/notes`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -85,7 +85,7 @@ export class HubspotService implements INoteService {
 
       const commonPropertyNames = Object.keys(commonNoteHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/notes';
+      const baseURL = `${connection.account_url}/objects/notes`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

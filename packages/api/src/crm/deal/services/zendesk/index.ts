@@ -36,7 +36,7 @@ export class ZendeskService implements IDealService {
         },
       });
       const resp = await axios.post(
-        `https://api.getbase.com/v2/deals`,
+        `${connection.account_url}/deals`,
         {
           data: dealData,
         },
@@ -78,7 +78,7 @@ export class ZendeskService implements IDealService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`https://api.getbase.com/v2/deals`, {
+      const resp = await axios.get(`${connection.account_url}/deals`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
