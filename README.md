@@ -1,5 +1,6 @@
 <div align="center">
-  <h1> Welcome on Panora </h1>
+  <h1> Panora </h1>
+  <p> Open-Source Unified API </p>
 </div>
 
 ![Hero](https://panora.dev/wp-content/uploads/2023/12/github-banner.png)
@@ -27,24 +28,44 @@
 
 Your customers expect all of their tools to work well together. Panora avoids your team spending hundreds of hours building and maintaining integrations instead of your core product.
 
-## 🔮 Core Features  
+
+# ✨ Core Features  
 
 |                    |
 |---------------------------|
 | **Magic Links:** Let your users grant you access to their data. Without writing code.              |
 | **Custom Fields:** Reflect in Panora the specific data points that matter to your users            |
 | **Passthrough Requests:** Interact with other software platforms in their native format.      |
-| **Flexible Sync Settings:** Businesses that need real-time update can configure Panora accordingly    |
 | **Webhooks:** Listen to one webhook to receive normalized data from various software platforms                  |
 
-## 🤝 Core Values
 
-|                                           |
-|-------------------------------------------|
-| 💻 Easy Developer Experience               |
-| 🫡 Fair Value Share: Contributors are valuable, so we've decided to let our community tip our heroes |
+# ✨ Integrations Catalog
+Panora supports integration with the following objects across multiple platforms:
 
-## 🕹️ Play with the Self-hosted version
+### CRM 
+|                                               | Contacts | Deals | Notes | Engagements | Tasks | Users | Companies |
+|-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|:-----:|:---------:|
+| Hubspot           |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
+| Pipedrive       |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
+| Zoho CRM          |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
+| Zendesk Sell |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
+| Freshsales |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
+| Attio                   |    ✔️    |       |       |             |       |       |     ✔️    |
+
+
+### Ticketing 
+|             | Tickets | Comments | Users | Contacts | Accounts | Tags | Teams | Collections |
+|-------------|:----------:|:-------:|:-------:|:------------:|:-------:|:-------:|:------:|:-------------:|
+| Zendesk     | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ | ✔ |
+| Front       | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ | ✔ |
+| Jira        | ✔        | ✔     | ✔    |            |      | ✔    | ✔ | ✔ |
+| Gorgias     | ✔        | ✔     | ✔    | ✔          |      | ✔    | ✔ | ✔ |
+
+Your favourite software is missing? [Ask the community to build a connector!](https://github.com/panoratech/Panora/issues/new) 
+
+
+
+# 🕹️ Try the Open-Source version
 
 - Prerequisite: You should have Git and Docker installed
 
@@ -65,19 +86,17 @@ Your customers expect all of their tools to work well together. Panora avoids yo
 ```
   docker compose up
  ```
-
-You can now open your browser and go to <http://localhost:80> to connect to the application.
 Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product
 
-## 🤔 Have questions? Ask the core team
+# 🤔 Questions? Ask the core team
 
 <a href="https://cal.com/rflih/30?utm_source=github&utm_campaign=readme"><img alt="Book us with Cal.com" src="https://cal.com/book-with-cal-dark.svg" /></a>
 
-## 🚀 Contributors
+# 🚀 Contributors
 
-<p>
-  <img src="https://api.vaunt.dev/v1/github/entities/panoratech/repositories/panora/contributors?format=svg&limit=12" width="600" />
-</p>
+<a href="https://github.com/panoratech/Panora/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=panoratech/Panora" />
+</a>
 
 Want to contribute? Visit our [guide](https://docs.panora.dev/open-source/contributors#setup-your-environnement) or check our detailed integrations guide [here.](https://github.com/panoratech/Panora/blob/main/INTEGRATIONS.md)
 
