@@ -324,14 +324,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -665,7 +658,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "number"
                 }
               }
             }
@@ -857,6 +850,81 @@
         ]
       }
     },
+    "/connections-strategies/delete": {
+      "post": {
+        "operationId": "deleteConnectionStrategy",
+        "summary": "Delete Connection Strategy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteCSDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/update": {
+      "post": {
+        "operationId": "updateConnectionStrategy",
+        "summary": "Update Connection Strategy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCSDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/credentials": {
+      "post": {
+        "operationId": "getConnectionStrategyCredentials",
+        "summary": "Get Connection Strategy Credential",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectionStrategyCredentials"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
     "/connections-strategies/getCredentials": {
       "get": {
         "operationId": "getCredentials",
@@ -872,6 +940,30 @@
           },
           {
             "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/GetConnectionStrategiesForProject": {
+      "get": {
+        "operationId": "getConnectionStrategiesForProject",
+        "summary": "Fetch All Connection Strategies for Project",
+        "parameters": [
+          {
+            "name": "projectId",
             "required": true,
             "in": "query",
             "schema": {
@@ -4592,12 +4684,74 @@
       "ToggleStrategyDto": {
         "type": "object",
         "properties": {
+          "id_cs": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_cs"
+        ]
+      },
+      "DeleteCSDto": {
+        "type": "object",
+        "properties": {
           "id": {
             "type": "string"
           }
         },
         "required": [
           "id"
+        ]
+      },
+      "UpdateCSDto": {
+        "type": "object",
+        "properties": {
+          "id_cs": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id_cs",
+          "status",
+          "attributes",
+          "values"
+        ]
+      },
+      "ConnectionStrategyCredentials": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "projectId",
+          "type",
+          "attributes"
         ]
       },
       "ApiResponse": {

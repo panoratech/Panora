@@ -1,7 +1,7 @@
 export enum AuthStrategy {
-  oauth2,
-  api_key,
-  basic
+  oauth2 = "0Auth2",
+  api_key = "API Key",
+  basic = "Basic Auth"
 }
 
 export enum SoftwareMode {
@@ -13,6 +13,7 @@ export type ProviderConfig = {
   logoPath: string;
   description: string;
   active?: boolean;
+
   customPropertiesUrl?: string; 
   authStrategy?: AuthStrategy;
   urls: {
@@ -111,6 +112,7 @@ export const providersConfig: ProvidersConfig = {
     }, 
     'accelo': {
       scopes: '',
+
       urls: {
         docsUrl: 'https://api.accelo.com/docs/#introduction',
         authBaseUrl: '/oauth2/v0/authorize', 
@@ -2168,6 +2170,7 @@ interface Provider {
 export function providersArray(vertical: string): Provider[] {
   const activeProviders = getActiveProvidersForVertical(vertical);
   return Object.entries(activeProviders).map(([providerName, config]) => ({
+
       name: providerName,
       urls: {
         docsUrl: config.urls.docsUrl,
@@ -2203,4 +2206,17 @@ export function findProviderByName(providerName: string): Provider | null {
     }
   }
   return null;
+}
+
+
+export function getLogoURL(providerName: string): string {
+
+  const vertical = findProviderVertical(providerName);
+  if (vertical !== null) {
+    return providersConfig[vertical][providerName].logoPath
+  }
+
+  return ""
+
+
 }

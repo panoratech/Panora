@@ -14,9 +14,10 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { session } = useStytchSession();
+  const { session, isInitialized} = useStytchSession();
   const router = useRouter();
   useEffect(() => {
+
     if(config.DISTRIBUTION !== "selfhost" && !session){
       router.replace("/b2c/login");
     }

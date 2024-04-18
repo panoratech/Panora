@@ -226,22 +226,21 @@ COMMENT ON COLUMN entity.ressource_owner_id IS 'uuid of the ressource owner - ca
 
 
 
+-- ************************************** connection_strategies
 
-
--- ************************************** cs_values
-
-CREATE TABLE cs_values
+CREATE TABLE connection_strategies
 (
- id_cs_value     uuid NOT NULL,
- value           text NOT NULL,
- id_cs_attribute uuid NOT NULL,
- CONSTRAINT PK_ct_values PRIMARY KEY ( id_cs_value )
+ id_connection_strategy uuid NOT NULL,
+ status                 boolean NOT NULL,
+ type                   text NOT NULL,
+ id_project             uuid NULL,
+ CONSTRAINT PK_connection_strategies PRIMARY KEY ( id_connection_strategy )
 );
 
 
 
-
-
+COMMENT ON COLUMN connection_strategies.status IS 'if the connection strategy should overwrite default strategy (from env)';
+COMMENT ON COLUMN connection_strategies.type IS 'OAUTH2, API_KEY, PIPEDRIVE_CLOUD_OAUTH, PIPEDRIVE_CLOUD_API, HUBSPOT_CLOUD';
 
 
 
@@ -251,14 +250,9 @@ CREATE TABLE cs_entities
 (
  id_cs_entity           uuid NOT NULL,
  id_connection_strategy uuid NOT NULL,
- CONSTRAINT PK_ct_entities PRIMARY KEY ( id_cs_entity )
+ CONSTRAINT PK_ct_entities PRIMARY KEY ( id_cs_entity ),
+ CONSTRAINT FK_cs_id FOREIGN KEY ( id_connection_strategy ) REFERENCES connection_strategies ( id_connection_strategy )
 );
-
-
-
-
-
-
 
 
 -- ************************************** cs_attributes
@@ -269,13 +263,21 @@ CREATE TABLE cs_attributes
  attribute_slug  text NOT NULL,
  data_type       text NOT NULL,
  id_cs_entity    uuid NOT NULL,
- CONSTRAINT PK_ct_attributes PRIMARY KEY ( id_cs_attribute )
+ CONSTRAINT PK_ct_attributes PRIMARY KEY ( id_cs_attribute ),
+ CONSTRAINT FK_cs_entity FOREIGN KEY ( id_cs_entity ) REFERENCES cs_entities ( id_cs_entity )
 );
 
 
+-- ************************************** cs_values
 
-
-
+CREATE TABLE cs_values
+(
+ id_cs_value     uuid NOT NULL,
+ value           text NOT NULL,
+ id_cs_attribute uuid NOT NULL,
+ CONSTRAINT PK_ct_values PRIMARY KEY ( id_cs_value ),
+ CONSTRAINT FK_cs_attribute FOREIGN KEY ( id_cs_attribute ) REFERENCES cs_attributes ( id_cs_attribute )
+);
 
 
 
@@ -314,32 +316,6 @@ CREATE TABLE crm_deals_stages
  remote_platform    text NULL,
  CONSTRAINT PK_crm_deal_stages PRIMARY KEY ( id_crm_deals_stage )
 );
-
-
-
-
-
-
-
-
--- ************************************** connection_strategies
-
-CREATE TABLE connection_strategies
-(
- id_connection_strategy uuid NOT NULL,
- status                 boolean NOT NULL,
- type                   text NOT NULL,
- id_project             uuid NULL,
- CONSTRAINT PK_connection_strategies PRIMARY KEY ( id_connection_strategy )
-);
-
-
-
-COMMENT ON COLUMN connection_strategies.status IS 'if the connection strategy should overwrite default strategy (from env)';
-COMMENT ON COLUMN connection_strategies.type IS 'OAUTH2, API_KEY, PIPEDRIVE_CLOUD_OAUTH, PIPEDRIVE_CLOUD_API, HUBSPOT_CLOUD';
-
-
-
 
 
 -- ************************************** tcg_tickets

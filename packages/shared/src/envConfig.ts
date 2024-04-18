@@ -14,10 +14,11 @@ export type ApiAuthData = {
 export type OAuth2AuthData = {
     CLIENT_ID: string;
     CLIENT_SECRET: string;
+    SCOPE: string;
     SUBDOMAIN?: string;
 }
 
-export type AuthData =  BasicAuthData | ApiAuthData | OAuth2AuthData
+export type AuthData = BasicAuthData | ApiAuthData | OAuth2AuthData
 
 // IMPORTANT ! 
 // type is of the form PROVIDERNAME_VERTICALNAME_SOFTWAREMODE_AUTHMODE
@@ -45,11 +46,12 @@ export function extractSoftwareMode(type: string): string {
     return parts[2];
 }
 
+
 export function providerToType(providerName: string, vertical: string, authMode: AuthStrategy, softwareMode?: SoftwareMode) {
     const software = softwareMode ? softwareMode.toUpperCase() : SoftwareMode.cloud;
-    switch(authMode) {
+    switch (authMode) {
         case AuthStrategy.api_key:
-            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_API_KEY`
+            return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_APIKEY`
         case AuthStrategy.oauth2:
             return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_OAUTH`
         case AuthStrategy.basic:
@@ -62,13 +64,13 @@ export function extractAuthMode(type: string): AuthStrategy {
     const parts = type.split('_');
     const authMode = parts[parts.length - 1];
 
-    switch(authMode) {
+    switch (authMode)  {
         case 'OAUTH':
             return AuthStrategy.oauth2;
-        case 'API_KEY':
+        case 'APIKEY':
             return AuthStrategy.api_key;
         case 'BASIC':
-            return AuthStrategy.basic; 
+            return AuthStrategy.basic;
         default:
             throw new Error('Auth mode not found');
     }
@@ -77,19 +79,19 @@ export function extractAuthMode(type: string): AuthStrategy {
 export function needsSubdomain(provider: string, vertical: string): boolean {
     // Check if the vertical exists in the config
     if (!providersConfig[vertical]) {
-       console.error(`Vertical ${vertical} not found in providersConfig.`);
-       return false;
+        console.error(`Vertical ${vertical} not found in providersConfig.`);
+        return false;
     }
-   
+
     // Check if the provider exists under the specified vertical
     if (!providersConfig[vertical][provider]) {
-       console.error(`Provider ${provider} not found under vertical ${vertical}.`);
-       return false;
+        console.error(`Provider ${provider} not found under vertical ${vertical}.`);
+        return false;
     }
-   
+
     // Extract the provider's config
     const providerConfig = providersConfig[vertical][provider];
-   
+
     const authBaseUrlStartsWithSlash = providerConfig.urls.authBaseUrl!.startsWith('/');
     const apiUrlStartsWithSlash = providerConfig.urls.apiUrl!.startsWith('/');
     const apiUrlIsBlank = providerConfig.urls.apiUrl! === '';

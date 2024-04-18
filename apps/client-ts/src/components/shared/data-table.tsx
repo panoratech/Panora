@@ -26,15 +26,18 @@ import {
 } from "@/components/ui/table"
 
 import { DataTablePagination } from "./data-table-pagination"
+import {Input} from '@/components/ui/input'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  data: TData[],
+  filterColumn?:string
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  filterColumn
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -69,6 +72,18 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {/*<DataTableToolbar table={table} />*/}
+      {filterColumn && (
+        <>
+        <Input
+          placeholder={filterColumn==="provider_name" ? "Filter Provider Name" : ""}
+          value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn(filterColumn)?.setFilterValue(event.target.value)
+          }
+          className="max-w"
+        />
+        </>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>

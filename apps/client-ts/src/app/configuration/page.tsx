@@ -37,17 +37,24 @@ import {
   import { usePostHog } from 'posthog-js/react'
   import config from "@/lib/config";
   import useProjectStore from "@/state/projectStore";
+import AddAuthCredentials from "@/components/Configuration/AddAuthCredentials";
+import AuthCredentialsTable from "@/components/Configuration/AuthCredentialsTable";
+import useConnectionStrategies from "@/hooks/useConnectionStrategies";
+import { extractAuthMode,extractProvider,extractVertical} from '@panora/shared'
   
   export default function Page() {
+    const {idProject} = useProjectStore();
+
+
     const { data: linkedUsers, isLoading, error } = useLinkedUsers();
     const { data: webhooks, isLoading: isWebhooksLoading, error: isWebhooksError } = useWebhooks();
+    const {data: ConnectionStrategies, isLoading: isConnectionStrategiesLoading,error: isConnectionStategiesError} = useConnectionStrategies(idProject)
   
     const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
     const [open, setOpen] = useState(false);
     const handleClose = () => {
       setOpen(false);
     };
-    const {idProject} = useProjectStore();
   
   
     const posthog = usePostHog()
@@ -72,6 +79,18 @@ import {
     if(isWebhooksError){
       console.log("error fetching webhooks..");
     }
+
+    if(isConnectionStrategiesLoading)
+    {
+      console.log("loading Connection Strategies...");
+    }
+
+    if(isConnectionStategiesError)
+    {
+      console.log("error Fetching connection Strategies!")
+    }
+
+
   
     const mappingTs = mappings?.map(mapping => ({
       standard_object: mapping.ressource_owner_type,
@@ -82,6 +101,19 @@ import {
       destination_field: mapping.slug,
       data_type: mapping.data_type,
     }))
+
+    // console.log(ConnectionStrategies)
+
+    const mappingConnectionStrategies = ConnectionStrategies?.map(cs => ({
+      id_cs : cs.id_connection_strategy,
+      provider_name : extractProvider(cs.type),
+      auth_type: extractAuthMode(cs.type),
+      vertical: extractVertical(cs.type),
+      type: cs.type,
+      status: cs.status
+    }))
+
+    console.log(mappingConnectionStrategies)
   
     return (
       
@@ -98,6 +130,9 @@ import {
                 </TabsTrigger>
                 <TabsTrigger value="webhooks">
                   Webhooks
+                </TabsTrigger>
+                <TabsTrigger value="0auth">
+                  0Auth Credentials
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="linked-accounts" className="space-y-4">
@@ -169,6 +204,24 @@ import {
                     <Separator className="mb-10"/>
                     <CardContent>
                       <WebhooksPage webhooks={webhooks} isLoading={isWebhooksLoading} />
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="0auth" className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
+                  <AddAuthCredentials/>
+                  <Card className="col-span-12">
+                    <CardHeader>
+                      <CardTitle className="text-left">Your Providers</CardTitle>
+                      <CardDescription className="text-left">
+                        Use and setup the credentials of your providers.
+                      </CardDescription>
+                    </CardHeader>
+                    <Separator className="mb-10"/>
+                    <CardContent>
+                      <AuthCredentialsTable mappings={mappingConnectionStrategies} isLoading={false} />
                     </CardContent>
                   </Card>
                 </div>
