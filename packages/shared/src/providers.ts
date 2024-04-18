@@ -1,4 +1,4 @@
-import { ProviderVertical } from "./enum";
+import { ProviderVertical } from './enum';
 
 export const categoriesVerticals = Object.values(ProviderVertical);
 
@@ -10,7 +10,6 @@ export const ACCOUNTING_PROVIDERS = [''];
 export const TICKETING_PROVIDERS = ['zendesk', 'front', 'github', 'jira', 'gorgias'];
 export const MARKETINGAUTOMATION_PROVIDERS = [''];
 export const FILESTORAGE_PROVIDERS = [''];
- 
 
 export function getProviderVertical(providerName: string): ProviderVertical {
   if (CRM_PROVIDERS.includes(providerName)) {

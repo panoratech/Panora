@@ -1,18 +1,28 @@
 {
-  "defaultSeverity": "error",
-  "extends": ["tslint:recommended"],
-  "jsRules": {
-    "no-unused-expression": true
-  },
-  "rules": {
-    "quotemark": [true, "single"],
-    "member-access": [false],
-    "ordered-imports": [false],
-    "max-line-length": [true, 150],
-    "member-ordering": [false],
-    "interface-name": [false],
-    "arrow-parens": false,
-    "object-literal-sort-keys": false
-  },
-  "rulesDirectory": []
-}
+    "extends": ["tslint:recommended"],
+    "jsRules": {
+      "no-unused-expression": true
+    },
+    "rules": {
+      "quotemark": [true, "single"],
+      "member-access": [false],
+      "ordered-imports": [false],
+      "max-line-length": [true, 500],
+      "member-ordering": [false],
+      "interface-name": [false],
+      "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+      "arrow-parens": false,
+      "no-shadowed-variable": false,
+      "object-literal-sort-keys": false,
+      "object-literal-key-quotes": false,
+      "no-trailing-whitespace": false,
+      "trailing-comma": false,
+      "no-console": [true, "log", "info", "warn", "dir", "time", "timeEnd", "trace", "assert", "clear", "count", "debug", "dirxml", "group", "groupCollapsed", "groupEnd", "profile", "profileEnd", "table"],
+      "whitespace": false,
+      "semicolon": false, 
+      "curly": false,
+      "interface-over-type-literal": false
+    },
+    "rulesDirectory": []
+  }
+  

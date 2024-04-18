@@ -1,4 +1,4 @@
-import { AuthStrategy, providersConfig, SoftwareMode } from "./utils";
+import { AuthStrategy, providersConfig, SoftwareMode } from './utils';
 
 export type BasicAuthData = {
     USERNAME: string;
@@ -45,9 +45,9 @@ export function extractSoftwareMode(type: string): string {
     return parts[2];
 }
 
-export function providerToType(providerName: string, vertical: string, authMode: AuthStrategy, softwareMode?: SoftwareMode){
+export function providerToType(providerName: string, vertical: string, authMode: AuthStrategy, softwareMode?: SoftwareMode) {
     const software = softwareMode ? softwareMode.toUpperCase() : SoftwareMode.cloud;
-    switch(authMode){
+    switch(authMode) {
         case AuthStrategy.api_key:
             return `${providerName.toUpperCase()}_${vertical.toUpperCase()}_${software}_API_KEY`
         case AuthStrategy.oauth2:
@@ -62,7 +62,7 @@ export function extractAuthMode(type: string): AuthStrategy {
     const parts = type.split('_');
     const authMode = parts[parts.length - 1];
 
-    switch(authMode){
+    switch(authMode) {
         case 'OAUTH':
             return AuthStrategy.oauth2;
         case 'API_KEY':
@@ -70,7 +70,7 @@ export function extractAuthMode(type: string): AuthStrategy {
         case 'BASIC':
             return AuthStrategy.basic; 
         default:
-            throw new Error("Auth mode not found");
+            throw new Error('Auth mode not found');
     }
 }
 
@@ -92,7 +92,7 @@ export function needsSubdomain(provider: string, vertical: string): boolean {
    
     const authBaseUrlStartsWithSlash = providerConfig.urls.authBaseUrl!.startsWith('/');
     const apiUrlStartsWithSlash = providerConfig.urls.apiUrl!.startsWith('/');
-    const apiUrlIsBlank = providerConfig.urls.apiUrl! == "";
+    const apiUrlIsBlank = providerConfig.urls.apiUrl! === '';
 
     return authBaseUrlStartsWithSlash || apiUrlStartsWithSlash || apiUrlIsBlank;
 }

@@ -1,5 +1,5 @@
-import { OAuth2AuthData, providerToType } from "./envConfig";
-import { AuthStrategy, providersConfig, ProviderConfig } from "./utils";
+import { OAuth2AuthData, providerToType } from './envConfig';
+import { AuthStrategy, providersConfig, ProviderConfig } from './utils';
 
 interface AuthParams {
   projectId: string;
@@ -26,12 +26,12 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   const encodedRedirectUrl = encodeURIComponent(`${apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
 
-  console.log("State : ", JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
-  console.log("encodedRedirect URL : ", encodedRedirectUrl);
+  // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
+  // console.log('encodedRedirect URL : ', encodedRedirectUrl);
 
-  //const vertical = findProviderVertical(providerName);
+  // const vertical = findProviderVertical(providerName);
   if (vertical == null) {
-    throw new Error("vertical is null");
+    throw new Error('vertical is null');
   }
 
   const config = providersConfig[vertical.toLowerCase()][providerName];
@@ -59,7 +59,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   }
 };
 
-type HandleOAuth2Url = {
+interface HandleOAuth2Url {
   providerName: string;
   vertical: string;
   authStrategy: AuthStrategy;
@@ -87,8 +87,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
-  const data_ = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
-  const data = await data_.json() as OAuth2AuthData;
+  const DATA = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
+  const data = await DATA.json() as OAuth2AuthData;
 
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new Error(`No client id for type ${type}`)
@@ -98,7 +98,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   if(!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
 
-  //construct the baseAuthUrl based on the fact that client may use custom subdomain
+  // construct the baseAuthUrl based on the fact that client may use custom subdomain
   const BASE_URL: string = data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
 
   if (!baseUrl || !BASE_URL) {
@@ -108,7 +108,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // Default URL structure
   let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
-  const providersWithoutScopes = ["pipedrive", "clickup", "aha", "freeagent", "teamwork", "attio", "close", "teamleader", 'getresponse']
+  const providersWithoutScopes = ['pipedrive', 'clickup', 'aha', 'freeagent', 'teamwork', 'attio', 'close', 'teamleader', 'getresponse']
 
   // Adding scope for providers that require it, except for 'pipedrive'
   if (!providersWithoutScopes.includes(providerName) ) {
@@ -117,26 +117,26 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   // Special cases for certain providers
   switch (providerName) {
-    case "zoho":
-      params += "&response_type=code&access_type=offline";
+    case 'zoho':
+      params += '&response_type=code&access_type=offline';
       break;
-    case "jira":
-    case "jira_service_mgmt":
+    case 'jira':
+    case 'jira_service_mgmt':
       params = `audience=api.atlassian.com&${params}&prompt=consent`;
       break;
-    case "gitlab":
-      params += "&code_challenge=&code_challenge_method=";
+    case 'gitlab':
+      params += '&code_challenge=&code_challenge_method=';
       break;
-    case "gorgias":
+    case 'gorgias':
       params = `&response_type=code&nonce=${randomString()}`;
       break;
     default:
       // For most providers, response_type=code is common
-      params += "&response_type=code";
+      params += '&response_type=code';
   }
 
   const finalAuthUrl = `${BASE_URL}?${params}`;
-  console.log("Final Authentication : ", finalAuthUrl);
+  // console.log('Final Authentication : ', finalAuthUrl);
   return finalAuthUrl;
 }
 
