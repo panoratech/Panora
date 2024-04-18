@@ -16,6 +16,23 @@ We made a docker file that builds Panora from sources, specifically to help you 
 
 <Step title="Copy env variables">```bash cp .env.example .env ```</Step>
 
+<Step title="Rules for env variables"> 
+1. You don't need Stytch variables if you selfhost, it's only used in cloud version of Panora so you can discard the stytch variables.
+2. To provide 3rd party variables you have the option to manage a 3rd party oAuth app by yourself by setting the credentials as such:
+
+(You must create by hand inside the 3rd party a custom oAuth2 app and paste the credentials using the following form)
+
+`PROVIDER_VERTICAL_SOFTWAREMODE_ATTRIBUTE`
+where
+PROVIDER is any 3rd party name
+VERTICAL is for example { CRM, TICKETING, MARKETINGAUTOMATION, ...}
+SOFTWAREMODE is { CLOUD, ONPREMISE }
+ATTRIBUTE is for example { CLIENT_ID, CLIENT_SECRET, SUBDOMAIN, ... }
+
+i.e `HUBSPOT_CRM_CLOUD_CLIENT_ID`
+
+</Step>
+
 <Step title="Removed previously installed dependencies">
   ```bash rm -rf node_modules .pnpm-store ./packages/api/dist
   ./packages/api/node_modules ./apps/webapp/node_modules
