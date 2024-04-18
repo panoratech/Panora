@@ -11,6 +11,7 @@
       "member-ordering": [false],
       "interface-name": [false],
       "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+      "array-type": false,
       "arrow-parens": false,
       "no-shadowed-variable": false,
       "object-literal-sort-keys": false,

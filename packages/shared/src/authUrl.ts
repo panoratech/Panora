@@ -40,7 +40,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   }
   const authStrategy = config.authStrategy!;
 
-  console.log(authStrategy)
+  // console.log(authStrategy)
 
   switch (authStrategy) {
     case AuthStrategy.oauth2:
@@ -92,12 +92,11 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const DATA = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
   const data = await DATA.json() as OAuth2AuthData;
 
-  console.log("Fetched Data ", JSON.stringify(data))
+  // console.log("Fetched Data ", JSON.stringify(data))
 
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new Error(`No client id for type ${type}`)
   const scopes = data.SCOPE
-
 
   const { urls: urls } = config;
   const { authBaseUrl: baseUrl } = urls;

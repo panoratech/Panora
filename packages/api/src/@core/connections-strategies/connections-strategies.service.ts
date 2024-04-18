@@ -13,7 +13,6 @@ import {
 import { SoftwareMode } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 
-
 export type OAuth = {
   CLIENT_ID: string;
   CLIENT_SECRET: string;
@@ -29,14 +28,14 @@ export class ConnectionsStrategiesService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   async isCustomCredentials(projectId: string, type: string) {
     const res = await this.prisma.connection_strategies.findFirst({
       where: {
         id_project: projectId,
         type: type,
-        status: true
+        status: true,
       },
     });
     if (!res) return false;
@@ -49,16 +48,14 @@ export class ConnectionsStrategiesService {
     attributes: string[],
     values: string[],
   ) {
-
     const checkCSDuplicate = await this.prisma.connection_strategies.findFirst({
       where: {
         id_project: projectId,
         type: type,
       },
     });
-    if (checkCSDuplicate) throw new Error('The Connection Strategy already exists!');
-
-
+    if (checkCSDuplicate)
+      throw new Error('The Connection Strategy already exists!');
 
     const cs = await this.prisma.connection_strategies.create({
       data: {
@@ -173,7 +170,7 @@ export class ConnectionsStrategiesService {
     let attributes: string[] = [];
     switch (authStrategy) {
       case AuthStrategy.oauth2:
-        attributes = ['client_id', 'client_secret', "scope"];
+        attributes = ['client_id', 'client_secret', 'scope'];
         if (needsSubdomain(provider, vertical)) {
           attributes.push('subdomain');
         }
@@ -223,7 +220,9 @@ export class ConnectionsStrategiesService {
           CLIENT_SECRET: this.configService.get<string>(
             `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_CLIENT_SECRET`,
           ),
-          SCOPE: providersConfig[vertical.toLowerCase()][provider.toLowerCase()].scopes
+          SCOPE:
+            providersConfig[vertical.toLowerCase()][provider.toLowerCase()]
+              .scopes,
         };
         if (needsSubdomain(provider, vertical)) {
           data = {
@@ -307,15 +306,13 @@ export class ConnectionsStrategiesService {
     try {
       return await this.prisma.connection_strategies.findMany({
         where: {
-          id_project: projectId
-        }
+          id_project: projectId,
+        },
       });
     } catch (error) {
-      throw new Error("Connection Strategies for projectID is not found!")
+      throw new Error('Connection Strategies for projectID is not found!');
     }
   }
-
-
 
   // update connection strategy
   async updateConnectionStrategy(
@@ -336,7 +333,7 @@ export class ConnectionsStrategiesService {
           id_connection_strategy: id_cs,
         },
         data: {
-          status: status
+          status: status,
         },
       });
 
@@ -361,25 +358,20 @@ export class ConnectionsStrategiesService {
         const value_ = await this.prisma.cs_values.updateMany({
           where: {
             id_cs_attribute: id_cs_attribute,
-
           },
           data: {
-            value: value
-          }
+            value: value,
+          },
         });
       }
-      return cs
-    }
-    catch (error) {
-      throw new Error("Update Failed");
+      return cs;
+    } catch (error) {
+      throw new Error('Update Failed');
     }
   }
 
-
   // Delete connection strategy
-  async deleteConnectionStrategy(
-    id_cs: string,
-  ) {
+  async deleteConnectionStrategy(id_cs: string) {
     try {
       const cs = await this.prisma.connection_strategies.findFirst({
         where: {
@@ -388,59 +380,52 @@ export class ConnectionsStrategiesService {
       });
       if (!cs) throw new Error('No connection strategies found !');
 
-
       const { id_cs_entity } = await this.prisma.cs_entities.findFirst({
         where: {
           id_connection_strategy: id_cs,
         },
       });
 
-      const attributes = await this.prisma.cs_attributes.findMany(
-        {
-          where: {
-            id_cs_entity: id_cs_entity
-          }
-        }
-      )
+      const attributes = await this.prisma.cs_attributes.findMany({
+        where: {
+          id_cs_entity: id_cs_entity,
+        },
+      });
 
       // Deleting all attributes' values
       for (let i = 0; i < attributes.length; i++) {
         const attributeObj = attributes[i];
 
-        const deleteValue = await this.prisma.cs_values.deleteMany(
-          {
-            where: {
-              id_cs_attribute: attributeObj.id_cs_attribute
-            }
-          }
-        );
+        const deleteValue = await this.prisma.cs_values.deleteMany({
+          where: {
+            id_cs_attribute: attributeObj.id_cs_attribute,
+          },
+        });
       }
 
       // Delete All Attribute
       const deleteAllAttributes = await this.prisma.cs_attributes.deleteMany({
         where: {
-          id_cs_entity: id_cs_entity
-        }
+          id_cs_entity: id_cs_entity,
+        },
       });
 
       // Delete cs_entity
       const delete_cs_entity = await this.prisma.cs_entities.deleteMany({
         where: {
-          id_connection_strategy: id_cs
-        }
+          id_connection_strategy: id_cs,
+        },
       });
 
       const deleteCS = await this.prisma.connection_strategies.delete({
         where: {
-          id_connection_strategy: id_cs
-        }
-      })
+          id_connection_strategy: id_cs,
+        },
+      });
 
-
-      return deleteCS
-    }
-    catch (error) {
-      throw new Error("Update Failed");
+      return deleteCS;
+    } catch (error) {
+      throw new Error('Update Failed');
     }
   }
 }

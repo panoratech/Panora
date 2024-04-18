@@ -1,7 +1,7 @@
 export enum AuthStrategy {
-  oauth2 = "0Auth2",
-  api_key = "API Key",
-  basic = "Basic Auth"
+  oauth2 = '0Auth2',
+  api_key = 'API Key',
+  basic = 'Basic Auth'
 }
 
 export enum SoftwareMode {
@@ -2208,15 +2208,12 @@ export function findProviderByName(providerName: string): Provider | null {
   return null;
 }
 
-
 export function getLogoURL(providerName: string): string {
-
   const vertical = findProviderVertical(providerName);
   if (vertical !== null) {
     return providersConfig[vertical][providerName].logoPath
   }
 
-  return ""
-
+  return ''
 
 }

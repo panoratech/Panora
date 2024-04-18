@@ -98,7 +98,9 @@ export class ConnectionsStrategiesController {
   @ApiResponse({ status: 201 })
   @Post('delete')
   async deleteConnectionStrategy(@Body() data: DeleteCSDto) {
-    return await this.connectionsStrategiesService.deleteConnectionStrategy(data.id);
+    return await this.connectionsStrategiesService.deleteConnectionStrategy(
+      data.id,
+    );
   }
 
   @ApiOperation({
@@ -109,8 +111,13 @@ export class ConnectionsStrategiesController {
   @ApiResponse({ status: 201 })
   @Post('update')
   async updateConnectionStrategy(@Body() updateData: UpdateCSDto) {
-    const { attributes, id_cs, status, values } = updateData
-    return await this.connectionsStrategiesService.updateConnectionStrategy(id_cs, status, attributes, values);
+    const { attributes, id_cs, status, values } = updateData;
+    return await this.connectionsStrategiesService.updateConnectionStrategy(
+      id_cs,
+      status,
+      attributes,
+      values,
+    );
   }
 
   @ApiOperation({
@@ -120,9 +127,15 @@ export class ConnectionsStrategiesController {
   @ApiBody({ type: ConnectionStrategyCredentials })
   @ApiResponse({ status: 201 })
   @Post('credentials')
-  async getConnectionStrategyCredential(@Body() data: ConnectionStrategyCredentials) {
-    const { attributes, projectId, type } = data
-    return await this.connectionsStrategiesService.getConnectionStrategyData(projectId, type, attributes);
+  async getConnectionStrategyCredential(
+    @Body() data: ConnectionStrategyCredentials,
+  ) {
+    const { attributes, projectId, type } = data;
+    return await this.connectionsStrategiesService.getConnectionStrategyData(
+      projectId,
+      type,
+      attributes,
+    );
   }
 
   @ApiOperation({
@@ -143,16 +156,17 @@ export class ConnectionsStrategiesController {
 
   @ApiOperation({
     operationId: 'getConnectionStrategiesForProject',
-    summary: 'Fetch All Connection Strategies for Project'
+    summary: 'Fetch All Connection Strategies for Project',
   })
   @ApiResponse({ status: 200 })
   @Get('GetConnectionStrategiesForProject')
   async getConnectionStrategiesForProject(
     @Query('projectId') projectId: string,
   ) {
-    return await this.connectionsStrategiesService.getConnectionStrategiesForProject(projectId)
+    return await this.connectionsStrategiesService.getConnectionStrategiesForProject(
+      projectId,
+    );
   }
-
 
   //TODO: add scopes maybe for a provider ?
 }

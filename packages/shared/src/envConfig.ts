@@ -46,7 +46,6 @@ export function extractSoftwareMode(type: string): string {
     return parts[2];
 }
 
-
 export function providerToType(providerName: string, vertical: string, authMode: AuthStrategy, softwareMode?: SoftwareMode) {
     const software = softwareMode ? softwareMode.toUpperCase() : SoftwareMode.cloud;
     switch (authMode) {
