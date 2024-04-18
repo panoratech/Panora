@@ -11,3 +11,4 @@ redis_data
 .DS_Store
 .pnpm-store/
 .npmrc
+.vscode
