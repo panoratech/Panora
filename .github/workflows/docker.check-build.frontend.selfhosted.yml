@@ -35,7 +35,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           context: .
           file: ./apps/client-ts/Dockerfile
-          push: true
+          push: false
           tags: panoradotdev/frontend-webapp:selfhosted
           build-args: |
             NEXT_PUBLIC_BACKEND_DOMAIN=${{ secrets.NEXT_PUBLIC_BACKEND_DOMAIN }}
