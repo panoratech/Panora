@@ -27,14 +27,10 @@ We made a docker file that builds Panora from sources, specifically to help you 
   .npmrc ```
 </Step>
 
-  <Step title="Start the Dockerfile">
-      ```bash
-        docker compose -f docker-compose.dev.yml up
-      ```
-
+<Step title="Start the Dockerfile">
+  ```bash docker compose -f docker-compose.dev.yml up``` 
+</Step>
 That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
-
-  </Step>
 </Steps>
 
 ## Adding new Integrations ✨
@@ -59,7 +55,7 @@ For the sake of the guide, now on we'll consider adding a 3rd party belonging to
 
 ## 1. Look into the `packages/shared/src/utils.ts` file and check if the provider you want to build has its metadata set inside the `providersConfig` object.
 
-It should be available (if not contact Panora team) with active field set to false meaning the integration has not been built.
+It should be available (if not contact Panora team) with `active` field set to `false` meaning the integration has not been built.
 
 Actually an integration is built in 2 parts :
 
