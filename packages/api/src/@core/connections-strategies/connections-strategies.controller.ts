@@ -125,9 +125,6 @@ export class ConnectionsStrategiesController {
     return await this.connectionsStrategiesService.getConnectionStrategyData(projectId, type, attributes);
   }
 
-
-
-
   @ApiOperation({
     operationId: 'getCredentials',
     summary: 'Fetch credentials info needed for connections',
