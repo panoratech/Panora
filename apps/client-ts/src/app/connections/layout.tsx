@@ -16,11 +16,11 @@ export default function Layout({
 }>) {
   const { session } = useStytchSession();
   const router = useRouter();
-  useEffect(() => {
+  /*useEffect(() => {
     if(config.DISTRIBUTION !== "selfhost" && !session){
       router.replace("/b2c/login");
     }
-  }, [session, router]);
+  }, [session, router]);*/
   
   return (
     <>
