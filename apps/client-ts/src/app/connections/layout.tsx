@@ -15,6 +15,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   const { session } = useStytchSession();
+  console.log("session inside connections page is "+ JSON.stringify(session))
   const router = useRouter();
   useEffect(() => {
     if(config.DISTRIBUTION !== "selfhost" && !session){
