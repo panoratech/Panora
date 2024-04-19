@@ -1,6 +1,6 @@
 {
   "name": "@panora/shared",
-  "version": "4.0.0",
+  "version": "1.0.5",
   "description": "NestJS npm package starter",
   "author": "John Biundo <johnfbiundo@gmail.com>",
   "license": "MIT",
