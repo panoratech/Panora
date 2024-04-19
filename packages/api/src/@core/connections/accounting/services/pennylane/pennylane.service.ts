@@ -152,7 +152,6 @@ export class PennylaneConnectionService
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic Q1JFREVOVElBTFMuQ0xJRU5UX0lEfTokewogICAgICAgICAgICAgICAgICBDUkVERU5USUFMUy5DTElFTlRfU0VDUkVUCiAgICAgICAgICAgICAgfQ==`,
           },
         },
       );
