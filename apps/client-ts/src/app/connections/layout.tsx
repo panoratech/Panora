@@ -18,7 +18,7 @@ export default function Layout({
   const router = useRouter();
   /*useEffect(() => {
     if(config.DISTRIBUTION !== "selfhost" && !session){
-      router.replace("/b2c/login");
+      router.push("/b2c/login");
     }
   }, [session, router]);*/
   
