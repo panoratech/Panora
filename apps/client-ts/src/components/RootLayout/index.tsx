@@ -36,7 +36,11 @@ export const RootLayout = () => {
   const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
   const handlePageChange = (page: string) => {
-    router.push(`${base}/${page}`);
+    if (page) {
+      router.push(`${base}/${page}`);
+    } else {
+      console.error(`Page ${page} is undefined`);
+    }
   };
 
   const lgBreakpoint = 1024; // Tailwind's 'lg' breakpoint

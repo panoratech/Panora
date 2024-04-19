@@ -173,7 +173,7 @@ export async function middleware(request: NextRequest) {
     revokeSession(request, response);
     return response;
   }
-
+  
   const sessionJWT = request.cookies.get("stytch_session_jwt")?.value;
   console.log(sessionJWT)
   if (!sessionJWT) {
