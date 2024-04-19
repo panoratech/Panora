@@ -10,7 +10,7 @@ const OAUTH_TOKEN = 'oauth';
 const MAGIC_LINKS_TOKEN = 'magic_links';
 const RESET_LOGIN = 'login';
 
-const stytchB2C = loadB2CStytch();
+const stytchClient = loadB2CStytch();
 const stytch = loadStytch();
 
 function redirectToSMSMFA(organization: Organization, member: Member, mfa_required: MfaRequired | null ) {
@@ -170,7 +170,22 @@ export async function middleware(request: NextRequest) {
 
   if(request.nextUrl.pathname.startsWith('/api/logout')){
     const response = NextResponse.redirect(new URL("/b2c/login", request.url));
-    revokeSession(request, response);
+    const sessionJWT = request.cookies.get("session")?.value;
+    if (!sessionJWT) {
+      return;
+    }
+    // Delete the session cookie by setting maxAge to 0
+    response.cookies.set("session", "", { maxAge: 0 });
+    // Call Stytch in the background to terminate the session
+    // But don't block on it!
+    stytchClient.sessions
+      .revoke({ session_jwt: sessionJWT })
+      .then(() => {
+        console.log("Session successfully revoked");
+      })
+      .catch((err: any) => {
+        console.error("Could not revoke session", err);
+      });
     return response;
   }
   
@@ -181,7 +196,6 @@ export async function middleware(request: NextRequest) {
   }
 
   // loadStytch() is a helper function for initalizing the Stytch Backend SDK. See the function definition for more details.
-  const stytchClient = loadB2CStytch();
 
   try {
     // Authenticate the session JWT. If an error is thrown the session authentication has failed.
