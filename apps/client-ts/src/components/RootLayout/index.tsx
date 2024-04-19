@@ -9,7 +9,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation';
 import config from '@/lib/config';
 
-
 const useDeviceSize = () => {
 
   const [width, setWidth] = useState(0)
@@ -36,22 +35,22 @@ export const RootLayout = () => {
   const [width, height] = useDeviceSize();
   const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
-  console.log('WEBAPP DOMAIN is '+ base)
-  /*const handlePageChange = (page: string) => {
+  
+  const handlePageChange = (page: string) => {
     console.log(`${base}/${page}`)
     if (page) {
       router.push(`${base}/${page}`);
     } else {
       console.error(`Page ${page} is undefined`);
     }
-  };*/
+  };
 
   const lgBreakpoint = 1024; // Tailwind's 'lg' breakpoint
 
   return (
     <div>
       {width < lgBreakpoint ? (
-        <SmallNav/>
+        <SmallNav onLinkClick={handlePageChange} />
       ) : (
         <div className='items-center hidden lg:flex lg:flex-col border-r fixed left-0 bg-opacity-90 backdrop-filter backdrop-blur-lg w-[200px] h-screen'>
           <div className='flex lg:flex-col items-center py-4 space-y-4'>
@@ -63,6 +62,7 @@ export const RootLayout = () => {
             <TeamSwitcher className='w-40 ml-3' />
             <MainNav
               className='flex lg:flex-col mx-auto w-[200px] space-y-0'
+              onLinkClick={handlePageChange}
             />
             {
               config.DISTRIBUTION == "managed" && 
