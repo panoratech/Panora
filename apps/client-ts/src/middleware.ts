@@ -170,12 +170,12 @@ export async function middleware(request: NextRequest) {
 
   if(request.nextUrl.pathname.startsWith('/api/logout')){
     const response = NextResponse.redirect(new URL("/b2c/login", request.url));
-    const sessionJWT = request.cookies.get("session")?.value;
+    const sessionJWT = request.cookies.get("stytch_session_jwt")?.value;
     if (!sessionJWT) {
       return;
     }
     // Delete the session cookie by setting maxAge to 0
-    response.cookies.set("session", "", { maxAge: 0 });
+    response.cookies.set("stytch_session_jwt", "", { maxAge: 0 });
     // Call Stytch in the background to terminate the session
     // But don't block on it!
     stytchClient.sessions
