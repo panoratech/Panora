@@ -1,5 +1,16 @@
 # @panora/embedded-card-react
 
+## 1.1.0
+
+### Minor Changes
+
+- b045cdf: updates
+
+### Patch Changes
+
+- Updated dependencies [b045cdf]
+  - @panora/shared@1.1.0
+
 ## 8.0.2
 
 ### Patch Changes
