@@ -34,7 +34,9 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       JWT_SECRET: ${JWT_SECRET}
-      REDIS_HOST: redis
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PASS: ${REDIS_PASS}
+      REDIS_PORT: ${REDIS_PORT}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}
       HUBSPOT_CRM_CLOUD_CLIENT_SECRET: ${HUBSPOT_CRM_CLOUD_CLIENT_SECRET}
@@ -121,8 +123,9 @@ services:
   redis:
     image: valkey/valkey:7.2-alpine
     container_name: 'Redis'
+    command: valkey-server --requirepass ${REDIS_PASS}
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT}:${REDIS_PORT}'
     volumes:
       - ./redis-data:/data
     networks:
