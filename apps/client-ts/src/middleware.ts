@@ -189,7 +189,7 @@ export async function middleware(request: NextRequest) {
     return response;
   }
   
-  /*const sessionJWT = request.cookies.get("stytch_session_jwt")?.value;
+  const sessionJWT = request.cookies.get("stytch_session_jwt")?.value;
   console.log(sessionJWT)
   if (!sessionJWT) {
     return NextResponse.redirect(new URL("/b2c/login", request.url));
@@ -203,7 +203,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   } catch (e) {
     return NextResponse.redirect(new URL("/b2c/login", request.url));
-  }*/
+  }
 
   /*const sessionJWT = request.cookies.get("session")?.value;
 
