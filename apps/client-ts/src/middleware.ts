@@ -169,7 +169,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if(request.nextUrl.pathname.startsWith('/api/logout')){
-    const response = NextResponse.redirect(new URL("/auth/login", request.url));
+    const response = NextResponse.redirect(new URL("/b2c/login", request.url));
     revokeSession(request, response);
     return response;
   }
