@@ -11,13 +11,13 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { session } = useStytchSession();
+  const { session,isInitialized } = useStytchSession();
   const router = useRouter();
   useEffect(() => {
-    if (!session) {
+    if (isInitialized && !session) {
       router.replace("/b2c/login");
     }
-  }, [session, router]);
+  }, [session, isInitialized, router]);
   console.log('WEBAPP DOMAIN is '+ process.env.NEXT_PUBLIC_WEBAPP_DOMAIN)
   
   return (

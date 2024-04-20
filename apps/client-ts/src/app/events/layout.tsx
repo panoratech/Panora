@@ -18,10 +18,10 @@ export default function Layout({
   const router = useRouter();
   useEffect(() => {
 
-    if(config.DISTRIBUTION !== "selfhost" && !session){
+    if(config.DISTRIBUTION !== "selfhosted" && isInitialized && !session){
       router.replace("/b2c/login");
     }
-  }, [session, router]);
+  }, [session,isInitialized, router]);
   
   return (
     <>

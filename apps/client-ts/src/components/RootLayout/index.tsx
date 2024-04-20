@@ -65,7 +65,7 @@ export const RootLayout = () => {
               onLinkClick={handlePageChange}
             />
             {
-              config.DISTRIBUTION == "managed" && 
+              config.DISTRIBUTION === "managed" && 
               (
                 <div className='ml-auto flex lg:flex-col items-center space-x-4 w-full'>
                   <UserNav />
