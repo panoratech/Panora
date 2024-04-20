@@ -190,7 +190,7 @@ export async function middleware(request: NextRequest) {
   }
   
   const sessionJWT = request.cookies.get("stytch_session_jwt")?.value;
-  console.log(sessionJWT)
+  //console.log(sessionJWT)
   if (!sessionJWT) {
     return NextResponse.redirect(new URL("/b2c/login", request.url));
   }

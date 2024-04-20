@@ -18,8 +18,7 @@ export default function Layout({
       router.replace("/b2c/login");
     }
   }, [session, isInitialized, router]);
-  console.log('WEBAPP DOMAIN is '+ process.env.NEXT_PUBLIC_WEBAPP_DOMAIN)
-  
+  //console.log('WEBAPP DOMAIN is '+ process.env.NEXT_PUBLIC_WEBAPP_DOMAIN)
   return (
     <>
         <RootLayout/>

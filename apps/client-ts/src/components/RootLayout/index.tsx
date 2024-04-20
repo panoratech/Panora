@@ -37,7 +37,7 @@ export const RootLayout = () => {
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
   
   const handlePageChange = (page: string) => {
-    console.log(`${base}/${page}`)
+    //console.log(`${base}/${page}`)
     if (page) {
       router.push(`${base}/${page}`);
     } else {
