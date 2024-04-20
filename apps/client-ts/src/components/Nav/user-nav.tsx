@@ -59,7 +59,7 @@ export function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuGroup>
-          <Link href={"/profile"}>
+          <Link href={"/b2c/profile"}>
             <DropdownMenuItem>
               Profile
             </DropdownMenuItem>
