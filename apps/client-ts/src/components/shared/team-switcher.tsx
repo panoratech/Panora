@@ -189,8 +189,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             <CommandList>
               <CommandGroup>
                 {
-                  config.DISTRIBUTION == "managed" && (
-                    <h4>USER TO DISPLAY</h4>
+                  config.DISTRIBUTION === "managed" && (
+                    <h4>{profile ? profile.email : "no profile"}</h4>
                   )
                 }
                 <DialogTrigger asChild>

@@ -16,7 +16,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import useProfile from "@/hooks/useProfile";
 import useProfileStore from "@/state/profileStore";
-import { useStytchUser,useStytch } from "@stytch/nextjs";
+import { useStytchUser, useStytch } from "@stytch/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -25,20 +25,27 @@ export function UserNav() {
   const stytch = useStytch();
   const { user } = useStytchUser();
   const router = useRouter();
-  const {data, isLoading} = useProfile(user?.user_id!);
-  if(!data) {
+  const {data, isLoading, isError, error} = useProfile(user?.user_id!);
+  if(isLoading) {
     console.log("loading profiles");
+  }
+  if(data) {
+    console.log("data is there ");
+  }
+  if(isError){
+    console.log('Profiles fetch error: '+ error)
   }
   const { profile, setProfile } = useProfileStore();
 
   useEffect(()=> {
-    if(data && data.length > 0 ){
+    if(data){
+      console.log("data is "+ JSON.stringify(data));
       setProfile({
-        id_user: data[0].id_user,
-        email: data[0].email!,
-        first_name: data[0].first_name,
-        last_name: data[0].last_name,
-        //id_organization: data[0].id_organization as string,
+        id_user: data.id_user,
+        email: data.email!,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        //id_organization: data.id_organization as string,
       })
     }
   }, [data, setProfile]);
@@ -61,7 +68,7 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-xs leading-none text-muted-foreground">
-            {profile ? profile.first_name || profile.email : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No mail found"}
+            {profile ? profile.email || profile.first_name : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No mail found"}
             </p>
           </div>
         </DropdownMenuLabel>
