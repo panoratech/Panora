@@ -16,12 +16,15 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import useProfile from "@/hooks/useProfile";
 import useProfileStore from "@/state/profileStore";
-import { useStytchUser } from "@stytch/nextjs";
+import { useStytchUser,useStytch } from "@stytch/nextjs";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect } from "react";
   
 export function UserNav() {
+  const stytch = useStytch();
   const { user } = useStytchUser();
+  const router = useRouter();
   const {data, isLoading} = useProfile(user?.user_id!);
   if(!data) {
     console.log("loading profiles");
@@ -40,6 +43,10 @@ export function UserNav() {
     }
   }, [data, setProfile]);
 
+  const onLogout = () => {
+    stytch.session.revoke()
+    router.push('/b2c/login');
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -72,11 +79,9 @@ export function UserNav() {
       </DropdownMenuItem>*/}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Link href={"/api/logout"}>
+            <DropdownMenuItem onClick={() => onLogout()} >
             Log out
-          </Link>
-        </DropdownMenuItem>
+            </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
