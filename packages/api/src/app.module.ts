@@ -41,8 +41,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
           SentryModule.forRoot({
             dsn: process.env.SENTRY_DSN,
             debug: true,
-            environment: 'dev',
-            release: 'some_release',
+            environment: `${process.env.ENV}-${process.env.DISTRIBUTION}`,
+            release: `${process.env.DISTRIBUTION}`,
             logLevels: ['debug'],
           }),
         ]
