@@ -107,11 +107,10 @@ model webhooks_reponses {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model connection_strategies {
-  id_connection_strategy String        @id(map: "pk_connection_strategies") @db.Uuid
+  id_connection_strategy String  @id(map: "pk_connection_strategies") @db.Uuid
   status                 Boolean
   type                   String
-  id_project             String?       @db.Uuid
-  cs_entities            cs_entities[]
+  id_project             String? @db.Uuid
 }
 
 model tcg_collections {
@@ -171,9 +170,9 @@ model connections {
   expiration_timestamp DateTime?    @db.Timestamp(6)
   created_at           DateTime     @db.Timestamp(6)
   connection_token     String?
-  vertical             String
   id_project           String       @db.Uuid
   id_linked_user       String       @db.Uuid
+  vertical             String?
   linked_users         linked_users @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_11")
   projects             projects     @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_9")
 
@@ -414,26 +413,21 @@ model crm_users {
 }
 
 model cs_attributes {
-  id_cs_attribute String      @id(map: "pk_ct_attributes") @db.Uuid
+  id_cs_attribute String @id(map: "pk_ct_attributes") @db.Uuid
   attribute_slug  String
   data_type       String
-  id_cs_entity    String      @db.Uuid
-  cs_entities     cs_entities @relation(fields: [id_cs_entity], references: [id_cs_entity], onDelete: NoAction, onUpdate: NoAction, map: "fk_cs_entity")
-  cs_values       cs_values[]
+  id_cs_entity    String @db.Uuid
 }
 
 model cs_entities {
-  id_cs_entity           String                @id(map: "pk_ct_entities") @db.Uuid
-  id_connection_strategy String                @db.Uuid
-  cs_attributes          cs_attributes[]
-  connection_strategies  connection_strategies @relation(fields: [id_connection_strategy], references: [id_connection_strategy], onDelete: NoAction, onUpdate: NoAction, map: "fk_cs_id")
+  id_cs_entity           String @id(map: "pk_ct_entities") @db.Uuid
+  id_connection_strategy String @db.Uuid
 }
 
 model cs_values {
-  id_cs_value     String        @id(map: "pk_ct_values") @db.Uuid
+  id_cs_value     String @id(map: "pk_ct_values") @db.Uuid
   value           String
-  id_cs_attribute String        @db.Uuid
-  cs_attributes   cs_attributes @relation(fields: [id_cs_attribute], references: [id_cs_attribute], onDelete: NoAction, onUpdate: NoAction, map: "fk_cs_attribute")
+  id_cs_attribute String @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments

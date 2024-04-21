@@ -50,7 +50,7 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'attio': {
-      //scopes: 'record_permission:read',
+      // scopes: 'record_permission:read',
       urls: {
         docsUrl: 'https://developers.attio.com/reference',
         authBaseUrl: 'https://app.attio.com/authorize',

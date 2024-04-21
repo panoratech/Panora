@@ -7,7 +7,7 @@
       "quotemark": [true, "single"],
       "member-access": [false],
       "ordered-imports": [false],
-      "max-line-length": [true, 500],
+      "max-line-length": [false],
       "member-ordering": [false],
       "interface-name": [false],
       "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
