@@ -1,5 +1,11 @@
 RELEASE 1.0.0
 
+## 1.2.1
+
+### Patch Changes
+
+- a416cc4: updated scopes
+
 ## 1.2.0
 
 ### Minor Changes
