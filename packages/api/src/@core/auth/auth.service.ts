@@ -116,7 +116,7 @@ export class AuthService {
 
   async login(user: LoginDto) {
     try {
-      /*let foundUser: User;
+      let foundUser: User;
 
       if (user.id_user) {
         foundUser = await this.prisma.users.findUnique({
@@ -134,13 +134,14 @@ export class AuthService {
         throw new UnauthorizedException('user not found inside login function');
       }
 
-      const isEq = await bcrypt.compare(
+      //TODO:
+      /*const isEq = await bcrypt.compare(
         user.password_hash,
         foundUser.password_hash,
       );
 
       if (!isEq) throw new UnauthorizedException('Invalid credentials.');
-
+      */
       const { password_hash, ...userData } = foundUser;
 
       const payload = {
@@ -153,7 +154,7 @@ export class AuthService {
         access_token: this.jwtService.sign(payload, {
           secret: process.env.JWT_SECRET,
         }), // token used to generate api keys
-      };*/
+      };
     } catch (error) {
       handleServiceError(error, this.logger);
     }

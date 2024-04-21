@@ -25,19 +25,10 @@ export function UserNav() {
   const stytch = useStytch();
   const { user } = useStytchUser();
   const router = useRouter();
-  const {data, isLoading, isError, error} = useProfile(user?.user_id!);
-  if(isLoading) {
-    console.log("loading profiles");
-  }
-  if(data) {
-    console.log("data is there ");
-  }
-  if(isError){
-    console.log('Profiles fetch error: '+ error)
-  }
+  //const {data, isLoading, isError, error} = useProfile(user?.user_id!);
   const { profile, setProfile } = useProfileStore();
 
-  useEffect(()=> {
+  /*useEffect(()=> {
     if(data){
       console.log("data is "+ JSON.stringify(data));
       setProfile({
@@ -48,7 +39,7 @@ export function UserNav() {
         //id_organization: data.id_organization as string,
       })
     }
-  }, [data, setProfile]);
+  }, [data, setProfile]);*/
 
   const onLogout = () => {
     stytch.session.revoke()
@@ -68,7 +59,7 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-xs leading-none text-muted-foreground">
-            {profile ? profile.email || profile.first_name : isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No mail found"}
+            {profile ? profile.email || profile.first_name : "No profile found"}
             </p>
           </div>
         </DropdownMenuLabel>

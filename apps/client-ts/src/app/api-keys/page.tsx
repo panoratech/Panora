@@ -97,6 +97,9 @@ export default function Page() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     // e.preventDefault(); // Prevent default form submission
+    console.log("user data is => "+ JSON.stringify(profile))
+    console.log("id_user is "+ profile!.id_user)
+    console.log("idProject is "+ idProject)
     mutate({ 
       userId: profile!.id_user,
       projectId: idProject,
