@@ -14,7 +14,11 @@ We made a docker file that builds Panora from sources, specifically to help you 
 
 <Steps>
 
-<Step title="Copy env variables">```bash cp .env.example .env ```</Step>
+<Step title="Copy env variables">
+```bash 
+cp .env.example .env 
+```
+</Step>
 
 <Step title="Rules for env variables"> 
 1. You don't need Stytch variables if you selfhost, it's only used in cloud version of Panora so you can discard the stytch variables.
@@ -22,30 +26,34 @@ We made a docker file that builds Panora from sources, specifically to help you 
 
 (You must create by hand inside the 3rd party a custom oAuth2 app and paste the credentials using the following form)
 
-`PROVIDER_VERTICAL_SOFTWAREMODE_ATTRIBUTE`
-where
-PROVIDER is any 3rd party name
-VERTICAL is for example { CRM, TICKETING, MARKETINGAUTOMATION, ...}
-SOFTWAREMODE is { CLOUD, ONPREMISE }
-ATTRIBUTE is for example { CLIENT_ID, CLIENT_SECRET, SUBDOMAIN, ... }
-
-i.e `HUBSPOT_CRM_CLOUD_CLIENT_ID`
+  `PROVIDER_VERTICAL_SOFTWAREMODE_ATTRIBUTE`
+  where
+  ```
+  PROVIDER is any 3rd party name
+  VERTICAL is for example { CRM, TICKETING, MARKETINGAUTOMATION, ...}
+  SOFTWAREMODE is { CLOUD, ONPREMISE }
+  ATTRIBUTE is for example { CLIENT_ID, CLIENT_SECRET, SUBDOMAIN, ... }
+  ```
+  i.e `HUBSPOT_CRM_CLOUD_CLIENT_ID`
 
 </Step>
 
 <Step title="Removed previously installed dependencies">
-  ```bash rm -rf node_modules .pnpm-store ./packages/api/dist
-  ./packages/api/node_modules ./apps/webapp/node_modules
-  ./apps/frontend_snippet/node_modules ```
+  ```bash 
+  rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
+  ```
 </Step>
 
 <Step title="Mac Users only:">
-  ```bash echo -e "node-linker=hoisted\npackage-import-method=clone-or-copy" >
-  .npmrc ```
+  ```bash 
+  echo -e "node-linker=hoisted\npackage-import-method=clone-or-copy" > .npmrc 
+  ```
 </Step>
 
 <Step title="Start the Dockerfile">
-  ```bash docker compose -f docker-compose.dev.yml up``` 
+  ```bash 
+  docker compose -f docker-compose.dev.yml up
+  ``` 
 </Step>
 That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
 </Steps>
@@ -204,9 +212,11 @@ Check other implementations under `/crm/contacts/services` to fill the core func
 ## 2. Enable your new service
 
 To make sure the service is enabled, dependencies and imports must be added.
-We built a script that does it in seconds.
+We built a script that does it in seconds. You can execute the given command from the root directory of Panora.
 
-`pnpm run validate-connectors --vertical="crm" --objectType="contact"`
+```bash
+cd packages/api && pnpm install && pnpm run validate-connectors --vertical="crm" --objectType="contact"
+```
 
 The script will automatically scan the `/crm/contact/services` folder and detect any new service folder so all dependencies and imports are updated across the codebase.
 
