@@ -11,6 +11,8 @@ import config from '@/lib/config';
 import { useStytchUser } from '@stytch/nextjs';
 import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
+import useProjectStore from '@/state/projectStore';
+import useProjects from '@/hooks/useProjects';
 
 const useDeviceSize = () => {
 
@@ -49,6 +51,15 @@ export const RootLayout = () => {
   }
 
   const { profile, setProfile } = useProfileStore();
+
+  const { idProject, setIdProject } = useProjectStore();
+  const { data : projects, isLoading: isloadingProjects } = useProjects();
+
+  useEffect(()=>{
+    if(projects && projects[0]){      
+      setIdProject(projects[0].id_project);
+    }
+  },[projects, setIdProject])
 
   useEffect(()=> {
     if(data){
