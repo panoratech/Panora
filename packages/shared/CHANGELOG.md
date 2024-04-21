@@ -1,5 +1,11 @@
 RELEASE 1.0.0
 
+## 1.2.0
+
+### Minor Changes
+
+- 9d9cb33: Updated scopes for 3rd parties
+
 ## 1.1.2
 
 ### Patch Changes
