@@ -100,7 +100,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   const { urls: urls } = config;
   const { authBaseUrl: baseUrl } = urls;
-
+ 
   if (!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
 
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
@@ -113,10 +113,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // Default URL structure
   let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
-  const providersWithoutScopes = ['pipedrive', 'clickup', 'aha', 'freeagent', 'teamwork', 'attio', 'close', 'teamleader', 'getresponse']
-
   // Adding scope for providers that require it, except for 'pipedrive'
-  if (!providersWithoutScopes.includes(providerName)) {
+  if (scopes) {
     params += `&scope=${encodeURIComponent(scopes)}`;
   }
 

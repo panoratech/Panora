@@ -9,7 +9,7 @@ export enum SoftwareMode {
 }
 
 export type ProviderConfig = {
-  scopes: string;
+  scopes?: string;
   logoPath: string;
   description: string;
   active?: boolean;
@@ -38,7 +38,7 @@ export type ProvidersConfig = {
 export const providersConfig: ProvidersConfig = {
   'crm': {
     'hubspot': {
-      scopes: 'crm.objects.contacts.read crm.objects.contacts.write crm.schemas.deals.read crm.schemas.deals.write crm.objects.deals.read crm.objects.deals.write crm.objects.companies.read crm.objects.companies.write crm.objects.owners.read settings.users.read settings.users.write settings.users.teams.read settings.users.teams.write',
+      scopes: 'crm.dealsplits.read_write crm.export crm.import crm.lists.read crm.lists.write crm.objects.carts.read crm.objects.carts.write crm.objects.commercepayments.read crm.objects.companies.read crm.objects.companies.write crm.objects.contacts.read crm.objects.contacts.write crm.objects.custom.read crm.objects.custom.write crm.objects.deals.read crm.objects.deals.write crm.objects.feedback_submissions.read crm.objects.goals.read crm.objects.invoices.read crm.objects.line_items.read crm.objects.line_items.write crm.objects.marketing_events.read crm.objects.marketing_events.write crm.objects.orders.read crm.objects.orders.write crm.objects.owners.read crm.objects.quotes.read crm.objects.quotes.write crm.objects.subscriptions.read crm.objects.users.read crm.objects.users.write crm.pipelines.orders.read crm.pipelines.orders.write crm.schemas.carts.read crm.schemas.carts.write crm.schemas.commercepayments.read crm.schemas.companies.read crm.schemas.companies.write crm.schemas.contacts.read crm.schemas.contacts.write crm.schemas.custom.read crm.schemas.deals.read crm.schemas.deals.write crm.schemas.invoices.read crm.schemas.line_items.read crm.schemas.orders.read crm.schemas.orders.write crm.schemas.quotes.read crm.schemas.subscriptions.read',
       urls: {
         docsUrl: 'https://developers.hubspot.com/docs/api/crm/understanding-the-crm',
         authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
@@ -50,7 +50,7 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'attio': {
-      scopes: 'record_permission:read',
+      //scopes: 'record_permission:read',
       urls: {
         docsUrl: 'https://developers.attio.com/reference',
         authBaseUrl: 'https://app.attio.com/authorize',
@@ -74,7 +74,6 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'pipedrive': {
-      scopes: 'Pipedrive_Scope',
       urls: {
         docsUrl: 'https://developers.pipedrive.com/docs/api/v1',
         authBaseUrl: 'https://oauth.pipedrive.com/oauth/authorize',
@@ -112,7 +111,6 @@ export const providersConfig: ProvidersConfig = {
     }, 
     'accelo': {
       scopes: '',
-
       urls: {
         docsUrl: 'https://api.accelo.com/docs/#introduction',
         authBaseUrl: '/oauth2/v0/authorize', 
@@ -158,7 +156,6 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'close': {
-      scopes: '',
       urls: {
         docsUrl: 'https://developer.close.com/',
         authBaseUrl: 'https://app.close.com/oauth2/authorize',
@@ -278,7 +275,6 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'teamleader': {
-      scopes: '',
       urls: {
         docsUrl: 'https://developer.teamleader.eu/#/introduction/ap-what?',
         authBaseUrl: 'https://focus.teamleader.eu/oauth2/authorize',
@@ -290,7 +286,6 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'teamwork': {
-      scopes: '',
       urls: {
         docsUrl: 'https://apidocs.teamwork.com/guides/teamwork/getting-started-with-the-teamwork-com-api',
         authBaseUrl: 'https://www.teamwork.com/launchpad/login',
@@ -409,7 +404,6 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'clickup': {
-      scopes: '',
       urls: {
         docsUrl: 'https://clickup.com/api/',
         apiUrl: 'https://api.clickup.com/v2',
@@ -433,7 +427,6 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'aha': {
-      scopes: '',
       urls: {
         docsUrl: 'https://www.aha.io/api',
         apiUrl: '/api/v1',
@@ -774,7 +767,6 @@ export const providersConfig: ProvidersConfig = {
       active: false,
     },
     'freeagent': {
-      scopes: '',
       urls: {
         docsUrl: 'https://dev.freeagent.com/docs/quick_start',
         apiUrl: 'https://api.freeagent.com/v2',
@@ -906,7 +898,6 @@ export const providersConfig: ProvidersConfig = {
       active: false,
     },
     'getresponse': {
-      scopes: '',
       urls: {
         authBaseUrl: 'https://app.getresponse.com/oauth2_authorize.html',
         docsUrl: 'https://apidocs.getresponse.com/v3',
@@ -2162,7 +2153,7 @@ interface Provider {
     apiUrl: string;
     authBaseUrl?: string | null;
   };
-  scopes: string;
+  scopes?: string;
   logoPath: string;
   description?: string;
 };

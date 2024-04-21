@@ -220,10 +220,18 @@ export class ConnectionsStrategiesService {
           CLIENT_SECRET: this.configService.get<string>(
             `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_CLIENT_SECRET`,
           ),
-          SCOPE:
-            providersConfig[vertical.toLowerCase()][provider.toLowerCase()]
-              .scopes,
         };
+        const scopes =
+          providersConfig[vertical.toLowerCase()][provider.toLowerCase()]
+            .scopes;
+        if (scopes) {
+          data = {
+            ...data,
+            SCOPE:
+              providersConfig[vertical.toLowerCase()][provider.toLowerCase()]
+                .scopes,
+          };
+        }
         if (needsSubdomain(provider, vertical)) {
           data = {
             ...data,
