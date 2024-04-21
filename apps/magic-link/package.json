@@ -1,7 +1,7 @@
 {
   "name": "magic-link",
   "private": true,
-  "version": "0.0.9",
+  "version": "0.0.10",
   "type": "module",
   "engines": {
     "node": ">=20.9.0"
@@ -14,7 +14,7 @@
     "ci": "pnpm run lint && pnpm run build"
   },
   "dependencies": {
-    "@panora/shared": "^1.1.2",
+    "@panora/shared": "^1.2.0",
     "@panora/typescript-sdk": "^1.0.3",
     "@tanstack/react-query": "^5.12.2",
     "api": "workspace:*",
