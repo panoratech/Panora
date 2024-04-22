@@ -43,6 +43,7 @@ export const RootLayout = () => {
 
   const { user } = useStytchUser();
   const {data, isLoading, isError, error} = useProfile(user?.user_id!);
+
   if(isLoading) {
     console.log("loading profiles");
   }
@@ -54,9 +55,9 @@ export const RootLayout = () => {
 
   const { idProject, setIdProject } = useProjectStore();
   
-  const { data : projects, isLoading: isloadingProjects } = useProjectsByUser(profile!.id_user);
+  const { data : projects, isLoading: isloadingProjects } = useProjectsByUser(profile?.id_user!);
 
-  useEffect(()=> {
+  useEffect(() => {
     if(projects && projects[0]){      
       setIdProject(projects[0].id_project);
     }
