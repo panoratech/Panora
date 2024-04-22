@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react';
 import { MainNav } from './../Nav/main-nav';
 import { SmallNav } from './../Nav/main-nav-sm';
