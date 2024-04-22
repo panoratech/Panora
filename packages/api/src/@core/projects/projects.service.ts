@@ -18,6 +18,19 @@ export class ProjectsService {
       handleServiceError(error, this.logger);
     }
   }
+
+  async getProjectsByUser(userId: string) {
+    try {
+      return await this.prisma.projects.findMany({
+        where: {
+          id_user: userId,
+        },
+      });
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
   async createProject(data: CreateProjectDto) {
     try {
       const { id_organization, ...rest } = data;

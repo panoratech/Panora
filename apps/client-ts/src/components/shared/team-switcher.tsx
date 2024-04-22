@@ -51,7 +51,7 @@ import { useEffect, useState } from "react"
 import useProjectStore from "@/state/projectStore"
 import useOrganisationStore from "@/state/organisationStore"
 import useProfileStore from "@/state/profileStore"
-import useProjects from "@/hooks/useProjects"
+import useProjectsByUser from '@/hooks/useProjectsByUser';
 import { Skeleton } from "../ui/skeleton"
 //import useOrganisations from "@/hooks/useOrganisations"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -83,11 +83,12 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   })
 
   //const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
-  const { data : projects, isLoading: isloadingProjects } = useProjects();
 
   const { idProject, setIdProject } = useProjectStore();
   
   const { profile } = useProfileStore();
+
+  const { data : projects, isLoading: isloadingProjects } = useProjectsByUser(profile!.id_user);
 
   
   useEffect(()=>{
