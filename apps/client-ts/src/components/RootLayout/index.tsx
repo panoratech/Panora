@@ -37,38 +37,27 @@ const useDeviceSize = () => {
 
 }
 
-export const RootLayout = async () => {
+export const RootLayout = () => {
   const [width, height] = useDeviceSize();
-  const router = useRouter()
+  const router = useRouter();
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
 
   const { user } = useStytchUser();
-  const {data, isLoading, isError, error} = useProfile(user?.user_id!);
+  const { data, isLoading, isError, error } = useProfile(user?.user_id!);
 
-  if(isLoading) {
+  if (isLoading) {
     console.log("loading profiles");
   }
-  if(isError){
-    console.log('Profiles fetch error: '+ error)
+  if (isError) {
+    console.log('Profiles fetch error: ' + error);
   }
 
   const { setProfile } = useProfileStore();
-
   const { setIdProject } = useProjectStore();
-
   const { setProjects } = useProjectsStore();
 
-  //const { data: projects, isLoading: isLoadingProjects } = useProjectsByUser(user?.user_id!);
-
-  /*useEffect(() => {
-    if(projects && projects[0]){      
-      setIdProject(projects[0].id_project);
-    }
-  },[projects, setIdProject])
-  */
-
   useEffect(() => {
-    if(data) {
+    if (data) {
       // Set profile
       setProfile({
         id_user: data.id_user,
@@ -76,24 +65,23 @@ export const RootLayout = async () => {
         first_name: data.first_name,
         last_name: data.last_name,
       });
-  
+
       // Fetch and set projects
       const fetchProjects = async () => {
         const response = await fetch(`${config.API_URL}/projects/${data.id_user}`);
         const projectsData = await response.json();
-        console.log("PROJECTS FETCHED ARE => "+ JSON.stringify(projectsData))
-        if(projectsData.length > 0) {
+        console.log("PROJECTS FETCHED ARE => " + JSON.stringify(projectsData));
+        if (projectsData.length > 0) {
           setIdProject(projectsData[0]?.id_project);
         }
         setProjects(projectsData as Project[]);
       };
-  
+
       fetchProjects();
     }
-  }, [data, setProfile]); // Make sure to list all used functions and data properties as dependencies
-  
+  }, [data, setProfile, setIdProject, setProjects]); // Updated dependencies
+
   const handlePageChange = (page: string) => {
-    //console.log(`${base}/${page}`)
     if (page) {
       router.push(`${base}/${page}`);
     } else {
