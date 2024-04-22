@@ -13,6 +13,7 @@ import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
 import useProjectsByUser from '@/hooks/useProjectsByUser';
+import useProjectsStore, { Project } from '@/state/projectsStore';
 
 const useDeviceSize = () => {
 
@@ -54,17 +55,19 @@ export const RootLayout = () => {
   const { profile, setProfile } = useProfileStore();
 
   const { idProject, setIdProject } = useProjectStore();
-  
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { data: projects, isLoading: isLoadingProjects } = profile ? useProjectsByUser(profile.id_user) : { data: [], isLoading: false };
 
-  useEffect(() => {
+  const { projects, setProjects } = useProjectsStore();
+
+  //const { data: projects, isLoading: isLoadingProjects } = useProjectsByUser(user?.user_id!);
+
+  /*useEffect(() => {
     if(projects && projects[0]){      
       setIdProject(projects[0].id_project);
     }
   },[projects, setIdProject])
+  */
 
-  useEffect(()=> {
+  useEffect(() => {
     if(data){
       //console.log("data is "+ JSON.stringify(data));
       setProfile({
@@ -76,6 +79,20 @@ export const RootLayout = () => {
       })
     }
   }, [data, setProfile]);
+  
+  useEffect(() => {
+    if(data){
+      const fetchProjects = async () => {
+        if (data) {
+          const response = await fetch(`${config.API_URL}/projects/${data.id_user}`);
+          const projectsData = await response.json();
+          setIdProject(projectsData[0]?.id_project); // Assuming you want to set the first project ID
+          setProjects(projectsData as Project[])
+        }
+     };
+     fetchProjects();
+    }
+  }, [data, setIdProject, setProfile, setProjects]);
 
   
   const handlePageChange = (page: string) => {

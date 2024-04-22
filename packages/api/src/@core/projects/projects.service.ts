@@ -19,11 +19,16 @@ export class ProjectsService {
     }
   }
 
-  async getProjectsByUser(userId: string) {
+  async getProjectsByUser(stytchUserId: string) {
     try {
+      const user = await this.prisma.users.findUnique({
+        where: {
+          id_stytch: stytchUserId,
+        },
+      });
       return await this.prisma.projects.findMany({
         where: {
-          id_user: userId,
+          id_user: user.id_user,
         },
       });
     } catch (error) {
