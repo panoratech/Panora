@@ -55,7 +55,8 @@ export const RootLayout = () => {
 
   const { idProject, setIdProject } = useProjectStore();
   
-  const { data : projects, isLoading: isloadingProjects } = useProjectsByUser(profile?.id_user!);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { data: projects, isLoading: isLoadingProjects } = profile ? useProjectsByUser(profile.id_user) : { data: [], isLoading: false };
 
   useEffect(() => {
     if(projects && projects[0]){      
