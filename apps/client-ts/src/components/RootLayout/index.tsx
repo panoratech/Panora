@@ -52,11 +52,11 @@ export const RootLayout = () => {
     console.log('Profiles fetch error: '+ error)
   }
 
-  const { profile, setProfile } = useProfileStore();
+  const { setProfile } = useProfileStore();
 
-  const { idProject, setIdProject } = useProjectStore();
+  const { setIdProject } = useProjectStore();
 
-  const { projects, setProjects } = useProjectsStore();
+  const { setProjects } = useProjectsStore();
 
   //const { data: projects, isLoading: isLoadingProjects } = useProjectsByUser(user?.user_id!);
 
@@ -68,33 +68,29 @@ export const RootLayout = () => {
   */
 
   useEffect(() => {
-    if(data){
-      //console.log("data is "+ JSON.stringify(data));
+    if(data) {
+      // Set profile
       setProfile({
         id_user: data.id_user,
         email: data.email!,
         first_name: data.first_name,
         last_name: data.last_name,
-        //id_organization: data.id_organization as string,
-      })
-    }
-  }, [data, setProfile]);
+      });
   
-  useEffect(() => {
-    if(data){
+      // Fetch and set projects
       const fetchProjects = async () => {
-        if (data) {
-          const response = await fetch(`${config.API_URL}/projects/${data.id_user}`);
-          const projectsData = await response.json();
-          console.log("PROJECTS FETCHED ARE => "+ JSON.stringify(projectsData))
-          setIdProject(projectsData[0]?.id_project); // Assuming you want to set the first project ID
-          setProjects(projectsData as Project[])
+        const response = await fetch(`${config.API_URL}/projects/${data.id_user}`);
+        const projectsData = await response.json();
+        console.log("PROJECTS FETCHED ARE => "+ JSON.stringify(projectsData))
+        if(projectsData.length > 0) {
+          setIdProject(projectsData[0]?.id_project);
         }
+        setProjects(projectsData as Project[]);
       };
-     fetchProjects();
+  
+      fetchProjects();
     }
-  }, [data, setIdProject, setProfile, setProjects]);
-
+  }, [data]); // Make sure to list all used functions and data properties as dependencies
   
   const handlePageChange = (page: string) => {
     //console.log(`${base}/${page}`)
