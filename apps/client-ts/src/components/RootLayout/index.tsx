@@ -56,16 +56,6 @@ export const RootLayout = async () => {
 
   const { setProjects } = useProjectsStore();
 
-  if(data) {
-    const response = await fetch(`${config.API_URL}/projects/${data.id_user}`);
-    const projectsData = await response.json();
-    console.log("PROJECTS FETCHED ARE => "+ JSON.stringify(projectsData))
-    if(projectsData.length > 0) {
-      setIdProject(projectsData[0]?.id_project);
-    }
-    setProjects(projectsData as Project[]);
-  }
-
   //const { data: projects, isLoading: isLoadingProjects } = useProjectsByUser(user?.user_id!);
 
   /*useEffect(() => {
@@ -86,7 +76,7 @@ export const RootLayout = async () => {
       });
   
       // Fetch and set projects
-      /*const fetchProjects = async () => {
+      const fetchProjects = async () => {
         const response = await fetch(`${config.API_URL}/projects/${data.id_user}`);
         const projectsData = await response.json();
         console.log("PROJECTS FETCHED ARE => "+ JSON.stringify(projectsData))
@@ -96,7 +86,7 @@ export const RootLayout = async () => {
         setProjects(projectsData as Project[]);
       };
   
-      fetchProjects();*/
+      fetchProjects();
     }
   }, [data, setProfile]); // Make sure to list all used functions and data properties as dependencies
   
