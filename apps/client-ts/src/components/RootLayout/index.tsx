@@ -86,10 +86,11 @@ export const RootLayout = () => {
         if (data) {
           const response = await fetch(`${config.API_URL}/projects/${data.id_user}`);
           const projectsData = await response.json();
+          console.log("PROJECTS FETCHED ARE => "+ JSON.stringify(projectsData))
           setIdProject(projectsData[0]?.id_project); // Assuming you want to set the first project ID
           setProjects(projectsData as Project[])
         }
-     };
+      };
      fetchProjects();
     }
   }, [data, setIdProject, setProfile, setProjects]);
