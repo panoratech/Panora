@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "author": "",
   "private": true,
@@ -23,8 +23,8 @@
     "ci": "pnpm run lint && pnpm run build",
     "copy-types-to-shared": "cp ./exports.ts ../shared/index.ts",
     "prisma:seed": "ts-node ./scripts/seed.webapp.ts",
-    "validate-connectors": "node ./scripts/connectorUpdate.js",
-    "prebuild-oauth-connector": "node ./scripts/oauthConnector.js"
+    "validate-connectors": "node --experimental-detect-module ./scripts/connectorUpdate.js",
+    "prebuild-oauth-connector": "node --experimental-detect-module ./scripts/oauthConnector.js"
   },
   "dependencies": {
     "@nestjs/bull": "^10.0.1",

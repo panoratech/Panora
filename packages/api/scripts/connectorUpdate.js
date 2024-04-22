@@ -354,6 +354,5 @@ if (import.meta.url === process.argv[1]) {
 }
 
 const argv = yargs(hideBin(process.argv)).argv;
-
-const baseDir = `../src/${argv.vertical.toLowerCase()}/${argv.object.toLowerCase()}/services`;
-updateObjectTypes(baseDir, argv.object, argv.vertical);
+const baseDir = `../src/${argv.vertical.toLowerCase()}/${argv.objectType.toLowerCase()}/services`;
+updateObjectTypes(baseDir, argv.objectType, argv.vertical);
