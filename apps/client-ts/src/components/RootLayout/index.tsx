@@ -52,34 +52,43 @@ export const RootLayout = () => {
     console.log('Profiles fetch error: ' + error);
   }
 
-  const { setProfile } = useProfileStore();
+  const { profile, setProfile } = useProfileStore();
   const { setIdProject } = useProjectStore();
   const { setProjects } = useProjectsStore();
 
-  useEffect(() => {
+   // Effect for setting profile
+   useEffect(() => {
     if (data) {
-      // Set profile
       setProfile({
         id_user: data.id_user,
         email: data.email!,
         first_name: data.first_name,
         last_name: data.last_name,
       });
+    }
+  }, [data, setProfile]);
 
-      // Fetch and set projects
+  // Effect for fetching projects
+  useEffect(() => {
+    if (profile) {
       const fetchProjects = async () => {
-        const response = await fetch(`${config.API_URL}/projects/${data.id_user}`);
+        const response = await fetch(`${config.API_URL}/projects/${profile.id_user}`);
         const projectsData = await response.json();
         console.log("PROJECTS FETCHED ARE => " + JSON.stringify(projectsData));
-        if (projectsData.length > 0) {
-          setIdProject(projectsData[0]?.id_project);
-        }
         setProjects(projectsData as Project[]);
+        setIdProject(projectsData[0].id_user);
       };
-
       fetchProjects();
     }
-  }, [data, setProfile, setIdProject, setProjects]); // Updated dependencies
+  }, [profile, setIdProject, setProjects]); // Depend on profile.id_user to trigger this effect
+
+  // Handling loading and error
+  if (isLoading) {
+    console.log("loading profiles");
+  }
+  if (isError) {
+    console.error('Profiles fetch error: ' + error);
+  }
 
   const handlePageChange = (page: string) => {
     if (page) {
