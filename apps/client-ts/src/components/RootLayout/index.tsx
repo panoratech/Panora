@@ -71,6 +71,7 @@ export const RootLayout = () => {
   // Effect for fetching projects
   useEffect(() => {
     if (profile) {
+      console.log("profile is => " + JSON.stringify(profile));
       const fetchProjects = async () => {
         const response = await fetch(`${config.API_URL}/projects/${profile.id_user}`);
         const projectsData = await response.json();
