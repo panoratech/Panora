@@ -77,7 +77,9 @@ export const RootLayout = () => {
         const projectsData = await response.json();
         console.log("PROJECTS FETCHED ARE => " + JSON.stringify(projectsData));
         setProjects(projectsData as Project[]);
-        setIdProject(projectsData[0].id_user);
+        if(projectsData.length > 0){
+          setIdProject(projectsData[0].id_user);
+        }
       };
       fetchProjects();
     }
