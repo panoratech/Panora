@@ -59,6 +59,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import config from "@/lib/config"
 import useProjectsStore from "@/state/projectsStore"
+import useProjects from "@/hooks/useProjects"
 
 
 const projectFormSchema = z.object({
@@ -88,8 +89,17 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   //const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
 
   const { idProject, setIdProject } = useProjectStore();
+  const {data: projects} = useProjects();
 
-  const { projects } = useProjectsStore();
+  //const { projects } = useProjectsStore();
+
+  // Effect for setting profile
+  useEffect(() => {
+    if (projects) {
+      setIdProject(projects[0].id_user);
+    }
+  }, [projects, setIdProject]);
+  
 
   if(projects){
     setIsloadingProjects(false);
