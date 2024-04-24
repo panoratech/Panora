@@ -1,5 +1,16 @@
 # run directly from the repo root directory
-# docker build -f ./apps/webapp/Dockerfile.dev .
+
+# docker build -f ./apps/client-vite/Dockerfile.dev . \
+#   --build-arg VITE_STYTCH_PROJECT_ID=test \
+#   --build-arg VITE_STYTCH_SECRET=value2 \
+#   --build-arg VITE_STYTCH_PROJECT_ENV=value3 \
+#   --build-arg VITE_STYTCH_PUBLIC_TOKEN=value4 \
+#   --build-arg VITE_DISTRIBUTION=selfhosted \
+#   --build-arg VITE_BACKEND_DOMAIN=http://localhost:3000 \
+#   --build-arg VITE_MAGIC_LINK_DOMAIN=http://localhost:81 \
+#   --build-arg VITE_WEBAPP_DOMAIN=http://localhost
+
+
 FROM node:20-alpine AS base
 # =======================================================================
 FROM base AS builder
@@ -10,18 +21,31 @@ RUN apk update
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+ARG VITE_STYTCH_PROJECT_ID
+ARG VITE_STYTCH_SECRET
+ARG VITE_STYTCH_PROJECT_ENV
+ARG VITE_STYTCH_PUBLIC_TOKEN
+ARG VITE_DISTRIBUTION 
 ARG VITE_BACKEND_DOMAIN
-ARG VITE_FRONTEND_DOMAIN
-ARG VITE_STYTCH_TOKEN
+ARG VITE_MAGIC_LINK_DOMAIN
+ARG VITE_WEBAPP_DOMAIN
 
-ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
-ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
-ENV VITE_STYTCH_TOKEN="$VITE_STYTCH_TOKEN"
+ENV VITE_STYTCH_PROJECT_ID="$VITE_STYTCH_PROJECT_ID"
+ENV VITE_STYTCH_SECRET="$VITE_STYTCH_SECRET"
+ENV VITE_STYTCH_PROJECT_ENV="$VITE_STYTCH_PROJECT_ENV"
+ENV VITE_STYTCH_PUBLIC_TOKEN="$VITE_STYTCH_PUBLIC_TOKEN"
+
+ENV VITE_DISTRIBUTION="$VITE_DISTRIBUTION"
+ENV VITE_BACKEND_DOMAIN="${VITE_BACKEND_DOMAIN}"
+ENV VITE_MAGIC_LINK_DOMAIN="${VITE_MAGIC_LINK_DOMAIN}"
+ENV VITE_WEBAPP_DOMAIN="${VITE_WEBAPP_DOMAIN}"
 
 RUN corepack enable
+
 
 WORKDIR /app
 RUN pnpm add -g turbo
 
-# Start the Webapp
-CMD cd apps/webapp && pnpm install && pnpm run dev --host
+#WORKDIR /app/apps/client-vite
+# run the ML
+CMD cd apps/client-vite && pnpm install && pnpm run dev --host

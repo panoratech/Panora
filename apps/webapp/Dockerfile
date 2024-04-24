@@ -1,5 +1,5 @@
 # run directly from the repo root directory
-# docker build -f ./apps/webapp/Dockerfile .
+# docker build -f ./apps/client-vite/Dockerfile .
 FROM node:20-alpine AS base
 # =======================================================================
 FROM base AS builder
@@ -14,8 +14,8 @@ RUN corepack enable
 WORKDIR /app
 RUN pnpm add -g turbo
 COPY . .
-RUN turbo prune webapp --docker
-RUN ls -la ./out/full/apps/webapp
+RUN turbo prune client-vite --docker
+RUN ls -la ./out/full/apps/client-vite
 
 # =======================================================================
 # Add lockfile and package.json's of isolated subworkspace
@@ -26,12 +26,26 @@ RUN apk update
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+ARG VITE_STYTCH_PROJECT_ID
+ARG VITE_STYTCH_SECRET
+ARG VITE_STYTCH_PROJECT_ENV
+ARG VITE_STYTCH_PUBLIC_TOKEN
+ARG VITE_DISTRIBUTION 
 ARG VITE_BACKEND_DOMAIN
-ARG VITE_FRONTEND_DOMAIN
-ARG VITE_STYTCH_TOKEN
-ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
-ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
-ENV VITE_STYTCH_TOKEN="$VITE_STYTCH_TOKEN"
+ARG VITE_MAGIC_LINK_DOMAIN
+ARG VITE_WEBAPP_DOMAIN
+
+ENV VITE_STYTCH_PROJECT_ID="$VITE_STYTCH_PROJECT_ID"
+ENV VITE_STYTCH_SECRET="$VITE_STYTCH_SECRET"
+ENV VITE_STYTCH_PROJECT_ENV="$VITE_STYTCH_PROJECT_ENV"
+ENV VITE_STYTCH_PUBLIC_TOKEN="$VITE_STYTCH_PUBLIC_TOKEN"
+
+ENV VITE_DISTRIBUTION="$VITE_DISTRIBUTION"
+ENV VITE_BACKEND_DOMAIN="${VITE_BACKEND_DOMAIN}"
+ENV VITE_MAGIC_LINK_DOMAIN="${VITE_MAGIC_LINK_DOMAIN}"
+ENV VITE_WEBAPP_DOMAIN="${VITE_WEBAPP_DOMAIN}"
+
+
 RUN corepack enable
 
 WORKDIR /app
@@ -44,22 +58,14 @@ RUN pnpm install
 
 # Build the project
 COPY --from=builder ./app/out/full/ .
-RUN pnpm turbo run build --filter=webapp...
+RUN pnpm turbo run build --filter=client-vite...
 
 # ========================================================================
-FROM nginx:stable-alpine as runner
+FROM nginx:1.24-alpine3.17 as runner
 
-#ARG VITE_BACKEND_DOMAIN
-#ARG VITE_FRONTEND_DOMAIN
-#ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
-#ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
-COPY --from=installer ./app/apps/webapp/dist/ /usr/share/nginx/html
+COPY --from=installer ./app/apps/client-vite/dist/ /usr/share/nginx/html
+COPY apps/client-vite/nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN echo "***********************"
-RUN cat /etc/nginx/conf.d/default.conf
-RUN echo "***********************"
-
-COPY apps/webapp/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
