@@ -13,6 +13,7 @@ import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
 import useProjects from '@/hooks/useProjects';
+import useProjectsByUser from '@/hooks/useProjectsByUser';
 
 const useDeviceSize = () => {
 
@@ -40,7 +41,7 @@ export const RootLayout = () => {
   const [width, height] = useDeviceSize();
   const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
-
+  const [userId, setUserId] = useState("");
   const { user } = useStytchUser();
   const {data, isLoading, isError, error} = useProfile(user?.user_id!);
   if(isLoading) {
@@ -53,8 +54,8 @@ export const RootLayout = () => {
   const { profile, setProfile } = useProfileStore();
 
   const { idProject, setIdProject } = useProjectStore();
-  const { data : projects, isLoading: isloadingProjects } = useProjects();
-
+  //const { data : projects, isLoading: isloadingProjects } = useProjects();
+  const {data : projects, isLoading: isloadingProjects} = useProjectsByUser(userId);
   useEffect(()=>{
     if(projects && projects[0]){      
       setIdProject(projects[0].id_project);
@@ -71,6 +72,7 @@ export const RootLayout = () => {
         last_name: data.last_name,
         //id_organization: data.id_organization as string,
       })
+      setUserId(data.id_user);
     }
   }, [data, setProfile]);
 

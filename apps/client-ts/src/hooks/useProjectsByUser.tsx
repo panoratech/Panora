@@ -7,6 +7,9 @@ const useProjectsByUser = (stytchUserId: string) => {
   return useQuery({
     queryKey: ['projects'], 
     queryFn: async (): Promise<Project[]> => {
+      if(stytchUserId === "" || !stytchUserId){
+        return [];
+      }
       const response = await fetch(`${config.API_URL}/projects/${stytchUserId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
