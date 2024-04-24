@@ -69,22 +69,23 @@ export const RootLayout = () => {
   }, [data, setProfile]);
 
   // Effect for fetching projects
-  /*useEffect(() => {
+  useEffect(() => {
     if (profile && profile.id_user) {
       console.log("profile is => " + JSON.stringify(profile));
       const fetchProjects = async () => {
         const response = await fetch(`${config.API_URL}/projects/${profile.id_user}`);
         const projectsData = await response.json();
         console.log("PROJECTS FETCHED ARE => " + JSON.stringify(projectsData));
-        if(projectsData.length > 0){
-          setProjects(projectsData as Project[]);
-          setIdProject(projectsData[0].id_user);
+        const PROJECTS = projectsData as Project[];
+        if(PROJECTS.length > 0){
+          setProjects(PROJECTS);
+          setIdProject(PROJECTS[0].id_user);
         }
       };
       fetchProjects();
     }
   }, [profile, setIdProject, setProjects]); // Depend on profile.id_user to trigger this effect
-  */
+
   // Handling loading and error
   if (isLoading) {
     console.log("loading profiles");
