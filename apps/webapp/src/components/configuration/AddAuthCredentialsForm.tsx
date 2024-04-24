@@ -50,8 +50,6 @@ import { usePostHog } from 'posthog-js/react'
 import useConnectionStrategyAuthCredentialsMutation from '@/hooks/mutations/useConnectionStrategyAuthCredentials'
 import useUpdateConnectionStrategyMutation from '@/hooks/mutations/useUpdateConnectionStrategy'
 
-
-
 const formSchema = z.object({
     provider_name: z.string().min(2, {
         message: "Provider should be selected.",

@@ -156,7 +156,7 @@ importers:
         specifier: ^3.3.2
         version: 3.3.4(react-hook-form@7.50.1)
       '@panora/shared':
-        specifier: workspace:*
+        specifier: ^1.2.1
         version: link:../../packages/shared
       '@radix-ui/react-avatar':
         specifier: ^1.0.4
