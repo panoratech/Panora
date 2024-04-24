@@ -72,7 +72,7 @@ export const RootLayout = () => {
         last_name: data.last_name,
         //id_organization: data.id_organization as string,
       })
-      setUserId(data.id_user);
+      //setUserId(data.id_user);
     }
   }, [data, setProfile]);
 

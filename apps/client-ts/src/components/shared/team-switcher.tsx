@@ -90,25 +90,20 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const { idProject, setIdProject } = useProjectStore();
   
   const { profile } = useProfileStore();
-  const {data : projects, isLoading: isloadingProjects} = useProjectsByUser(userId);
+  const {data : projects, isLoading: isloadingProjects} = useProjectsByUser(profile?.id_user!);
 
   
   useEffect(()=>{
     if(projects && projects[0]){      
       setIdProject(projects[0].id_project);
     }
-    //TODO: display connected user
-    /*if(orgs && orgs[0]){
-      setOrganisationName(orgs[0].name);
-      setIdOrg(orgs[0].id_organization);
-    }*/
   },[projects, setIdProject])
 
-  useEffect(() => {
+  /*useEffect(() => {
     if(profile && profile.id_user){
       setUserId(profile.id_user)
     }
-  }, [profile])
+  }, [profile])*/
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
