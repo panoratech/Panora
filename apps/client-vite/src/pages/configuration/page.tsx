@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Card,
   CardContent,
@@ -29,7 +27,6 @@ import useLinkedUsers from "@/hooks/useLinkedUsers";
 import useFieldMappings from "@/hooks/useFieldMappings";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
-import { LoadingSpinner } from "@/components/Connection/LoadingSpinner";
 import AddWebhook from "@/components/Configuration/AddWebhook";
 import { cn } from "@/lib/utils";
 import { WebhooksPage } from "@/components/Configuration/WebhooksPage";

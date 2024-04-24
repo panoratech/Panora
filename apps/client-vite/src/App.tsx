@@ -17,7 +17,7 @@ import { Toaster } from 'sonner';
 const queryClient = new QueryClient();
 
 function App() {
-  const {profile} = useProfileStore();
+  const { profile } = useProfileStore();
   const posthog = usePostHog()
 
   useEffect(() => {

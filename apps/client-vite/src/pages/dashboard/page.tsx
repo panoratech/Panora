@@ -1,5 +1,3 @@
-'use client';
-
 import { Line, LineChart, ResponsiveContainer} from "recharts";
 import { Overview } from "@/components/Dashboard/overview";
 import { Button } from "@/components/ui/button";

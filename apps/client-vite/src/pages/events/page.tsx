@@ -1,5 +1,3 @@
-'use client';
-
 import EventsTable from "@/components/Events/EventsTable";
 import { Suspense } from 'react'
 

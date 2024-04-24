@@ -1,5 +1,3 @@
-'use client';
-
 import ConnectionTable from "@/components/Connection/ConnectionTable";
 
 export default function ConnectionPage() {

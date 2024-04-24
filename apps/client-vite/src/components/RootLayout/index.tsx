@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react';
 import { MainNav } from './../Nav/main-nav';
 import { SmallNav } from './../Nav/main-nav-sm';
@@ -8,11 +6,8 @@ import TeamSwitcher from './../shared/team-switcher';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
 import config from '@/lib/config';
-import { useStytchUser } from '@stytch/nextjs';
-import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
-import useProjects from '@/hooks/useProjects';
 import useProjectsByUser from '@/hooks/useProjectsByUser';
 
 const useDeviceSize = () => {
@@ -42,14 +37,13 @@ export const RootLayout = () => {
   const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
   const [userId, setUserId] = useState("");
-  const { user } = useStytchUser();
-  const {data, isLoading, isError, error} = useProfile(user?.user_id!);
+  /*const {data, isLoading, isError, error} = useProfile(user?.user_id!);
   if(isLoading) {
     console.log("loading profiles");
   }
   if(isError){
     console.log('Profiles fetch error: '+ error)
-  }
+  }*/
 
   const { profile, setProfile } = useProfileStore();
 
@@ -64,7 +58,7 @@ export const RootLayout = () => {
     }
   },[projects, setIdProject])
 
-  useEffect(() => {
+  /*useEffect(() => {
     if(data){
       //console.log("data is "+ JSON.stringify(data));
       setProfile({
@@ -76,7 +70,7 @@ export const RootLayout = () => {
       })
       setUserId(data.id_user);
     }
-  }, [data, setProfile]);
+  }, [data, setProfile]);*/
 
   
   const handlePageChange = (page: string) => {
