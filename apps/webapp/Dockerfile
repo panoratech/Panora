@@ -1,5 +1,5 @@
 # run directly from the repo root directory
-# docker build -f ./apps/client-vite/Dockerfile .
+# docker build -f ./apps/webapp/Dockerfile .
 FROM node:20-alpine AS base
 # =======================================================================
 FROM base AS builder
@@ -14,8 +14,8 @@ RUN corepack enable
 WORKDIR /app
 RUN pnpm add -g turbo
 COPY . .
-RUN turbo prune client-vite --docker
-RUN ls -la ./out/full/apps/client-vite
+RUN turbo prune webapp --docker
+RUN ls -la ./out/full/apps/webapp
 
 # =======================================================================
 # Add lockfile and package.json's of isolated subworkspace
@@ -58,13 +58,13 @@ RUN pnpm install
 
 # Build the project
 COPY --from=builder ./app/out/full/ .
-RUN pnpm turbo run build --filter=client-vite...
+RUN pnpm turbo run build --filter=webapp...
 
 # ========================================================================
 FROM nginx:1.24-alpine3.17 as runner
 
-COPY --from=installer ./app/apps/client-vite/dist/ /usr/share/nginx/html
-COPY apps/client-vite/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=installer ./app/apps/webapp/dist/ /usr/share/nginx/html
+COPY apps/webapp/nginx.conf /etc/nginx/conf.d/default.conf
 
 
 EXPOSE 80

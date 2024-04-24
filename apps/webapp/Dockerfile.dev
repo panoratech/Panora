@@ -1,6 +1,6 @@
 # run directly from the repo root directory
 
-# docker build -f ./apps/client-vite/Dockerfile.dev . \
+# docker build -f ./apps/webapp/Dockerfile.dev . \
 #   --build-arg VITE_STYTCH_PROJECT_ID=test \
 #   --build-arg VITE_STYTCH_SECRET=value2 \
 #   --build-arg VITE_STYTCH_PROJECT_ENV=value3 \
@@ -46,6 +46,6 @@ RUN corepack enable
 WORKDIR /app
 RUN pnpm add -g turbo
 
-#WORKDIR /app/apps/client-vite
+#WORKDIR /app/apps/webapp
 # run the ML
-CMD cd apps/client-vite && pnpm install && pnpm run dev --host
+CMD cd apps/webapp && pnpm install && pnpm run dev --host
