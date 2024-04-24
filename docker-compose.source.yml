@@ -1,5 +1,5 @@
 # this docker compose is for development purposes.
-# use it to build locally instead of pulling pre-build images from cloud
+# use it to build locally instead of pulling pre-built images from cloud
 
 name: panora
 version: '3.8'
@@ -131,9 +131,9 @@ services:
     networks:
       - backend
       
-  webapp-next:
+  webapp-vite:
     build:
-      dockerfile: ./apps/client-ts/Dockerfile
+      dockerfile: ./apps/client-vite/Dockerfile
       context: ./
       args:
         NEXT_PUBLIC_STYTCH_PROJECT_ID: ${NEXT_PUBLIC_STYTCH_PROJECT_ID}
@@ -146,7 +146,7 @@ services:
         NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
     restart: unless-stopped
     ports:
-      - 80:8090
+      - 80:80
     depends_on:
       - api
     networks:

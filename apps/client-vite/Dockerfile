@@ -1,4 +1,5 @@
 # run directly from the repo root directory
+# docker build -f ./apps/client-vite/Dockerfile .
 FROM node:20-alpine AS base
 # =======================================================================
 FROM base AS builder

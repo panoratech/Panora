@@ -40,9 +40,9 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: ./apps/client-ts/Dockerfile
+          file: ./apps/client-vite/Dockerfile
           push: true
-          tags: panoradotdev/frontend-webapp:selfhosted
+          tags: panoradotdev/client-vite:selfhosted
           build-args: |
             NEXT_PUBLIC_BACKEND_DOMAIN=${{ secrets.NEXT_PUBLIC_BACKEND_DOMAIN }}
             NEXT_PUBLIC_MAGIC_LINK_DOMAIN=${{ secrets.NEXT_PUBLIC_MAGIC_LINK_DOMAIN }}
