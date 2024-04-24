@@ -13,7 +13,6 @@ import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
 import useProjectsByUser from '@/hooks/useProjectsByUser';
-import useProjectsStore from '@/state/projectsStore';
 import useProjects from '@/hooks/useProjects';
 
 const useDeviceSize = () => {
@@ -55,7 +54,6 @@ export const RootLayout = () => {
 
   const { profile, setProfile } = useProfileStore();
   const { setIdProject } = useProjectStore();
-  const { setProjects } = useProjectsStore();
 
    // Effect for setting profile
   useEffect(() => {
