@@ -1,13 +1,5 @@
 import { create } from 'zustand';
-
-export interface Project {
-  id_project: string;
-  name: string;
-  sync_mode: string;
-  pull_frequency: string;
-  redirect_url?: string;
-  id_user: string;
-}
+import { projects as Project } from 'api';
 
 interface ProjectsState {
   projects: Project[] | null;

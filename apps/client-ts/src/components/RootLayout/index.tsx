@@ -13,7 +13,8 @@ import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
 import useProjectsByUser from '@/hooks/useProjectsByUser';
-import useProjectsStore, { Project } from '@/state/projectsStore';
+import useProjectsStore from '@/state/projectsStore';
+import useProjects from '@/hooks/useProjects';
 
 const useDeviceSize = () => {
 
@@ -44,6 +45,7 @@ export const RootLayout = () => {
 
   const { user } = useStytchUser();
   const { data, isLoading, isError, error } = useProfile(user?.user_id!);
+  const {data: projects} = useProjects();
 
   if (isLoading) {
     console.log("loading profiles");
@@ -57,7 +59,7 @@ export const RootLayout = () => {
   const { setProjects } = useProjectsStore();
 
    // Effect for setting profile
-   useEffect(() => {
+  useEffect(() => {
     if (data) {
       setProfile({
         id_user: data.id_user,
@@ -68,8 +70,16 @@ export const RootLayout = () => {
     }
   }, [data, setProfile]);
 
-  // Effect for fetching projects
+  // Effect for setting profile
   useEffect(() => {
+    if (projects) {
+      setProjects(projects);
+      setIdProject(projects[0].id_user);
+    }
+  }, [projects, setIdProject, setProfile, setProjects]);
+  
+  // Effect for fetching projects
+  /*useEffect(() => {
     if (profile && profile.id_user) {
       console.log("profile is => " + JSON.stringify(profile));
       const fetchProjects = async () => {
@@ -85,6 +95,7 @@ export const RootLayout = () => {
       fetchProjects();
     }
   }, [profile, setIdProject, setProjects]); // Depend on profile.id_user to trigger this effect
+  */
 
   // Handling loading and error
   if (isLoading) {
