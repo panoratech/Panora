@@ -9,5 +9,8 @@ apps/magic-link/dist
 apps/client-ts/node_modules
 apps/client-ts/.next
 
+apps/client-vite/node_modules
+apps/client-vite/dist
+
 packages/api/node_modules
 packages/api/dist

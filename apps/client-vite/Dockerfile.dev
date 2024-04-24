@@ -1,5 +1,16 @@
 # run directly from the repo root directory
-# docker build -f ./apps/magic-link/Dockerfile.dev .
+
+# docker build -f ./apps/client-vite/Dockerfile.dev . \
+#   --build-arg VITE_STYTCH_PROJECT_ID=test \
+#   --build-arg VITE_STYTCH_SECRET=value2 \
+#   --build-arg VITE_STYTCH_PROJECT_ENV=value3 \
+#   --build-arg VITE_STYTCH_PUBLIC_TOKEN=value4 \
+#   --build-arg VITE_DISTRIBUTION=selfhosted \
+#   --build-arg VITE_BACKEND_DOMAIN=http://localhost:3000 \
+#   --build-arg VITE_MAGIC_LINK_DOMAIN=http://localhost:81 \
+#   --build-arg VITE_WEBAPP_DOMAIN=http://localhost
+
+
 FROM node:20-alpine AS base
 # =======================================================================
 FROM base AS builder
@@ -31,8 +42,10 @@ ENV VITE_WEBAPP_DOMAIN="${VITE_WEBAPP_DOMAIN}"
 
 RUN corepack enable
 
+
 WORKDIR /app
 RUN pnpm add -g turbo
 
+#WORKDIR /app/apps/client-vite
 # run the ML
 CMD cd apps/client-vite && pnpm install && pnpm run dev --host
