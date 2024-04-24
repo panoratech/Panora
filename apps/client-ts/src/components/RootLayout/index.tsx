@@ -73,7 +73,7 @@ export const RootLayout = () => {
     if (profile && profile.id_user) {
       console.log("profile is => " + JSON.stringify(profile));
       const fetchProjects = async () => {
-        const response = await fetch(`${config.API_URL}/projects/${profile.id_user}`);
+        const response = await fetch(`${config.API_URL}/projects`); //${profile.id_user}
         const projectsData = await response.json();
         console.log("PROJECTS FETCHED ARE => " + JSON.stringify(projectsData));
         const PROJECTS = projectsData as Project[];
