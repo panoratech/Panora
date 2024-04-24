@@ -69,7 +69,7 @@ export const RootLayout = () => {
   }, [data, setProfile]);
 
   // Effect for fetching projects
-  useEffect(() => {
+  /*useEffect(() => {
     if (profile && profile.id_user) {
       console.log("profile is => " + JSON.stringify(profile));
       const fetchProjects = async () => {
@@ -84,7 +84,7 @@ export const RootLayout = () => {
       fetchProjects();
     }
   }, [profile, setIdProject, setProjects]); // Depend on profile.id_user to trigger this effect
-
+  */
   // Handling loading and error
   if (isLoading) {
     console.log("loading profiles");
