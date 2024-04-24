@@ -1,27 +1,23 @@
-import './App.css';
-import { ThemeProvider } from '@/components/theme-provider';
+import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
-import LogsPage from './components/events';
-import ConnectionsPage from './components/connections';
-import TaskPage from './components/events/EventsTable';
+import LogsPage from './pages/events/page';
+import ConnectionsPage from './pages/connections/page';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RootLayout } from './components/root-layout';
-import ConfigurationPage from './components/configuration';
-import ApiKeysPage from './components/api-keys';
-import DashboardPage from './components/dashboard';
+import { RootLayout } from './components/RootLayout/index';
+import ConfigurationPage from './pages/configuration/page';
+import ApiKeysPage from './pages/api-keys/page';
+import DashboardPage from './pages/dashboard/page';
 import useProfileStore from './state/profileStore';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
-import RegisterPage from './routes/auth_.register';
-import LoginPage from './routes/auth_.login';
 import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
 
 function App() {
-  const {profile} = useProfileStore();
+  const { profile } = useProfileStore();
   const posthog = usePostHog()
 
   useEffect(() => {
@@ -30,24 +26,20 @@ function App() {
         profile.id_user,
         { email: profile.email }
       );
-      posthog?.group('company', profile.id_organization)
     }
   }, [posthog, profile])
-  
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+      <QueryClientProvider client={queryClient}>
         <Router>
           <QueryParamProvider adapter={ReactRouter6Adapter}>
             <Routes>
-              <Route path='/auth/register' element={<RegisterPage />} />
-              <Route path='/auth/login' element={<LoginPage />} />
-
+              {/*<Route path='/auth/register' element={<RegisterPage />} />
+              <Route path='/auth/login' element={<LoginPage />} />*/}
               <Route path='/' element={<RootLayout />}>
                   <Route index element={<ConnectionsPage />} />
                   <Route path='/dashboard' element={<DashboardPage />} />
                   <Route path='/logs' element={<LogsPage />} />
-                  <Route path='/tasks' element={<TaskPage />} />
                   <Route path='/configuration' element={<ConfigurationPage />} />
                   <Route path='/connections' element={<ConnectionsPage />} />
                   <Route path='/api-keys' element={<ApiKeysPage />} />
@@ -56,9 +48,8 @@ function App() {
             <Toaster />
           </QueryParamProvider>
         </Router>
-      </ThemeProvider>
     </QueryClientProvider>
-  );
+  )
 }
 
-export default App;
+export default App

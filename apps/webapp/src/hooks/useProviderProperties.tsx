@@ -1,4 +1,4 @@
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { useQuery } from '@tanstack/react-query';
  
 const useProviderProperties = (linkedUserId: string, providerId: string) => {

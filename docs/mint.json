@@ -5,6 +5,11 @@
   "primaryTab": {
     "name": "Home"
   },
+  "analytics": {
+    "posthog": {
+        "apiKey": "phc_WhWJfNPOHAuWVdyTacGxrPa9JW54scnofA9KVEjFcFw"
+      }
+  },
   "api": {
     "baseUrl": "https://api.panora.dev",
     "auth": {
@@ -51,7 +56,7 @@
     },
     {
       "name": "Marketing Automation",
-      "url": "marketing_automation"
+      "url": "marketingautomation"
     },
     {
       "name": "Ticketing",
@@ -111,7 +116,7 @@
     {
       "group": "Marketing Automation",
       "pages": [
-        "marketing_automation/introduction"
+        "marketingautomation/introduction"
       ]
     },
     {

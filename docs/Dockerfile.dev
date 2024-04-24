@@ -1,0 +1,15 @@
+FROM node:20-alpine AS base
+
+# Set pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+RUN pnpm add -g mintlify
+
+WORKDIR /app
+
+# Documentation is served on port 3000.
+EXPOSE 3000
+
+# Run Documentation
+CMD mintlify dev

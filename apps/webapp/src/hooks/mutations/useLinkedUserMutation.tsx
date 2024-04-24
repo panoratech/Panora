@@ -1,4 +1,4 @@
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 interface ILinkedUserDto {
@@ -37,7 +37,7 @@ const useLinkedUserMutation = () => {
         },
         onError: (error) => {
             toast("The creation of linked user has failed !", {
-                description: error.message,
+                description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),

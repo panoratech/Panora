@@ -1,25 +1,25 @@
-# @panora/shared
+RELEASE 1.0.0
 
-## 4.0.0
+## 1.2.1
 
-### Major Changes
+### Patch Changes
 
-- 3f5adb5: updated constants
+- a416cc4: updated scopes
 
-## 3.0.0
+## 1.2.0
 
-### Major Changes
+### Minor Changes
 
-- 0cfef30: readme
+- 9d9cb33: Updated scopes for 3rd parties
 
-## 2.0.0
+## 1.1.2
 
-### Major Changes
+### Patch Changes
 
-- 1245fa3: added static assets
+- 350b121: info package update
 
-## 1.0.0
+## 1.1.1
 
-### Major Changes
+### Patch Changes
 
-- 0606c93: fix
+- cf9cea9: readme update

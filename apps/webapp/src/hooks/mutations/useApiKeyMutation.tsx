@@ -1,4 +1,4 @@
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 
@@ -20,7 +20,7 @@ const useApiKeyMutation = () => {
                 'Content-Type': 'application/json', 
             },
         });
-
+ 
         if (!loginResponse.ok) {
             throw new Error('Failed to login');
         }
@@ -54,7 +54,7 @@ const useApiKeyMutation = () => {
         },
         onError: (error) => {
             toast("Api key generation failed !", {
-                description: error.message,
+                description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),

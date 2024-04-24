@@ -28,6 +28,7 @@ export enum TicketingObject {
     account = 'account',
     tag = 'tag',
     team = 'team',
+    collection = 'collection'
 }
 // Utility function to prepend prefix to enum values
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,12 +1,12 @@
 export enum ProviderVertical {
-    CRM = 'CRM',
-    HRIS = 'HRIS',
-    ATS = 'ATS',
-    Accounting = 'Accounting',
-    Ticketing = 'Ticketing',
-    MarketingAutomation = 'Marketing Automation',
-    FileStorage = 'File Storage',
-    Unknown = 'Unknown',
+    CRM = 'crm',
+    HRIS = 'hris',
+    ATS = 'ats',
+    Accounting = 'accounting',
+    Ticketing = 'ticketing',
+    MarketingAutomation = 'marketingautomation',
+    FileStorage = 'filestorage',
+    Unknown = 'unknown',
 }
 
 export enum CrmProviders {
@@ -14,15 +14,15 @@ export enum CrmProviders {
     ZENDESK = 'zendesk',
     HUBSPOT = 'hubspot',
     PIPEDRIVE = 'pipedrive',
-    FRESHSALES = 'freshsales',
+    ATTIO = 'attio'
 }
-  
+
 export enum TicketingProviders {
     ZENDESK = 'zendesk',
     FRONT = 'front',
     GITHUB = 'github',
     JIRA = 'jira',
-    LINEAR = 'linear',
+    GORGIAS = 'gorgias',
 }
 
 export enum AccountingProviders {
@@ -32,4 +32,3 @@ export enum AccountingProviders {
     FREEAGENT = 'freeagent',
     SAGE = 'sage',
 }
-  

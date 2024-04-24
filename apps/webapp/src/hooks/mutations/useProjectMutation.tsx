@@ -1,10 +1,10 @@
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 
 interface IProDto {
     name: string;
-    id_organization: string;
+    id_user: string; 
 }
 
 const useProjectMutation = () => {
@@ -38,7 +38,7 @@ const useProjectMutation = () => {
         },
         onError: (error) => {
             toast("Project creation has failed !", {
-                description: error.message,
+                description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),

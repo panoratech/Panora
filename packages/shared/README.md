@@ -1,28 +1,25 @@
+<h1 align="center"></h1>
 
-## Package of shared code across the Panora project
+<div align="center">
+  <a href="https://docs.panora.dev/" target="_blank">
+    <img src="./logo.png" width="150" alt="Panora Logo" />
+  </a>
+</div>
 
-It mainly contains all providers metadata (Hubspot, Zendesk etc) and code useful for enabling embedded connections for end-users.
+<h3 align="center">Shared Utils & Functions of Panora</h3>
 
-# authUrl.ts
+<div align="center">
+  <a href="https://nestjs.com" target="_blank">
+    <img src="https://img.shields.io/badge/built%20with-NestJs-red.svg" alt="Built with NestJS">
+  </a>
+</div>
 
-The logic needed for magic-link and embedded-catalog components.
+### Installation
 
-# enum.ts
+1. Clone the repo
+2. Run npm/yarn install
 
-Enums of all providers used.
-
-# provider.ts
-
-Arrays of all providers used.
-
-# standardObjects.ts
-
-All standard objects used by each vertical.
-
-# utils.ts
-
-All providers metadata (logo, name, clientId ...)
-
-# webhookScopes.ts
-
-Scopes used for webhooks.
+```bash
+cd shared
+pnpm install
+```

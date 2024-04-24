@@ -1,4 +1,4 @@
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 
@@ -40,7 +40,7 @@ const useDefineFieldMutation = () => {
         },
         onError: (error) => {
             toast("Field mapping definition failed !", {
-                description: error.message,
+                description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import useOAuth from '@/hooks/useOAuth';
-import { categoriesVerticals, findProviderByName, providersArray } from '@panora/shared';
+import { categoriesVerticals } from '@panora/shared/src/providers';
+import {findProviderByName, providersArray} from '@panora/shared/src/utils';
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
-import config from '@/helpers/config';
 
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
@@ -47,7 +47,8 @@ const ProviderModal = () => {
   
   const { open, isReady } = useOAuth({
     providerName: selectedProvider,
-    returnUrl: config.ML_FRONTEND_URL!,
+    vertical: selectedCategory,
+    returnUrl: "https://google.com", //TODO: handle the redirection URL (let customer put their confetti or success page redirect url ? )
     projectId: linkedUser?.id_project as string,
     linkedUserId: linkedUser?.id_linked_user as string,
     onSuccess: () => console.log('OAuth successful'),

@@ -1,27 +1,31 @@
 import "./global.css";
 import useOAuth from '@/hooks/useOAuth';
 import { useEffect, useState } from 'react';
-import { findProviderVertical, getDescription, providersConfig } from '@panora/shared';
+import { getDescription, providersConfig } from '@panora/shared';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 interface ProviderCardProp {
   name: string;
+  vertical: string;
   projectId: string;
   returnUrl: string;
   linkedUserId: string;
+  optionalApiUrl?: string,
 }
-const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId}: ProviderCardProp) => {
+const PanoraIntegrationCard = ({name, vertical, projectId, returnUrl, linkedUserId, optionalApiUrl}: ProviderCardProp) => {
   const [providerClicked, setProviderClicked] = useState(false);
   const [loading, setLoading] = useState(false)
 
-  const vertical = findProviderVertical(name.toLowerCase())
+  //const vertical = findProviderVertical(name.toLowerCase())
   //if(!projectId || !linkedUserId) return;
 
   const { open, isReady } = useOAuth({
     providerName: name.toLowerCase(),
+    vertical: vertical.toLowerCase(),
     returnUrl: returnUrl,
     projectId: projectId,
     linkedUserId: linkedUserId,
+    optionalApiUrl: optionalApiUrl,
     onSuccess: () => console.log('OAuth successful'),
   });
 
@@ -42,7 +46,7 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId}: Provi
     setLoading(true);
     setProviderClicked(true);
     return;
-  };
+  }; 
 
   const img = providersConfig[vertical!.toLowerCase()][name.toLowerCase()].logoPath;
     
@@ -80,11 +84,11 @@ const PanoraIntegrationCard = ({name, projectId, returnUrl, linkedUserId}: Provi
   )
 };
 
-const PanoraProviderCard = ({name, projectId, returnUrl, linkedUserId}: ProviderCardProp) => {
+const PanoraProviderCard = ({name, vertical, projectId, returnUrl, linkedUserId, optionalApiUrl}: ProviderCardProp) => {
     const queryClient = new QueryClient();
     return (
       <QueryClientProvider client={queryClient}>
-          <PanoraIntegrationCard name={name} projectId={projectId} returnUrl={returnUrl} linkedUserId={linkedUserId}  />
+          <PanoraIntegrationCard name={name} vertical={vertical} projectId={projectId} returnUrl={returnUrl} linkedUserId={linkedUserId} optionalApiUrl={optionalApiUrl}  />
       </QueryClientProvider>
     )
 }

@@ -1,5 +1,5 @@
 import useMagicLinkStore from '@/state/magicLinkStore';
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from "sonner"
 
@@ -41,7 +41,7 @@ const useMagicLinkMutation = () => {
         },
         onError: (error) => {
             toast("Magic link generation failed !", {
-                description: error.message,
+                description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),

@@ -1,4 +1,4 @@
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from "sonner"
 interface IMapTargetFieldDto {
@@ -37,7 +37,7 @@ const useMapFieldMutation = () => {
         },
         onError: (error) => {
             toast("Field mapping failed !", {
-                description: error.message,
+                description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),

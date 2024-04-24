@@ -27,12 +27,10 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
 ARG VITE_BACKEND_DOMAIN
-ARG VITE_ML_FRONTEND_URL
 ARG VITE_FRONTEND_DOMAIN
 
 ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
 ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
-ENV VITE_ML_FRONTEND_URL="$VITE_ML_FRONTEND_URL"
 
 RUN corepack enable
 
@@ -49,7 +47,7 @@ COPY --from=builder ./app/out/full/ .
 RUN pnpm turbo run build --filter=magic-link...
 
 # ========================================================================
-FROM nginx:stable-alpine as runner
+FROM nginx:1.24-alpine3.17 as runner
 
 #ARG VITE_BACKEND_DOMAIN
 #ARG VITE_FRONTEND_DOMAIN

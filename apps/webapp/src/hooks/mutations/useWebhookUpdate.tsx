@@ -1,4 +1,4 @@
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from "sonner"
 
@@ -26,7 +26,7 @@ const useWebhookStatusMutation = () => {
         mutationFn: updateStatusWebhookEndpoint,
         onError: (error) => {
             toast("Webhook endpoint update has failed !", {
-                description: error.message,
+                description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),

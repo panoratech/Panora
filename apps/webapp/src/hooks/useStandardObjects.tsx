@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { entity as Entity } from 'api';
 
 export const useStandardObjects = () => {

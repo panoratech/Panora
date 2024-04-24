@@ -1,6 +1,6 @@
-import { PaginationParams } from '@/types';
-import config from '@/utils/config';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { PaginationParams } from '@/lib/types';
+import config from '@/lib/config';
+import { useQuery } from '@tanstack/react-query';
 import { events as Event } from 'api';
 
 const fetchEvents = async (params: PaginationParams): Promise<Event[]> => {
@@ -21,7 +21,6 @@ const useEvents = (params: PaginationParams) => {
   return useQuery({
     queryKey: ['events', { page: params.page, pageSize: params.pageSize }],
     queryFn: () => fetchEvents(params),
-    placeholderData: keepPreviousData,
   });
 };
 

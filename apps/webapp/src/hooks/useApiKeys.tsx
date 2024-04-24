@@ -1,4 +1,4 @@
-import config from '@/utils/config';
+import config from '@/lib/config';
 import { useQuery } from '@tanstack/react-query';
 import { api_keys as ApiKey } from 'api';
 
