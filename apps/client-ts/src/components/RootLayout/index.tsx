@@ -70,14 +70,14 @@ export const RootLayout = () => {
 
   // Effect for fetching projects
   useEffect(() => {
-    if (profile) {
+    if (profile && profile.id_user) {
       console.log("profile is => " + JSON.stringify(profile));
       const fetchProjects = async () => {
         const response = await fetch(`${config.API_URL}/projects/${profile.id_user}`);
         const projectsData = await response.json();
         console.log("PROJECTS FETCHED ARE => " + JSON.stringify(projectsData));
-        setProjects(projectsData as Project[]);
         if(projectsData.length > 0){
+          setProjects(projectsData as Project[]);
           setIdProject(projectsData[0].id_user);
         }
       };

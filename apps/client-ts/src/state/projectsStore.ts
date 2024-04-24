@@ -15,7 +15,7 @@ interface ProjectsState {
 }
 
 const useProjectsStore = create<ProjectsState>()((set) => ({
-    projects: null,
+    projects: [],
     setProjects: (projects: Project[]) => set({ projects: projects }),
 }));
 
