@@ -38,6 +38,7 @@ export class TasksService implements OnModuleInit {
           connection.id_connection,
           connection.provider_slug,
           connection.refresh_token,
+          connection.id_project,
           account_url,
         );
       }

@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ICompanyService } from '@crm/company/types';
-import {
-  CrmObject,
-  PipedriveCompanyInput,
-  PipedriveCompanyOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -12,6 +8,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { PipedriveCompanyInput, PipedriveCompanyOutput } from './types';
 
 @Injectable()
 export class PipedriveService implements ICompanyService {
@@ -36,10 +33,11 @@ export class PipedriveService implements ICompanyService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/organizations`,
+        `${connection.account_url}/organizations`,
         JSON.stringify(companyData),
         {
           headers: {
@@ -75,19 +73,17 @@ export class PipedriveService implements ICompanyService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
-      const resp = await axios.get(
-        `https://api.pipedrive.com/v1/organizations`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const resp = await axios.get(`${connection.account_url}/organizations`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
 
       return {
         data: resp.data.data,

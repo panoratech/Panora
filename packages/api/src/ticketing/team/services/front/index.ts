@@ -32,10 +32,11 @@ export class FrontService implements ITeamService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 
-      const resp = await axios.get('https://api2.frontapp.com/teams', {
+      const resp = await axios.get(`${connection.account_url}/teams`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

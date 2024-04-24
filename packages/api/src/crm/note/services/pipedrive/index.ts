@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { INoteService } from '@crm/note/types';
-import {
-  CrmObject,
-  PipedriveNoteInput,
-  PipedriveNoteOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { PipedriveNoteInput, PipedriveNoteOutput } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -36,10 +33,11 @@ export class PipedriveService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/notes`,
+        `${connection.account_url}/notes`,
         JSON.stringify(noteData),
         {
           headers: {
@@ -75,9 +73,10 @@ export class PipedriveService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
-      const resp = await axios.get(`https://api.pipedrive.com/v1/notes`, {
+      const resp = await axios.get(`${connection.account_url}/notes`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "description": "",
   "author": "",
   "private": true,
@@ -11,7 +11,7 @@
     "build": "./scripts/pull-database.sh && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "(cd node_modules/@panora/shared && pnpm run build) && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -22,7 +22,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "ci": "pnpm run lint && pnpm run build",
     "copy-types-to-shared": "cp ./exports.ts ../shared/index.ts",
-    "prisma:seed": "ts-node ./scripts/seed.webapp.ts"
+    "prisma:seed": "ts-node ./scripts/seed.webapp.ts",
+    "validate-connectors": "node --experimental-detect-module ./scripts/connectorUpdate.js",
+    "prebuild-oauth-connector": "node --experimental-detect-module ./scripts/oauthConnector.js"
   },
   "dependencies": {
     "@nestjs/bull": "^10.0.1",
@@ -46,6 +48,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.3.1",
     "install": "^0.13.0",
@@ -59,7 +62,9 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "stytch": "^10.5.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "yargs": "^17.7.2",
+    "@panora/shared": "workspace:*"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

@@ -1,4 +1,4 @@
-import { HubspotUserInput, HubspotUserOutput } from '@crm/@utils/@types';
+import { HubspotUserInput, HubspotUserOutput } from './types';
 import {
   UnifiedUserInput,
   UnifiedUserOutput,

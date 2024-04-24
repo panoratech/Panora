@@ -7,10 +7,10 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './@core/tasks/tasks.service';
 import { LoggerModule } from 'nestjs-pino';
 import { HrisModule } from './hris/hris.module';
-import { MarketingAutomationModule } from './marketing-automation/marketing-automation.module';
+import { MarketingAutomationModule } from './marketingautomation/marketingautomation.module';
 import { AtsModule } from './ats/ats.module';
 import { AccountingModule } from './accounting/accounting.module';
-import { FileStorageModule } from './file-storage/file-storage.module';
+import { FileStorageModule } from './filestorage/filestorage.module';
 import { SentryInterceptor, SentryModule } from '@ntegral/nestjs-sentry';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -41,8 +41,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
           SentryModule.forRoot({
             dsn: process.env.SENTRY_DSN,
             debug: true,
-            environment: 'dev',
-            release: 'some_release',
+            environment: `${process.env.ENV}-${process.env.DISTRIBUTION}`,
+            release: `${process.env.DISTRIBUTION}`,
             logLevels: ['debug'],
           }),
         ]
@@ -63,8 +63,9 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     }),
     BullModule.forRoot({
       redis: {
-        host: process.env.REDIS_HOST,
-        port: 6379,
+        host: process.env.REDIS_HOST || 'redis',
+        port: Number(process.env.REDIS_PORT) || 6379,
+        password: process.env.REDIS_PASS,
       },
     }),
   ],

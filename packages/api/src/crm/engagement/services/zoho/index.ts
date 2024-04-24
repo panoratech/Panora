@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IEngagementService } from '@crm/engagement/types';
-import {
-  CrmObject,
-  ZohoEngagementInput,
-  ZohoEngagementOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZohoEngagementInput, ZohoEngagementOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -36,10 +33,11 @@ export class ZohoService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Engagements`,
+        `${connection.account_url}/Engagements`,
         { data: [engagementData] },
         {
           headers: {
@@ -76,12 +74,13 @@ export class ZohoService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Engagements?fields=${fields}`,
+        `${connection.account_url}/Engagements?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

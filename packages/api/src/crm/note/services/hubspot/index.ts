@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { INoteService } from '@crm/note/types';
+import { CrmObject } from '@crm/@utils/@types';
 import {
-  CrmObject,
   HubspotNoteInput,
   HubspotNoteOutput,
-  commonHubspotProperties,
   commonNoteHubspotProperties,
-} from '@crm/@utils/@types';
+} from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -37,13 +36,14 @@ export class HubspotService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
       const dataBody = {
         properties: noteData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/notes`,
+        `${connection.account_url}/objects/notes`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -79,12 +79,13 @@ export class HubspotService implements INoteService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
 
       const commonPropertyNames = Object.keys(commonNoteHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/notes';
+      const baseURL = `${connection.account_url}/objects/notes`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

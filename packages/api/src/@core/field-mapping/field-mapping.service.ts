@@ -6,11 +6,11 @@ import {
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { customPropertiesUrls, getProviderVertical } from '../utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { CrmObject } from '@crm/@utils/@types';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { providersConfig } from '@panora/shared';
 
 @Injectable()
 export class FieldMappingService {
@@ -116,17 +116,26 @@ export class FieldMappingService {
     }
   }
 
-  async getCustomProperties(linkedUserId: string, providerId: string) {
+  async getCustomProperties(
+    linkedUserId: string,
+    providerId: string,
+    vertical: string,
+  ) {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
           provider_slug: providerId.toLowerCase(),
+          vertical: vertical.toLowerCase(),
         },
       });
+      const provider = providersConfig[vertical][providerId.toLowerCase()];
+      //TODO: handle case where apiUrl is == "" or starts with "/"
+      if (!provider.urls.apiUrl || !provider.urls.customPropertiesUrl)
+        throw new Error('proivder urls are invalid');
 
       const resp = await axios.get(
-        customPropertiesUrls[getProviderVertical(providerId)][providerId],
+        provider.urls.apiUrl + provider.urls.customPropertiesUrl,
         {
           headers: {
             'Content-Type': 'application/json',

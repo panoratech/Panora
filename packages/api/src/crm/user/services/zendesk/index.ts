@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IUserService } from '@crm/user/types';
-import {
-  CrmObject,
-  ZendeskUserInput,
-  ZendeskUserOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZendeskUserOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -34,9 +31,10 @@ export class ZendeskService implements IUserService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
-      const resp = await axios.get(`https://api.getbase.com/v2/users`, {
+      const resp = await axios.get(`${connection.account_url}/users`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

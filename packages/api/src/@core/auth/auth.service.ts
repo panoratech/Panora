@@ -13,7 +13,6 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
 import { users as User } from '@prisma/client';
-import { StytchService } from './stytch/stytch.service';
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
@@ -21,7 +20,6 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    private stytchService: StytchService,
     private logger: LoggerService,
   ) {
     this.logger.setContext(AuthService.name);
@@ -30,6 +28,18 @@ export class AuthService {
   async getUsers() {
     try {
       return await this.prisma.users.findMany();
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+  async getUserByStytchId(stytchId: string) {
+    try {
+      return await this.prisma.users.findUnique({
+        where: {
+          id_stytch: stytchId,
+          identification_strategy: 'b2c',
+        },
+      });
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -45,7 +55,7 @@ export class AuthService {
 
   async register(user: CreateUserDto) {
     try {
-      const foundUser = await this.prisma.users.findFirst({
+      /*const foundUser = await this.prisma.users.findFirst({
         where: { email: user.email },
       });
 
@@ -53,19 +63,11 @@ export class AuthService {
         throw new BadRequestException('email already exists');
       }
 
-      const stytchUser = await this.stytchService.passwords.create({
-        email: user.email,
-        password: user.password_hash,
-        name: {
-          first_name: user.first_name,
-          last_name: user.last_name,
-        },
-      });
-
-      const savedUser = await this.createUser(user, stytchUser.user_id);
+      const savedUser = await this.createUser(user);
 
       const { password_hash, ...resp_user } = savedUser;
-      return resp_user;
+      return resp_user;*/
+      return;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -73,7 +75,7 @@ export class AuthService {
 
   async createUser(user: CreateUserDto, id_user?: string) {
     try {
-      const salt = await bcrypt.genSalt();
+      /*const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(user.password_hash, salt);
 
       return await this.prisma.users.create({
@@ -82,12 +84,37 @@ export class AuthService {
           id_user: id_user || uuidv4(),
           password_hash: hashedPassword,
         },
+      });*/
+      return await this.prisma.users.upsert({
+        where: {
+          id_stytch: user.stytch_id_user,
+        },
+        update: {
+          identification_strategy: 'b2c',
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          password_hash: '',
+          created_at: new Date(),
+          id_user: id_user || uuidv4(),
+        },
+        create: {
+          id_stytch: user.stytch_id_user,
+          identification_strategy: 'b2c',
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          password_hash: '',
+          created_at: new Date(),
+          id_user: id_user || uuidv4(),
+        },
       });
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
+  //TODO
   async login(user: LoginDto) {
     try {
       let foundUser: User;
@@ -108,13 +135,14 @@ export class AuthService {
         throw new UnauthorizedException('user not found inside login function');
       }
 
-      const isEq = await bcrypt.compare(
+      //TODO:
+      /*const isEq = await bcrypt.compare(
         user.password_hash,
         foundUser.password_hash,
       );
 
       if (!isEq) throw new UnauthorizedException('Invalid credentials.');
-
+      */
       const { password_hash, ...userData } = foundUser;
 
       const payload = {
@@ -128,17 +156,6 @@ export class AuthService {
           secret: process.env.JWT_SECRET,
         }), // token used to generate api keys
       };
-    } catch (error) {
-      handleServiceError(error, this.logger);
-    }
-  }
-
-  async validateStytchToken(token: string) {
-    try {
-      const { user } = await this.stytchService.oauth.authenticate({
-        token,
-      });
-      return user;
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -192,9 +209,9 @@ export class AuthService {
         );
       }
 
-      if (foundProject.id_organization !== foundUser.id_organization) {
+      /*if (foundProject.id_organization !== foundUser.id_organization) {
         throw new Error('User is not inside the project');
-      }
+      }*/
       // Generate a new API key (use a secure method for generation)
       const { access_token } = await this.generateApiKey(projectId, userId);
       // Store the API key in the database associated with the user

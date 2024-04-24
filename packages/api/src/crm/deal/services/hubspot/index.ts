@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IDealService } from '@crm/deal/types';
-import {
-  CrmObject,
-  HubspotDealInput,
-  HubspotDealOutput,
-  commonDealHubspotProperties,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -13,7 +8,11 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
-
+import {
+  HubspotDealInput,
+  HubspotDealOutput,
+  commonDealHubspotProperties,
+} from './types';
 @Injectable()
 export class HubspotService implements IDealService {
   constructor(
@@ -36,13 +35,14 @@ export class HubspotService implements IDealService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
       const dataBody = {
         properties: dealData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/deals`,
+        `${connection.account_url}/objects/deals`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -79,12 +79,13 @@ export class HubspotService implements IDealService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
 
       const commonPropertyNames = Object.keys(commonDealHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/deals';
+      const baseURL = `${connection.account_url}/objects/deals`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

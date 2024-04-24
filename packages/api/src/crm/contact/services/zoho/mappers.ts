@@ -1,13 +1,10 @@
-import {
-  Address,
-  ZohoContactInput,
-  ZohoContactOutput,
-} from '@crm/@utils/@types';
+import { Address } from '@crm/@utils/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
+import { ZohoContactInput, ZohoContactOutput } from './types';
 
 export class ZohoContactMapper implements IContactMapper {
   desunify(

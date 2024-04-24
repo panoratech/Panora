@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "moduleResolution": "node",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -15,8 +16,8 @@
       "@crm/*": ["src/crm/*"],
       "@hris/*": ["src/hris/*"],
       "@ticketing/*": ["src/ticketing/*"],
-      "@file-storage/*": ["src/file-storage/*"],
-      "@marketing-automation/*": ["src/marketing-automation/*"],
+      "@filestorage/*": ["src/filestorage/*"],
+      "@marketingautomation/*": ["src/marketingautomation/*"],
       "@ats/*": ["src/ats/*"],
       "@accounting/*": ["src/accounting/*"],
     },
@@ -26,6 +27,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    //"moduleResolution": "Bundler"
   }
 }

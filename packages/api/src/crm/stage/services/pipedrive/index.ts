@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IStageService } from '@crm/stage/types';
-import {
-  CrmObject,
-  PipedriveStageInput,
-  PipedriveStageOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { PipedriveStageOutput } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -36,13 +33,14 @@ export class PipedriveService implements IStageService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
       const res = await this.prisma.crm_deals.findUnique({
         where: { id_crm_deal: deal_id },
       });
 
-      const deals = await axios.get(`https://api.pipedrive.com/v1/deals`, {
+      const deals = await axios.get(`${connection.account_url}/deals`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -54,7 +52,7 @@ export class PipedriveService implements IStageService {
       const deal = deals.data.data.find(
         (item) => String(item.id) === res.remote_id,
       );
-      const resp = await axios.get(`https://api.pipedrive.com/v1/stages`, {
+      const resp = await axios.get(`${connection.account_url}/stages`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

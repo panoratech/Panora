@@ -36,11 +36,12 @@ export class FrontService implements IContactService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 
       const resp = await axios.get(
-        `https://api2.frontapp.com/accounts/${remote_account_id}/contacts`,
+        `${connection.account_url}/accounts/${remote_account_id}/contacts`,
         {
           headers: {
             'Content-Type': 'application/json',

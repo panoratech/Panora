@@ -4,9 +4,19 @@ import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ProviderVertical, getProviderVertical } from '@@core/utils/types';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
+import { ProviderVertical } from '@panora/shared';
+import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
+import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
+
+export type StateDataType = {
+  projectId: string;
+  vertical: string;
+  linkedUserId: string;
+  providerName: string;
+  returnUrl: string;
+};
 
 @ApiTags('connections')
 @Controller('connections')
@@ -14,6 +24,8 @@ export class ConnectionsController {
   constructor(
     private readonly crmConnectionsService: CrmConnectionsService,
     private readonly ticketingConnectionsService: TicketingConnectionsService,
+    private readonly accountingConnectionsService: AccountingConnectionsService,
+    private readonly marketingAutomationConnectionsService: MarketingAutomationConnectionsService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
@@ -45,9 +57,10 @@ export class ConnectionsController {
           `No Callback Params found for code, found ${code}`,
         );
 
-      const stateData = JSON.parse(decodeURIComponent(state));
-      const { projectId, linkedUserId, providerName, returnUrl } = stateData;
-      switch (getProviderVertical(providerName.toLowerCase())) {
+      const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
+      const { projectId, vertical, linkedUserId, providerName, returnUrl } =
+        stateData;
+      switch (vertical.toLowerCase()) {
         case ProviderVertical.CRM:
           const zohoLocation_ = zohoLocation ? zohoLocation : '';
           this.crmConnectionsService.handleCRMCallBack(
@@ -61,12 +74,24 @@ export class ConnectionsController {
         case ProviderVertical.ATS:
           break;
         case ProviderVertical.Accounting:
+          this.accountingConnectionsService.handleAccountingCallBack(
+            projectId,
+            linkedUserId,
+            providerName,
+            code,
+          );
           break;
         case ProviderVertical.FileStorage:
           break;
         case ProviderVertical.HRIS:
           break;
         case ProviderVertical.MarketingAutomation:
+          this.marketingAutomationConnectionsService.handleMarketingAutomationCallBack(
+            projectId,
+            linkedUserId,
+            providerName,
+            code,
+          );
           break;
         case ProviderVertical.Ticketing:
           this.ticketingConnectionsService.handleTicketingCallBack(

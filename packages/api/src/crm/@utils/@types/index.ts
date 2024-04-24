@@ -104,60 +104,69 @@ export type ICrmService =
   | ICompanyService;
 
 /* contact */
+/*
 export * from '../../contact/services/freshsales/types';
 export * from '../../contact/services/zendesk/types';
 export * from '../../contact/services/hubspot/types';
 export * from '../../contact/services/zoho/types';
 export * from '../../contact/services/pipedrive/types';
-
+export * from '../../contact/services/attio/types'
+*/
 /* user */
+/*
 export * from '../../user/services/freshsales/types';
 export * from '../../user/services/zendesk/types';
 export * from '../../user/services/hubspot/types';
 export * from '../../user/services/zoho/types';
 export * from '../../user/services/pipedrive/types';
-
+*/
 /* engagement */
+/*
 export * from '../../engagement/services/freshsales/types';
 export * from '../../engagement/services/zendesk/types';
 export * from '../../engagement/services/hubspot/types';
 export * from '../../engagement/services/zoho/types';
 export * from '../../engagement/services/pipedrive/types';
-
+*/
 /* note */
+/*
 export * from '../../note/services/freshsales/types';
 export * from '../../note/services/zendesk/types';
 export * from '../../note/services/hubspot/types';
 export * from '../../note/services/zoho/types';
 export * from '../../note/services/pipedrive/types';
-
+*/
 /* deal */
+/*
 export * from '../../deal/services/freshsales/types';
 export * from '../../deal/services/zendesk/types';
 export * from '../../deal/services/hubspot/types';
 export * from '../../deal/services/zoho/types';
 export * from '../../deal/services/pipedrive/types';
-
+*/
 /* task */
+/*
 export * from '../../task/services/freshsales/types';
 export * from '../../task/services/zendesk/types';
 export * from '../../task/services/hubspot/types';
 export * from '../../task/services/zoho/types';
 export * from '../../task/services/pipedrive/types';
-
+*/
 /* stage */
+/*
 export * from '../../stage/services/freshsales/types';
 export * from '../../stage/services/zendesk/types';
 export * from '../../stage/services/hubspot/types';
 export * from '../../stage/services/zoho/types';
 export * from '../../stage/services/pipedrive/types';
-
+*/
 /* company */
-export * from '../../company/services/freshsales/types';
+/*export * from '../../company/services/freshsales/types';
 export * from '../../company/services/zendesk/types';
 export * from '../../company/services/hubspot/types';
 export * from '../../company/services/zoho/types';
 export * from '../../company/services/pipedrive/types';
+*/
 
 /* engagementType */
 

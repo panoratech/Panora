@@ -33,6 +33,7 @@ export class FrontService implements ITagService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 
@@ -45,7 +46,7 @@ export class FrontService implements ITagService {
         },
       });
 
-      const resp = await axios.get('https://api2.frontapp.com/conversations', {
+      const resp = await axios.get(`${connection.account_url}/conversations`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -33,13 +33,14 @@ export class GithubService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'github',
+          vertical: 'ticketing',
         },
       });
       const dataBody = ticketData;
-      const owner = '';
+      const org = '';
       const repo = '';
       const resp = await axios.post(
-        `https://api.github.com/repos/${owner}/${repo}/issues`,
+        `${connection.account_url}/repos/${org}/${repo}/issues`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -74,11 +75,12 @@ export class GithubService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'github',
+          vertical: 'ticketing',
         },
       });
       const owner = '';
       const repo = '';
-      const resp = await axios.get(`https://api.github.com/repos/issues`, {
+      const resp = await axios.get(`${connection.account_url}/repos/issues`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

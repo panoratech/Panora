@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IDealService } from '@crm/deal/types';
-import {
-  CrmObject,
-  ZendeskDealInput,
-  ZendeskDealOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZendeskDealInput, ZendeskDealOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -35,10 +32,11 @@ export class ZendeskService implements IDealService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
-        `https://api.getbase.com/v2/deals`,
+        `${connection.account_url}/deals`,
         {
           data: dealData,
         },
@@ -77,9 +75,10 @@ export class ZendeskService implements IDealService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
-      const resp = await axios.get(`https://api.getbase.com/v2/deals`, {
+      const resp = await axios.get(`${connection.account_url}/deals`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

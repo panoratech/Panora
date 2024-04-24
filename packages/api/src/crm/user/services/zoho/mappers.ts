@@ -1,4 +1,5 @@
-import { ZohoUserInput, ZohoUserOutput } from '@crm/@utils/@types';
+import { ZohoUserInput, ZohoUserOutput } from './types';
+
 import {
   UnifiedUserInput,
   UnifiedUserOutput,

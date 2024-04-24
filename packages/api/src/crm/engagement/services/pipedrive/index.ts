@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IEngagementService } from '@crm/engagement/types';
-import {
-  CrmObject,
-  PipedriveEngagementInput,
-  PipedriveEngagementOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -12,7 +8,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
-
+import { PipedriveEngagementInput, PipedriveEngagementOutput } from './types';
 @Injectable()
 export class PipedriveService implements IEngagementService {
   constructor(
@@ -38,6 +34,7 @@ export class PipedriveService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
       return;
@@ -89,10 +86,11 @@ export class PipedriveService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
 
-      const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {
+      const resp = await axios.get(`${connection.account_url}/activities`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -127,10 +125,11 @@ export class PipedriveService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
 
-      const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {
+      const resp = await axios.get(`${connection.account_url}/activities`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -165,6 +164,7 @@ export class PipedriveService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
 

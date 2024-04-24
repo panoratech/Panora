@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ICompanyService } from '@crm/company/types';
-import {
-  CrmObject,
-  ZohoCompanyInput,
-  ZohoCompanyOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -12,6 +8,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { ZohoCompanyInput, ZohoCompanyOutput } from './types';
 
 @Injectable()
 export class ZohoService implements ICompanyService {
@@ -36,10 +33,11 @@ export class ZohoService implements ICompanyService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Companys`,
+        `${connection.account_url}/Companys`,
         { data: [companyData] },
         {
           headers: {
@@ -76,12 +74,13 @@ export class ZohoService implements ICompanyService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Companys?fields=${fields}`,
+        `${connection.account_url}/Companys?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

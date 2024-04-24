@@ -32,10 +32,11 @@ export class FrontService implements IUserService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 
-      const resp = await axios.get('https://api2.frontapp.com/teammates', {
+      const resp = await axios.get(`${connection.account_url}/teammates`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

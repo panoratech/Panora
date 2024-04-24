@@ -3,7 +3,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse, CRM_PROVIDERS } from '@@core/utils/types';
+import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
@@ -14,6 +14,7 @@ import { UnifiedUserOutput } from '../types/model.unified';
 import { IUserService } from '../types';
 import { crm_users as CrmUser } from '@prisma/client';
 import { OriginalUserOutput } from '@@core/utils/types/original/original.crm';
+import { CRM_PROVIDERS } from '@panora/shared';
 @Injectable()
 export class SyncService implements OnModuleInit {
   constructor(
@@ -40,15 +41,21 @@ export class SyncService implements OnModuleInit {
   async syncUsers() {
     try {
       this.logger.log(`Syncing users....`);
-      const defaultOrg = await this.prisma.organizations.findFirst({
+      /*const defaultOrg = await this.prisma.organizations.findFirst({
         where: {
           name: 'Acme Inc',
+        },
+      });*/
+
+      const defaultUser = await this.prisma.users.findFirst({
+        where: {
+          email: 'audrey@aubry.io',
         },
       });
 
       const defaultProject = await this.prisma.projects.findFirst({
         where: {
-          id_organization: defaultOrg.id_organization,
+          id_user: defaultUser.id_user,
           name: 'Project 1',
         },
       });
@@ -98,6 +105,7 @@ export class SyncService implements OnModuleInit {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: integrationId,
+          vertical: 'crm',
         },
       });
       if (!connection) {
@@ -131,6 +139,7 @@ export class SyncService implements OnModuleInit {
         sourceObject,
         targetType: CrmObject.user,
         providerName: integrationId,
+        vertical: 'crm',
         customFieldMappings,
       })) as UnifiedUserOutput[];
 

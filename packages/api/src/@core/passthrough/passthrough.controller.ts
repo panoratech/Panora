@@ -27,18 +27,21 @@ export class PassthroughController {
   })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
+  @ApiQuery({ name: 'vertical', required: true, type: String })
   @ApiBody({ type: PassThroughRequestDto })
   @ApiResponse({ status: 200, type: PassThroughResponse })
   @Post()
   async passthroughRequest(
     @Query('integrationId') integrationId: string,
     @Query('linkedUserId') linkedUserId: string,
+    @Query('vertical') vertical: string,
     @Body() requestParams: PassThroughRequestDto,
   ): Promise<PassThroughResponse> {
     return this.passthroughService.sendPassthroughRequest(
       requestParams,
       integrationId,
       linkedUserId,
+      vertical,
     );
   }
 }

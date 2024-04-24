@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse, TICKETING_PROVIDERS } from '@@core/utils/types';
+import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { unify } from '@@core/utils/unification/unify';
@@ -14,6 +14,7 @@ import { UnifiedCommentOutput } from '../types/model.unified';
 import { ICommentService } from '../types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../services/registry.service';
+import { TICKETING_PROVIDERS } from '@panora/shared';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -41,15 +42,21 @@ export class SyncService implements OnModuleInit {
   async syncComments() {
     try {
       this.logger.log(`Syncing comments....`);
-      const defaultOrg = await this.prisma.organizations.findFirst({
+      /*const defaultOrg = await this.prisma.organizations.findFirst({
         where: {
           name: 'Acme Inc',
+        },
+      });*/
+
+      const defaultUser = await this.prisma.users.findFirst({
+        where: {
+          email: 'audrey@aubry.io',
         },
       });
 
       const defaultProject = await this.prisma.projects.findFirst({
         where: {
-          id_organization: defaultOrg.id_organization,
+          id_user: defaultUser.id_user,
           name: 'Project 1',
         },
       });
@@ -108,6 +115,7 @@ export class SyncService implements OnModuleInit {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: integrationId,
+          vertical: 'ticketing',
         },
       });
       if (!connection) {
@@ -139,6 +147,7 @@ export class SyncService implements OnModuleInit {
         sourceObject,
         targetType: TicketingObject.comment,
         providerName: integrationId,
+        vertical: 'ticketing',
         customFieldMappings,
       })) as UnifiedCommentOutput[];
 

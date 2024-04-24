@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IStageService } from '@crm/stage/types';
-import { CrmObject, ZohoStageInput, ZohoStageOutput } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZohoStageOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -31,12 +32,13 @@ export class ZohoService implements IStageService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Stages?fields=${fields}`,
+        `${connection.account_url}Stages?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

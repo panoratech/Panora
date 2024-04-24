@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ITaskService } from '@crm/task/types';
-import {
-  CrmObject,
-  PipedriveTaskInput,
-  PipedriveTaskOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { PipedriveTaskInput, PipedriveTaskOutput } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -36,10 +33,11 @@ export class PipedriveService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
-        `https://api.pipedrive.com/v1/activities`,
+        `${connection.account_url}/activities`,
         JSON.stringify(taskData),
         {
           headers: {
@@ -75,10 +73,11 @@ export class PipedriveService implements ITaskService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
       const resp = await axios.get(
-        `https://api.pipedrive.com/v1/activities?type=task&user_id=${19156166}`,
+        `${connection.account_url}/activities?type=task&user_id=${19156166}`,
         {
           headers: {
             'Content-Type': 'application/json',

@@ -37,6 +37,7 @@ export class FrontService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 
@@ -95,7 +96,7 @@ export class FrontService implements ITicketService {
         }
 
         resp = await axios.post(
-          `https://api2.frontapp.com/conversations`,
+          `${connection.account_url}/conversations`,
           formData,
           {
             headers: {
@@ -108,7 +109,7 @@ export class FrontService implements ITicketService {
         );
       } else {
         resp = await axios.post(
-          `https://api2.frontapp.com/conversations`,
+          `${connection.account_url}/conversations`,
           JSON.stringify(restOfTicketData),
           {
             headers: {
@@ -130,7 +131,7 @@ export class FrontService implements ITicketService {
           final = { ...final, custom_fields: custom_fields };
         }
         const tag_resp = await axios.patch(
-          `https://api2.frontapp.com/conversations/${resp.data.id}`,
+          `${connection.account_url}/conversations/${resp.data.id}`,
           JSON.stringify(final),
           {
             headers: {
@@ -168,10 +169,11 @@ export class FrontService implements ITicketService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 
-      const resp = await axios.get('https://api2.frontapp.com/conversations', {
+      const resp = await axios.get(`${connection.account_url}/conversations`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

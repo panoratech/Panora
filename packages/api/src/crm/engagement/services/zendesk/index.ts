@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IEngagementService } from '@crm/engagement/types';
-import {
-  CrmObject,
-  ZendeskEngagementInput,
-  ZendeskEngagementOutput,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { ZendeskEngagementInput, ZendeskEngagementOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -62,10 +59,11 @@ export class ZendeskService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
-        `https://api.getbase.com/v2/engagements`,
+        `${connection.account_url}/engagements`,
         {
           data: engagementData,
         },
@@ -127,10 +125,11 @@ export class ZendeskService implements IEngagementService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zendesk',
+          vertical: 'crm',
         },
       });
 
-      const resp = await axios.get(`https://api.getbase.com/v2/calls`, {
+      const resp = await axios.get(`${connection.account_url}/calls`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

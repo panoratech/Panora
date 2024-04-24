@@ -2,16 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  TicketingObject,
-  ZendeskContactOutput,
-} from '@ticketing/@utils/@types';
+import { TicketingObject } from '@ticketing/@utils/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { IContactService } from '@ticketing/contact/types';
+import { ZendeskContactOutput } from './types';
 
 @Injectable()
 export class ZendeskService implements IContactService {
@@ -25,7 +23,7 @@ export class ZendeskService implements IContactService {
     this.logger.setContext(
       TicketingObject.contact.toUpperCase() + ':' + ZendeskService.name,
     );
-    this.registry.registerService('zendesk_tcg', this);
+    this.registry.registerService('zendesk', this);
   }
 
   async syncContacts(
@@ -36,21 +34,19 @@ export class ZendeskService implements IContactService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_tcg',
+          provider_slug: 'zendesk',
+          vertical: 'ticketing',
         },
       });
 
-      const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/users`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const resp = await axios.get(`${connection.account_url}/users`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
       const contacts: ZendeskContactOutput[] = resp.data.users;
       const filteredContacts = contacts.filter(
         (contact) => contact.role === 'end-user',

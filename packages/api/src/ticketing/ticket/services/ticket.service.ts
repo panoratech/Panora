@@ -115,6 +115,7 @@ export class TicketService {
         sourceObject: unifiedTicketData,
         targetType: TicketingObject.ticket,
         providerName: integrationId,
+        vertical: 'ticketing',
         customFieldMappings: unifiedTicketData.field_mappings
           ? customFieldMappings
           : [],
@@ -132,6 +133,7 @@ export class TicketService {
         sourceObject: [resp.data],
         targetType: TicketingObject.ticket,
         providerName: integrationId,
+        vertical: 'ticketing',
         customFieldMappings: customFieldMappings,
       })) as UnifiedTicketOutput[];
 

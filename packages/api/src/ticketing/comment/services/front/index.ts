@@ -38,6 +38,7 @@ export class FrontService implements ICommentService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
 
@@ -85,7 +86,7 @@ export class FrontService implements ICommentService {
 
         // Send request with attachments
         resp = await axios.post(
-          `https://api2.frontapp.com/conversations/${remoteIdTicket}/comments`,
+          `${connection.account_url}/conversations/${remoteIdTicket}/comments`,
           formData,
           {
             headers: {
@@ -99,7 +100,7 @@ export class FrontService implements ICommentService {
       } else {
         // Send request without attachments
         resp = await axios.post(
-          `https://api2.frontapp.com/conversations/${remoteIdTicket}/comments`,
+          `${connection.account_url}/conversations/${remoteIdTicket}/comments`,
           JSON.stringify(dataBody),
           {
             headers: {
@@ -137,6 +138,7 @@ export class FrontService implements ICommentService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'front',
+          vertical: 'ticketing',
         },
       });
       //retrieve ticket remote id so we can retrieve the comments in the original software
@@ -150,7 +152,7 @@ export class FrontService implements ICommentService {
       });
 
       const resp = await axios.get(
-        `https://api2.frontapp.com/conversations/${ticket.remote_id}/comments`,
+        `${connection.account_url}conversations/${ticket.remote_id}/comments`,
         {
           headers: {
             'Content-Type': 'application/json',

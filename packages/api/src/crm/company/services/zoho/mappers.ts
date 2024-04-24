@@ -1,9 +1,9 @@
-import { ZohoCompanyInput, ZohoCompanyOutput } from '@crm/@utils/@types';
 import {
   UnifiedCompanyInput,
   UnifiedCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
+import { ZohoCompanyInput, ZohoCompanyOutput } from './types';
 
 export class ZohoCompanyMapper implements ICompanyMapper {
   desunify(

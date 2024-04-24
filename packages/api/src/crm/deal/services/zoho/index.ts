@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IDealService } from '@crm/deal/types';
-import { CrmObject, ZohoDealInput, ZohoDealOutput } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -8,7 +8,7 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
-
+import { ZohoDealInput, ZohoDealOutput } from './types';
 @Injectable()
 export class ZohoService implements IDealService {
   constructor(
@@ -32,10 +32,11 @@ export class ZohoService implements IDealService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       const resp = await axios.post(
-        `https://www.zohoapis.eu/crm/v3/Deals`,
+        `${connection.account_url}/Deals`,
         { data: [dealData] },
         {
           headers: {
@@ -72,12 +73,13 @@ export class ZohoService implements IDealService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
       //TODO: handle fields
       const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `https://www.zohoapis.eu/crm/v3/Deals?fields=${fields}`,
+        `${connection.account_url}/Deals?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

@@ -4,7 +4,6 @@ import axios from 'axios';
 import {
   CallbackParams,
   ICrmConnectionService,
-  PipeDriveOAuthResponse,
   RefreshParams,
 } from '../../types';
 import { Action, handleServiceError } from '@@core/utils/errors';
@@ -12,19 +11,38 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceConnectionRegistry } from '../registry.service';
+import { ServiceRegistry } from '../registry.service';
+import {
+  OAuth2AuthData,
+  providersConfig,
+  providerToType,
+} from '@panora/shared';
+import { AuthStrategy } from '@panora/shared';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
+export interface PipedriveOAuthResponse {
+  access_token: string;
+  token_type: string;
+  refresh_token: string;
+  scope: string[];
+  expires_in: number;
+  api_domain: string;
+}
 @Injectable()
 export class PipedriveConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
-    private registry: ServiceConnectionRegistry,
+    private registry: ServiceRegistry,
+    private cService: ConnectionsStrategiesService,
   ) {
     this.logger.setContext(PipedriveConnectionService.name);
     this.registry.registerService('pipedrive', this);
+    this.type = providerToType('pipedrive', 'crm', AuthStrategy.oauth2);
   }
 
   async handleCallback(opts: CallbackParams) {
@@ -34,11 +52,16 @@ export class PipedriveConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'pipedrive',
+          vertical: 'crm',
         },
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await this.cService.getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
@@ -52,14 +75,12 @@ export class PipedriveConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getPipedriveSecret().CLIENT_ID}:${
-                this.env.getPipedriveSecret().CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },
       );
-      const data: PipeDriveOAuthResponse = res.data;
+      const data: PipedriveOAuthResponse = res.data;
       this.logger.log('OAuth credentials : pipedrive ');
       let db_res;
       const connection_token = uuidv4();
@@ -85,7 +106,9 @@ export class PipedriveConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'pipedrive',
+            vertical: 'crm',
             token_type: 'oauth',
+            account_url: providersConfig['crm']['pipedrive'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -110,8 +133,12 @@ export class PipedriveConnectionService implements ICrmConnectionService {
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken } = opts;
+      const { connectionId, refreshToken, projectId } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await this.cService.getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
@@ -125,14 +152,12 @@ export class PipedriveConnectionService implements ICrmConnectionService {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             Authorization: `Basic ${Buffer.from(
-              `${this.env.getPipedriveSecret().CLIENT_ID}:${
-                this.env.getPipedriveSecret().CLIENT_SECRET
-              }`,
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
           },
         },
       );
-      const data: PipeDriveOAuthResponse = res.data;
+      const data: PipedriveOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,

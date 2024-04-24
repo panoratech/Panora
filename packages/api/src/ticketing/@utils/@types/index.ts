@@ -45,6 +45,12 @@ import {
   UnifiedUserInput,
   UnifiedUserOutput,
 } from '@ticketing/user/types/model.unified';
+import { ICollectionService } from '@ticketing/collection/types';
+import {
+  UnifiedCollectionInput,
+  UnifiedCollectionOutput,
+} from '@ticketing/collection/types/model.unified';
+import { collectionUnificationMapping } from '@ticketing/collection/types/mappingsTypes';
 
 export enum TicketingObject {
   ticket = 'ticket',
@@ -55,6 +61,7 @@ export enum TicketingObject {
   account = 'account',
   tag = 'tag',
   team = 'team',
+  collection = 'collection',
 }
 
 export type UnifiedTicketing =
@@ -73,7 +80,9 @@ export type UnifiedTicketing =
   | UnifiedTagInput
   | UnifiedTagOutput
   | UnifiedAttachmentInput
-  | UnifiedAttachmentOutput;
+  | UnifiedAttachmentOutput
+  | UnifiedCollectionInput
+  | UnifiedCollectionOutput;
 
 export const unificationMapping = {
   [TicketingObject.ticket]: ticketUnificationMapping,
@@ -83,6 +92,7 @@ export const unificationMapping = {
   [TicketingObject.contact]: contactTicketingUnificationMapping,
   [TicketingObject.team]: teamUnificationMapping,
   [TicketingObject.tag]: tagUnificationMapping,
+  [TicketingObject.collection]: collectionUnificationMapping,
 };
 
 export type ITicketingService =
@@ -93,13 +103,5 @@ export type ITicketingService =
   | IContactService
   | IAccountService
   | ITeamService
-  | ITagService;
-
-/*TODO: export all providers  */
-export * from '../../ticket/services/zendesk/types';
-export * from '../../comment/services/zendesk/types';
-export * from '../../user/services/zendesk/types';
-export * from '../../contact/services/zendesk/types';
-export * from '../../account/services/zendesk/types';
-export * from '../../team/services/zendesk/types';
-export * from '../../tag/services/zendesk/types';
+  | ITagService
+  | ICollectionService;

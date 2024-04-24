@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IStageService } from '@crm/stage/types';
-import {
-  CrmObject,
-  HubspotStageOutput,
-  commonStageHubspotProperties,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { HubspotStageOutput, commonStageHubspotProperties } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -37,6 +34,7 @@ export class HubspotService implements IStageService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
 
@@ -46,7 +44,7 @@ export class HubspotService implements IStageService {
 
       const commonPropertyNames = Object.keys(commonStageHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `https://api.hubapi.com/crm/v3/objects/deals/${res.remote_id}`;
+      const baseURL = `${connection.account_url}/objects/deals/${res.remote_id}`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

@@ -5,33 +5,74 @@ import {
   CallbackParams,
   ICrmConnectionService,
   RefreshParams,
-  ZohoOAuthResponse,
 } from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
 import { Action, NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceConnectionRegistry } from '../registry.service';
+import { ServiceRegistry } from '../registry.service';
+import {
+  OAuth2AuthData,
+  providersConfig,
+  providerToType,
+} from '@panora/shared';
+import { AuthStrategy } from '@panora/shared';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
-const ZOHOLocations = {
-  us: 'https://accounts.zoho.com',
-  eu: 'https://accounts.zoho.eu',
-  in: 'https://accounts.zoho.in',
-  au: 'https://accounts.zoho.com.au',
-  jp: 'https://accounts.zoho.jp',
+type ZohoUrlType = {
+  [key: string]: {
+    authBase: string;
+    apiBase: string;
+  };
 };
+export const ZOHOLocations: ZohoUrlType = {
+  us: {
+    authBase: 'https://accounts.zoho.com',
+    apiBase: 'https://www.zohoapis.com',
+  },
+  eu: {
+    authBase: 'https://accounts.zoho.eu',
+    apiBase: 'https://www.zohoapis.eu',
+  },
+  in: {
+    authBase: 'https://accounts.zoho.in',
+    apiBase: 'https://www.zohoapis.in',
+  },
+  au: {
+    authBase: 'https://accounts.zoho.com.au',
+    apiBase: 'https://www.zohoapis.com.au',
+  },
+  jp: {
+    authBase: 'https://accounts.zoho.jp',
+    apiBase: 'https://www.zohoapis.jp',
+  },
+};
+
+export interface ZohoOAuthResponse {
+  access_token: string;
+  refresh_token: string;
+  api_domain: string;
+  token_type: string;
+  expires_in: number;
+}
+
+//TODO: manage domains
 @Injectable()
 export class ZohoConnectionService implements ICrmConnectionService {
+  private readonly type: string;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
-    private registry: ServiceConnectionRegistry,
+    private registry: ServiceRegistry,
+    private cService: ConnectionsStrategiesService,
   ) {
     this.logger.setContext(ZohoConnectionService.name);
     this.registry.registerService('zoho', this);
+    this.type = providerToType('zoho', 'crm', AuthStrategy.oauth2);
   }
   async handleCallback(opts: CallbackParams) {
     try {
@@ -43,23 +84,28 @@ export class ZohoConnectionService implements ICrmConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'zoho',
+          vertical: 'crm',
         },
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await this.cService.getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: this.env.getZohoSecret().CLIENT_ID,
-        client_secret: this.env.getZohoSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
       });
       //no refresh token
-      const domain = ZOHOLocations[location];
+      const authDomain = ZOHOLocations[location].authBase;
       const res = await axios.post(
-        `${domain}/oauth/v2/token`,
+        `${authDomain}/oauth/v2/token`,
         formData.toString(),
         {
           headers: {
@@ -71,6 +117,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
       this.logger.log('OAuth credentials : zoho ' + JSON.stringify(data));
       let db_res;
       const connection_token = uuidv4();
+      const apiDomain = ZOHOLocations[location].apiBase;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -87,7 +134,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
             ),
             status: 'valid',
             created_at: new Date(),
-            account_url: domain,
+            account_url: apiDomain + providersConfig['crm']['zoho'].urls.apiUrl,
           },
         });
       } else {
@@ -96,6 +143,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'zoho',
+            vertical: 'crm',
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token
@@ -112,7 +160,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
             linked_users: {
               connect: { id_linked_user: linkedUserId },
             },
-            account_url: domain,
+            account_url: apiDomain + providersConfig['crm']['zoho'].urls.apiUrl,
           },
         });
       }
@@ -124,12 +172,16 @@ export class ZohoConnectionService implements ICrmConnectionService {
   }
   async handleTokenRefresh(opts: RefreshParams) {
     try {
-      const { connectionId, refreshToken, account_url } = opts;
+      const { connectionId, refreshToken, account_url, projectId } = opts;
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const CREDENTIALS = (await this.cService.getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
-        client_id: this.env.getZohoSecret().CLIENT_ID,
-        client_secret: this.env.getZohoSecret().CLIENT_SECRET,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });

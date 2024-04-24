@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IUserService } from '@crm/user/types';
-import {
-  CrmObject,
-  HubspotUserOutput,
-  commonUserHubspotProperties,
-} from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@utils/@types';
+import { HubspotUserOutput, commonUserHubspotProperties } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -36,12 +33,13 @@ export class HubspotService implements IUserService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'hubspot',
+          vertical: 'crm',
         },
       });
 
       const commonPropertyNames = Object.keys(commonUserHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/owners';
+      const baseURL = `${connection.account_url}/owners`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

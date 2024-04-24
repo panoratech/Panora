@@ -2,17 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  TicketingObject,
-  ZendeskTicketInput,
-  ZendeskTicketOutput,
-} from '@ticketing/@utils/@types';
+import { TicketingObject } from '@ticketing/@utils/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
+import { ZendeskTicketInput, ZendeskTicketOutput } from './types';
 
 @Injectable()
 export class ZendeskService implements ITicketService {
@@ -26,7 +23,7 @@ export class ZendeskService implements ITicketService {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + ZendeskService.name,
     );
-    this.registry.registerService('zendesk_tcg', this);
+    this.registry.registerService('zendesk', this);
   }
   async addTicket(
     ticketData: ZendeskTicketInput,
@@ -36,7 +33,8 @@ export class ZendeskService implements ITicketService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_tcg',
+          provider_slug: 'zendesk',
+          vertical: 'ticketing',
         },
       });
       let dataBody = {
@@ -58,9 +56,7 @@ export class ZendeskService implements ITicketService {
 
             //TODO:; fetch the right file from AWS s3
             const s3File = '';
-            const url = `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/uploads.json?filename=${
-              res.file_name
-            }`;
+            const url = `${connection.account_url}/uploads.json?filename=${res.file_name}`;
 
             const resp = await axios.get(url, {
               headers: {
@@ -86,7 +82,7 @@ export class ZendeskService implements ITicketService {
       }
 
       const resp = await axios.post(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets.json`,
+        `${connection.account_url}/tickets.json`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -120,21 +116,19 @@ export class ZendeskService implements ITicketService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'zendesk_tcg',
+          provider_slug: 'zendesk',
+          vertical: 'ticketing',
         },
       });
 
-      const resp = await axios.get(
-        `https://${this.env.getZendeskTicketingSubdomain()}.zendesk.com/api/v2/tickets.json`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const resp = await axios.get(`${connection.account_url}/tickets.json`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
       this.logger.log(`Synced zendesk tickets !`);
 
       return {
