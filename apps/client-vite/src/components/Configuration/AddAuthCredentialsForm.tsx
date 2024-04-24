@@ -48,7 +48,7 @@ import {
     TooltipTrigger,
   } from "@/components/ui/tooltip"
 import {PasswordInput} from '@/components/ui/password-input'
-import { ALL_PROVIDERS, getLogoURL, providerToType } from "@panora/shared"
+import { ALL_PROVIDERS,getLogoURL,getProviderVertical,providerToType,AuthStrategy } from "@panora/shared"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
 import useProjectStore from "@/state/projectStore"
@@ -148,13 +148,13 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 fetchCredentials({
                     projectId:idProject,
                     type: prop.data?.type,
-                    attributes: prop.data?.auth_type==="0Auth2" ? ["client_id","client_secret","scope"]
-                    : prop.data?.auth_type==="API Key" ? ["api_key"] : ["username","secret"]
+                    attributes: prop.data?.auth_type===AuthStrategy.oauth2 ? ["client_id","client_secret","scope"]
+                    : prop.data?.auth_type===AuthStrategy.api_key ? ["api_key"] : ["username","secret"]
                 },
                 {
                     onSuccess(data, variables, context) {
 
-                        if(prop.data?.auth_type==="0Auth2")
+                        if(prop.data?.auth_type===AuthStrategy.oauth2)
                             {
                                 form.setValue("client_id",data[0])
                                 form.setValue("client_secret",data[1])
@@ -162,7 +162,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
     
                             }
-                            else if(prop.data?.auth_type==="API Key")
+                            else if(prop.data?.auth_type===AuthStrategy.api_key)
                             {
                                 form.setValue("api_key",data[0])
     
@@ -213,7 +213,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
         switch(values.auth_type)
         {
-            case "0Auth2":
+            case AuthStrategy.oauth2:
                 if(client_id==="" || client_secret==="" || scope==="")
                 {
                     if(client_id==="")
@@ -248,7 +248,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 {
                     createCS({
                         projectId:idProject,
-                        type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],"0Auth2" as any),
+                        type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.oauth2),
                         attributes:["client_id","client_secret","scope"],
                         values:[client_id,client_secret,scope]
                     });
@@ -266,7 +266,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 }
                 break;
             
-            case "API Key":
+            case AuthStrategy.api_key:
                 if(values.api_key==="")
                 {
                     form.setError("api_key",{"message":"Please Enter API Key"});
@@ -290,7 +290,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                     {
                         createCS({
                             projectId:idProject,
-                            type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],"API Key" as any),
+                            type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.api_key),
                             attributes:["api_key"],
                             values:[api_key]
                         });
@@ -308,7 +308,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 }
                 break;
 
-            case "Basic Auth":
+            case AuthStrategy.basic:
                 if(values.username==="" || values.secret==="")
                     {
                         if(values.username==="")
@@ -340,7 +340,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         {
                             createCS({
                                 projectId:idProject,
-                                type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],"Basic Auth" as any),
+                                type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.basic),
                                 attributes:["username","secret"],
                                 values:[username,secret]
                             });
@@ -486,9 +486,9 @@ const AddAuthCredentialsForm = (prop : propType) => {
                                 <SelectValue placeholder="Select Authentication Method" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value={"0Auth2"}>0Auth2</SelectItem>
-                                <SelectItem value={"API Key"}>API</SelectItem>
-                                <SelectItem value={"Basic Auth"}>Basic Auth</SelectItem>
+                                <SelectItem value={AuthStrategy.oauth2}>0Auth2</SelectItem>
+                                <SelectItem value={AuthStrategy.api_key}>API</SelectItem>
+                                <SelectItem value={AuthStrategy.basic}>Basic Auth</SelectItem>
                             </SelectContent>
                             </Select>
                         </FormControl>
@@ -501,7 +501,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
         {/* If Authentication Method is 0Auth2 */}
 
-        {Watch.auth_type==="0Auth2" ? 
+        {Watch.auth_type===AuthStrategy.oauth2 ? 
             <>
             <div className="flex flex-col">
                 <FormField
@@ -574,7 +574,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
             :
             <></>}
 
-        {Watch.auth_type==="API Key" ? 
+        {Watch.auth_type===AuthStrategy.api_key ? 
             <>
             <div className="flex flex-col">
                 <FormField
@@ -595,7 +595,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
             :
             <></>}
 
-        {Watch.auth_type==="Basic Auth" ? 
+        {Watch.auth_type===AuthStrategy.basic ? 
             <>
             <div className="flex flex-col">
                 <FormField
