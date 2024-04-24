@@ -12,8 +12,6 @@ import { useStytchUser } from '@stytch/nextjs';
 import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
-import useProjectsByUser from '@/hooks/useProjectsByUser';
-import useProjects from '@/hooks/useProjects';
 
 const useDeviceSize = () => {
 
@@ -34,7 +32,6 @@ const useDeviceSize = () => {
   }, []);
 
   return [width, height]
-
 }
 
 export const RootLayout = () => {
