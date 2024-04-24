@@ -58,6 +58,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import config from "@/lib/config"
+import useProjectsByUser from "@/hooks/useProjectsByUser"
 
 
 const projectFormSchema = z.object({
@@ -77,17 +78,19 @@ interface ModalObj {
 
 export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [open, setOpen] = useState(false)
+  const [userId, setUserId] = useState("");
 
   const [showNewDialog, setShowNewDialog] = useState<ModalObj>({
     open: false,
   })
 
   //const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
-  const { data : projects, isLoading: isloadingProjects } = useProjects();
+  //const { data : projects, isLoading: isloadingProjects } = useProjects();
 
   const { idProject, setIdProject } = useProjectStore();
   
   const { profile } = useProfileStore();
+  const {data : projects, isLoading: isloadingProjects} = useProjectsByUser(userId);
 
   
   useEffect(()=>{
@@ -100,6 +103,12 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
       setIdOrg(orgs[0].id_organization);
     }*/
   },[projects, setIdProject])
+
+  useEffect(() => {
+    if(profile && profile.id_user){
+      setUserId(profile.id_user)
+    }
+  }, [profile])
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
