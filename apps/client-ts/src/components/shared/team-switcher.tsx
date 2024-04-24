@@ -49,14 +49,15 @@ import {
 import useProjectMutation from "@/hooks/mutations/useProjectMutation"
 import { useEffect, useState } from "react"
 import useProjectStore from "@/state/projectStore"
+import useOrganisationStore from "@/state/organisationStore"
 import useProfileStore from "@/state/profileStore"
+import useProjects from "@/hooks/useProjects"
 import { Skeleton } from "../ui/skeleton"
 //import useOrganisations from "@/hooks/useOrganisations"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import config from "@/lib/config"
-import useProjects from "@/hooks/useProjects"
 
 
 const projectFormSchema = z.object({
@@ -81,30 +82,24 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     open: false,
   })
 
-  const [isloadingProjects, setIsloadingProjects] = useState<boolean>(true)
-
   //const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
+  const { data : projects, isLoading: isloadingProjects } = useProjects();
 
   const { idProject, setIdProject } = useProjectStore();
-  const {data: projects} = useProjects();
-
-  //const { projects } = useProjectsStore();
-
-  // Effect for setting profile
-  useEffect(() => {
-    if (projects) {
-      setIdProject(projects[0].id_user);
-    }
-  }, [projects, setIdProject]);
   
-
-  if(projects){
-    setIsloadingProjects(false);
-  }
-
   const { profile } = useProfileStore();
 
-  //const { data: projects, isLoading: isLoadingProjects } = useProjectsByUser(user?.user_id!);
+  
+  useEffect(()=>{
+    if(projects && projects[0]){      
+      setIdProject(projects[0].id_project);
+    }
+    //TODO: display connected user
+    /*if(orgs && orgs[0]){
+      setOrganisationName(orgs[0].name);
+      setIdOrg(orgs[0].id_organization);
+    }*/
+  },[projects, setIdProject])
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));

@@ -12,6 +12,7 @@ import { useStytchUser } from '@stytch/nextjs';
 import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
+import useProjects from '@/hooks/useProjects';
 
 const useDeviceSize = () => {
 
@@ -32,67 +33,50 @@ const useDeviceSize = () => {
   }, []);
 
   return [width, height]
+
 }
 
 export const RootLayout = () => {
   const [width, height] = useDeviceSize();
-  const router = useRouter();
+  const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
 
   const { user } = useStytchUser();
-  const { data, isLoading, isError, error } = useProfile(user?.user_id!);
-
-  if (isLoading) {
+  const {data, isLoading, isError, error} = useProfile(user?.user_id!);
+  if(isLoading) {
     console.log("loading profiles");
   }
-  if (isError) {
-    console.log('Profiles fetch error: ' + error);
+  if(isError){
+    console.log('Profiles fetch error: '+ error)
   }
 
   const { profile, setProfile } = useProfileStore();
-  const { setIdProject } = useProjectStore();
 
-   // Effect for setting profile
-  useEffect(() => {
-    if (data) {
+  const { idProject, setIdProject } = useProjectStore();
+  const { data : projects, isLoading: isloadingProjects } = useProjects();
+
+  useEffect(()=>{
+    if(projects && projects[0]){      
+      setIdProject(projects[0].id_project);
+    }
+  },[projects, setIdProject])
+
+  useEffect(()=> {
+    if(data){
+      //console.log("data is "+ JSON.stringify(data));
       setProfile({
         id_user: data.id_user,
         email: data.email!,
         first_name: data.first_name,
         last_name: data.last_name,
-      });
+        //id_organization: data.id_organization as string,
+      })
     }
   }, [data, setProfile]);
 
   
-  // Effect for fetching projects
-  /*useEffect(() => {
-    if (profile && profile.id_user) {
-      console.log("profile is => " + JSON.stringify(profile));
-      const fetchProjects = async () => {
-        const response = await fetch(`${config.API_URL}/projects`); //${profile.id_user}
-        const projectsData = await response.json();
-        console.log("PROJECTS FETCHED ARE => " + JSON.stringify(projectsData));
-        const PROJECTS = projectsData as Project[];
-        if(PROJECTS.length > 0){
-          setProjects(PROJECTS);
-          setIdProject(PROJECTS[0].id_user);
-        }
-      };
-      fetchProjects();
-    }
-  }, [profile, setIdProject, setProjects]); // Depend on profile.id_user to trigger this effect
-  */
-
-  // Handling loading and error
-  if (isLoading) {
-    console.log("loading profiles");
-  }
-  if (isError) {
-    console.error('Profiles fetch error: ' + error);
-  }
-
   const handlePageChange = (page: string) => {
+    //console.log(`${base}/${page}`)
     if (page) {
       router.push(`${base}/${page}`);
     } else {
