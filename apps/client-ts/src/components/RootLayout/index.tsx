@@ -12,6 +12,9 @@ import { useStytchUser } from '@stytch/nextjs';
 import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
+import { cn } from "@/lib/utils";
+import { ThemeToggle } from '@/components/Nav/theme-toggle';
+
 
 const useDeviceSize = () => {
 
@@ -35,7 +38,7 @@ const useDeviceSize = () => {
 
 }
 
-export const RootLayout = () => {
+export const RootLayout = ({children}:{children:React.ReactNode})  => {
   const [width, height] = useDeviceSize();
   const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
@@ -55,7 +58,7 @@ export const RootLayout = () => {
 
   useEffect(()=> { 
     if(data){
-      //console.log("data from bundled call is "+ JSON.stringify(data));
+      console.log("data from bundled call is "+ JSON.stringify(data));
       setProfile({
         id_user: data.id_user,
         email: data.email!,
@@ -64,7 +67,7 @@ export const RootLayout = () => {
         projects: data.projects
         //id_organization: data.id_organization as string,
       })
-      setIdProject(data.projects[0].id_project)
+      setIdProject(data.projects[0]?.id_project)
     }
   }, [data, setIdProject, setProfile]);
 
@@ -78,39 +81,42 @@ export const RootLayout = () => {
     }
   };
 
-  const lgBreakpoint = 1024; // Tailwind's 'lg' breakpoint
 
   return (
-    <div>
-      {width < lgBreakpoint ? (
-        <SmallNav onLinkClick={handlePageChange} />
-      ) : (
-        <div className='items-center hidden lg:flex lg:flex-col border-r fixed left-0 bg-opacity-90 backdrop-filter backdrop-blur-lg w-[200px] h-screen'>
-          <div className='flex lg:flex-col items-center py-4 space-y-4'>
-            <div className='flex flex-row justify-between items-center w-full px-6'>
-              <Link href='/'>
-                <img src="/logo.png" className='w-14' />
-              </Link>
+    <>
+    <div className="fixed top-0 left-0 right-0 supports-backdrop-blur:bg-background/60 border-b bg-background/95 backdrop-blur z-20">
+      <nav className="h-14 flex items-center justify-between px-4">
+        <div className="hidden lg:block">
+          <Link href='/'>
+            <img src="/logo.png" className='w-14' />
+          </Link>
+        </div>
+        <div className={cn("block lg:!hidden")}>
+          <SmallNav onLinkClick={handlePageChange} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <UserNav />
+          <ThemeToggle />
+        </div>
+      </nav>
+    </div>
+    <div className="flex h-screen overflow-hidden">
+      <nav
+        className={cn(`relative hidden h-screen border-r pt-16 lg:block w-72`)}
+      >
+        <div className="space-y-4 py-4">
+          <div className="px-3 py-2">
+            <div className="space-y-1">
+              
+              <TeamSwitcher userId={profile?.id_user!} className='w-40 ml-3' />
+              <MainNav onLinkClick={handlePageChange} className=''/>
             </div>
-            <TeamSwitcher className='w-40 ml-3' userId={profile?.id_user!}/>
-            <MainNav
-              className='flex lg:flex-col mx-auto w-[200px] space-y-0'
-              onLinkClick={handlePageChange}
-            />
-            {
-              config.DISTRIBUTION === "managed" && 
-              (
-                <div className='ml-auto flex lg:flex-col items-center space-x-4 w-full'>
-                  <UserNav />
-                </div>
-              )
-            }
           </div>
         </div>
-      )}
-      <div className='flex-1 space-y-4 pt-6 px-10 lg:ml-[200px]'>
-        {/*<Outlet />*/}
-      </div>
+      </nav>
+      <main className="w-full pt-16">{children}</main>
     </div>
+    </>
   );
 };
