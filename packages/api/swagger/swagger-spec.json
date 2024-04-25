@@ -451,6 +451,30 @@
         ]
       }
     },
+    "/projects/{userId}": {
+      "get": {
+        "operationId": "getProjectsByUser",
+        "summary": "Retrieve projects by user",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "projects"
+        ]
+      }
+    },
     "/projects/create": {
       "post": {
         "operationId": "createProject",

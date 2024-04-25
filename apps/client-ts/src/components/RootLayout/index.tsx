@@ -12,8 +12,6 @@ import { useStytchUser } from '@stytch/nextjs';
 import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
-import useProjects from '@/hooks/useProjects';
-import useProjectsByUser from '@/hooks/useProjectsByUser';
 
 const useDeviceSize = () => {
 
@@ -41,9 +39,9 @@ export const RootLayout = () => {
   const [width, height] = useDeviceSize();
   const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
-  const [userId, setUserId] = useState("");
   const { user } = useStytchUser();
   const {data, isLoading, isError, error} = useProfile(user?.user_id!);
+
   if(isLoading) {
     console.log("loading profiles");
   }
@@ -53,28 +51,22 @@ export const RootLayout = () => {
 
   const { profile, setProfile } = useProfileStore();
 
-  const { idProject, setIdProject } = useProjectStore();
-  //const { data : projects, isLoading: isloadingProjects } = useProjects();
-  const {data : projects, isLoading: isloadingProjects} = useProjectsByUser(userId);
-  useEffect(()=>{
-    if(projects && projects[0]){      
-      setIdProject(projects[0].id_project);
-    }
-  },[projects, setIdProject])
+  const { setIdProject } = useProjectStore();
 
-  useEffect(()=> {
+  useEffect(()=> { 
     if(data){
-      //console.log("data is "+ JSON.stringify(data));
+      //console.log("data from bundled call is "+ JSON.stringify(data));
       setProfile({
         id_user: data.id_user,
         email: data.email!,
         first_name: data.first_name,
         last_name: data.last_name,
+        projects: data.projects
         //id_organization: data.id_organization as string,
       })
-      //setUserId(data.id_user);
+      setIdProject(data.projects[0].id_project)
     }
-  }, [data, setProfile]);
+  }, [data, setIdProject, setProfile]);
 
   
   const handlePageChange = (page: string) => {
@@ -100,7 +92,7 @@ export const RootLayout = () => {
                 <img src="/logo.png" className='w-14' />
               </Link>
             </div>
-            <TeamSwitcher className='w-40 ml-3' />
+            <TeamSwitcher className='w-40 ml-3' userId={profile?.id_user!}/>
             <MainNav
               className='flex lg:flex-col mx-auto w-[200px] space-y-0'
               onLinkClick={handlePageChange}

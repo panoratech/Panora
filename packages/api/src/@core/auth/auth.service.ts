@@ -34,12 +34,21 @@ export class AuthService {
   }
   async getUserByStytchId(stytchId: string) {
     try {
-      return await this.prisma.users.findUnique({
+      const user = await this.prisma.users.findUnique({
         where: {
           id_stytch: stytchId,
           identification_strategy: 'b2c',
         },
       });
+      const projects = await this.prisma.projects.findMany({
+        where: {
+          id_user: user.id_user,
+        },
+      });
+      return {
+        ...user,
+        projects: projects,
+      };
     } catch (error) {
       handleServiceError(error, this.logger);
     }

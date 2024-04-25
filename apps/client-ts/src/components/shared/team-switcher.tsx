@@ -49,16 +49,12 @@ import {
 import useProjectMutation from "@/hooks/mutations/useProjectMutation"
 import { useEffect, useState } from "react"
 import useProjectStore from "@/state/projectStore"
-import useOrganisationStore from "@/state/organisationStore"
-import useProfileStore from "@/state/profileStore"
-import useProjects from "@/hooks/useProjects"
-import { Skeleton } from "../ui/skeleton"
-//import useOrganisations from "@/hooks/useOrganisations"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import config from "@/lib/config"
-import useProjectsByUser from "@/hooks/useProjectsByUser"
+import { Skeleton } from "@/components/ui/skeleton";
+import useProfileStore from "@/state/profileStore"
 
 
 const projectFormSchema = z.object({
@@ -69,41 +65,25 @@ const projectFormSchema = z.object({
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
-interface TeamSwitcherProps extends PopoverTriggerProps {}
+interface TeamSwitcherProps extends PopoverTriggerProps {
+  userId: string;
+}
 
 interface ModalObj {
   open: boolean;
   status?: number; // 0 for org, 1 for project
 }
 
-export default function TeamSwitcher({ className }: TeamSwitcherProps) {
+export default function TeamSwitcher({ className, userId }: TeamSwitcherProps) {
   const [open, setOpen] = useState(false)
-  const [userId, setUserId] = useState("");
-
   const [showNewDialog, setShowNewDialog] = useState<ModalObj>({
     open: false,
   })
 
-  //const { data : orgs, isLoading: isloadingOrganisations } = useOrganisations();
-  //const { data : projects, isLoading: isloadingProjects } = useProjects();
-
   const { idProject, setIdProject } = useProjectStore();
   
   const { profile } = useProfileStore();
-  const {data : projects, isLoading: isloadingProjects} = useProjectsByUser(profile?.id_user!);
-
-  
-  useEffect(()=>{
-    if(projects && projects[0]){      
-      setIdProject(projects[0].id_project);
-    }
-  },[projects, setIdProject])
-
-  /*useEffect(() => {
-    if(profile && profile.id_user){
-      setUserId(profile.id_user)
-    }
-  }, [profile])*/
+  const projects = profile?.projects;
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
@@ -139,7 +119,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             aria-label="Select a team"
             className={cn("w-[250px] justify-between", className)}
           >
-            {projects && projects.length > 0 ? projects[0].name : isloadingProjects ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : "No projects found"}
+            {projects && projects.length > 0 ? projects[0].name : "No projects found"}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -150,7 +130,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CommandEmpty>Not found.</CommandEmpty>
                 <CommandGroup key={"projects"} heading={"Projects"}>
                   {
-                    !isloadingProjects && projects && projects.length > 0 ? projects.map((project) => (
+                    projects && projects.length > 0 ? projects.map((project) => (
                       <CommandItem
                         key={project.id_project}
                         onSelect={() => {
