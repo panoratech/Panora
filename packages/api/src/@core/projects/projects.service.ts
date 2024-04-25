@@ -40,8 +40,6 @@ export class ProjectsService {
             id_user: id_user,
           },
         });
-
-
       }
 
       return await this.prisma.projects.findMany({

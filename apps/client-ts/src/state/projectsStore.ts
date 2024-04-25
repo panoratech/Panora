@@ -4,8 +4,8 @@ export interface Project {
     id_project: string;
     name: string;
     sync_mode: string;
-    pull_frequency: string;
-    redirect_url?: string;
+    pull_frequency?: bigint | null;
+    redirect_url?: string | null;
     id_user: string;
 }
 
