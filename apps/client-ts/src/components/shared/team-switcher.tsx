@@ -119,7 +119,11 @@ export default function TeamSwitcher({ className, userId }: TeamSwitcherProps) {
             aria-label="Select a team"
             className={cn("w-[250px] justify-between", className)}
           >
-            {projects && projects.length > 0 ? projects[0].name : "No projects found"}
+            {
+               projects && projects.length > 0
+               ? projects.find(p => p.id_project === idProject)?.name || "Selected project not found"
+               : "No projects found"
+            }
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
