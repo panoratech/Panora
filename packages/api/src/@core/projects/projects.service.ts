@@ -21,6 +21,29 @@ export class ProjectsService {
 
   async getProjectsByUser(userId: string) {
     try {
+      console.log("UserId in getProjectsByUser : ", userId);
+
+      // If userId is stytch_id then it should start with user
+
+      if (userId.startsWith("user")) {
+        const { id_user } = await this.prisma.users.findFirst({
+          where: {
+            id_stytch: userId
+          }
+        });
+        if (!id_user) {
+          throw new Error("User Not found");
+        }
+
+        return await this.prisma.projects.findMany({
+          where: {
+            id_user: id_user,
+          },
+        });
+
+
+      }
+
       return await this.prisma.projects.findMany({
         where: {
           id_user: userId,

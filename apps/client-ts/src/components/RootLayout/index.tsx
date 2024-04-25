@@ -14,6 +14,8 @@ import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from '@/components/Nav/theme-toggle';
+import useProjectsByUser from '@/hooks/useProjectsByUser';
+import useProjectsStore from '@/state/projectsStore';
 
 
 const useDeviceSize = () => {
@@ -44,6 +46,7 @@ export const RootLayout = ({children}:{children:React.ReactNode})  => {
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
   const { user } = useStytchUser();
   const {data, isLoading, isError, error} = useProfile(user?.user_id!);
+  const {data : projectsData} = useProjectsByUser(user?.user_id)
 
   if(isLoading) {
     console.log("loading profiles");
@@ -54,7 +57,8 @@ export const RootLayout = ({children}:{children:React.ReactNode})  => {
 
   const { profile, setProfile } = useProfileStore();
 
-  const { setIdProject } = useProjectStore();
+  const { setIdProject, } = useProjectStore();
+  const {setProjects} = useProjectsStore();
 
   useEffect(()=> { 
     if(data){
@@ -67,9 +71,21 @@ export const RootLayout = ({children}:{children:React.ReactNode})  => {
         projects: data.projects
         //id_organization: data.id_organization as string,
       })
-      setIdProject(data.projects[0]?.id_project)
+      
     }
-  }, [data, setIdProject, setProfile]);
+    
+  }, [data]);
+
+  useEffect(() => {
+    if(projectsData)
+      {
+        console.log("Projects : ",projectsData)
+        setProjects(projectsData);
+        setIdProject(projectsData[0]?.id_project);
+      }
+  },[projectsData])
+
+
 
   
   const handlePageChange = (page: string) => {
@@ -96,7 +112,14 @@ export const RootLayout = ({children}:{children:React.ReactNode})  => {
         </div>
 
         <div className="flex items-center gap-2">
-          <UserNav />
+        {
+              config.DISTRIBUTION === "managed" && 
+              (
+                <div className='ml-auto flex lg:flex-col items-center space-x-4 w-full'>
+                  <UserNav />
+                </div>
+              )
+            }
           <ThemeToggle />
         </div>
       </nav>
@@ -109,7 +132,7 @@ export const RootLayout = ({children}:{children:React.ReactNode})  => {
           <div className="px-3 py-2">
             <div className="space-y-1">
               
-              <TeamSwitcher userId={profile?.id_user!} className='w-40 ml-3' />
+              <TeamSwitcher userId={profile?.id_user!} className='w-40 ml-3' projects={projectsData? projectsData : []} />
               <MainNav onLinkClick={handlePageChange} className=''/>
             </div>
           </div>

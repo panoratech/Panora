@@ -105,7 +105,7 @@ export class AuthService {
           email: user.email,
           password_hash: '',
           created_at: new Date(),
-          id_user: id_user || uuidv4(),
+          // id_user: id_user || uuidv4(),
         },
         create: {
           id_stytch: user.stytch_id_user,

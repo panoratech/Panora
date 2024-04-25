@@ -55,6 +55,8 @@ import * as z from "zod"
 import config from "@/lib/config"
 import { Skeleton } from "@/components/ui/skeleton";
 import useProfileStore from "@/state/profileStore"
+import useProjectsStore from "@/state/projectsStore"
+import { projects as Project } from 'api';
 
 
 const projectFormSchema = z.object({
@@ -67,6 +69,7 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
 interface TeamSwitcherProps extends PopoverTriggerProps {
   userId: string;
+  projects: Project[]
 }
 
 interface ModalObj {
@@ -74,7 +77,7 @@ interface ModalObj {
   status?: number; // 0 for org, 1 for project
 }
 
-export default function TeamSwitcher({ className, userId }: TeamSwitcherProps) {
+export default function TeamSwitcher({ className, userId,projects }: TeamSwitcherProps) {
   const [open, setOpen] = useState(false)
   const [showNewDialog, setShowNewDialog] = useState<ModalObj>({
     open: false,
@@ -83,13 +86,22 @@ export default function TeamSwitcher({ className, userId }: TeamSwitcherProps) {
   const { idProject, setIdProject } = useProjectStore();
   
   const { profile } = useProfileStore();
-  const projects = profile?.projects;
+  // const {projects,setProjects} = useProjectsStore();
+
+  // console.log("Projects in team switcher : ",projects);
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
   };
 
   const { mutate: mutateProject } = useProjectMutation();
+
+  useEffect(() => {
+    if(idProject==="")
+      {
+        setIdProject(projects[0]?.id_project)
+      }
+  },[projects])
 
   const projectForm = useForm<z.infer<typeof projectFormSchema>>({
     resolver: zodResolver(projectFormSchema),
@@ -166,7 +178,8 @@ export default function TeamSwitcher({ className, userId }: TeamSwitcherProps) {
                             key={index}
                             className="text-sm"
                           >
-                            <Skeleton className="w-[100px] h-[20px] rounded-md" />
+                            <p>No Projects Found</p>
+                            {/* <Skeleton className="w-[100px] h-[20px] rounded-md" /> */}
                           </CommandItem>
                         )
                     )

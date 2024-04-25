@@ -3,9 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { projects as Project } from 'api';
 
 
-const useProjectsByUser = (stytchUserId: string) => {
+const useProjectsByUser = (stytchUserId: string | undefined) => {
   return useQuery({
     queryKey: ['projects'], 
+    enabled: stytchUserId!==undefined,
     queryFn: async (): Promise<Project[]> => {
       if(stytchUserId === "" || !stytchUserId){
         return [];
