@@ -2,7 +2,6 @@
 import { Inter } from "next/font/google";
 import "./../globals.css";
 import { RootLayout } from "@/components/RootLayout";
-import { useStytchSession } from "@stytch/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import config from "@/lib/config";
@@ -14,18 +13,20 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { session,isInitialized } = useStytchSession();
-  const router = useRouter();
-  useEffect(() => {
-    if(config.DISTRIBUTION !== "selfhosted" && isInitialized && !session){
-      router.push("/b2c/login");
-    }
-  }, [session,isInitialized, router]);
+  // const { session, isInitialized} = useStytchSession();
+  // const router = useRouter();
+  // useEffect(() => {
+
+  //   if(config.DISTRIBUTION !== "selfhosted" && isInitialized && !session){
+  //     router.replace("/b2c/login");
+  //   }
+  // }, [session,isInitialized, router]);
   
   return (
     <>
-        <RootLayout/>
+        <RootLayout>
         {children}
+        </RootLayout>
     </>
   );
 }

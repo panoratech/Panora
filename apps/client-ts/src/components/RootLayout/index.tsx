@@ -8,7 +8,6 @@ import TeamSwitcher from './../shared/team-switcher';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
 import config from '@/lib/config';
-import { useStytchUser } from '@stytch/nextjs';
 import useProfile from '@/hooks/useProfile';
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
@@ -35,42 +34,68 @@ const useDeviceSize = () => {
 
 }
 
+
+type User_ = User & { projects: Project[] };
+type User = {
+  id_user: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  id_organization?: string;
+}
+
+const dummyUser : User_ = {
+  id_user:"0ce39030-2901-4c56-8db0-5e326182ec6b",
+  email:"dummy@gmail.com",
+  first_name:"ms",
+  last_name:"suthar",
+  projects:[]
+}
+
+
+
+
+
 export const RootLayout = () => {
   const [width, height] = useDeviceSize();
   const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
-  const { user } = useStytchUser();
-  const {data, isLoading, isError, error} = useProfile(user?.user_id!);
+  // const { user } = useStytchUser();
+  // const {data, isLoading, isError, error} = useProfile(user?.user_id!);
 
-  if(isLoading) {
-    console.log("loading profiles");
-  }
-  if(isError){
-    console.log('Profiles fetch error: '+ error)
-  }
+  // if(isLoading) {
+  //   console.log("loading profiles");
+  // }
+  // if(isError){
+  //   console.log('Profiles fetch error: '+ error)
+  // }
 
   const { profile, setProfile } = useProfileStore();
 
   const { setIdProject } = useProjectStore();
 
-  useEffect(()=> { 
-    if(data){
-      //console.log("data from bundled call is "+ JSON.stringify(data));
-      setProfile({
-        id_user: data.id_user,
-        email: data.email!,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        projects: data.projects
-        //id_organization: data.id_organization as string,
-      })
-      console.log("data projects are => "+ JSON.stringify(data.projects));
+  // useEffect(()=> { 
+  //   if(data){
+  //     //console.log("data from bundled call is "+ JSON.stringify(data));
+  //     setProfile({
+  //       id_user: data.id_user,
+  //       email: data.email!,
+  //       first_name: data.first_name,
+  //       last_name: data.last_name,
+  //       projects: data.projects
+  //       //id_organization: data.id_organization as string,
+  //     })
+  //     console.log("data projects are => "+ JSON.stringify(data.projects));
       
-      if(data.projects && data.projects.length > 0 && data.projects[0].id_project){
-        setIdProject(data.projects[0].id_project)
-      }
-    }
-  }, [data, setIdProject, setProfile]);
+  //     if(data.projects && data.projects.length > 0 && data.projects[0].id_project){
+  //       setIdProject(data.projects[0].id_project)
+  //     }
+  //   }
+  // }, [data, setIdProject, setProfile]);
+
+  useEffect(() => {
+    setProfile(dummyUser);
+  },[])
 
   
   const handlePageChange = (page: string) => {

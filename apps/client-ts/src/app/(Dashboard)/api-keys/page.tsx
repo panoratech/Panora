@@ -34,7 +34,7 @@ import config from "@/lib/config";
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { DataTableLoading } from "../../components/shared/data-table-loading";
+import { DataTableLoading } from "@/components/shared/data-table-loading";
 
 
 const formSchema = z.object({

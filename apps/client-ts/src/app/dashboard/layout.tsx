@@ -24,8 +24,9 @@ export default function Layout({
   
   return (
     <>
-        <RootLayout/>
+        <RootLayout>
         {children}
+        </RootLayout>
     </>
   );
 }
