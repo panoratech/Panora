@@ -43,14 +43,15 @@ export default function ConnectionTable() {
   } 
  
   const linkedConnections = (filter: string) => connections?.filter((connection) => connection.status == filter);
-
+  //console.log("connections are => "+ JSON.stringify(connections))
   const ts = connections?.map((connection) => ({
     organisation: nameOrg, 
     app: connection.provider_slug,
+    vertical: connection.vertical,
     category: connection.token_type, 
     status: connection.status,
     linkedUser: connection.id_linked_user, 
-    date: new Date().toISOString(), 
+    date: connection.created_at, 
     connectionToken: connection.connection_token!
   }))
 
@@ -64,7 +65,7 @@ export default function ConnectionTable() {
               <CardTitle>Linked</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{linkedConnections("0")?.length}</p>
+              <p className="text-4xl font-bold">{linkedConnections("valid")?.length}</p>
             </CardContent>
 
           </Card>

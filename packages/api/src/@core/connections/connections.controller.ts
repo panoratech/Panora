@@ -104,8 +104,27 @@ export class ConnectionsController {
         case ProviderVertical.Unknown:
           break;
       }
-
       res.redirect(returnUrl);
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
+  @Get('gorgias/oauth/install')
+  handleGorgiasAuthUrl(
+    @Res() res: Response,
+    @Query('account') account: string,
+    @Query('response_type') response_type: string,
+    @Query('nonce') nonce: string,
+    @Query('scope') scope: string,
+    @Query('client_id') client_id: string,
+    @Query('redirect_uri') redirect_uri: string,
+    @Query('state') state: string,
+  ) {
+    try {
+      if (!account) throw new Error('account prop not found');
+      const params = `?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}&state=${state}&nonce=${nonce}&scope=${scope}`;
+      res.redirect(`https://${account}.gorgias.com/oauth/authorize${params}`);
     } catch (error) {
       handleServiceError(error, this.logger);
     }

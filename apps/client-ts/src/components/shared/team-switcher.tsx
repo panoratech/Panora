@@ -161,7 +161,9 @@ export default function TeamSwitcher({ className, userId }: TeamSwitcherProps) {
                           )}
                         />
                       </CommandItem>
-                    )) : Array.from({ length: 6 }).map((_, index) => (
+                    )) : projects && projects.length === 0 ? <p className="px-2 text-sm">No projects found !</p>
+                    
+                    : Array.from({ length: 6 }).map((_, index) => (
                           <CommandItem
                             key={index}
                             className="text-sm"
@@ -178,7 +180,7 @@ export default function TeamSwitcher({ className, userId }: TeamSwitcherProps) {
               <CommandGroup>
                 {
                   config.DISTRIBUTION === "managed" && (
-                    <h4>{profile ? profile.email : "no profile"}</h4>
+                    <p className="px-2 text-sm mb-2">{profile ? profile.email : "no profile"}</p>
                   )
                 }
                 <DialogTrigger asChild>

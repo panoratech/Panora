@@ -64,7 +64,11 @@ export const RootLayout = () => {
         projects: data.projects
         //id_organization: data.id_organization as string,
       })
-      setIdProject(data.projects[0].id_project)
+      console.log("data projects are => "+ JSON.stringify(data.projects));
+      
+      if(data.projects && data.projects.length > 0 && data.projects[0].id_project){
+        setIdProject(data.projects[0].id_project)
+      }
     }
   }, [data, setIdProject, setProfile]);
 

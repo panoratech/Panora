@@ -85,7 +85,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   } = input;
 
   const type = providerToType(providerName, vertical, authStrategy);
-
+ 
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
@@ -104,8 +104,10 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if (!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
 
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
-  const BASE_URL: string = data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
+  const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}`:
+  data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
 
+  // console.log('BASE URL IS '+ BASE_URL)
   if (!baseUrl || !BASE_URL) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }

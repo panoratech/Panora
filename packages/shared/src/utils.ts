@@ -50,7 +50,7 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'attio': {
-      // scopes: 'record_permission:read',
+      scopes: 'record_permission:read',
       urls: {
         docsUrl: 'https://developers.attio.com/reference',
         authBaseUrl: 'https://app.attio.com/authorize',
@@ -349,7 +349,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://developers.gorgias.com/reference/introduction',
         apiUrl: '/api',
-        authBaseUrl: '/oauth/authorize',
+        authBaseUrl: `/connections/gorgias/oauth/install`,
       },
       logoPath: 'https://x5h8w2v3.rocketcdn.me/wp-content/uploads/2020/09/FS-AFFI-00660Gorgias.png',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
