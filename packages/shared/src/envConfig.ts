@@ -95,7 +95,7 @@ export function needsSubdomain(provider: string, vertical: string): boolean {
     const apiUrlStartsWithSlash = providerConfig.urls.apiUrl!.substring(0,1) === '/';
     const apiUrlIsBlank = providerConfig.urls.apiUrl! === '';
 
-    //console.log("subdomain needed "+ authBaseUrlStartsWithSlash)
+    // console.log("subdomain needed "+ authBaseUrlStartsWithSlash)
 
     return authBaseUrlStartsWithSlash || apiUrlStartsWithSlash || apiUrlIsBlank;
 }
