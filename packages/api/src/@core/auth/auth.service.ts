@@ -36,7 +36,7 @@ export class AuthService {
     try {
       const user = await this.prisma.users.findUnique({
         where: {
-          id_stytch: stytchId,
+          id_user: stytchId,
           identification_strategy: 'b2c',
         },
       });
@@ -64,7 +64,7 @@ export class AuthService {
 
   async register(user: CreateUserDto) {
     try {
-      /*const foundUser = await this.prisma.users.findFirst({
+      const foundUser = await this.prisma.users.findFirst({
         where: { email: user.email },
       });
 
@@ -72,11 +72,9 @@ export class AuthService {
         throw new BadRequestException('email already exists');
       }
 
-      const savedUser = await this.createUser(user);
+      return await this.createUser(user);
 
-      const { password_hash, ...resp_user } = savedUser;
-      return resp_user;*/
-      return;
+
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -94,9 +92,10 @@ export class AuthService {
           password_hash: hashedPassword,
         },
       });*/
+      console.log("Inside create User")
       return await this.prisma.users.upsert({
         where: {
-          id_stytch: user.stytch_id_user,
+          email: user.email,
         },
         update: {
           identification_strategy: 'b2c',
@@ -108,7 +107,6 @@ export class AuthService {
           id_user: id_user || uuidv4(),
         },
         create: {
-          id_stytch: user.stytch_id_user,
           identification_strategy: 'b2c',
           first_name: user.first_name,
           last_name: user.last_name,

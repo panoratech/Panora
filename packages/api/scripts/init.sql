@@ -74,11 +74,10 @@ CREATE TABLE users
  password_hash           text NULL,
  first_name              text NOT NULL,
  last_name               text NOT NULL,
- id_stytch               text NULL,
  created_at              timestamp NOT NULL DEFAULT NOW(),
  modified_at             timestamp NOT NULL DEFAULT NOW(),
  CONSTRAINT PK_users PRIMARY KEY ( id_user ),
- CONSTRAINT force_stytch_id_unique UNIQUE ( id_stytch )
+ CONSTRAINT unique_email UNIQUE ( email )
 );
 
 
@@ -90,7 +89,6 @@ STYTCH_B2B
 STYTCH_B2C';
 COMMENT ON COLUMN users.created_at IS 'DEFAULT NOW() to automatically insert a value if nothing supplied';
 
-COMMENT ON CONSTRAINT force_stytch_id_unique ON users IS 'force unique on stytch id';
 
 
 

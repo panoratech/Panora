@@ -4496,9 +4496,6 @@
           "email": {
             "type": "string"
           },
-          "stytch_id_user": {
-            "type": "string"
-          },
           "strategy": {
             "type": "string"
           },
@@ -4513,7 +4510,6 @@
           "first_name",
           "last_name",
           "email",
-          "stytch_id_user",
           "strategy"
         ]
       },
