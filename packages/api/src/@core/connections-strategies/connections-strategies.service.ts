@@ -171,20 +171,20 @@ export class ConnectionsStrategiesService {
     switch (authStrategy) {
       case AuthStrategy.oauth2:
         attributes = ['client_id', 'client_secret', 'scope'];
-        if (needsSubdomain(provider, vertical)) {
+        if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
         }
         break;
       case AuthStrategy.api_key:
         attributes = ['api_key'];
 
-        if (needsSubdomain(provider, vertical)) {
+        if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
         }
         break;
       case AuthStrategy.basic:
         attributes = ['username', 'secret'];
-        if (needsSubdomain(provider, vertical)) {
+        if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
         }
         break;
@@ -232,7 +232,12 @@ export class ConnectionsStrategiesService {
                 .scopes,
           };
         }
-        if (needsSubdomain(provider, vertical)) {
+        const isSubdomain = needsSubdomain(
+          provider.toLowerCase(),
+          vertical.toLowerCase(),
+        );
+        console.log('needs subdomain ??? ' + isSubdomain);
+        if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           data = {
             ...data,
             SUBDOMAIN: this.configService.get<string>(
@@ -247,7 +252,7 @@ export class ConnectionsStrategiesService {
             `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_API_KEY`,
           ),
         };
-        if (needsSubdomain(provider, vertical)) {
+        if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           data = {
             ...data,
             SUBDOMAIN: this.configService.get<string>(
@@ -265,7 +270,7 @@ export class ConnectionsStrategiesService {
             `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_SECRET`,
           ),
         };
-        if (needsSubdomain(provider, vertical)) {
+        if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           data = {
             ...data,
             SUBDOMAIN: this.configService.get<string>(

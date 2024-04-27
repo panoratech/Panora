@@ -6,9 +6,10 @@ export const connectionSchema = z.object({
   organisation: z.string(),
   app: z.string(),
   category: z.string(),
+  vertical: z.string(),
   status: z.string(),
   linkedUser: z.string(),
-  date: z.string(),
+  date: z.date(),
   connectionToken: z.string()
 })
 
