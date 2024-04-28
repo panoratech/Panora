@@ -1,8 +1,6 @@
 import { create } from 'zustand';
-import { projects as Project } from 'api';
 
-type User_ = User & { projects: Project[] };
-type User = {
+type User_ = {
   id_user: string;
   email: string;
   first_name: string;
@@ -11,7 +9,7 @@ type User = {
 }
 
 interface ProfileState {
-  profile: User_  | null;
+  profile: User_ | null;
   setProfile: (profile: User_) => void;
 }
 

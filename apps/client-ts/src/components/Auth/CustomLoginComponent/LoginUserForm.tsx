@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import useLoginMutation from '@/hooks/mutations/useLoginMutation'
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     email: z.string().email({
@@ -36,6 +38,10 @@ const formSchema = z.object({
 
 const LoginUserForm = () => {
 
+    const router = useRouter()
+
+    const {mutate : loginMutate} = useLoginMutation()
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -45,7 +51,15 @@ const LoginUserForm = () => {
     })
 
 const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+
+    loginMutate({
+        email:values.email,
+        password_hash:values.password
+    },
+    {
+        onSuccess: () => router.replace("/connections")
+    })
+    
 }
 
 

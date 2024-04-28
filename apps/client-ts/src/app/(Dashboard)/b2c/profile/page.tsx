@@ -11,14 +11,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation";
-import { useStytch, useStytchSession, useStytchUser } from "@stytch/nextjs";
 
 const Profile = () => {
-    const stytch = useStytch();
-    // Get the Stytch User object if available
-    const { user } = useStytchUser();
-    // Get the Stytch Session object if available
-    const { session } = useStytchSession();
+    
     const router = useRouter();
 
     return (

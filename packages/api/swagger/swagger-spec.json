@@ -4527,6 +4527,7 @@
           }
         },
         "required": [
+          "email",
           "password_hash"
         ]
       },
