@@ -26,18 +26,26 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
 
     const result: ZendeskCompanyInput = {
       name: source.name,
-      email: primaryEmail,
-      phone: primaryPhone,
-      address: {
+      is_organization: true,
+      industry: source.industry,
+    };
+
+    if (source.addresses && source.addresses[0]) {
+      result.address = {
         line1: source.addresses[0].street_1,
         city: source.addresses[0].city,
         state: source.addresses[0].state,
         postal_code: source.addresses[0].postal_code,
         country: source.addresses[0].country,
-      },
-      is_organization: true,
-      industry: source.industry,
-    };
+      };
+    }
+
+    if (primaryEmail) {
+      result.email = primaryEmail;
+    }
+    if (primaryPhone) {
+      result.phone = primaryPhone;
+    }
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {

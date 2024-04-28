@@ -42,58 +42,52 @@ export class SyncService implements OnModuleInit {
   async syncComments() {
     try {
       this.logger.log(`Syncing comments....`);
-      /*const defaultOrg = await this.prisma.organizations.findFirst({
-        where: {
-          name: 'Acme Inc',
-        },
-      });*/
-
-      const defaultUser = await this.prisma.users.findFirst({
-        where: {
-          email: 'audrey@aubry.io',
-        },
-      });
-
-      const defaultProject = await this.prisma.projects.findFirst({
-        where: {
-          id_user: defaultUser.id_user,
-          name: 'Project 1',
-        },
-      });
-      const id_project = defaultProject.id_project;
-      const linkedUsers = await this.prisma.linked_users.findMany({
-        where: {
-          id_project: id_project,
-        },
-      });
-      linkedUsers.map(async (linkedUser) => {
-        try {
-          const providers = TICKETING_PROVIDERS;
-          for (const provider of providers) {
-            try {
-              //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
-              const tickets = await this.prisma.tcg_tickets.findMany({
-                where: {
-                  remote_platform: provider,
-                  id_linked_user: linkedUser.id_linked_user,
-                },
-              });
-              for (const ticket of tickets) {
-                await this.syncCommentsForLinkedUser(
-                  provider,
-                  linkedUser.id_linked_user,
-                  id_project,
-                  ticket.id_tcg_ticket,
-                );
+      const users = await this.prisma.users.findMany();
+      if (users && users.length > 0) {
+        for (const user of users) {
+          const projects = await this.prisma.projects.findMany({
+            where: {
+              id_user: user.id_user,
+            },
+          });
+          for (const project of projects) {
+            const id_project = project.id_project;
+            const linkedUsers = await this.prisma.linked_users.findMany({
+              where: {
+                id_project: id_project,
+              },
+            });
+            linkedUsers.map(async (linkedUser) => {
+              try {
+                const providers = TICKETING_PROVIDERS;
+                for (const provider of providers) {
+                  try {
+                    //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
+                    const tickets = await this.prisma.tcg_tickets.findMany({
+                      where: {
+                        remote_platform: provider,
+                        id_linked_user: linkedUser.id_linked_user,
+                      },
+                    });
+                    for (const ticket of tickets) {
+                      await this.syncCommentsForLinkedUser(
+                        provider,
+                        linkedUser.id_linked_user,
+                        id_project,
+                        ticket.id_tcg_ticket,
+                      );
+                    }
+                  } catch (error) {
+                    handleServiceError(error, this.logger);
+                  }
+                }
+              } catch (error) {
+                handleServiceError(error, this.logger);
               }
-            } catch (error) {
-              handleServiceError(error, this.logger);
-            }
+            });
           }
-        } catch (error) {
-          handleServiceError(error, this.logger);
         }
-      });
+      }
     } catch (error) {
       handleServiceError(error, this.logger);
     }

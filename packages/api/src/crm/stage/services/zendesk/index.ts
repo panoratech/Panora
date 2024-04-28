@@ -59,7 +59,7 @@ export class ZendeskService implements IStageService {
         },
       });
 
-      const finalData = resp.data.items.find(
+      const finalData = (resp.data.items as any[]).find(
         (item) => item.data.id === stage_remote_id,
       );
 

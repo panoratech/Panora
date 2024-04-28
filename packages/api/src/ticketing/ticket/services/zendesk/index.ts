@@ -81,6 +81,10 @@ export class ZendeskService implements ITicketService {
         };
       }
 
+      this.logger.log(
+        'data to insert for zendesk ticket is ' + JSON.stringify(dataBody),
+      );
+
       const resp = await axios.post(
         `${connection.account_url}/tickets.json`,
         JSON.stringify(dataBody),

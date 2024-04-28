@@ -25,13 +25,6 @@ export class AttioContactMapper implements IContactMapper {
     const primaryEmail = source.email_addresses?.[0]?.email_address;
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
-    // const emailObject = primaryEmail
-    //   ? [{ value: primaryEmail, primary: true, label: '' }]
-    //   : [];
-    // const phoneObject = primaryPhone
-    //   ? [{ value: primaryPhone, primary: true, label: '' }]
-    //   : [];
-
     const result: AttioContactInput = {
       values: {
         name: [
@@ -41,10 +34,16 @@ export class AttioContactMapper implements IContactMapper {
             full_name: `${source.first_name} ${source.last_name}`,
           },
         ],
-        email_addresses: [{ email_address: primaryEmail }],
-        phone_numbers: [{ original_phone_number: primaryPhone }],
       },
     };
+
+    if (primaryEmail) {
+      result.values.email_addresses = [{ email_address: primaryEmail }];
+    }
+
+    if (primaryPhone) {
+      result.values.phone_numbers = [{ original_phone_number: primaryPhone }];
+    }
 
     // if (source.user_id) {
     //   const owner = await this.utils.getUser(source.user_id);

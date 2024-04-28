@@ -86,15 +86,18 @@ export class ZendeskService implements IContactService {
           )}`,
         },
       });
-      const finalData = resp.data.items
-        .filter((item) => item.is_organization === false)
-        .map((item) => {
-          return item.data;
-        });
+
+      const finalData: any[] = resp.data.items.map((item) => {
+        return item.data;
+      });
+      const filteredData = finalData.filter(
+        (item) => item.is_organization === false,
+      );
+
       this.logger.log(`Synced zendesk contacts !`);
 
       return {
-        data: finalData,
+        data: filteredData,
         message: 'Zendesk contacts retrieved',
         statusCode: 200,
       };

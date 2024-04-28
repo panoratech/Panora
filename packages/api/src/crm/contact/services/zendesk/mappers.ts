@@ -29,16 +29,24 @@ export class ZendeskContactMapper implements IContactMapper {
       name: `${source.first_name} ${source.last_name}`,
       first_name: source.first_name,
       last_name: source.last_name,
-      email: primaryEmail,
-      phone: primaryPhone,
-      address: {
+    };
+
+    if (primaryEmail) {
+      result.email = primaryEmail;
+    }
+    if (primaryPhone) {
+      result.phone = primaryPhone;
+    }
+    if (source.addresses && source.addresses[0]) {
+      result.address = {
         line1: source.addresses[0].street_1,
         city: source.addresses[0].city,
         state: source.addresses[0].state,
         postal_code: source.addresses[0].postal_code,
         country: source.addresses[0].country,
-      },
-    };
+      };
+    }
+
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {

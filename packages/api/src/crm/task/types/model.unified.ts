@@ -1,13 +1,33 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UnifiedTaskInput {
-  subject?: string;
-  content?: string;
-  status?: string;
+  @ApiProperty({ description: 'The subject of the task' })
+  subject: string;
+
+  @ApiProperty({ description: 'The content of the task' })
+  content: string;
+
+  @ApiProperty({
+    description:
+      'The status of the task. Authorized values are "Completed" and "Not Completed" ',
+  })
+  status: string;
+
+  @ApiPropertyOptional({ description: 'The due date of the task' })
   due_date?: Date;
+
+  @ApiPropertyOptional({ description: 'The finished date of the task' })
   finished_date?: Date;
+
+  @ApiPropertyOptional({ description: 'The uuid of the user tied to the task' })
   user_id?: string;
+
+  @ApiPropertyOptional({
+    description: 'The uuid fo the company tied to the task',
+  })
   company_id?: string;
+
+  @ApiPropertyOptional({ description: 'The uuid of the deal tied to the task' })
   deal_id?: string;
 
   @ApiPropertyOptional({

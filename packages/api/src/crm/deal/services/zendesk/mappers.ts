@@ -23,10 +23,13 @@ export class ZendeskDealMapper implements IDealMapper {
     const result: ZendeskDealInput = {
       name: source.name,
       value: source.amount,
-      contact_id: Number(
-        await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
-      ),
     };
+
+    if (source.company_id) {
+      result.contact_id = Number(
+        await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
+      );
+    }
 
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);

@@ -22,11 +22,14 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
   ): Promise<PipedriveCompanyInput> {
     const result: PipedriveCompanyInput = {
       name: source.name,
-      address: source.addresses[0].street_1,
-      address_locality: source.addresses[0].city,
-      address_country: source.addresses[0].country,
-      address_postal_code: source.addresses[0].postal_code,
     };
+
+    if (source.addresses && source.addresses[0]) {
+      result.address = source.addresses[0].street_1;
+      result.address_locality = source.addresses[0].city;
+      result.address_country = source.addresses[0].country;
+      result.address_postal_code = source.addresses[0].postal_code;
+    }
 
     if (source.user_id) {
       const owner = await this.utils.getUser(source.user_id);

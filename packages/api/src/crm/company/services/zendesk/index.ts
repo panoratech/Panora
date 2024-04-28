@@ -86,15 +86,17 @@ export class ZendeskService implements ICompanyService {
           )}`,
         },
       });
-      const finalData = resp.data.items
-        .filter((item) => item.data.is_organization === true)
-        .map((item) => {
-          return item.data;
-        });
+      const finalData: any[] = resp.data.items.map((item) => {
+        return item.data;
+      });
+      const filteredData = finalData.filter(
+        (item) => item.data.is_organization === true,
+      );
+
       this.logger.log(`Synced zendesk companies !`);
 
       return {
-        data: finalData,
+        data: filteredData,
         message: 'Zendesk companies retrieved',
         statusCode: 200,
       };

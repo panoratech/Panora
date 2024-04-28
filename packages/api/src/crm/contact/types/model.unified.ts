@@ -8,19 +8,19 @@ export class UnifiedContactInput {
   @ApiProperty({ description: 'The last name of the contact' })
   last_name: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: [Email],
     description: 'The email addresses of the contact',
   })
   email_addresses: Email[];
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: [Phone],
     description: 'The phone numbers of the contact',
   })
   phone_numbers: Phone[];
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: [Address],
     description: 'The addresses of the contact',
   })

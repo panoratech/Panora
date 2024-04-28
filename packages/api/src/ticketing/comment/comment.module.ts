@@ -10,9 +10,7 @@ import { CommentController } from './comment.controller';
 import { CommentService } from './services/comment.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './services/registry.service';
-import { GithubService } from './services/github';
 import { FrontService } from './services/front';
-import { HubspotService } from './services/hubspot';
 import { JiraService } from './services/jira';
 import { GorgiasService } from './services/gorgias';
 
@@ -34,9 +32,7 @@ import { GorgiasService } from './services/gorgias';
     ServiceRegistry,
     /* PROVIDERS SERVICES */
     ZendeskService,
-    HubspotService,
     FrontService,
-    GithubService,
     JiraService,
     GorgiasService,
   ],

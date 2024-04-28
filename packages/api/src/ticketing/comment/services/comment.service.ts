@@ -340,7 +340,7 @@ export class CommentService {
         body: comment.body,
         html_body: comment.html_body,
         is_private: comment.is_private,
-        creator_type: comment.creator_type,
+        creator_type: comment.creator_type as 'user' | 'contact',
         ticket_id: comment.id_tcg_ticket,
         contact_id: comment.id_tcg_contact, // uuid of Contact object
         user_id: comment.id_tcg_user, // uuid of User object
@@ -418,7 +418,7 @@ export class CommentService {
             body: comment.body,
             html_body: comment.html_body,
             is_private: comment.is_private,
-            creator_type: comment.creator_type,
+            creator_type: comment.creator_type as 'user' | 'contact',
             ticket_id: comment.id_tcg_ticket,
             contact_id: comment.id_tcg_contact, // uuid of Contact object
             user_id: comment.id_tcg_user, // uuid of User object

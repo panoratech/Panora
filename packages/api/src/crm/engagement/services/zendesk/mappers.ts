@@ -43,11 +43,15 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
     }[],
   ): Promise<ZendeskEngagementInput> {
     const result: ZendeskEngagementInput = {
-      summary: source.content,
+      summary: source.content || '',
       incoming: source.direction === 'incoming', // Example mapping
-      made_at: source.start_at?.toISOString(),
-      updated_at: source.end_time?.toISOString(),
     };
+
+    if (source.start_at && source.end_time) {
+      // TODO; compute a date difference instead of raw difference
+      result.duration =
+        source.end_time.getSeconds() - source.start_at.getSeconds();
+    }
 
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);

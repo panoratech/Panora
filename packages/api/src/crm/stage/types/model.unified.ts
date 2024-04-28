@@ -1,7 +1,9 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UnifiedStageInput {
+  @ApiProperty({ description: 'The name of the stage' })
   stage_name: string;
+
   @ApiPropertyOptional({
     type: [{}],
     description:

@@ -20,61 +20,43 @@ export class ZendeskTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<ZendeskTicketInput> {
-    let result: ZendeskTicketInput = {
+    const result: ZendeskTicketInput = {
       description: source.description,
-      priority: 'high',
-      status: 'new',
       subject: source.name,
       comment: {
-        body: source.comment.body,
-        html_body: source.comment.html_body || null,
+        body: source.comment.body || '',
         public: !source.comment.is_private || true,
-        uploads: source.comment.attachments, //fetch token attachments for this uuid, would be done on the fly in dest service
+        uploads: source.comment.attachments || [], //fetch token attachments for this uuid, would be done on the fly in dest service
       },
     };
+    if (source.comment.html_body) {
+      result.comment.html_body = source.comment.html_body;
+    }
     if (source.assigned_to && source.assigned_to.length > 0) {
-      result = {
-        ...result,
-        assignee_email: await this.utils.getAssigneeMetadataFromUuid(
-          source.assigned_to?.[0],
-        ), // get the mail of the uuid
-      };
+      result.assignee_email = await this.utils.getAssigneeMetadataFromUuid(
+        source.assigned_to?.[0],
+      ); // get the mail of the uuid
     }
     if (source.due_date) {
-      result = {
-        ...result,
-        due_at: source.due_date?.toISOString(),
-      };
+      result.due_at = source.due_date?.toISOString();
     }
     if (source.priority) {
-      result = {
-        ...result,
-        priority: source.priority as 'urgent' | 'high' | 'normal' | 'low',
-      };
+      result.priority = source.priority as 'urgent' | 'high' | 'normal' | 'low';
     }
     if (source.status) {
-      result = {
-        ...result,
-        status: source.status as
-          | 'new'
-          | 'open'
-          | 'pending'
-          | 'hold'
-          | 'solved'
-          | 'closed',
-      };
+      result.status = source.status as
+        | 'new'
+        | 'open'
+        | 'pending'
+        | 'hold'
+        | 'solved'
+        | 'closed';
     }
     if (source.tags) {
-      result = {
-        ...result,
-        tags: source.tags,
-      };
+      result.tags = source.tags;
     }
     if (source.type) {
-      result = {
-        ...result,
-        type: source.type as 'problem' | 'incident' | 'question' | 'task',
-      };
+      result.type = source.type as 'problem' | 'incident' | 'question' | 'task';
     }
 
     if (customFieldMappings && source.field_mappings) {

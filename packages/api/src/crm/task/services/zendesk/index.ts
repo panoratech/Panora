@@ -9,7 +9,6 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
-import { OriginalTaskOutput } from '@@core/utils/types/original/original.crm';
 @Injectable()
 export class ZendeskService implements ITaskService {
   constructor(

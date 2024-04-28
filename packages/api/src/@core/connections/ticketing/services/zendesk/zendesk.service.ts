@@ -12,7 +12,7 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy } from '@panora/shared';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -65,9 +65,8 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
         scope: 'read',
       });
 
-      //const subdomain = 'panora7548';
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN!}/oauth/tokens`,
+        `${CREDENTIALS.SUBDOMAIN}/oauth/tokens`,
         formData.toString(),
         {
           headers: {
@@ -82,6 +81,9 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
 
       let db_res;
       const connection_token = uuidv4();
+      const BASE_API_URL =
+        CREDENTIALS.SUBDOMAIN +
+        providersConfig['ticketing']['zendesk'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -90,7 +92,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: CREDENTIALS.SUBDOMAIN!,
+            account_url: BASE_API_URL,
             refresh_token: '',
             expiration_timestamp: new Date(), //TODO
             status: 'valid',
@@ -105,7 +107,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
             provider_slug: 'zendesk',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: CREDENTIALS.SUBDOMAIN!,
+            account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
             expiration_timestamp: new Date(), //TODO

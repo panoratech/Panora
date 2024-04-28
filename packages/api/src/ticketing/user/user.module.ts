@@ -11,7 +11,6 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { ZendeskService } from './services/zendesk';
 import { FrontService } from './services/front';
-import { GithubService } from './services/github';
 import { JiraService } from './services/jira';
 import { GorgiasService } from './services/gorgias';
 
@@ -34,7 +33,6 @@ import { GorgiasService } from './services/gorgias';
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
-    GithubService,
     JiraService,
     GorgiasService,
   ],

@@ -121,6 +121,10 @@ export class TicketService {
           : [],
       });
 
+      this.logger.log(
+        'ticket desunified is ' + JSON.stringify(desunifiedObject),
+      );
+
       const service: ITicketService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalTicketOutput> = await service.addTicket(

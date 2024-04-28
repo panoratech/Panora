@@ -1,13 +1,39 @@
 import { Address, Email, Phone } from '@crm/@utils/@types';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UnifiedCompanyInput {
+  @ApiProperty({ description: 'The name of the company' })
   name: string;
-  industry: string;
-  number_of_employees: number;
+
+  @ApiPropertyOptional({ description: 'The industry of the company' })
+  industry?: string;
+
+  @ApiPropertyOptional({
+    description: 'The number of employees of the company',
+  })
+  number_of_employees?: number;
+
+  @ApiPropertyOptional({
+    description: 'The uuid of the user who owns the company',
+  })
   user_id?: string;
+
+  @ApiPropertyOptional({
+    description: 'The email addresses of the company',
+    type: [Email],
+  })
   email_addresses?: Email[];
+
+  @ApiPropertyOptional({
+    description: 'The addresses of the company',
+    type: [Address],
+  })
   addresses?: Address[];
+
+  @ApiPropertyOptional({
+    description: 'The phone numbers of the company',
+    type: [Phone],
+  })
   phone_numbers?: Phone[];
 
   @ApiPropertyOptional({
