@@ -28,7 +28,7 @@ import useFetchUserMutation from "@/hooks/mutations/useFetchUserMutation";
 
 export default function Page() {
 
-    const [userInitialized,setUserInitialized] = useState(false)
+    const [userInitialized,setUserInitialized] = useState(true)
     const {mutate : fetchUserMutate} = useFetchUserMutation()
     const router = useRouter()
     const {profile} = useProfileStore();
@@ -44,17 +44,22 @@ export default function Page() {
 
     useEffect(() => {
 
+        if(!Cookies.get('access_token'))
+            {
+                setUserInitialized(false);
+            }
+
         if(Cookies.get('access_token') && !profile)
         {
             fetchUserMutate(Cookies.get('access_token'),{
-                onError: () => setUserInitialized(true)
+                onError: () => setUserInitialized(false)
             })
         }
 
-        if(profile)
-        {
-            router.replace('/connections');
-        }
+        // if(profile)
+        // {
+        //     router.replace('/connections');
+        // }
 
     },[])
 

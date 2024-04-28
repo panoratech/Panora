@@ -112,41 +112,49 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
 
   return (
     <>
-    <div className="fixed top-0 left-0 right-0 supports-backdrop-blur:bg-background/60 border-b bg-background/95 backdrop-blur z-20">
-      <nav className="h-14 flex items-center justify-between px-4">
-        <div className="hidden lg:block">
-          <Link href='/'>
-            <img src="/logo.png" className='w-14' />
-          </Link>
-        </div>
-        <div className={cn("block lg:!hidden")}>
-          <SmallNav onLinkClick={handlePageChange} />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <UserNav />
-          <ThemeToggle />
-        </div>
-      </nav>
-    </div>
-    <div className="flex h-screen overflow-hidden">
-      <nav
-        className={cn(`relative hidden h-screen border-r pt-16 lg:block w-72`)}
-      >
-        <div className="space-y-4 py-4">
-          <div className="px-3 py-2">
-            <div className="space-y-1">
-              
-              {/* <TeamSwitcher className='w-40 ml-3' userId={profile?.id_user} /> */}
-              <MainNav onLinkClick={handlePageChange} className=''/>
+      {userInitialized ? 
+      (
+        <>
+        <div className="fixed top-0 left-0 right-0 supports-backdrop-blur:bg-background/60 border-b bg-background/95 backdrop-blur z-20">
+          <nav className="h-14 flex items-center justify-between px-4">
+            <div className="hidden lg:block">
+              <Link href='/'>
+                <img src="/logo.png" className='w-14' />
+              </Link>
             </div>
-          </div>
+            <div className={cn("block lg:!hidden")}>
+              <SmallNav onLinkClick={handlePageChange} />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <UserNav />
+              <ThemeToggle />
+            </div>
+          </nav>
         </div>
-      </nav>
+        <div className="flex h-screen overflow-hidden">
+          <nav
+            className={cn(`relative hidden h-screen border-r pt-16 lg:block w-72`)}
+          >
+            <div className="space-y-4 py-4">
+              <div className="px-3 py-2">
+                <div className="space-y-1">
+                  
+                  {/* <TeamSwitcher className='w-40 ml-3' userId={profile?.id_user} /> */}
+                  <MainNav onLinkClick={handlePageChange} className=''/>
+                </div>
+              </div>
+            </div>
+          </nav>
 
-      <main className="w-full pt-16">{children}</main>
+          <main className="w-full pt-16">{children}</main>
 
-    </div>
+        </div>
+        </>
+      )
+    :(
+      <></>
+    )}
     </>
   );
 };
