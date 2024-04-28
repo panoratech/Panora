@@ -19,32 +19,49 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
+import useProfileStore from "@/state/profileStore";
+import useFetchUserMutation from "@/hooks/mutations/useFetchUserMutation";
 
 
 
-export default async function Page() {
+export default function Page() {
 
+    const [userInitialized,setUserInitialized] = useState(false)
+    const {mutate : fetchUserMutate} = useFetchUserMutation()
     const router = useRouter()
+    const {profile} = useProfileStore();
 
-    if(Cookies.get('access_token'))
-    {
-        router.back()
-    }
+    useEffect(() => {
 
-    
+        if(profile)
+        {
+            router.replace('/connections');
+        }
 
+    },[profile]);
 
+    useEffect(() => {
 
+        if(Cookies.get('access_token') && !profile)
+        {
+            fetchUserMutate(Cookies.get('access_token'),{
+                onError: () => setUserInitialized(true)
+            })
+        }
 
+        if(profile)
+        {
+            router.replace('/connections');
+        }
 
-
+    },[])
 
     return (
         <>
         
-        {!Cookies.get('access_token') ? 
+        {!userInitialized ? 
         (
             <div className='min-h-screen grid lg:grid-cols-2 mx-auto text-left'>
                 <div className='flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>

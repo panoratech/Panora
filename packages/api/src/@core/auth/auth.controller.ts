@@ -6,6 +6,7 @@ import {
   UseGuards,
   Query,
   Res,
+  Request,
   Param,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -59,16 +60,38 @@ export class AuthController {
     return this.authService.getUsers();
   }
 
-  @ApiOperation({
-    operationId: 'getUser',
-    summary: 'Get a specific user by ID',
-  })
-  @ApiResponse({ status: 200, description: 'Returns the user data.' })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  @Get('users/:stytchId')
-  async getUser(@Param('stytchId') stytchId: string) {
-    return this.authService.getUserByStytchId(stytchId);
+  // @ApiOperation({
+  //   operationId: 'getUser',
+  //   summary: 'Get a specific user by ID',
+  // })
+  // @ApiResponse({ status: 200, description: 'Returns the user data.' })
+  // @ApiResponse({ status: 404, description: 'User not found.' })
+  // @Get('users/:stytchId')
+  // async getUser(@Param('stytchId') stytchId: string) {
+  //   return this.authService.getUserByStytchId(stytchId);
+  // }
+
+  // @ApiOperation({ operationId: 'generateApiKey', summary: 'Create API Key' })
+  // @ApiBody({ type: ApiKeyDto })
+  // @ApiResponse({ status: 201 })
+  // @UseGuards(JwtAuthGuard)
+  // @Get('users/currentUser')
+  // async getCurrentUser(@Body() data: ApiKeyDto): Promise<{ api_key: string }> {
+  //   return this.authService.generateApiKeyForUser(
+  //     data.userId,
+  //     data.projectId,
+  //     data.keyName,
+  //   );
+  // }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getProfile(@Request() req) {
+    return req.user;
   }
+
+
+
 
   @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
   @ApiResponse({ status: 200 })

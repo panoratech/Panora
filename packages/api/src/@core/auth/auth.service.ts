@@ -168,6 +168,8 @@ export class AuthService {
       const payload = {
         email: userData.email,
         sub: userData.id_user,
+        first_name: userData.first_name,
+        last_name: userData.last_name
       };
 
 

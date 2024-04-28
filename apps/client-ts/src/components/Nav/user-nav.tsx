@@ -19,6 +19,8 @@ import useProfileStore from "@/state/profileStore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect } from "react";
+import Cookies from 'js-cookie';
+
   
 export function UserNav() {
   // const stytch = useStytch();
@@ -41,7 +43,8 @@ export function UserNav() {
   }, [data, setProfile]);*/
 
   const onLogout = () => {
-    stytch.session.revoke()
+    Cookies.remove("access_token")
+    setProfile(null)
     router.push('/b2c/login');
   }
   return (

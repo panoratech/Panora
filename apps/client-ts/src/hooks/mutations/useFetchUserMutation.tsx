@@ -5,46 +5,34 @@ import useProfileStore from '@/state/profileStore';
 import { projects as Project } from 'api';
 import Cookies from 'js-cookie';
 
+
 type IUserDto = {
-  id_user: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  id_organization?: string;
-}
-
-interface ILoginInputDto {
-    email:string,
-    password_hash:string
-}
+    id_user: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    id_organization?: string;
+  }
 
 
-
-interface ILoginOutputDto {
-    user: IUserDto,
-    access_token: string
-
-}
-
-
-const useLoginMutation = () => {
+const useFetchUserMutation = () => {
 
     const {setProfile} = useProfileStore()
 
-    const loginUser = async (userData: ILoginInputDto) => {
+    const loginUser = async (cookie : string | undefined) => {
         // Fetch the token
-        const response = await fetch(`${config.API_URL}/auth/login`, {
-            method: 'POST',
-            body: JSON.stringify(userData),
+        const response = await fetch(`${config.API_URL}/auth/profile`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json', 
+                'Authorization': `Bearer ${cookie}`
             },
         });
 
 
  
         if (!response.ok) {
-            throw new Error("Login Failed!!")
+            throw new Error("Fetch User Failed!!")
         }
         
         
@@ -55,7 +43,7 @@ const useLoginMutation = () => {
     return useMutation({
         mutationFn: loginUser,
         onMutate: () => {
-            toast("Logging the user !", {
+            toast("Fetching the user !", {
                 description: "",
                 action: {
                   label: "Close",
@@ -64,7 +52,7 @@ const useLoginMutation = () => {
             })
         },
         onError: (error) => {
-            toast("User generation failed !", {
+            toast("Fetch User failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
@@ -72,13 +60,13 @@ const useLoginMutation = () => {
                 },
             })
         },
-        onSuccess: (data : ILoginOutputDto) => {
+        onSuccess: (data : IUserDto) => {
 
-            setProfile(data.user);
-            Cookies.set('access_token',data.access_token,{expires:1});
-            console.log("Bearer Token in client Side : ",data.access_token);
+            setProfile(data);
+            // Cookies.set('access_token',data.access_token,{expires:1});
+            // console.log("Bearer Token in client Side : ",data.access_token);
 
-            toast("User has been generated !", {
+            toast("User has been fetched !", {
                 description: "",
                 action: {
                   label: "Close",
@@ -91,4 +79,4 @@ const useLoginMutation = () => {
     });
 };
 
-export default useLoginMutation;
+export default useFetchUserMutation;

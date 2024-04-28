@@ -148,26 +148,20 @@
         ]
       }
     },
-    "/auth/users/{stytchId}": {
+    "/auth/profile": {
       "get": {
-        "operationId": "getUser",
-        "summary": "Get a specific user by ID",
-        "parameters": [
-          {
-            "name": "stytchId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "operationId": "AuthController_getProfile",
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "Returns the user data."
-          },
-          "404": {
-            "description": "User not found."
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [

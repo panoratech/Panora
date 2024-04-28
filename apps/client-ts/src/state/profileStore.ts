@@ -10,13 +10,13 @@ type User_ = {
 
 interface ProfileState {
   profile: User_ | null;
-  setProfile: (profile: User_) => void;
+  setProfile: (profile: User_ | null) => void;
 }
 
 
 const useProfileStore = create<ProfileState>()((set) => ({
   profile: null,
-  setProfile: (profile_: User_) => set({ profile: profile_ }),
+  setProfile: (profile_: User_ | null) => set({ profile: profile_ }),
 }));
 
 export default useProfileStore;

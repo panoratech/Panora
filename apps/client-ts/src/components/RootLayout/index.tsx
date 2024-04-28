@@ -14,7 +14,8 @@ import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
 import { ThemeToggle } from '@/components/Nav/theme-toggle';
 import { projects as Project } from 'api';
-
+import Cookies from 'js-cookie';
+import useFetchUserMutation from "@/hooks/mutations/useFetchUserMutation";
 
 const useDeviceSize = () => {
 
@@ -64,42 +65,40 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
   const [width, height] = useDeviceSize();
   const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
-  // const { user } = useStytchUser();
-  // const {data, isLoading, isError, error} = useProfile(user?.user_id!);
 
-  // if(isLoading) {
-  //   console.log("loading profiles");
-  // }
-  // if(isError){
-  //   console.log('Profiles fetch error: '+ error)
-  // }
+  const [userInitialized,setUserInitialized] = useState(false)
 
-  const { profile, setProfile } = useProfileStore();
-
+  const {profile} = useProfileStore()
   const { setIdProject } = useProjectStore();
 
-  // useEffect(()=> { 
-  //   if(data){
-  //     //console.log("data from bundled call is "+ JSON.stringify(data));
-  //     setProfile({
-  //       id_user: data.id_user,
-  //       email: data.email!,
-  //       first_name: data.first_name,
-  //       last_name: data.last_name,
-  //       projects: data.projects
-  //       //id_organization: data.id_organization as string,
-  //     })
-  //     console.log("data projects are => "+ JSON.stringify(data.projects));
-      
-  //     if(data.projects && data.projects.length > 0 && data.projects[0].id_project){
-  //       setIdProject(data.projects[0].id_project)
-  //     }
-  //   }
-  // }, [data, setIdProject, setProfile]);
+  const {mutate: fetchUserMutate} = useFetchUserMutation()
 
   useEffect(() => {
-    setProfile(dummyUser);
+
+    if(!Cookies.get('access_token'))
+    {
+        router.replace("/b2c/login")
+    }
+    else
+    {
+      fetchUserMutate(Cookies.get('access_token'),{
+        onError: () => router.replace("/b2c/login")
+      })
+    }
   },[])
+
+  useEffect(() => {
+    if(profile)
+      {
+        setUserInitialized(true)
+      }
+  },[profile])
+
+
+
+  
+
+  
 
   
   const handlePageChange = (page: string) => {
@@ -138,7 +137,7 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
           <div className="px-3 py-2">
             <div className="space-y-1">
               
-              <TeamSwitcher className='w-40 ml-3' userId={profile?.id_user} />
+              {/* <TeamSwitcher className='w-40 ml-3' userId={profile?.id_user} /> */}
               <MainNav onLinkClick={handlePageChange} className=''/>
             </div>
           </div>
