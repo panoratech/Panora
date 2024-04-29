@@ -7,6 +7,10 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 import { Connection } from "./data/schema"
 import { DataTableColumnHeader } from "./../shared/data-table-column-header"
+import React,{ useState } from "react"
+import { ClipboardIcon } from '@radix-ui/react-icons'
+import { toast } from "sonner"
+
 
 function truncateMiddle(str: string, maxLength: number) {
   if (str.length <= maxLength) {
@@ -20,10 +24,10 @@ function truncateMiddle(str: string, maxLength: number) {
 
 function insertDots(originalString: string): string {
   if(!originalString) return "";
-  if (originalString.length <= 50) {
-    return originalString;
-  }
-  return originalString.substring(0, 50 - 3) + '...';
+  // if (originalString.length <= 50) {
+  //   return originalString;
+  // }
+  return originalString.substring(0, 7) + '...';
 }
 
 function formatISODate(ISOString: string): string {
@@ -42,6 +46,26 @@ function formatISODate(ISOString: string): string {
   // Create a formatter (using US English locale as an example)
   const formatter = new Intl.DateTimeFormat('en-US', options);
   return formatter.format(date);
+}
+
+const connectionTokenComponent = ({row}:{row:any}) => {
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(row.getValue("connectionToken"));
+      toast("Connection Token copied to clipboard!!")
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+
+  return (
+    <div className="flex items-center">
+        <Badge variant="outline">{truncateMiddle(row.getValue("connectionToken"),6)}   
+        <ClipboardIcon onClick={handleCopy} className="mx-2"/>
+
+        </Badge>
+    </div>
+  )
 }
 
 export const columns: ColumnDef<Connection>[] = [
@@ -187,23 +211,17 @@ export const columns: ColumnDef<Connection>[] = [
       //const label = labels.find((label) => label.value === row.original.date)
 
       return (
-        <div className="flex space-x-2">
+        <div className="flex">
           <Badge variant="outline">{formatISODate(row.getValue("date"))}</Badge>
         </div>
       )
     },
   },
-  // {
-  //   accessorKey: "connectionToken",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Connection Token" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     <div className="flex">
-  //       <div className=" truncate mr-2">
-  //         <Badge variant="outline">{insertDots(row.getValue("connectionToken"))}</Badge>
-  //       </div>
-  //     </div>
-  //   },
-  // }
+  {
+    accessorKey: "connectionToken",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Connection Token" />
+    ),
+    cell: connectionTokenComponent
+  }
 ]
