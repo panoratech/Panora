@@ -12,8 +12,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
-import { users as User } from '@prisma/client';
-import { ConfigService } from '@nestjs/config';
 
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
@@ -131,7 +129,7 @@ export class AuthService {
   //TODO
   async login(user: LoginDto) {
     try {
-      let foundUser: User;
+      // let foundUser: User;
 
       // if (user.id_user) {
       //   foundUser = await this.prisma.users.findUnique({
@@ -145,7 +143,7 @@ export class AuthService {
       //   });
       // }
 
-      foundUser = await this.prisma.users.findUnique({
+      const foundUser = await this.prisma.users.findUnique({
         where: {
           email: user.email
         }

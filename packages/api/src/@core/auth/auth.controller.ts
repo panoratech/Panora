@@ -90,9 +90,6 @@ export class AuthController {
     return req.user;
   }
 
-
-
-
   @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
   @ApiResponse({ status: 200 })
   @Get('api-keys')
