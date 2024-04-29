@@ -1,14 +1,20 @@
 "use client"
 
-import React from 'react'
+import React,{useEffect} from 'react'
 import { useRouter } from "next/navigation";
 
 
-const Index = () => {
+const Home = () => {
 
 
     const Router = useRouter();
+
+    useEffect(() => {
+
     Router.replace('/connections')
+
+
+    },[])
     
   return (
     <>
@@ -16,4 +22,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default Home

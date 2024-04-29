@@ -32,7 +32,8 @@ const Profile = () => {
         setProfile(null)
         setIdProject("")
         queryClient.clear()
-        router.push('/b2c/login');
+        router.push('/b2c/login')
+
     }
 
     return (
