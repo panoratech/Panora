@@ -54,14 +54,12 @@ export class PipedriveContactMapper implements IContactMapper {
     }
 
     if (customFieldMappings && source.field_mappings) {
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find(
-            (mapping) => mapping.slug === key,
-          );
-          if (mapping) {
-            result[mapping.remote_id] = fieldMapping[key];
-          }
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
       }
     }
@@ -94,9 +92,12 @@ export class PipedriveContactMapper implements IContactMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput> {
-    const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: contact[mapping.remote_id],
-    }));
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = contact[mapping.remote_id];
+      }
+    }
     const address: Address = {
       street_1: '',
       city: '',

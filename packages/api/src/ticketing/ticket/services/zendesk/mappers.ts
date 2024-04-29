@@ -61,19 +61,18 @@ export class ZendeskTicketMapper implements ITicketMapper {
 
     if (customFieldMappings && source.field_mappings) {
       let res: CustomField[] = [];
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find(
-            (mapping) => mapping.slug === key,
-          );
-          if (mapping) {
-            const obj = { id: mapping.remote_id, value: fieldMapping[key] };
-            res = [...res, obj];
-          }
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          const obj = { id: mapping.remote_id, value: v };
+          res = [...res, obj];
         }
       }
       result['custom_fields'] = res;
     }
+
     return result;
   }
 
@@ -101,15 +100,18 @@ export class ZendeskTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<Promise<UnifiedTicketOutput>> {
-    const field_mappings = customFieldMappings.reduce((acc, mapping) => {
-      const customField = ticket.custom_fields.find(
-        (field) => field.id === mapping.remote_id,
-      );
-      if (customField) {
-        acc.push({ [mapping.slug]: customField.value });
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        const customField = ticket.custom_fields.find(
+          (field) => field.id === mapping.remote_id,
+        );
+        if (customField) {
+          field_mappings[mapping.slug] = customField.value;
+        }
       }
-      return acc;
-    }, [] as Record<string, any>[]);
+    }
+
     let opts: any;
 
     //TODO: contact or user ?

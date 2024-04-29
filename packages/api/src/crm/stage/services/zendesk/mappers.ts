@@ -40,10 +40,12 @@ export class ZendeskStageMapper implements IStageMapper {
       remote_id: string;
     }[],
   ): UnifiedStageOutput {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: stage[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = stage[mapping.remote_id];
+      }
+    }
 
     return {
       stage_name: stage.name,

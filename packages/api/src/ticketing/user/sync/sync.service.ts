@@ -251,10 +251,10 @@ export class SyncService implements OnModuleInit {
             },
           });
 
-          for (const mapping of user.field_mappings) {
+          for (const [slug, value] of Object.entries(user.field_mappings)) {
             const attribute = await this.prisma.attribute.findFirst({
               where: {
-                slug: Object.keys(mapping)[0],
+                slug: slug,
                 source: originSource,
                 id_consumer: linkedUserId,
               },
@@ -264,9 +264,7 @@ export class SyncService implements OnModuleInit {
               await this.prisma.value.create({
                 data: {
                   id_value: uuidv4(),
-                  data: Object.values(mapping)[0]
-                    ? Object.values(mapping)[0]
-                    : 'null',
+                  data: value || 'null',
                   attribute: {
                     connect: {
                       id_attribute: attribute.id_attribute,

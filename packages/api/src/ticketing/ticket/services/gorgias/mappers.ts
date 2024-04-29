@@ -68,16 +68,16 @@ export class GorgiasTicketMapper implements ITicketMapper {
       result.tags = source.tags.map((tag) => ({ name: tag }));
     }
 
-    // Map custom fields if applicable
     if (customFieldMappings && source.field_mappings) {
       result.meta = {}; // Ensure meta exists
-      source.field_mappings.forEach((fieldMapping) => {
-        customFieldMappings.forEach((mapping) => {
-          if (fieldMapping.hasOwnProperty(mapping.slug)) {
-            result.meta[mapping.remote_id] = fieldMapping[mapping.slug];
-          }
-        });
-      });
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result.meta[mapping.remote_id] = v;
+        }
+      }
     }
 
     return result;
@@ -105,12 +105,12 @@ export class GorgiasTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedTicketOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: ticket.meta
-          ? ticket.meta[mapping.remote_id]
-          : undefined,
-      })) ?? [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = ticket.meta[mapping.remote_id];
+      }
+    }
 
     let opts: any;
 

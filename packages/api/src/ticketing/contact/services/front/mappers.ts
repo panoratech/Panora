@@ -38,9 +38,12 @@ export class FrontContactMapper implements IContactMapper {
       remote_id: string;
     }[],
   ): UnifiedContactOutput {
-    const field_mappings = customFieldMappings?.map((mapping) => ({
-      [mapping.slug]: contact.custom_fields?.[mapping.remote_id],
-    }));
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = contact.custom_fields[mapping.remote_id];
+      }
+    }
     const emailHandle = contact.handles.find(
       (handle) => handle.source === 'email',
     );
