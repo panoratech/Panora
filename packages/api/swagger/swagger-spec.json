@@ -5032,15 +5032,36 @@
         "required": [
           "first_name",
           "last_name",
-          "email_addresses",
-          "phone_numbers",
-          "addresses",
           "field_mappings"
         ]
       },
       "UnifiedDealOutput": {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the deal"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the deal"
+          },
+          "amount": {
+            "type": "number",
+            "description": "The amount of the deal"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user who is on the deal"
+          },
+          "stage_id": {
+            "type": "string",
+            "description": "The uuid of the stage of the deal"
+          },
+          "company_id": {
+            "type": "string",
+            "description": "The uuid of the company tied to the deal"
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
@@ -5059,6 +5080,9 @@
           }
         },
         "required": [
+          "name",
+          "description",
+          "amount",
           "field_mappings",
           "remote_data"
         ]
@@ -5066,18 +5090,65 @@
       "UnifiedDealInput": {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the deal"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the deal"
+          },
+          "amount": {
+            "type": "number",
+            "description": "The amount of the deal"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user who is on the deal"
+          },
+          "stage_id": {
+            "type": "string",
+            "description": "The uuid of the stage of the deal"
+          },
+          "company_id": {
+            "type": "string",
+            "description": "The uuid of the company tied to the deal"
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
           }
         },
         "required": [
+          "name",
+          "description",
+          "amount",
           "field_mappings"
         ]
       },
       "UnifiedNoteOutput": {
         "type": "object",
         "properties": {
+          "content": {
+            "type": "string",
+            "description": "The content of the note"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user tied the note"
+          },
+          "company_id": {
+            "type": "string",
+            "description": "The uuid of the company tied to the note"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid fo the contact tied to the note"
+          },
+          "deal_id": {
+            "type": "string",
+            "description": "The uuid of the deal tied to the note"
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
@@ -5096,6 +5167,7 @@
           }
         },
         "required": [
+          "content",
           "field_mappings",
           "remote_data"
         ]
@@ -5103,18 +5175,76 @@
       "UnifiedNoteInput": {
         "type": "object",
         "properties": {
+          "content": {
+            "type": "string",
+            "description": "The content of the note"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user tied the note"
+          },
+          "company_id": {
+            "type": "string",
+            "description": "The uuid of the company tied to the note"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid fo the contact tied to the note"
+          },
+          "deal_id": {
+            "type": "string",
+            "description": "The uuid of the deal tied to the note"
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
           }
         },
         "required": [
+          "content",
           "field_mappings"
         ]
       },
       "UnifiedCompanyOutput": {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the company"
+          },
+          "industry": {
+            "type": "string",
+            "description": "The industry of the company"
+          },
+          "number_of_employees": {
+            "type": "number",
+            "description": "The number of employees of the company"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user who owns the company"
+          },
+          "email_addresses": {
+            "description": "The email addresses of the company",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Email"
+            }
+          },
+          "addresses": {
+            "description": "The addresses of the company",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          "phone_numbers": {
+            "description": "The phone numbers of the company",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Phone"
+            }
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
@@ -5133,6 +5263,7 @@
           }
         },
         "required": [
+          "name",
           "field_mappings",
           "remote_data"
         ]
@@ -5140,18 +5271,97 @@
       "UnifiedCompanyInput": {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the company"
+          },
+          "industry": {
+            "type": "string",
+            "description": "The industry of the company"
+          },
+          "number_of_employees": {
+            "type": "number",
+            "description": "The number of employees of the company"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user who owns the company"
+          },
+          "email_addresses": {
+            "description": "The email addresses of the company",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Email"
+            }
+          },
+          "addresses": {
+            "description": "The addresses of the company",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          "phone_numbers": {
+            "description": "The phone numbers of the company",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Phone"
+            }
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
           }
         },
         "required": [
+          "name",
           "field_mappings"
         ]
       },
       "UnifiedEngagementOutput": {
         "type": "object",
         "properties": {
+          "content": {
+            "type": "string",
+            "description": "The content of the engagement"
+          },
+          "direction": {
+            "type": "string",
+            "description": "The direction of the engagement"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject of the engagement"
+          },
+          "start_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The start time of the engagement"
+          },
+          "end_time": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The end time of the engagement"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the engagement. Authorized values are EMAIL, CALL or MEETING"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user tied to the engagement"
+          },
+          "company_id": {
+            "type": "string",
+            "description": "The uuid of the company tied to the engagement"
+          },
+          "contacts": {
+            "description": "The uuids of contacts tied to the engagement object",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
@@ -5170,6 +5380,7 @@
           }
         },
         "required": [
+          "type",
           "field_mappings",
           "remote_data"
         ]
@@ -5177,18 +5388,64 @@
       "UnifiedEngagementInput": {
         "type": "object",
         "properties": {
+          "content": {
+            "type": "string",
+            "description": "The content of the engagement"
+          },
+          "direction": {
+            "type": "string",
+            "description": "The direction of the engagement"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject of the engagement"
+          },
+          "start_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The start time of the engagement"
+          },
+          "end_time": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The end time of the engagement"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the engagement. Authorized values are EMAIL, CALL or MEETING"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user tied to the engagement"
+          },
+          "company_id": {
+            "type": "string",
+            "description": "The uuid of the company tied to the engagement"
+          },
+          "contacts": {
+            "description": "The uuids of contacts tied to the engagement object",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
           }
         },
         "required": [
+          "type",
           "field_mappings"
         ]
       },
       "UnifiedStageOutput": {
         "type": "object",
         "properties": {
+          "stage_name": {
+            "type": "string",
+            "description": "The name of the stage"
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
@@ -5207,6 +5464,7 @@
           }
         },
         "required": [
+          "stage_name",
           "field_mappings",
           "remote_data"
         ]
@@ -5214,6 +5472,40 @@
       "UnifiedTaskOutput": {
         "type": "object",
         "properties": {
+          "subject": {
+            "type": "string",
+            "description": "The subject of the task"
+          },
+          "content": {
+            "type": "string",
+            "description": "The content of the task"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the task. Authorized values are \"Completed\" and \"Not Completed\" "
+          },
+          "due_date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The due date of the task"
+          },
+          "finished_date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The finished date of the task"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user tied to the task"
+          },
+          "company_id": {
+            "type": "string",
+            "description": "The uuid fo the company tied to the task"
+          },
+          "deal_id": {
+            "type": "string",
+            "description": "The uuid of the deal tied to the task"
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
@@ -5232,6 +5524,9 @@
           }
         },
         "required": [
+          "subject",
+          "content",
+          "status",
           "field_mappings",
           "remote_data"
         ]
@@ -5239,12 +5534,49 @@
       "UnifiedTaskInput": {
         "type": "object",
         "properties": {
+          "subject": {
+            "type": "string",
+            "description": "The subject of the task"
+          },
+          "content": {
+            "type": "string",
+            "description": "The content of the task"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the task. Authorized values are \"Completed\" and \"Not Completed\" "
+          },
+          "due_date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The due date of the task"
+          },
+          "finished_date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The finished date of the task"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user tied to the task"
+          },
+          "company_id": {
+            "type": "string",
+            "description": "The uuid fo the company tied to the task"
+          },
+          "deal_id": {
+            "type": "string",
+            "description": "The uuid of the deal tied to the task"
+          },
           "field_mappings": {
             "type": "object",
             "properties": {}
           }
         },
         "required": [
+          "subject",
+          "content",
+          "status",
           "field_mappings"
         ]
       },
@@ -5295,6 +5627,49 @@
           "email_address",
           "field_mappings",
           "remote_data"
+        ]
+      },
+      "UnifiedCommentInput": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "The body of the comment"
+          },
+          "html_body": {
+            "type": "string",
+            "description": "The html body of the comment"
+          },
+          "is_private": {
+            "type": "boolean",
+            "description": "The public status of the comment"
+          },
+          "creator_type": {
+            "type": "string",
+            "description": "The creator type of the comment (either user or contact)"
+          },
+          "ticket_id": {
+            "type": "string",
+            "description": "The uuid of the ticket the comment is tied to"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid of the contact which the comment belongs to (if no user_id specified)"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user which the comment belongs to (if no contact_id specified)"
+          },
+          "attachments": {
+            "description": "The attachements uuids tied to the comment",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "body"
         ]
       },
       "UnifiedTicketOutput": {
@@ -5356,11 +5731,12 @@
             }
           },
           "comment": {
-            "description": "The comments of the ticket",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "description": "The comment of the ticket",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnifiedCommentInput"
+              }
+            ]
           },
           "account_id": {
             "type": "string",
@@ -5453,11 +5829,12 @@
             }
           },
           "comment": {
-            "description": "The comments of the ticket",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "description": "The comment of the ticket",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnifiedCommentInput"
+              }
+            ]
           },
           "account_id": {
             "type": "string",
@@ -5572,49 +5949,6 @@
         "required": [
           "body",
           "remote_data"
-        ]
-      },
-      "UnifiedCommentInput": {
-        "type": "object",
-        "properties": {
-          "body": {
-            "type": "string",
-            "description": "The body of the comment"
-          },
-          "html_body": {
-            "type": "string",
-            "description": "The html body of the comment"
-          },
-          "is_private": {
-            "type": "boolean",
-            "description": "The public status of the comment"
-          },
-          "creator_type": {
-            "type": "string",
-            "description": "The creator type of the comment (either user or contact)"
-          },
-          "ticket_id": {
-            "type": "string",
-            "description": "The uuid of the ticket the comment is tied to"
-          },
-          "contact_id": {
-            "type": "string",
-            "description": "The uuid of the contact which the comment belongs to (if no user_id specified)"
-          },
-          "user_id": {
-            "type": "string",
-            "description": "The uuid of the user which the comment belongs to (if no contact_id specified)"
-          },
-          "attachments": {
-            "description": "The attachements uuids tied to the comment",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "body"
         ]
       },
       "UnifiedAttachmentInput": {

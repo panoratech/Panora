@@ -8,19 +8,19 @@ export class UnifiedContactInput {
   @ApiProperty({ description: 'The last name of the contact' })
   last_name: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: [Email],
     description: 'The email addresses of the contact',
   })
   email_addresses: Email[];
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: [Phone],
     description: 'The phone numbers of the contact',
   })
   phone_numbers: Phone[];
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: [Address],
     description: 'The addresses of the contact',
   })
@@ -33,11 +33,11 @@ export class UnifiedContactInput {
   user_id?: string;
 
   @ApiPropertyOptional({
-    type: [{}],
+    type: {},
     description:
       'The custom field mappings of the contact between the remote 3rd party & Panora',
   })
-  field_mappings?: Record<string, any>[];
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedContactOutput extends UnifiedContactInput {

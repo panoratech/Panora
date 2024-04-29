@@ -22,11 +22,14 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
   ): Promise<PipedriveCompanyInput> {
     const result: PipedriveCompanyInput = {
       name: source.name,
-      address: source.addresses[0].street_1,
-      address_locality: source.addresses[0].city,
-      address_country: source.addresses[0].country,
-      address_postal_code: source.addresses[0].postal_code,
     };
+
+    if (source.addresses && source.addresses[0]) {
+      result.address = source.addresses[0].street_1;
+      result.address_locality = source.addresses[0].city;
+      result.address_country = source.addresses[0].country;
+      result.address_postal_code = source.addresses[0].postal_code;
+    }
 
     if (source.user_id) {
       const owner = await this.utils.getUser(source.user_id);
@@ -42,14 +45,15 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
         };
       }
     }
-
     if (customFieldMappings && source.field_mappings) {
-      customFieldMappings.forEach((mapping) => {
-        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
-        if (customValue) {
-          result[mapping.remote_id] = customValue[mapping.slug];
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
-      });
+      }
     }
 
     return result;
@@ -80,10 +84,12 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: company[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = company[mapping.remote_id];
+      }
+    }
 
     let res = {
       name: company.name,

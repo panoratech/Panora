@@ -26,8 +26,10 @@ export class JiraCommentMapper implements ICommentMapper {
   ): Promise<JiraCommentInput> {
     const result: JiraCommentInput = {
       body: source.body,
-      attachments: source.attachments,
     };
+    if (source.attachments) {
+      result.attachments = source.attachments;
+    }
     return result;
   }
 

@@ -41,7 +41,6 @@ export class JiraUserMapper implements IUserMapper {
     const unifiedUser: UnifiedUserOutput = {
       name: `${user.displayName}`,
       email_address: '',
-      field_mappings: [],
     };
 
     return unifiedUser;

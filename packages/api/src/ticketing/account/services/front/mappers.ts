@@ -38,9 +38,12 @@ export class FrontAccountMapper implements IAccountMapper {
       remote_id: string;
     }[],
   ): UnifiedAccountOutput {
-    const field_mappings = customFieldMappings?.map((mapping) => ({
-      [mapping.slug]: account.custom_fields?.[mapping.remote_id],
-    }));
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = account.custom_fields[mapping.remote_id];
+      }
+    }
 
     const unifiedAccount: UnifiedAccountOutput = {
       name: account.name,

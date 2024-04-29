@@ -29,16 +29,24 @@ export class ZendeskContactMapper implements IContactMapper {
       name: `${source.first_name} ${source.last_name}`,
       first_name: source.first_name,
       last_name: source.last_name,
-      email: primaryEmail,
-      phone: primaryPhone,
-      address: {
+    };
+
+    if (primaryEmail) {
+      result.email = primaryEmail;
+    }
+    if (primaryPhone) {
+      result.phone = primaryPhone;
+    }
+    if (source.addresses && source.addresses[0]) {
+      result.address = {
         line1: source.addresses[0].street_1,
         city: source.addresses[0].city,
         state: source.addresses[0].state,
         postal_code: source.addresses[0].postal_code,
         country: source.addresses[0].country,
-      },
-    };
+      };
+    }
+
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {
@@ -47,14 +55,12 @@ export class ZendeskContactMapper implements IContactMapper {
     }
 
     if (customFieldMappings && source.field_mappings) {
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find(
-            (mapping) => mapping.slug === key,
-          );
-          if (mapping) {
-            result.custom_fields[mapping.remote_id] = fieldMapping[key];
-          }
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result.custom_fields[mapping.remote_id] = v;
         }
       }
     }
@@ -88,9 +94,12 @@ export class ZendeskContactMapper implements IContactMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput> {
-    const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: contact.custom_fields[mapping.remote_id],
-    }));
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = contact.custom_fields[mapping.remote_id];
+      }
+    }
     // Constructing the email and phone details
     const email_addresses = contact.email
       ? [{ email_address: contact.email, email_address_type: 'primary' }]

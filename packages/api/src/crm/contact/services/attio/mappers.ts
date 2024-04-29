@@ -25,13 +25,6 @@ export class AttioContactMapper implements IContactMapper {
     const primaryEmail = source.email_addresses?.[0]?.email_address;
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
-    // const emailObject = primaryEmail
-    //   ? [{ value: primaryEmail, primary: true, label: '' }]
-    //   : [];
-    // const phoneObject = primaryPhone
-    //   ? [{ value: primaryPhone, primary: true, label: '' }]
-    //   : [];
-
     const result: AttioContactInput = {
       values: {
         name: [
@@ -41,10 +34,16 @@ export class AttioContactMapper implements IContactMapper {
             full_name: `${source.first_name} ${source.last_name}`,
           },
         ],
-        email_addresses: [{ email_address: primaryEmail }],
-        phone_numbers: [{ original_phone_number: primaryPhone }],
       },
     };
+
+    if (primaryEmail) {
+      result.values.email_addresses = [{ email_address: primaryEmail }];
+    }
+
+    if (primaryPhone) {
+      result.values.phone_numbers = [{ original_phone_number: primaryPhone }];
+    }
 
     // if (source.user_id) {
     //   const owner = await this.utils.getUser(source.user_id);
@@ -62,14 +61,12 @@ export class AttioContactMapper implements IContactMapper {
     // }
 
     if (customFieldMappings && source.field_mappings) {
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find(
-            (mapping) => mapping.slug === key,
-          );
-          if (mapping) {
-            result[mapping.remote_id] = fieldMapping[key];
-          }
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
       }
     }
@@ -102,9 +99,12 @@ export class AttioContactMapper implements IContactMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput> {
-    const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: contact.values[mapping.remote_id],
-    }));
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = contact.values[mapping.remote_id];
+      }
+    }
     const address: Address = {
       street_1: '',
       city: '',

@@ -90,6 +90,10 @@ export class ContactService {
           : [],
       });
 
+      this.logger.log(
+        'desunified obect is ' + JSON.stringify(desunifiedObject),
+      );
+
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalContactOutput> = await service.addContact(
@@ -323,10 +327,12 @@ export class ContactService {
           },
         });
 
-        for (const mapping of target_contact.field_mappings) {
+        for (const [slug, value] of Object.entries(
+          target_contact.field_mappings,
+        )) {
           const attribute = await this.prisma.attribute.findFirst({
             where: {
-              slug: Object.keys(mapping)[0],
+              slug: slug,
               source: integrationId,
               id_consumer: linkedUserId,
             },
@@ -336,7 +342,7 @@ export class ContactService {
             await this.prisma.value.create({
               data: {
                 id_value: uuidv4(),
-                data: Object.values(mapping)[0] || 'null',
+                data: value || 'null',
                 attribute: {
                   connect: {
                     id_attribute: attribute.id_attribute,

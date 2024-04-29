@@ -20,19 +20,18 @@ export class FrontTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<FrontTicketInput> {
-    let result: FrontTicketInput = {
+    const result: FrontTicketInput = {
       type: 'discussion', // Assuming 'discussion' as a default type for Front conversations
       subject: source.name,
-      teammate_ids: source.assigned_to,
       comment: {
-        body: source.comment.body,
+        body: source.comment.body || '',
         author_id:
           source.comment.creator_type === 'user'
             ? await this.utils.getAsigneeRemoteIdFromUserUuid(
                 source.comment.user_id,
               )
-            : undefined,
-        attachments: source.comment.attachments,
+            : '',
+        attachments: source.comment.attachments || [],
       },
     };
 
@@ -44,28 +43,20 @@ export class FrontTicketMapper implements ITicketMapper {
           res.push(data);
         }
       }
-      result = {
-        ...result,
-        teammate_ids: res,
-      };
+      result.teammate_ids = res;
     }
 
     if (source.tags) {
-      result = {
-        ...result,
-        tags: source.tags,
-      };
+      result.tags = source.tags;
     }
 
     if (customFieldMappings && source.field_mappings) {
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find(
-            (mapping) => mapping.slug === key,
-          );
-          if (mapping) {
-            result['custom_fields'][mapping.remote_id] = fieldMapping[key];
-          }
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
       }
     }
@@ -97,9 +88,12 @@ export class FrontTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedTicketOutput> {
-    const field_mappings = customFieldMappings?.map((mapping) => ({
-      [mapping.slug]: ticket.custom_fields?.[mapping.remote_id],
-    }));
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = ticket.custom_fields[mapping.remote_id];
+      }
+    }
 
     let opts: any;
 

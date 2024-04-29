@@ -23,10 +23,13 @@ export class ZendeskDealMapper implements IDealMapper {
     const result: ZendeskDealInput = {
       name: source.name,
       value: source.amount,
-      contact_id: Number(
-        await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
-      ),
     };
+
+    if (source.company_id) {
+      result.contact_id = Number(
+        await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
+      );
+    }
 
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
@@ -44,12 +47,14 @@ export class ZendeskDealMapper implements IDealMapper {
     }
 
     if (customFieldMappings && source.field_mappings) {
-      customFieldMappings.forEach((mapping) => {
-        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
-        if (customValue) {
-          result.custom_fields[mapping.remote_id] = customValue[mapping.slug];
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
-      });
+      }
     }
 
     return result;
@@ -80,10 +85,12 @@ export class ZendeskDealMapper implements IDealMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedDealOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: deal.custom_fields[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = deal.custom_fields[mapping.remote_id];
+      }
+    }
 
     let opts: any = {};
     if (deal.creator_id) {

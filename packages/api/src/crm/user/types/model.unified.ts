@@ -1,15 +1,18 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UnifiedUserInput {
-  name?: string;
-  email?: string;
+  @ApiProperty({ description: 'The name of the user' })
+  name: string;
+
+  @ApiProperty({ description: 'The email of the user' })
+  email: string;
 
   @ApiPropertyOptional({
-    type: [{}],
+    type: {},
     description:
       'The custom field mappings of the user between the remote 3rd party & Panora',
   })
-  field_mappings?: Record<string, any>[];
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedUserOutput extends UnifiedUserInput {

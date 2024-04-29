@@ -25,7 +25,7 @@ export class HubspotCompanyMapper implements ICompanyMapper {
       phone: '',
       state: '',
       domain: '',
-      industry: source.industry,
+      industry: source.industry || '',
     };
 
     // Assuming 'phone_numbers' array contains at least one phone number
@@ -49,14 +49,12 @@ export class HubspotCompanyMapper implements ICompanyMapper {
     }
 
     if (customFieldMappings && source.field_mappings) {
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find(
-            (mapping) => mapping.slug === key,
-          );
-          if (mapping) {
-            result[mapping.remote_id] = fieldMapping[key];
-          }
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
       }
     }
@@ -89,11 +87,12 @@ export class HubspotCompanyMapper implements ICompanyMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: company.properties[mapping.remote_id],
-      })) || [];
-
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = company.properties[mapping.remote_id];
+      }
+    }
     let opts: any = {};
     if (company.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(

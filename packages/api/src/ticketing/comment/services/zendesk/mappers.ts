@@ -26,14 +26,23 @@ export class ZendeskCommentMapper implements ICommentMapper {
   ): Promise<ZendeskCommentInput> {
     const result: ZendeskCommentInput = {
       body: source.body,
-      html_body: source.html_body,
-      public: !source.is_private,
-      author_id: source.contact_id
-        ? Number(await this.utils.getContactRemoteIdFromUuid(source.contact_id))
-        : Number(await this.utils.getUserRemoteIdFromUuid(source.user_id)),
+      public: source.is_private ? !source.is_private : true,
       type: 'Comment',
-      uploads: source.attachments, //we let the array of uuids on purpose (it will be modified in the given service on the fly!)
     };
+
+    if (source.contact_id) {
+      result.author_id = source.contact_id
+        ? Number(await this.utils.getContactRemoteIdFromUuid(source.contact_id))
+        : Number(await this.utils.getUserRemoteIdFromUuid(source.user_id));
+    }
+
+    if (source.attachments) {
+      result.uploads = source.attachments; //we let the array of uuids on purpose (it will be modified in the given service on the fly!)
+    }
+
+    if (source.html_body) {
+      result.html_body = source.html_body;
+    }
 
     return result;
   }

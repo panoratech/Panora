@@ -15,21 +15,19 @@ export class HubspotTicketMapper implements ITicketMapper {
   ): HubspotTicketInput {
     const result = {
       subject: source.name,
-      hs_pipeline: source.type,
+      hs_pipeline: source.type || '',
       hubspot_owner_id: '', // TODO Replace 'default' with actual owner ID
-      hs_pipeline_stage: source.status,
+      hs_pipeline_stage: source.status || '',
       hs_ticket_priority: source.priority || 'MEDIUM',
     };
 
     if (customFieldMappings && source.field_mappings) {
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find(
-            (mapping) => mapping.slug === key,
-          );
-          if (mapping) {
-            result[mapping.remote_id] = fieldMapping[key];
-          }
+      for (const key in source.field_mappings) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === key,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = source.field_mappings[key];
         }
       }
     }
@@ -59,9 +57,12 @@ export class HubspotTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): UnifiedTicketOutput {
-    const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: ticket.properties[mapping.remote_id],
-    }));
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = ticket.properties[mapping.remote_id];
+      }
+    }
 
     return {
       name: ticket.properties.name, //TODO

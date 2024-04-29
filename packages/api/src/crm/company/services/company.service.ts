@@ -245,7 +245,7 @@ export class CompanyService {
         unique_crm_company_id = res.id_crm_company;
       } else {
         // Create a new company
-        this.logger.log('company not exists');
+        // this.logger.log('company not exists');
         const uuid = uuidv4();
         let data: any = {
           id_crm_company: uuid,

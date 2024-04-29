@@ -17,7 +17,7 @@ export class UnifiedCommentInput {
   @ApiPropertyOptional({
     description: 'The creator type of the comment (either user or contact)',
   })
-  creator_type: 'user' | 'contact' | null | string;
+  creator_type?: 'user' | 'contact';
 
   @ApiPropertyOptional({
     description: 'The uuid of the ticket the comment is tied to',

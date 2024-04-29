@@ -15,27 +15,35 @@ export class ZohoCompanyMapper implements ICompanyMapper {
   ): ZohoCompanyInput {
     const result: ZohoCompanyInput = {
       Account_Name: source.name,
-      Phone: source.phone_numbers?.find(
-        (phone) => phone.phone_type === 'primary',
-      )?.phone_number,
-      Email: source.email_addresses?.find(
-        (email) => email.email_address_type === 'primary',
-      )?.email_address,
-      Mailing_Street: source.addresses?.[0]?.street_1,
-      Mailing_City: source.addresses?.[0]?.city,
-      Mailing_State: source.addresses?.[0]?.state,
-      Mailing_Zip: source.addresses?.[0]?.postal_code,
-      Mailing_Country: source.addresses?.[0]?.country,
     };
 
-    // Custom field mappings
+    if (source.addresses && source.addresses[0]) {
+      result.Mailing_Street = source.addresses?.[0]?.street_1;
+      result.Mailing_City = source.addresses?.[0]?.city;
+      result.Mailing_State = source.addresses?.[0]?.state;
+      result.Mailing_Zip = source.addresses?.[0]?.postal_code;
+      result.Mailing_Country = source.addresses?.[0]?.country;
+    }
+    if (source.phone_numbers) {
+      result.Phone = source.phone_numbers?.find(
+        (phone) => phone.phone_type === 'primary',
+      )?.phone_number;
+    }
+    if (source.email_addresses) {
+      result.Email = source.email_addresses?.find(
+        (email) => email.email_address_type === 'primary',
+      )?.email_address;
+    }
+
     if (customFieldMappings && source.field_mappings) {
-      customFieldMappings.forEach((mapping) => {
-        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
-        if (customValue) {
-          result[mapping.remote_id] = customValue[mapping.slug];
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
-      });
+      }
     }
 
     return result;
@@ -64,10 +72,12 @@ export class ZohoCompanyMapper implements ICompanyMapper {
       remote_id: string;
     }[],
   ): UnifiedCompanyOutput {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: company[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = company[mapping.remote_id];
+      }
+    }
 
     return {
       name: company.Account_Name,

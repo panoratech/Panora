@@ -10,7 +10,6 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { FrontService } from './services/front';
-import { GithubService } from './services/github';
 import { ZendeskService } from './services/zendesk';
 import { JiraService } from './services/jira';
 import { GorgiasService } from './services/gorgias';
@@ -34,7 +33,6 @@ import { GorgiasService } from './services/gorgias';
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
-    GithubService,
     JiraService,
     GorgiasService,
   ],

@@ -27,9 +27,14 @@ export class HubspotContactMapper implements IContactMapper {
     const result: HubspotContactInput = {
       firstname: source.first_name,
       lastname: source.last_name,
-      email: primaryEmail,
-      phone: primaryPhone,
     };
+
+    if (primaryEmail) {
+      result.email = primaryEmail;
+    }
+    if (primaryPhone) {
+      result.phone = primaryPhone;
+    }
 
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
@@ -39,17 +44,16 @@ export class HubspotContactMapper implements IContactMapper {
     }
 
     if (customFieldMappings && source.field_mappings) {
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find(
-            (mapping) => mapping.slug === key,
-          );
-          if (mapping) {
-            result[mapping.remote_id] = fieldMapping[key];
-          }
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
       }
     }
+
     return result;
   }
 
@@ -76,9 +80,13 @@ export class HubspotContactMapper implements IContactMapper {
       remote_id: string;
     }[],
   ): UnifiedContactOutput {
-    const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: contact.properties[mapping.remote_id],
-    }));
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = contact.properties[mapping.remote_id];
+      }
+    }
+
     /*todo: const address: Address = {
       street_1: '',
       city: '',
