@@ -2,49 +2,24 @@ import {
   FrontAccountInput,
   FrontAccountOutput,
 } from '@ticketing/account/services/front/types';
-import {
-  GithubAccountInput,
-  GithubAccountOutput,
-} from '@ticketing/account/services/github/types';
 import { FrontAttachmentOutput } from '@ticketing/attachment/services/front/types';
-import { GithubAttachmentOutput } from '@ticketing/attachment/services/github/types';
 import { ZendeskAttachmentOutput } from '@ticketing/attachment/services/zendesk/types';
 import {
   FrontCommentInput,
   FrontCommentOutput,
 } from '@ticketing/comment/services/front/types';
 import {
-  GithubCommentInput,
-  GithubCommentOutput,
-} from '@ticketing/comment/services/github/types';
-import {
-  HubspotCommentInput,
-  HubspotCommentOutput,
-} from '@ticketing/comment/services/hubspot/types';
-import {
   FrontContactInput,
   FrontContactOutput,
 } from '@ticketing/contact/services/front/types';
-import {
-  GithubContactInput,
-  GithubContactOutput,
-} from '@ticketing/contact/services/github/types';
 import {
   FrontTagInput,
   FrontTagOutput,
 } from '@ticketing/tag/services/front/types';
 import {
-  GithubTagInput,
-  GithubTagOutput,
-} from '@ticketing/tag/services/github/types';
-import {
   FrontTeamInput,
   FrontTeamOutput,
 } from '@ticketing/team/services/front/types';
-import {
-  GithubTeamInput,
-  GithubTeamOutput,
-} from '@ticketing/team/services/github/types';
 import {
   FrontTicketInput,
   FrontTicketOutput,
@@ -61,11 +36,6 @@ import {
   FrontUserInput,
   FrontUserOutput,
 } from '@ticketing/user/services/front/types';
-import {
-  GithubUserInput,
-  GithubUserOutput,
-} from '@ticketing/user/services/github/types';
-
 import {
   GorgiasTicketInput,
   GorgiasTicketOutput,
@@ -158,42 +128,33 @@ export type OriginalTicketInput =
 export type OriginalCommentInput =
   | ZendeskCommentInput
   | FrontCommentInput
-  | GithubCommentInput
-  | HubspotCommentInput
   | GorgiasCommentInput
   | JiraCommentInput;
 //| JiraCommentServiceMgmtInput;
 /* user */
 export type OriginalUserInput =
   | ZendeskUserInput
-  | GithubUserInput
   | FrontUserInput
   | GorgiasUserInput
   | JiraUserInput;
 //| JiraServiceMgmtUserInput;
 /* account */
-export type OriginalAccountInput =
-  | ZendeskAccountInput
-  | GithubAccountInput
-  | FrontAccountInput;
+export type OriginalAccountInput = ZendeskAccountInput | FrontAccountInput;
 /* contact */
 export type OriginalContactInput =
   | ZendeskContactInput
-  | GithubContactInput
   | FrontContactInput
   | GorgiasContactInput;
 
 /* tag */
 export type OriginalTagInput =
   | ZendeskTagInput
-  | GithubTagInput
   | FrontTagInput
   | GorgiasTagInput
   | JiraTagInput;
 /* team */
 export type OriginalTeamInput =
   | ZendeskTeamInput
-  | GithubTeamInput
   | FrontTeamInput
   | GorgiasTeamInput
   | JiraTeamInput;
@@ -228,33 +189,25 @@ export type OriginalTicketOutput =
 export type OriginalCommentOutput =
   | ZendeskCommentOutput
   | FrontCommentOutput
-  | GithubCommentOutput
-  | HubspotCommentOutput
   | GorgiasCommentOutput
   | JiraCommentOutput;
 /* user */
 export type OriginalUserOutput =
   | ZendeskUserOutput
-  | GithubUserOutput
   | FrontUserOutput
   | GorgiasUserOutput
   | JiraUserOutput;
 /* account */
-export type OriginalAccountOutput =
-  | ZendeskAccountOutput
-  | GithubAccountOutput
-  | FrontAccountOutput;
+export type OriginalAccountOutput = ZendeskAccountOutput | FrontAccountOutput;
 /* contact */
 export type OriginalContactOutput =
   | ZendeskContactOutput
-  | GithubContactOutput
   | FrontContactOutput
   | GorgiasContactOutput;
 
 /* tag */
 export type OriginalTagOutput =
   | ZendeskTagOutput
-  | GithubTagOutput
   | FrontTagOutput
   | GorgiasTagOutput
   | JiraTagOutput;
@@ -262,7 +215,6 @@ export type OriginalTagOutput =
 /* team */
 export type OriginalTeamOutput =
   | ZendeskTeamOutput
-  | GithubTeamOutput
   | FrontTeamOutput
   | GorgiasTeamOutput
   | JiraTeamOutput;
@@ -271,7 +223,6 @@ export type OriginalTeamOutput =
 export type OriginalAttachmentOutput =
   | ZendeskAttachmentOutput
   | FrontAttachmentOutput
-  | GithubAttachmentOutput
   | GorgiasAttachmentOutput
   | JiraAttachmentOutput;
 
