@@ -242,7 +242,7 @@ export class SyncService implements OnModuleInit {
           tickets_results = [...tickets_results, res];
         } else {
           // Create a new ticket
-          this.logger.log('not existing ticket ' + ticket.name);
+          // this.logger.log('not existing ticket ' + ticket.name);
 
           let data: any = {
             id_tcg_ticket: uuidv4(),

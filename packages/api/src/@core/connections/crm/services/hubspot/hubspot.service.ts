@@ -46,9 +46,9 @@ export class HubspotConnectionService implements ICrmConnectionService {
   async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
-      this.logger.log(
+      /* this.logger.log(
         'linkeduserid is ' + linkedUserId + ' inside callback hubspot',
-      );
+      );*/
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

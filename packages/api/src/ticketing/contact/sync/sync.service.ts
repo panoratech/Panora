@@ -247,7 +247,7 @@ export class SyncService implements OnModuleInit {
           contacts_results = [...contacts_results, res];
         } else {
           // Create a new contact
-          this.logger.log('not existing contact ' + contact.name);
+          // this.logger.log('not existing contact ' + contact.name);
           const data: any = {
             id_tcg_contact: uuidv4(),
             name: contact.name,

@@ -222,7 +222,7 @@ export class SyncService implements OnModuleInit {
           users_results = [...users_results, res];
         } else {
           // Create a new user
-          this.logger.log('not existing user ' + user.name);
+          // this.logger.log('not existing user ' + user.name);
           const data = {
             id_tcg_user: uuidv4(),
             name: user.name,

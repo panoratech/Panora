@@ -316,7 +316,7 @@ export class SyncService implements OnModuleInit {
               unique_ticketing_attachmt_id = res.id_tcg_attachment;
             } else {
               // Create a new attachment
-              this.logger.log('attchmt not exists');
+              // this.logger.log('attchmt not exists');
               const data = {
                 id_tcg_attachment: uuidv4(),
                 remote_id: attchmt.id,
