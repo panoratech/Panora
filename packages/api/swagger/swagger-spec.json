@@ -4618,7 +4618,6 @@
         },
         "required": [
           "name",
-          "id_organization",
           "id_user"
         ]
       },

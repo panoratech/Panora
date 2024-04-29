@@ -20,6 +20,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect } from "react";
 import Cookies from 'js-cookie';
+import useProjectStore from "@/state/projectStore"
+import { useQueryClient } from '@tanstack/react-query';
 
   
 export function UserNav() {
@@ -28,6 +30,10 @@ export function UserNav() {
   const router = useRouter();
   //const {data, isLoading, isError, error} = useProfile(user?.user_id!);
   const { profile, setProfile } = useProfileStore();
+  const { idProject, setIdProject } = useProjectStore();
+  const queryClient = useQueryClient();
+
+
 
   /*useEffect(()=> {
     if(data){
@@ -45,6 +51,8 @@ export function UserNav() {
   const onLogout = () => {
     Cookies.remove("access_token")
     setProfile(null)
+    setIdProject("")
+    queryClient.clear()
     router.push('/b2c/login');
   }
   return (

@@ -3,14 +3,15 @@ import { useQuery } from '@tanstack/react-query';
 import { projects as Project } from 'api';
 
 
-const useProjectsByUser = (stytchUserId: string) => {
+const useProjectsByUser = (userId: string | undefined) => {
   return useQuery({
     queryKey: ['projects'], 
+    enabled: userId!==undefined,
     queryFn: async (): Promise<Project[]> => {
-      if(stytchUserId === "" || !stytchUserId){
+      if(userId === "" || !userId){
         return [];
       }
-      const response = await fetch(`${config.API_URL}/projects/${stytchUserId}`);
+      const response = await fetch(`${config.API_URL}/projects/${userId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

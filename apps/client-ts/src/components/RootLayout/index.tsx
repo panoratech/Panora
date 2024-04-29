@@ -16,6 +16,8 @@ import { ThemeToggle } from '@/components/Nav/theme-toggle';
 import { projects as Project } from 'api';
 import Cookies from 'js-cookie';
 import useFetchUserMutation from "@/hooks/mutations/useFetchUserMutation";
+import useProjectsByUser from '@/hooks/useProjectsByUser';
+
 
 const useDeviceSize = () => {
 
@@ -69,12 +71,15 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
   const [userInitialized,setUserInitialized] = useState(false)
 
   const {profile} = useProfileStore()
-  const { setIdProject } = useProjectStore();
+  const {data : projectsData} = useProjectsByUser(profile?.id_user)
+  const { idProject, setIdProject } = useProjectStore();
+
+
+  // const { setIdProject } = useProjectStore();
 
   const {mutate: fetchUserMutate} = useFetchUserMutation()
 
   useEffect(() => {
-
     if(!Cookies.get('access_token'))
     {
         router.replace("/b2c/login")
@@ -94,12 +99,18 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
       }
   },[profile])
 
+  useEffect(() => {
+    if(projectsData)
+      {
+        console.log("Projects : ",projectsData);
+        if(idProject==="" && projectsData.length>0)
+          {
+            console.log("Project Id setting : ",projectsData[0]?.id_project)
+            setIdProject(projectsData[0]?.id_project);
 
-
-  
-
-  
-
+          }
+      }
+  },[projectsData])
   
   const handlePageChange = (page: string) => {
     if (page) {
@@ -140,7 +151,7 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
               <div className="px-3 py-2">
                 <div className="space-y-1">
                   
-                  {/* <TeamSwitcher className='w-40 ml-3' userId={profile?.id_user} /> */}
+                  <TeamSwitcher className='w-40 ml-3' projects={projectsData? projectsData : []}/>
                   <MainNav onLinkClick={handlePageChange} className=''/>
                 </div>
               </div>

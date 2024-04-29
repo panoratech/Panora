@@ -13,17 +13,25 @@ import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation";
 import Cookies from 'js-cookie';
 import useProfileStore from "@/state/profileStore";
+import useProjectStore from "@/state/projectStore"
+import { useQueryClient } from '@tanstack/react-query';
 
 
 const Profile = () => {
 
     const {profile,setProfile} = useProfileStore();
+    const { idProject, setIdProject } = useProjectStore();
+    const queryClient = useQueryClient();
+
+
     
     const router = useRouter();
 
     const onLogout = () => {
         Cookies.remove("access_token")
         setProfile(null)
+        setIdProject("")
+        queryClient.clear()
         router.push('/b2c/login');
     }
 

@@ -46,10 +46,8 @@ const useProjectMutation = () => {
             })
         },
         onSuccess: (data) => {
-            queryClient.invalidateQueries({
-                queryKey: ['projects'],
-                refetchType: 'active',
-            })
+            
+            console.log(data)
             queryClient.setQueryData<IProDto[]>(['projects'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });
