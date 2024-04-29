@@ -1,6 +1,6 @@
 import { Address, Email, Phone } from '@crm/@utils/@types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedContactInput {
   @ApiProperty({ type: String, description: 'The first name of the contact' })
@@ -33,7 +33,7 @@ export class UnifiedContactInput {
     type: String,
     description: 'The uuid of the user who owns the contact',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   user_id?: string;
 
@@ -48,7 +48,7 @@ export class UnifiedContactInput {
 
 export class UnifiedContactOutput extends UnifiedContactInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the contact' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

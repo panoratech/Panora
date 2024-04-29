@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedAttachmentInput {
   @ApiProperty({ type: String, description: 'The file name of the attachment' })
@@ -32,7 +32,7 @@ export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
     type: String,
     description: 'The uuid of the attachment',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

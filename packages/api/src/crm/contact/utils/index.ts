@@ -1,4 +1,4 @@
-import { Email, Phone } from '@crm/@utils/@types';
+import { countryPhoneFormats, Email, Phone } from '@crm/@utils/@types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { PrismaClient } from '@prisma/client';
@@ -44,6 +44,26 @@ export class Utils {
       normalizedPhones,
     };
   }
+
+  extractPhoneDetails(phone_number: string): {
+    country_code: string;
+    base_number: string;
+  } {
+    let country_code = '';
+    let base_number: string = phone_number;
+
+    // Find the matching country code
+    for (const [countryCode, _] of Object.entries(countryPhoneFormats)) {
+      if (phone_number.startsWith(countryCode)) {
+        country_code = countryCode;
+        base_number = phone_number.substring(countryCode.length);
+        break;
+      }
+    }
+
+    return { country_code, base_number };
+  }
+
   async getRemoteIdFromUserUuid(uuid: string) {
     try {
       const res = await this.prisma.crm_users.findFirst({

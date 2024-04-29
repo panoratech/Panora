@@ -48,7 +48,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
                 }
               : null,
         },
-      ], 
+      ],
     };
 
     if (source.status) {

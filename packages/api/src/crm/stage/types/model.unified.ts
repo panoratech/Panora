@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedStageInput {
   @ApiProperty({ type: String, description: 'The name of the stage' })
@@ -17,7 +17,7 @@ export class UnifiedStageInput {
 
 export class UnifiedStageOutput extends UnifiedStageInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the stage' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

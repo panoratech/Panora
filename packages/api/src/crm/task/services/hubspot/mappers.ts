@@ -104,5 +104,4 @@ export class HubspotTaskMapper implements ITaskMapper {
       // Additional fields mapping based on UnifiedTaskOutput structure
     };
   }
-
 }

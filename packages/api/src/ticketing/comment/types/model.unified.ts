@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedCommentInput {
   @ApiProperty({ type: String, description: 'The body of the comment' })
@@ -38,7 +38,7 @@ export class UnifiedCommentInput {
     type: String,
     description: 'The uuid of the ticket the comment is tied to',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   ticket_id?: string; // uuid of Ticket object
 
@@ -47,7 +47,7 @@ export class UnifiedCommentInput {
     description:
       'The uuid of the contact which the comment belongs to (if no user_id specified)',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   contact_id?: string; // uuid of Contact object
 
@@ -56,7 +56,7 @@ export class UnifiedCommentInput {
     description:
       'The uuid of the user which the comment belongs to (if no contact_id specified)',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   user_id?: string; // uuid of User object
 
@@ -70,7 +70,7 @@ export class UnifiedCommentInput {
 
 export class UnifiedCommentOutput extends UnifiedCommentInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the comment' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedContactInput {
   @ApiProperty({
@@ -43,7 +43,7 @@ export class UnifiedContactInput {
 
 export class UnifiedContactOutput extends UnifiedContactInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the contact' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

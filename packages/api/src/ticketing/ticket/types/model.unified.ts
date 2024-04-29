@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UnifiedCommentInput } from '@ticketing/comment/types/model.unified';
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedTicketInput {
   @ApiProperty({
@@ -50,15 +50,15 @@ export class UnifiedTicketInput {
     type: String,
     description: 'The uuid of the parent ticket',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   parent_ticket?: string;
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the project the ticket belongs to',
+    description: 'The uuid of the collection (project) the ticket belongs to',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   project_id?: string;
 
@@ -105,7 +105,7 @@ export class UnifiedTicketInput {
     type: String,
     description: 'The uuid of the account which the ticket belongs to',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   account_id?: string;
 
@@ -113,7 +113,7 @@ export class UnifiedTicketInput {
     type: String,
     description: 'The uuid of the contact which the ticket belongs to',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   contact_id?: string;
 
@@ -127,7 +127,7 @@ export class UnifiedTicketInput {
 }
 export class UnifiedTicketOutput extends UnifiedTicketInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the ticket' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

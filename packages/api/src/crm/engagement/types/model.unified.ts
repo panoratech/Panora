@@ -1,25 +1,29 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedEngagementInput {
-  @ApiPropertyOptional({ type: String, description: 'The content of the engagement' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The content of the engagement',
+  })
   @IsString()
   @IsOptional()
   content?: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     type: String,
-    description: 'The direction of the engagement. Authorized values are INBOUND or OUTBOUND' 
+    description:
+      'The direction of the engagement. Authorized values are INBOUND or OUTBOUND',
   })
   @IsIn(['INBOUND', 'OUTBOUND'], {
-    message: "Direction must be either INBOUND or OUTBOUND"
+    message: 'Direction must be either INBOUND or OUTBOUND',
   })
   @IsOptional()
   direction?: string;
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The subject of the engagement' 
+    description: 'The subject of the engagement',
   })
   @IsString()
   @IsOptional()
@@ -39,7 +43,7 @@ export class UnifiedEngagementInput {
       'The type of the engagement. Authorized values are EMAIL, CALL or MEETING',
   })
   @IsIn(['EMAIL', 'CALL', 'MEETING'], {
-    message: "Type must be either EMAIL, CALL or MEETING"
+    message: 'Type must be either EMAIL, CALL or MEETING',
   })
   type: string;
 
@@ -47,7 +51,7 @@ export class UnifiedEngagementInput {
     type: String,
     description: 'The uuid of the user tied to the engagement',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   user_id?: string;
 
@@ -55,7 +59,7 @@ export class UnifiedEngagementInput {
     type: String,
     description: 'The uuid of the company tied to the engagement',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   company_id?: string; // uuid of Company object
 
@@ -76,8 +80,11 @@ export class UnifiedEngagementInput {
 }
 
 export class UnifiedEngagementOutput extends UnifiedEngagementInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the engagement' })
-  @IsString()
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The uuid of the engagement',
+  })
+  @IsUUID()
   @IsOptional()
   id?: string;
 

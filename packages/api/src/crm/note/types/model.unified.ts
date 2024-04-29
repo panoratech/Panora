@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedNoteInput {
   @ApiProperty({ type: String, description: 'The content of the note' })
@@ -10,7 +10,7 @@ export class UnifiedNoteInput {
     type: String,
     description: 'The uuid of the user tied the note',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   user_id?: string;
 
@@ -18,7 +18,7 @@ export class UnifiedNoteInput {
     type: String,
     description: 'The uuid of the company tied to the note',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   company_id?: string;
 
@@ -26,7 +26,7 @@ export class UnifiedNoteInput {
     type: String,
     description: 'The uuid fo the contact tied to the note',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   contact_id?: string;
 
@@ -34,7 +34,7 @@ export class UnifiedNoteInput {
     type: String,
     description: 'The uuid of the deal tied to the note',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   deal_id?: string;
 
@@ -49,7 +49,7 @@ export class UnifiedNoteInput {
 
 export class UnifiedNoteOutput extends UnifiedNoteInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the note' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

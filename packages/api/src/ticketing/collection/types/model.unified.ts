@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedCollectionInput {
   @ApiProperty({
@@ -34,7 +34,7 @@ export class UnifiedCollectionOutput extends UnifiedCollectionInput {
     type: String,
     description: 'The uuid of the collection',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

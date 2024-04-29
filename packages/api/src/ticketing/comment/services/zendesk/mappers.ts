@@ -30,11 +30,15 @@ export class ZendeskCommentMapper implements ICommentMapper {
       type: 'Comment',
     };
 
-    if(source.creator_type === "USER"){
-      result.author_id = Number(await this.utils.getUserRemoteIdFromUuid(source.user_id));
+    if (source.creator_type === 'USER') {
+      result.author_id = Number(
+        await this.utils.getUserRemoteIdFromUuid(source.user_id),
+      );
     }
-    if(source.creator_type === "CONTACT"){
-      result.author_id = Number(await this.utils.getContactRemoteIdFromUuid(source.contact_id));
+    if (source.creator_type === 'CONTACT') {
+      result.author_id = Number(
+        await this.utils.getContactRemoteIdFromUuid(source.contact_id),
+      );
     }
 
     if (source.attachments) {

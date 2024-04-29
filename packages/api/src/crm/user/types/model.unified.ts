@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedUserInput {
   @ApiProperty({ type: String, description: 'The name of the user' })
@@ -21,7 +21,7 @@ export class UnifiedUserInput {
 
 export class UnifiedUserOutput extends UnifiedUserInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the user' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedTagInput {
   @ApiProperty({
@@ -20,7 +20,7 @@ export class UnifiedTagInput {
 
 export class UnifiedTagOutput extends UnifiedTagInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the tag' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

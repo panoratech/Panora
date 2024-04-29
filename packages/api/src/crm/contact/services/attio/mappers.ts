@@ -42,23 +42,8 @@ export class AttioContactMapper implements IContactMapper {
     }
 
     if (primaryPhone) {
-      result.values.phone_numbers = [{ original_phone_number: primaryPhone }];
+      result.values.phone_numbers = [primaryPhone];
     }
-
-    // if (source.user_id) {
-    //   const owner = await this.utils.getUser(source.user_id);
-    //   if (owner) {
-    //     result.id = {
-    //       object_id: Number(owner.remote_id),
-    //       name: owner.name,
-    //       email: owner.email,
-    //       has_pic: 0,
-    //       pic_hash: '',
-    //       active_flag: false,
-    //       value: 0,
-    //     };
-    //   }
-    // }
 
     if (customFieldMappings && source.field_mappings) {
       for (const [k, v] of Object.entries(source.field_mappings)) {

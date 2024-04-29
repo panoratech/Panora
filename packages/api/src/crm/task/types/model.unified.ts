@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedTaskInput {
   @ApiProperty({ type: String, description: 'The subject of the task' })
@@ -32,7 +32,7 @@ export class UnifiedTaskInput {
     type: String,
     description: 'The uuid of the user tied to the task',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   user_id?: string;
 
@@ -40,7 +40,7 @@ export class UnifiedTaskInput {
     type: String,
     description: 'The uuid fo the company tied to the task',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   company_id?: string;
 
@@ -63,7 +63,7 @@ export class UnifiedTaskInput {
 
 export class UnifiedTaskOutput extends UnifiedTaskInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the task' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

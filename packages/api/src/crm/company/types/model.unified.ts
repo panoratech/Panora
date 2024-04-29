@@ -1,6 +1,12 @@
-import { Address, Email, Phone } from '@crm/@utils/@types';
+import { Address, Email, Industry, Phone } from '@crm/@utils/@types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class UnifiedCompanyInput {
   @ApiProperty({ type: String, description: 'The name of the company' })
@@ -9,9 +15,10 @@ export class UnifiedCompanyInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The industry of the company',
+    description:
+      'The industry of the company. Authorized values can be found in the Industry enum.',
   })
-  @IsString()
+  @IsEnum(Industry)
   @IsOptional()
   industry?: string;
 
@@ -27,8 +34,8 @@ export class UnifiedCompanyInput {
     type: String,
     description: 'The uuid of the user who owns the company',
   })
-  @IsString()
   @IsOptional()
+  @IsUUID()
   user_id?: string;
 
   @ApiPropertyOptional({
@@ -63,7 +70,7 @@ export class UnifiedCompanyInput {
 
 export class UnifiedCompanyOutput extends UnifiedCompanyInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the company' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 

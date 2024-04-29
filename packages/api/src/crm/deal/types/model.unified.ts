@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedDealInput {
   @ApiProperty({ type: String, description: 'The name of the deal' })
@@ -18,7 +18,7 @@ export class UnifiedDealInput {
     type: String,
     description: 'The uuid of the user who is on the deal',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   user_id?: string;
 
@@ -26,7 +26,7 @@ export class UnifiedDealInput {
     type: String,
     description: 'The uuid of the stage of the deal',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   stage_id?: string;
 
@@ -34,7 +34,7 @@ export class UnifiedDealInput {
     type: String,
     description: 'The uuid of the company tied to the deal',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   company_id?: string;
 
@@ -49,7 +49,7 @@ export class UnifiedDealInput {
 
 export class UnifiedDealOutput extends UnifiedDealInput {
   @ApiPropertyOptional({ type: String, description: 'The uuid of the deal' })
-  @IsString()
+  @IsUUID()
   @IsOptional()
   id?: string;
 
