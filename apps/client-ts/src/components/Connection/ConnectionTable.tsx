@@ -59,30 +59,30 @@ export default function ConnectionTable() {
   return (
     <>
       <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
-        <div className="flex items-center space-x-4 justify-between flex-row">
-          <Card className="w-1/3">
-            <CardHeader>
-              <CardTitle>Linked</CardTitle>
+        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-lg font-medium">Linked</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{linkedConnections("valid")?.length}</p>
+              <p className="text-2xl font-bold">{linkedConnections("valid")?.length}</p>
             </CardContent>
 
           </Card>
-          <Card className="w-1/3">
-            <CardHeader>
-              <CardTitle>Incomplete Link</CardTitle>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-lg font-medium">Incomplete Link</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{linkedConnections("1")?.length}</p>
+              <p className="text-2xl font-bold">{linkedConnections("1")?.length}</p>
             </CardContent>
           </Card>
-          <Card className="w-1/3">
-            <CardHeader>
-              <CardTitle>Relink Needed</CardTitle>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-lg font-medium">Relink Needed</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{linkedConnections("2")?.length}</p>
+              <p className="text-2xl font-bold">{linkedConnections("2")?.length}</p>
             </CardContent>
 
           </Card>

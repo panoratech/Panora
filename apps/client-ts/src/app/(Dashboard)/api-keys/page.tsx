@@ -35,6 +35,7 @@ import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { DataTableLoading } from "@/components/shared/data-table-loading";
+import { Heading } from "@/components/ui/heading";
 
 
 const formSchema = z.object({
@@ -116,13 +117,15 @@ export default function Page() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-between space-y-2 w-full">
-      <div className="flex-1 space-y-4 pt-6">
+    <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
+      <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex flex-col items-start justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">Api Keys</h2>
-          <h2 className="text-lg font-bold tracking-tight">Manage your api keys.</h2>
+          <Heading
+          title="Api Keys"
+          description="Manage your api keys."
+          />
         </div>          
-        <div className="flex space-y-8 md:flex pb-4">
+        <div>
           <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
             <Button
