@@ -193,17 +193,17 @@ export const columns: ColumnDef<Connection>[] = [
       )
     },
   },
-  /*{
-    accessorKey: "connectionToken",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Connection Token" />
-    ),
-    cell: ({ row }) => {
-      <div className="flex">
-        <div className=" truncate mr-2">
-          <Badge variant="outline">{insertDots(row.getValue("connectionToken"))}</Badge>
-        </div>
-      </div>
-    },
-  }*/
+  // {
+  //   accessorKey: "connectionToken",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Connection Token" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     <div className="flex">
+  //       <div className=" truncate mr-2">
+  //         <Badge variant="outline">{insertDots(row.getValue("connectionToken"))}</Badge>
+  //       </div>
+  //     </div>
+  //   },
+  // }
 ]
