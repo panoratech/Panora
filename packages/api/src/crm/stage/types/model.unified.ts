@@ -5,11 +5,11 @@ export class UnifiedStageInput {
   stage_name: string;
 
   @ApiPropertyOptional({
-    type: [{}],
+    type: {},
     description:
       'The custom field mappings of the stage between the remote 3rd party & Panora',
   })
-  field_mappings?: Record<string, any>[];
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedStageOutput extends UnifiedStageInput {

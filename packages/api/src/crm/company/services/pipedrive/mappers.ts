@@ -45,14 +45,15 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
         };
       }
     }
-
     if (customFieldMappings && source.field_mappings) {
-      customFieldMappings.forEach((mapping) => {
-        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
-        if (customValue) {
-          result[mapping.remote_id] = customValue[mapping.slug];
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
-      });
+      }
     }
 
     return result;
@@ -83,10 +84,12 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: company[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = company[mapping.remote_id];
+      }
+    }
 
     let res = {
       name: company.name,

@@ -54,12 +54,14 @@ export class ZendeskTaskMapper implements ITaskMapper {
     }
 
     if (customFieldMappings && source.field_mappings) {
-      customFieldMappings.forEach((mapping) => {
-        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
-        if (customValue) {
-          result[mapping.remote_id] = customValue[mapping.slug];
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
-      });
+      }
     }
 
     return result;
@@ -90,10 +92,12 @@ export class ZendeskTaskMapper implements ITaskMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedTaskOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: task[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = task[mapping.remote_id];
+      }
+    }
 
     let opts: any = {};
     const type = task.resource_type;

@@ -32,14 +32,15 @@ export class HubspotNoteMapper implements INoteMapper {
       }
     }
 
-    // Custom field mappings
     if (customFieldMappings && source.field_mappings) {
-      customFieldMappings.forEach((mapping) => {
-        const customValue = source.field_mappings.find((f) => f[mapping.slug]);
-        if (customValue) {
-          result[mapping.remote_id] = customValue[mapping.slug];
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
-      });
+      }
     }
 
     return result;
@@ -70,10 +71,12 @@ export class HubspotNoteMapper implements INoteMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedNoteOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: note.properties[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = note.properties[mapping.remote_id];
+      }
+    }
 
     let opts: any = {};
     if (note.properties.hubspot_owner_id) {

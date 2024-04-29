@@ -39,16 +39,16 @@ export class GithubTicketMapper implements ITicketMapper {
       }
     }
 
-    // Handling custom field mappings
     if (customFieldMappings && source.field_mappings) {
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find((m) => m.slug === key);
-          if (mapping) {
-            // TODO: Since GitHub API doesn't support arbitrary custom fields directly,
-            // you might need to handle these mappings in a specific way,
-            // such as appending them to the body or handling them externally.
-          }
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
+          // TODO: Since GitHub API doesn't support arbitrary custom fields directly,
+          // you might need to handle these mappings in a specific way,
+          // such as appending them to the body or handling them externally.
         }
       }
     }
@@ -68,11 +68,14 @@ export class GithubTicketMapper implements ITicketMapper {
 
     return Promise.all(
       sourcesArray.map(async (ticket) => {
-        const field_mappings = customFieldMappings?.map((mapping) => ({
-          [mapping.slug]: ticket.labels.find(
-            (label) => label.name === mapping.remote_id,
-          )?.description,
-        }));
+        const field_mappings: { [key: string]: any } = {};
+        if (customFieldMappings) {
+          for (const mapping of customFieldMappings) {
+            field_mappings[mapping.slug] = ticket.labels.find(
+              (label) => label.name === mapping.remote_id,
+            )?.description;
+          }
+        }
 
         const opts: any = {};
 

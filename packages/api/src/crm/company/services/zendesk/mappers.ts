@@ -53,14 +53,12 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
       }
     }
     if (customFieldMappings && source.field_mappings) {
-      for (const fieldMapping of source.field_mappings) {
-        for (const key in fieldMapping) {
-          const mapping = customFieldMappings.find(
-            (mapping) => mapping.slug === key,
-          );
-          if (mapping) {
-            result.custom_fields[mapping.remote_id] = fieldMapping[key];
-          }
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
         }
       }
     }
@@ -92,9 +90,13 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput> {
-    const field_mappings = customFieldMappings.map((mapping) => ({
-      [mapping.slug]: company.custom_fields[mapping.remote_id],
-    }));
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = company.custom_fields[mapping.remote_id];
+      }
+    }
+
     // Constructing the email and phone details
     const email_addresses = company.email
       ? [{ email_address: company.email, email_address_type: 'primary' }]

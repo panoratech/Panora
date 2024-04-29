@@ -24,11 +24,11 @@ export class UnifiedDealInput {
   company_id?: string;
 
   @ApiPropertyOptional({
-    type: [{}],
+    type: {},
     description:
       'The custom field mappings of the company between the remote 3rd party & Panora',
   })
-  field_mappings?: Record<string, any>[];
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedDealOutput extends UnifiedDealInput {

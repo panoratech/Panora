@@ -38,11 +38,11 @@ export class UnifiedEngagementInput {
   contacts?: string[]; // array of uuids of Engagement Contacts objects
 
   @ApiPropertyOptional({
-    type: [{}],
+    type: {},
     description:
       'The custom field mappings of the engagement between the remote 3rd party & Panora',
   })
-  field_mappings?: Record<string, any>[];
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedEngagementOutput extends UnifiedEngagementInput {

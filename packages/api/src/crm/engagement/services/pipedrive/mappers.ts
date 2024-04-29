@@ -114,10 +114,12 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedEngagementOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: engagement[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = engagement[mapping.remote_id];
+      }
+    }
 
     const opts: any = {};
     if (engagement.user_id) {
@@ -152,10 +154,12 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedEngagementOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: engagement.properties[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = engagement[mapping.remote_id];
+      }
+    }
 
     let opts: any = {};
     if (engagement.user_id) {
@@ -194,10 +198,12 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedEngagementOutput> {
-    const field_mappings =
-      customFieldMappings?.map((mapping) => ({
-        [mapping.slug]: engagement.properties[mapping.remote_id],
-      })) || [];
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = engagement[mapping.remote_id];
+      }
+    }
 
     const opts: any = {};
     if (engagement.user_id) {
