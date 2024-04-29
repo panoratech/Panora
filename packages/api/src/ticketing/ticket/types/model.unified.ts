@@ -64,8 +64,8 @@ export class UnifiedTicketInput {
   assigned_to?: string[]; //uuid of Users objects ?
 
   @ApiPropertyOptional({
-    type: [String],
-    description: 'The comments of the ticket',
+    type: UnifiedCommentInput,
+    description: 'The comment of the ticket',
   })
   comment?: UnifiedCommentInput;
 

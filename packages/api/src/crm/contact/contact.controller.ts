@@ -131,7 +131,7 @@ export class ContactController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      this.logger.log('x-connection-token is ' + connection_token);
+      // this.logger.log('x-connection-token is ' + connection_token);
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,

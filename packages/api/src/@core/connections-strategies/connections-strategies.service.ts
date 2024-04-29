@@ -232,11 +232,11 @@ export class ConnectionsStrategiesService {
                 .scopes,
           };
         }
-        const isSubdomain = needsSubdomain(
+        /*const isSubdomain = needsSubdomain(
           provider.toLowerCase(),
           vertical.toLowerCase(),
-        );
-        console.log('needs subdomain ??? ' + isSubdomain);
+        );*/
+        // console.log('needs subdomain ??? ' + isSubdomain);
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           data = {
             ...data,

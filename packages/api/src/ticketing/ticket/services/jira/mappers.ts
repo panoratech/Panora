@@ -26,11 +26,11 @@ export class JiraTicketMapper implements ITicketMapper {
     const result: JiraTicketInput = {
       fields: {
         project: {
-          key: source.project_id,
+          key: source.project_id || '',
         },
         description: source.description,
         issuetype: {
-          name: source.type,
+          name: source.type || '',
         },
       },
     };

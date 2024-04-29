@@ -28,7 +28,6 @@
 
 Your customers expect all of their tools to work well together. Panora avoids your team spending hundreds of hours building and maintaining integrations instead of your core product.
 
-
 # ✨ Core Features  
 
 |                    |
@@ -38,11 +37,12 @@ Your customers expect all of their tools to work well together. Panora avoids yo
 | **Passthrough Requests:** Interact with other software platforms in their native format.      |
 | **Webhooks:** Listen to one webhook to receive normalized data from various software platforms                  |
 
-
 # ✨ Integrations Catalog
+
 Panora supports integration with the following objects across multiple platforms:
 
-### CRM 
+### CRM
+
 |                                               | Contacts | Deals | Notes | Engagements | Tasks | Users | Companies |
 |-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|:-----:|:---------:|
 | Hubspot           |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
@@ -51,18 +51,16 @@ Panora supports integration with the following objects across multiple platforms
 | Zendesk Sell |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
 | Attio                   |    ✔️    |       |       |             |       |       |     ✔️    |
 
+### Ticketing
 
-### Ticketing 
 |             | Tickets | Comments | Users | Contacts | Accounts | Tags | Teams | Collections |
 |-------------|:----------:|:-------:|:-------:|:------------:|:-------:|:-------:|:------:|:-------------:|
-| Zendesk     | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ | ✔ |
-| Front       | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ | ✔ |
+| Zendesk     | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ |  |
+| Front       | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ |  |
 | Jira        | ✔        | ✔     | ✔    |            |      | ✔    | ✔ | ✔ |
-| Gorgias     | ✔        | ✔     | ✔    | ✔          |      | ✔    | ✔ | ✔ |
+| Gorgias     | ✔        | ✔     | ✔    | ✔          |      | ✔    | ✔ |  |
 
-Your favourite software is missing? [Ask the community to build a connector!](https://github.com/panoratech/Panora/issues/new) 
-
-
+Your favourite software is missing? [Ask the community to build a connector!](https://github.com/panoratech/Panora/issues/new)
 
 # 🕹️ Try the Open-Source version
 
@@ -85,6 +83,7 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
 ```
   docker compose up
  ```
+
 Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product
 
 # 🤔 Questions? Ask the core team

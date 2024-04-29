@@ -25,7 +25,7 @@ export class HubspotCompanyMapper implements ICompanyMapper {
       phone: '',
       state: '',
       domain: '',
-      industry: source.industry,
+      industry: source.industry || '',
     };
 
     // Assuming 'phone_numbers' array contains at least one phone number

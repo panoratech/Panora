@@ -90,6 +90,10 @@ export class ContactService {
           : [],
       });
 
+      this.logger.log(
+        'desunified obect is ' + JSON.stringify(desunifiedObject),
+      );
+
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalContactOutput> = await service.addContact(

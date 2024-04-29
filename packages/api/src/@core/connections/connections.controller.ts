@@ -110,7 +110,7 @@ export class ConnectionsController {
     }
   }
 
-  @Get('gorgias/oauth/install')
+  @Get('/gorgias/oauth/install')
   handleGorgiasAuthUrl(
     @Res() res: Response,
     @Query('account') account: string,

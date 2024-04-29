@@ -15,18 +15,25 @@ export class ZohoCompanyMapper implements ICompanyMapper {
   ): ZohoCompanyInput {
     const result: ZohoCompanyInput = {
       Account_Name: source.name,
-      Phone: source.phone_numbers?.find(
-        (phone) => phone.phone_type === 'primary',
-      )?.phone_number,
-      Email: source.email_addresses?.find(
-        (email) => email.email_address_type === 'primary',
-      )?.email_address,
-      Mailing_Street: source.addresses?.[0]?.street_1,
-      Mailing_City: source.addresses?.[0]?.city,
-      Mailing_State: source.addresses?.[0]?.state,
-      Mailing_Zip: source.addresses?.[0]?.postal_code,
-      Mailing_Country: source.addresses?.[0]?.country,
     };
+
+    if (source.addresses && source.addresses[0]) {
+      result.Mailing_Street = source.addresses?.[0]?.street_1;
+      result.Mailing_City = source.addresses?.[0]?.city;
+      result.Mailing_State = source.addresses?.[0]?.state;
+      result.Mailing_Zip = source.addresses?.[0]?.postal_code;
+      result.Mailing_Country = source.addresses?.[0]?.country;
+    }
+    if (source.phone_numbers) {
+      result.Phone = source.phone_numbers?.find(
+        (phone) => phone.phone_type === 'primary',
+      )?.phone_number;
+    }
+    if (source.email_addresses) {
+      result.Email = source.email_addresses?.find(
+        (email) => email.email_address_type === 'primary',
+      )?.email_address;
+    }
 
     // Custom field mappings
     if (customFieldMappings && source.field_mappings) {

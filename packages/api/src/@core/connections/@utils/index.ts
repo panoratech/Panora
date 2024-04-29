@@ -18,7 +18,7 @@ export class ConnectionUtils {
     token: string,
   ): Promise<ConnectionMetadata> {
     try {
-      console.log('token is ' + token);
+      // console.log('token is ' + token);
       if (!token)
         throw new Error('token provided for connection token is invalid');
       const res = await this.prisma.connections.findFirst({

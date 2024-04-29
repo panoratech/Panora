@@ -1,8 +1,11 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UnifiedUserInput {
-  name?: string;
-  email?: string;
+  @ApiProperty({ description: 'The name of the user' })
+  name: string;
+
+  @ApiProperty({ description: 'The email of the user' })
+  email: string;
 
   @ApiPropertyOptional({
     type: [{}],

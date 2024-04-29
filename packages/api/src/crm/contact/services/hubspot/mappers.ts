@@ -27,9 +27,14 @@ export class HubspotContactMapper implements IContactMapper {
     const result: HubspotContactInput = {
       firstname: source.first_name,
       lastname: source.last_name,
-      email: primaryEmail,
-      phone: primaryPhone,
     };
+
+    if (primaryEmail) {
+      result.email = primaryEmail;
+    }
+    if (primaryPhone) {
+      result.phone = primaryPhone;
+    }
 
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);

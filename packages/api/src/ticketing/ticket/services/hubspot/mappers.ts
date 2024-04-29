@@ -15,9 +15,9 @@ export class HubspotTicketMapper implements ITicketMapper {
   ): HubspotTicketInput {
     const result = {
       subject: source.name,
-      hs_pipeline: source.type,
+      hs_pipeline: source.type || '',
       hubspot_owner_id: '', // TODO Replace 'default' with actual owner ID
-      hs_pipeline_stage: source.status,
+      hs_pipeline_stage: source.status || '',
       hs_ticket_priority: source.priority || 'MEDIUM',
     };
 

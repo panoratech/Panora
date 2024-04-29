@@ -49,9 +49,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
   async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
-      this.logger.log(
-        'linkeduserid is ' + linkedUserId + ' inside callback accelo',
-      );
+      // this.logger.log('linkeduserid is ' + linkedUserId + ' inside callback accelo',);
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

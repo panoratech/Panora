@@ -26,13 +26,15 @@ export class AttioCompanyMapper implements ICompanyMapper {
             value: source.name,
           },
         ],
-        categories: [
-          {
-            option: source.industry,
-          },
-        ],
       },
     };
+    if (source.industry) {
+      result.values.categories = [
+        {
+          option: source.industry,
+        },
+      ];
+    }
     // const result: AttioCompanyInput = {
     //   city: '',
     //   name: source.name,

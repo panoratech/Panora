@@ -121,6 +121,10 @@ export class TicketService {
           : [],
       });
 
+      this.logger.log(
+        'ticket desunified is ' + JSON.stringify(desunifiedObject),
+      );
+
       const service: ITicketService =
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalTicketOutput> = await service.addTicket(
@@ -195,7 +199,7 @@ export class TicketService {
         unique_ticketing_ticket_id = res.id_tcg_ticket;
       } else {
         // Create a new ticket
-        this.logger.log('not existing ticket ' + target_ticket.name);
+        // this.logger.log('not existing ticket ' + target_ticket.name);
 
         let data: any = {
           id_tcg_ticket: uuidv4(),

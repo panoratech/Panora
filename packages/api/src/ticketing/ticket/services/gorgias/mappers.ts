@@ -23,18 +23,20 @@ export class GorgiasTicketMapper implements ITicketMapper {
     const result: GorgiasTicketInput = {
       channel: source.type ?? 'email', // Assuming 'email' as default channel
       subject: source.name,
-      status: source.status,
-      created_datetime: source.due_date?.toISOString(),
+      created_datetime:
+        source.due_date?.toISOString() || new Date().toISOString(),
       messages: [
         {
           via: source.type ?? 'email',
           from_agent: false,
           channel: source.type ?? 'email',
-          body_html: source.comment.html_body,
-          body_text: source.comment.body,
-          attachments: source.comment.attachments.map((att) => ({
-            extra: att,
-          })),
+          body_html: source.comment.html_body || '',
+          body_text: source.comment.body || '',
+          attachments: source.comment.attachments
+            ? source.comment.attachments.map((att) => ({
+                extra: att,
+              }))
+            : [],
           sender:
             source.comment.creator_type === 'user'
               ? {
@@ -44,10 +46,14 @@ export class GorgiasTicketMapper implements ITicketMapper {
                     ),
                   ),
                 }
-              : undefined,
+              : null,
         },
       ],
     };
+
+    if (source.status) {
+      result.status = source.status;
+    }
 
     if (source.assigned_to && source.assigned_to.length > 0) {
       const data = await this.utils.getAsigneeRemoteIdFromUserUuid(

@@ -20,19 +20,18 @@ export class FrontTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<FrontTicketInput> {
-    let result: FrontTicketInput = {
+    const result: FrontTicketInput = {
       type: 'discussion', // Assuming 'discussion' as a default type for Front conversations
       subject: source.name,
-      teammate_ids: source.assigned_to,
       comment: {
-        body: source.comment.body,
+        body: source.comment.body || '',
         author_id:
           source.comment.creator_type === 'user'
             ? await this.utils.getAsigneeRemoteIdFromUserUuid(
                 source.comment.user_id,
               )
-            : undefined,
-        attachments: source.comment.attachments,
+            : '',
+        attachments: source.comment.attachments || [],
       },
     };
 
@@ -44,17 +43,11 @@ export class FrontTicketMapper implements ITicketMapper {
           res.push(data);
         }
       }
-      result = {
-        ...result,
-        teammate_ids: res,
-      };
+      result.teammate_ids = res;
     }
 
     if (source.tags) {
-      result = {
-        ...result,
-        tags: source.tags,
-      };
+      result.tags = source.tags;
     }
 
     if (customFieldMappings && source.field_mappings) {
