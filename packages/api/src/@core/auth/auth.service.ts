@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
+import { VerifyUserDto } from './dto/verify-user.dto';
 
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
@@ -32,23 +33,29 @@ export class AuthService {
       handleServiceError(error, this.logger);
     }
   }
-  async getUserByStytchId(stytchId: string) {
+  async verifyUser(verifyUser: VerifyUserDto) {
     try {
       const user = await this.prisma.users.findUnique({
         where: {
-          id_user: stytchId,
-          identification_strategy: 'b2c',
+          id_user: verifyUser.id_user,
         },
       });
-      const projects = await this.prisma.projects.findMany({
-        where: {
-          id_user: user.id_user,
-        },
-      });
-      return {
-        ...user,
-        projects: projects,
-      };
+
+      if (!user) {
+        throw new UnauthorizedException('user does not exist!');
+      }
+
+      return verifyUser;
+
+      // const projects = await this.prisma.projects.findMany({
+      //   where: {
+      //     id_user: user.id_user,
+      //   },
+      // });
+      // return {
+      //   ...user,
+      //   projects: projects,
+      // };
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -126,23 +133,8 @@ export class AuthService {
     }
   }
 
-  //TODO
   async login(user: LoginDto) {
     try {
-      // let foundUser: User;
-
-      // if (user.id_user) {
-      //   foundUser = await this.prisma.users.findUnique({
-      //     where: { id_user: user.id_user },
-      //   });
-      // }
-
-      // if (!foundUser && user.email) {
-      //   foundUser = await this.prisma.users.findFirst({
-      //     where: { email: user.email },
-      //   });
-      // }
-
       const foundUser = await this.prisma.users.findUnique({
         where: {
           email: user.email
@@ -150,7 +142,7 @@ export class AuthService {
       });
 
       if (!foundUser) {
-        throw new UnauthorizedException('user not found inside login function');
+        throw new UnauthorizedException('user does not exist!');
       }
 
       const isEq = await bcrypt.compare(

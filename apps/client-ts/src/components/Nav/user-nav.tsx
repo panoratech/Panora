@@ -49,11 +49,11 @@ export function UserNav() {
   }, [data, setProfile]);*/
 
   const onLogout = () => {
+    router.push('/b2c/login')
     Cookies.remove("access_token")
     setProfile(null)
     setIdProject("")
     queryClient.clear()
-    router.push('/b2c/login')
 
   }
   return (

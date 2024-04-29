@@ -158,10 +158,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/VerifyUserDto"
                 }
               }
             }
+          },
+          "201": {
+            "description": ""
           }
         },
         "tags": [
@@ -4523,6 +4526,29 @@
         "required": [
           "email",
           "password_hash"
+        ]
+      },
+      "VerifyUserDto": {
+        "type": "object",
+        "properties": {
+          "id_user": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_user",
+          "email",
+          "first_name",
+          "last_name"
         ]
       },
       "ApiKeyDto": {

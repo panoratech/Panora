@@ -19,7 +19,7 @@ const useFetchUserMutation = () => {
 
     const {setProfile} = useProfileStore()
 
-    const loginUser = async (cookie : string | undefined) => {
+    const verifyUser = async (cookie : string | undefined) => {
         // Fetch the token
         const response = await fetch(`${config.API_URL}/auth/profile`, {
             method: 'GET',
@@ -29,19 +29,15 @@ const useFetchUserMutation = () => {
             },
         });
 
-
- 
         if (!response.ok) {
+            Cookies.remove('access_token')
             throw new Error("Fetch User Failed!!")
         }
-        
-        
-        
-        
+         
         return response.json();
     };
     return useMutation({
-        mutationFn: loginUser,
+        mutationFn: verifyUser,
         onMutate: () => {
             toast("Fetching the user !", {
                 description: "",

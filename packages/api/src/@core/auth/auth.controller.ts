@@ -84,10 +84,11 @@ export class AuthController {
   //   );
   // }
 
+  @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
-    return req.user;
+    return this.authService.verifyUser(req.user);
   }
 
   @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
