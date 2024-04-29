@@ -15,9 +15,9 @@ export class HubspotTicketMapper implements ITicketMapper {
   ): HubspotTicketInput {
     const result = {
       subject: source.name,
-      hs_pipeline: source.type || '',
-      hubspot_owner_id: '', // TODO Replace 'default' with actual owner ID
-      hs_pipeline_stage: source.status || '',
+      hs_pipeline: '',
+      hubspot_owner_id: '',
+      hs_pipeline_stage: '',
       hs_ticket_priority: source.priority || 'MEDIUM',
     };
 
@@ -65,11 +65,11 @@ export class HubspotTicketMapper implements ITicketMapper {
     }
 
     return {
-      name: ticket.properties.name, //TODO
-      status: ticket.properties.hs_pipeline_stage,
-      description: ticket.properties.description, //TODO
+      name: ticket.properties.name,
+      status: "", // hs_pipeline_stage: '',
+      description: ticket.properties.description, 
       due_date: new Date(ticket.properties.createdate),
-      type: ticket.properties.hs_pipeline,
+      type: "", //ticket.properties.hs_pipeline,
       parent_ticket: '', // Define how you determine the parent ticket
       completed_at: new Date(ticket.properties.hs_lastmodifieddate),
       priority: ticket.properties.hs_ticket_priority,

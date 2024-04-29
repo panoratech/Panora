@@ -57,7 +57,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
       // Assuming direction is used to determine call status
       hs_call_status: '',
       hs_call_duration: '', // Needs appropriate mapping
-      hs_call_direction: source.direction || '', // Needs appropriate mapping
+      hs_call_direction: source.direction || '', // Needs appropriate mapping 
       hubspot_owner_id: '',
       hs_call_to_number: '', // Needs appropriate mapping
       hs_call_from_number: '', // Needs appropriate mapping
@@ -146,7 +146,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
           ? 'INCOMING_EMAIL'
           : source.direction === 'OUTBOUND'
           ? 'FORWARDED_EMAIL'
-          : '',
+          : '', 
       hs_email_to_lastname: '', // Placeholder, needs appropriate mapping
       hs_email_sender_email: '', // Placeholder, needs appropriate mapping
       hs_email_to_firstname: '', // Placeholder, needs appropriate mapping

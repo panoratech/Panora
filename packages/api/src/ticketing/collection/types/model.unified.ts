@@ -12,7 +12,8 @@ export class UnifiedCollectionInput {
   description?: string;
 
   @ApiPropertyOptional({
-    description: 'The type of the collection, either PROJECT or LIST ',
+    description:
+      'The type of the collection. Authorized values are either PROJECT or LIST ',
   })
   collection_type?: string;
 }

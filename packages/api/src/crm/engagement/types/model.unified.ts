@@ -4,7 +4,7 @@ export class UnifiedEngagementInput {
   @ApiPropertyOptional({ description: 'The content of the engagement' })
   content?: string;
 
-  @ApiPropertyOptional({ description: 'The direction of the engagement' })
+  @ApiPropertyOptional({ description: 'The direction of the engagement. Authorized values are INBOUND or OUTBOUND' })
   direction?: string;
 
   @ApiPropertyOptional({ description: 'The subject of the engagement' })

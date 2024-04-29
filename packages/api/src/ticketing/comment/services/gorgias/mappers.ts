@@ -96,7 +96,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
           'gorgias',
         );
         if (contact_id) {
-          opts = { creator_type: 'contact', contact_id: contact_id };
+          opts = { creator_type: 'CONTACT', contact_id: contact_id };
         }
       }
     }

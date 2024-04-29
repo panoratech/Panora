@@ -9,7 +9,7 @@ export class UnifiedTaskInput {
 
   @ApiProperty({
     description:
-      'The status of the task. Authorized values are "Completed" and "Not Completed" ',
+      'The status of the task. Authorized values are PENDING, COMPLETED.',
   })
   status: string;
 

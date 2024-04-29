@@ -15,9 +15,10 @@ export class UnifiedCommentInput {
   is_private?: boolean;
 
   @ApiPropertyOptional({
-    description: 'The creator type of the comment (either user or contact)',
+    description:
+      'The creator type of the comment. Authorized values are either USER or CONTACT',
   })
-  creator_type?: 'user' | 'contact';
+  creator_type?: string;
 
   @ApiPropertyOptional({
     description: 'The uuid of the ticket the comment is tied to',

@@ -8,7 +8,7 @@ export class UnifiedTicketInput {
   name: string;
 
   @ApiPropertyOptional({
-    description: 'The status of the ticket',
+    description: 'The status of the ticket. Authorized values are OPEN or CLOSED.',
   })
   status?: string;
 
@@ -25,7 +25,7 @@ export class UnifiedTicketInput {
   due_date?: Date;
 
   @ApiPropertyOptional({
-    description: 'The type of the ticket',
+    description: 'The type of the ticket. Authorized values are PROBLEM, QUESTION, or TASK',
   })
   type?: string;
 
@@ -53,9 +53,9 @@ export class UnifiedTicketInput {
   completed_at?: Date;
 
   @ApiPropertyOptional({
-    description: 'The priority of the ticket',
+    description: 'The priority of the ticket. Authorized values are HIGH, MEDIUM or LOW.',
   })
-  priority?: string;
+  priority?: string; 
 
   @ApiPropertyOptional({
     type: [String],

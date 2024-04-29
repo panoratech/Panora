@@ -41,22 +41,16 @@ export class ZendeskTicketMapper implements ITicketMapper {
       result.due_at = source.due_date?.toISOString();
     }
     if (source.priority) {
-      result.priority = source.priority as 'urgent' | 'high' | 'normal' | 'low';
+      result.priority = (source.priority == "MEDIUM" ? 'normal' :  source.priority.toLowerCase()) as 'urgent' | 'high' | 'normal' | 'low';
     }
     if (source.status) {
-      result.status = source.status as
-        | 'new'
-        | 'open'
-        | 'pending'
-        | 'hold'
-        | 'solved'
-        | 'closed';
+      result.status = source.status.toLowerCase() as 'open' | 'closed';
     }
     if (source.tags) {
       result.tags = source.tags;
     }
     if (source.type) {
-      result.type = source.type as 'problem' | 'incident' | 'question' | 'task';
+      result.type = source.type.toLowerCase() as 'problem' | 'incident' | 'question' | 'task';
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -128,10 +122,10 @@ export class ZendeskTicketMapper implements ITicketMapper {
 
     const unifiedTicket: UnifiedTicketOutput = {
       name: ticket.subject,
-      status: ticket.status,
+      status: ticket.status === "new" || ticket.status === "open" ? 'OPEN' : "CLOSED", // todo: handle pending status ?
       description: ticket.description,
       due_date: ticket.due_at ? new Date(ticket.due_at) : undefined,
-      type: ticket.type,
+      type: ticket.type === "incident" ? "PROBLEM" : ticket.type.toUpperCase(),
       parent_ticket: undefined, // If available, add logic to map parent ticket
       tags: ticket.tags,
       completed_at: new Date(ticket.updated_at),

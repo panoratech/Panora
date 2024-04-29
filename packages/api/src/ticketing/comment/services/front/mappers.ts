@@ -80,7 +80,7 @@ export class FrontCommentMapper implements ICommentMapper {
 
       if (user_id) {
         // we must always fall here for Front
-        opts = { user_id: user_id, creator_type: 'user' };
+        opts = { user_id: user_id, creator_type: 'USER' };
       }
     }
 

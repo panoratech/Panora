@@ -3,6 +3,7 @@ import { AppService } from './app.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ApiOperation } from '@nestjs/swagger';
+import { mapCompanyIndustryToRemote } from '@crm/company/utils';
 
 @Controller()
 export class AppController {
@@ -23,6 +24,11 @@ export class AppController {
   @Get('health')
   health(): number {
     return 200;
+  }
+
+  @Get('gpt')
+  async gptTest() {
+    return await mapCompanyIndustryToRemote('Technology', 'hubspot');
   }
 
   @UseGuards(ApiKeyAuthGuard)
