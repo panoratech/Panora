@@ -48,6 +48,7 @@ const useFetchUserMutation = () => {
             // })
         },
         onError: (error) => {
+            Cookies.remove('access_token')
             toast.error("Fetch User failed !", {
                 description: error as any,
                 action: {
