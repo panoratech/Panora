@@ -14,7 +14,6 @@ import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 
-
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
 export class AuthService {
@@ -71,8 +70,6 @@ export class AuthService {
 
   async register(user: CreateUserDto) {
     try {
-
-
       const foundUser = await this.prisma.users.findFirst({
         where: { email: user.email },
       });
@@ -82,8 +79,6 @@ export class AuthService {
       }
 
       return await this.createUser(user);
-
-
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -128,17 +123,17 @@ export class AuthService {
       //   },
       // });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       handleServiceError(error, this.logger);
     }
   }
 
   async login(user: LoginDto) {
     try {
-      const foundUser = await this.prisma.users.findUnique({
+      const foundUser = await this.prisma.users.findFirst({
         where: {
-          email: user.email
-        }
+          email: user.email,
+        },
       });
 
       if (!foundUser) {
@@ -152,24 +147,21 @@ export class AuthService {
 
       if (!isEq) throw new UnauthorizedException('Invalid credentials.');
 
-
       const { ...userData } = foundUser;
 
       const payload = {
         email: userData.email,
         sub: userData.id_user,
         first_name: userData.first_name,
-        last_name: userData.last_name
+        last_name: userData.last_name,
       };
-
-
 
       return {
         user: {
           id_user: foundUser.id_user,
           email: foundUser.email,
           first_name: foundUser.first_name,
-          last_name: foundUser.last_name
+          last_name: foundUser.last_name,
         },
         access_token: this.jwtService.sign(payload, {
           secret: process.env.JWT_SECRET,

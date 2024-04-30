@@ -65,6 +65,7 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
           <nav className="h-14 flex items-center justify-between px-4">
             <div className="hidden lg:block">
               <Link href='/'>
+              Panora.
                 {/* <img src="/logo.png" className='w-14' /> */}
               </Link>
             </div>
@@ -84,8 +85,7 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
             >
               <div className="space-y-4 py-4">
                 <div className="px-3 py-2">
-                  <div className="space-y-1">
-                    
+                  <div className="space-y-3">
                     <TeamSwitcher className='w-40 ml-3' projects={projectsData? projectsData : []}/>
                     <MainNav onLinkClick={handlePageChange} className=''/>
                   </div>
