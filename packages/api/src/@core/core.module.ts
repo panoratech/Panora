@@ -12,6 +12,7 @@ import { WebhookModule } from './webhook/webhook.module';
 import { EnvironmentModule } from './environment/environment.module';
 import { EncryptionService } from './encryption/encryption.service';
 import { ConnectionsStrategiesModule } from './connections-strategies/connections-strategies.module';
+import { SyncModule } from './sync/sync.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ConnectionsStrategiesModule } from './connections-strategies/connection
     WebhookModule,
     EnvironmentModule,
     ConnectionsStrategiesModule,
+    SyncModule,
   ],
   exports: [
     AuthModule,
@@ -41,6 +43,7 @@ import { ConnectionsStrategiesModule } from './connections-strategies/connection
     WebhookModule,
     EnvironmentModule,
     ConnectionsStrategiesModule,
+    SyncModule,
   ],
   providers: [EncryptionService],
 })

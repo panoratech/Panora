@@ -48,7 +48,7 @@ import {
   UnifiedUserInput,
   UnifiedUserOutput,
 } from '@crm/user/types/model.unified';
-import { IsEnum, IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString } from 'class-validator';
 
 export enum CrmObject {
   company = 'company',

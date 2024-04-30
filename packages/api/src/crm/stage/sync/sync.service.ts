@@ -30,19 +30,27 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.syncStages();
+      //await this.syncStages();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
-  @Cron('*/20 * * * *')
+  @Cron('0 1 * * *')
   //function used by sync worker which populate our crm_stages table
   //its role is to fetch all stages from providers 3rd parties and save the info inside our db
-  async syncStages() {
+  async syncStages(user_id?: string) {
     try {
       this.logger.log(`Syncing stages....`);
-      const users = await this.prisma.users.findMany();
+      const users = user_id
+        ? [
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
+        : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
           const projects = await this.prisma.projects.findMany({
