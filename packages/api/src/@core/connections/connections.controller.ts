@@ -101,8 +101,6 @@ export class ConnectionsController {
             code,
           );
           break;
-        case ProviderVertical.Unknown:
-          break;
       }
       res.redirect(returnUrl);
     } catch (error) {
