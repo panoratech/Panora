@@ -17,9 +17,10 @@ import { AttioService } from './services/attio';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
+    BullModule.registerQueue(
+      { name: 'webhookDelivery' },
+      { name: 'syncTasks' },
+    ),
   ],
   controllers: [CompanyController],
   providers: [

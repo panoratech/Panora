@@ -15,6 +15,8 @@ import { ServiceRegistry } from '../services/registry.service';
 import { tcg_contacts as TicketingContact } from '@prisma/client';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.ticketing';
 import { TICKETING_PROVIDERS } from '@panora/shared';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -24,19 +26,38 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
   }
 
   async onModuleInit() {
     try {
-      //await this.syncContacts();
+      await this.scheduleSyncJob();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
-  @Cron('0 1 * * *')
+  private async scheduleSyncJob() {
+    const jobName = 'ticketing-sync-contacts';
+
+    // Remove existing jobs to avoid duplicates in case of application restart
+    const jobs = await this.syncQueue.getRepeatableJobs();
+    for (const job of jobs) {
+      if (job.name === jobName) {
+        await this.syncQueue.removeRepeatableByKey(job.key);
+      }
+    }
+    // Add new job to the queue with a CRON expression
+    await this.syncQueue.add(
+      jobName,
+      {},
+      {
+        repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
+      },
+    );
+  }
   //function used by sync worker which populate our tcg_contacts table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
   async syncContacts(user_id?: string) {
