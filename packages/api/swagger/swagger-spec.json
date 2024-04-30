@@ -148,26 +148,23 @@
         ]
       }
     },
-    "/auth/users/{stytchId}": {
+    "/auth/profile": {
       "get": {
-        "operationId": "getUser",
-        "summary": "Get a specific user by ID",
-        "parameters": [
-          {
-            "name": "stytchId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "operationId": "AuthController_getProfile",
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "Returns the user data."
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyUserDto"
+                }
+              }
+            }
           },
-          "404": {
-            "description": "User not found."
+          "201": {
+            "description": ""
           }
         },
         "tags": [
@@ -4496,9 +4493,6 @@
           "email": {
             "type": "string"
           },
-          "stytch_id_user": {
-            "type": "string"
-          },
           "strategy": {
             "type": "string"
           },
@@ -4513,7 +4507,6 @@
           "first_name",
           "last_name",
           "email",
-          "stytch_id_user",
           "strategy"
         ]
       },
@@ -4531,7 +4524,31 @@
           }
         },
         "required": [
+          "email",
           "password_hash"
+        ]
+      },
+      "VerifyUserDto": {
+        "type": "object",
+        "properties": {
+          "id_user": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_user",
+          "email",
+          "first_name",
+          "last_name"
         ]
       },
       "ApiKeyDto": {
@@ -4627,7 +4644,6 @@
         },
         "required": [
           "name",
-          "id_organization",
           "id_user"
         ]
       },

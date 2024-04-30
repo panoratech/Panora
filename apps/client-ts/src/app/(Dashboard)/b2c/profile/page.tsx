@@ -11,15 +11,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation";
-import { useStytch, useStytchSession, useStytchUser } from "@stytch/nextjs";
+import Cookies from 'js-cookie';
+import useProfileStore from "@/state/profileStore";
+import useProjectStore from "@/state/projectStore"
+import { useQueryClient } from '@tanstack/react-query';
+
 
 const Profile = () => {
-    const stytch = useStytch();
-    // Get the Stytch User object if available
-    const { user } = useStytchUser();
-    // Get the Stytch Session object if available
-    const { session } = useStytchSession();
+
+    const {profile,setProfile} = useProfileStore();
+    const { idProject, setIdProject } = useProjectStore();
+    const queryClient = useQueryClient();
+
+
+    
     const router = useRouter();
+
+    const onLogout = () => {
+        router.push('/b2c/login')
+        Cookies.remove("access_token")
+        setProfile(null)
+        setIdProject("")
+        queryClient.clear()
+
+    }
 
     return (
         <div className="ml-[200px] p-10">
@@ -28,7 +43,7 @@ const Profile = () => {
             <CardTitle>Profile</CardTitle>
             <CardDescription>
             <div className="flex items-center">
-                {user?.name.first_name} {user?.name.last_name}
+                {profile?.first_name} {profile?.last_name}
             </div>
             </CardDescription>
         </CardHeader>
@@ -36,17 +51,14 @@ const Profile = () => {
             <h4 className="text-sm font-medium mb-2">Connected user</h4>
 
             <div className="flex space-x-2">
-            <Input value={`${user?.emails[0].email}`} readOnly />
+            <Input value={`${profile?.email}`} readOnly />
             <Button variant="secondary" className="shrink-0">
                 Copy
             </Button>
             </div>
             <Separator className="my-4" />
             <div className="pt-4">
-            <Button onClick={() => {
-                stytch.session.revoke()
-                router.push('/b2c/login');
-            }}>
+            <Button onClick={() => onLogout()}>
                 Log Out
             </Button>
             </div>

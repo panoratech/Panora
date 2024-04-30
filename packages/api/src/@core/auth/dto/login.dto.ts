@@ -4,7 +4,7 @@ export class LoginDto {
   @ApiProperty()
   id_user?: string;
   @ApiProperty()
-  email?: string;
+  email: string;
   @ApiProperty()
   password_hash: string;
 }

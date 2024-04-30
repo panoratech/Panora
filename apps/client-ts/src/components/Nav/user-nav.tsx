@@ -16,17 +16,24 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import useProfile from "@/hooks/useProfile";
 import useProfileStore from "@/state/profileStore";
-import { useStytchUser, useStytch } from "@stytch/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect } from "react";
+import Cookies from 'js-cookie';
+import useProjectStore from "@/state/projectStore"
+import { useQueryClient } from '@tanstack/react-query';
+
   
 export function UserNav() {
-  const stytch = useStytch();
-  const { user } = useStytchUser();
+  // const stytch = useStytch();
+  // const { user } = useStytchUser();
   const router = useRouter();
   //const {data, isLoading, isError, error} = useProfile(user?.user_id!);
   const { profile, setProfile } = useProfileStore();
+  const { idProject, setIdProject } = useProjectStore();
+  const queryClient = useQueryClient();
+
+
 
   /*useEffect(()=> {
     if(data){
@@ -42,8 +49,12 @@ export function UserNav() {
   }, [data, setProfile]);*/
 
   const onLogout = () => {
-    stytch.session.revoke()
-    router.push('/b2c/login');
+    router.push('/b2c/login')
+    Cookies.remove("access_token")
+    setProfile(null)
+    setIdProject("")
+    queryClient.clear()
+
   }
   return (
     <DropdownMenu>

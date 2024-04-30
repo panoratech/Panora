@@ -11,15 +11,15 @@ export function MainNav({
   onLinkClick: (name: string) => void;
   className: string;
 }) {
-  const [selectedItem, setSelectedItem] = useState<string>("connections");
+  const [selectedItem, setSelectedItem] = useState<string>("");
   const pathname = usePathname();
   useEffect(() => {
     setSelectedItem(pathname.substring(1))
   }, [pathname])
 
   const navItemClassName = (itemName: string) =>
-    `text-sm border-b font-medium w-full text-left px-4 py-2 dark:hover:bg-zinc-900 hover:bg-zinc-200 cursor-pointer ${
-      selectedItem === itemName ? 'dark:bg-zinc-800 bg-zinc-200' : 'text-muted-foreground'
+    `group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground cursor-pointer ${
+      selectedItem === itemName ? 'bg-accent' : 'transparent'
     } transition-colors`;
   
   function click(e: MouseEvent, name: string) {
@@ -29,7 +29,7 @@ export function MainNav({
 
   return (
     <nav
-      className={`flex flex-col items-start ${className}`}
+      className={`grid items-start gap-2 ${className}`}
       {...props}
     >
       <a

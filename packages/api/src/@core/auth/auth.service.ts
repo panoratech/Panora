@@ -12,7 +12,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
-import { users as User } from '@prisma/client';
+import { VerifyUserDto } from './dto/verify-user.dto';
+
 
 //TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
@@ -32,23 +33,29 @@ export class AuthService {
       handleServiceError(error, this.logger);
     }
   }
-  async getUserByStytchId(stytchId: string) {
+  async verifyUser(verifyUser: VerifyUserDto) {
     try {
       const user = await this.prisma.users.findUnique({
         where: {
-          id_stytch: stytchId,
-          identification_strategy: 'b2c',
+          id_user: verifyUser.id_user,
         },
       });
-      const projects = await this.prisma.projects.findMany({
-        where: {
-          id_user: user.id_user,
-        },
-      });
-      return {
-        ...user,
-        projects: projects,
-      };
+
+      if (!user) {
+        throw new UnauthorizedException('user does not exist!');
+      }
+
+      return verifyUser;
+
+      // const projects = await this.prisma.projects.findMany({
+      //   where: {
+      //     id_user: user.id_user,
+      //   },
+      // });
+      // return {
+      //   ...user,
+      //   projects: projects,
+      // };
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -64,19 +71,19 @@ export class AuthService {
 
   async register(user: CreateUserDto) {
     try {
-      /*const foundUser = await this.prisma.users.findFirst({
+
+
+      const foundUser = await this.prisma.users.findFirst({
         where: { email: user.email },
       });
 
       if (foundUser) {
-        throw new BadRequestException('email already exists');
+        throw new BadRequestException('Email is already exists!!');
       }
 
-      const savedUser = await this.createUser(user);
+      return await this.createUser(user);
 
-      const { password_hash, ...resp_user } = savedUser;
-      return resp_user;*/
-      return;
+
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -84,83 +91,86 @@ export class AuthService {
 
   async createUser(user: CreateUserDto, id_user?: string) {
     try {
-      /*const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(user.password_hash, salt);
-
+      const hashedPassword = await bcrypt.hash(user.password_hash, 10);
       return await this.prisma.users.create({
         data: {
-          ...user,
+          // ...user,
           id_user: id_user || uuidv4(),
           password_hash: hashedPassword,
-        },
-      });*/
-      return await this.prisma.users.upsert({
-        where: {
-          id_stytch: user.stytch_id_user,
-        },
-        update: {
           identification_strategy: 'b2c',
           first_name: user.first_name,
           last_name: user.last_name,
           email: user.email,
-          password_hash: '',
           created_at: new Date(),
-          id_user: id_user || uuidv4(),
-        },
-        create: {
-          id_stytch: user.stytch_id_user,
-          identification_strategy: 'b2c',
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          password_hash: '',
-          created_at: new Date(),
-          id_user: id_user || uuidv4(),
         },
       });
+      // return await this.prisma.users.upsert({
+      //   where: {
+      //     email: user.email,
+      //   },
+      //   update: {
+      //     identification_strategy: 'b2c',
+      //     first_name: user.first_name,
+      //     last_name: user.last_name,
+      //     email: user.email,
+      //     password_hash: '',
+      //     created_at: new Date(),
+      //     id_user: id_user || uuidv4(),
+      //   },
+      //   create: {
+      //     identification_strategy: 'b2c',
+      //     first_name: user.first_name,
+      //     last_name: user.last_name,
+      //     email: user.email,
+      //     password_hash: '',
+      //     created_at: new Date(),
+      //     id_user: id_user || uuidv4(),
+      //   },
+      // });
     } catch (error) {
+      console.log(error)
       handleServiceError(error, this.logger);
     }
   }
 
-  //TODO
   async login(user: LoginDto) {
     try {
-      let foundUser: User;
-
-      if (user.id_user) {
-        foundUser = await this.prisma.users.findUnique({
-          where: { id_user: user.id_user },
-        });
-      }
-
-      if (!foundUser && user.email) {
-        foundUser = await this.prisma.users.findFirst({
-          where: { email: user.email },
-        });
-      }
+      const foundUser = await this.prisma.users.findUnique({
+        where: {
+          email: user.email
+        }
+      });
 
       if (!foundUser) {
-        throw new UnauthorizedException('user not found inside login function');
+        throw new UnauthorizedException('user does not exist!');
       }
 
-      //TODO:
-      /*const isEq = await bcrypt.compare(
+      const isEq = await bcrypt.compare(
         user.password_hash,
         foundUser.password_hash,
       );
 
       if (!isEq) throw new UnauthorizedException('Invalid credentials.');
-      */
-      const { password_hash, ...userData } = foundUser;
+
+
+      const { ...userData } = foundUser;
 
       const payload = {
         email: userData.email,
         sub: userData.id_user,
+        first_name: userData.first_name,
+        last_name: userData.last_name
       };
 
+
+
       return {
-        user: userData,
+        user: {
+          id_user: foundUser.id_user,
+          email: foundUser.email,
+          first_name: foundUser.first_name,
+          last_name: foundUser.last_name
+        },
         access_token: this.jwtService.sign(payload, {
           secret: process.env.JWT_SECRET,
         }), // token used to generate api keys

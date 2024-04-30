@@ -6,7 +6,7 @@ interface ProjectState {
 }
 
 const useProjectStore = create<ProjectState>()((set) => ({
-  idProject: "123",
+  idProject: "",
   setIdProject: (id) => set({ idProject: id }),
 }));
 

@@ -2,33 +2,41 @@ import config from '@/lib/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 
-interface IProDto {
-    name: string;
-    id_user: string; 
+interface IUserDto {
+    first_name: string,
+    last_name: string,
+    email: string,
+    strategy: string,
+    password_hash: string,
+    id_organisation?: string,
 }
+const useCreateUserMutation = () => {
 
-const useProjectMutation = () => {
-    const queryClient = useQueryClient();
-    
-    const addProject = async (data: IProDto) => {
-        const response = await fetch(`${config.API_URL}/projects/create`, {
+    const addUser = async (userData: IUserDto) => {
+        // Fetch the token
+        const response = await fetch(`${config.API_URL}/auth/register`, {
             method: 'POST',
-            body: JSON.stringify(data),
+            body: JSON.stringify(userData),
             headers: {
-            'Content-Type': 'application/json',
+                'Content-Type': 'application/json', 
             },
         });
-        
+
+
+ 
         if (!response.ok) {
-            throw new Error('Failed to add project');
+            throw new Error("Email already associated with other account!!")
         }
+        
+        
+        
         
         return response.json();
     };
     return useMutation({
-        mutationFn: addProject,
+        mutationFn: addUser,
         onMutate: () => {
-            toast("Project is being created !", {
+            toast("User is being created !", {
                 description: "",
                 action: {
                   label: "Close",
@@ -37,7 +45,7 @@ const useProjectMutation = () => {
             })
         },
         onError: (error) => {
-            toast("Project creation has failed !", {
+            toast("User generation failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
@@ -47,11 +55,7 @@ const useProjectMutation = () => {
         },
         onSuccess: (data) => {
             
-            // console.log(data)
-            queryClient.setQueryData<IProDto[]>(['projects'], (oldQueryData = []) => {
-                return [...oldQueryData, data];
-            });
-            toast("Project has been created !", {
+            toast("User has been generated !", {
                 description: "",
                 action: {
                   label: "Close",
@@ -64,4 +68,4 @@ const useProjectMutation = () => {
     });
 };
 
-export default useProjectMutation;
+export default useCreateUserMutation;

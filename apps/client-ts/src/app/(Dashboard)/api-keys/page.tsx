@@ -34,7 +34,8 @@ import config from "@/lib/config";
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { DataTableLoading } from "../../components/shared/data-table-loading";
+import { DataTableLoading } from "@/components/shared/data-table-loading";
+import { Heading } from "@/components/ui/heading";
 
 
 const formSchema = z.object({
@@ -116,13 +117,15 @@ export default function Page() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-between space-y-2 w-full">
-      <div className="flex-1 space-y-4 pt-6">
+    <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
+      <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex flex-col items-start justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">Api Keys</h2>
-          <h2 className="text-lg font-bold tracking-tight">Manage your api keys.</h2>
+          <Heading
+          title="Api Keys"
+          description="Manage your api keys."
+          />
         </div>          
-        <div className="flex space-y-8 md:flex pb-4">
+        <div>
           <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
             <Button
@@ -141,44 +144,60 @@ export default function Page() {
             </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Api Key</DialogTitle>
-                <DialogDescription>
-                  Never share this key, you must saved it it will be displayed once !
-                </DialogDescription>
-              </DialogHeader>
+              {idProject==="" ? (
+                <>
+                <DialogHeader>
+                  <DialogTitle></DialogTitle>
+                </DialogHeader>
+                <h1>You have to create project in order to create API Key.</h1>
+                <DialogFooter>
+                  <Button variant='outline' type="reset" onClick={() => onCancel()}>Close</Button>
+                </DialogFooter>
+                </>
+              )
+              :
+              (
+                <>
+                <DialogHeader>
+                  <DialogTitle>Add New Api Key</DialogTitle>
+                  <DialogDescription>
+                    Never share this key, you must saved it it will be displayed once !
+                  </DialogDescription>
+                </DialogHeader>
 
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                  <FormField
-                        control={form.control}
-                        name="apiKeyIdentifier"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>API Key Identifier</FormLabel>
-                            <FormControl>
-                              <Input 
-                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                              placeholder="My Best Key For Finance Data" {...field}
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              This is the API Key Identifier of system.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                    />
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                    <FormField
+                          control={form.control}
+                          name="apiKeyIdentifier"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>API Key Identifier</FormLabel>
+                              <FormControl>
+                                <Input 
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                                placeholder="My Best Key For Finance Data" {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                This is the API Key Identifier of system.
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                      />
+                    </div>
                   </div>
-                </div>
-              <DialogFooter>
-                <Button variant='outline' type="reset" onClick={() => onCancel()}>Cancel</Button>
-                <Button type='submit'>Create</Button>
-              </DialogFooter>
-                </form>
-              </Form>
+                <DialogFooter>
+                  <Button variant='outline' type="reset" onClick={() => onCancel()}>Cancel</Button>
+                  <Button type='submit'>Create</Button>
+                </DialogFooter>
+                  </form>
+                </Form>
+                </>
+              )}
             </DialogContent>
           </Dialog>
         </div>

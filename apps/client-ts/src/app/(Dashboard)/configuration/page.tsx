@@ -41,6 +41,7 @@ import AddAuthCredentials from "@/components/Configuration/AddAuthCredentials";
 import AuthCredentialsTable from "@/components/Configuration/AuthCredentialsTable";
 import useConnectionStrategies from "@/hooks/useConnectionStrategies";
 import { extractAuthMode,extractProvider,extractVertical} from '@panora/shared'
+import { Heading } from "@/components/ui/heading";
 
 export default function Page() {
   const {idProject} = useProjectStore();
@@ -112,10 +113,13 @@ export default function Page() {
 
   return (
     
-    <div className="flex flex-col pl-[200px] items-center justify-between space-y-2">
+    <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Configuration</h2>
+            <Heading
+            title="Configuration"
+            description=""
+            />
           </div>
           <Tabs defaultValue="linked-accounts" className="space-y-4">
             <TabsList>

@@ -66,11 +66,10 @@ model tcg_users {
 model users {
   id_user                 String     @id(map: "pk_users") @db.Uuid
   identification_strategy String
-  email                   String?
+  email                   String?    @unique(map: "unique_email")
   password_hash           String?
   first_name              String
   last_name               String
-  id_stytch               String?    @unique(map: "force_stytch_id_unique")
   created_at              DateTime   @default(now()) @db.Timestamp(6)
   modified_at             DateTime   @default(now()) @db.Timestamp(6)
   api_keys                api_keys[]
