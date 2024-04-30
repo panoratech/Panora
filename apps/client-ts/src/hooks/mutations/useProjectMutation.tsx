@@ -47,7 +47,7 @@ const useProjectMutation = () => {
         },
         onSuccess: (data) => {
             
-            console.log(data)
+            // console.log(data)
             queryClient.setQueryData<IProDto[]>(['projects'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });

@@ -169,6 +169,20 @@ const AddConnectionButton = ({
         </PopoverContent>
       </Popover> 
       <DialogContent>
+        {idProject==="" ? (
+          <>
+            <DialogHeader>
+              <DialogTitle></DialogTitle>
+            </DialogHeader>
+              <h1>You have to create project in order to create Connection.</h1>
+              <DialogFooter>
+                <Button variant='outline' type="reset" onClick={() => setShowNewLinkedUserDialog({open: false})}>Close</Button>
+              </DialogFooter>
+          </>
+        )
+      :
+      (
+        <>
         <DialogHeader>
           <DialogTitle>Share this magic link with your customers</DialogTitle>
           <DialogDescription>
@@ -244,6 +258,8 @@ const AddConnectionButton = ({
         </DialogFooter>
         </form>
         </Form>
+        </>
+      )}
       </DialogContent>
     </Dialog>    
   )
