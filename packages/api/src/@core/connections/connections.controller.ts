@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res, Param } from '@nestjs/common';
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -139,4 +139,20 @@ export class ConnectionsController {
   async getConnections() {
     return await this.prisma.connections.findMany();
   }
+
+  // @ApiOperation({
+  //   operationId: 'getConnectionsByUser',
+  //   summary: 'Retrieve connections by user',
+  // })
+  // @ApiResponse({ status: 200 })
+  // @Get(':userId')
+  // getProjectsByUser(@Param('userId') userId: string) {
+  //   return this.prisma.connections.findMany(
+  //     {
+  //       where: {
+  //         id
+  //       }
+  //     }
+  //   );
+  // }
 }

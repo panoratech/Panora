@@ -39,16 +39,16 @@ const useFetchUserMutation = () => {
     return useMutation({
         mutationFn: verifyUser,
         onMutate: () => {
-            toast("Fetching the user !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
+            // toast("Fetching the user !", {
+            //     description: "",
+            //     action: {
+            //       label: "Close",
+            //       onClick: () => console.log("Close"),
+            //     },
+            // })
         },
         onError: (error) => {
-            toast("Fetch User failed !", {
+            toast.error("Fetch User failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
@@ -62,7 +62,7 @@ const useFetchUserMutation = () => {
             // Cookies.set('access_token',data.access_token,{expires:1});
             // console.log("Bearer Token in client Side : ",data.access_token);
 
-            toast("User has been fetched !", {
+            toast.success("User has been fetched !", {
                 description: "",
                 action: {
                   label: "Close",

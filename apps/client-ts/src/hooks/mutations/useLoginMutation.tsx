@@ -55,16 +55,16 @@ const useLoginMutation = () => {
     return useMutation({
         mutationFn: loginUser,
         onMutate: () => {
-            toast("Logging the user !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
+            // toast("Logging the user !", {
+            //     description: "",
+            //     action: {
+            //       label: "Close",
+            //       onClick: () => console.log("Close"),
+            //     },
+            // })
         },
         onError: (error) => {
-            toast("User generation failed !", {
+            toast.error("User generation failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
@@ -78,7 +78,7 @@ const useLoginMutation = () => {
             Cookies.set('access_token',data.access_token,{expires:1});
             console.log("Bearer Token in client Side : ",data.access_token);
 
-            toast("User has been generated !", {
+            toast.success("User has been generated !", {
                 description: "",
                 action: {
                   label: "Close",
