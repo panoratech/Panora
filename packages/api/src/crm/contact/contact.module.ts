@@ -41,6 +41,13 @@ import { ServiceRegistry } from './services/registry.service';
     PipedriveService,
     HubspotService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class ContactModule {}

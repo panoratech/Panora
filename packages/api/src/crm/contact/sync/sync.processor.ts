@@ -5,8 +5,9 @@ import { SyncService } from './sync.service';
 @Processor('syncTasks')
 export class SyncProcessor {
   constructor(private syncService: SyncService) {}
-  @Process('crm-sync-contacts')
-  async handleSyncCompanies(job: Job) {
+
+  @Process({ name: 'crm-sync-contacts', concurrency: 5 })
+  async handleSyncContacts(job: Job) {
     try {
       console.log(`Processing queue -> crm-sync-contacts ${job.id}`);
       await this.syncService.syncContacts();

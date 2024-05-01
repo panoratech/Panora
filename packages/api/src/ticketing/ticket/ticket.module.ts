@@ -43,6 +43,13 @@ import { GorgiasService } from './services/gorgias';
     JiraService,
     GorgiasService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class TicketModule {}

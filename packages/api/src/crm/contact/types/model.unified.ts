@@ -15,19 +15,22 @@ export class UnifiedContactInput {
     type: [Email],
     description: 'The email addresses of the contact',
   })
-  email_addresses: Email[];
+  @IsOptional()
+  email_addresses?: Email[];
 
   @ApiPropertyOptional({
     type: [Phone],
     description: 'The phone numbers of the contact',
   })
-  phone_numbers: Phone[];
+  @IsOptional()
+  phone_numbers?: Phone[];
 
   @ApiPropertyOptional({
     type: [Address],
     description: 'The addresses of the contact',
   })
-  addresses: Address[];
+  @IsOptional()
+  addresses?: Address[];
 
   @ApiPropertyOptional({
     type: String,

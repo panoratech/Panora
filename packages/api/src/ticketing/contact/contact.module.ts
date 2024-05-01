@@ -37,6 +37,13 @@ import { GorgiasService } from './services/gorgias';
     FrontService,
     GorgiasService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class ContactModule {}

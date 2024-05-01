@@ -59,6 +59,8 @@ export class SyncService implements OnModuleInit {
   }
   //function used by sync worker which populate our tcg_collections table
   //its role is to fetch all collections from providers 3rd parties and save the info inside our db
+  //@Cron('*/2 * * * *') // every 2 minutes (for testing)
+  @Cron('0 */8 * * *') // every 8 hours
   async syncCollections(user_id?: string) {
     try {
       this.logger.log(`Syncing collections....`);

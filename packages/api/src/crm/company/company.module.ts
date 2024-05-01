@@ -39,6 +39,13 @@ import { AttioService } from './services/attio';
     HubspotService,
     AttioService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class CompanyModule {}

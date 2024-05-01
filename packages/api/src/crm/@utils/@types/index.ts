@@ -328,6 +328,7 @@ export class Email {
     type: String,
     description: 'The email address',
   })
+  @IsString()
   email_address: string;
 
   @ApiProperty({
@@ -343,6 +344,8 @@ export class Email {
     type: String,
     description: 'The owner type of an email',
   })
+  @IsString()
+  @IsOptional()
   owner_type?: string;
 }
 

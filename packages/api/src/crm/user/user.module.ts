@@ -39,6 +39,13 @@ import { ZohoService } from './services/zoho';
     PipedriveService,
     HubspotService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class UserModule {}

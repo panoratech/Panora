@@ -49,23 +49,37 @@ export class SyncService implements OnModuleInit {
 
     // Remove existing jobs to avoid duplicates in case of application restart
     const jobs = await this.syncQueue.getRepeatableJobs();
+    console.log(`Found ${jobs.length} repeatable jobs.`);
     for (const job of jobs) {
+      console.log(`Checking job: ${job.name}`);
       if (job.name === jobName) {
+        console.log(`Removing job with key: ${job.key}`);
         await this.syncQueue.removeRepeatableByKey(job.key);
       }
     }
+
     // Add new job to the queue with a CRON expression
-    await this.syncQueue.add(
-      jobName,
-      {},
-      {
-        repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
-      },
-    );
+    console.log(`Adding new job: ${jobName}`);
+    await this.syncQueue
+      .add(
+        jobName,
+        {},
+        {
+          repeat: { cron: '*/2 * * * *' }, // Runs once a day at midnight
+        },
+      )
+      .then(() => {
+        console.log('Job added successfully');
+      })
+      .catch((error) => {
+        console.error('Failed to add job', error);
+      });
   }
 
   //function used by sync worker which populate our crm_contacts table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
+  //@Cron('*/2 * * * *') // every 2 minutes (for testing)
+  @Cron('0 */8 * * *') // every 8 hours
   async syncContacts(user_id?: string) {
     try {
       this.logger.log(`Syncing contacts....`);

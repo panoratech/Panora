@@ -35,6 +35,13 @@ import { FrontService } from './services/front';
     ZendeskService,
     FrontService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class AccountModule {}

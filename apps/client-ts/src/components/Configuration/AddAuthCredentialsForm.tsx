@@ -359,7 +359,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
     </CardHeader>
     <CardContent className="grid gap-5">
         <div className="grid gap-4">
-            {/* <div className="grip gap-4"> */}
             <FormField
             control={form.control}
             // disabled={prop.performUpdate}
@@ -432,21 +431,16 @@ const AddAuthCredentialsForm = (prop : propType) => {
                             </div>
                             
                                     </CommandItem>
-                                ))}
-                                </CommandGroup>
+                        ))}
+                        </CommandGroup>
                         </ScrollArea>
                             </Command>
                             </PopoverContent>
                         </Popover>
                         <FormMessage />
-
-
-                        {/* <FormDescription>
-                            This is the language that will be used in the dashboard.
-                        </FormDescription> */}
-                        </FormItem>
+                </FormItem>
                     )}
-                    />
+                />
 
             {/* </div> */}
         </div>

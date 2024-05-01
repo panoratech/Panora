@@ -33,6 +33,13 @@ import { JiraService } from './services/jira';
     /* PROVIDERS SERVICES */
     JiraService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class CollectionModule {}

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { SyncService as CrmCompanySyncService } from '@crm/company/sync/sync.service';
@@ -22,7 +21,6 @@ import { SyncService as TicketingUserSyncService } from '@ticketing/user/sync/sy
 @Injectable()
 export class CoreSyncService {
   constructor(
-    private prisma: PrismaService,
     private logger: LoggerService,
     private CrmCompanySyncService: CrmCompanySyncService,
     private CrmContactSyncService: CrmContactSyncService,
