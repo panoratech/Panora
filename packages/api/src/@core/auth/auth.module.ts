@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { LoggerService } from '@@core/logger/logger.service';
 import { AuthController } from './auth.controller';
+import { ValidateUserService } from '@@core/utils/services/validateUser.service';
 
 @Module({
   controllers: [AuthController],
@@ -19,6 +20,7 @@ import { AuthController } from './auth.controller';
     PrismaService,
     ConfigService,
     LoggerService,
+    ValidateUserService,
   ],
   imports: [
     PassportModule,

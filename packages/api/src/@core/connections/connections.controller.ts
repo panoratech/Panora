@@ -1,4 +1,12 @@
-import { Controller, Get, Query, Res, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Res,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -9,6 +17,8 @@ import { TicketingConnectionsService } from './ticketing/services/ticketing.conn
 import { ProviderVertical } from '@panora/shared';
 import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
 import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 export type StateDataType = {
   projectId: string;
@@ -135,24 +145,16 @@ export class ConnectionsController {
     summary: 'List Connections',
   })
   @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard, ValidateUserGuard)
   @Get()
-  async getConnections() {
-    return await this.prisma.connections.findMany();
+  async getConnections(
+    @Request() req: any,
+    @Query('projectId') projectId: string,
+  ) {
+    return await this.prisma.connections.findMany({
+      where: {
+        id_project: projectId,
+      },
+    });
   }
-
-  // @ApiOperation({
-  //   operationId: 'getConnectionsByUser',
-  //   summary: 'Retrieve connections by user',
-  // })
-  // @ApiResponse({ status: 200 })
-  // @Get(':userId')
-  // getProjectsByUser(@Param('userId') userId: string) {
-  //   return this.prisma.connections.findMany(
-  //     {
-  //       where: {
-  //         id
-  //       }
-  //     }
-  //   );
-  // }
 }

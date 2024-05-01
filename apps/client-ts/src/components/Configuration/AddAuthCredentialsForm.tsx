@@ -35,20 +35,13 @@ import {
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-  } from "@/components/ui/tooltip"
 import {PasswordInput} from '@/components/ui/password-input'
-import { ALL_PROVIDERS,getLogoURL,getProviderVertical,providerToType,AuthStrategy } from "@panora/shared"
+import { ALL_PROVIDERS,getLogoURL,providerToType,AuthStrategy } from "@panora/shared"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
 import useProjectStore from "@/state/projectStore"
@@ -103,17 +96,13 @@ const formSchema = z.object({
         // api_key?:string,
         // username?:string,
         // secret?:string,
-
-
     }
 
   }
 
 const AddAuthCredentialsForm = (prop : propType) => {
-
     const [copied, setCopied] = useState(false);
     const [popoverOpen,setPopOverOpen] = useState(false);
-    // const [olddata,setOldData] = useState(prop.data)
     const {idProject} = useProjectStore()
     const {mutate : createCS} = useConnectionStrategyMutation();
     const {mutate :updateCS} = useUpdateConnectionStrategyMutation()
@@ -133,8 +122,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
         },
         
     })
-
-
 
     const posthog = usePostHog()
 
@@ -181,10 +168,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
 },[])
 
-    
-
-
-
     const handlePopOverClose = () => {
         setPopOverOpen(false);
     }
@@ -203,8 +186,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
     const Watch = form.watch()
     
-
-
     function onSubmit(values: z.infer<typeof formSchema>) {
 
 

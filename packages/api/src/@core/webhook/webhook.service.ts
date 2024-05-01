@@ -18,9 +18,13 @@ export class WebhookService {
     this.logger.setContext(WebhookService.name);
   }
 
-  async getWebhookEndpoints() {
+  async getWebhookEndpoints(project_id: string) {
     try {
-      return await this.prisma.webhook_endpoints.findMany();
+      return await this.prisma.webhook_endpoints.findMany({
+        where: {
+          id_project: project_id,
+        },
+      });
     } catch (error) {
       handleServiceError(error, this.logger);
     }

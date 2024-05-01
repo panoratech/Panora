@@ -9,12 +9,31 @@ export class EventsService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(EventsService.name);
   }
-  async findEvents(dto: PaginationDto) {
+  async findEvents(dto: PaginationDto, project_id: string) {
     try {
+      // First, fetch the linked_users related to the project_id
+      const linkedUsers = await this.prisma.linked_users.findMany({
+        where: {
+          id_project: project_id,
+        },
+        select: {
+          id_linked_user: true,
+        },
+      });
+
+      // Extract the ids of the linked_users
+      const linkedUserIds = linkedUsers.map((user) => user.id_linked_user);
+
+      // Then, use those ids to filter the events
       return await this.prisma.events.findMany({
         orderBy: { timestamp: 'desc' },
         skip: (dto.page - 1) * dto.pageSize,
         take: dto.pageSize,
+        where: {
+          id_linked_user: {
+            in: linkedUserIds,
+          },
+        },
       });
     } catch (error) {
       handleServiceError(error, this.logger);

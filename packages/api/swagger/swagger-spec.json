@@ -176,7 +176,16 @@
       "get": {
         "operationId": "getApiKeys",
         "summary": "Retrieve API Keys",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
@@ -327,7 +336,16 @@
       "get": {
         "operationId": "getConnections",
         "summary": "List Connections",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
@@ -342,7 +360,16 @@
       "get": {
         "operationId": "getWebhooksMetadata",
         "summary": "Retrieve webhooks metadata ",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
@@ -429,7 +456,16 @@
       "get": {
         "operationId": "getLinkedUsers",
         "summary": "Retrieve Linked Users",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
@@ -509,30 +545,6 @@
         "operationId": "getProjects",
         "summary": "Retrieve projects",
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "projects"
-        ]
-      }
-    },
-    "/projects/{userId}": {
-      "get": {
-        "operationId": "getProjectsByUser",
-        "summary": "Retrieve projects by user",
-        "parameters": [
-          {
-            "name": "userId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": ""
@@ -726,6 +738,14 @@
               "minimum": 1,
               "default": 10,
               "type": "number"
+            }
+          },
+          {
+            "name": "project_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1049,7 +1069,7 @@
         ]
       }
     },
-    "/connections-strategies/GetConnectionStrategiesForProject": {
+    "/connections-strategies/getConnectionStrategiesForProject": {
       "get": {
         "operationId": "getConnectionStrategiesForProject",
         "summary": "Fetch All Connection Strategies for Project",

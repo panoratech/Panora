@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { LinkedUsersService } from './linked-users.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateLinkedUserDto } from './dto/create-linked-user.dto';
@@ -9,6 +9,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 @ApiTags('linked-users')
 @Controller('linked-users')
@@ -23,8 +25,10 @@ export class LinkedUsersController {
   @ApiOperation({ operationId: 'addLinkedUser', summary: 'Add Linked User' })
   @ApiBody({ type: CreateLinkedUserDto })
   @ApiResponse({ status: 201 })
+  //@UseGuards(JwtAuthGuard)
   @Post('create')
   addLinkedUser(@Body() linkedUserCreateDto: CreateLinkedUserDto) {
+    // validate project_id against user
     return this.linkedUsersService.addLinkedUser(linkedUserCreateDto);
   }
 
@@ -33,9 +37,10 @@ export class LinkedUsersController {
     summary: 'Retrieve Linked Users',
   })
   @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard, ValidateUserGuard)
   @Get()
-  getLinkedUsers() {
-    return this.linkedUsersService.getLinkedUsers();
+  getLinkedUsers(@Query('project_id') project_id: string) {
+    return this.linkedUsersService.getLinkedUsers(project_id);
   }
 
   @ApiOperation({
@@ -44,8 +49,10 @@ export class LinkedUsersController {
   })
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiResponse({ status: 200 })
+  //@UseGuards(JwtAuthGuard)
   @Get('single')
   getLinkedUser(@Query('id') id: string) {
+    // validate project_id against user
     return this.linkedUsersService.getLinkedUser(id);
   }
 
@@ -55,8 +62,10 @@ export class LinkedUsersController {
   })
   @ApiQuery({ name: 'originId', required: true, type: String })
   @ApiResponse({ status: 200 })
+  //@UseGuards(JwtAuthGuard)
   @Get('single')
   getLinkedUserV2(@Query('originId') id: string) {
+    // validate project_id against user
     return this.linkedUsersService.getLinkedUserV2(id);
   }
 }

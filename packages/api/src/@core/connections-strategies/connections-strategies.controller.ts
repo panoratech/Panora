@@ -1,19 +1,14 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
-import {
-  ApiBody,
-  ApiOperation,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ConnectionsStrategiesService } from './connections-strategies.service';
 import { CreateConnectionStrategyDto } from './dto/create-connections-strategies.dto';
 import { ToggleStrategyDto } from './dto/toggle.dto';
-import { GetConnectionStrategyDto } from './dto/get-connections.dto';
 import { DeleteCSDto } from './dto/delete-cs.dto';
 import { UpdateCSDto } from './dto/update-cs.dto';
 import { ConnectionStrategyCredentials } from './dto/get-connection-cs-credentials.dto';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 @ApiTags('connections-strategies')
 @Controller('connections-strategies')
@@ -25,34 +20,19 @@ export class ConnectionsStrategiesController {
     this.logger.setContext(ConnectionsStrategiesController.name);
   }
 
-  /*@ApiOperation({
-    operationId: 'isCustomCredentials',
-    summary:
-      'Fetch info on whether the customer uses custom credentials for connections',
-  })
-  @ApiResponse({ status: 200 })
-  @Get('isCustomCredentials')
-  async isCustomCredentials(
-    @Query('projectId') projectId: string,
-    @Query('type') type: string,
-  ) {
-    return await this.connectionsStrategiesService.isCustomCredentials(
-      projectId,
-      type,
-    );
-  }*/
-
   @ApiOperation({
     operationId: 'createConnectionStrategy',
     summary: 'Create Connection Strategy',
   })
   @ApiBody({ type: CreateConnectionStrategyDto })
   @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
   @Post('create')
   async createConnectionStrategy(
     @Body() connectionStrategyCreateDto: CreateConnectionStrategyDto,
   ) {
     const { projectId, type, attributes, values } = connectionStrategyCreateDto;
+    // validate user against project_id
     return await this.connectionsStrategiesService.createConnectionStrategy(
       projectId,
       type,
@@ -61,32 +41,16 @@ export class ConnectionsStrategiesController {
     );
   }
 
-  /*@ApiOperation({
-    operationId: 'getConnectionStrategyData',
-    summary: 'Get Connection Strategy Data',
-  })
-  @ApiBody({ type: GetConnectionStrategyDto })
-  @ApiResponse({ status: 201 })
-  @Post('get')
-  async getConnectionStrategyData(
-    @Body() connectionStrategyCreateDto: GetConnectionStrategyDto,
-  ) {
-    const { projectId, type, attributes } = connectionStrategyCreateDto;
-    return await this.connectionsStrategiesService.getConnectionStrategyData(
-      projectId,
-      type,
-      attributes,
-    );
-  }*/
-
   @ApiOperation({
     operationId: 'toggleConnectionStrategy',
     summary: 'Activate/Deactivate Connection Strategy',
   })
   @ApiBody({ type: ToggleStrategyDto })
   @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
   @Post('toggle')
   async toggleConnectionStrategy(@Body() data: ToggleStrategyDto) {
+    // validate user against project_id
     return await this.connectionsStrategiesService.toggle(data.id_cs);
   }
 
@@ -96,8 +60,10 @@ export class ConnectionsStrategiesController {
   })
   @ApiBody({ type: DeleteCSDto })
   @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
   @Post('delete')
   async deleteConnectionStrategy(@Body() data: DeleteCSDto) {
+    // validate user against project_id
     return await this.connectionsStrategiesService.deleteConnectionStrategy(
       data.id,
     );
@@ -109,9 +75,11 @@ export class ConnectionsStrategiesController {
   })
   @ApiBody({ type: UpdateCSDto })
   @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
   @Post('update')
   async updateConnectionStrategy(@Body() updateData: UpdateCSDto) {
     const { attributes, id_cs, status, values } = updateData;
+    // validate user against project_id
     return await this.connectionsStrategiesService.updateConnectionStrategy(
       id_cs,
       status,
@@ -126,10 +94,12 @@ export class ConnectionsStrategiesController {
   })
   @ApiBody({ type: ConnectionStrategyCredentials })
   @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
   @Post('credentials')
   async getConnectionStrategyCredential(
     @Body() data: ConnectionStrategyCredentials,
   ) {
+    // validate user against project_id
     const { attributes, projectId, type } = data;
     return await this.connectionsStrategiesService.getConnectionStrategyData(
       projectId,
@@ -138,11 +108,13 @@ export class ConnectionsStrategiesController {
     );
   }
 
+  //todo: ADMIN
   @ApiOperation({
     operationId: 'getCredentials',
     summary: 'Fetch credentials info needed for connections',
   })
   @ApiResponse({ status: 200 })
+  //@UseGuards(JwtAuthGuard)
   @Get('getCredentials')
   async getCredentials(
     @Query('projectId') projectId: string,
@@ -159,7 +131,8 @@ export class ConnectionsStrategiesController {
     summary: 'Fetch All Connection Strategies for Project',
   })
   @ApiResponse({ status: 200 })
-  @Get('GetConnectionStrategiesForProject')
+  @UseGuards(JwtAuthGuard, ValidateUserGuard)
+  @Get('getConnectionStrategiesForProject')
   async getConnectionStrategiesForProject(
     @Query('projectId') projectId: string,
   ) {

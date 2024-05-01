@@ -6,6 +6,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
 import { AccountingConnectionModule } from './accounting/accounting.connection.module';
 import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
+import { ValidateUserService } from '@@core/utils/services/validateUser.service';
 
 @Module({
   controllers: [ConnectionsController],
@@ -15,7 +16,7 @@ import { MarketingAutomationConnectionsModule } from './marketingautomation/mark
     AccountingConnectionModule,
     MarketingAutomationConnectionsModule,
   ],
-  providers: [LoggerService, PrismaService],
+  providers: [LoggerService, PrismaService, ValidateUserService],
   exports: [
     CrmConnectionModule,
     TicketingConnectionModule,

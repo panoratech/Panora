@@ -5,11 +5,13 @@ import { DataTableLoading } from "../shared/data-table-loading";
 import { events as Event } from "api";
 import { useEventsCount } from '@/hooks/useEventsCount';
 import { useQueryPagination } from '@/hooks/useQueryPagination';
+import useProjectStore from "@/state/projectStore";
 
 export default function EventsTable() {
   const { data: eventsCount } = useEventsCount();
   
   const pagination = useQueryPagination({ totalItems: eventsCount });
+  const {idProject} = useProjectStore();
 
   const {
     data: events,
@@ -19,7 +21,7 @@ export default function EventsTable() {
   } = useEvents({
     page: pagination.page,
     pageSize: pagination.pageSize,
-  });
+  }, idProject);
   
   //TODO
   const transformedEvents = events?.map((event: Event) => ({

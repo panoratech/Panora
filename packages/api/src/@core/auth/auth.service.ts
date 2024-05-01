@@ -60,9 +60,14 @@ export class AuthService {
     }
   }
 
-  async getApiKeys() {
+  async getApiKeys(user_id: string, project_id: string) {
     try {
-      return await this.prisma.api_keys.findMany();
+      return await this.prisma.api_keys.findMany({
+        where: {
+          id_user: user_id,
+          id_project: project_id,
+        },
+      });
     } catch (error) {
       handleServiceError(error, this.logger);
     }

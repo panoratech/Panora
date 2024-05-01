@@ -1,6 +1,8 @@
 import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from "sonner"
+import Cookies from 'js-cookie';
+
 interface IMapTargetFieldDto {
   attributeId: string;
   source_custom_field_id: string;
@@ -15,6 +17,7 @@ const useMapFieldMutation = () => {
             body: JSON.stringify(data),
             headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Cookies.get('access_token')}`,
             },
         });
         

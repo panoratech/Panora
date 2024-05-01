@@ -1,17 +1,6 @@
 'use client';
 import CreateUserForm from "@/components/Auth/CustomLoginComponent/CreateUserForm";
 import LoginUserForm from "@/components/Auth/CustomLoginComponent/LoginUserForm";
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Tabs,
   TabsContent,
@@ -23,8 +12,6 @@ import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import useProfileStore from "@/state/profileStore";
 import useFetchUserMutation from "@/hooks/mutations/useFetchUserMutation";
-
-
 
 export default function Page() {
 
