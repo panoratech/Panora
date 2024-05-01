@@ -11,7 +11,7 @@ export const TICKETING_PROVIDERS = ['zendesk', 'front', 'github', 'jira', 'gorgi
 export const MARKETINGAUTOMATION_PROVIDERS = [''];
 export const FILESTORAGE_PROVIDERS = [''];
 
-export function getProviderVertical(providerName: string): ProviderVertical {
+/*export function getProviderVertical(providerName: string): ProviderVertical {
   if (CRM_PROVIDERS.includes(providerName)) {
     return ProviderVertical.CRM;
   }
@@ -33,8 +33,8 @@ export function getProviderVertical(providerName: string): ProviderVertical {
   if (FILESTORAGE_PROVIDERS.includes(providerName)) {
     return ProviderVertical.FileStorage;
   }
-  return null;
-}
+  return undefined;
+}*/
 
 function mergeAllProviders(...arrays: string[][]): { vertical: string, value: string }[] {
   const result: { vertical: string, value: string }[] = [];

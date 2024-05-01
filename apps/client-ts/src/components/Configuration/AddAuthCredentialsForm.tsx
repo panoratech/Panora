@@ -48,7 +48,7 @@ import {
     TooltipTrigger,
   } from "@/components/ui/tooltip"
 import {PasswordInput} from '@/components/ui/password-input'
-import { ALL_PROVIDERS,getLogoURL,getProviderVertical,providerToType,AuthStrategy } from "@panora/shared"
+import { ALL_PROVIDERS,getLogoURL,providerToType,AuthStrategy } from "@panora/shared"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
 import useProjectStore from "@/state/projectStore"
