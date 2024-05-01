@@ -21,7 +21,7 @@ export default function EventsTable() {
   } = useEvents({
     page: pagination.page,
     pageSize: pagination.pageSize,
-  }, idProject);
+  });
   
   //TODO
   const transformedEvents = events?.map((event: Event) => ({

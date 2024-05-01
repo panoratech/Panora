@@ -18,7 +18,6 @@ import { ProviderVertical } from '@panora/shared';
 import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
 import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 export type StateDataType = {
   projectId: string;
@@ -143,15 +142,14 @@ export class ConnectionsController {
     summary: 'List Connections',
   })
   @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard, ValidateUserGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async getConnections(
-    @Request() req: any,
-    @Query('projectId') projectId: string,
-  ) {
+  async getConnections(@Request() req: any) {
+    const { id_project } = req.user;
+    console.log('Req data is:', req.user);
     return await this.prisma.connections.findMany({
       where: {
-        id_project: projectId,
+        id_project: id_project,
       },
     });
   }

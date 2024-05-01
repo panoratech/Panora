@@ -7,8 +7,6 @@ import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import useFetchUserMutation from "@/hooks/mutations/useFetchUserMutation";
 
-
-
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Layout({

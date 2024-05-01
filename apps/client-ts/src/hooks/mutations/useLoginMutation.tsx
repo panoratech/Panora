@@ -1,8 +1,7 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from "sonner"
 import useProfileStore from '@/state/profileStore';
-import { projects as Project } from 'api';
 import Cookies from 'js-cookie';
 
 type IUserDto = {
@@ -18,14 +17,10 @@ interface ILoginInputDto {
     password_hash:string
 }
 
-
-
 interface ILoginOutputDto {
     user: IUserDto,
     access_token: string
-
 }
-
 
 const useLoginMutation = () => {
 
@@ -41,14 +36,9 @@ const useLoginMutation = () => {
             },
         });
 
-
- 
         if (!response.ok) {
             throw new Error("Login Failed!!")
         }
-        
-        
-        
         
         return response.json();
     };
@@ -73,10 +63,9 @@ const useLoginMutation = () => {
             })
         },
         onSuccess: (data : ILoginOutputDto) => {
-
             setProfile(data.user);
             Cookies.set('access_token',data.access_token,{expires:1});
-            console.log("Bearer Token in client Side : ",data.access_token);
+            //console.log("Bearer Token in client Side : ",data.access_token);
 
             toast.success("User has been generated !", {
                 description: "",

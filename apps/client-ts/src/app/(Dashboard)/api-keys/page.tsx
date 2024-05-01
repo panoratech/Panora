@@ -57,7 +57,7 @@ export default function Page() {
   const {idProject} = useProjectStore();
   const {profile} = useProfileStore();
 
-  const { data: apiKeys, isLoading, error } = useApiKeys(idProject);
+  const { data: apiKeys, isLoading, error } = useApiKeys();
   const { mutate } = useApiKeyMutation();
 
   useEffect(() => {

@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { api_keys as ApiKey } from 'api';
 import Cookies from 'js-cookie';
 
-const useApiKeys = (project_id: string) => {
+const useApiKeys = () => {
   return useQuery({
     queryKey: ['api-keys'], 
     queryFn: async (): Promise<ApiKey[]> => {
-      const response = await fetch(`${config.API_URL}/auth/api-keys?project_id=${project_id}`,
+      const response = await fetch(`${config.API_URL}/auth/api-keys`,
       {
         method: 'GET',
         headers: {

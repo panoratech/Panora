@@ -60,11 +60,10 @@ export class AuthService {
     }
   }
 
-  async getApiKeys(user_id: string, project_id: string) {
+  async getApiKeys(project_id: string) {
     try {
       return await this.prisma.api_keys.findMany({
         where: {
-          id_user: user_id,
           id_project: project_id,
         },
       });
@@ -141,6 +140,12 @@ export class AuthService {
         },
       });
 
+      const project = await this.prisma.projects.findFirst({
+        where: {
+          id_user: foundUser.id_user,
+        },
+      });
+
       if (!foundUser) {
         throw new UnauthorizedException('user does not exist!');
       }
@@ -159,6 +164,7 @@ export class AuthService {
         sub: userData.id_user,
         first_name: userData.first_name,
         last_name: userData.last_name,
+        id_project: project.id_project,
       };
 
       return {
@@ -171,6 +177,31 @@ export class AuthService {
         access_token: this.jwtService.sign(payload, {
           secret: process.env.JWT_SECRET,
         }), // token used to generate api keys
+      };
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
+  async refreshAccessToken(
+    projectId: string,
+    id_user: string,
+    email: string,
+    first_name: string,
+    last_name: string,
+  ) {
+    try {
+      const payload = {
+        email: email,
+        sub: id_user,
+        first_name: first_name,
+        last_name: last_name,
+        id_project: projectId,
+      };
+      return {
+        access_token: this.jwtService.sign(payload, {
+          secret: process.env.JWT_SECRET,
+        }),
       };
     } catch (error) {
       handleServiceError(error, this.logger);

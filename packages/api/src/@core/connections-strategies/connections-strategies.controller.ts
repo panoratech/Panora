@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ConnectionsStrategiesService } from './connections-strategies.service';
@@ -8,7 +16,6 @@ import { DeleteCSDto } from './dto/delete-cs.dto';
 import { UpdateCSDto } from './dto/update-cs.dto';
 import { ConnectionStrategyCredentials } from './dto/get-connection-cs-credentials.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 @ApiTags('connections-strategies')
 @Controller('connections-strategies')
@@ -32,7 +39,6 @@ export class ConnectionsStrategiesController {
     @Body() connectionStrategyCreateDto: CreateConnectionStrategyDto,
   ) {
     const { projectId, type, attributes, values } = connectionStrategyCreateDto;
-    // validate user against project_id
     return await this.connectionsStrategiesService.createConnectionStrategy(
       projectId,
       type,
@@ -50,7 +56,6 @@ export class ConnectionsStrategiesController {
   @UseGuards(JwtAuthGuard)
   @Post('toggle')
   async toggleConnectionStrategy(@Body() data: ToggleStrategyDto) {
-    // validate user against project_id
     return await this.connectionsStrategiesService.toggle(data.id_cs);
   }
 
@@ -63,7 +68,6 @@ export class ConnectionsStrategiesController {
   @UseGuards(JwtAuthGuard)
   @Post('delete')
   async deleteConnectionStrategy(@Body() data: DeleteCSDto) {
-    // validate user against project_id
     return await this.connectionsStrategiesService.deleteConnectionStrategy(
       data.id,
     );
@@ -131,13 +135,12 @@ export class ConnectionsStrategiesController {
     summary: 'Fetch All Connection Strategies for Project',
   })
   @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard, ValidateUserGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('getConnectionStrategiesForProject')
-  async getConnectionStrategiesForProject(
-    @Query('projectId') projectId: string,
-  ) {
+  async getConnectionStrategiesForProject(@Request() req: any) {
+    const { id_project } = req.user;
     return await this.connectionsStrategiesService.getConnectionStrategiesForProject(
-      projectId,
+      id_project,
     );
   }
 

@@ -176,16 +176,7 @@
       "get": {
         "operationId": "getApiKeys",
         "summary": "Retrieve API Keys",
-        "parameters": [
-          {
-            "name": "project_id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": ""
@@ -207,6 +198,31 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ApiKeyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/refresh-token": {
+      "post": {
+        "operationId": "refreshAccessToken",
+        "summary": "Refresh Access Token",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshDto"
               }
             }
           }
@@ -336,16 +352,7 @@
       "get": {
         "operationId": "getConnections",
         "summary": "List Connections",
-        "parameters": [
-          {
-            "name": "projectId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": ""
@@ -360,16 +367,7 @@
       "get": {
         "operationId": "getWebhooksMetadata",
         "summary": "Retrieve webhooks metadata ",
-        "parameters": [
-          {
-            "name": "project_id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": ""
@@ -456,16 +454,7 @@
       "get": {
         "operationId": "getLinkedUsers",
         "summary": "Retrieve Linked Users",
-        "parameters": [
-          {
-            "name": "project_id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": ""
@@ -738,14 +727,6 @@
               "minimum": 1,
               "default": 10,
               "type": "number"
-            }
-          },
-          {
-            "name": "project_id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -1073,16 +1054,7 @@
       "get": {
         "operationId": "getConnectionStrategiesForProject",
         "summary": "Fetch All Connection Strategies for Project",
-        "parameters": [
-          {
-            "name": "projectId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": ""
@@ -4636,6 +4608,17 @@
           "projectId",
           "userId",
           "keyName"
+        ]
+      },
+      "RefreshDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
         ]
       },
       "WebhookDto": {

@@ -26,7 +26,7 @@ import Cookies from 'js-cookie';
 export default function ConnectionTable() {
   
   const {idProject} = useProjectStore();
-  const { data: connections, isLoading, error } = useConnections(idProject);
+  const { data: connections, isLoading, error } = useConnections();
   const [isGenerated, setIsGenerated] = useState(false);
 
   const posthog = usePostHog()

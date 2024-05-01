@@ -19,8 +19,8 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const Profile = () => {
 
-    const {profile,setProfile} = useProfileStore();
-    const { idProject, setIdProject } = useProjectStore();
+    const { profile, setProfile } = useProfileStore();
+    const { setIdProject } = useProjectStore();
     const queryClient = useQueryClient();
 
 
