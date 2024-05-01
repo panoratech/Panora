@@ -2,6 +2,7 @@ import config from '@/lib/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
 import { connection_strategies as ConnectionStrategies } from 'api';
+import Cookies from 'js-cookie';
 
 interface IUpdateConnectionStrategyDto {
     id_cs?: string
@@ -27,6 +28,7 @@ const useUpdateConnectionStrategyMutation = () => {
                 body: JSON.stringify({id_cs:connectionStrategyData.id_cs}),
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Cookies.get('access_token')}`,
                 },
             });
 

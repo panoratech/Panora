@@ -28,7 +28,7 @@ export class ConnectionsStrategiesService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async isCustomCredentials(projectId: string, type: string) {
     const res = await this.prisma.connection_strategies.findFirst({

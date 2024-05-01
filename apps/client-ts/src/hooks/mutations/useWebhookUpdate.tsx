@@ -1,6 +1,7 @@
 import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from "sonner"
+import Cookies from 'js-cookie';
 
 interface IWebhookUpdateDto {
     id: string;
@@ -13,6 +14,7 @@ const useWebhookStatusMutation = () => {
             body: JSON.stringify({active: data.active}),
             headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Cookies.get('access_token')}`,
             },
         });
         

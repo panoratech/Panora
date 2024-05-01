@@ -1,6 +1,7 @@
 import config from '@/lib/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
+import Cookies from 'js-cookie';
 
 interface IDefineTargetFieldDto{
     object_type_owner: string;
@@ -18,6 +19,7 @@ const useDefineFieldMutation = () => {
             body: JSON.stringify(data),
             headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Cookies.get('access_token')}`,
             },
         });
         

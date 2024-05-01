@@ -4,11 +4,9 @@ import {
   Body,
   Get,
   UseGuards,
+  Request,
   Query,
-  Res,
-  Param,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -16,7 +14,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiKeyDto } from './dto/api-key.dto';
 import { LoginDto } from './dto/login.dto';
-import { ApiKeyAuthGuard } from './guards/api-key.guard';
+import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -52,6 +50,7 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  // todo: admin only
   @ApiOperation({ operationId: 'getUsers', summary: 'Get users' })
   @ApiResponse({ status: 200 })
   @Get('users')
@@ -59,22 +58,23 @@ export class AuthController {
     return this.authService.getUsers();
   }
 
-  @ApiOperation({
-    operationId: 'getUser',
-    summary: 'Get a specific user by ID',
-  })
-  @ApiResponse({ status: 200, description: 'Returns the user data.' })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  @Get('users/:stytchId')
-  async getUser(@Param('stytchId') stytchId: string) {
-    return this.authService.getUserByStytchId(stytchId);
+  @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getProfile(@Request() req) {
+    return this.authService.verifyUser(req.user);
   }
 
   @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
   @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard, ValidateUserGuard)
   @Get('api-keys')
-  async apiKeys() {
-    return this.authService.getApiKeys();
+  async getApiKeys(
+    @Request() req: any,
+    @Query('project_id') project_id: string,
+  ) {
+    const id_user = req.user.id_user; // Extracted from JWT payload
+    return this.authService.getApiKeys(id_user, project_id);
   }
 
   @ApiOperation({ operationId: 'generateApiKey', summary: 'Create API Key' })

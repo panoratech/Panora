@@ -33,10 +33,10 @@ export class ProjectsService {
 
   async createProject(data: CreateProjectDto) {
     try {
-      const { id_organization, ...rest } = data;
+      // const { id_organization, ...rest } = data;
       const res = await this.prisma.projects.create({
         data: {
-          ...rest,
+          name: data.name,
           sync_mode: 'pool',
           id_project: uuidv4(),
           id_user: data.id_user,

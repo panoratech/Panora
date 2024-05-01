@@ -2,7 +2,7 @@
 -- ('55222419-795d-4183-8478-361626363e58', 'Acme Inc', 'cust_stripe_acme_56604f75-7bf8-4541-9ab4-5928aade4bb8' );
 
 INSERT INTO users (id_user, identification_strategy, email, password_hash, first_name, last_name) VALUES
-('0ce39030-2901-4c56-8db0-5e326182ec6b', 'b2c','audrey@aubry.io', '$2b$10$Nxcp3x0yDaCrMrhZQ6IiNeqk0BxxDTnfn9iGG2UK5nWMh/UB6LgZu', 'Audrey', 'Aubry');
+('0ce39030-2901-4c56-8db0-5e326182ec6b', 'b2c','local@panora.dev', '$2b$10$Y7Q8TWGyGuc5ecdIASbBsuXMo3q/Rs3/cnY.mLZP4tUgfGUOCUBlG', 'local', 'Panora');
 
 
 INSERT INTO projects (id_project, name, sync_mode, id_user) VALUES

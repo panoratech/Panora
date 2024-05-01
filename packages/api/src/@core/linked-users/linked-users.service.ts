@@ -10,9 +10,13 @@ export class LinkedUsersService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(LinkedUsersService.name);
   }
-  async getLinkedUsers() {
+  async getLinkedUsers(project_id: string) {
     try {
-      return await this.prisma.linked_users.findMany();
+      return await this.prisma.linked_users.findMany({
+        where: {
+          id_project: project_id,
+        },
+      });
     } catch (error) {
       handleServiceError(error, this.logger);
     }

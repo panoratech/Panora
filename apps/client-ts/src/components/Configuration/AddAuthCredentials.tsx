@@ -15,28 +15,19 @@ import { cn } from "@/lib/utils"
 
 import { usePostHog } from 'posthog-js/react'
 import config from "@/lib/config"
-// import { toast } from "@/components/ui/use-toast"
 
 import AddAuthCredentialsForm from "./AddAuthCredentialsForm"
 
-
-
-
 const AddAuthCredentials = () => {
-    const [open, setOpen] = useState(false);
-    const posthog = usePostHog()
-    const {idProject} = useProjectStore();
+  const [open, setOpen] = useState(false);
+  const posthog = usePostHog()
+  const {idProject} = useProjectStore();
 
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open)
+    // form.reset()
+  };
 
-    
-
-    const handleOpenChange = (open: boolean) => {
-        setOpen(open)
-        // form.reset()
-      };
-
-   
-  
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>

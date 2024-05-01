@@ -55,6 +55,7 @@ import * as z from "zod"
 import config from "@/lib/config"
 import { Skeleton } from "@/components/ui/skeleton";
 import useProfileStore from "@/state/profileStore"
+import { projects as Project } from 'api';
 
 
 const projectFormSchema = z.object({
@@ -66,7 +67,7 @@ const projectFormSchema = z.object({
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
 interface TeamSwitcherProps extends PopoverTriggerProps {
-  userId: string;
+  projects:Project[]
 }
 
 interface ModalObj {
@@ -74,16 +75,25 @@ interface ModalObj {
   status?: number; // 0 for org, 1 for project
 }
 
-export default function TeamSwitcher({ className, userId }: TeamSwitcherProps) {
+export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) {
   const [open, setOpen] = useState(false)
   const [showNewDialog, setShowNewDialog] = useState<ModalObj>({
     open: false,
   })
+  
+
+  const { profile } = useProfileStore();
 
   const { idProject, setIdProject } = useProjectStore();
   
-  const { profile } = useProfileStore();
-  const projects = profile?.projects;
+  // const projects = profile?.projects;
+
+  // useEffect(() => {
+  //   if(idProject==="" && projects)
+  //     {
+  //       setIdProject(projects[0]?.id_project)
+  //     }
+  // },[projects])
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
