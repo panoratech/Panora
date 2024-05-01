@@ -4,6 +4,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { ConnectionsStrategiesController } from './connections-strategies.controller';
 import { ConnectionsStrategiesService } from './connections-strategies.service';
 import { ConfigService } from '@nestjs/config';
+import { ValidateUserService } from '@@core/utils/services/validateUser.service';
 
 @Module({
   controllers: [ConnectionsStrategiesController],
@@ -12,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
     PrismaService,
     ConnectionsStrategiesService,
     ConfigService,
+    ValidateUserService,
   ],
 })
 export class ConnectionsStrategiesModule {}

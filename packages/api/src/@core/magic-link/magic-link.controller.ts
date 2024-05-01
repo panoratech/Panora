@@ -1,5 +1,5 @@
 import { LoggerService } from '@@core/logger/logger.service';
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { MagicLinkService } from './magic-link.service';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';
 import {
@@ -9,7 +9,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { invite_links as MagicLink } from '@prisma/client';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 @ApiTags('magic-link')
 @Controller('magic-link')
 export class MagicLinkController {
@@ -26,11 +26,13 @@ export class MagicLinkController {
   })
   @ApiBody({ type: CreateMagicLinkDto })
   @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
   @Post('create')
   createLink(@Body() data: CreateMagicLinkDto) {
     return this.magicLinkService.createUniqueLink(data);
   }
 
+  // todo: only admin
   @ApiOperation({
     operationId: 'getMagicLinks',
     summary: 'Retrieve Magic Links',
@@ -41,6 +43,7 @@ export class MagicLinkController {
     return this.magicLinkService.getMagicLinks();
   }
 
+  // admin
   @ApiOperation({
     operationId: 'getMagicLink',
     summary: 'Retrieve a Magic Link',
@@ -49,6 +52,7 @@ export class MagicLinkController {
   @ApiResponse({ status: 200 })
   @Get('single')
   getMagicLink(@Query('id') id: string) {
+    // validate project_id against user
     return this.magicLinkService.getMagicLink(id);
   }
 }

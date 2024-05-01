@@ -4,12 +4,9 @@ import {
   Body,
   Get,
   UseGuards,
-  Query,
-  Res,
   Request,
-  Param,
+  Query,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -17,7 +14,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiKeyDto } from './dto/api-key.dto';
 import { LoginDto } from './dto/login.dto';
-import { ApiKeyAuthGuard } from './guards/api-key.guard';
+import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -53,36 +50,13 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  // todo: admin only
   @ApiOperation({ operationId: 'getUsers', summary: 'Get users' })
   @ApiResponse({ status: 200 })
   @Get('users')
   async users() {
     return this.authService.getUsers();
   }
-
-  // @ApiOperation({
-  //   operationId: 'getUser',
-  //   summary: 'Get a specific user by ID',
-  // })
-  // @ApiResponse({ status: 200, description: 'Returns the user data.' })
-  // @ApiResponse({ status: 404, description: 'User not found.' })
-  // @Get('users/:stytchId')
-  // async getUser(@Param('stytchId') stytchId: string) {
-  //   return this.authService.getUserByStytchId(stytchId);
-  // }
-
-  // @ApiOperation({ operationId: 'generateApiKey', summary: 'Create API Key' })
-  // @ApiBody({ type: ApiKeyDto })
-  // @ApiResponse({ status: 201 })
-  // @UseGuards(JwtAuthGuard)
-  // @Get('users/currentUser')
-  // async getCurrentUser(@Body() data: ApiKeyDto): Promise<{ api_key: string }> {
-  //   return this.authService.generateApiKeyForUser(
-  //     data.userId,
-  //     data.projectId,
-  //     data.keyName,
-  //   );
-  // }
 
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
@@ -93,9 +67,14 @@ export class AuthController {
 
   @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
   @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard, ValidateUserGuard)
   @Get('api-keys')
-  async apiKeys() {
-    return this.authService.getApiKeys();
+  async getApiKeys(
+    @Request() req: any,
+    @Query('project_id') project_id: string,
+  ) {
+    const id_user = req.user.id_user; // Extracted from JWT payload
+    return this.authService.getApiKeys(id_user, project_id);
   }
 
   @ApiOperation({ operationId: 'generateApiKey', summary: 'Create API Key' })

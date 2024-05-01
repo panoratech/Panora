@@ -13,40 +13,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton";
-import useProfile from "@/hooks/useProfile";
 import useProfileStore from "@/state/profileStore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useEffect } from "react";
 import Cookies from 'js-cookie';
 import useProjectStore from "@/state/projectStore"
 import { useQueryClient } from '@tanstack/react-query';
 
   
 export function UserNav() {
-  // const stytch = useStytch();
-  // const { user } = useStytchUser();
   const router = useRouter();
-  //const {data, isLoading, isError, error} = useProfile(user?.user_id!);
   const { profile, setProfile } = useProfileStore();
   const { idProject, setIdProject } = useProjectStore();
   const queryClient = useQueryClient();
-
-
-
-  /*useEffect(()=> {
-    if(data){
-      console.log("data is "+ JSON.stringify(data));
-      setProfile({
-        id_user: data.id_user,
-        email: data.email!,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        //id_organization: data.id_organization as string,
-      })
-    }
-  }, [data, setProfile]);*/
 
   const onLogout = () => {
     router.push('/b2c/login')

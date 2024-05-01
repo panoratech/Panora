@@ -46,8 +46,8 @@ import { Heading } from "@/components/ui/heading";
 export default function Page() {
   const {idProject} = useProjectStore();
 
-  const { data: linkedUsers, isLoading, error } = useLinkedUsers();
-  const { data: webhooks, isLoading: isWebhooksLoading, error: isWebhooksError } = useWebhooks();
+  const { data: linkedUsers, isLoading, error } = useLinkedUsers(idProject);
+  const { data: webhooks, isLoading: isWebhooksLoading, error: isWebhooksError } = useWebhooks(idProject);
   const {data: ConnectionStrategies, isLoading: isConnectionStrategiesLoading,error: isConnectionStategiesError} = useConnectionStrategies(idProject)
 
   const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();

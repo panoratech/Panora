@@ -59,7 +59,6 @@ const AddWebhook = () => {
     const handleClose = () => {
       setOpen(false);
     };
-    //const [secret, setSecret] = useState('');
     const posthog = usePostHog()
 
     const {idProject} = useProjectStore();

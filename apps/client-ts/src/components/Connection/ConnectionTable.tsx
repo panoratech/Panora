@@ -21,16 +21,18 @@ import useMagicLinkStore from "@/state/magicLinkStore";
 import useOrganisationStore from "@/state/organisationStore";
 import { usePostHog } from 'posthog-js/react'
 import useProjectStore from "@/state/projectStore";
+import Cookies from 'js-cookie';
 
 export default function ConnectionTable() {
-  const { data: connections, isLoading, error } = useConnections();
+  
+  const {idProject} = useProjectStore();
+  const { data: connections, isLoading, error } = useConnections(idProject);
   const [isGenerated, setIsGenerated] = useState(false);
 
   const posthog = usePostHog()
   
   const {uniqueLink} = useMagicLinkStore();
   const {nameOrg} = useOrganisationStore();
-  const {idProject} = useProjectStore();
 
   if(isLoading){
     return (

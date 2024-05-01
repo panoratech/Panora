@@ -1,6 +1,7 @@
 import config from '@/lib/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
+import Cookies from 'js-cookie';
 
 interface IFetchedData {
     authValues:string[]
@@ -22,6 +23,7 @@ const useConnectionStrategyAuthCredentialsMutation = () => {
           body: JSON.stringify(GetCSCredentialsData),
           headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Cookies.get('access_token')}`,
           },
         })
           if (!response.ok) {

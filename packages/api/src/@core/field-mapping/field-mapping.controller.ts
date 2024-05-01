@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { LoggerService } from '../logger/logger.service';
 import { FieldMappingService } from './field-mapping.service';
 import {
@@ -6,6 +6,7 @@ import {
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
 import { ApiResponse, ApiTags, ApiBody, ApiOperation } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
 @ApiTags('field-mapping')
 @Controller('field-mapping')
@@ -22,6 +23,7 @@ export class FieldMappingController {
     summary: 'Retrieve field mapping entities',
   })
   @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard)
   @Get('entities')
   getEntities() {
     return this.fieldMappingService.getEntities();
@@ -33,6 +35,7 @@ export class FieldMappingController {
   })
   @ApiResponse({ status: 200 })
   @Get('attribute')
+  @UseGuards(JwtAuthGuard)
   getAttributes() {
     return this.fieldMappingService.getAttributes();
   }
@@ -43,6 +46,7 @@ export class FieldMappingController {
   })
   @ApiResponse({ status: 200 })
   @Get('value')
+  @UseGuards(JwtAuthGuard)
   getValues() {
     return this.fieldMappingService.getValues();
   }
@@ -55,6 +59,7 @@ export class FieldMappingController {
   @ApiResponse({ status: 201 })
   //define target field on our unified model
   @Post('define')
+  @UseGuards(JwtAuthGuard)
   defineTargetField(@Body() defineTargetFieldDto: DefineTargetFieldDto) {
     return this.fieldMappingService.defineTargetField(defineTargetFieldDto);
   }
@@ -62,6 +67,7 @@ export class FieldMappingController {
   @ApiOperation({ operationId: 'mapField', summary: 'Map Custom Field' })
   @ApiBody({ type: MapFieldToProviderDto })
   @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
   @Post('map')
   mapFieldToProvider(@Body() mapFieldToProviderDto: MapFieldToProviderDto) {
     return this.fieldMappingService.mapFieldToProvider(mapFieldToProviderDto);
@@ -72,6 +78,7 @@ export class FieldMappingController {
     summary: 'Retrieve Custom Properties',
   })
   @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard)
   @Get('properties')
   getCustomProperties(
     @Query('linkedUserId') linkedUserId: string,

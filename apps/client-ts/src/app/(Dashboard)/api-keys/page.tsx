@@ -36,7 +36,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { DataTableLoading } from "@/components/shared/data-table-loading";
 import { Heading } from "@/components/ui/heading";
-
+import Cookies from 'js-cookie';
 
 const formSchema = z.object({
   apiKeyIdentifier: z.string().min(2, {
@@ -54,11 +54,13 @@ export default function Page() {
   const [open,setOpen] = useState(false)
   const [tsApiKeys,setTSApiKeys] = useState<TSApiKeys[] | undefined>([])
 
-  const { data: apiKeys, isLoading, error } = useApiKeys();
+  const {idProject} = useProjectStore();
+  const {profile} = useProfileStore();
+
+  const { data: apiKeys, isLoading, error } = useApiKeys(idProject);
   const { mutate } = useApiKeyMutation();
 
   useEffect(() => {
-
     const temp_tsApiKeys = apiKeys?.map((key) => ({
       name: key.name || "",
       token: key.api_key_hash,
@@ -69,8 +71,7 @@ export default function Page() {
     
   },[apiKeys])
 
-  const {idProject} = useProjectStore();
-  const {profile} = useProfileStore();
+
 
   const posthog = usePostHog()
 

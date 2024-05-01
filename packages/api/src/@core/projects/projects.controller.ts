@@ -1,8 +1,17 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -16,24 +25,17 @@ export class ProjectsController {
 
   @ApiOperation({ operationId: 'getProjects', summary: 'Retrieve projects' })
   @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard)
   @Get()
-  getProjects() {
-    return this.projectsService.getProjects();
-  }
-
-  @ApiOperation({
-    operationId: 'getProjectsByUser',
-    summary: 'Retrieve projects by user',
-  })
-  @ApiResponse({ status: 200 })
-  @Get(':userId')
-  getProjectsByUser(@Param('userId') userId: string) {
-    return this.projectsService.getProjectsByUser(userId);
+  getProjects(@Request() req: any) {
+    const user_id = req.user.id_user;
+    return this.projectsService.getProjectsByUser(user_id);
   }
 
   @ApiOperation({ operationId: 'createProject', summary: 'Create a project' })
   @ApiBody({ type: CreateProjectDto })
   @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
   @Post('create')
   createProject(@Body() projectCreateDto: CreateProjectDto) {
     return this.projectsService.createProject(projectCreateDto);

@@ -5,6 +5,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookProcessor } from './webhook.processor';
 import { WebhookController } from './webhook.controller';
+import { ValidateUserService } from '@@core/utils/services/validateUser.service';
 
 @Module({
   imports: [
@@ -18,6 +19,12 @@ import { WebhookController } from './webhook.controller';
       name: 'webhookDelivery',
     }),
   ],
-  providers: [WebhookService, PrismaService, LoggerService, WebhookProcessor],
+  providers: [
+    WebhookService,
+    PrismaService,
+    LoggerService,
+    WebhookProcessor,
+    ValidateUserService,
+  ],
 })
 export class WebhookModule {}

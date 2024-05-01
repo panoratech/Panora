@@ -12,21 +12,6 @@ const useApiKeyMutation = () => {
     const queryClient = useQueryClient();
 
     const addApiKey = async (data: IApiKeyDto) => {
-        //TODO: in cloud environment this step must be done when user logs in directly inside his dashboard
-        // Fetch the token
-        // const loginResponse = await fetch(`${config.API_URL}/auth/login`, {
-        //     method: 'POST',
-        //     body: JSON.stringify({ id_user: data.userId.trim(), password_hash: 'my_password' }),
-        //     headers: {
-        //         'Content-Type': 'application/json', 
-        //     },
-        // });
- 
-        // if (!loginResponse.ok) {
-        //     throw new Error('Failed to login');
-        // }
-        // const { access_token } = await loginResponse.json();
-
         const response = await fetch(`${config.API_URL}/auth/generate-apikey`, {
             method: 'POST',
             body: JSON.stringify(data),
@@ -35,7 +20,7 @@ const useApiKeyMutation = () => {
             'Authorization': `Bearer ${Cookies.get('access_token')}`,
             },
         });
-        
+         
         if (!response.ok) {
             throw new Error('Failed to add api key');
         }

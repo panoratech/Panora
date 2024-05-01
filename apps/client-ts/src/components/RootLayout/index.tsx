@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { MainNav } from '@/components/Nav/main-nav';
 import { SmallNav } from '@/components/Nav/main-nav-sm';
 import { UserNav } from '@/components/Nav/user-nav';
@@ -11,18 +11,7 @@ import { cn } from "@/lib/utils";
 import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
 import { ThemeToggle } from '@/components/Nav/theme-toggle';
-import { projects as Project } from 'api';
-import useFetchUserMutation from "@/hooks/mutations/useFetchUserMutation";
-import useProjectsByUser from '@/hooks/useProjectsByUser';
-
-
-type User = {
-  id_user: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  id_organization?: string;
-}
+import useProjects from '@/hooks/useProjects';
 
 export const RootLayout = ({children}:{children:React.ReactNode}) => {
   const router = useRouter()
@@ -30,7 +19,7 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
 
 
   const {profile} = useProfileStore()
-  const {data : projectsData} = useProjectsByUser(profile?.id_user)
+  const {data : projectsData} = useProjects();
   const { idProject, setIdProject } = useProjectStore();
 
 

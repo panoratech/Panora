@@ -1,6 +1,7 @@
 import config from '@/lib/config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner"
+import Cookies from 'js-cookie';
 
 interface IConnectionStrategyDto {
     projectId: string,
@@ -27,6 +28,7 @@ const useConnectionStrategyMutation = () => {
             body: JSON.stringify(connectionStrategyData),
             headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Cookies.get('access_token')}`,
             },
         });
 
