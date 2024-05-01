@@ -136,12 +136,14 @@ export class Utils {
   }
 
   mapStatus(status: string, provider_name: string): string {
-    try{
-      switch(provider_name.toLowerCase()){
+    try {
+      switch (provider_name.toLowerCase()) {
         default:
-          throw new Error('Provider not supported for status custom task mapping')
+          throw new Error(
+            'Provider not supported for status custom task mapping',
+          );
       }
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
