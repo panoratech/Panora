@@ -33,6 +33,7 @@ export function getProviderVertical(providerName: string): ProviderVertical {
   if (FILESTORAGE_PROVIDERS.includes(providerName)) {
     return ProviderVertical.FileStorage;
   }
+  return null;
 }
 
 function mergeAllProviders(...arrays: string[][]): { vertical: string, value: string }[] {
