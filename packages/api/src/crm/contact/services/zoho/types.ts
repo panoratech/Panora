@@ -1,5 +1,9 @@
 export interface ZohoContact {
-  Owner: string;
+  Owner: {
+    name: string;
+    id: string;
+    email: string;
+  };
   Lead_Source: string;
   First_Name: string;
   Last_Name: string;

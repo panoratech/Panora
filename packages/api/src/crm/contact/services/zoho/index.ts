@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IContactService } from '@crm/contact/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -77,8 +77,8 @@ export class ZohoService implements IContactService {
           vertical: 'crm',
         },
       });
-      //TODO: handle fields
-      const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
+      const fields =
+        'First_Name,Last_Name,Full_Name,Email,Phone,Mailing_Street,Other_Street,Mailing_City,Other_City,Mailing_State,Other_State,Mailing_Zip,Other_Zip,Mailing_Country,Other_Country';
       const resp = await axios.get(
         `${connection.account_url}/Contacts?fields=${fields}`,
         {

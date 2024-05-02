@@ -4,7 +4,7 @@ import {
   UnifiedCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
-import { Utils } from '@crm/deal/utils';
+import { Utils } from '@crm/@lib/@utils';
 
 export class AttioCompanyMapper implements ICompanyMapper {
   private readonly utils: Utils;

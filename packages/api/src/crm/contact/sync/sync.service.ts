@@ -6,7 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { unify } from '@@core/utils/unification/unify';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '@crm/contact/types/model.unified';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,11 +14,10 @@ import { crm_contacts as CrmContact } from '@prisma/client';
 import { IContactService } from '../types';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from '../services/registry.service';
-import { normalizeAddresses } from '@crm/company/utils';
-import { Utils } from '../utils';
 import { CRM_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { Utils } from '@crm/@lib/@utils';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -263,7 +262,9 @@ export class SyncService implements OnModuleInit {
             contact.phone_numbers,
           );
 
-        const normalizedAddresses = normalizeAddresses(contact.addresses);
+        const normalizedAddresses = this.utils.normalizeAddresses(
+          contact.addresses,
+        );
 
         let unique_crm_contact_id: string;
 

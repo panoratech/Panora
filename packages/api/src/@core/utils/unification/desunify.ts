@@ -1,8 +1,8 @@
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { TargetObject, Unified } from '../types';
-import { desunifyCrm } from '@crm/@utils/@unification';
-import { TicketingObject } from '@ticketing/@utils/@types';
-import { desunifyTicketing } from '@ticketing/@utils/@unification';
+import { desunifyCrm } from '@crm/@lib/@unification';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { desunifyTicketing } from '@ticketing/@lib/@unification';
 import { DesunifyReturnType } from '../types/desunify.input';
 import { ProviderVertical } from '@panora/shared';
 

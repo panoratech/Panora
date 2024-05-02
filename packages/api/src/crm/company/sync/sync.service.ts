@@ -8,17 +8,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 import { unify } from '@@core/utils/unification/unify';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedCompanyOutput } from '../types/model.unified';
 import { ICompanyService } from '../types';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 import { crm_companies as CrmCompany } from '@prisma/client';
-import { normalizeAddresses } from '../utils';
-import { Utils } from '@crm/contact/utils';
 import { CRM_PROVIDERS } from '@panora/shared';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
+import { Utils } from '@crm/@lib/@utils';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -257,7 +256,9 @@ export class SyncService implements OnModuleInit {
             company.phone_numbers,
           );
 
-        const normalizedAddresses = normalizeAddresses(company.addresses);
+        const normalizedAddresses = this.utils.normalizeAddresses(
+          company.addresses,
+        );
 
         let unique_crm_company_id: string;
 

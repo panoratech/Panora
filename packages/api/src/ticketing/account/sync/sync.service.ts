@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 import { unify } from '@@core/utils/unification/unify';
-import { TicketingObject } from '@ticketing/@utils/@types';
+import { TicketingObject } from '@ticketing/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedAccountOutput } from '../types/model.unified';
 import { IAccountService } from '../types';

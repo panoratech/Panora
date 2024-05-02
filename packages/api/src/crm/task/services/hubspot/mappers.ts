@@ -4,7 +4,7 @@ import {
   UnifiedTaskOutput,
 } from '@crm/task/types/model.unified';
 import { ITaskMapper } from '@crm/task/types';
-import { Utils } from '@crm/task/utils';
+import { Utils } from '@crm/@lib/@utils';
 
 export class HubspotTaskMapper implements ITaskMapper {
   private readonly utils: Utils;

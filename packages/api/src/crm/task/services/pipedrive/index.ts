@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ITaskService } from '@crm/task/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { PipedriveTaskInput, PipedriveTaskOutput } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';

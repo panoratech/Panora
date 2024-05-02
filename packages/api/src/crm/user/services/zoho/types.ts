@@ -1,49 +1,101 @@
-export interface ZohoUser {
-  Owner: string;
-  User_Source: string;
-  First_Name: string;
-  Last_Name: string;
-  Full_Name: string;
-  Account_Name: string;
-  Email: string;
-  Title: string;
-  Department: string;
-  Phone: string;
-  Home_Phone: string;
-  Other_Phone: string;
-  Fax: string;
-  Mobile: string;
-  Date_of_Birth: Date;
-  Assistant: string;
-  Asst_Phone: string;
-  Email_Opt_Out: boolean;
-  Created_By: string;
-  Skype_ID: string;
-  Modified_By: string;
-  Created_Time: Date;
-  Modified_Time: Date;
-  Salutation: string;
-  Secondary_Email: string;
-  Last_Activity_Time: Date;
-  Twitter: string;
-  Reporting_To: string;
-  Unsubscribed_Mode: string;
-  Unsubscribed_Time: Date;
-  Last_Enriched_Time__s: Date;
-  Enrich_Status__s: string;
-  Mailing_Street: string;
-  Other_Street: string;
-  Mailing_City: string;
-  Other_City: string;
-  Mailing_State: string;
-  Other_State: string;
-  Mailing_Zip: string;
-  Other_Zip: string;
-  Mailing_Country: string;
-  Other_Country: string;
-  Description: string;
-  Record_Image: string;
-  [key: string]: any;
+interface ZohoUser {
+  country: string | null;
+  name_format__s: string;
+  language: string;
+  microsoft: boolean;
+  $shift_effective_from: string | null;
+  Currency: string;
+  id: string;
+  state: string | null;
+  fax: string | null;
+  country_locale: string;
+  sandboxDeveloper: boolean;
+  zip: string | null;
+  decimal_separator: string;
+  created_time: string;
+  time_format: string;
+  offset: number;
+  profile: Profile;
+  created_by: CreatedBy;
+  zuid: string | null;
+  full_name: string;
+  phone: string | null;
+  dob: string | null;
+  sort_order_preference__s: string | null;
+  status: string;
+  role: Role;
+  customize_info: CustomizeInfo;
+  city: string | null;
+  signature: string | null;
+  locale: string;
+  personal_account: boolean;
+  Isonline: boolean;
+  default_tab_group: string;
+  Modified_By: ModifiedBy;
+  street: string | null;
+  $current_shift: string | null;
+  alias: string | null;
+  theme: Theme;
+  first_name: string | null;
+  email: string;
+  status_reason__s: string | null;
+  website: string | null;
+  Modified_Time: string;
+  $next_shift: string | null;
+  mobile: string | null;
+  last_name: string;
+  time_zone: string;
+  number_separator: string;
+  confirm: boolean;
+  date_format: string;
+  category: string;
+  $in_merge: boolean | null;
+  Tag: string[];
+  Fax: string | null;
+  $approval_state: string;
+}
+
+interface Profile {
+  name: string;
+  id: string;
+}
+
+interface CreatedBy {
+  name: string;
+  id: string;
+}
+
+interface Role {
+  name: string;
+  id: string;
+}
+
+interface CustomizeInfo {
+  notes_desc: boolean;
+  show_right_panel: boolean | null;
+  bc_view: boolean | null;
+  show_home: boolean;
+  show_detail_view: boolean;
+  unpin_recent_item: boolean | null;
+}
+
+interface ModifiedBy {
+  name: string;
+  id: string;
+}
+
+interface Theme {
+  normal_tab: TabStyle;
+  selected_tab: TabStyle;
+  new_background: string | null;
+  background: string;
+  screen: string;
+  type: string;
+}
+
+interface TabStyle {
+  font_color: string;
+  background: string;
 }
 
 export type ZohoUserInput = Partial<ZohoUser>;

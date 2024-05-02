@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IUserService } from '@crm/user/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { ZendeskUserOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IStageService } from '@crm/stage/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { HubspotStageOutput, commonStageHubspotProperties } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';

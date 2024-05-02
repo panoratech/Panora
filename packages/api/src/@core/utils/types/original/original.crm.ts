@@ -1,7 +1,12 @@
+import { AttioCompanyOutput } from '@crm/company/services/attio/types';
 import { HubspotCompanyOutput } from '@crm/company/services/hubspot/types';
 import { PipedriveCompanyOutput } from '@crm/company/services/pipedrive/types';
 import { ZendeskCompanyOutput } from '@crm/company/services/zendesk/types';
 import { ZohoCompanyOutput } from '@crm/company/services/zoho/types';
+import {
+  AttioContactInput,
+  AttioContactOutput,
+} from '@crm/contact/services/attio/types';
 import {
   HubspotContactInput,
   HubspotContactOutput,
@@ -18,7 +23,6 @@ import { HubspotDealOutput } from '@crm/deal/services/hubspot/types';
 import { PipedriveDealOutput } from '@crm/deal/services/pipedrive/types';
 import { ZendeskDealOutput } from '@crm/deal/services/zendesk/types';
 import { ZohoDealOutput } from '@crm/deal/services/zoho/types';
-
 import {
   HubspotEngagementInput,
   HubspotEngagementOutput,
@@ -35,7 +39,6 @@ import {
   ZohoEngagementInput,
   ZohoEngagementOutput,
 } from '@crm/engagement/services/zoho/types';
-
 import {
   HubspotNoteInput,
   HubspotNoteOutput,
@@ -49,7 +52,6 @@ import {
   ZendeskNoteOutput,
 } from '@crm/note/services/zendesk/types';
 import { ZohoNoteInput, ZohoNoteOutput } from '@crm/note/services/zoho/types';
-
 import {
   HubspotStageInput,
   HubspotStageOutput,
@@ -66,7 +68,6 @@ import {
   ZohoStageInput,
   ZohoStageOutput,
 } from '@crm/stage/services/zoho/types';
-
 import {
   HubspotTaskInput,
   HubspotTaskOutput,
@@ -105,7 +106,8 @@ export type OriginalContactInput =
   | HubspotContactInput
   | ZohoContactInput
   | ZendeskContactInput
-  | PipedriveContactInput;
+  | PipedriveContactInput
+  | AttioContactInput;
 
 /* deal */
 export type OriginalDealInput =
@@ -119,7 +121,8 @@ export type OriginalCompanyInput =
   | HubspotCompanyOutput
   | ZohoCompanyOutput
   | ZendeskCompanyOutput
-  | PipedriveCompanyOutput;
+  | PipedriveCompanyOutput
+  | AttioCompanyOutput;
 
 /* engagement */
 export type OriginalEngagementInput =
@@ -174,7 +177,8 @@ export type OriginalContactOutput =
   | HubspotContactOutput
   | ZohoContactOutput
   | ZendeskContactOutput
-  | PipedriveContactOutput;
+  | PipedriveContactOutput
+  | AttioContactOutput;
 
 /* deal */
 export type OriginalDealOutput =
@@ -188,7 +192,8 @@ export type OriginalCompanyOutput =
   | HubspotCompanyOutput
   | ZohoCompanyOutput
   | ZendeskCompanyOutput
-  | PipedriveCompanyOutput;
+  | PipedriveCompanyOutput
+  | AttioCompanyOutput;
 
 /* engagement */
 export type OriginalEngagementOutput =

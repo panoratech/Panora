@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IDealService } from '@crm/deal/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -76,8 +76,8 @@ export class ZohoService implements IDealService {
           vertical: 'crm',
         },
       });
-      //TODO: handle fields
-      const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
+      const fields =
+        'Owner,Description,Deal_Name,Account_Name,Stage,Amount,Contact_Name';
       const resp = await axios.get(
         `${connection.account_url}/Deals?fields=${fields}`,
         {

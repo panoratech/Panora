@@ -8,7 +8,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { providersConfig } from '@panora/shared';
 

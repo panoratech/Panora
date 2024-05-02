@@ -4,7 +4,7 @@ import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/ticket/utils';
+import { Utils } from '@ticketing/@lib/@utils';
 
 export class ZendeskTicketMapper implements ITicketMapper {
   private readonly utils: Utils;

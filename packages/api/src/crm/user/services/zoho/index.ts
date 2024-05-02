@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IUserService } from '@crm/user/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { ZohoUserOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -35,10 +35,8 @@ export class ZohoService implements IUserService {
           vertical: 'crm',
         },
       });
-      //TODO: handle fields
-      const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
       const resp = await axios.get(
-        `${connection.account_url}/Users?fields=${fields}`,
+        `${connection.account_url}/users?type=AllUsers`,
         {
           headers: {
             'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IEngagementService } from '@crm/engagement/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { ZohoEngagementInput, ZohoEngagementOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -37,7 +37,7 @@ export class ZohoService implements IEngagementService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/Engagements`,
+        `${connection.account_url}/Campaigns`,
         { data: [engagementData] },
         {
           headers: {
@@ -77,10 +77,10 @@ export class ZohoService implements IEngagementService {
           vertical: 'crm',
         },
       });
-      //TODO: handle fields
-      const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
+      const fields =
+        'Owner,Description,Campaign_Name,End_Date,Start_Date,Type,Created_By';
       const resp = await axios.get(
-        `${connection.account_url}/Engagements?fields=${fields}`,
+        `${connection.account_url}/Campaigns?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

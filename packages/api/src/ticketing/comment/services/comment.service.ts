@@ -11,7 +11,7 @@ import {
 } from '../types/model.unified';
 import { ICommentService } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
-import { TicketingObject } from '@ticketing/@utils/@types';
+import { TicketingObject } from '@ticketing/@lib/@types';
 import { unify } from '@@core/utils/unification/unify';
 import { ServiceRegistry } from './registry.service';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ITaskService } from '@crm/task/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { ZohoTaskInput, ZohoTaskOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -77,8 +77,8 @@ export class ZohoService implements ITaskService {
           vertical: 'crm',
         },
       });
-      //TODO: handle fields
-      const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
+      const fields =
+        'Status,Owner,Description,Due_Date,Priority,Closed_Time,Subject,What_Id';
       const resp = await axios.get(
         `${connection.account_url}/Tasks?fields=${fields}`,
         {

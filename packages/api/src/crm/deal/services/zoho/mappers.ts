@@ -4,8 +4,11 @@ import {
   UnifiedDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
+import { Utils } from '@crm/@lib/@utils';
 
 export class ZohoDealMapper implements IDealMapper {
+  private utils = new Utils();
+
   async desunify(
     source: UnifiedDealInput,
     customFieldMappings?: {
@@ -15,8 +18,29 @@ export class ZohoDealMapper implements IDealMapper {
   ): Promise<ZohoDealInput> {
     const result: ZohoDealInput = {
       Description: source.description,
-      Title: source.name,
+      Deal_Name: source.name,
+      Amount: source.amount,
     };
+    if (source.company_id) {
+      result.Account_Name.id = await this.utils.getRemoteIdFromCompanyUuid(
+        source.company_id,
+      );
+      result.Account_Name.name = await this.utils.getCompanyNameFromUuid(
+        source.company_id,
+        'zoho',
+      );
+    }
+    if (source.stage_id) {
+      result.Stage = await this.utils.getStageNameFromStageUuid(
+        source.stage_id,
+        'zoho',
+      );
+    }
+    if (source.user_id) {
+      result.Owner.id = await this.utils.getRemoteIdFromUserUuid(
+        source.user_id,
+      );
+    }
 
     if (customFieldMappings && source.field_mappings) {
       for (const [k, v] of Object.entries(source.field_mappings)) {
@@ -60,14 +84,27 @@ export class ZohoDealMapper implements IDealMapper {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
-        field_mappings[mapping.slug] = deal.custom_fields[mapping.remote_id];
+        field_mappings[mapping.slug] = deal[mapping.remote_id];
       }
     }
-    return {
-      name: deal.Title,
+    const res: UnifiedDealOutput = {
+      name: deal.Deal_Name,
       description: deal.Description,
-      amount: 0, //todo;
+      amount: deal.Amount,
       field_mappings,
     };
+    if (deal.Owner.id) {
+      res.user_id = await this.utils.getUserUuidFromRemoteId(
+        deal.Owner.id,
+        'zoho',
+      );
+    }
+    if (deal.Account_Name.id) {
+      res.company_id = await this.utils.getCompanyUuidFromRemoteId(
+        deal.Account_Name.id,
+        'zoho',
+      );
+    }
+    return res;
   }
 }

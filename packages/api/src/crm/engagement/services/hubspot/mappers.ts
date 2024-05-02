@@ -13,7 +13,7 @@ import {
   UnifiedEngagementOutput,
 } from '@crm/engagement/types/model.unified';
 import { IEngagementMapper } from '@crm/engagement/types';
-import { Utils } from '@crm/deal/utils';
+import { Utils } from '@crm/@lib/@utils';
 
 export class HubspotEngagementMapper implements IEngagementMapper {
   private readonly utils: Utils;

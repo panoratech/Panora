@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { INoteService } from '@crm/note/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { ZohoNoteInput, ZohoNoteOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -77,8 +77,7 @@ export class ZohoService implements INoteService {
           vertical: 'crm',
         },
       });
-      //TODO: handle fields
-      const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
+      const fields = 'Note_Title,Note_Content,Owner,ParentId';
       const resp = await axios.get(
         `${connection.account_url}/Notes?fields=${fields}`,
         {

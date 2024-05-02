@@ -97,9 +97,7 @@ export interface AttioCompany {
     domains?: DomainValueItem[];
     name?: TextValueItem[];
     description?: TextValueItem[];
-
     team?: TeamValueItemOption1[] | TeamValueItemOption2[];
-
     primary_location?: LocationValueItem[];
     categories?: CategoryValueItem[];
     logo_url?: TextValueItem[];

@@ -10,14 +10,13 @@ import {
   UnifiedCompanyOutput,
 } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 import { unify } from '@@core/utils/unification/unify';
 import { ICompanyService } from '../types';
-import { normalizeAddresses } from '../utils';
-import { Utils } from '@crm/contact/utils';
+import { Utils } from '@crm/@lib/@utils';
 
 @Injectable()
 export class CompanyService {
@@ -136,7 +135,9 @@ export class CompanyService {
           target_company.phone_numbers,
         );
 
-      const normalizedAddresses = normalizeAddresses(target_company.addresses);
+      const normalizedAddresses = this.utils.normalizeAddresses(
+        target_company.addresses,
+      );
 
       let unique_crm_company_id: string;
 

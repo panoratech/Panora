@@ -1,4 +1,4 @@
-import { Address, Email, Phone } from '@crm/@utils/@types';
+import { Address, Email, Phone } from '@crm/@lib/@types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsUUID } from 'class-validator';
 

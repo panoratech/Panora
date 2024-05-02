@@ -1,49 +1,74 @@
-export interface ZohoTask {
-  Owner: string;
-  Task_Source: string;
-  First_Name: string;
-  Last_Name: string;
-  Full_Name: string;
-  Account_Name: string;
-  Email: string;
-  Title: string;
-  Department: string;
-  Phone: string;
-  Home_Phone: string;
-  Other_Phone: string;
-  Fax: string;
-  Mobile: string;
-  Date_of_Birth: Date;
-  Assistant: string;
-  Asst_Phone: string;
-  Email_Opt_Out: boolean;
-  Created_By: string;
-  Skype_ID: string;
-  Modified_By: string;
-  Created_Time: Date;
-  Modified_Time: Date;
-  Salutation: string;
-  Secondary_Email: string;
-  Last_Activity_Time: Date;
-  Twitter: string;
-  Reporting_To: string;
-  Unsubscribed_Mode: string;
-  Unsubscribed_Time: Date;
-  Last_Enriched_Time__s: Date;
-  Enrich_Status__s: string;
-  Mailing_Street: string;
-  Other_Street: string;
-  Mailing_City: string;
-  Other_City: string;
-  Mailing_State: string;
-  Other_State: string;
-  Mailing_Zip: string;
-  Other_Zip: string;
-  Mailing_Country: string;
-  Other_Country: string;
+interface ZohoTask {
+  Owner: PersonDetail;
   Description: string;
-  Record_Image: string;
-  [key: string]: any;
+  $currency_symbol: string;
+  Closed_Time: string | null;
+  $review_process: any | null;
+  Expected_Revenue: number;
+  Send_Notification_Email: boolean;
+  Modified_By: PersonDetail;
+  $review: any | null;
+  $process_flow: boolean;
+  Exchange_Rate: number;
+  Currency: string;
+  id: string;
+  $approved: boolean;
+  Remind_At: Reminder | null;
+  Who_Id: RelatedPerson;
+  Status:
+    | 'Not Started'
+    | 'Deferred'
+    | 'In Progress'
+    | 'Completed'
+    | 'Waiting on someone else';
+  $approval: ApprovalProcess;
+  Modified_Time: string;
+  Due_Date: string;
+  Priority: 'High' | 'Highest' | 'Low' | 'Lowest' | 'Normal';
+  Created_Time: string;
+  $editable: boolean;
+  Subject: string;
+  $orchestration: boolean;
+  $se_module: string;
+  Recurring_Activity: RecurrenceRule | null;
+  What_Id: RelatedAccount;
+  $in_merge: boolean;
+  Tag: string[];
+  Created_By: PersonDetail;
+  $approval_state: 'approved' | 'not_approved'; // Assuming 'not_approved' is a valid state
+}
+
+interface PersonDetail {
+  name: string;
+  id: string;
+  email: string;
+}
+
+interface ApprovalProcess {
+  delegate: boolean;
+  approve: boolean;
+  reject: boolean;
+  resubmit: boolean;
+}
+
+interface RelatedPerson {
+  name: string;
+  id: string;
+}
+
+interface RelatedAccount {
+  name: string;
+  id: string;
+}
+
+interface Reminder {
+  type: 'email' | 'pop up'; // Assuming these are the only two types
+  date: string;
+  frequency: number; // Frequency could be defined more specifically based on the application's needs
+}
+
+interface RecurrenceRule {
+  RRULE: string; // This could be further detailed based on the actual recurrence pattern format
 }
 
 export type ZohoTaskInput = Partial<ZohoTask>;

@@ -4,7 +4,7 @@ import {
   UnifiedDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
-import { Utils } from '@crm/deal/utils';
+import { Utils } from '@crm/@lib/@utils';
 
 export class ZendeskDealMapper implements IDealMapper {
   private readonly utils: Utils;

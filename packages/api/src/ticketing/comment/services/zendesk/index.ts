@@ -6,7 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ICommentService } from '@ticketing/comment/types';
-import { TicketingObject } from '@ticketing/@utils/@types';
+import { TicketingObject } from '@ticketing/@lib/@types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskCommentInput, ZendeskCommentOutput } from './types';

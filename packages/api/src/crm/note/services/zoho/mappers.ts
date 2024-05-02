@@ -4,7 +4,7 @@ import {
   UnifiedNoteOutput,
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
-import { Utils } from '@crm/note/utils';
+import { Utils } from '@crm/@lib/@utils';
 
 export class ZohoNoteMapper implements INoteMapper {
   private readonly utils: Utils;
@@ -19,8 +19,32 @@ export class ZohoNoteMapper implements INoteMapper {
       remote_id: string;
     }[],
   ): Promise<ZohoNoteInput> {
+    const module = source.deal_id
+      ? {
+          api_name: 'Deals',
+          id: await this.utils.getRemoteIdFromDealUuid(source.deal_id),
+        }
+      : source.company_id
+      ? {
+          api_name: 'Accounts',
+          id: await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
+        }
+      : source.contact_id
+      ? {
+          api_name: 'Contacts',
+          id: await this.utils.getRemoteIdFromContactUuid(source.contact_id),
+        }
+      : { api_name: '', id: '' };
+
     const result: ZohoNoteInput = {
-      Description: source.content,
+      Note_Content: source.content,
+      Parent_Id: {
+        module: {
+          api_name: module.api_name,
+          id: module.id,
+        },
+        id: '', // todo
+      },
     };
 
     if (customFieldMappings && source.field_mappings) {
@@ -69,9 +93,28 @@ export class ZohoNoteMapper implements INoteMapper {
       }
     }
 
-    return {
-      content: note.Description,
+    const res: UnifiedNoteOutput = {
+      content: note.Note_Content,
       field_mappings,
     };
+
+    const module = note.Parent_Id.module;
+    if (module.api_name === 'Deals' && module.id) {
+      res.deal_id = await this.utils.getDealUuidFromRemoteId(module.id, 'zoho');
+    }
+    if (module.api_name === 'Accounts' && module.id) {
+      res.company_id = await this.utils.getCompanyUuidFromRemoteId(
+        module.id,
+        'zoho',
+      );
+    }
+    if (module.api_name === 'Contacts' && module.id) {
+      res.contact_id = await this.utils.getContactUuidFromRemoteId(
+        module.id,
+        'zoho',
+      );
+    }
+
+    return res;
   }
 }

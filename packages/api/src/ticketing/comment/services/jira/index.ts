@@ -6,10 +6,10 @@ import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ICommentService } from '@ticketing/comment/types';
-import { TicketingObject } from '@ticketing/@utils/@types';
+import { TicketingObject } from '@ticketing/@lib/@types';
 import { JiraCommentInput, JiraCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
-import { Utils } from '@ticketing/comment/utils';
+import { Utils } from '@ticketing/@lib/@utils';;
 import * as fs from 'fs';
 
 @Injectable()

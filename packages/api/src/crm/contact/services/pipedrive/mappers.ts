@@ -1,11 +1,11 @@
-import { Address } from '@crm/@utils/@types';
+import { Address } from '@crm/@lib/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
-import { Utils } from '@crm/contact/utils';
 import { PipedriveContactInput, PipedriveContactOutput } from './types';
+import { Utils } from '@crm/@lib/@utils';
 
 export class PipedriveContactMapper implements IContactMapper {
   private readonly utils: Utils;

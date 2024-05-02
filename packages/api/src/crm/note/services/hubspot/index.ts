@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { INoteService } from '@crm/note/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import {
   HubspotNoteInput,
   HubspotNoteOutput,

@@ -1,11 +1,11 @@
-import { Address } from '@crm/@utils/@types';
+import { Address } from '@crm/@lib/@types';
 import {
   UnifiedCompanyInput,
   UnifiedCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
-import { Utils } from '@crm/contact/utils';
 import { ZendeskCompanyInput, ZendeskCompanyOutput } from './types';
+import { Utils } from '@crm/@lib/@utils';
 
 export class ZendeskCompanyMapper implements ICompanyMapper {
   private readonly utils: Utils;
@@ -13,6 +13,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
   constructor() {
     this.utils = new Utils();
   }
+
   async desunify(
     source: UnifiedCompanyInput,
     customFieldMappings?: {

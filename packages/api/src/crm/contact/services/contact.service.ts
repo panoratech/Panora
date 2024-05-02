@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { IContactService } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { LoggerService } from '@@core/logger/logger.service';
 import { unify } from '@@core/utils/unification/unify';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,8 +16,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from './registry.service';
-import { normalizeAddresses } from '@crm/company/utils';
-import { Utils } from '../utils';
+import { Utils } from '@crm/@lib/@utils';
 
 @Injectable()
 export class ContactService {
@@ -139,7 +138,9 @@ export class ContactService {
           target_contact.phone_numbers,
         );
 
-      const normalizedAddresses = normalizeAddresses(target_contact.addresses);
+      const normalizedAddresses = this.utils.normalizeAddresses(
+        target_contact.addresses,
+      );
 
       let unique_crm_contact_id: string;
 

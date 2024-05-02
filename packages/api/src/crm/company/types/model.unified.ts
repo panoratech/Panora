@@ -1,4 +1,4 @@
-import { Address, Email, Industry, Phone } from '@crm/@utils/@types';
+import { Address, Email, Industry, Phone } from '@crm/@lib/@types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEnum,

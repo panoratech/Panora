@@ -11,7 +11,7 @@ import {
 } from '../types/model.unified';
 import { ITicketService } from '../types';
 import { desunify } from '@@core/utils/unification/desunify';
-import { TicketingObject } from '@ticketing/@utils/@types';
+import { TicketingObject } from '@ticketing/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { unify } from '@@core/utils/unification/unify';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';

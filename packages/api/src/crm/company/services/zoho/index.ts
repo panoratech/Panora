@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ICompanyService } from '@crm/company/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
@@ -37,7 +37,7 @@ export class ZohoService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/Companys`,
+        `${connection.account_url}/Accounts`,
         { data: [companyData] },
         {
           headers: {
@@ -77,10 +77,10 @@ export class ZohoService implements ICompanyService {
           vertical: 'crm',
         },
       });
-      //TODO: handle fields
-      const fields = 'First_Name,Last_Name,Full_Name,Email,Phone';
+      const fields =
+        'Owner,Industry,Billing_Street,Billing_Code,Billing_City,Billing_State,Employees,Phone,Description,Account_Name';
       const resp = await axios.get(
-        `${connection.account_url}/Companys?fields=${fields}`,
+        `${connection.account_url}/Accounts?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -90,7 +90,6 @@ export class ZohoService implements ICompanyService {
           },
         },
       );
-      //this.logger.log('CONTACTS ZOHO ' + JSON.stringify(resp.data.data));
       this.logger.log(`Synced zoho companys !`);
       return {
         data: resp.data.data,

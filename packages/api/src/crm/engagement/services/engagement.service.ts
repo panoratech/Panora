@@ -10,13 +10,12 @@ import {
   UnifiedEngagementOutput,
 } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject, ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalEngagementOutput } from '@@core/utils/types/original/original.crm';
 import { unify } from '@@core/utils/unification/unify';
 import { IEngagementService } from '../types';
-import { ENGAGEMENTS_TYPE } from '../utils';
 
 @Injectable()
 export class EngagementService {

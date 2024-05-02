@@ -1,12 +1,15 @@
-import { Address } from '@crm/@utils/@types';
+import { Address } from '@crm/@lib/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
 import { ZohoContactInput, ZohoContactOutput } from './types';
+import { Utils } from '@crm/@lib/@utils';
 
 export class ZohoContactMapper implements IContactMapper {
+  private utils = new Utils();
+
   desunify(
     source: UnifiedContactInput,
     customFieldMappings?: {
@@ -61,18 +64,20 @@ export class ZohoContactMapper implements IContactMapper {
     }
 
     // Handling array of HubspotContactOutput
-    return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+    return Promise.all(
+      source.map((contact) =>
+        this.mapSingleContactToUnified(contact, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleContactToUnified(
+  private async mapSingleContactToUnified(
     contact: ZohoContactOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput {
+  ): Promise<UnifiedContactOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -126,6 +131,10 @@ export class ZohoContactMapper implements IContactMapper {
       email_addresses,
       phone_numbers,
       field_mappings,
+      user_id: await this.utils.getUserUuidFromRemoteId(
+        contact.Owner.id,
+        'zoho',
+      ),
       addresses: [address],
     };
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IStageService } from '@crm/stage/types';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { ZohoStageOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -24,6 +24,7 @@ export class ZohoService implements IStageService {
     this.registry.registerService('zoho', this);
   }
 
+  //todo: stages name are tied to deals object
   async syncStages(
     linkedUserId: string,
   ): Promise<ApiResponse<ZohoStageOutput[]>> {

@@ -4,35 +4,42 @@ import {
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { ZohoCompanyInput, ZohoCompanyOutput } from './types';
+import { Utils } from '@crm/@lib/@utils';
 
 export class ZohoCompanyMapper implements ICompanyMapper {
-  desunify(
+  private utils = new Utils();
+
+  async desunify(
     source: UnifiedCompanyInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): ZohoCompanyInput {
+  ): Promise<ZohoCompanyInput> {
     const result: ZohoCompanyInput = {
       Account_Name: source.name,
     };
+    if (source.number_of_employees) {
+      result.Employees = source.number_of_employees;
+    }
 
     if (source.addresses && source.addresses[0]) {
-      result.Mailing_Street = source.addresses?.[0]?.street_1;
-      result.Mailing_City = source.addresses?.[0]?.city;
-      result.Mailing_State = source.addresses?.[0]?.state;
-      result.Mailing_Zip = source.addresses?.[0]?.postal_code;
-      result.Mailing_Country = source.addresses?.[0]?.country;
+      result.Billing_Street = source.addresses?.[0]?.street_1;
+      result.Billing_City = source.addresses?.[0]?.city;
+      result.Billing_State = source.addresses?.[0]?.state;
+      result.Billing_Code = source.addresses?.[0]?.postal_code;
+      result.Billing_Country = source.addresses?.[0]?.country;
     }
     if (source.phone_numbers) {
       result.Phone = source.phone_numbers?.find(
         (phone) => phone.phone_type === 'primary',
       )?.phone_number;
     }
-    if (source.email_addresses) {
-      result.Email = source.email_addresses?.find(
-        (email) => email.email_address_type === 'primary',
-      )?.email_address;
+
+    if (source.user_id) {
+      result.Owner.id = await this.utils.getRemoteIdFromUserUuid(
+        source.user_id,
+      );
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -60,18 +67,20 @@ export class ZohoCompanyMapper implements ICompanyMapper {
       return this.mapSingleCompanyToUnified(source, customFieldMappings);
     }
 
-    return source.map((company) =>
-      this.mapSingleCompanyToUnified(company, customFieldMappings),
+    return Promise.all(
+      source.map((company) =>
+        this.mapSingleCompanyToUnified(company, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleCompanyToUnified(
+  private async mapSingleCompanyToUnified(
     company: ZohoCompanyOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCompanyOutput {
+  ): Promise<UnifiedCompanyOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -88,26 +97,23 @@ export class ZohoCompanyMapper implements ICompanyMapper {
           owner_type: 'company',
         },
       ],
-      email_addresses: [
-        {
-          email_address: company.Email,
-          email_address_type: 'primary',
-          owner_type: 'company',
-        },
-      ],
       addresses: [
         {
-          street_1: company.Mailing_Street,
-          city: company.Mailing_City,
-          state: company.Mailing_State,
-          postal_code: company.Mailing_Zip,
-          country: company.Mailing_Country,
+          street_1: company.Billing_Street,
+          city: company.Billing_City,
+          state: company.Billing_State,
+          postal_code: company.Billing_Code,
+          country: company.Billing_Country,
           address_type: 'primary',
           owner_type: 'company',
         },
       ],
-      industry: '', //TODO
-      number_of_employees: 0, //TODO
+      industry: company.Industry, //TODO: map to correct industry
+      user_id: await this.utils.getUserUuidFromRemoteId(
+        company.Owner.id,
+        'zoho',
+      ),
+      number_of_employees: company.Employees,
       field_mappings,
     };
   }

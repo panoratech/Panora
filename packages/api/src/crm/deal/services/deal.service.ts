@@ -7,7 +7,7 @@ import { handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedDealInput, UnifiedDealOutput } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';

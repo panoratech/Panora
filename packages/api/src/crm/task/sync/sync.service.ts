@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 import { unify } from '@@core/utils/unification/unify';
-import { CrmObject } from '@crm/@utils/@types';
+import { CrmObject } from '@crm/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedTaskOutput } from '../types/model.unified';
 import { ITaskService } from '../types';

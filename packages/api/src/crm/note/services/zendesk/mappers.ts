@@ -4,7 +4,7 @@ import {
   UnifiedNoteOutput,
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
-import { Utils } from '@crm/note/utils';
+import { Utils } from '@crm/@lib/@utils';
 
 export class ZendeskNoteMapper implements INoteMapper {
   private readonly utils: Utils;

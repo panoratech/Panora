@@ -104,6 +104,8 @@ export type ICrmService =
   | IStageService
   | ICompanyService;
 
+export const ENGAGEMENTS_TYPE = ['CALL', 'MEETING', 'EMAIL'];
+
 export enum Industry {
   ACCOUNTING = 'ACCOUNTING',
   AIRLINES_AVIATION = 'AIRLINES_AVIATION',
