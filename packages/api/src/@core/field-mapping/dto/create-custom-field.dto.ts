@@ -12,6 +12,8 @@ export class DefineTargetFieldDto {
   description: string;
   @ApiProperty()
   data_type: string;
+  //@ApiProperty()
+  //project_id: string;
 }
 
 export class MapFieldToProviderDto {

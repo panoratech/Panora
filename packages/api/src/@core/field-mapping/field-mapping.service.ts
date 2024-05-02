@@ -22,9 +22,13 @@ export class FieldMappingService {
     this.logger.setContext(FieldMappingService.name);
   }
 
-  async getAttributes() {
+  async getAttributes(projectId: string) {
     try {
-      return await this.prisma.attribute.findMany();
+      return await this.prisma.attribute.findMany({
+        where: {
+          id_project: projectId,
+        },
+      });
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -69,7 +73,7 @@ export class FieldMappingService {
     }
   }
 
-  async defineTargetField(dto: DefineTargetFieldDto) {
+  async defineTargetField(dto: DefineTargetFieldDto, projectId: string) {
     // Create a new attribute in your system representing the target field
     //const id_entity = await this.getEntityId(dto.object_type_owner);
     //this.logger.log('id entity is ' + id_entity);
@@ -77,6 +81,7 @@ export class FieldMappingService {
       const attribute = await this.prisma.attribute.create({
         data: {
           id_attribute: uuidv4(),
+          id_project: projectId,
           ressource_owner_type: dto.object_type_owner as string,
           slug: dto.name,
           description: dto.description,

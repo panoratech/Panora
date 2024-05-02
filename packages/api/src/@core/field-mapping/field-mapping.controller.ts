@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { LoggerService } from '../logger/logger.service';
 import { FieldMappingService } from './field-mapping.service';
 import {
@@ -36,8 +44,9 @@ export class FieldMappingController {
   @ApiResponse({ status: 200 })
   @Get('attribute')
   @UseGuards(JwtAuthGuard)
-  getAttributes() {
-    return this.fieldMappingService.getAttributes();
+  getAttributes(@Request() req: any) {
+    const { id_project } = req.user;
+    return this.fieldMappingService.getAttributes(id_project);
   }
 
   @ApiOperation({
@@ -60,8 +69,15 @@ export class FieldMappingController {
   //define target field on our unified model
   @Post('define')
   @UseGuards(JwtAuthGuard)
-  defineTargetField(@Body() defineTargetFieldDto: DefineTargetFieldDto) {
-    return this.fieldMappingService.defineTargetField(defineTargetFieldDto);
+  defineTargetField(
+    @Request() req: any,
+    @Body() defineTargetFieldDto: DefineTargetFieldDto,
+  ) {
+    const { id_project } = req.user;
+    return this.fieldMappingService.defineTargetField(
+      defineTargetFieldDto,
+      id_project,
+    );
   }
 
   @ApiOperation({ operationId: 'mapField', summary: 'Map Custom Field' })

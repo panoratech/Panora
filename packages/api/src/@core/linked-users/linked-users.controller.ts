@@ -35,7 +35,6 @@ export class LinkedUsersController {
   //@UseGuards(JwtAuthGuard)
   @Post('create')
   addLinkedUser(@Body() linkedUserCreateDto: CreateLinkedUserDto) {
-    // validate project_id against user
     return this.linkedUsersService.addLinkedUser(linkedUserCreateDto);
   }
 
