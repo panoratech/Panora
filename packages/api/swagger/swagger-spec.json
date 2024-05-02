@@ -4712,13 +4712,17 @@
           },
           "data_type": {
             "type": "string"
+          },
+          "id_project": {
+            "type": "string"
           }
         },
         "required": [
           "object_type_owner",
           "name",
           "description",
-          "data_type"
+          "data_type",
+          "id_project"
         ]
       },
       "MapFieldToProviderDto": {

@@ -8,6 +8,7 @@ interface IDefineTargetFieldDto{
     name: string;
     description: string;
     data_type: string;
+    id_project: string
 }
 
 const useDefineFieldMutation = () => {

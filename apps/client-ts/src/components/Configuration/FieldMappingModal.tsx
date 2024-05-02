@@ -129,6 +129,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
       name: values.fieldName,
       description: values.fieldDescription,
       data_type: values.fieldType,
+      id_project: idProject
     });
     posthog?.capture("field_defined", {
       id_project: idProject,
@@ -153,7 +154,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
   }
 
   return (
-    <Tabs defaultValue="define" className="w-[400px] mt-5">
+    <Tabs defaultValue="define" className="mt-5">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="define">Define Field</TabsTrigger>
         <TabsTrigger value="map">Map Fields</TabsTrigger>

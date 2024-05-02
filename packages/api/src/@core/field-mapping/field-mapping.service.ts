@@ -87,6 +87,7 @@ export class FieldMappingService {
           source: '',
           //id_entity: id_entity,
           scope: 'user', // [user | org] wide
+          id_project: dto.id_project
         },
       });
 

@@ -1,7 +1,7 @@
 import { StandardObject } from '@@core/utils/types';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CustomFieldCreateDto {}
+export class CustomFieldCreateDto { }
 
 export class DefineTargetFieldDto {
   @ApiProperty({ type: String })
@@ -12,6 +12,8 @@ export class DefineTargetFieldDto {
   description: string;
   @ApiProperty()
   data_type: string;
+  @ApiProperty()
+  id_project: string;
 }
 
 export class MapFieldToProviderDto {

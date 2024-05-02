@@ -171,7 +171,7 @@ export default function Page() {
                     Add Field Mappings
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:w-[450px]">
+                <DialogContent className="sm:w-[450px] lg:max-w-screen-lg overflow-y-scroll max-h-screen">
                   <FModal onClose={handleClose}/>
                 </DialogContent>
               </Dialog>

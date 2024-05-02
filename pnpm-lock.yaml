@@ -243,7 +243,7 @@ importers:
   apps/magic-link:
     dependencies:
       '@panora/shared':
-        specifier: ^1.2.1
+        specifier: ^1.2.2
         version: link:../../packages/shared
       '@panora/typescript-sdk':
         specifier: ^1.0.3
