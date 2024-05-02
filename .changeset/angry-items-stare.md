@@ -1,5 +1,0 @@
----
-"@panora/shared": patch
----
-
-Patch
