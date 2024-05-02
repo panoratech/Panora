@@ -1,6 +1,5 @@
 import { OAuth2AuthData, providerToType } from './envConfig';
 import { AuthStrategy, providersConfig, ProviderConfig } from './utils';
-
 interface AuthParams {
   projectId: string;
   linkedUserId: string;
@@ -25,10 +24,8 @@ const randomString = () => {
 export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
   const encodedRedirectUrl = encodeURIComponent(`${apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
-
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl);
-
   // const vertical = findProviderVertical(providerName);
   if (vertical == null) {
     throw new Error('vertical is null');

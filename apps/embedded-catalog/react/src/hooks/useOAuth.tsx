@@ -5,11 +5,11 @@ import { constructAuthUrl } from '@panora/shared';
 type UseOAuthProps = {
   clientId?: string;
   providerName: string;           // Name of the OAuth provider
-  vertical: string;
+  vertical: string;               // Vertical (Crm, Ticketing, etc)
   returnUrl: string;              // Return URL after OAuth flow
   projectId: string;              // Project ID
   linkedUserId: string;           // Linked User ID
-  optionalApiUrl?: string;                // URL of the User's Server
+  optionalApiUrl?: string;        // URL of the User's Server
   onSuccess: () => void;
 };
 
