@@ -1,5 +1,13 @@
 # api
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [2757372]
+- Updated dependencies [2757372]
+  - @panora/shared@1.2.2
+
 ## 0.0.6
 
 ### Patch Changes
