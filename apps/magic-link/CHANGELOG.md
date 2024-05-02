@@ -1,5 +1,14 @@
 # magic-link
 
+## 0.0.12
+
+### Patch Changes
+
+- Updated dependencies [2757372]
+- Updated dependencies [2757372]
+  - @panora/shared@1.2.2
+  - api@0.0.7
+
 ## 0.0.11
 
 ### Patch Changes
