@@ -23,7 +23,7 @@ export class HubspotTaskMapper implements ITaskMapper {
     const result: HubspotTaskInput = {
       hs_task_subject: source.subject || '',
       hs_task_body: source.content || '',
-      hs_task_status: this.mapStatus(source.status),
+      hs_task_status: source.status,
       hs_task_priority: '',
       hs_timestamp: source.due_date
         ? source.due_date.toISOString()
@@ -97,42 +97,11 @@ export class HubspotTaskMapper implements ITaskMapper {
     return {
       subject: task.properties.hs_task_subject,
       content: task.properties.hs_task_body,
-      status: this.mapStatusReverse(task.properties.hs_task_status),
+      status: task.properties.hs_task_status,
       due_date: new Date(task.properties.hs_timestamp),
       field_mappings,
       ...opts,
       // Additional fields mapping based on UnifiedTaskOutput structure
     };
-  }
-
-  private mapStatus(status?: string): string {
-    // Map UnifiedTaskInput status to HubspotTaskInput status
-    // Adjust this method according to your specific status mapping logic
-    return status || 'WAITING';
-  }
-
-  private mapPriority(priority?: string): 'HIGH' | 'MEDIUM' | 'LOW' {
-    // Map UnifiedTaskInput priority to HubspotTaskInput priority
-    // Adjust this method according to your specific priority mapping logic
-    return priority === 'High'
-      ? 'HIGH'
-      : priority === 'Medium'
-      ? 'MEDIUM'
-      : 'LOW';
-  }
-
-  private mapStatusReverse(status: string): string {
-    // Reverse map HubspotTaskOutput status to UnifiedTaskOutput status
-    // Adjust this method according to your specific status reverse mapping logic
-    switch (status) {
-      case 'WAITING':
-        return 'Pending';
-      case 'COMPLETED':
-        return 'Completed';
-      case 'IN_PROGRESS':
-        return 'In Progress';
-      default:
-        return 'Unknown';
-    }
   }
 }

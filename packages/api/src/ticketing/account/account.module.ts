@@ -14,9 +14,12 @@ import { FrontService } from './services/front';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
+    BullModule.registerQueue(
+      {
+        name: 'webhookDelivery',
+      },
+      { name: 'syncTasks' },
+    ),
   ],
   controllers: [AccountController],
   providers: [
@@ -32,6 +35,13 @@ import { FrontService } from './services/front';
     ZendeskService,
     FrontService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class AccountModule {}

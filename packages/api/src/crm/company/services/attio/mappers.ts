@@ -35,20 +35,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
         },
       ];
     }
-    // const result: AttioCompanyInput = {
-    //   city: '',
-    //   name: source.name,
-    //   phone: '',
-    //   state: '',
-    //   domain: '',
-    //   industry: source.industry,
-    // };
 
-    // Assuming 'phone_numbers' array contains at least one phone number
-    // const primaryPhone = source.phone_numbers?.[0]?.phone_number;
-    // if (primaryPhone) {
-    //   result.values = primaryPhone;
-    // }
     if (source.addresses) {
       const address = source.addresses[0];
       if (address) {

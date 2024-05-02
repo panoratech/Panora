@@ -5,13 +5,13 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  Request,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginationDto } from '@@core/utils/dtos/pagination.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 @ApiTags('events')
 @Controller('events')
@@ -34,13 +34,11 @@ export class EventsController {
       },
     }),
   )
-  @UseGuards(JwtAuthGuard, ValidateUserGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async getEvents(
-    @Query() dto: PaginationDto,
-    @Query('project_id') project_id: string,
-  ) {
-    return await this.eventsService.findEvents(dto, project_id);
+  async getEvents(@Query() dto: PaginationDto, @Request() req: any) {
+    const { id_project } = req.user;
+    return await this.eventsService.findEvents(dto, id_project);
   }
 
   // todo

@@ -18,9 +18,12 @@ import { GorgiasService } from './services/gorgias';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
+    BullModule.registerQueue(
+      {
+        name: 'webhookDelivery',
+      },
+      { name: 'syncTasks' },
+    ),
   ],
   controllers: [TicketController],
   providers: [
@@ -40,6 +43,13 @@ import { GorgiasService } from './services/gorgias';
     JiraService,
     GorgiasService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class TicketModule {}

@@ -4,11 +4,11 @@ import { connections as Connection } from 'api';
 import Cookies from 'js-cookie';
 
 
-const useConnections = (project_id: string) => {
+const useConnections = () => {
   return useQuery({
     queryKey: ['connections'], 
     queryFn: async (): Promise<Connection[]> => {
-      const response = await fetch(`${config.API_URL}/connections?project_id=${project_id}`,{
+      const response = await fetch(`${config.API_URL}/connections`,{
         method: 'GET',
         headers: {
             'Content-Type': 'application/json', 

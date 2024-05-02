@@ -56,7 +56,5 @@ export async function desunify<T extends Unified>({
         providerName,
         customFieldMappings,
       });
-    case ProviderVertical.Unknown:
-      break;
   }
 }

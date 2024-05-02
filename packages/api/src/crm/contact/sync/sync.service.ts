@@ -17,9 +17,11 @@ import { ServiceRegistry } from '../services/registry.service';
 import { normalizeAddresses } from '@crm/company/utils';
 import { Utils } from '../utils';
 import { CRM_PROVIDERS } from '@panora/shared';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
-export class SyncContactsService implements OnModuleInit {
+export class SyncService implements OnModuleInit {
   private readonly utils: Utils;
 
   constructor(
@@ -28,26 +30,69 @@ export class SyncContactsService implements OnModuleInit {
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
+    @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
-    this.logger.setContext(SyncContactsService.name);
+    this.logger.setContext(SyncService.name);
     this.utils = new Utils();
   }
 
   async onModuleInit() {
     try {
-      await this.syncContacts();
+      await this.scheduleSyncJob();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
-  @Cron('*/20 * * * *')
+  private async scheduleSyncJob() {
+    const jobName = 'crm-sync-contacts';
+
+    // Remove existing jobs to avoid duplicates in case of application restart
+    const jobs = await this.syncQueue.getRepeatableJobs();
+    console.log(`Found ${jobs.length} repeatable jobs.`);
+    for (const job of jobs) {
+      console.log(`Checking job: ${job.name}`);
+      if (job.name === jobName) {
+        console.log(`Removing job with key: ${job.key}`);
+        await this.syncQueue.removeRepeatableByKey(job.key);
+      }
+    }
+
+    // Add new job to the queue with a CRON expression
+    console.log(`Adding new job: ${jobName}`);
+    await this.syncQueue
+      .add(
+        jobName,
+        {},
+        {
+          repeat: { cron: '*/2 * * * *' }, // Runs once a day at midnight
+        },
+      )
+      .then(() => {
+        console.log('Job added successfully');
+      })
+      .catch((error) => {
+        console.error('Failed to add job', error);
+      });
+  }
+
   //function used by sync worker which populate our crm_contacts table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
-  async syncContacts() {
+  //@Cron('*/2 * * * *') // every 2 minutes (for testing)
+  @Cron('0 */8 * * *') // every 8 hours
+  async syncContacts(user_id?: string) {
     try {
       this.logger.log(`Syncing contacts....`);
-      const users = await this.prisma.users.findMany();
+
+      const users = user_id
+        ? [
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
+        : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
           const projects = await this.prisma.projects.findMany({

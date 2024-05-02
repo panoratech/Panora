@@ -16,9 +16,12 @@ import { ZohoService } from './services/zoho';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
+    BullModule.registerQueue(
+      {
+        name: 'webhookDelivery',
+      },
+      { name: 'syncTasks' },
+    ),
   ],
   controllers: [NoteController],
   providers: [
@@ -36,6 +39,13 @@ import { ZohoService } from './services/zoho';
     PipedriveService,
     HubspotService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class NoteModule {}

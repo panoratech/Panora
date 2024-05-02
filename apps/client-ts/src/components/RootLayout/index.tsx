@@ -12,19 +12,14 @@ import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
 import { ThemeToggle } from '@/components/Nav/theme-toggle';
 import useProjects from '@/hooks/useProjects';
+import useRefreshAccessTokenMutation from '@/hooks/mutations/useRefreshAccessTokenMutation';
 
 export const RootLayout = ({children}:{children:React.ReactNode}) => {
   const router = useRouter()
   const base = process.env.NEXT_PUBLIC_WEBAPP_DOMAIN;
-
-
-  const {profile} = useProfileStore()
   const {data : projectsData} = useProjects();
   const { idProject, setIdProject } = useProjectStore();
-
-
-  // const { setIdProject } = useProjectStore();
-
+  const {mutate : refreshAccessToken} = useRefreshAccessTokenMutation()
 
   useEffect(() => {
     if(projectsData)
@@ -34,10 +29,9 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
           {
             console.log("Project Id setting : ",projectsData[0]?.id_project)
             setIdProject(projectsData[0]?.id_project);
-
           }
       }
-  },[projectsData])
+  },[idProject, projectsData, refreshAccessToken, setIdProject])
   
   const handlePageChange = (page: string) => {
     if (page) {

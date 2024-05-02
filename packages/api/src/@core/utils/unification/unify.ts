@@ -57,8 +57,6 @@ export async function unify<T extends UnifySourceType | UnifySourceType[]>({
         providerName,
         customFieldMappings,
       });
-    case ProviderVertical.Unknown:
-      break;
   }
   return;
 }

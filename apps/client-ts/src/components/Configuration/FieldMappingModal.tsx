@@ -109,7 +109,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
   const { data: mappings } = useFieldMappings();
   const { mutate: mutateDefineField } = useDefineFieldMutation();
   const { mutate: mutateMapField } = useMapFieldMutation();
-  const { data: linkedUsers } = useLinkedUsers(idProject);
+  const { data: linkedUsers } = useLinkedUsers();
   const { data: sourceCustomFields, error, isLoading } = useProviderProperties(linkedUserId,sourceProvider);
   
   const posthog = usePostHog()

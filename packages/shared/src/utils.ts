@@ -323,9 +323,8 @@ export const providersConfig: ProvidersConfig = {
   },
   'ticketing': {
     'front': {
-      scopes: '',
       urls: {
-        docsUrl: '',
+        docsUrl: 'https://dev.frontapp.com/docs/welcome',
         authBaseUrl: 'https://app.frontapp.com/oauth/authorize',
         apiUrl: 'https://api2.frontapp.com',
       },

@@ -120,7 +120,7 @@ export interface AttioContact {
     twitter_follower_count?: NumberValueItem[];
     instagram?: TextValueItem[];
     first_email_interaction?: InteractionValueItem[];
-    phone_numbers?: PhoneValueItem[];
+    phone_numbers?: PhoneValueItem[] | string[];
   };
 }
 

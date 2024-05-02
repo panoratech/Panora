@@ -6,7 +6,6 @@ export enum ProviderVertical {
     Ticketing = 'ticketing',
     MarketingAutomation = 'marketingautomation',
     FileStorage = 'filestorage',
-    Unknown = 'unknown',
 }
 
 export enum CrmProviders {

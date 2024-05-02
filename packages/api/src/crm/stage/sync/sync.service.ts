@@ -15,6 +15,8 @@ import { IStageService } from '../types';
 import { crm_deals_stages as CrmStage } from '@prisma/client';
 import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
 import { CRM_PROVIDERS } from '@panora/shared';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -24,25 +26,54 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
   }
 
   async onModuleInit() {
     try {
-      await this.syncStages();
+      await this.scheduleSyncJob();
     } catch (error) {
       handleServiceError(error, this.logger);
     }
   }
 
-  @Cron('*/20 * * * *')
+  private async scheduleSyncJob() {
+    const jobName = 'crm-sync-stages';
+
+    // Remove existing jobs to avoid duplicates in case of application restart
+    const jobs = await this.syncQueue.getRepeatableJobs();
+    for (const job of jobs) {
+      if (job.name === jobName) {
+        await this.syncQueue.removeRepeatableByKey(job.key);
+      }
+    }
+    // Add new job to the queue with a CRON expression
+    await this.syncQueue.add(
+      jobName,
+      {},
+      {
+        repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
+      },
+    );
+  }
   //function used by sync worker which populate our crm_stages table
   //its role is to fetch all stages from providers 3rd parties and save the info inside our db
-  async syncStages() {
+  //@Cron('*/2 * * * *') // every 2 minutes (for testing)
+  @Cron('0 */8 * * *') // every 8 hours
+  async syncStages(user_id?: string) {
     try {
       this.logger.log(`Syncing stages....`);
-      const users = await this.prisma.users.findMany();
+      const users = user_id
+        ? [
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
+        : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
           const projects = await this.prisma.projects.findMany({

@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { linked_users as LinkedUser } from 'api';
 import Cookies from 'js-cookie';
 
-const useLinkedUsers = (project_id: string) => {
+const useLinkedUsers = () => {
   return useQuery({
     queryKey: ['linked-users'], 
     queryFn: async (): Promise<LinkedUser[]> => {
-      const response = await fetch(`${config.API_URL}/linked-users?project_id=${project_id}`,
+      const response = await fetch(`${config.API_URL}/linked-users`,
       {
         method: 'GET',
         headers: {

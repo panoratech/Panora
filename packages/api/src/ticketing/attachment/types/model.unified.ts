@@ -1,13 +1,21 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedAttachmentInput {
-  @ApiProperty({ description: 'The file name of the attachment' })
+  @ApiProperty({ type: String, description: 'The file name of the attachment' })
+  @IsString()
   file_name: string;
 
-  @ApiProperty({ description: 'The file url of the attachment' })
+  @ApiProperty({ type: String, description: 'The file url of the attachment' })
+  @IsString()
   file_url: string;
 
-  @ApiProperty({ description: "The uploader's uuid of the attachment" })
+  @ApiProperty({
+    type: String,
+    description: "The uploader's uuid of the attachment",
+  })
+  @IsString()
+  @IsOptional()
   uploader?: string;
 
   @ApiPropertyOptional({
@@ -15,22 +23,32 @@ export class UnifiedAttachmentInput {
     description:
       'The custom field mappings of the attachment between the remote 3rd party & Panora',
   })
+  @IsOptional()
   field_mappings?: Record<string, any>;
 }
 
 export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
-  @ApiPropertyOptional({ description: 'The uuid of the attachment' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The uuid of the attachment',
+  })
+  @IsUUID()
+  @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
+    type: String,
     description: 'The id of the attachment in the context of the 3rd Party',
   })
+  @IsString()
+  @IsOptional()
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: [{}],
+    type: {},
     description:
       'The remote data of the attachment in the context of the 3rd Party',
   })
+  @IsOptional()
   remote_data?: Record<string, any>;
 }

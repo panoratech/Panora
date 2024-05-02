@@ -20,7 +20,6 @@ import { CompanyModule } from './company/company.module';
     UserModule,
   ],
   providers: [],
-  controllers: [],
   exports: [
     ContactModule,
     DealModule,

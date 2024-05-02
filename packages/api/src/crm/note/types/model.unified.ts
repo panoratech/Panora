@@ -1,23 +1,41 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedNoteInput {
-  @ApiProperty({ description: 'The content of the note' })
+  @ApiProperty({ type: String, description: 'The content of the note' })
+  @IsString()
   content: string;
 
-  @ApiPropertyOptional({ description: 'The uuid of the user tied the note' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The uuid of the user tied the note',
+  })
+  @IsUUID()
+  @IsOptional()
   user_id?: string;
 
   @ApiPropertyOptional({
+    type: String,
     description: 'The uuid of the company tied to the note',
   })
+  @IsUUID()
+  @IsOptional()
   company_id?: string;
 
   @ApiPropertyOptional({
+    type: String,
     description: 'The uuid fo the contact tied to the note',
   })
+  @IsUUID()
+  @IsOptional()
   contact_id?: string;
 
-  @ApiPropertyOptional({ description: 'The uuid of the deal tied to the note' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The uuid of the deal tied to the note',
+  })
+  @IsUUID()
+  @IsOptional()
   deal_id?: string;
 
   @ApiPropertyOptional({
@@ -25,22 +43,30 @@ export class UnifiedNoteInput {
     description:
       'The custom field mappings of the note between the remote 3rd party & Panora',
   })
+  @IsOptional()
   field_mappings?: Record<string, any>;
 }
 
 export class UnifiedNoteOutput extends UnifiedNoteInput {
-  @ApiPropertyOptional({ description: 'The uuid of the note' })
+  @ApiPropertyOptional({ type: String, description: 'The uuid of the note' })
+  @IsUUID()
+  @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
+    type: String,
+
     description: 'The id of the note in the context of the Crm 3rd Party',
   })
+  @IsString()
+  @IsOptional()
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: [{}],
+    type: {},
     description:
       'The remote data of the note in the context of the Crm 3rd Party',
   })
+  @IsOptional()
   remote_data?: Record<string, any>;
 }

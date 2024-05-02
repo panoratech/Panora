@@ -9,7 +9,7 @@ import { PipedriveService } from './services/pipedrive';
 import { HubspotService } from './services/hubspot';
 import { LoggerService } from '@@core/logger/logger.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { SyncContactsService } from './sync/sync.service';
+import { SyncService } from './sync/sync.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { EncryptionService } from '@@core/encryption/encryption.service';
@@ -17,9 +17,12 @@ import { ServiceRegistry } from './services/registry.service';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
+    BullModule.registerQueue(
+      {
+        name: 'webhookDelivery',
+      },
+      { name: 'syncTasks' },
+    ),
   ],
   controllers: [ContactController],
   providers: [
@@ -27,7 +30,7 @@ import { ServiceRegistry } from './services/registry.service';
     PrismaService,
     LoggerService,
     FieldMappingService,
-    SyncContactsService,
+    SyncService,
     WebhookService,
     EncryptionService,
     ServiceRegistry,
@@ -38,6 +41,13 @@ import { ServiceRegistry } from './services/registry.service';
     PipedriveService,
     HubspotService,
   ],
-  exports: [SyncContactsService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class ContactModule {}

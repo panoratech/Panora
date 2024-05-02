@@ -30,10 +30,15 @@ export class ZendeskCommentMapper implements ICommentMapper {
       type: 'Comment',
     };
 
-    if (source.contact_id) {
-      result.author_id = source.contact_id
-        ? Number(await this.utils.getContactRemoteIdFromUuid(source.contact_id))
-        : Number(await this.utils.getUserRemoteIdFromUuid(source.user_id));
+    if (source.creator_type === 'USER') {
+      result.author_id = Number(
+        await this.utils.getUserRemoteIdFromUuid(source.user_id),
+      );
+    }
+    if (source.creator_type === 'CONTACT') {
+      result.author_id = Number(
+        await this.utils.getContactRemoteIdFromUuid(source.contact_id),
+      );
     }
 
     if (source.attachments) {
@@ -92,14 +97,14 @@ export class ZendeskCommentMapper implements ICommentMapper {
       );
 
       if (user_id) {
-        opts = { user_id: user_id, creator_type: 'user' };
+        opts = { user_id: user_id, creator_type: 'USER' };
       } else {
         const contact_id = await this.utils.getContactUuidFromRemoteId(
           String(comment.author_id),
           'zendesk',
         );
         if (contact_id) {
-          opts = { creator_type: 'contact', contact_id: contact_id };
+          opts = { creator_type: 'CONTACT', contact_id: contact_id };
         }
       }
     }

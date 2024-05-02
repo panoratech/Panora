@@ -14,7 +14,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiKeyDto } from './dto/api-key.dto';
 import { LoginDto } from './dto/login.dto';
-import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
+import { RefreshDto } from './dto/refresh.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -67,14 +67,11 @@ export class AuthController {
 
   @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
   @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard, ValidateUserGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('api-keys')
-  async getApiKeys(
-    @Request() req: any,
-    @Query('project_id') project_id: string,
-  ) {
-    const id_user = req.user.id_user; // Extracted from JWT payload
-    return this.authService.getApiKeys(id_user, project_id);
+  async getApiKeys(@Request() req: any) {
+    const { id_project } = req.user;
+    return this.authService.getApiKeys(id_project);
   }
 
   @ApiOperation({ operationId: 'generateApiKey', summary: 'Create API Key' })
@@ -87,6 +84,26 @@ export class AuthController {
       data.userId,
       data.projectId,
       data.keyName,
+    );
+  }
+
+  @ApiOperation({
+    operationId: 'refreshAccessToken',
+    summary: 'Refresh Access Token',
+  })
+  @ApiBody({ type: RefreshDto })
+  @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
+  @Post('refresh-token')
+  refreshAccessToken(@Request() req: any, @Body() body: RefreshDto) {
+    const { projectId } = body;
+    const { id_user, email, first_name, last_name } = req.user;
+    return this.authService.refreshAccessToken(
+      projectId,
+      id_user,
+      email,
+      first_name,
+      last_name,
     );
   }
 }

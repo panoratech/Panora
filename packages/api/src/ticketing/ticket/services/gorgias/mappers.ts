@@ -52,7 +52,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
     };
 
     if (source.status) {
-      result.status = source.status;
+      result.status = source.status.toLowerCase();
     }
 
     if (source.assigned_to && source.assigned_to.length > 0) {

@@ -39,6 +39,7 @@
     "@nestjs/swagger": "^7.1.14",
     "@nestjs/throttler": "^5.1.1",
     "@ntegral/nestjs-sentry": "^4.0.0",
+    "@panora/shared": "workspace:*",
     "@prisma/client": "^5.4.2",
     "@sentry/node": "^7.80.0",
     "@sentry/tracing": "^7.80.0",
@@ -46,7 +47,7 @@
     "bcrypt": "^5.1.1",
     "bull": "^4.11.5",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0",
+    "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -54,6 +55,7 @@
     "install": "^0.13.0",
     "js-yaml": "^4.1.0",
     "nestjs-pino": "^3.5.0",
+    "openai": "^4.38.5",
     "passport": "^0.6.0",
     "passport-headerapikey": "^1.2.2",
     "passport-jwt": "^4.0.1",
@@ -63,8 +65,7 @@
     "rxjs": "^7.8.1",
     "stytch": "^10.5.0",
     "uuid": "^9.0.1",
-    "yargs": "^17.7.2",
-    "@panora/shared": "workspace:*"
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

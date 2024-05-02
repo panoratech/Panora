@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { LinkedUsersService } from './linked-users.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateLinkedUserDto } from './dto/create-linked-user.dto';
@@ -10,7 +18,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 @ApiTags('linked-users')
 @Controller('linked-users')
@@ -37,10 +44,11 @@ export class LinkedUsersController {
     summary: 'Retrieve Linked Users',
   })
   @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard, ValidateUserGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
-  getLinkedUsers(@Query('project_id') project_id: string) {
-    return this.linkedUsersService.getLinkedUsers(project_id);
+  getLinkedUsers(@Request() req: any) {
+    const { id_project } = req.user;
+    return this.linkedUsersService.getLinkedUsers(id_project);
   }
 
   @ApiOperation({

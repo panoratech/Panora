@@ -13,9 +13,12 @@ import { JiraService } from './services/jira';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
+    BullModule.registerQueue(
+      {
+        name: 'webhookDelivery',
+      },
+      { name: 'syncTasks' },
+    ),
   ],
   controllers: [CollectionController],
   providers: [
@@ -30,6 +33,13 @@ import { JiraService } from './services/jira';
     /* PROVIDERS SERVICES */
     JiraService,
   ],
-  exports: [SyncService],
+  exports: [
+    SyncService,
+    ServiceRegistry,
+    WebhookService,
+    FieldMappingService,
+    LoggerService,
+    PrismaService,
+  ],
 })
 export class CollectionModule {}

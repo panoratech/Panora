@@ -134,4 +134,26 @@ export class Utils {
       throw new Error(error);
     }
   }
+
+  mapStatus(status: string, provider_name: string): string {
+    try {
+      switch (provider_name.toLowerCase()) {
+        default:
+          throw new Error(
+            'Provider not supported for status custom task mapping',
+          );
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  // not currently in use, but might be in the future
+  mapPriority(priority?: string): 'HIGH' | 'MEDIUM' | 'LOW' {
+    return priority === 'High'
+      ? 'HIGH'
+      : priority === 'Medium'
+      ? 'MEDIUM'
+      : 'LOW';
+  }
 }

@@ -73,7 +73,7 @@ export class JiraCommentMapper implements ICommentMapper {
 
       if (user_id) {
         // we must always fall here for Jira
-        opts = { user_id: user_id, creator_type: 'user' };
+        opts = { user_id: user_id, creator_type: 'USER' };
       }
     }
 

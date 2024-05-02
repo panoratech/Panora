@@ -7,14 +7,12 @@ import {
   Param,
   UseGuards,
   Request,
-  Query,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ApiBody, ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { WebhookService } from './webhook.service';
 import { WebhookDto } from './dto/webhook.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-import { ValidateUserGuard } from '@@core/utils/guards/validate-user.guard';
 
 @ApiTags('webhook')
 @Controller('webhook')
@@ -31,10 +29,11 @@ export class WebhookController {
     summary: 'Retrieve webhooks metadata ',
   })
   @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard, ValidateUserGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
-  getWebhooks(@Query('project_id') project_id: string) {
-    return this.webhookService.getWebhookEndpoints(project_id);
+  getWebhooks(@Request() req: any) {
+    const { id_project } = req.user;
+    return this.webhookService.getWebhookEndpoints(id_project);
   }
 
   @ApiOperation({
@@ -46,9 +45,7 @@ export class WebhookController {
   async updateWebhookStatus(
     @Param('id') id: string,
     @Body('active') active: boolean,
-    @Request() req: any,
   ) {
-    // verify id of webhook belongs to user from req
     return this.webhookService.updateStatusWebhookEndpoint(id, active);
   }
 
@@ -61,7 +58,6 @@ export class WebhookController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async addWebhook(@Body() data: WebhookDto) {
-    // verify project id of user is same from data
     return this.webhookService.createWebhookEndpoint(data);
   }
 }

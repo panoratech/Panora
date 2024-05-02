@@ -56,6 +56,7 @@ import config from "@/lib/config"
 import { Skeleton } from "@/components/ui/skeleton";
 import useProfileStore from "@/state/profileStore"
 import { projects as Project } from 'api';
+import useRefreshAccessTokenMutation from "@/hooks/mutations/useRefreshAccessTokenMutation"
 
 
 const projectFormSchema = z.object({
@@ -85,15 +86,7 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
   const { profile } = useProfileStore();
 
   const { idProject, setIdProject } = useProjectStore();
-  
-  // const projects = profile?.projects;
-
-  // useEffect(() => {
-  //   if(idProject==="" && projects)
-  //     {
-  //       setIdProject(projects[0]?.id_project)
-  //     }
-  // },[projects])
+  const {mutate : refreshAccessToken} = useRefreshAccessTokenMutation()
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
@@ -149,6 +142,7 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
                         key={project.id_project}
                         onSelect={() => {
                           setIdProject(project.id_project)
+                          refreshAccessToken(project.id_project)
                           setOpen(false)
                         }}
                         className="text-sm"
