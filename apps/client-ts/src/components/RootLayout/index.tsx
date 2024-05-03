@@ -76,7 +76,7 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
               </div>
             </nav>
 
-            <main className="w-full pt-16">{children}</main>
+            <main className="w-full pt-16 overflow-y-scroll">{children}</main>
 
         </div>
      </>

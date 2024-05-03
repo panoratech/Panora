@@ -56,9 +56,7 @@ const formSchema = z.object({
 
 const AddWebhook = () => {
     const [open, setOpen] = useState(false);
-    const handleClose = () => {
-      setOpen(false);
-    };
+    
     const posthog = usePostHog()
 
     const {idProject} = useProjectStore();
@@ -73,6 +71,11 @@ const AddWebhook = () => {
             event: scopes[0]
         },
     })
+
+    const handleOpenChange = (openVal : boolean) => {
+        setOpen(openVal);
+        form.reset();
+      };
     
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)
@@ -82,7 +85,7 @@ const AddWebhook = () => {
             id_project: idProject,
             scope: [values.event],
         });
-        handleClose();  
+        handleOpenChange(false);  
         posthog?.capture("webhook_created", {
             id_project: idProject,
             mode: config.DISTRIBUTION
@@ -90,7 +93,7 @@ const AddWebhook = () => {
     }
   
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
         <Button
             variant="outline"

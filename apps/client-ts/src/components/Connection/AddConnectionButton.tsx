@@ -106,6 +106,12 @@ const AddConnectionButton = ({
     })
     
     setIsGenerated(true);
+    form.reset()
+  }
+
+  const onClose = () => {
+    setShowNewLinkedUserDialog({open: false})
+    form.reset();
   }
   
   return (
@@ -190,7 +196,7 @@ const AddConnectionButton = ({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} >
+        <form onSubmit={form.handleSubmit(onSubmit)} onReset={() => onClose()} >
         <div>
           <div className="space-y-4 py-2 pb-4">
             {!showNewLinkedUserDialog.import ?
@@ -250,7 +256,7 @@ const AddConnectionButton = ({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" onClick={() => setShowNewLinkedUserDialog({open: false})}>
+            <Button variant="outline" type="reset">
               Cancel
             </Button>
           </DialogClose>

@@ -153,7 +153,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
   }
 
   return (
-    <Tabs defaultValue="define" className="w-[400px] mt-5">
+    <Tabs defaultValue="define" className="m-2" >
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="define">Define Field</TabsTrigger>
         <TabsTrigger value="map">Map Fields</TabsTrigger>
