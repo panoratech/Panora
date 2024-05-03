@@ -47,6 +47,7 @@ export interface ZohoContact {
   Other_Country: string;
   Description: string;
   Record_Image: string;
+  id: string;
   [key: string]: any;
 }
 
