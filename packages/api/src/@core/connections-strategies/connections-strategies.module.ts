@@ -5,15 +5,17 @@ import { ConnectionsStrategiesController } from './connections-strategies.contro
 import { ConnectionsStrategiesService } from './connections-strategies.service';
 import { ConfigService } from '@nestjs/config';
 import { ValidateUserService } from '@@core/utils/services/validateUser.service';
+import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Module({
   controllers: [ConnectionsStrategiesController],
   providers: [
     LoggerService,
+    EncryptionService,
     PrismaService,
     ConnectionsStrategiesService,
     ConfigService,
     ValidateUserService,
   ],
 })
-export class ConnectionsStrategiesModule {}
+export class ConnectionsStrategiesModule { }
