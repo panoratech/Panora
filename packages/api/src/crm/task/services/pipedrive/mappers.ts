@@ -137,6 +137,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
     }
 
     return {
+      remote_id: task.id,
       subject: task.subject,
       content: task.public_description,
       status: task.done ? 'Completed' : 'Pending',

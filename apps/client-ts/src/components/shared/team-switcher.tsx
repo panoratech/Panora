@@ -108,6 +108,12 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
       id_user: profile!.id_user,
     });
     setShowNewDialog({open: false})  
+    projectForm.reset();
+  }
+
+  const onClose = () => {
+    setShowNewDialog({open:false})
+    projectForm.reset();
   }
   
 
@@ -209,7 +215,7 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
           </> : 
           <>
           <Form {...projectForm}>
-          <form onSubmit={projectForm.handleSubmit(onProjectSubmit)} >
+          <form onSubmit={projectForm.handleSubmit(onProjectSubmit)} onReset={() => onClose()}>
             <DialogHeader>
               <DialogTitle>Create project</DialogTitle>
               <DialogDescription>
@@ -242,7 +248,7 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowNewDialog({open:false})}>
+              <Button variant="outline" type="reset">
                 Cancel
               </Button>
               <Button type="submit">Create</Button>

@@ -38,7 +38,9 @@ export class JiraTeamMapper implements ITeamMapper {
       remote_id: string;
     }[],
   ): UnifiedTeamOutput {
+    // TODO - Storing temporary remote_id
     const unifiedTeam: UnifiedTeamOutput = {
+      remote_id: '',
       name: team.name,
     };
 

@@ -77,7 +77,7 @@ export class SyncService implements OnModuleInit {
 
   //function used by sync worker which populate our crm_contacts table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
-  //@Cron('*/2 * * * *') // every 2 minutes (for testing)
+  // @Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
   async syncContacts(user_id?: string) {
     try {
@@ -85,12 +85,12 @@ export class SyncService implements OnModuleInit {
 
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -185,20 +185,10 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedContactOutput[];
 
-      //TODO
-      const contactIds = sourceObject.map((contact) =>
-        'id' in contact
-          ? String(contact.id)
-          : 'contact_id' in contact
-          ? String(contact.contact_id)
-          : undefined,
-      );
-
       //insert the data in the DB with the fieldMappings (value table)
       const contacts_data = await this.saveContactsInDb(
         linkedUserId,
         unifiedObject,
-        contactIds,
         integrationId,
         sourceObject,
       );
@@ -229,7 +219,6 @@ export class SyncService implements OnModuleInit {
   async saveContactsInDb(
     linkedUserId: string,
     contacts: UnifiedContactOutput[],
-    originIds: string[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmContact[]> {
@@ -237,7 +226,7 @@ export class SyncService implements OnModuleInit {
       let contacts_results: CrmContact[] = [];
       for (let i = 0; i < contacts.length; i++) {
         const contact = contacts[i];
-        const originId = originIds[i];
+        const originId = contact.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

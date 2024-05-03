@@ -46,6 +46,7 @@ export class ZendeskContactMapper implements IContactMapper {
     }
 
     const unifiedContact: UnifiedContactOutput = {
+      remote_id: String(contact.id),
       name: contact.name,
       email_address: contact.email,
       phone_number: contact.phone,

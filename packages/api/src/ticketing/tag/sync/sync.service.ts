@@ -67,12 +67,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing tags....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -182,15 +182,12 @@ export class SyncService implements OnModuleInit {
       })) as UnifiedTagOutput[];
 
       //TODO: exceptionally we use the unifiedObject as we might need to get the fake remote ids from Zendesk store in id field
-      const tagIds = unifiedObject.map((tag) =>
-        'id' in tag ? String(tag.id) : undefined,
-      );
+
 
       //insert the data in the DB with the fieldMappings (value table)
       const tag_data = await this.saveTagsInDb(
         linkedUserId,
         unifiedObject,
-        tagIds,
         integrationId,
         id_ticket,
         sourceObject,
@@ -222,7 +219,6 @@ export class SyncService implements OnModuleInit {
   async saveTagsInDb(
     linkedUserId: string,
     tags: UnifiedTagOutput[],
-    originIds: string[],
     originSource: string,
     id_ticket: string,
     remote_data: Record<string, any>[],
@@ -231,7 +227,7 @@ export class SyncService implements OnModuleInit {
       let tags_results: TicketingTag[] = [];
       for (let i = 0; i < tags.length; i++) {
         const tag = tags[i];
-        const originId = originIds[i];
+        const originId = tag.remote_id;
 
         if (!originId || originId == '') {
           return;

@@ -64,6 +64,7 @@ export class PipedriveUserMapper implements IUserMapper {
     }
 
     return {
+      remote_id: String(user.id),
       name: user.name,
       email: user.email,
       field_mappings,

@@ -39,6 +39,7 @@ export class ZendeskTeamMapper implements ITeamMapper {
     }[],
   ): UnifiedTeamOutput {
     const unifiedTeam: UnifiedTeamOutput = {
+      remote_id: String(team.id),
       name: team.name,
       description: team.description,
     };

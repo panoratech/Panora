@@ -51,6 +51,7 @@ const useUpdateConnectionStrategyMutation = () => {
                 }),
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Cookies.get('access_token')}`,
                 },
             });
 

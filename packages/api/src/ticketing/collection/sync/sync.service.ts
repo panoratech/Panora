@@ -66,12 +66,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing collections....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -154,16 +154,10 @@ export class SyncService implements OnModuleInit {
         customFieldMappings: [],
       })) as UnifiedCollectionOutput[];
 
-      //TODO
-      const collectionIds = sourceObject.map((collection) =>
-        'id' in collection ? String(collection.id) : undefined,
-      );
-
       //insert the data in the DB with the fieldMappings (value table)
       const collection_data = await this.saveCollectionsInDb(
         linkedUserId,
         unifiedObject,
-        collectionIds,
         integrationId,
         sourceObject,
       );
@@ -196,7 +190,6 @@ export class SyncService implements OnModuleInit {
   async saveCollectionsInDb(
     linkedUserId: string,
     collections: UnifiedCollectionOutput[],
-    originIds: string[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingCollection[]> {
@@ -204,7 +197,7 @@ export class SyncService implements OnModuleInit {
       let collections_results: TicketingCollection[] = [];
       for (let i = 0; i < collections.length; i++) {
         const collection = collections[i];
-        const originId = originIds[i];
+        const originId = collection.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

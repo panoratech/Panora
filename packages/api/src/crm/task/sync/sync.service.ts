@@ -67,12 +67,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing tasks....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -169,16 +169,10 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedTaskOutput[];
 
-      //TODO
-      const taskIds = sourceObject.map((task) =>
-        'id' in task ? String(task.id) : undefined,
-      );
-
       //insert the data in the DB with the fieldMappings (value table)
       const tasks_data = await this.saveTasksInDb(
         linkedUserId,
         unifiedObject,
-        taskIds,
         integrationId,
         sourceObject,
       );
@@ -209,7 +203,6 @@ export class SyncService implements OnModuleInit {
   async saveTasksInDb(
     linkedUserId: string,
     tasks: UnifiedTaskOutput[],
-    originIds: string[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmTask[]> {
@@ -217,7 +210,7 @@ export class SyncService implements OnModuleInit {
       let tasks_results: CrmTask[] = [];
       for (let i = 0; i < tasks.length; i++) {
         const task = tasks[i];
-        const originId = originIds[i];
+        const originId = task.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

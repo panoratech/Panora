@@ -1,3 +1,4 @@
+import { EncryptionService } from '@@core/encryption/encryption.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -27,6 +28,7 @@ export type RateLimit = {
 export class ConnectionsStrategiesService {
   constructor(
     private prisma: PrismaService,
+    private crypto: EncryptionService,
     private configService: ConfigService,
   ) { }
 
@@ -86,7 +88,7 @@ export class ConnectionsStrategiesService {
       const value_ = await this.prisma.cs_values.create({
         data: {
           id_cs_value: uuidv4(),
-          value: value,
+          value: this.crypto.encrypt(value),
           id_cs_attribute: attribute_.id_cs_attribute,
         },
       });
@@ -155,7 +157,7 @@ export class ConnectionsStrategiesService {
         },
       });
       if (!value_) throw new Error('No value found !');
-      authValues.push(value_.value);
+      authValues.push(this.crypto.decrypt(value_.value));
     }
     return authValues;
   }
@@ -335,6 +337,7 @@ export class ConnectionsStrategiesService {
     values: string[],
   ) {
     try {
+      console.log("In updateAPI xzx")
       const cs = await this.prisma.connection_strategies.findFirst({
         where: {
           id_connection_strategy: id_cs,
@@ -373,12 +376,14 @@ export class ConnectionsStrategiesService {
             id_cs_attribute: id_cs_attribute,
           },
           data: {
-            value: value,
+            value: this.crypto.encrypt(value),
           },
         });
       }
       return cs;
     } catch (error) {
+      console.log("Error xzx")
+      console.log(error)
       throw new Error('Update Failed');
     }
   }

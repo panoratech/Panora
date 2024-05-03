@@ -93,6 +93,7 @@ export class ZohoTaskMapper implements ITaskMapper {
       }
     }
     const res: UnifiedTaskOutput = {
+      remote_id: task.id,
       content: task.Description,
       subject: task.Subject,
       status: task.Status === 'Completed' ? 'COMPLETED' : 'IN PROGRESS',

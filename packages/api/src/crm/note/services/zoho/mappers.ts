@@ -21,20 +21,20 @@ export class ZohoNoteMapper implements INoteMapper {
   ): Promise<ZohoNoteInput> {
     const module = source.deal_id
       ? {
-          api_name: 'Deals',
-          id: await this.utils.getRemoteIdFromDealUuid(source.deal_id),
-        }
+        api_name: 'Deals',
+        id: await this.utils.getRemoteIdFromDealUuid(source.deal_id),
+      }
       : source.company_id
-      ? {
+        ? {
           api_name: 'Accounts',
           id: await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
         }
-      : source.contact_id
-      ? {
-          api_name: 'Contacts',
-          id: await this.utils.getRemoteIdFromContactUuid(source.contact_id),
-        }
-      : { api_name: '', id: '' };
+        : source.contact_id
+          ? {
+            api_name: 'Contacts',
+            id: await this.utils.getRemoteIdFromContactUuid(source.contact_id),
+          }
+          : { api_name: '', id: '' };
 
     const result: ZohoNoteInput = {
       Note_Content: source.content,
@@ -94,6 +94,7 @@ export class ZohoNoteMapper implements INoteMapper {
     }
 
     const res: UnifiedNoteOutput = {
+      remote_id: note.id,
       content: note.Note_Content,
       field_mappings,
     };

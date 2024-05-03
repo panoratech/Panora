@@ -121,7 +121,10 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
         postal_code: company.address_postal_code,
       };
     }
-    res = { ...res, ...opts };
-    return res;
+    return {
+      remote_id: company.id,
+      ...res,
+      ...opts,
+    };
   }
 }

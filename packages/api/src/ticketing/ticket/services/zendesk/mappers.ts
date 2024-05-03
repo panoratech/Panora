@@ -127,6 +127,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
+      remote_id: String(ticket.id),
       name: ticket.subject,
       status:
         ticket.status === 'new' || ticket.status === 'open' ? 'OPEN' : 'CLOSED', // todo: handle pending status ?

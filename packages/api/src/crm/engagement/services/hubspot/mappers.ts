@@ -145,8 +145,8 @@ export class HubspotEngagementMapper implements IEngagementMapper {
         source.direction === 'INBOUND'
           ? 'INCOMING_EMAIL'
           : source.direction === 'OUTBOUND'
-          ? 'FORWARDED_EMAIL'
-          : '',
+            ? 'FORWARDED_EMAIL'
+            : '',
       hs_email_to_lastname: '', // Placeholder, needs appropriate mapping
       hs_email_sender_email: '', // Placeholder, needs appropriate mapping
       hs_email_to_firstname: '', // Placeholder, needs appropriate mapping
@@ -194,15 +194,15 @@ export class HubspotEngagementMapper implements IEngagementMapper {
       case 'MEETING':
         return await this.unifyMeeting(
           source as
-            | HubspotEngagementMeetingOutput
-            | HubspotEngagementMeetingOutput[],
+          | HubspotEngagementMeetingOutput
+          | HubspotEngagementMeetingOutput[],
           customFieldMappings,
         );
       case 'EMAIL':
         return await this.unifyEmail(
           source as
-            | HubspotEngagementEmailOutput
-            | HubspotEngagementEmailOutput[],
+          | HubspotEngagementEmailOutput
+          | HubspotEngagementEmailOutput[],
           customFieldMappings,
         );
       default:
@@ -378,6 +378,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     }
 
     return {
+      remote_id: engagement.id,
       content: engagement.properties.hs_email_text,
       subject: engagement.properties.hs_email_subject,
       start_at: new Date(engagement.properties.createdate),
@@ -387,8 +388,8 @@ export class HubspotEngagementMapper implements IEngagementMapper {
         engagement.properties.hs_email_direction === 'INCOMING_EMAIL'
           ? 'INBOUND'
           : engagement.properties.hs_email_direction === 'FORWARDED_EMAIL'
-          ? 'OUTBOUND'
-          : '',
+            ? 'OUTBOUND'
+            : '',
       field_mappings,
       ...opts,
     };

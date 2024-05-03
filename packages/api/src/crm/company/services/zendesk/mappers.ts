@@ -142,6 +142,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
     }
 
     return {
+      remote_id: String(company.id),
       name: company.name,
       email_addresses,
       phone_numbers,

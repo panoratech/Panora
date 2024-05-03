@@ -34,18 +34,18 @@ export class GorgiasTicketMapper implements ITicketMapper {
           body_text: source.comment.body || '',
           attachments: source.comment.attachments
             ? source.comment.attachments.map((att) => ({
-                extra: att,
-              }))
+              extra: att,
+            }))
             : [],
           sender:
             source.comment.creator_type === 'user'
               ? {
-                  id: Number(
-                    await this.utils.getAsigneeRemoteIdFromUserUuid(
-                      source.comment.user_id,
-                    ),
+                id: Number(
+                  await this.utils.getAsigneeRemoteIdFromUserUuid(
+                    source.comment.user_id,
                   ),
-                }
+                ),
+              }
               : null,
         },
       ],
@@ -127,6 +127,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
 
     // Assuming additional processing is needed to fully populate the UnifiedTicketOutput
     const unifiedTicket: UnifiedTicketOutput = {
+      remote_id: String(ticket.id),
       name: ticket.subject,
       status: ticket.status,
       description: ticket.subject, // Assuming the description is similar to the subject

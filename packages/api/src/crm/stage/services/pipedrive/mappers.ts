@@ -48,6 +48,7 @@ export class PipedriveStageMapper implements IStageMapper {
     }
 
     return {
+      remote_id: String(stage.id),
       stage_name: stage.name,
       field_mappings,
     };
