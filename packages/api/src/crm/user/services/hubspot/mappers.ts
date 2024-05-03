@@ -47,6 +47,7 @@ export class HubspotUserMapper implements IUserMapper {
     }
 
     return {
+      remote_id: user.id,
       name: `${user.firstName} ${user.lastName}`,
       email: user.email,
       field_mappings,

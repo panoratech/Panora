@@ -92,6 +92,7 @@ export class HubspotNoteMapper implements INoteMapper {
     }
 
     return {
+      remote_id: note.id,
       content: note.properties.hs_note_body,
       field_mappings,
       ...opts,

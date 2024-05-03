@@ -67,12 +67,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing stages....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -185,16 +185,10 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedStageOutput[];
 
-      //TODO
-      const stageIds = sourceObject.map((stage) =>
-        'id' in stage ? String(stage.id) : undefined,
-      );
-
       //insert the data in the DB with the fieldMappings (value table)
       const stages_data = await this.saveStagesInDb(
         linkedUserId,
         unifiedObject,
-        stageIds,
         integrationId,
         deal_id,
         sourceObject,
@@ -226,7 +220,6 @@ export class SyncService implements OnModuleInit {
   async saveStagesInDb(
     linkedUserId: string,
     stages: UnifiedStageOutput[],
-    originIds: string[],
     originSource: string,
     deal_id: string,
     remote_data: Record<string, any>[],
@@ -235,7 +228,7 @@ export class SyncService implements OnModuleInit {
       let stages_results: CrmStage[] = [];
       for (let i = 0; i < stages.length; i++) {
         const stage = stages[i];
-        const originId = originIds[i];
+        const originId = stage.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

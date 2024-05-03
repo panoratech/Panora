@@ -95,6 +95,7 @@ export class HubspotTaskMapper implements ITaskMapper {
       }
     }
     return {
+      remote_id: task.id,
       subject: task.properties.hs_task_subject,
       content: task.properties.hs_task_body,
       status: task.properties.hs_task_status,

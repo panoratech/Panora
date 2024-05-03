@@ -143,6 +143,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
     const direction = engagement.incoming ? 'incoming' : 'outgoing';
 
     return {
+      remote_id: String(engagement.id),
       content: engagement.summary,
       subject: '',
       start_at: new Date(engagement.made_at),

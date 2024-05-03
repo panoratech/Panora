@@ -116,6 +116,9 @@ export class ZendeskCommentMapper implements ICommentMapper {
       ...opts,
     };
 
-    return res;
+    return {
+      remote_id: String(comment.id),
+      ...res
+    };
   }
 }

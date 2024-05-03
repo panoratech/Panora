@@ -93,6 +93,7 @@ export class GithubTicketMapper implements ITicketMapper {
         }
 
         const unifiedTicket: UnifiedTicketOutput = {
+          remote_id: String(ticket.id),
           name: ticket.title,
           description: ticket.body,
           status: ticket.state,

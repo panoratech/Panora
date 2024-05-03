@@ -217,6 +217,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     }
 
     return {
+      remote_id: String(engagement.id),
       content: engagement.note, // Assuming email content is stored in 'note'
       subject: engagement.subject,
       start_at: new Date(engagement.add_time), // Using 'add_time' as the start time

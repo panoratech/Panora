@@ -89,6 +89,9 @@ export class FrontCommentMapper implements ICommentMapper {
       ...opts,
     };
 
-    return res;
+    return {
+      remote_id: comment.id,
+      ...res
+    };
   }
 }

@@ -39,6 +39,7 @@ export class GorgiasTeamMapper implements ITeamMapper {
     }[],
   ): UnifiedTeamOutput {
     const unifiedTeam: UnifiedTeamOutput = {
+      remote_id: String(team.id),
       name: team.name,
     };
 

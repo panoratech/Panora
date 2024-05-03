@@ -134,6 +134,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
     }
 
     return {
+      remote_id: company.id.record_id,
       name: company.values.name[0]?.value,
       industry:
         typeof company.values.categories[0]?.option === 'string'

@@ -129,6 +129,7 @@ export class ZendeskDealMapper implements IDealMapper {
     }
 
     return {
+      remote_id: String(deal.id),
       name: deal.name,
       amount:
         typeof deal.value === 'string' ? parseFloat(deal.value) : deal.value,

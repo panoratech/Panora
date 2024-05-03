@@ -88,6 +88,7 @@ export class ZohoDealMapper implements IDealMapper {
       }
     }
     const res: UnifiedDealOutput = {
+      remote_id: deal.id,
       name: deal.Deal_Name,
       description: deal.Description,
       amount: deal.Amount,

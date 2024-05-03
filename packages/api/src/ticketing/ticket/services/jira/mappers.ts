@@ -103,6 +103,7 @@ export class JiraTicketMapper implements ITicketMapper {
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
+      remote_id: ticket.id,
       name: ticket.fields.description,
       status: ticket.fields.status.name,
       description: ticket.fields.description,

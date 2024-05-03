@@ -65,7 +65,7 @@ export class SyncService implements OnModuleInit {
 
   //function used by sync worker which populate our crm_companies table
   //its role is to fetch all companies from providers 3rd parties and save the info inside our db
-  //@Cron('*/2 * * * *') // every 2 minutes (for testing)
+  // @Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
   async syncCompanies(user_id?: string) {
     try {
@@ -83,12 +83,12 @@ export class SyncService implements OnModuleInit {
       */
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -183,16 +183,12 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedCompanyOutput[];
 
-      //TODO
-      const companyIds = sourceObject.map((company) =>
-        'id' in company ? String(company.id) : undefined,
-      );
+
 
       //insert the data in the DB with the fieldMappings (value table)
       const companies_data = await this.saveCompanysInDb(
         linkedUserId,
         unifiedObject,
-        companyIds,
         integrationId,
         sourceObject,
       );
@@ -223,7 +219,6 @@ export class SyncService implements OnModuleInit {
   async saveCompanysInDb(
     linkedUserId: string,
     companies: UnifiedCompanyOutput[],
-    originIds: string[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmCompany[]> {
@@ -231,7 +226,7 @@ export class SyncService implements OnModuleInit {
       let companies_results: CrmCompany[] = [];
       for (let i = 0; i < companies.length; i++) {
         const company = companies[i];
-        const originId = originIds[i];
+        const originId = company.remote_id;
 
         if (!originId || originId == '') {
           throw new NotFoundError(`Origin id not there, found ${originId}`);

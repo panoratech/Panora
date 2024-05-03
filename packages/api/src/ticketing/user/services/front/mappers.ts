@@ -46,6 +46,7 @@ export class FrontUserMapper implements IUserMapper {
     }
 
     const unifiedUser: UnifiedUserOutput = {
+      remote_id: user.id,
       name: `${user.last_name} ${user.last_name}`,
       email_address: user.email,
       field_mappings: field_mappings,

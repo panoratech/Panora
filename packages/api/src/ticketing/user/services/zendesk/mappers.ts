@@ -46,6 +46,7 @@ export class ZendeskUserMapper implements IUserMapper {
     }
 
     const unifiedUser: UnifiedUserOutput = {
+      remote_id: String(user.id),
       name: user.name,
       email_address: user.email,
       field_mappings: field_mappings,
