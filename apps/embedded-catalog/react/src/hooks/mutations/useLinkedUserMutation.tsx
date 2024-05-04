@@ -8,7 +8,7 @@ interface ICreateTargetFieldDto {
 }
 const useLinkedUserMutation = () => {
     const addLinkedUser = async (linkedUserData: ICreateTargetFieldDto) => {
-        const response = await fetch(`${config.API_URL}/linked-users/create`, {
+        const response = await fetch(`${config.API_URL}/linked-users`, {
             method: 'POST',
             body: JSON.stringify(linkedUserData),
             headers: {

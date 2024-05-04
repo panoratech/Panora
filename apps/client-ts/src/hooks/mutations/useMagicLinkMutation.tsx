@@ -13,7 +13,7 @@ interface ILinkDto {
 
 const useMagicLinkMutation = () => {
     const generateLink = async (data: ILinkDto) => {
-        const response = await fetch(`${config.API_URL}/magic-link/create`, {
+        const response = await fetch(`${config.API_URL}/magic-links`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

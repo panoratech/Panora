@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -24,9 +25,10 @@ import {
   UnifiedCollectionOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
-@ApiTags('ticketing/collection')
-@Controller('ticketing/collection')
+@ApiTags('ticketing/collections')
+@Controller('ticketing/collections')
 export class CollectionController {
   private readonly connectionUtils = new ConnectionUtils();
 
@@ -55,7 +57,7 @@ export class CollectionController {
       'Set to true to include data from the original Ticketing software.',
   })
   @ApiCustomResponse(UnifiedCollectionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCollections(
     @Headers('x-connection-token') connection_token: string,
@@ -95,7 +97,7 @@ export class CollectionController {
       'Set to true to include data from the original Ticketing software.',
   })
   @ApiCustomResponse(UnifiedCollectionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getCollection(
     @Param('id') id: string,

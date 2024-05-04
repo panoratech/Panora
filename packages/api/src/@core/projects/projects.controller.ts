@@ -36,7 +36,7 @@ export class ProjectsController {
   @ApiBody({ type: CreateProjectDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
-  @Post('create')
+  @Post()
   createProject(@Body() projectCreateDto: CreateProjectDto) {
     return this.projectsService.createProject(projectCreateDto);
   }

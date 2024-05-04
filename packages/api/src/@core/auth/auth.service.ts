@@ -91,7 +91,7 @@ export class AuthService {
   async createUser(user: CreateUserDto, id_user?: string) {
     try {
       const hashedPassword = await bcrypt.hash(user.password_hash, 10);
-      return await this.prisma.users.create({
+      const user_ = await this.prisma.users.create({
         data: {
           // ...user,
           id_user: id_user || uuidv4(),
@@ -103,29 +103,16 @@ export class AuthService {
           created_at: new Date(),
         },
       });
-      // return await this.prisma.users.upsert({
-      //   where: {
-      //     email: user.email,
-      //   },
-      //   update: {
-      //     identification_strategy: 'b2c',
-      //     first_name: user.first_name,
-      //     last_name: user.last_name,
-      //     email: user.email,
-      //     password_hash: '',
-      //     created_at: new Date(),
-      //     id_user: id_user || uuidv4(),
-      //   },
-      //   create: {
-      //     identification_strategy: 'b2c',
-      //     first_name: user.first_name,
-      //     last_name: user.last_name,
-      //     email: user.email,
-      //     password_hash: '',
-      //     created_at: new Date(),
-      //     id_user: id_user || uuidv4(),
-      //   },
-      // });
+      const proj = await this.prisma.projects.create({
+        data: {
+          id_project: uuidv4(),
+          name: "Project 1",
+          sync_mode: "",
+          id_user: user_.id_user
+        }
+      })
+      this.logger.log("Proj data after registr is "+ JSON.stringify(proj))
+      return user_;
     } catch (error) {
       console.log(error);
       handleServiceError(error, this.logger);
@@ -145,6 +132,7 @@ export class AuthService {
           id_user: foundUser.id_user,
         },
       });
+      this.logger.log("Project found (login) is "+ JSON.stringify(project))
 
       if (!foundUser) {
         throw new UnauthorizedException('user does not exist!');

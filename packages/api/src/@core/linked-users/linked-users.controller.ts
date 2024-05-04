@@ -33,7 +33,7 @@ export class LinkedUsersController {
   @ApiBody({ type: CreateLinkedUserDto })
   @ApiResponse({ status: 201 })
   //@UseGuards(JwtAuthGuard)
-  @Post('create')
+  @Post()
   addLinkedUser(@Body() linkedUserCreateDto: CreateLinkedUserDto) {
     return this.linkedUsersService.addLinkedUser(linkedUserCreateDto);
   }

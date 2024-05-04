@@ -14,7 +14,7 @@ const useDefineFieldMutation = () => {
     const queryClient = useQueryClient()
 
     const defineField = async (data: IDefineTargetFieldDto) => {
-        const response = await fetch(`${config.API_URL}/field-mapping/define`, {
+        const response = await fetch(`${config.API_URL}/field-mappings/define`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

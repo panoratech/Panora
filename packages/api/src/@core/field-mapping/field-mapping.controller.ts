@@ -16,8 +16,8 @@ import {
 import { ApiResponse, ApiTags, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
-@ApiTags('field-mapping')
-@Controller('field-mapping')
+@ApiTags('field-mappings')
+@Controller('field-mappings')
 export class FieldMappingController {
   constructor(
     private readonly fieldMappingService: FieldMappingService,

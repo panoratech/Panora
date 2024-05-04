@@ -6,7 +6,7 @@ const useProviderProperties = (linkedUserId: string, providerId: string) => {
   return useQuery({
     queryKey: ['providerProperties', linkedUserId, providerId], 
     queryFn: async () => {
-      const response = await fetch(`${config.API_URL}/field-mapping/properties?linkedUserId=${linkedUserId}&providerId=${providerId}`,
+      const response = await fetch(`${config.API_URL}/field-mappings/properties?linkedUserId=${linkedUserId}&providerId=${providerId}`,
       {
         method: 'GET',
         headers: {

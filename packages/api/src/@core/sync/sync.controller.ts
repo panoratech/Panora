@@ -4,8 +4,8 @@ import { LoggerService } from '../logger/logger.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
-@ApiTags('sync')
-@Controller('sync')
+@ApiTags('syncs')
+@Controller('syncs')
 export class SyncController {
   constructor(
     private readonly syncService: CoreSyncService,
@@ -31,7 +31,7 @@ export class SyncController {
   })
   @ApiResponse({ status: 200 })
   @UseGuards(ApiKeyAuthGuard)
-  @Get('resync/:vertical')
+  @Get('resyncs/:vertical')
   resync(@Param('vertical') vertical: string) {
     // TODO: get the right user_id of the premium user using the api key
     const user_id = '';

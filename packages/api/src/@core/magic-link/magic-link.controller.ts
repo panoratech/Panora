@@ -10,8 +10,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-@ApiTags('magic-link')
-@Controller('magic-link')
+@ApiTags('magic-links')
+@Controller('magic-links')
 export class MagicLinkController {
   constructor(
     private readonly magicLinkService: MagicLinkService,
@@ -27,7 +27,7 @@ export class MagicLinkController {
   @ApiBody({ type: CreateMagicLinkDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
-  @Post('create')
+  @Post()
   createLink(@Body() data: CreateMagicLinkDto) {
     return this.magicLinkService.createUniqueLink(data);
   }

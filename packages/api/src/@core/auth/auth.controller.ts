@@ -5,7 +5,6 @@ import {
   Get,
   UseGuards,
   Request,
-  Query,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
@@ -32,14 +31,6 @@ export class AuthController {
   @Post('register')
   async registerUser(@Body() user: CreateUserDto) {
     return this.authService.register(user);
-  }
-
-  @ApiOperation({ operationId: 'createUser', summary: 'Create User' })
-  @ApiBody({ type: CreateUserDto })
-  @ApiResponse({ status: 201 })
-  @Post('users/create')
-  async createUser(@Body() user: CreateUserDto) {
-    return this.authService.createUser(user);
   }
 
   @ApiOperation({ operationId: 'signIn', summary: 'Log In' })

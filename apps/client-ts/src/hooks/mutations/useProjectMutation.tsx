@@ -12,7 +12,7 @@ const useProjectMutation = () => {
     const queryClient = useQueryClient();
     
     const addProject = async (data: IProDto) => {
-        const response = await fetch(`${config.API_URL}/projects/create`, {
+        const response = await fetch(`${config.API_URL}/projects`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

@@ -10,7 +10,7 @@ const useLinkedUserMutation = () => {
     const queryClient = useQueryClient();
     
     const addLinkedUser = async (linkedUserData: ILinkedUserDto) => {
-        const response = await fetch(`${config.API_URL}/linked-users/create`, {
+        const response = await fetch(`${config.API_URL}/linked-users`, {
             method: 'POST',
             body: JSON.stringify(linkedUserData),
             headers: {

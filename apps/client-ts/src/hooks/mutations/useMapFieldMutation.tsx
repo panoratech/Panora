@@ -12,7 +12,7 @@ interface IMapTargetFieldDto {
 
 const useMapFieldMutation = () => {
     const mapField = async (data: IMapTargetFieldDto) => {
-        const response = await fetch(`${config.API_URL}/field-mapping/map`, {
+        const response = await fetch(`${config.API_URL}/field-mappings/map`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

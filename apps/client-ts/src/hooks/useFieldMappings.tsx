@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 
 const useFieldMappings = () => {
   return useQuery({queryKey: ['mappings'], queryFn: async (): Promise<Attribute[]> => {
-    const response = await fetch(`${config.API_URL}/field-mapping/attribute`,
+    const response = await fetch(`${config.API_URL}/field-mappings/attribute`,
     {
       method: 'GET',
       headers: {
