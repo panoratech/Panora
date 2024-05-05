@@ -180,7 +180,7 @@ export default function Page() {
                     <CardTitle className="text-left">Your Fields Mapping</CardTitle>
                     <CardDescription className="text-left">
                       You built {mappings ? mappings.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} fields mappings.
-                        <a href="https://docs.panora.dev/core-concepts/custom-fields" target="_blank" rel="noopener noreferrer"><strong> Learn more about custom field mappings</strong></a>
+                        <a href="https://docs.panora.dev/core-concepts/custom-fields" target="_blank" rel="noopener noreferrer">Learn more about custom field mappings</a>
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
