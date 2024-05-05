@@ -16,7 +16,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -35,8 +34,7 @@ import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { DataTableLoading } from "@/components/shared/data-table-loading";
-import { Heading } from "@/components/ui/heading";
-import Cookies from 'js-cookie';
+import {CustomHeading}  from "@/components/shared/custom-heading";
 
 const formSchema = z.object({
   apiKeyIdentifier: z.string().min(2, {
@@ -121,7 +119,7 @@ export default function Page() {
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex flex-col items-start justify-between space-y-2">
-          <Heading
+          <CustomHeading
           title="API Keys"
           description={
             <>
