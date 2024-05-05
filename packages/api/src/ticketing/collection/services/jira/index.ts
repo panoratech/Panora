@@ -8,7 +8,8 @@ import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ICollectionService } from '@ticketing/collection/types';
-import { JiraCollectionOutput } from './types';
+import { JiraCollectionOutput, JiraCollectionInput } from './types';
+import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 
 @Injectable()
 export class JiraService implements ICollectionService {
@@ -60,5 +61,14 @@ export class JiraService implements ICollectionService {
         ActionType.GET,
       );
     }
+  }
+
+  async addCollection(
+    commentData: DesunifyReturnType,
+    linkedUserId: string
+  ): Promise<ApiResponse<JiraCollectionInput>> {
+
+    return null;
+
   }
 }

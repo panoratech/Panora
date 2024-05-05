@@ -14,13 +14,13 @@ export type ProviderConfig = {
   description: string;
   active?: boolean;
 
-  customPropertiesUrl?: string; 
+  customPropertiesUrl?: string;
   authStrategy?: AuthStrategy;
   urls: {
     docsUrl: string;
     apiUrl: string;
     authBaseUrl?: string; // url used to authorize an application on behalf of the user (only when authStrategy is oauth2)
-    customPropertiesUrl?: string; 
+    customPropertiesUrl?: string;
   }
 };
 
@@ -108,12 +108,12 @@ export const providersConfig: ProvidersConfig = {
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       authStrategy: AuthStrategy.oauth2,
-    }, 
+    },
     'accelo': {
       scopes: '',
       urls: {
         docsUrl: 'https://api.accelo.com/docs/#introduction',
-        authBaseUrl: '/oauth2/v0/authorize', 
+        authBaseUrl: '/oauth2/v0/authorize',
         apiUrl: '/api/v0',
       },
       logoPath: 'https://play-lh.googleusercontent.com/j63K2u8ZXukgPs8QPgyXfyoxuNBl_ST7gLx5DEFeczCTtM9e5JNpDjjBy32qLxFS7p0',
@@ -219,7 +219,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://developers.nutshell.com/',
         apiUrl: '/api/v1/json',
-      },      
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbCONyN9DCKfd4E8pzIdItl5VqPTEErpoEn9vHCgblRg&s',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -231,7 +231,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://pipeliner.stoplight.io/docs/api-docs',
         apiUrl: '',
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/rK9Qv_w9C8Py_aLZdQQDobNdHWSG8KL4dj3cBBQLcimVu-ctxwujA4VE442lIpZ65AE',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -255,7 +255,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: '',
         authBaseUrl: '',
         apiUrl: '',
-      },      
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgL4FJb-GptGfxDDkWbIX2CjIM77t5q-d7eCFY6sGsHA&s',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -268,7 +268,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: '',
         authBaseUrl: '',
         apiUrl: '',
-      },      
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQftNERc1ImBHm8MXXuWdhQiFYwW-dXNcogRL1UV8JyHFQGY2BbsbpwKvERwKRB39RH6zw&usqp=CAU',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -302,7 +302,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: '',
-      },      
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcUYrYD8lnaFaDN93vwjHhksKJUG3rqlb1TCFC__oPBw&s',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -315,7 +315,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: '',
         authBaseUrl: '',
         apiUrl: '',
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -394,12 +394,12 @@ export const providersConfig: ProvidersConfig = {
       scopes: '',
       urls: {
         docsUrl: 'https://docs.gitlab.com/ee/api/rest/#',
-        apiUrl: '/api/v4',
-        authBaseUrl: '/oauth/authorize',
+        apiUrl: 'https://gitlab.com/api/v4',
+        authBaseUrl: 'https://gitlab.com/oauth/authorize',
       },
       logoPath: '',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
-      active: false,
+      active: true,
       authStrategy: AuthStrategy.oauth2
     },
     'clickup': {
@@ -467,7 +467,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: '',
         apiUrl: '',
         authBaseUrl: '',
-      },      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+      }, logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
     },
@@ -478,7 +478,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: '',
         apiUrl: '',
         authBaseUrl: '',
-      },      logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+      }, logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
     },
@@ -487,7 +487,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://docs.dixa.io/docs/',
         apiUrl: 'https://dev.dixa.io',
-      },      
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -512,7 +512,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: '',
         apiUrl: '',
         authBaseUrl: '',
-      },      
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -602,7 +602,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: '',
-      },      
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -613,7 +613,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: '',
-      },        
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -623,7 +623,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://www.reamaze.com/api',
         apiUrl: '/api/v1',
-      },  
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -635,7 +635,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: '',
-      },  
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -646,7 +646,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: '',
-      },  
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -656,7 +656,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://developer.shortcut.com/api/rest/v3',
         apiUrl: 'https://api.app.shortcut.com',
-      },  
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -668,7 +668,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: '',
-      },        
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -679,7 +679,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: '',
-      },        
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -690,7 +690,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: 'https://api.app.shortcut.com',
-      },  
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -701,7 +701,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: 'https://developers.wrike.com/overview/',
         apiUrl: '/api/v4',
         authBaseUrl: 'https://login.wrike.com/oauth2/authorize/v4',
-      },  
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -712,7 +712,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: '',
-      },        
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -722,7 +722,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: '',
-      },        
+      },
       logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: false,
@@ -795,7 +795,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: '',
         apiUrl: '',
         authBaseUrl: '',
-      },         
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -807,7 +807,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: '',
         apiUrl: '',
         authBaseUrl: '',
-      },        
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -831,7 +831,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: '',
         apiUrl: '',
         authBaseUrl: '',
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -891,7 +891,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://customer.io/docs/api/track/',
         apiUrl: 'https://track.customer.io/api/'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -901,7 +901,7 @@ export const providersConfig: ProvidersConfig = {
         authBaseUrl: 'https://app.getresponse.com/oauth2_authorize.html',
         docsUrl: 'https://apidocs.getresponse.com/v3',
         apiUrl: 'https://api.getresponse.com/v3'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -913,7 +913,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -925,18 +925,18 @@ export const providersConfig: ProvidersConfig = {
         authBaseUrl: 'https://accounts.infusionsoft.com/app/oauth/authorize',
         docsUrl: 'https://developer.infusionsoft.com/docs/rest/',
         apiUrl: 'https://api.infusionsoft.com/crm/rest/v1/account/profile'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
       authStrategy: AuthStrategy.oauth2
     },
-    'klaviyo': { 
+    'klaviyo': {
       scopes: '',
       urls: {
         docsUrl: 'https://developers.klaviyo.com/en/reference/api_overview',
         apiUrl: 'https://a.klaviyo.com/api'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -948,7 +948,7 @@ export const providersConfig: ProvidersConfig = {
         authBaseUrl: 'https://login.mailchimp.com/oauth2/authorize',
         docsUrl: 'https://mailchimp.com/developer/marketing/api/',
         apiUrl: '' // todo
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -959,7 +959,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://developers.messagebird.com/api/',
         apiUrl: 'https://rest.messagebird.com'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -971,7 +971,7 @@ export const providersConfig: ProvidersConfig = {
         authBaseUrl: 'https://api.podium.com/oauth/authorize',
         docsUrl: 'https://docs.podium.com/reference/introduction',
         apiUrl: 'https://api.podium.com/v4'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -982,7 +982,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://docs.sendgrid.com/for-developers/sending-email/api-getting-started',
         apiUrl: 'https://api.sendgrid.com/v3'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -993,7 +993,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://developers.brevo.com/docs/getting-started',
         apiUrl: 'https://api.brevo.com/v3'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1008,7 +1008,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1018,7 +1018,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://developers.ashbyhq.com',
         apiUrl: 'https://api.ashbyhq.com'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1030,7 +1030,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://documentation.bamboohr.com/docs/getting-started',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1041,7 +1041,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://developer.breezy.hr/reference/overview',
         apiUrl: 'https://api.breezy.hr/v3'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1053,7 +1053,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://bullhorn.github.io/rest-api-docs/',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1063,7 +1063,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://docs.catsone.com/api/v3/',
         apiUrl: 'https://api.catsone.com/v3'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1074,7 +1074,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://clayhr.readme.io/',
         apiUrl: '/rm/api/v3'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1086,7 +1086,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1097,7 +1097,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1107,7 +1107,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: 'https://developer.lumesse-talenthub.com/rest-api-developers-guide/1.21.33/index.html?page=rest-api&subpage=introduction',
         apiUrl: 'https://apiproxy.shared.lumessetalentlink.com/tlk/rest'
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1118,7 +1118,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1128,7 +1128,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1138,7 +1138,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1148,7 +1148,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1158,7 +1158,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1168,7 +1168,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1178,7 +1178,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1188,7 +1188,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1198,7 +1198,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1208,7 +1208,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1218,7 +1218,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1228,7 +1228,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1238,7 +1238,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1248,7 +1248,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1258,7 +1258,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1268,7 +1268,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1278,7 +1278,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1288,7 +1288,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1298,7 +1298,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1308,7 +1308,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1318,7 +1318,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1328,7 +1328,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1338,7 +1338,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1348,7 +1348,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1358,7 +1358,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1368,7 +1368,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1378,7 +1378,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1388,7 +1388,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1398,7 +1398,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1408,7 +1408,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1418,7 +1418,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1428,7 +1428,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1438,7 +1438,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1448,7 +1448,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1458,7 +1458,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1468,7 +1468,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1478,7 +1478,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1491,7 +1491,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1501,7 +1501,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1511,7 +1511,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1521,7 +1521,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1531,7 +1531,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1541,7 +1541,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1551,7 +1551,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1561,7 +1561,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1571,7 +1571,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1581,7 +1581,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1591,7 +1591,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1601,7 +1601,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1611,7 +1611,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1621,7 +1621,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1631,7 +1631,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1641,7 +1641,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1651,7 +1651,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1661,7 +1661,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1671,7 +1671,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1681,7 +1681,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1691,7 +1691,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1701,7 +1701,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1711,7 +1711,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1721,7 +1721,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1731,7 +1731,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1741,7 +1741,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1751,7 +1751,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1761,7 +1761,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1771,7 +1771,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1781,7 +1781,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1791,7 +1791,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1801,7 +1801,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1811,7 +1811,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1821,7 +1821,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1831,7 +1831,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1841,7 +1841,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1851,7 +1851,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1861,7 +1861,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1871,7 +1871,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1881,7 +1881,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1891,7 +1891,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1901,7 +1901,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1911,7 +1911,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1921,7 +1921,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1931,7 +1931,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1941,7 +1941,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1951,7 +1951,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1961,7 +1961,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1971,7 +1971,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1981,7 +1981,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -1991,7 +1991,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2001,7 +2001,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2011,7 +2011,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2021,7 +2021,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2031,7 +2031,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2041,7 +2041,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2051,7 +2051,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2061,7 +2061,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2071,7 +2071,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2081,7 +2081,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2091,7 +2091,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2101,7 +2101,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2111,7 +2111,7 @@ export const providersConfig: ProvidersConfig = {
       urls: {
         docsUrl: '',
         apiUrl: ''
-      },      
+      },
       logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
       active: false,
@@ -2161,15 +2161,15 @@ export function providersArray(vertical: string): Provider[] {
   const activeProviders = getActiveProvidersForVertical(vertical);
   return Object.entries(activeProviders).map(([providerName, config]) => ({
 
-      name: providerName,
-      urls: {
-        docsUrl: config.urls.docsUrl,
-        apiUrl: config.urls.apiUrl,
-        authBaseUrl: config.urls.authBaseUrl,
-      },
-      scopes: config.scopes,
-      logoPath: config.logoPath,
-      description: config.description,
+    name: providerName,
+    urls: {
+      docsUrl: config.urls.docsUrl,
+      apiUrl: config.urls.apiUrl,
+      authBaseUrl: config.urls.authBaseUrl,
+    },
+    scopes: config.scopes,
+    logoPath: config.logoPath,
+    description: config.description,
   }));
 }
 

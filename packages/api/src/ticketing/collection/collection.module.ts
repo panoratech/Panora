@@ -1,3 +1,4 @@
+import { GitlabService } from './services/gitlab';
 import { Module } from '@nestjs/common';
 import { CollectionController } from './collection.controller';
 import { SyncService } from './sync/sync.service';
@@ -32,6 +33,7 @@ import { JiraService } from './services/jira';
     ServiceRegistry,
     /* PROVIDERS SERVICES */
     JiraService,
+    GitlabService,
   ],
   exports: [
     SyncService,

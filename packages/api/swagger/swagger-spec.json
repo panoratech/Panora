@@ -83,31 +83,6 @@
         ]
       }
     },
-    "/auth/users/create": {
-      "post": {
-        "operationId": "createUser",
-        "summary": "Create User",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "auth"
-        ]
-      }
-    },
     "/auth/login": {
       "post": {
         "operationId": "signIn",
@@ -425,7 +400,7 @@
         ]
       }
     },
-    "/linked-users/create": {
+    "/linked-users": {
       "post": {
         "operationId": "addLinkedUser",
         "summary": "Add Linked User",
@@ -448,9 +423,7 @@
         "tags": [
           "linked-users"
         ]
-      }
-    },
-    "/linked-users": {
+      },
       "get": {
         "operationId": "getLinkedUsers",
         "summary": "Retrieve Linked Users",
@@ -542,9 +515,7 @@
         "tags": [
           "projects"
         ]
-      }
-    },
-    "/projects/create": {
+      },
       "post": {
         "operationId": "createProject",
         "summary": "Create a project",
@@ -569,7 +540,7 @@
         ]
       }
     },
-    "/field-mapping/entities": {
+    "/field-mappings/entities": {
       "get": {
         "operationId": "getFieldMappingsEntities",
         "summary": "Retrieve field mapping entities",
@@ -580,11 +551,11 @@
           }
         },
         "tags": [
-          "field-mapping"
+          "field-mappings"
         ]
       }
     },
-    "/field-mapping/attribute": {
+    "/field-mappings/attribute": {
       "get": {
         "operationId": "getFieldMappings",
         "summary": "Retrieve field mappings",
@@ -595,11 +566,11 @@
           }
         },
         "tags": [
-          "field-mapping"
+          "field-mappings"
         ]
       }
     },
-    "/field-mapping/value": {
+    "/field-mappings/value": {
       "get": {
         "operationId": "getFieldMappingValues",
         "summary": "Retrieve field mappings values",
@@ -610,11 +581,11 @@
           }
         },
         "tags": [
-          "field-mapping"
+          "field-mappings"
         ]
       }
     },
-    "/field-mapping/define": {
+    "/field-mappings/define": {
       "post": {
         "operationId": "defineTargetField",
         "summary": "Define target Field",
@@ -635,11 +606,11 @@
           }
         },
         "tags": [
-          "field-mapping"
+          "field-mappings"
         ]
       }
     },
-    "/field-mapping/map": {
+    "/field-mappings/map": {
       "post": {
         "operationId": "mapField",
         "summary": "Map Custom Field",
@@ -660,11 +631,11 @@
           }
         },
         "tags": [
-          "field-mapping"
+          "field-mappings"
         ]
       }
     },
-    "/field-mapping/properties": {
+    "/field-mappings/properties": {
       "get": {
         "operationId": "getCustomProviderProperties",
         "summary": "Retrieve Custom Properties",
@@ -700,7 +671,7 @@
           }
         },
         "tags": [
-          "field-mapping"
+          "field-mappings"
         ]
       }
     },
@@ -762,7 +733,7 @@
         ]
       }
     },
-    "/magic-link/create": {
+    "/magic-links": {
       "post": {
         "operationId": "createMagicLink",
         "summary": "Create a Magic Link",
@@ -783,11 +754,9 @@
           }
         },
         "tags": [
-          "magic-link"
+          "magic-links"
         ]
-      }
-    },
-    "/magic-link": {
+      },
       "get": {
         "operationId": "getMagicLinks",
         "summary": "Retrieve Magic Links",
@@ -798,11 +767,11 @@
           }
         },
         "tags": [
-          "magic-link"
+          "magic-links"
         ]
       }
     },
-    "/magic-link/single": {
+    "/magic-links/single": {
       "get": {
         "operationId": "getMagicLink",
         "summary": "Retrieve a Magic Link",
@@ -822,7 +791,7 @@
           }
         },
         "tags": [
-          "magic-link"
+          "magic-links"
         ]
       }
     },
@@ -1065,7 +1034,7 @@
         ]
       }
     },
-    "/sync/status/{vertical}": {
+    "/syncs/status/{vertical}": {
       "get": {
         "operationId": "getSyncStatus",
         "summary": "Retrieve sync status of a certain vertical",
@@ -1085,11 +1054,11 @@
           }
         },
         "tags": [
-          "sync"
+          "syncs"
         ]
       }
     },
-    "/sync/resync/{vertical}": {
+    "/syncs/resyncs/{vertical}": {
       "get": {
         "operationId": "resync",
         "summary": "Resync common objects across a vertical",
@@ -1109,7 +1078,7 @@
           }
         },
         "tags": [
-          "sync"
+          "syncs"
         ]
       }
     },
@@ -3141,7 +3110,7 @@
         ]
       }
     },
-    "/ticketing/collection": {
+    "/ticketing/collections": {
       "get": {
         "operationId": "getCollections",
         "summary": "List a batch of Collections",
@@ -3189,11 +3158,11 @@
           }
         },
         "tags": [
-          "ticketing/collection"
+          "ticketing/collections"
         ]
       }
     },
-    "/ticketing/collection/{id}": {
+    "/ticketing/collections/{id}": {
       "get": {
         "operationId": "getCollection",
         "summary": "Retrieve a Collection",
@@ -3242,7 +3211,7 @@
           }
         },
         "tags": [
-          "ticketing/collection"
+          "ticketing/collections"
         ]
       }
     },

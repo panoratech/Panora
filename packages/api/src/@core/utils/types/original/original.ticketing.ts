@@ -1,3 +1,4 @@
+
 import {
   FrontAccountInput,
   FrontAccountOutput,
@@ -82,7 +83,7 @@ import {
   JiraTagInput,
   JiraTagOutput,
 } from '@ticketing/tag/services/jira/types';
-import { JiraCollectionOutput } from '@ticketing/collection/services/jira/types';
+import { JiraCollectionOutput, JiraCollectionInput } from '@ticketing/collection/services/jira/types';
 import {
   ZendeskTicketInput,
   ZendeskTicketOutput,
@@ -111,7 +112,10 @@ import {
   ZendeskUserInput,
   ZendeskUserOutput,
 } from '@ticketing/user/services/zendesk/types';
-
+import {
+  GitlabCollectionInput,
+  GitlabCollectionOutput,
+} from '@ticketing/collection/services/gitlab/types';
 /* INPUT */
 
 /* ticket */
@@ -161,7 +165,7 @@ export type OriginalTeamInput =
 
 /* attachment */
 export type OriginalAttachmentInput = null;
-export type OriginalCollectionInput = null;
+export type OriginalCollectionInput = JiraCollectionInput | GitlabCollectionInput;
 
 export type TicketingObjectInput =
   | OriginalTicketInput
@@ -228,7 +232,8 @@ export type OriginalAttachmentOutput =
 
 /* collection */
 
-export type OriginalCollectionOutput = JiraCollectionOutput;
+export type OriginalCollectionOutput = JiraCollectionOutput | GitlabCollectionOutput;
+
 
 export type TicketingObjectOutput =
   | OriginalTicketOutput
@@ -240,3 +245,5 @@ export type TicketingObjectOutput =
   | OriginalContactOutput
   | OriginalAccountOutput
   | OriginalCollectionOutput;
+
+
