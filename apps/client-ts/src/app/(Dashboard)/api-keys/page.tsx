@@ -167,7 +167,7 @@ export default function Page() {
                 <DialogHeader>
                   <DialogTitle>Create a new API key</DialogTitle>
                   <DialogDescription>
-                  Keep your key safe. <br></br>Save and store this new key to a secure place, such as a password manager or secret store. You won't be able to see it again.
+                  Keep your key safe. <br></br>Save and store this new key to a secure place, such as a password manager or secret store. You will not be able to see it again.
                   </DialogDescription>
                 </DialogHeader>
 
