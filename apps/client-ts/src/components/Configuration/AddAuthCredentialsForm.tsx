@@ -220,7 +220,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         attributes:["client_id","client_secret","scope"],
                         values:[client_id,client_secret,scope]
                     })
-                    posthog?.capture("Connection_strategy_0Auth2_updated", {
+                    posthog?.capture("Connection_strategy_OAuth2_updated", {
                         id_project: idProject,
                         mode: config.DISTRIBUTION
                       });
@@ -233,7 +233,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         attributes:["client_id","client_secret","scope"],
                         values:[client_id,client_secret,scope]
                     });
-                    posthog?.capture("Connection_strategy_0Auth2_created", {
+                    posthog?.capture("Connection_strategy_OAuth2_created", {
                         id_project: idProject,
                         mode: config.DISTRIBUTION
                       });
@@ -352,9 +352,9 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
 <form onSubmit={form.handleSubmit(onSubmit)}>
     <CardHeader>
-        <CardTitle>Add 0Auth Credentials</CardTitle>
+        <CardTitle>Add OAuth Credentials</CardTitle>
         <CardDescription>
-        Add your provider&apos; credentials for connection.
+        In the event that you are using your own OAuth credentials, Panora gives you have the option to import them instead of using our pre-made OAuth apps.
         </CardDescription>
     </CardHeader>
     <CardContent className="grid gap-5">
@@ -461,7 +461,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                                 <SelectValue placeholder="Select Authentication Method" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value={AuthStrategy.oauth2}>0Auth2</SelectItem>
+                                <SelectItem value={AuthStrategy.oauth2}>OAuth2</SelectItem>
                                 <SelectItem value={AuthStrategy.api_key}>API</SelectItem>
                                 <SelectItem value={AuthStrategy.basic}>Basic Auth</SelectItem>
                             </SelectContent>
@@ -474,7 +474,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
 
         </div>
 
-        {/* If Authentication Method is 0Auth2 */}
+        {/* If Authentication Method is OAuth2 */}
 
         {Watch.auth_type===AuthStrategy.oauth2 ? 
             <>
@@ -607,7 +607,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
             <></>}
         </CardContent>
         <CardFooter className="justify-between space-x-2">
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Save</Button>
         </CardFooter>
 </form>
 </Form>

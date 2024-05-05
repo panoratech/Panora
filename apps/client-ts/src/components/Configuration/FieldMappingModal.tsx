@@ -155,17 +155,18 @@ export function FModal({ onClose }: {onClose: () => void}) {
   return (
     <Tabs defaultValue="define" className="m-2" >
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="define">Define Field</TabsTrigger>
-        <TabsTrigger value="map">Map Fields</TabsTrigger>
+        <TabsTrigger value="define">Create Field</TabsTrigger>
+        <TabsTrigger value="map">Map Field</TabsTrigger>
       </TabsList>
       <TabsContent value="define">
         <Card>
           <Form {...defineForm}>
             <form onSubmit={defineForm.handleSubmit(onDefineSubmit)}>
               <CardHeader>
-                <CardTitle>Define Panora Field</CardTitle>
+                <CardTitle>Create a custom field</CardTitle>
                 <CardDescription>
-                  Define a Panora custom field to extend a unified model. Once done, you can map it to an existing field in your end-user's software.
+                  Create a custom field in Panora to extend our unified objects. Once done, you can map this field to existing fields in your end-user's software. Find details in
+                  <a href="https://docs.panora.dev/core-concepts/custom-fields" target="_blank" rel="noopener noreferrer"><strong> documentation</strong></a>.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
@@ -175,7 +176,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                       name="standardModel"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Standard Object</FormLabel>
+                          <FormLabel>What object to you want to extend?</FormLabel>
                           <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value} >
                             <SelectTrigger className="w-[180px]">
@@ -192,9 +193,6 @@ export function FModal({ onClose }: {onClose: () => void}) {
                             </SelectContent>
                           </Select>
                           </FormControl>
-                          <FormDescription>
-                            This is the common unified model (Contact, Company, Ticket...)
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -206,16 +204,13 @@ export function FModal({ onClose }: {onClose: () => void}) {
                       name="fieldName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel>Give your Custom Field an identifier</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="favorite_color" {...field} 
+                              placeholder="ex: hair_color, or lead_score" {...field} 
                               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
                             />
                           </FormControl>
-                          <FormDescription>
-                            This will be the name of the field on Panora's side.
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -234,9 +229,6 @@ export function FModal({ onClose }: {onClose: () => void}) {
                               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
                             />
                           </FormControl>
-                          <FormDescription>
-                            A quick description of the field to remind you its context.
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -248,7 +240,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                       name="fieldType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Field Type</FormLabel>
+                          <FormLabel>Data Type</FormLabel>
                           <FormControl>
                           <Select
                             onValueChange={field.onChange} defaultValue={field.value}
@@ -258,18 +250,15 @@ export function FModal({ onClose }: {onClose: () => void}) {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                <SelectItem value="string">string</SelectItem>
-                                <SelectItem value="int">int</SelectItem>
-                                <SelectItem value="string[]">string[]</SelectItem>
-                                <SelectItem value="int[]">int[]</SelectItem>
+                                <SelectItem value="string">Text</SelectItem>
+                                <SelectItem value="int">Number</SelectItem>
+                                <SelectItem value="string[]">Text Array</SelectItem>
+                                <SelectItem value="int[]">Number Array</SelectItem>
                                 <SelectItem value="date">Date</SelectItem>
                               </SelectGroup>
                             </SelectContent>
                           </Select>
                           </FormControl>
-                          <FormDescription>
-                            This is the type of the field.
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -277,7 +266,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className='w-full'>Define Field</Button>
+                <Button className='w-full'>Create Field</Button>
               </CardFooter>
             </form>
           </Form>
@@ -289,9 +278,9 @@ export function FModal({ onClose }: {onClose: () => void}) {
 
           <form onSubmit={mapForm.handleSubmit(onMapSubmit)}>
             <CardHeader>
-              <CardTitle>Map</CardTitle>
+              <CardTitle>Map Field</CardTitle>
               <CardDescription>
-                After you defined a Panora custom field, you can map it to an existent custom field on your end-user's software.
+              Field Mapping allows you to map data from your users' platforms to custom fields on your Panora Unified Models.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -301,7 +290,7 @@ export function FModal({ onClose }: {onClose: () => void}) {
                     name="attributeId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Panora Field</FormLabel>
+                        <FormLabel>Panora Custom Field</FormLabel>
                         <FormControl>
                         <Select 
                           onValueChange={field.onChange} defaultValue={field.value}
@@ -321,9 +310,6 @@ export function FModal({ onClose }: {onClose: () => void}) {
                           </SelectContent>
                         </Select>
                         </FormControl>
-                        <FormDescription>
-                          This is the field name that you defined.
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}

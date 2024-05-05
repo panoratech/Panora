@@ -116,9 +116,9 @@ const AddWebhook = () => {
 
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 <CardHeader>
-                    <CardTitle>Define your webhook</CardTitle>
+                    <CardTitle>Create a webhook</CardTitle>
                     <CardDescription>
-                    React to specific events in your product.
+                    Set up your webhook endpoint to receive live events from Panora.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6">
@@ -160,15 +160,14 @@ const AddWebhook = () => {
                             name="url"
                             render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Destination URL</FormLabel>
+                                <FormLabel>Endpoint URL</FormLabel>
                                 <FormControl>
                                 <Input 
-                                    placeholder="https://localhost/my-endpoint/webhook" {...field} 
+                                    placeholder="https://yourdomain/webhook_endpoint" {...field} 
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
                                 />
                                 </FormControl>
                                 <FormDescription>
-                                This is the endpoint where the webhook will send requests to.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -184,13 +183,10 @@ const AddWebhook = () => {
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
                                 <Input 
-                                    placeholder="Please include a description of your endpoint." {...field} 
+                                    placeholder="Give your endpoint a short, descriptive name." {...field} 
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
                                 />
                                 </FormControl>
-                                <FormDescription>
-                                This is the description of your webhook.
-                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                             )}
@@ -198,7 +194,7 @@ const AddWebhook = () => {
                     </div>
                 </CardContent>
                 <CardFooter className="justify-between space-x-2">
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">Add Endpoint</Button>
                 </CardFooter>
             </form>
             </Form>

@@ -44,7 +44,7 @@ const AddAuthCredentials = () => {
             }}
           >
             <PlusCircledIcon className=" h-5 w-5" />
-            Add 0Auth Credentials
+            Add Custom OAuth
         </Button>
         </DialogTrigger>
         <DialogContent className="sm:w-[450px] lg:max-w-screen-lg overflow-y-scroll max-h-screen">

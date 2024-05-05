@@ -192,7 +192,7 @@ const AddConnectionButton = ({
         <DialogHeader>
           <DialogTitle>Share this magic link with your customers</DialogTitle>
           <DialogDescription>
-            {showNewLinkedUserDialog.import ? "You can upload a sheet of your existing customers" : "Generate a unique link for your customer"}
+            {showNewLinkedUserDialog.import ? "You can upload a sheet of your existing customers" : "Panora's Magic Link allows you to deliver an in-browser Panora Link experience and let users grant you access to their account. Send your users secure URLs to authorize their integrations in production without frontend code."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -210,12 +210,12 @@ const AddConnectionButton = ({
                             <FormLabel>Origin User Identifier</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="acme-inc-user-123" {...field} 
+                                placeholder='ex: "johndoe123_crm", or "johndoe123_ticketing"' {...field} 
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
                               />
                             </FormControl>
                             <FormDescription>
-                              This is the id of the user in your system.
+                            Uniquely identifies Linked Accounts. An end-user should have one for each third-party account connected.
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -231,12 +231,12 @@ const AddConnectionButton = ({
                             <FormLabel>Origin User Email</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="joedoe@acme.inc" {...field} 
+                                placeholder="steve@apple.inc" {...field} 
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
                               />
                             </FormControl>
                             <FormDescription>
-                              This is the email of the user in your system.
+                            For identification purposes — we will not send anything.
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -260,7 +260,7 @@ const AddConnectionButton = ({
               Cancel
             </Button>
           </DialogClose>
-          <Button type="submit">Generate</Button>
+          <Button type="submit">Create Magic Link</Button>
         </DialogFooter>
         </form>
         </Form>
