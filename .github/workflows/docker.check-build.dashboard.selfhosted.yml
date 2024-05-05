@@ -1,4 +1,4 @@
-name: Compile Docker Images (Frontend Selfhosted)
+name: Compile Docker Images (Frontend Dashboard Selfhosted)
 
 on:
   pull_request:

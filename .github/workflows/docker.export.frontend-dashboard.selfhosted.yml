@@ -1,4 +1,4 @@
-name: Export Docker Images (Frontend Selfhosted)
+name: Export Docker Images (Frontend Dashboard Selfhosted)
 
 on:
   push:

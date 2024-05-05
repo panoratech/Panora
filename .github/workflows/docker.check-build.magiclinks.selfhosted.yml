@@ -1,4 +1,4 @@
-name: Compile Docker Images (Frontend Selfhosted)
+name: Compile Docker Images (Frontend Magiclinks Selfhosted)
 
 on:
   pull_request:
