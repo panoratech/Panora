@@ -16,7 +16,6 @@ RUN pnpm add -g turbo
 COPY . .
 RUN turbo prune api --docker
 
-# resulat: full/, json/ pnpm-lock.yaml , pnpm-workspace.yaml
 # =======================================================================
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer

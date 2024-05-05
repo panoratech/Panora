@@ -131,7 +131,7 @@ export default function Page() {
                 Webhooks
               </TabsTrigger>
               <TabsTrigger value="0auth">
-                0Auth Credentials
+                OAuth Credentials
               </TabsTrigger>
             </TabsList>
             <TabsContent value="linked-accounts" className="space-y-4">
@@ -179,7 +179,8 @@ export default function Page() {
                   <CardHeader>
                     <CardTitle className="text-left">Your Fields Mapping</CardTitle>
                     <CardDescription className="text-left">
-                      You built {mappings ? mappings.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} fields mapping.
+                      You built {mappings ? mappings.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} fields mappings.
+                        <a href="https://docs.panora.dev/core-concepts/custom-fields" target="_blank" rel="noopener noreferrer"><strong> Learn more about custom field mappings</strong></a>
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
@@ -198,6 +199,7 @@ export default function Page() {
                     <CardTitle className="text-left">Your Webhooks</CardTitle>
                     <CardDescription className="text-left">
                       You enabled {webhooks ? webhooks.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} webhooks.
+                      <a href="https://docs.panora.dev/webhooks/overview" target="_blank" rel="noopener noreferrer"><strong> Read more about webhooks from our documentation</strong></a>
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
