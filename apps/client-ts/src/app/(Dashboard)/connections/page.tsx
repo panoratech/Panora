@@ -12,7 +12,8 @@ export default function ConnectionPage() {
           title="Connections"
           description="Connections between your product and your users’ accounts on third-party software."
           />
-        </div>         
+        </div>
+        <></>
         <ConnectionTable />
         </div>
       </div>

@@ -122,8 +122,13 @@ export default function Page() {
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex flex-col items-start justify-between space-y-2">
           <Heading
-          title="Api Keys"
-          description="Manage your api keys."
+          title="API Keys"
+          description={
+            <>
+              Create a key that unlocks full API access to this project. 
+              <a href="https://docs.panora.dev/core-concepts/auth#learn-how-to-generate-your-api-keys-and-catch-connection-tokens" target="_blank" rel="noopener noreferrer"> More details in <strong>our documentation</strong></a>.
+            </>
+          }
           />
         </div>          
         <div>
@@ -160,9 +165,9 @@ export default function Page() {
               (
                 <>
                 <DialogHeader>
-                  <DialogTitle>Add New Api Key</DialogTitle>
+                  <DialogTitle>Create a new API key</DialogTitle>
                   <DialogDescription>
-                    Never share this key, you must saved it it will be displayed once !
+                  Keep your key safe. <br></br>Save and store this new key to a secure place, such as a password manager or secret store. You won't be able to see it again.
                   </DialogDescription>
                 </DialogHeader>
 
@@ -175,16 +180,13 @@ export default function Page() {
                           name="apiKeyIdentifier"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>API Key Identifier</FormLabel>
+                              <FormLabel>Name your API key</FormLabel>
                               <FormControl>
                                 <Input 
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                                placeholder="My Best Key For Finance Data" {...field}
+                                placeholder="Your awesome key name" {...field}
                                 />
                               </FormControl>
-                              <FormDescription>
-                                This is the API Key Identifier of system.
-                              </FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}
