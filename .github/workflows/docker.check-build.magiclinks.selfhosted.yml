@@ -1,0 +1,30 @@
+name: Compile Docker Images (Frontend Magiclinks Selfhosted)
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ENVIRONMENT: SELF_HOSTED
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Frontend (Magic Links)
+        uses: docker/build-push-action@v2
+        with:
+          platforms: linux/amd64,linux/arm64
+          context: .
+          file: ./apps/magic-link/Dockerfile
+          push: false
+          tags: panoradotdev/frontend-magic-links:selfhosted
+          build-args: |
+            VITE_BACKEND_DOMAIN=${{ secrets.VITE_BACKEND_DOMAIN }}
