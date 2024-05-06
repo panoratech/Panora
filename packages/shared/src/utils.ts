@@ -43,7 +43,7 @@ export const providersConfig: ProvidersConfig = {
         docsUrl: 'https://developers.hubspot.com/docs/api/crm/understanding-the-crm',
         authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
         apiUrl: 'https://api.hubapi.com/crm/v3',
-        customPropertiesUrl: '/properties/v1/contacts/properties',
+        customPropertiesUrl: '/properties/contacts',
       },
       logoPath: 'https://assets-global.website-files.com/6421a177cdeeaf3c6791b745/64d61202dd99e63d40d446f6_hubspot%20logo.png',
       description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
