@@ -391,7 +391,7 @@ export const providersConfig: ProvidersConfig = {
       authStrategy: AuthStrategy.oauth2
     },
     'gitlab': {
-      scopes: '',
+      scopes: 'api read_api read_user create_runner k8s_proxy read_repository write_repository sudo admin_mode read_service_ping openid profile email',
       urls: {
         docsUrl: 'https://docs.gitlab.com/ee/api/rest/#',
         apiUrl: 'https://gitlab.com/api/v4',
