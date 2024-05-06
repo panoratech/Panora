@@ -60,7 +60,7 @@ export class SyncService implements OnModuleInit {
   }
   //function used by sync worker which populate our tcg_users table
   //its role is to fetch all users from providers 3rd parties and save the info inside our db
-  //@Cron('*/2 * * * *') // every 2 minutes (for testing)
+  // @Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
   async syncUsers(user_id?: string) {
     try {
@@ -157,7 +157,8 @@ export class SyncService implements OnModuleInit {
       );
 
       const sourceObject: OriginalUserOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+      // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+      // console.log("Source Data ", sourceObject)
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalUserOutput[]>({
         sourceObject,
@@ -253,10 +254,12 @@ export class SyncService implements OnModuleInit {
             created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
-            id_tcg_account: user.account_id || '',
+            // id_tcg_account: user.account_id || '',
             remote_id: originId,
             remote_platform: originSource,
           };
+
+          // console.log("Tcg user Data: ", data)
           const res = await this.prisma.tcg_users.create({
             data: data,
           });

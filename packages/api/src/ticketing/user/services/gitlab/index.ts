@@ -46,8 +46,10 @@ export class GitlabService implements IUserService {
             });
             this.logger.log(`Synced gitlab users !`);
 
+            // console.log("Users Data : ", resp.data);
+
             return {
-                data: resp.data._results,
+                data: resp.data,
                 message: 'gitlab users retrieved',
                 statusCode: 200,
             };
