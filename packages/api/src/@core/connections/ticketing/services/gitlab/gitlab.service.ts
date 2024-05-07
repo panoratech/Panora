@@ -80,6 +80,8 @@ export class GitlabConnectionService implements ITicketingConnectionService {
         'OAuth credentials : gitlab ticketing ' + JSON.stringify(data),
       );
 
+      // console.log("Gitlab Credentials : ", data)
+
       let db_res;
       const connection_token = uuidv4();
 
@@ -153,6 +155,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
         },
       );
       const data: GitlabOAuthResponse = res.data;
+      // console.log("Gitlab Credentials (In refresh) : ", data)
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
@@ -165,9 +168,9 @@ export class GitlabConnectionService implements ITicketingConnectionService {
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : jira ');
+      this.logger.log('OAuth credentials updated : gitlab ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'jira', Action.oauthRefresh);
+      handleServiceError(error, this.logger, 'gitlab', Action.oauthRefresh);
     }
   }
 }

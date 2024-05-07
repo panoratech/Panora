@@ -7,12 +7,11 @@ import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
-import { ICollectionService } from '@ticketing/collection/types';
-import { GitlabCollectionInput, GitlabCollectionOutput } from './types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
+import { ITagService } from '@ticketing/tag/types';
+import { GitlabTagOutput } from './types';
 
 @Injectable()
-export class GitlabService implements ICollectionService {
+export class GitlabService implements ITagService {
     constructor(
         private prisma: PrismaService,
         private logger: LoggerService,
@@ -20,14 +19,17 @@ export class GitlabService implements ICollectionService {
         private registry: ServiceRegistry,
     ) {
         this.logger.setContext(
-            TicketingObject.collection.toUpperCase() + ':' + GitlabService.name,
+            TicketingObject.tag.toUpperCase() + ':' + GitlabService.name,
         );
         this.registry.registerService('gitlab', this);
     }
 
-    async syncCollections(
+
+    // Here id_ticket ==> id_project
+    async syncTags(
         linkedUserId: string,
-    ): Promise<ApiResponse<GitlabCollectionOutput[]>> {
+        id_project: string,
+    ): Promise<ApiResponse<GitlabTagOutput[]>> {
         try {
             const connection = await this.prisma.connections.findFirst({
                 where: {
@@ -37,42 +39,22 @@ export class GitlabService implements ICollectionService {
                 },
             });
 
-            // It fetches all project from gitlab
-            // const resp = await axios.get(`${connection.account_url}/projects`, {
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         Authorization: `Bearer ${this.cryptoService.decrypt(
-            //             connection.access_token,
-            //         )}`,
-            //     },
-            // });
 
-            const currentUser = await axios.get(`${connection.account_url}/user`, {
+            const resp = await axios.get(`${connection.account_url}/projects/${id_project}/repository/tags`, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${this.cryptoService.decrypt(
                         connection.access_token,
                     )}`,
                 },
-            })
+            });
+            this.logger.log(`Synced gitlab tags !`);
 
-            const resp = await axios.get(`${connection.account_url}/users/${currentUser.data.id}/projects`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${this.cryptoService.decrypt(
-                        connection.access_token,
-                    )}`,
-                },
-            })
-
-            this.logger.log(`Synced gitlab collections !`);
-
-            // console.log("In index of gitlab", JSON.stringify(resp.data))
 
 
             return {
                 data: resp.data,
-                message: 'Gitlab collections retrieved',
+                message: 'Gitlab tags retrieved',
                 statusCode: 200,
             };
         } catch (error) {
@@ -80,11 +62,9 @@ export class GitlabService implements ICollectionService {
                 error,
                 this.logger,
                 'Gitlab',
-                TicketingObject.collection,
+                TicketingObject.tag,
                 ActionType.GET,
             );
         }
     }
-
-
 }
