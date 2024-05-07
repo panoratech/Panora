@@ -37,7 +37,6 @@ export class GitlabService implements ICollectionService {
                 },
             });
 
-            console.log("xzx : ", `${connection.account_url}/projects`)
 
             const resp = await axios.get(`${connection.account_url}/projects`, {
                 headers: {
@@ -69,49 +68,5 @@ export class GitlabService implements ICollectionService {
         }
     }
 
-    async addCollection(
-        commentData: DesunifyReturnType,
-        linkedUserId: string
-    ): Promise<ApiResponse<GitlabCollectionInput>> {
 
-        try {
-            const connection = await this.prisma.connections.findFirst({
-                where: {
-                    id_linked_user: linkedUserId,
-                    provider_slug: 'gitlab',
-                    vertical: 'ticketing',
-                },
-            });
-
-            const resp = await axios.post(
-                `${connection.account_url}/projects`,
-                JSON.stringify({
-                    data: commentData,
-                }),
-                {
-                    headers: {
-                        Authorization: `Bearer ${this.cryptoService.decrypt(
-                            connection.access_token,
-                        )}`,
-                        'Content-Type': 'application/json',
-                    },
-                },
-            );
-
-            return {
-                data: resp.data,
-                message: 'Gitlab Collection created',
-                statusCode: 201,
-            };
-        } catch (error) {
-            handleServiceError(
-                error,
-                this.logger,
-                'Gitlab',
-                TicketingObject.collection,
-                ActionType.POST,
-            );
-        }
-
-    }
 }

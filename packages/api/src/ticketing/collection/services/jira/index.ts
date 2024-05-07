@@ -63,12 +63,5 @@ export class JiraService implements ICollectionService {
     }
   }
 
-  async addCollection(
-    commentData: DesunifyReturnType,
-    linkedUserId: string
-  ): Promise<ApiResponse<JiraCollectionInput>> {
 
-    return null;
-
-  }
 }

@@ -12,10 +12,6 @@ export interface ICollectionService {
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalCollectionOutput[]>>;
 
-  addCollection(
-    collectionData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalCollectionInput>>;
 }
 
 export interface ICollectionMapper {
