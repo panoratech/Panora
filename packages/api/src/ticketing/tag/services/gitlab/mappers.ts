@@ -39,7 +39,7 @@ export class GitlabTagMapper implements ITagMapper {
         }[],
     ): UnifiedTagOutput {
         const unifiedTag: UnifiedTagOutput = {
-            remote_id: String(tag.name),
+            remote_id: tag.name,
             name: tag.name,
         };
 
