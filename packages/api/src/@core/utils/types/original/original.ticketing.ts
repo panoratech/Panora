@@ -1,4 +1,5 @@
 
+
 import {
   FrontAccountInput,
   FrontAccountOutput,
@@ -116,6 +117,10 @@ import {
   GitlabCollectionInput,
   GitlabCollectionOutput,
 } from '@ticketing/collection/services/gitlab/types';
+import {
+  GitlabTicketInput,
+  GitlabTicketOutput,
+} from '@ticketing/ticket/services/gitlab/types';
 
 /* INPUT */
 
@@ -126,7 +131,8 @@ export type OriginalTicketInput =
   | GithubTicketInput
   | HubspotTicketInput
   | GorgiasTicketInput
-  | JiraTicketInput;
+  | JiraTicketInput
+  | GitlabTicketInput;
 //| JiraServiceMgmtTicketInput;
 
 /* comment */
@@ -189,7 +195,8 @@ export type OriginalTicketOutput =
   | GithubTicketOutput
   | HubspotTicketOutput
   | GorgiasTicketOutput
-  | JiraTicketOutput;
+  | JiraTicketOutput
+  | GitlabTicketOutput;
 
 /* comment */
 export type OriginalCommentOutput =
@@ -247,5 +254,7 @@ export type TicketingObjectOutput =
   | OriginalContactOutput
   | OriginalAccountOutput
   | OriginalCollectionOutput;
+
+
 
 
