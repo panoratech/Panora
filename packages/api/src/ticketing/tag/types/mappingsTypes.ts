@@ -1,4 +1,3 @@
-import { GitlabTagMapper } from '../services/gitlab/mappers';
 import { JiraTagMapper } from '../services/jira/mappers';
 import { FrontTagMapper } from '../services/front/mappers';
 import { GorgiasTagMapper } from '../services/gorgias/mappers';
@@ -8,7 +7,6 @@ const zendeskTagMapper = new ZendeskTagMapper();
 const frontTagMapper = new FrontTagMapper();
 const gorgiasTagMapper = new GorgiasTagMapper();
 
-const gitlabTagMapper = new GitlabTagMapper();
 const jiraTagMapper = new JiraTagMapper();
 export const tagUnificationMapping = {
   zendesk: {
@@ -22,10 +20,6 @@ export const tagUnificationMapping = {
   gorgias: {
     unify: gorgiasTagMapper.unify.bind(gorgiasTagMapper),
     desunify: gorgiasTagMapper.desunify.bind(gorgiasTagMapper),
-  },
-  gitlab: {
-    unify: gitlabTagMapper.unify.bind(gitlabTagMapper),
-    desunify: gitlabTagMapper.desunify.bind(gitlabTagMapper),
   },
   jira: {
     unify: jiraTagMapper.unify.bind(jiraTagMapper),

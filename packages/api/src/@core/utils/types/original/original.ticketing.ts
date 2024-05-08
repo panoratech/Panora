@@ -116,10 +116,7 @@ import {
   GitlabCollectionInput,
   GitlabCollectionOutput,
 } from '@ticketing/collection/services/gitlab/types';
-import {
-  GitlabTagInput,
-  GitlabTagOutput,
-} from '@ticketing/tag/services/gitlab/types';
+
 /* INPUT */
 
 /* ticket */
@@ -159,8 +156,7 @@ export type OriginalTagInput =
   | ZendeskTagInput
   | FrontTagInput
   | GorgiasTagInput
-  | JiraTagInput
-  | GitlabTagInput;
+  | JiraTagInput;
 
 /* team */
 export type OriginalTeamInput =
@@ -220,8 +216,7 @@ export type OriginalTagOutput =
   | ZendeskTagOutput
   | FrontTagOutput
   | GorgiasTagOutput
-  | JiraTagOutput
-  | GitlabTagOutput;
+  | JiraTagOutput;
 
 /* team */
 export type OriginalTeamOutput =

@@ -1,4 +1,3 @@
-import { GitlabService } from './services/gitlab';
 import { Module } from '@nestjs/common';
 import { TagController } from './tag.controller';
 import { SyncService } from './sync/sync.service';
@@ -39,7 +38,6 @@ import { GorgiasService } from './services/gorgias';
     FrontService,
     JiraService,
     GorgiasService,
-    GitlabService,
   ],
   exports: [
     SyncService,
@@ -50,4 +48,4 @@ import { GorgiasService } from './services/gorgias';
     PrismaService,
   ],
 })
-export class TagModule {}
+export class TagModule { }
