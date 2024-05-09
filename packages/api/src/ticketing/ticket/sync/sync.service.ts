@@ -301,6 +301,9 @@ export class SyncService implements OnModuleInit {
           if (ticket.assigned_to) {
             data = { ...data, assigned_to: ticket.assigned_to };
           }
+          if (ticket.project_id) {
+            data = { ...data, collections: [ticket.project_id] }
+          }
           /*
             parent_ticket: ticket.parent_ticket || 'd',
           */

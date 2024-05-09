@@ -298,6 +298,7 @@ export class SyncService implements OnModuleInit {
           if (comment.creator_type) {
             data = { ...data, creator_type: comment.creator_type };
           }
+
           data = { ...data, ...opts };
 
           const res = await this.prisma.tcg_comments.create({

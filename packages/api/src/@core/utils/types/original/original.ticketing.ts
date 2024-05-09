@@ -121,6 +121,10 @@ import {
   GitlabTicketInput,
   GitlabTicketOutput,
 } from '@ticketing/ticket/services/gitlab/types';
+import {
+  GitlabCommentInput,
+  GitlabCommentOutput
+} from '@ticketing/comment/services/gitlab/types'
 
 /* INPUT */
 
@@ -140,7 +144,8 @@ export type OriginalCommentInput =
   | ZendeskCommentInput
   | FrontCommentInput
   | GorgiasCommentInput
-  | JiraCommentInput;
+  | JiraCommentInput
+  | GitlabCommentInput;
 //| JiraCommentServiceMgmtInput;
 /* user */
 export type OriginalUserInput =
@@ -203,7 +208,8 @@ export type OriginalCommentOutput =
   | ZendeskCommentOutput
   | FrontCommentOutput
   | GorgiasCommentOutput
-  | JiraCommentOutput;
+  | JiraCommentOutput
+  | GitlabCommentOutput;
 /* user */
 export type OriginalUserOutput =
   | ZendeskUserOutput

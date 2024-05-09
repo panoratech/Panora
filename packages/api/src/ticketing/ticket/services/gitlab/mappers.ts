@@ -20,10 +20,18 @@ export class GitlabTicketMapper implements ITicketMapper {
             remote_id: string;
         }[],
     ): Promise<GitlabTicketInput> {
+
+        // TODO - Project_id should be mandatory field for gitlab provider
+
+        const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(source.project_id);
+
+
+
+
         const result: GitlabTicketInput = {
             title: source.name,
             description: source.description ? source.description : '',
-            project_id: Number(source.project_id)
+            project_id: Number(remote_project_id)
         };
 
         if (source.status) {
@@ -104,6 +112,16 @@ export class GitlabTicketMapper implements ITicketMapper {
             }
         }
 
+        if (ticket.project_id) {
+            const tcg_collection_id = await this.utils.getCollectionUuidFromRemoteId(
+                String(ticket.project_id),
+                'gitlab'
+            );
+            if (tcg_collection_id) {
+                opts = { project_id: tcg_collection_id }
+            }
+        }
+
 
 
         const unifiedTicket: UnifiedTicketOutput = {
@@ -111,7 +129,6 @@ export class GitlabTicketMapper implements ITicketMapper {
             name: ticket.title,
             description: ticket.description ? ticket.description : '',
             due_date: new Date(ticket.created_at),
-            project_id: String(ticket.project_id),
             tags: ticket.labels ? ticket.labels : [],
             field_mappings,
             ...opts

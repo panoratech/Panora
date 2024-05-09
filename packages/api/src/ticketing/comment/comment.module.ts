@@ -1,3 +1,4 @@
+import { GitlabService } from './services/gitlab';
 import { Module } from '@nestjs/common';
 import { SyncService } from './sync/sync.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
@@ -38,6 +39,7 @@ import { GorgiasService } from './services/gorgias';
     FrontService,
     JiraService,
     GorgiasService,
+    GitlabService,
   ],
   exports: [
     SyncService,
