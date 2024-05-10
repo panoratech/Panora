@@ -468,6 +468,7 @@ export class TicketService {
             completed_at: ticket.completed_at || null,
             priority: ticket.priority || '',
             assigned_to: ticket.assigned_to || [],
+            collections: ticket.collections || [],
             field_mappings: field_mappings,
           };
         }),

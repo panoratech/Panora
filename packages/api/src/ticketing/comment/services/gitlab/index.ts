@@ -75,24 +75,38 @@ export class GitlabService implements ICommentService {
                 attachments: uploads,
             };
 
-            const ticket = await this.prisma.tcg_tickets.findUnique({
+            const ticket = await this.prisma.tcg_tickets.findFirst({
                 where: {
-                    id_tcg_ticket: remoteIdTicket,
+                    remote_id: remoteIdTicket,
+                    remote_platform: 'gitlab',
                 },
                 select: {
-                    collections: true
-                },
+                    collections: true,
+                    id_tcg_ticket: true
+                }
             });
 
-            const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(ticket.collections[0])
+            // const ticket = await this.prisma.tcg_tickets.findUnique({
+            //     where: {
+            //         id_tcg_ticket: remoteIdTicket,
+            //     },
+            //     select: {
+            //         collections: true
+            //     },
+            // });
 
+            const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(ticket.collections[0]);
 
-
-
-
+            // Retrieve the uuid of issue from remote_data
+            const remote_data = await this.prisma.remote_data.findFirst({
+                where: {
+                    ressource_owner_id: ticket.id_tcg_ticket,
+                },
+            });
+            const { iid } = JSON.parse(remote_data.data);
 
             const resp = await axios.post(
-                `${connection.account_url}/projects/${remote_project_id}/issues/${remoteIdTicket}/notes`,
+                `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
                 JSON.stringify(data),
                 {
                     headers: {
@@ -145,9 +159,19 @@ export class GitlabService implements ICommentService {
             // retrieve the remote_id of project from collections
             const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(ticket.collections[0])
 
+            // Retrieve the uuid of issue from remote_data
+            const remote_data = await this.prisma.remote_data.findFirst({
+                where: {
+                    ressource_owner_id: id_ticket,
+                },
+            });
+            const { iid } = JSON.parse(remote_data.data);
+
+            console.log("Requested URL : ", `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`)
+
 
             const resp = await axios.get(
-                `${connection.account_url}/projects/${remote_project_id}/issues/${ticket.remote_id}/notes`,
+                `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -158,9 +182,10 @@ export class GitlabService implements ICommentService {
                 },
             );
             this.logger.log(`Synced gitlab comments !`);
+            console.log(resp.data)
 
             return {
-                data: resp.data._results,
+                data: resp.data,
                 message: 'Gitlab comments retrieved',
                 statusCode: 200,
             };

@@ -32,7 +32,7 @@ export class GitlabService implements ITicketService {
             const connection = await this.prisma.connections.findFirst({
                 where: {
                     id_linked_user: linkedUserId,
-                    provider_slug: 'github',
+                    provider_slug: 'gitlab',
                     vertical: 'ticketing',
                 },
             });
@@ -73,7 +73,7 @@ export class GitlabService implements ITicketService {
             const connection = await this.prisma.connections.findFirst({
                 where: {
                     id_linked_user: linkedUserId,
-                    provider_slug: 'github',
+                    provider_slug: 'gitlab',
                     vertical: 'ticketing',
                 },
             });

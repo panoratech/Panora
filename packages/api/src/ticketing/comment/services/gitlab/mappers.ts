@@ -83,7 +83,9 @@ export class GitlabCommentMapper implements ICommentMapper {
                 String(comment.author.id),
                 'gitlab',
             );
-            opts.user_id = user_id;
+            if (user_id) {
+                opts.user_id = user_id;
+            }
         }
 
         //   if (user_id) {
@@ -100,10 +102,13 @@ export class GitlabCommentMapper implements ICommentMapper {
         // }
         if (comment.noteable_id) {
             const ticket_id = await this.utils.getTicketUuidFromRemoteId(
-                String(comment.noteable_id),
+                String(comment.noteable_iid),
                 'gitlab'
             )
-            opts.ticket_id = ticket_id;
+            if (ticket_id) {
+                opts.ticket_id = ticket_id;
+
+            }
         }
 
         const res: UnifiedCommentOutput = {

@@ -60,7 +60,7 @@ export class SyncService implements OnModuleInit {
   }
   //function used by sync worker which populate our tcg_comments table
   //its role is to fetch all comments from providers 3rd parties and save the info inside our db
-  //@Cron('*/2 * * * *') // every 2 minutes (for testing)
+  // @Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
   async syncComments(user_id?: string) {
     try {
@@ -189,9 +189,9 @@ export class SyncService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'success',
-          type: 'ticketing.comment.synced',
-          method: 'SYNC',
-          url: '/sync',
+          type: 'ticketing.comment.pulled',
+          method: 'PULL',
+          url: '/pull',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -200,7 +200,7 @@ export class SyncService implements OnModuleInit {
       });
       await this.webhook.handleWebhook(
         comments_data,
-        'ticketing.comment.synced',
+        'ticketing.comment.pulled',
         id_project,
         event.id_event,
       );
@@ -236,15 +236,16 @@ export class SyncService implements OnModuleInit {
 
         let unique_ticketing_comment_id: string;
         const opts =
-          comment.creator_type === 'contact'
+          (comment.creator_type === 'CONTACT' && comment.contact_id)
             ? {
               id_tcg_contact: comment.contact_id,
             }
-            : comment.creator_type === 'user'
+            : (comment.creator_type === 'USER' && comment.user_id)
               ? {
                 id_tcg_user: comment.user_id,
               }
-              : {}; //case where nothing is passed for creator or a not authorized value;
+              : {};
+        //case where nothing is passed for creator or a not authorized value;
 
         if (existingComment) {
           // Update the existing comment

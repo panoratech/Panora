@@ -98,7 +98,7 @@ export class GitlabTicketMapper implements ITicketMapper {
 
         let opts: any;
         if (ticket.type) {
-            opts.type = ticket.type === "opened" ? "OPEN" : "CLOSED"
+            opts = { ...opts, type: ticket.type === "opened" ? "OPEN" : "CLOSED" }
         }
 
         if (ticket.assignee) {
@@ -108,7 +108,7 @@ export class GitlabTicketMapper implements ITicketMapper {
                 'gitlab',
             );
             if (user_id) {
-                opts = { assigned_to: [user_id] };
+                opts = { ...opts, assigned_to: [user_id] };
             }
         }
 
@@ -118,7 +118,7 @@ export class GitlabTicketMapper implements ITicketMapper {
                 'gitlab'
             );
             if (tcg_collection_id) {
-                opts = { project_id: tcg_collection_id }
+                opts = { ...opts, project_id: tcg_collection_id }
             }
         }
 
