@@ -47,6 +47,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { usePostHog } from 'posthog-js/react'
 import config from "@/lib/config"
+import { CRM_PROVIDERS } from "@panora/shared"
 
 
 const defineFormSchema = z.object({
@@ -110,7 +111,8 @@ export function FModal({ onClose }: {onClose: () => void}) {
   const { mutate: mutateDefineField } = useDefineFieldMutation();
   const { mutate: mutateMapField } = useMapFieldMutation();
   const { data: linkedUsers } = useLinkedUsers();
-  const { data: sourceCustomFields, error, isLoading } = useProviderProperties(linkedUserId,sourceProvider);
+  // TODO: HANDLE VERTICAL AND PROVIDERS FOR CUSTOM MAPPINGS
+  const { data: sourceCustomFields, error, isLoading } = useProviderProperties(linkedUserId,sourceProvider, "crm");
   
   const posthog = usePostHog()
 
@@ -330,12 +332,12 @@ export function FModal({ onClose }: {onClose: () => void}) {
                             <SelectValue placeholder="Select a provider" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="hubspot">Hubspot</SelectItem>
-                              <SelectItem value="zendesk">Zendesk</SelectItem>
-                              <SelectItem value="slack">Slack</SelectItem>
-                              <SelectItem value="asana">Asana</SelectItem>
-                              <SelectItem value="zoho">Zoho</SelectItem>
+                            <SelectGroup> 
+                              {
+                                CRM_PROVIDERS.map((provider) =>
+                                  <SelectItem value={provider} key={provider}>{provider}</SelectItem>
+                                )
+                              }                              
                             </SelectGroup>
                           </SelectContent>
                         </Select>

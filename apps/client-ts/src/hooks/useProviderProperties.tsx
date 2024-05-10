@@ -2,11 +2,11 @@ import config from '@/lib/config';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
-const useProviderProperties = (linkedUserId: string, providerId: string) => {
+const useProviderProperties = (linkedUserId: string, providerId: string, vertical: string) => {
   return useQuery({
-    queryKey: ['providerProperties', linkedUserId, providerId], 
+    queryKey: ['providerProperties', linkedUserId, providerId, vertical], 
     queryFn: async () => {
-      const response = await fetch(`${config.API_URL}/field-mappings/properties?linkedUserId=${linkedUserId}&providerId=${providerId}`,
+      const response = await fetch(`${config.API_URL}/field-mappings/properties?linkedUserId=${linkedUserId}&providerId=${providerId}&vertical=${vertical}`,
       {
         method: 'GET',
         headers: {

@@ -127,6 +127,13 @@ export class FieldMappingService {
     vertical: string,
   ) {
     try {
+      this.logger.log(
+        'data to test is => ' +
+          JSON.stringify({
+            providerId,
+            vertical,
+          }),
+      );
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -139,8 +146,13 @@ export class FieldMappingService {
       if (!provider.urls.apiUrl || !provider.urls.customPropertiesUrl)
         throw new Error('proivder urls are invalid');
 
+      this.logger.log(
+        'url for properties is ' +
+          provider.urls.apiUrl +
+          provider.urls.customPropertiesUrl,
+      );
       const resp = await axios.get(
-        provider.urls.apiUrl + provider.urls.customPropertiesUrl,
+        'https://api.hubapi.com/properties/v1/contacts/properties', // todo : provider.urls.apiUrl + provider.urls.customPropertiesUrl,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -150,6 +162,7 @@ export class FieldMappingService {
           },
         },
       );
+      this.logger.log('properties are ' + JSON.stringify(resp.data));
       return {
         data: resp.data,
         message: `${providerId} contact properties retrieved`,
