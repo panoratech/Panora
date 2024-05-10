@@ -10,6 +10,7 @@ import { DataTableColumnHeader } from "./../shared/data-table-column-header"
 import React,{ useState } from "react"
 import { ClipboardIcon } from '@radix-ui/react-icons'
 import { toast } from "sonner"
+import { getLogoURL } from "@panora/shared"
 
 
 function truncateMiddle(str: string, maxLength: number) {
@@ -112,13 +113,7 @@ export const columns: ColumnDef<Connection>[] = [
       return (
         <div className="flex space-x-2">
           <Badge variant={"outline"} className="p-1 pr-2">
-              <img src={
-                provider == "hubspot" ?
-                `providers/crm/${provider}.jpg` : 
-                provider == "zoho" ? 
-                `providers/crm/${provider}.webp`
-                : `providers/crm/${provider}.png`
-                } className="w-5 h-5 rounded-sm mr-2" 
+              <img src={getLogoURL(provider)} className="w-5 h-5 rounded-sm mr-2" 
               />
               {provider}
           </Badge>

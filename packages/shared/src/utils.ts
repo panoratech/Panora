@@ -397,7 +397,7 @@ export const providersConfig: ProvidersConfig = {
         apiUrl: 'https://gitlab.com/api/v4',
         authBaseUrl: 'https://gitlab.com/oauth/authorize',
       },
-      logoPath: '',
+      logoPath: 'https://asset.brandfetch.io/idw382nG0m/idVn6myaqy.png',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
       active: true,
       authStrategy: AuthStrategy.oauth2
