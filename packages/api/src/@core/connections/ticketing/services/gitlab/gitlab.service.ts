@@ -143,7 +143,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
         this.type,
       )) as OAuth2AuthData;
       const res = await axios.post(
-        `https://api.gitlab.app/oauth/token`,
+        `https://gitlab.com/oauth/token`,
         formData.toString(),
         {
           headers: {
