@@ -4,14 +4,21 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrmConnectionsService } from '../connections/crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
+import { ProviderVertical } from '@panora/shared';
+import { AccountingConnectionsService } from '@@core/connections/accounting/services/accounting.connection.service';
+import { MarketingAutomationConnectionsService } from '@@core/connections/marketingautomation/services/marketingautomation.connection.service';
+import { TicketingConnectionsService } from '@@core/connections/ticketing/services/ticketing.connection.service';
 
 @Injectable()
 export class TasksService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
-    private crmConnectionsService: CrmConnectionsService,
+    private readonly crmConnectionsService: CrmConnectionsService,
+    private readonly ticketingConnectionsService: TicketingConnectionsService,
+    private readonly accountingConnectionsService: AccountingConnectionsService,
+    private readonly marketingAutomationConnectionsService: MarketingAutomationConnectionsService,
     private logger: LoggerService,
-  ) {}
+  ) { }
 
   onModuleInit() {
     this.handleCron();
@@ -34,13 +41,58 @@ export class TasksService implements OnModuleInit {
       if (connection.refresh_token) {
         const account_url =
           connection.provider_slug == 'zoho' ? connection.account_url : '';
-        await this.crmConnectionsService.handleCRMTokensRefresh(
-          connection.id_connection,
-          connection.provider_slug,
-          connection.refresh_token,
-          connection.id_project,
-          account_url,
-        );
+
+        switch (connection.vertical) {
+          case ProviderVertical.CRM:
+            await this.crmConnectionsService.handleCRMTokensRefresh(
+              connection.id_connection,
+              connection.provider_slug,
+              connection.refresh_token,
+              connection.id_project,
+              account_url,
+            );
+            break;
+
+          case ProviderVertical.ATS:
+            break;
+
+          case ProviderVertical.Accounting:
+            this.accountingConnectionsService.handleAccountingTokensRefresh(
+              connection.id_connection,
+              connection.provider_slug,
+              connection.refresh_token,
+              connection.id_project,
+              account_url,
+            );
+            break;
+
+          case ProviderVertical.FileStorage:
+            break;
+
+          case ProviderVertical.HRIS:
+            break;
+
+          case ProviderVertical.MarketingAutomation:
+            this.marketingAutomationConnectionsService.handleMarketingAutomationTokensRefresh(
+              connection.id_connection,
+              connection.provider_slug,
+              connection.refresh_token,
+              connection.id_project,
+              account_url,
+            );
+            break;
+
+          case ProviderVertical.Ticketing:
+            this.ticketingConnectionsService.handleTicketingTokensRefresh(
+              connection.id_connection,
+              connection.provider_slug,
+              connection.refresh_token,
+              connection.id_project,
+              account_url,
+            );
+            break;
+        }
+
       }
     }
   }
