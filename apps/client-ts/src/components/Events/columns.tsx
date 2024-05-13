@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 import { DataTableColumnHeader } from "../shared/data-table-column-header"
 import { Event } from "./data/schema"
+import { getLogoURL } from "@panora/shared"
 
 export const columns: ColumnDef<Event>[] = [
   {
@@ -140,13 +141,7 @@ export const columns: ColumnDef<Event>[] = [
         <div className="flex w-[100px] items-center">
           {row.getValue("integration") ? 
             <Badge variant={"outline"} className="p-1 pr-2">
-              <img src={
-                provider == "hubspot" ?
-                `providers/crm/${provider}.jpg` : 
-                provider == "zoho" ? 
-                `providers/crm/${provider}.webp`
-                : `providers/crm/${provider}.png`
-                } className="w-5 h-5 rounded-sm mr-2" 
+              <img src={getLogoURL(provider)} className="w-5 h-5 rounded-sm mr-2" 
               />
               {provider}
             </Badge>

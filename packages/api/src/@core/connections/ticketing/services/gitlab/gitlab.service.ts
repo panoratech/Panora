@@ -12,7 +12,7 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy } from '@panora/shared';
+import { AuthStrategy, providersConfig } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -67,7 +67,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        `https://api.gitlab.app/oauth/token`,
+        `https://gitlab.com/oauth/token`,
         formData.toString(),
         {
           headers: {
@@ -79,6 +79,8 @@ export class GitlabConnectionService implements ITicketingConnectionService {
       this.logger.log(
         'OAuth credentials : gitlab ticketing ' + JSON.stringify(data),
       );
+
+      // console.log("Gitlab Credentials : ", data)
 
       let db_res;
       const connection_token = uuidv4();
@@ -105,6 +107,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'gitlab',
             vertical: 'ticketing',
+            account_url: providersConfig['ticketing']['gitlab'].urls.apiUrl,
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
@@ -140,7 +143,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
         this.type,
       )) as OAuth2AuthData;
       const res = await axios.post(
-        `https://api.gitlab.app/oauth/token`,
+        `https://gitlab.com/oauth/token`,
         formData.toString(),
         {
           headers: {
@@ -152,6 +155,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
         },
       );
       const data: GitlabOAuthResponse = res.data;
+      // console.log("Gitlab Credentials (In refresh) : ", data)
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
@@ -164,9 +168,9 @@ export class GitlabConnectionService implements ITicketingConnectionService {
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : jira ');
+      this.logger.log('OAuth credentials updated : gitlab ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'jira', Action.oauthRefresh);
+      handleServiceError(error, this.logger, 'gitlab', Action.oauthRefresh);
     }
   }
 }

@@ -1,3 +1,4 @@
+import { GitlabService } from './services/gitlab';
 import { Module } from '@nestjs/common';
 import { TicketController } from './ticket.controller';
 import { TicketService } from './services/ticket.service';
@@ -42,6 +43,7 @@ import { GorgiasService } from './services/gorgias';
     GithubService,
     JiraService,
     GorgiasService,
+    GitlabService,
   ],
   exports: [
     SyncService,

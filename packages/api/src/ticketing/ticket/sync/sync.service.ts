@@ -60,7 +60,7 @@ export class SyncService implements OnModuleInit {
   }
   //function used by sync worker which populate our tcg_tickets table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
-  //@Cron('*/2 * * * *') // every 2 minutes (for testing)
+  // @Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
   async syncTickets(user_id?: string) {
     try {
@@ -178,9 +178,9 @@ export class SyncService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'success',
-          type: 'ticketing.ticket.synced',
-          method: 'SYNC',
-          url: '/sync',
+          type: 'ticketing.ticket.pulled',
+          method: 'PULL',
+          url: '/pull',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -190,7 +190,7 @@ export class SyncService implements OnModuleInit {
 
       await this.webhook.handleWebhook(
         tickets_data,
-        'ticketing.ticket.synced',
+        'ticketing.ticket.pulled',
         id_project,
         event.id_event,
       );
@@ -300,6 +300,9 @@ export class SyncService implements OnModuleInit {
           }
           if (ticket.assigned_to) {
             data = { ...data, assigned_to: ticket.assigned_to };
+          }
+          if (ticket.project_id) {
+            data = { ...data, collections: [ticket.project_id] }
           }
           /*
             parent_ticket: ticket.parent_ticket || 'd',

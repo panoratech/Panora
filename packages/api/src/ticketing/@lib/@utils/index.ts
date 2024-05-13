@@ -103,4 +103,62 @@ export class Utils {
       throw new Error(error);
     }
   }
+
+  async getCollectionUuidFromRemoteId(remote_id: string, remote_platform: string) {
+    try {
+      const res = await this.prisma.tcg_collections.findFirst({
+        where: {
+          remote_id: remote_id,
+          remote_platform: remote_platform,
+        },
+      });
+      if (!res) return;
+      return res.id_tcg_collection;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async getCollectionRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.tcg_collections.findFirst({
+        where: {
+          id_tcg_collection: uuid,
+        },
+      });
+      if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
+      return res.remote_id;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async getTicketUuidFromRemoteId(remote_id: string, remote_platform: string) {
+    try {
+      const res = await this.prisma.tcg_tickets.findFirst({
+        where: {
+          remote_id: remote_id,
+          remote_platform: remote_platform,
+        },
+      });
+      if (!res) return;
+      return res.id_tcg_ticket;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async getTicketRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.tcg_tickets.findFirst({
+        where: {
+          id_tcg_ticket: uuid,
+        },
+      });
+      if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
+      return res.remote_id;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

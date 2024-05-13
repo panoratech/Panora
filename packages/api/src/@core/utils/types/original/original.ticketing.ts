@@ -1,3 +1,5 @@
+
+
 import {
   FrontAccountInput,
   FrontAccountOutput,
@@ -82,7 +84,7 @@ import {
   JiraTagInput,
   JiraTagOutput,
 } from '@ticketing/tag/services/jira/types';
-import { JiraCollectionOutput } from '@ticketing/collection/services/jira/types';
+import { JiraCollectionOutput, JiraCollectionInput } from '@ticketing/collection/services/jira/types';
 import {
   ZendeskTicketInput,
   ZendeskTicketOutput,
@@ -111,6 +113,18 @@ import {
   ZendeskUserInput,
   ZendeskUserOutput,
 } from '@ticketing/user/services/zendesk/types';
+import {
+  GitlabCollectionInput,
+  GitlabCollectionOutput,
+} from '@ticketing/collection/services/gitlab/types';
+import {
+  GitlabTicketInput,
+  GitlabTicketOutput,
+} from '@ticketing/ticket/services/gitlab/types';
+import {
+  GitlabCommentInput,
+  GitlabCommentOutput
+} from '@ticketing/comment/services/gitlab/types'
 
 /* INPUT */
 
@@ -121,7 +135,8 @@ export type OriginalTicketInput =
   | GithubTicketInput
   | HubspotTicketInput
   | GorgiasTicketInput
-  | JiraTicketInput;
+  | JiraTicketInput
+  | GitlabTicketInput;
 //| JiraServiceMgmtTicketInput;
 
 /* comment */
@@ -129,7 +144,8 @@ export type OriginalCommentInput =
   | ZendeskCommentInput
   | FrontCommentInput
   | GorgiasCommentInput
-  | JiraCommentInput;
+  | JiraCommentInput
+  | GitlabCommentInput;
 //| JiraCommentServiceMgmtInput;
 /* user */
 export type OriginalUserInput =
@@ -152,6 +168,7 @@ export type OriginalTagInput =
   | FrontTagInput
   | GorgiasTagInput
   | JiraTagInput;
+
 /* team */
 export type OriginalTeamInput =
   | ZendeskTeamInput
@@ -161,7 +178,7 @@ export type OriginalTeamInput =
 
 /* attachment */
 export type OriginalAttachmentInput = null;
-export type OriginalCollectionInput = null;
+export type OriginalCollectionInput = JiraCollectionInput | GitlabCollectionInput;
 
 export type TicketingObjectInput =
   | OriginalTicketInput
@@ -183,14 +200,16 @@ export type OriginalTicketOutput =
   | GithubTicketOutput
   | HubspotTicketOutput
   | GorgiasTicketOutput
-  | JiraTicketOutput;
+  | JiraTicketOutput
+  | GitlabTicketOutput;
 
 /* comment */
 export type OriginalCommentOutput =
   | ZendeskCommentOutput
   | FrontCommentOutput
   | GorgiasCommentOutput
-  | JiraCommentOutput;
+  | JiraCommentOutput
+  | GitlabCommentOutput;
 /* user */
 export type OriginalUserOutput =
   | ZendeskUserOutput
@@ -228,7 +247,8 @@ export type OriginalAttachmentOutput =
 
 /* collection */
 
-export type OriginalCollectionOutput = JiraCollectionOutput;
+export type OriginalCollectionOutput = JiraCollectionOutput | GitlabCollectionOutput;
+
 
 export type TicketingObjectOutput =
   | OriginalTicketOutput
@@ -240,3 +260,7 @@ export type TicketingObjectOutput =
   | OriginalContactOutput
   | OriginalAccountOutput
   | OriginalCollectionOutput;
+
+
+
+

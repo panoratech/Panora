@@ -48,4 +48,4 @@ import { GorgiasService } from './services/gorgias';
     PrismaService,
   ],
 })
-export class TagModule {}
+export class TagModule { }

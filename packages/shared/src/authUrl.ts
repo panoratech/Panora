@@ -82,7 +82,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   } = input;
 
   const type = providerToType(providerName, vertical, authStrategy);
- 
+
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
@@ -97,12 +97,12 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   const { urls: urls } = config;
   const { authBaseUrl: baseUrl } = urls;
- 
+
   if (!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
 
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
-  const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}`:
-  data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
+  const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}` :
+    data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
 
   // console.log('BASE URL IS '+ BASE_URL)
   if (!baseUrl || !BASE_URL) {
@@ -127,7 +127,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       params = `audience=api.atlassian.com&${params}&prompt=consent`;
       break;
     case 'gitlab':
-      params += '&code_challenge=&code_challenge_method=';
+      params += '&response_type=code&code_challenge=&code_challenge_method=';
       break;
     case 'gorgias':
       params = `&response_type=code&nonce=${randomString()}`;
