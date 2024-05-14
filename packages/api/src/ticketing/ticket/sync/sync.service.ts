@@ -10,16 +10,17 @@ import { unify } from '@@core/utils/unification/unify';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { UnifiedTicketOutput } from '../types/model.unified';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { tcg_tickets as TicketingTicket } from '@prisma/client';
+// import { tcg_tickts as TicketingTicket } from '@prisma/client';
 import { ITicketService } from '../types';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from '../services/registry.service';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-
+import { Utils } from '@ticketing/@lib/@utils';
 @Injectable()
 export class SyncService implements OnModuleInit {
+  private readonly utils: Utils;
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -29,6 +30,7 @@ export class SyncService implements OnModuleInit {
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
+    this.utils = new Utils();
   }
 
   async onModuleInit() {
@@ -67,12 +69,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing tickets....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -148,52 +150,63 @@ export class SyncService implements OnModuleInit {
       const remoteProperties: string[] = customFieldMappings.map(
         (mapping) => mapping.remote_id,
       );
-
+      let batch = 1;
       const service: ITicketService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalTicketOutput[]> =
-        await service.syncTickets(linkedUserId, remoteProperties);
+      const handleService = async (pageMeta?: Record<string, any>) => {
+        return await service.syncTickets(
+          linkedUserId,
+          remoteProperties,
+          pageMeta,
+        );
+      };
+      const handleSaveToDb = async (
+        resp: ApiResponse<OriginalTicketOutput[]>,
+      ) => {
+        const sourceObject: OriginalTicketOutput[] = resp?.data;
+        //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+        //unify the data according to the target obj wanted
+        const unifiedObject = (await unify<OriginalTicketOutput[]>({
+          sourceObject,
+          targetType: TicketingObject.ticket,
+          providerName: integrationId,
+          vertical: 'ticketing',
+          customFieldMappings,
+        })) as UnifiedTicketOutput[];
 
-      const sourceObject: OriginalTicketOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalTicketOutput[]>({
-        sourceObject,
-        targetType: TicketingObject.ticket,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        customFieldMappings,
-      })) as UnifiedTicketOutput[];
+        //insert the data in the DB with the fieldMappings (value table)
+        const tickets_data = await this.saveTicketsInDb(
+          linkedUserId,
+          unifiedObject,
+          integrationId,
+          sourceObject,
+        );
 
+        const event = await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ticketing.ticket.pulled',
+            method: 'PULL',
+            url: '/pull',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const tickets_data = await this.saveTicketsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.ticket.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
+        await this.webhook.handleWebhook(
+          tickets_data,
+          'ticketing.ticket.pulled',
+          id_project,
+          event.id_event,
+        );
+        console.log(`Synced the tickets of batch: ${batch++}`);
+      };
+      this.utils.fetchDataRecurisvely(handleService, handleSaveToDb, {
+        isFirstPage: true,
       });
-
-      await this.webhook.handleWebhook(
-        tickets_data,
-        'ticketing.ticket.pulled',
-        id_project,
-        event.id_event,
-      );
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -204,9 +217,9 @@ export class SyncService implements OnModuleInit {
     tickets: UnifiedTicketOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
-  ): Promise<TicketingTicket[]> {
+  ): Promise<UnifiedTicketOutput[]> {
     try {
-      let tickets_results: TicketingTicket[] = [];
+      let tickets_results: UnifiedTicketOutput[] = [];
       for (let i = 0; i < tickets.length; i++) {
         const ticket = tickets[i];
         const originId = ticket.remote_id;
@@ -302,7 +315,7 @@ export class SyncService implements OnModuleInit {
             data = { ...data, assigned_to: ticket.assigned_to };
           }
           if (ticket.project_id) {
-            data = { ...data, collections: [ticket.project_id] }
+            data = { ...data, collections: [ticket.project_id] };
           }
           /*
             parent_ticket: ticket.parent_ticket || 'd',

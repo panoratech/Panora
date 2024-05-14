@@ -4,87 +4,114 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
-import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ICollectionService } from '@ticketing/collection/types';
-import { GitlabCollectionInput, GitlabCollectionOutput } from './types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
+import { GitlabCollectionOutput } from './types';
+import { Pagination, Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class GitlabService implements ICollectionService {
-    constructor(
-        private prisma: PrismaService,
-        private logger: LoggerService,
-        private cryptoService: EncryptionService,
-        private registry: ServiceRegistry,
-    ) {
-        this.logger.setContext(
-            TicketingObject.collection.toUpperCase() + ':' + GitlabService.name,
-        );
-        this.registry.registerService('gitlab', this);
+  private readonly utils: Utils;
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
+  ) {
+    this.logger.setContext(
+      TicketingObject.collection.toUpperCase() + ':' + GitlabService.name,
+    );
+    this.registry.registerService('gitlab', this);
+    this.utils = new Utils();
+  }
+
+  async syncCollections(
+    linkedUserId: string,
+    _?: string[] | null,
+    pageMeta?: Pagination,
+  ): Promise<ApiResponse<GitlabCollectionOutput[]>> {
+    try {
+      pageMeta = { isFirstPage: true, ...(pageMeta || {}) } as Pagination;
+      if (pageMeta.isLastPage) {
+        return {
+          data: [],
+          message: 'Gitlab collections Cursor ended. no more records....',
+          statusCode: 200,
+          pageMeta: {
+            ...pageMeta,
+            isFirstPage: false,
+          },
+        };
+      }
+      let baseUrl = pageMeta.baseURl;
+      const connection =
+        pageMeta.connection ||
+        (await this.prisma.connections.findFirst({
+          where: {
+            id_linked_user: linkedUserId,
+            provider_slug: 'gitlab',
+            vertical: 'ticketing',
+          },
+        }));
+      if (!baseUrl) {
+        const currentUser = (
+          await this.utils.sendRequestWithRetry({
+            url: `${connection.account_url}/user`,
+            method: 'get',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          })
+        ).data;
+        baseUrl = `${connection.account_url}/users/${currentUser?.id}/projects`;
+        pageMeta = {
+          ...pageMeta,
+          baseUrl,
+          queryParams: { order_by: 'id' },
+        };
+      }
+      const apiUrl = this.utils.getPaginateUrl(baseUrl, 'gitlab', pageMeta);
+      const resp = await this.utils.sendRequestWithRetry({
+        url: apiUrl,
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
+
+      this.logger.log(`Synced gitlab collections !`);
+      // Initialize an empty object to store the links
+      const links = this.utils.extractPaginationDetailsFromResponse(
+        resp,
+        'gitlab',
+      );
+
+      const newPageMeta = { ...pageMeta, isFirst: false, connection, links };
+      newPageMeta.isLastPage = this.utils.getLastPageStatus(
+        newPageMeta,
+        'gitlab',
+      );
+      return {
+        data: resp.data,
+        message: 'Gitlab collections retrieved',
+        statusCode: 200,
+        pageMeta: newPageMeta,
+      };
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'gitlab',
+        TicketingObject.collection,
+        ActionType.GET,
+      );
     }
-
-    async syncCollections(
-        linkedUserId: string,
-    ): Promise<ApiResponse<GitlabCollectionOutput[]>> {
-        try {
-            const connection = await this.prisma.connections.findFirst({
-                where: {
-                    id_linked_user: linkedUserId,
-                    provider_slug: 'gitlab',
-                    vertical: 'ticketing',
-                },
-            });
-
-            // It fetches all project from gitlab
-            // const resp = await axios.get(`${connection.account_url}/projects`, {
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         Authorization: `Bearer ${this.cryptoService.decrypt(
-            //             connection.access_token,
-            //         )}`,
-            //     },
-            // });
-
-            const currentUser = await axios.get(`${connection.account_url}/user`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${this.cryptoService.decrypt(
-                        connection.access_token,
-                    )}`,
-                },
-            })
-
-            const resp = await axios.get(`${connection.account_url}/users/${currentUser.data.id}/projects`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${this.cryptoService.decrypt(
-                        connection.access_token,
-                    )}`,
-                },
-            })
-
-            this.logger.log(`Synced gitlab collections !`);
-
-            // console.log("In index of gitlab", JSON.stringify(resp.data))
-
-
-            return {
-                data: resp.data,
-                message: 'Gitlab collections retrieved',
-                statusCode: 200,
-            };
-        } catch (error) {
-            handleServiceError(
-                error,
-                this.logger,
-                'Gitlab',
-                TicketingObject.collection,
-                ActionType.GET,
-            );
-        }
-    }
-
-
+  }
 }

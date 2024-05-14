@@ -44,4 +44,21 @@ export class EncryptionService {
       throw new Error('Decrypting error... ' + error);
     }
   }
+
+  generateRandomString(length: number): string {
+    const allowedChars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~';
+    let randomString = '';
+    for (let i = 0; i < length; i++) {
+      randomString += allowedChars.charAt(
+        Math.floor(Math.random() * allowedChars.length),
+      );
+    }
+    return randomString;
+  }
+
+  generateHash(code: string): string {
+    const hash = crypto.createHash('sha256').update(code).digest('binary');
+    return Buffer.from(hash).toString('base64url');
+  }
 }

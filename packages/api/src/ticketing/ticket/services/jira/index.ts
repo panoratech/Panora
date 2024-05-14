@@ -9,7 +9,7 @@ import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { JiraTicketInput, JiraTicketOutput } from './types';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class JiraService implements ITicketService {
@@ -44,7 +44,7 @@ export class JiraService implements ITicketService {
       //Add comment by calling the unified comment function but first insert the ticket base data
 
       const resp = await axios.post(
-        `${connection.account_url}/issue`,
+        `${connection.account_url}/rest/api/v2/issue`,
         JSON.stringify(ticketData),
         {
           headers: {
@@ -95,7 +95,7 @@ export class JiraService implements ITicketService {
       this.logger.log(`Synced jira tickets !`);
 
       return {
-        data: resp.data.issues,
+        data: resp.data?.issues,
         message: 'Jira tickets retrieved',
         statusCode: 200,
       };

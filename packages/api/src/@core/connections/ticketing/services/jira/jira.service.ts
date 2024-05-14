@@ -89,9 +89,8 @@ export class JiraConnectionService implements ITicketingConnectionService {
 
       // get the cloud id from atlassian jira, it is used across requests to the api
       //TODO: add a field inside our connections db to handle it
-      const res_ = await axios.post(
+      const res_ = await axios.get(
         `https://api.atlassian.com/oauth/token/accessible-resources`,
-        formData.toString(),
         {
           headers: {
             Authorization: `Bearer ${data.access_token}`,
@@ -102,14 +101,42 @@ export class JiraConnectionService implements ITicketingConnectionService {
       const sites_scopes: JiraCloudIdInformation[] = res_.data;
       let cloud_id: string;
       for (const site of sites_scopes) {
-        if (site.url == 'https://panora.atlassian.net') {
+        if (
+          site.url ==
+          ('https://testp123.atlassian.net' || 'https://panora.atlassian.net')
+        ) {
           cloud_id = site.id;
           break;
         }
       }
+
       let db_res;
       const connection_token = uuidv4();
-
+      console.log(
+        JSON.stringify({
+          id_connection: uuidv4(),
+          connection_token: connection_token,
+          provider_slug: 'jira',
+          vertical: 'ticketing',
+          token_type: 'oauth',
+          account_url: `https://api.atlassian.com/ex/jira/${cloud_id}/rest/api/${
+            process.env.JIRA_API_VERSION || 2
+          }`,
+          access_token: this.cryptoService.encrypt(data.access_token),
+          refresh_token: this.cryptoService.encrypt(data.refresh_token),
+          expiration_timestamp: new Date(
+            new Date().getTime() + Number(data.expires_in) * 1000,
+          ),
+          status: 'valid',
+          created_at: new Date(),
+          projects: {
+            connect: { id_project: projectId },
+          },
+          linked_users: {
+            connect: { id_linked_user: linkedUserId },
+          },
+        }),
+      );
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
           where: {
@@ -118,7 +145,9 @@ export class JiraConnectionService implements ITicketingConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
+            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}/rest/api/${
+              process.env.JIRA_API_VERSION || 2
+            }`,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -134,7 +163,9 @@ export class JiraConnectionService implements ITicketingConnectionService {
             provider_slug: 'jira',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
+            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}/rest/api/${
+              process.env.JIRA_API_VERSION || 2
+            }`,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

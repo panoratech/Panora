@@ -1,5 +1,3 @@
-
-
 import {
   FrontAccountInput,
   FrontAccountOutput,
@@ -84,7 +82,10 @@ import {
   JiraTagInput,
   JiraTagOutput,
 } from '@ticketing/tag/services/jira/types';
-import { JiraCollectionOutput, JiraCollectionInput } from '@ticketing/collection/services/jira/types';
+import {
+  JiraCollectionOutput,
+  JiraCollectionInput,
+} from '@ticketing/collection/services/jira/types';
 import {
   ZendeskTicketInput,
   ZendeskTicketOutput,
@@ -123,8 +124,12 @@ import {
 } from '@ticketing/ticket/services/gitlab/types';
 import {
   GitlabCommentInput,
-  GitlabCommentOutput
-} from '@ticketing/comment/services/gitlab/types'
+  GitlabCommentOutput,
+} from '@ticketing/comment/services/gitlab/types';
+import {
+  GitlabUserInput,
+  GitlabUserOutput,
+} from '@ticketing/user/services/gitlab/types';
 
 /* INPUT */
 
@@ -137,6 +142,7 @@ export type OriginalTicketInput =
   | GorgiasTicketInput
   | JiraTicketInput
   | GitlabTicketInput;
+
 //| JiraServiceMgmtTicketInput;
 
 /* comment */
@@ -152,7 +158,8 @@ export type OriginalUserInput =
   | ZendeskUserInput
   | FrontUserInput
   | GorgiasUserInput
-  | JiraUserInput;
+  | JiraUserInput
+  | GitlabUserInput;
 //| JiraServiceMgmtUserInput;
 /* account */
 export type OriginalAccountInput = ZendeskAccountInput | FrontAccountInput;
@@ -178,7 +185,9 @@ export type OriginalTeamInput =
 
 /* attachment */
 export type OriginalAttachmentInput = null;
-export type OriginalCollectionInput = JiraCollectionInput | GitlabCollectionInput;
+export type OriginalCollectionInput =
+  | JiraCollectionInput
+  | GitlabCollectionInput;
 
 export type TicketingObjectInput =
   | OriginalTicketInput
@@ -215,7 +224,8 @@ export type OriginalUserOutput =
   | ZendeskUserOutput
   | FrontUserOutput
   | GorgiasUserOutput
-  | JiraUserOutput;
+  | JiraUserOutput
+  | GitlabUserOutput;
 /* account */
 export type OriginalAccountOutput = ZendeskAccountOutput | FrontAccountOutput;
 /* contact */
@@ -247,8 +257,9 @@ export type OriginalAttachmentOutput =
 
 /* collection */
 
-export type OriginalCollectionOutput = JiraCollectionOutput | GitlabCollectionOutput;
-
+export type OriginalCollectionOutput =
+  | JiraCollectionOutput
+  | GitlabCollectionOutput;
 
 export type TicketingObjectOutput =
   | OriginalTicketOutput
@@ -260,7 +271,3 @@ export type TicketingObjectOutput =
   | OriginalContactOutput
   | OriginalAccountOutput
   | OriginalCollectionOutput;
-
-
-
-

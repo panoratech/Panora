@@ -42,7 +42,6 @@ export class TicketingConnectionsService {
     try {
       const serviceName = providerName.toLowerCase();
       const service = this.serviceRegistry.getService(serviceName);
-
       if (!service) {
         throw new NotFoundError(`Unknown provider, found ${providerName}`);
       }

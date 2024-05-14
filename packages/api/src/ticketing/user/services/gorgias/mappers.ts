@@ -39,11 +39,11 @@ export class GorgiasUserMapper implements IUserMapper {
     // Initialize field_mappings array from customFields, if provided
     const field_mappings = customFieldMappings
       ? customFieldMappings
-        .map((mapping) => ({
-          key: mapping.slug,
-          value: user.meta ? user.meta[mapping.remote_id] : undefined,
-        }))
-        .filter((mapping) => mapping.value !== undefined)
+          .map((mapping) => ({
+            key: mapping.slug,
+            value: user.meta ? user.meta[mapping.remote_id] : undefined,
+          }))
+          .filter((mapping) => mapping.value !== undefined)
       : [];
 
     const unifiedUser: UnifiedUserOutput = {

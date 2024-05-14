@@ -97,6 +97,7 @@ export class CollectionService {
                 ressource_owner_id: collection.id,
               },
             });
+            console.log('resp=========>', resp);
             const remote_data = JSON.parse(resp.data);
             return { ...collection, remote_data };
           }),

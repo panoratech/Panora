@@ -14,6 +14,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { FrontService } from './services/front';
 import { JiraService } from './services/jira';
 import { GorgiasService } from './services/gorgias';
+import { GitlabService } from './services/gitlab';
 
 @Module({
   imports: [

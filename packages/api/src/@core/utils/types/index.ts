@@ -27,6 +27,12 @@ export type TargetObject =
 
 export type StandardObject = TargetObject;
 
+export type Pagination = {
+  isFirstPage: boolean;
+  isLastPage?: boolean;
+  queryParams?: Record<string, any>;
+  [key: string]: any;
+};
 //API RESPONSE
 export class ApiResponse<T> {
   data: T;
@@ -36,6 +42,8 @@ export class ApiResponse<T> {
   error?: string;
   @ApiProperty({ type: Number })
   statusCode: number;
+  @ApiPropertyOptional()
+  pageMeta?: Pagination;
 }
 
 export const ApiCustomResponse = <DataDto extends Type<unknown>>(

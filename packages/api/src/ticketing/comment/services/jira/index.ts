@@ -9,7 +9,7 @@ import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { JiraCommentInput, JiraCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
 import * as fs from 'fs';
 
 @Injectable()
@@ -45,7 +45,7 @@ export class JiraService implements ICommentService {
 
       // Send request without attachments
       const resp = await axios.post(
-        `${connection.account_url}/issue/${remoteIdTicket}/comment`,
+        `${connection.account_url}/issue/${remoteIdTicket}/rest/api/2/comment`,
         JSON.stringify(commentData),
         {
           headers: {
@@ -91,7 +91,7 @@ export class JiraService implements ICommentService {
 
         // Send request with attachments
         const resp_ = await axios.post(
-          `${connection.account_url}/issue/${remoteIdTicket}/attachments`,
+          `${connection.account_url}/rest/api/2/issue/${remoteIdTicket}/attachments`,
           formData,
           {
             headers: {

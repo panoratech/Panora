@@ -5,6 +5,7 @@ import {
   Res,
   UseGuards,
   Request,
+  Session,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm.connection.service';
@@ -49,10 +50,11 @@ export class ConnectionsController {
   @ApiQuery({ name: 'location', required: true, type: String })
   @ApiResponse({ status: 200 })
   @Get('oauth/callback')
-  handleCallback(
+  async handleCallback(
     @Res() res: Response,
     @Query('state') state: string,
     @Query('code') code: string,
+    @Session() session: Record<string, any>,
     @Query('location') zohoLocation?: string,
   ) {
     try {

@@ -52,20 +52,29 @@ export class GitlabConnectionService implements ITicketingConnectionService {
         },
       });
 
-      //reconstruct the redirect URI that was passed in the githubend it must be the same
+      //reconstruct the redirect URI that was passed in the gitlab end it must be the same
       const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
+      // const CODE_VERIFIER = this.cryptoService.generateRandomString(
+      //   Math.floor(Math.random() * (128 - 43 + 1)) + 43,
+      // );
+
       const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
-        code: code,
         grant_type: 'authorization_code',
+        code: code,
+        // code_challenge: this.cryptoService.generateHash(CODE_VERIFIER),
+        // code_challenge_method: 'S256',
+        // state: state ?? this.cryptoService.generateRandomString(16),
       });
+
+      // Usage example
       const res = await axios.post(
         `https://gitlab.com/oauth/token`,
         formData.toString(),
@@ -93,6 +102,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            account_url: providersConfig['ticketing']['gitlab'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -134,9 +144,11 @@ export class GitlabConnectionService implements ITicketingConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
+      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
+        redirect_uri: REDIRECT_URI,
       });
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,

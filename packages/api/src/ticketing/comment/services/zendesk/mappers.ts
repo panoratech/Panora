@@ -8,7 +8,7 @@ import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unifi
 import { unify } from '@@core/utils/unification/unify';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
 
 export class ZendeskCommentMapper implements ICommentMapper {
   private readonly utils: Utils;
@@ -118,7 +118,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
 
     return {
       remote_id: String(comment.id),
-      ...res
+      ...res,
     };
   }
 }

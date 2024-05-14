@@ -17,9 +17,11 @@ import { ServiceRegistry } from '../services/registry.service';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { Pagination, Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
+  private readonly utils: Utils;
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -29,6 +31,7 @@ export class SyncService implements OnModuleInit {
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
+    this.utils = new Utils();
   }
 
   async onModuleInit() {
@@ -67,13 +70,14 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing comments....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
+
       if (users && users.length > 0) {
         for (const user of users) {
           const projects = await this.prisma.projects.findMany({
@@ -162,48 +166,59 @@ export class SyncService implements OnModuleInit {
 
       const service: ICommentService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalCommentOutput[]> =
-        await service.syncComments(linkedUserId, id_ticket, remoteProperties);
+      const handleSaveTODb = async (
+        resp: ApiResponse<OriginalCommentOutput[]>,
+      ) => {
+        const sourceObject: OriginalCommentOutput[] = resp?.data || [];
+        //unify the data according to the target obj wanted
+        const unifiedObject = (await unify<OriginalCommentOutput[]>({
+          sourceObject,
+          targetType: TicketingObject.comment,
+          providerName: integrationId,
+          vertical: 'ticketing',
+          customFieldMappings,
+        })) as UnifiedCommentOutput[];
 
-      const sourceObject: OriginalCommentOutput[] = resp.data;
+        //insert the data in the DB with the fieldMappings (value table)
+        const comments_data = await this.saveCommentsInDb(
+          linkedUserId,
+          unifiedObject,
+          integrationId,
+          id_ticket,
+          sourceObject,
+        );
 
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalCommentOutput[]>({
-        sourceObject,
-        targetType: TicketingObject.comment,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        customFieldMappings,
-      })) as UnifiedCommentOutput[];
-
-      //insert the data in the DB with the fieldMappings (value table)
-      const comments_data = await this.saveCommentsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        id_ticket,
-        sourceObject,
-      );
-
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.comment.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
+        const event = await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ticketing.comment.synced',
+            method: 'PUL',
+            url: '/pull',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+        await this.webhook.handleWebhook(
+          comments_data,
+          'ticketing.comment.pulled',
+          id_project,
+          event.id_event,
+        );
+      };
+      const handleService = async (pageMeta?: Pagination) => {
+        return await service.syncComments(
+          linkedUserId,
+          id_ticket,
+          remoteProperties,
+          pageMeta,
+        );
+      };
+      this.utils.fetchDataRecurisvely(handleService, handleSaveTODb, {
+        isFirstPage: true,
       });
-      await this.webhook.handleWebhook(
-        comments_data,
-        'ticketing.comment.pulled',
-        id_project,
-        event.id_event,
-      );
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -236,15 +251,15 @@ export class SyncService implements OnModuleInit {
 
         let unique_ticketing_comment_id: string;
         const opts =
-          (comment.creator_type === 'CONTACT' && comment.contact_id)
+          comment.creator_type === 'CONTACT' && comment.contact_id
             ? {
-              id_tcg_contact: comment.contact_id,
-            }
-            : (comment.creator_type === 'USER' && comment.user_id)
-              ? {
+                id_tcg_contact: comment.contact_id,
+              }
+            : comment.creator_type === 'USER' && comment.user_id
+            ? {
                 id_tcg_user: comment.user_id,
               }
-              : {};
+            : {};
         //case where nothing is passed for creator or a not authorized value;
 
         if (existingComment) {

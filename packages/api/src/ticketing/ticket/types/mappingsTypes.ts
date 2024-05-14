@@ -5,6 +5,8 @@ import { GithubTicketMapper } from '../services/github/mappers';
 import { GorgiasTicketMapper } from '../services/gorgias/mappers';
 import { HubspotTicketMapper } from '../services/hubspot/mappers';
 import { ZendeskTicketMapper } from '../services/zendesk/mappers';
+import { GitlabTicketMapper } from '../services/gitlab/mappers';
+import { JiraTicketMapper } from '../services/jira/mappers';
 
 const zendeskTicketMapper = new ZendeskTicketMapper();
 const frontTicketMapper = new FrontTicketMapper();

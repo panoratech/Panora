@@ -8,6 +8,7 @@ const frontTagMapper = new FrontTagMapper();
 const gorgiasTagMapper = new GorgiasTagMapper();
 
 const jiraTagMapper = new JiraTagMapper();
+
 export const tagUnificationMapping = {
   zendesk: {
     unify: zendeskTagMapper.unify.bind(zendeskTagMapper),

@@ -93,7 +93,7 @@ export class JiraTicketMapper implements ITicketMapper {
 
     let opts: any;
 
-    const assigneeId = ticket.fields.assignee.id;
+    const assigneeId = ticket?.fields?.assignee?.id;
     const user_id = await this.utils.getUserUuidFromRemoteId(
       assigneeId,
       'jira',
@@ -104,11 +104,11 @@ export class JiraTicketMapper implements ITicketMapper {
 
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: ticket.id,
-      name: ticket.fields.description,
-      status: ticket.fields.status.name,
-      description: ticket.fields.description,
-      due_date: new Date(ticket.fields.duedate),
-      tags: ticket.fields.labels,
+      name: ticket?.fields.description,
+      status: ticket?.fields?.status.name,
+      description: ticket?.fields?.description,
+      due_date: new Date(ticket?.fields?.duedate),
+      tags: ticket?.fields?.labels,
       field_mappings: [], //TODO
       ...opts,
     };

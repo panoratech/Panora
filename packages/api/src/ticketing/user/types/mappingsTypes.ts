@@ -6,7 +6,6 @@ import { ZendeskUserMapper } from '../services/zendesk/mappers';
 
 const zendeskUserMapper = new ZendeskUserMapper();
 const frontUserMapper = new FrontUserMapper();
-
 const gitlabUserMapper = new GitlabUserMapper();
 const gorgiasUserMapper = new GorgiasUserMapper();
 const jiraUserMapper = new JiraUserMapper();
@@ -25,7 +24,7 @@ export const userUnificationMapping = {
   },
   gorgias: {
     unify: gorgiasUserMapper.unify.bind(gorgiasUserMapper),
-    desunify: gorgiasUserMapper.desunify.bind(gorgiasUserMapper),
+    desunify: gorgiasUserMapper.desunify,
   },
   jira: {
     unify: jiraUserMapper.unify.bind(jiraUserMapper),

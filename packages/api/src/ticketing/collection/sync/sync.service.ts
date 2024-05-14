@@ -17,9 +17,11 @@ import { tcg_collections as TicketingCollection } from '@prisma/client';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
+  private readonly utils: Utils;
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
+    this.utils = new Utils();
   }
 
   async onModuleInit() {
@@ -66,12 +69,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing collections....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -140,48 +143,56 @@ export class SyncService implements OnModuleInit {
 
       const service: ICollectionService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalCollectionOutput[]> =
-        await service.syncCollections(linkedUserId);
+      const handleSaveTODb = async (
+        resp: ApiResponse<OriginalCollectionOutput[]>,
+      ) => {
+        const sourceObject: OriginalCollectionOutput[] = resp?.data;
+        this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+        //unify the data according to the target obj wanted
+        const unifiedObject = (await unify<OriginalCollectionOutput[]>({
+          sourceObject,
+          targetType: TicketingObject.collection,
+          providerName: integrationId,
+          vertical: 'ticketing',
+          customFieldMappings: [],
+        })) as UnifiedCollectionOutput[];
 
-      const sourceObject: OriginalCollectionOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalCollectionOutput[]>({
-        sourceObject,
-        targetType: TicketingObject.collection,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        customFieldMappings: [],
-      })) as UnifiedCollectionOutput[];
+        //insert the data in the DB with the fieldMappings (value table)
+        const collection_data = await this.saveCollectionsInDb(
+          linkedUserId,
+          unifiedObject,
+          integrationId,
+          sourceObject,
+        );
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const collection_data = await this.saveCollectionsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
+        const event = await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ticketing.collection.pulled',
+            method: 'PULL',
+            url: '/pull',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
 
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.collection.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
+        await this.webhook.handleWebhook(
+          collection_data,
+          'ticketing.collection.pulled',
+          id_project,
+          event.id_event,
+        );
+      };
+
+      const handleService = async (pageMeta?: Record<string, any>) => {
+        return await service.syncCollections(linkedUserId, null, pageMeta);
+      };
+      this.utils.fetchDataRecurisvely(handleService, handleSaveTODb, {
+        isFirstPage: true,
       });
-
-      await this.webhook.handleWebhook(
-        collection_data,
-        'ticketing.collection.pulled',
-        id_project,
-        event.id_event,
-      );
     } catch (error) {
       handleServiceError(error, this.logger);
     }
