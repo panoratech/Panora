@@ -7,6 +7,7 @@ export interface IUserService {
   syncUsers(
     linkedUserId: string,
     custom_properties?: string[],
+    pageMeta?: Record<string, any>,
   ): Promise<ApiResponse<OriginalUserOutput[]>>;
 }
 

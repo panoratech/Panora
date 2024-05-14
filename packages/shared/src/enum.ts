@@ -22,6 +22,7 @@ export enum TicketingProviders {
     GITHUB = 'github',
     JIRA = 'jira',
     GORGIAS = 'gorgias',
+    GITLAB='gitlab'
 }
 
 export enum AccountingProviders {

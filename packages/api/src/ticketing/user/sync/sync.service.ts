@@ -17,9 +17,11 @@ import { UnifiedUserOutput } from '../types/model.unified';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
+  private readonly utils: Utils;
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -29,6 +31,7 @@ export class SyncService implements OnModuleInit {
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
+    this.utils = new Utils();
   }
 
   async onModuleInit() {
@@ -67,12 +70,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing users....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -90,7 +93,7 @@ export class SyncService implements OnModuleInit {
             });
             linkedUsers.map(async (linkedUser) => {
               try {
-                const providers = TICKETING_PROVIDERS;
+                const providers = ['jira'] || TICKETING_PROVIDERS;
                 for (const provider of providers) {
                   try {
                     await this.syncUsersForLinkedUser(
@@ -151,50 +154,57 @@ export class SyncService implements OnModuleInit {
 
       const service: IUserService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalUserOutput[]> = await service.syncUsers(
-        linkedUserId,
-        remoteProperties,
-      );
+      const handleService = async (pageMeta?: Record<string, any>) => {
+        return await service.syncUsers(
+          linkedUserId,
+          remoteProperties,
+          pageMeta,
+        );
+      };
+      const handleSaveToDb = async (
+        resp: ApiResponse<OriginalUserOutput[]>,
+      ) => {
+        const sourceObject: OriginalUserOutput[] = resp?.data;
+        //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+        //unify the data accordiGitLab may impose rate limits on API requests to prevent abuse or excessive load on their servers. Ensure that you're not hitting API endpoints too frequently or exceeding any rate limits imposed by GitLab. Consider implementing backoff strategies or exponential retry mechanisms to handle rate limiting gracefully.ng to the target obj wanted
+        const unifiedObject = (await unify<OriginalUserOutput[]>({
+          sourceObject,
+          targetType: TicketingObject.user,
+          providerName: integrationId,
+          vertical: 'ticketing',
+          customFieldMappings,
+        })) as UnifiedUserOutput[];
 
-      const sourceObject: OriginalUserOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalUserOutput[]>({
-        sourceObject,
-        targetType: TicketingObject.user,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        customFieldMappings,
-      })) as UnifiedUserOutput[];
-
-
-
-      //insert the data in the DB with the fieldMappings (value table)
-      const user_data = await this.saveUsersInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.user.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
+        //insert the data in the DB with the fieldMappings (value table)
+        const user_data = await this.saveUsersInDb(
+          linkedUserId,
+          unifiedObject,
+          integrationId,
+          sourceObject,
+        );
+        const event = await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ticketing.user.pulled',
+            method: 'PULL',
+            url: '/pull',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+        await this.webhook.handleWebhook(
+          user_data,
+          'ticketing.user.pulled',
+          id_project,
+          event.id_event,
+        );
+      };
+      this.utils.fetchDataRecurisvely(handleService, handleSaveToDb, {
+        isFirstPage: true,
       });
-      await this.webhook.handleWebhook(
-        user_data,
-        'ticketing.user.pulled',
-        id_project,
-        event.id_event,
-      );
     } catch (error) {
       handleServiceError(error, this.logger);
     }
@@ -253,7 +263,7 @@ export class SyncService implements OnModuleInit {
             created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
-            id_tcg_account: user.account_id || '',
+            //TODO: id_tcg_account: user.account_id || '',
             remote_id: originId,
             remote_platform: originSource,
           };

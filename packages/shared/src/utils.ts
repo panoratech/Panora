@@ -394,12 +394,11 @@ export const providersConfig: ProvidersConfig = {
       scopes: '',
       urls: {
         docsUrl: 'https://docs.gitlab.com/ee/api/rest/#',
-        apiUrl: '/api/v4',
-        authBaseUrl: '/oauth/authorize',
+        apiUrl: 'https://gitlab.com/api/v4',
+        authBaseUrl: 'https://gitlab.com/oauth/authorize',
       },
       logoPath: '',
       description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
-      active: false,
       authStrategy: AuthStrategy.oauth2
     },
     'clickup': {

@@ -124,21 +124,20 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       break;
     case 'jira':
     case 'jira_service_mgmt':
-      params = `audience=api.atlassian.com&${params}&prompt=consent`;
+      params = `audience=api.atlassian.com&${params}&prompt=consent&response_type=code`;
       break;
     case 'gitlab':
-      params += '&code_challenge=&code_challenge_method=';
+      params += `&response_type=code&nonce=${randomString()}`;
       break;
     case 'gorgias':
       params = `&response_type=code&nonce=${randomString()}`;
-      break;
+      break; 
     default:
       // For most providers, response_type=code is common
       params += '&response_type=code';
   }
 
   const finalAuthUrl = `${BASE_URL}?${params}`;
-  // console.log('Final Authentication : ', finalAuthUrl);
   return finalAuthUrl;
 }
 

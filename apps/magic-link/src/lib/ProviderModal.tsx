@@ -1,28 +1,28 @@
 import { useEffect, useState } from 'react';
 import useOAuth from '@/hooks/useOAuth';
 import { categoriesVerticals } from '@panora/shared/src/providers';
-import {findProviderByName, providersArray} from '@panora/shared/src/utils';
+import { findProviderByName, providersArray } from '@panora/shared/src/utils';
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
 
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
-    const provider = findProviderByName(providerName);
-    return (
-      <div className="fixed inset-0 flex justify-center items-center">
-        <div className="text-center p-6 bg-[#1d1d1d] rounded-lg">
-          <div className='icon-wrapper'>
-            <img src={provider!.logoPath} alt={provider!.name} className="mx-auto mb-4 w-14 h-14 rounded-xl" />
-          </div>
-          
-          <h4 className="text-lg font-bold mb-2">Continue in {provider!.name}</h4>
-          <p className="text-gray-400 mb-4">Accepting oAuth access to Panora</p>
-          <div className='flex justify-center items-center'>
-            
-           </div>
+  const provider = findProviderByName(providerName);
+  return (
+    <div className="fixed inset-0 flex justify-center items-center">
+      <div className="text-center p-6 bg-[#1d1d1d] rounded-lg">
+        <div className='icon-wrapper'>
+          <img src={provider!.logoPath} alt={provider!.name} className="mx-auto mb-4 w-14 h-14 rounded-xl" />
+        </div>
+
+        <h4 className="text-lg font-bold mb-2">Continue in {provider!.name}</h4>
+        <p className="text-gray-400 mb-4">Accepting oAuth access to Panora</p>
+        <div className='flex justify-center items-center'>
+
         </div>
       </div>
-    );
+    </div>
+  );
 };
 
 const ProviderModal = () => {
@@ -30,21 +30,30 @@ const ProviderModal = () => {
   const [selectedProvider, setSelectedProvider] = useState('');
   const [loading, setLoading] = useState<{
     status: boolean; provider: string
-  }>({status: false, provider: ''});
+  }>({ status: false, provider: '' });
   const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState('');
 
-  useEffect(() => { 
+  useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
+    console.log("queryParams", queryParams);
+    console.log("window.location.search", window.location.search);
     const uniqueId = queryParams.get('uniqueLink');
+    console.log("entries", queryParams.entries);
+    console.log("toString", queryParams.toString());
+    console.log("uniqueId", uniqueId);
+
     if (uniqueId) {
       setUniqueMagicLinkId(uniqueId);
     }
   }, []);
 
-  
-  const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
-  const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
-  
+
+  const { data: magicLink } = useUniqueMagicLink(uniqueMagicLinkId);
+  console.log("magicLink==========>", magicLink)
+  const { data: linkedUser } = useLinkedUser(magicLink?.id_linked_user as string);
+  console.log("linkedUser==========>", linkedUser)
+
+
   const { open, isReady } = useOAuth({
     providerName: selectedProvider,
     vertical: selectedCategory,
@@ -57,28 +66,28 @@ const ProviderModal = () => {
   const onWindowClose = () => {
     setSelectedProvider('');
     setLoading({
-        status: false,
-        provider: ''
+      status: false,
+      provider: ''
     })
   }
 
   useEffect(() => {
     if (selectedProvider && isReady) {
-        open(onWindowClose);
+      open(onWindowClose);
     }
-    
+
   }, [selectedProvider, isReady, open]);
-  
+
   const handleWalletClick = (walletName: string) => {
     console.log(`Wallet selected: ${walletName}`);
     setSelectedProvider(walletName.toLowerCase());
-    setLoading({status: true, provider: walletName});
+    setLoading({ status: true, provider: walletName });
   };
 
-  const handleCategoryClick = (category: string) => {    
+  const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
   };
-  
+
   const PROVIDERS = providersArray(selectedCategory);
 
 
@@ -89,40 +98,40 @@ const ProviderModal = () => {
           <h3 className="text-lg font-medium">Select Integrations</h3>
           <button className="text-gray-400 hover:text-white transition duration-150">&times;</button>
         </div>}
-        {!loading.status ? 
-            <div className="p-4 max-h-[32rem] overflow-auto scrollbar-hide">
-                <div className="flex mb-4 outline-none flex-wrap">
-                    {categoriesVerticals.map((category, index) => (
-                    <button
-                        key={index}
-                        className={`px-3 py-1 mb-2 mr-1 rounded-full text-xs font-medium transition duration-150 ${selectedCategory === category ? 'bg-indigo-600 hover:bg-indigo-500	' : 'bg-neutral-700 hover:bg-neutral-600'}`}
-                        onClick={() => handleCategoryClick(category)}
-                    >
-                        {category}
-                    </button>
-                    ))}
-                </div>
-                {(
-                    <>
-                    {PROVIDERS.map((provider, index) => (
-                        <div
-                        key={index}
-                        className="flex items-center justify-between px-4 py-2 my-2 bg-neutral-900 hover:bg-neutral-800 border-black  hover:border-indigo-800 rounded-xl transition duration-150 cursor-pointer"
-                        onClick={() => handleWalletClick(provider.name)}
-                        >
-                        <div className="flex items-center">
-                        <img className="w-8 h-8 rounded-lg mr-3" src={provider.logoPath} alt={provider.name} />
-                            <span>{provider.name.substring(0,1).toUpperCase().concat(provider.name.substring(1,provider.name.length))}</span>
-                        </div>
-                        
-                        </div>
-                    ))}
-                    
-                    </>
-                )}
+        {!loading.status ?
+          <div className="p-4 max-h-[32rem] overflow-auto scrollbar-hide">
+            <div className="flex mb-4 outline-none flex-wrap">
+              {categoriesVerticals.map((category, index) => (
+                <button
+                  key={index}
+                  className={`px-3 py-1 mb-2 mr-1 rounded-full text-xs font-medium transition duration-150 ${selectedCategory === category ? 'bg-indigo-600 hover:bg-indigo-500	' : 'bg-neutral-700 hover:bg-neutral-600'}`}
+                  onClick={() => handleCategoryClick(category)}
+                >
+                  {category}
+                </button>
+              ))}
             </div>
-            :
-            <LoadingOverlay providerName={loading.provider}/>
+            {(
+              <>
+                {PROVIDERS.map((provider, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between px-4 py-2 my-2 bg-neutral-900 hover:bg-neutral-800 border-black  hover:border-indigo-800 rounded-xl transition duration-150 cursor-pointer"
+                    onClick={() => handleWalletClick(provider.name)}
+                  >
+                    <div className="flex items-center">
+                      <img className="w-8 h-8 rounded-lg mr-3" src={provider.logoPath} alt={provider.name} />
+                      <span>{provider.name.substring(0, 1).toUpperCase().concat(provider.name.substring(1, provider.name.length))}</span>
+                    </div>
+
+                  </div>
+                ))}
+
+              </>
+            )}
+          </div>
+          :
+          <LoadingOverlay providerName={loading.provider} />
         }
       </div>
     </div>

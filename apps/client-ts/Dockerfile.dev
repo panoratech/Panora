@@ -23,5 +23,7 @@ RUN corepack enable
 WORKDIR /app
 RUN pnpm add -g turbo
 
+EXPOSE 8090
+
 # Start the Webapp
 CMD cd apps/client-ts && pnpm install && pnpm run dev

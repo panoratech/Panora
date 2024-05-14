@@ -113,12 +113,14 @@ export class JiraServiceMgmtConnectionService
       let cloud_id: string;
       for (const site of sites_scopes) {
         //todo
-        if (site.url == 'https://panora.atlassian.net') {
+        if (
+          site.url ==
+          ('https://testp123.atlassian.net' || 'https://panora.atlassian.net')
+        ) {
           cloud_id = site.id;
           break;
         }
       }
-
       let db_res;
       const connection_token = uuidv4();
 
@@ -128,7 +130,9 @@ export class JiraServiceMgmtConnectionService
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
+            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}/rest/api/${
+              process.env.JIRA_API_VERSION || 2
+            }`,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -146,7 +150,9 @@ export class JiraServiceMgmtConnectionService
             provider_slug: 'jira_service_mgmt',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
+            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}/rest/api/${
+              process.env.JIRA_API_VERSION || 2
+            }`,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

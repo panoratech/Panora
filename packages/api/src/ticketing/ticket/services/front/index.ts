@@ -9,7 +9,7 @@ import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class FrontService implements ITicketService {

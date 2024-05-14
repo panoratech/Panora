@@ -10,6 +10,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { JiraService } from './services/jira';
+import { GitlabService } from './services/gitlab';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { JiraService } from './services/jira';
     ServiceRegistry,
     /* PROVIDERS SERVICES */
     JiraService,
+    GitlabService,
   ],
   exports: [
     SyncService,

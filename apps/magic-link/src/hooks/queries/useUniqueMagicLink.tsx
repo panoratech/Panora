@@ -4,13 +4,13 @@ import config from '@/helpers/config';
 
 const useUniqueMagicLink = (id: string) => {
   return useQuery({
-    queryKey: ['magic-link', id], 
+    queryKey: ['magic-link', id],
     queryFn: async (): Promise<MagicLink> => {
       const response = await fetch(`${config.API_URL}/magic-links/single?id=${id}`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
     }
   });
 };

@@ -15,7 +15,7 @@ export class UnifiedTicketInput {
     description:
       'The status of the ticket. Authorized values are OPEN or CLOSED.',
   })
-  @IsIn(['OPEN', 'CLOSED'], {
+  @IsIn(['OPEN', 'CLOSED', 'REOPEN'], {
     message: 'Type must be either OPEN or CLOSED',
   })
   @IsOptional()

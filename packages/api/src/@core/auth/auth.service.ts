@@ -106,12 +106,12 @@ export class AuthService {
       const proj = await this.prisma.projects.create({
         data: {
           id_project: uuidv4(),
-          name: "Project 1",
-          sync_mode: "",
-          id_user: user_.id_user
-        }
-      })
-      this.logger.log("Proj data after registr is "+ JSON.stringify(proj))
+          name: 'Project 1',
+          sync_mode: '',
+          id_user: user_.id_user,
+        },
+      });
+      this.logger.log('Proj data after registr is ' + JSON.stringify(proj));
       return user_;
     } catch (error) {
       console.log(error);
@@ -132,7 +132,7 @@ export class AuthService {
           id_user: foundUser.id_user,
         },
       });
-      this.logger.log("Project found (login) is "+ JSON.stringify(project))
+      this.logger.log('Project found (login) is ' + JSON.stringify(project));
 
       if (!foundUser) {
         throw new UnauthorizedException('user does not exist!');
@@ -273,6 +273,7 @@ export class AuthService {
   async validateApiKey(apiKey: string): Promise<boolean> {
     try {
       // Decode the JWT to verify if it's valid and get the payload
+      console.log('validateApiKey =========>', apiKey);
       const decoded = this.jwtService.verify(apiKey, {
         secret: process.env.JWT_SECRET,
       });

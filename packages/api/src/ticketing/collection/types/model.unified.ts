@@ -27,6 +27,9 @@ export class UnifiedCollectionInput {
   })
   @IsOptional()
   collection_type?: string;
+
+  @IsOptional()
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedCollectionOutput extends UnifiedCollectionInput {

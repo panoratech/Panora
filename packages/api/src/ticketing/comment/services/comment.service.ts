@@ -63,7 +63,6 @@ export class CommentService {
           id_linked_user: linkedUserId,
         },
       });
-
       //CHECKS
       if (!linkedUser) throw new Error('Linked User Not Found');
       const tick = unifiedCommentData.ticket_id;

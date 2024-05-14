@@ -9,7 +9,8 @@ import { ApiResponse } from '@@core/utils/types';
 export interface ICollectionService {
   syncCollections(
     linkedUserId: string,
-    custom_properties?: string[],
+    custom_properties?: string[] | null,
+    pageMeta?: Record<string, any>,
   ): Promise<ApiResponse<OriginalCollectionOutput[]>>;
 }
 

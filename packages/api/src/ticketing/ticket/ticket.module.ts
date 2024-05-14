@@ -15,6 +15,7 @@ import { FrontService } from './services/front';
 import { GithubService } from './services/github';
 import { JiraService } from './services/jira';
 import { GorgiasService } from './services/gorgias';
+import { GitlabService } from './services/gitlab';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { GorgiasService } from './services/gorgias';
     GithubService,
     JiraService,
     GorgiasService,
+    GitlabService,
   ],
   exports: [
     SyncService,
