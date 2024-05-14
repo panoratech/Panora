@@ -55,10 +55,6 @@
       "url": "crm"
     },
     {
-      "name": "Marketing Automation",
-      "url": "marketingautomation"
-    },
-    {
       "name": "Ticketing",
       "url": "ticketing"
     },
@@ -111,12 +107,6 @@
           "group": "Users",
           "pages": [ "crm/users/overview", "crm/users/api/list", "crm/users/api/get" ]
         }
-      ]
-    },
-    {
-      "group": "Marketing Automation",
-      "pages": [
-        "marketingautomation/introduction"
       ]
     },
     {
@@ -382,19 +372,19 @@
         "core-concepts/auth",
         "core-concepts/magic-links",
         "core-concepts/custom-fields",
-        "core-concepts/sync-strategies",
-        {
-          "group": "Connections",
-          "pages": ["connections/overview", "connections/api/list"]
-        }
+        "core-concepts/sync-strategies"
       ]
+    },
+    {
+      "group": "Glossary",
+      "pages": ["glossary/connection-object", "glossary/linked-account-object"]
     },
     {
       "group": "Devtools",
       "pages": [
         {
           "group": "SDKs",
-          "pages": ["backend-sdk/typescript", "backend-sdk/python" , "backend-sdk/java"]
+          "pages": ["backend-sdk/typescript", "backend-sdk/python"]
         }
       ]
     },
@@ -416,7 +406,6 @@
         "open-source/contributors"
       ]
     },
-  
     {
       "group": "Support",
       "pages": [

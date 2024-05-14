@@ -13,215 +13,231 @@ We made a docker file that builds Panora from sources, specifically to help you 
 <Info>Execute these from your Panora's repo root folder</Info>
 
 <Steps>
+  <Step title="Copy env variables">
+    ```bash 
+      cp .env.example .env 
+    ```
+  </Step>
+  <Step title="Rules for env variables"> 
+    <Info>
+      You must create manually a custom oAuth2 app inside the 3rd party and copy the
+      critical values (_client id and client secret_)
+    </Info>
+    You have the option to manage a custom 3rd party oAuth app.
 
-<Step title="Copy env variables">
-```bash 
-cp .env.example .env 
-```
-</Step>
+    **Each custom 3rd party environment variable must be of the form `PROVIDER_VERTICAL_SOFTWAREMODE_ATTRIBUTE` where**
 
-<Step title="Rules for env variables"> 
-1. You don't need Stytch variables if you selfhost, it's only used in cloud version of Panora so you can discard the stytch variables.
-2. To provide 3rd party variables you have the option to manage a 3rd party oAuth app by yourself by setting the credentials as such:
+    - `PROVIDER` is any 3rd party name
+    - `VERTICAL` is for example [CRM, TICKETING, MARKETINGAUTOMATION, ...]
+    - `SOFTWAREMODE` is [ CLOUD, ONPREMISE ]
+    - `ATTRIBUTE` is for example [ CLIENT_ID, CLIENT_SECRET, SUBDOMAIN, ... ]
 
-(You must create by hand inside the 3rd party a custom oAuth2 app and paste the credentials using the following form)
+    _Example_ :
 
-  `PROVIDER_VERTICAL_SOFTWAREMODE_ATTRIBUTE`
-  where
-  ```
-  PROVIDER is any 3rd party name
-  VERTICAL is for example { CRM, TICKETING, MARKETINGAUTOMATION, ...}
-  SOFTWAREMODE is { CLOUD, ONPREMISE }
-  ATTRIBUTE is for example { CLIENT_ID, CLIENT_SECRET, SUBDOMAIN, ... }
-  ```
-  i.e `HUBSPOT_CRM_CLOUD_CLIENT_ID`
+    - `HUBSPOT_CRM_CLOUD_CLIENT_ID = client_id_value_pasted_from_hubspot_developer_app`
+    - `HUBSPOT_CRM_CLOUD_CLIENT_SECRET = client_secret_value_pasted_from_hubspot_developer_app`
 
-</Step>
-
-<Step title="Removed previously installed dependencies">
-  ```bash 
-  rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
-  ```
-</Step>
-
-<Step title="Mac Users only:">
-  ```bash 
-  echo -e "node-linker=hoisted\npackage-import-method=clone-or-copy" > .npmrc 
-  ```
-</Step>
-
-<Step title="Start the Dockerfile">
-  ```bash 
-  docker compose -f docker-compose.dev.yml up
-  ``` 
-</Step>
-That's all! You can find the backend and other services running at their usual location. Editing code locally will immediately reflect.
+  </Step>
+  <Step title="Removed previously installed dependencies">
+    ```bash 
+    rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
+    ```
+  </Step>
+  <Step title="Mac Users only:">
+    ```bash 
+    echo -e "node-linker=hoisted\n package-import-method=clone-or-copy" > .npmrc 
+    ```
+  </Step>
+  <Step title="Start the Dockerfile">
+    ```bash 
+    docker compose -f docker-compose.dev.yml up
+    ``` 
+  </Step>
 </Steps>
+  That's all ! You can find the backend and other services running at their usual location. Editing code locally will **immediately** reflect.
 
 ## Adding new Integrations ✨
 
 Make sure you are inside `packages/api/src` where the server lives !
 
-# You want to add a new 3rd Party not yet supported ? 🧑‍🎤
+### You want to add a new 3rd Party not yet supported ? 🧑‍🎤
 
 _Ie: Slack, Hubspot, Jira, Shopify ..._
 
 First choose wisely which vertical the 3rd party belongs to among these:
 
-- crm
-- ticketing
-- accounting
-- ats
-- filestorage
-- hris
-- marketingautomation
+- `crm`
+- `ticketing`
+- `accounting`
+- `ats`
+- `filestorage`
+- `hris`
+- `marketingautomation`
 
-For the sake of the guide, now on we'll consider adding a 3rd party belonging to the `crm` vertical.
+<Info>
+  For the sake of the guide, now on we'll consider adding a 3rd party belonging
+  to the `crm` vertical.
+</Info>
 
-## 1. Look into the `packages/shared/src/utils.ts` file and check if the provider you want to build has its metadata set inside the `providersConfig` object.
+# Step 1: Ensure 3rd party metadata is set
 
-It should be available (if not contact Panora team) with `active` field set to `false` meaning the integration has not been built.
+Look into the `packages/shared/src/utils.ts` file and check if the provider you want to build has its metadata set inside the `providersConfig` object.
+
+It should be available (if not [contact us](https://app.cal.com/rflih/30)) with `active` field set to `false` meaning the integration has not been built.
 
 Actually an integration is built in 2 parts :
 
-- the authentication part (oauth, api key, basic etc) which is built by the Panora team
-- the service integration where the mapping is created with our unified model which is what you'll build
+- the **authentication part** (oauth, api key, basic etc) which is built by the Panora team
+- the **service integration** where the mapping is created with our unified model which is what you'll build
 
-## 2. Build your provider service
+# Step 2: Build your provider service
 
-# You want to map a common object to your new 3rd Party ? 👩‍🎤
+### You want to map a common object to your new 3rd Party ? 👩‍🎤
 
 _Ie: Contact, Ticket, Deal, Company ..._
 
 For the sake of this guide, let's map the common object `contact` under `crm` vertical to _my3rdParty_ (in reality it would be a real 3rd party name).
 
-### DISCLAIMER: an integration is considered valid when all common objects have been mapped. Then, after the PR is accepted we'll be able to set `active` field to `true` inside `providersConfig`.
+<Info>
+  **An integration is considered valid when all common objects have been mapped.
+  Then, after the PR is accepted we'll be able to set `active` field to `true`
+  inside `providersConfig`**
+</Info>
 
-## 1. Add a new service to map your common object to your 3rd party
+<Steps>
+  <Step title="Add a new service to map your common object to your 3rd party">
+    Create a new service folder with the name of your 3rd party. Let's call it _my3rdParty_.
 
-Create a new service folder with the name of your 3rd party. Let's call it _my3rdParty_.
+    ```bash
+    cd crm/contact/services/my3rdParty
+    ```
 
-`cd crm/contact/services/my3rdParty`
+    You'll now create 3 files :
 
-You'll now create 3 files.
+    - `index.ts` where your service is created and direct interaction with your 3rd party API is handled
+    - `types.ts` where the 3rd party specific API types are defined
+    - `mappers.ts` where the mapping between our unified common model and the 3rd party one is handled
 
-`index.ts` \_where your service is created and direct interaction with your 3rd party API is handled
+    <Steps>
+      <Step title="Create the index.ts file">
+          It must implement the `IContactService` interface.
+          ```ts
+            export interface IContactService {
+              addContact(
+                contactData: DesunifyReturnType,
+                linkedUserId: string
+              ): Promise<ApiResponse<OriginalContactOutput>>;
 
-It must implement the `IContactService` interface.
+              syncContacts(
+                linkedUserId: string
+              ): Promise<ApiResponse<OriginalContactOutput[]>>;
+            }
+          ```
 
-```ts
-export interface IContactService {
-  addContact(
-    contactData: DesunifyReturnType,
-    linkedUserId: string
-  ): Promise<ApiResponse<OriginalContactOutput>>;
+          ```ts
+              @Injectable()
+              export class My3rdPartyService implements IContactService {
+                constructor(
+                  private prisma: PrismaService,
+                  private logger: LoggerService,
+                  private cryptoService: EncryptionService,
+                  private registry: ServiceRegistry,
+                ) {
+                  this.logger.setContext(
+                    CrmObject.contact.toUpperCase() + ':' + My3rdPartyService.name,
+                  );
+                  this.registry.registerService('my3rdParty', this);
+                }
+                async addContact(
+                  contactData: 3rdPartyContactInput,
+                  linkedUserId: string,
+                ): Promise<ApiResponse<3rdPartyContactOutput>> {}
 
-  syncContacts(
-    linkedUserId: string
-  ): Promise<ApiResponse<OriginalContactOutput[]>>;
-}
-```
+                async syncContacts(
+                  linkedUserId: string,
+                ): Promise<ApiResponse<3rdPartyContactOutput[]>> {}
+              }
+          ```
+          Check other implementations under `/crm/contacts/services` to fill the core functions.
+      </Step>
+      <Step title="Create the types.ts file">
+        The keen readers may have noticed `3rdPartyContactInput` and `3rdPartyContactOutput`.
+        This is where `types.ts` comes in: <br/>
+        Go to the 3rd party API and insert the correct types asked by the API.
+        ```ts
+        export interface 3rdPartyContact {
+            //INSERT THE CORRECT TYPE HERE
+        }
+        export type 3rdPartyContactInput = Partial<3rdPartyContact>;
+        export type 3rdPartyContactOutput = 3rdPartyContactInput;
+        ```
+      </Step>
+      <Step title="Create the mappers.ts file">
+        Last but not least, inside `mappers.ts` you have to build the mappings between our unified common object `contact` and your third party specific type `3rdPartyContact`.
 
-```ts
-@Injectable()
-export class My3rdPartyService implements IContactService {
-  constructor(
-    private prisma: PrismaService,
-    private logger: LoggerService,
-    private cryptoService: EncryptionService,
-    private registry: ServiceRegistry,
-  ) {
-    this.logger.setContext(
-      CrmObject.contact.toUpperCase() + ':' + My3rdPartyService.name,
-    );
-    this.registry.registerService('my3rdParty', this);
-  }
-  async addContact(
-    contactData: 3rdPartyContactInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<3rdPartyContactOutput>> {}
+        It must implement `IContactMapper` interface.
 
-  async syncContacts(
-    linkedUserId: string,
-  ): Promise<ApiResponse<3rdPartyContactOutput[]>> {}
-}
-```
+        ```ts
+        export interface IContactMapper {
+          desunify(
+            source: UnifiedContactInput,
+            customFieldMappings?: {
+              slug: string;
+              remote_id: string;
+            }[]
+          ): DesunifyReturnType;
 
-Check other implementations under `/crm/contacts/services` to fill the core functions.
+          unify(
+            source: OriginalContactOutput | OriginalContactOutput[],
+            customFieldMappings?: {
+              slug: string;
+              remote_id: string;
+            }[]
+          ): UnifiedContactOutput | UnifiedContactOutput[];
+        }
+        ```
 
-The keen readers may have noticed `3rdPartyContactInput` and `3rdPartyContactOutput`.
+        ```ts
+        export class My3rdPartyMapper implements IContactMapper {
+          desunify(
+            source: UnifiedContactInput,
+            customFieldMappings?: {
+              slug: string;
+              remote_id: string;
+            }[],
+          ): 3rdPartyContactInput {}
 
-This is where `types.ts` comes in:
+          unify(
+            source: 3rdPartyContactOutput | 3rdPartyContactOutput[],
+            customFieldMappings?: {
+              slug: string;
+              remote_id: string;
+            }[],
+          ): UnifiedContactOutput | UnifiedContactOutput[] {}
+        }
+        ```
 
-Go to the 3rd party API and insert the correct types asked by the API.
+        Check other implementations under `/crm/contacts/services` to fill the core functions.
+      </Step>
+    </Steps>
 
-```ts
-export interface 3rdPartyContact {
-    //INSERT THE CORRECT TYPE HERE
-}
-export type 3rdPartyContactInput = Partial<3rdPartyContact>;
-export type 3rdPartyContactOutput = 3rdPartyContactInput;
-```
+  </Step>
 
-Last but not least, inside `mappers.ts` you have to build the mappings between our unified common object `contact` and your third party specific type `3rdPartyContact`.
+  <Step title="Enable your new service">
+    To make sure the service is enabled, dependencies and imports must be added. <br/>
+    We built a script that does it in seconds. You can execute the given command from the root directory of Panora.
 
-It must implement `IContactMapper` interface.
+    ```bash
+    cd packages/api && pnpm install && pnpm run validate-connectors --vertical="crm" --objectType="contact"
+    ```
 
-```ts
-export interface IContactMapper {
-  desunify(
-    source: UnifiedContactInput,
-    customFieldMappings?: {
-      slug: string;
-      remote_id: string;
-    }[]
-  ): DesunifyReturnType;
+    The script will automatically scan the `/crm/contact/services` folder and detect any new service folder so all dependencies and imports are updated across the codebase.
 
-  unify(
-    source: OriginalContactOutput | OriginalContactOutput[],
-    customFieldMappings?: {
-      slug: string;
-      remote_id: string;
-    }[]
-  ): UnifiedContactOutput | UnifiedContactOutput[];
-}
-```
+  </Step>
+</Steps>
 
-```ts
-export class My3rdPartyMapper implements IContactMapper {
-  desunify(
-    source: UnifiedContactInput,
-    customFieldMappings?: {
-      slug: string;
-      remote_id: string;
-    }[],
-  ): 3rdPartyContactInput {}
+### Congrats, you now have built a new integration with Panora ! 🦸‍♀️
 
-  unify(
-    source: 3rdPartyContactOutput | 3rdPartyContactOutput[],
-    customFieldMappings?: {
-      slug: string;
-      remote_id: string;
-    }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {}
-}
-```
-
-Check other implementations under `/crm/contacts/services` to fill the core functions.
-
-## 2. Enable your new service
-
-To make sure the service is enabled, dependencies and imports must be added.
-We built a script that does it in seconds. You can execute the given command from the root directory of Panora.
-
-```bash
-cd packages/api && pnpm install && pnpm run validate-connectors --vertical="crm" --objectType="contact"
-```
-
-The script will automatically scan the `/crm/contact/services` folder and detect any new service folder so all dependencies and imports are updated across the codebase.
-
-### Congrats Hero ! 🦸‍♀️
-
-### You now have built a new integration with Panora
-
-### NB: The development kit to add integrations out of the blue is coming soon 🎸
+<Info>
+  Nb: The development kit to add integrations out of the blue is coming soon 🎸
+</Info>

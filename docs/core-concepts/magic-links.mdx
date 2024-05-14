@@ -1,8 +1,9 @@
 ---
-title: 'Magic Links'
-description: 'Use Magic Links to invite your users to grant you access to their data without a dedicated website. Create a full connection flow in just a few clicks. No code required.'
-icon: 'wand-magic-sparkles'
+title: "Magic Links"
+description: "Use Magic Links to invite your users to grant you access to their data without a dedicated website. Create a full connection flow in just a few clicks. **No code required.**"
+icon: "wand-magic-sparkles"
 ---
+
 <img
   className="block dark:hidden"
   src="/images/generate-magic-link.gif"
@@ -13,28 +14,21 @@ icon: 'wand-magic-sparkles'
 
 <Steps>
 
-<Step>
-Login to your account dashboard
-</Step>
+<Step>Login to your account dashboard</Step>
+
+<Step>Go to section _Connections_ and local button `Create a Magic Link`</Step>
+
+<Step>Click `Create a Unique Magic Link`</Step>
 
 <Step>
-Go to section Connections and local button `Create a Magic Link`
+  You'll be asked for two informations: an `Origin User Email` and an `Origin
+  User Identifier`. The `Origin User Identifier` is the id of the user you're
+  inviting, as represented in your systems.
 </Step>
 
-<Step>
-Click `Create a Unique Magic Link` 
-</Step>
-
-<Step>
-You'll be asked for two informations: an email and an `Origin User Identifier`.
-The `Origin User Identifier` is the id of the user you're inviting, as represented in your systems.
-</Step>
-
-<Step>
-Click Generate. You can now share the link!
-</Step>
+<Step>Click `Generate`. You can now share the link!</Step>
 
 </Steps>
 
-The connection will show as `status` until the user connects to a platform.
-We recommend listening to webhooks to get notified once a user connects.
+Once the user successfully completes the granting auth flow, the connection will have a `status` value of `valid`.
+We recommend listening to [webhooks](/webhooks/overview) to get notified once a user connects.
