@@ -102,15 +102,15 @@ export class GitlabService implements ICommentService {
         }));
       if (!baseUrl) {
         //retrieve ticket remote id so we can retrieve the comments in the original software
-        const ticket = await this.prisma.tcg_tickets.findUnique({
-          where: {
-            id_tcg_ticket: id_ticket,
-          },
-          select: {
-            remote_id: true,
-            // project_remote_id: true,
-          },
-        });
+        // const ticket = await this.prisma.tcg_tickets.findUnique({
+        //   where: {
+        //     id_tcg_ticket: id_ticket,
+        //   },
+        //   select: {
+        //     remote_id: true,
+        //     // project_remote_id: true,
+        //   },
+        // });
 
         const remoteTicketData = await this.prisma.remote_data.findFirst({
           where: {
@@ -147,6 +147,13 @@ export class GitlabService implements ICommentService {
       newPageMeta.isLastPage = this.utils.getLastPageStatus(
         newPageMeta,
         'gitlab',
+      );
+      this.logger.log(
+        `fetched the gitlab comments of size ${resp?.data?.length}. ${
+          newPageMeta?.isLastPage
+            ? 'This is this last page.'
+            : 'Syncing into system and waiting for next page results....'
+        }}`,
       );
       return {
         data: comments,

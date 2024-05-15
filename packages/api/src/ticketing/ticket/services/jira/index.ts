@@ -95,7 +95,7 @@ export class JiraService implements ITicketService {
       this.logger.log(`Synced jira tickets !`);
 
       return {
-        data: resp.data?.issues,
+        data: resp.data?.issues || [],
         message: 'Jira tickets retrieved',
         statusCode: 200,
       };

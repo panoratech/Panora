@@ -100,6 +100,9 @@ export class SyncService implements OnModuleInit {
                       linkedUser.id_linked_user,
                       id_project,
                     );
+                    this.logger.log(
+                      `collecitons sync completed for provider: ${provider} linked to user_id ${linkedUser.id_linked_user}`,
+                    );
                   } catch (error) {
                     handleServiceError(error, this.logger);
                   }
@@ -147,7 +150,7 @@ export class SyncService implements OnModuleInit {
         resp: ApiResponse<OriginalCollectionOutput[]>,
       ) => {
         const sourceObject: OriginalCollectionOutput[] = resp?.data;
-        this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+        // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
         //unify the data according to the target obj wanted
         const unifiedObject = (await unify<OriginalCollectionOutput[]>({
           sourceObject,
@@ -190,7 +193,7 @@ export class SyncService implements OnModuleInit {
       const handleService = async (pageMeta?: Record<string, any>) => {
         return await service.syncCollections(linkedUserId, null, pageMeta);
       };
-      this.utils.fetchDataRecurisvely(handleService, handleSaveTODb, {
+      await this.utils.fetchDataRecurisvely(handleService, handleSaveTODb, {
         isFirstPage: true,
       });
     } catch (error) {
@@ -206,7 +209,6 @@ export class SyncService implements OnModuleInit {
   ): Promise<TicketingCollection[]> {
     try {
       let collections_results: TicketingCollection[] = [];
-      console.log(collections)
       for (let i = 0; i < collections.length; i++) {
         const collection = collections[i];
         const originId = collection.remote_id;

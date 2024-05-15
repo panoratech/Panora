@@ -1,7 +1,7 @@
 import { IUserMapper } from '@ticketing/user/types';
 import {
-    UnifiedUserInput,
-    UnifiedUserOutput,
+  UnifiedUserInput,
+  UnifiedUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { GitlabUserInput, GitlabUserOutput } from './types';
 

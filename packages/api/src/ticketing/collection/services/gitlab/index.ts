@@ -86,8 +86,7 @@ export class GitlabService implements ICollectionService {
         },
       });
 
-      this.logger.log(`Synced gitlab collections !`);
-      // Initialize an empty object to store the links
+      this.logger.log(`Syncing gitlab collections !`);
       const links = this.utils.extractPaginationDetailsFromResponse(
         resp,
         'gitlab',
@@ -97,6 +96,13 @@ export class GitlabService implements ICollectionService {
       newPageMeta.isLastPage = this.utils.getLastPageStatus(
         newPageMeta,
         'gitlab',
+      );
+      this.logger.log(
+        `fetched the gitlab collections of size ${resp?.data?.length}. ${
+          newPageMeta?.isLastPage
+            ? `This is this last page.`
+            : `Syncing into system and waiting for next page results....}`
+        }}`,
       );
       return {
         data: resp.data,

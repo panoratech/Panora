@@ -100,6 +100,9 @@ export class SyncService implements OnModuleInit {
                       linkedUser.id_linked_user,
                       id_project,
                     );
+                    this.logger.log(
+                      `tickets sync completed for provider: ${provider} linked to user_id: ${linkedUser.id_linked_user}`,
+                    );
                   } catch (error) {
                     handleServiceError(error, this.logger);
                   }
@@ -204,7 +207,7 @@ export class SyncService implements OnModuleInit {
         );
         console.log(`Synced the tickets of batch: ${batch++}`);
       };
-      this.utils.fetchDataRecurisvely(handleService, handleSaveToDb, {
+      await this.utils.fetchDataRecurisvely(handleService, handleSaveToDb, {
         isFirstPage: true,
       });
     } catch (error) {

@@ -62,7 +62,7 @@ export class GitlabService implements IUserService {
           )}`,
         },
       });
-      this.logger.log(`Synced gitlab users !`);
+      this.logger.log(`Syncing gitlab users !`);
       const links = this.utils.extractPaginationDetailsFromResponse(
         resp,
         'gitlab',
@@ -71,6 +71,15 @@ export class GitlabService implements IUserService {
       newPageMeta.isLastPage = this.utils.getLastPageStatus(
         newPageMeta,
         'gitlab',
+      );
+      this.logger.log(
+        `fetched the gitlab users of size ${resp?.data?.length}. ${
+          newPageMeta?.isLastPage
+            ? `This is this last page.,${JSON.stringify(newPageMeta)}`
+            : `Syncing into system and waiting for next page results....${JSON.stringify(
+                newPageMeta,
+              )}`
+        }}`,
       );
       return {
         data: resp.data,

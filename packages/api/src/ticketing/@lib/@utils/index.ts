@@ -252,9 +252,20 @@ export class Utils {
   extractPaginationDetailsFromResponse(
     res: AxiosResponse<any, any>,
     provider: string,
+    pageSize?: number,
   ) {
     switch (provider) {
       case 'gitlab':
+        // if data is empty return no links;
+        if (
+          !res?.data ||
+          (res?.data &&
+            (res.data.length === 0 ||
+              res.data.length <
+                (pageSize || process.env.GITLAB_PAGINATION_SIZE)))
+        ) {
+          return {};
+        }
         const linkHeader = res?.headers?.link ?? '';
         const pattern = /<([^>]+)>; rel="([^"]+)"/g;
         const links: Record<string, string> = {};
@@ -300,11 +311,16 @@ export class Utils {
     );
     await saveToDbHandler(resp);
     if (
+      resp?.data?.length >= 1 &&
       resp?.pageMeta &&
       'isLastPage' in resp.pageMeta &&
       !resp.pageMeta.isLastPage
     ) {
-      this.fetchDataRecurisvely(serviceHandler, saveToDbHandler, resp.pageMeta);
+      await this.fetchDataRecurisvely(
+        serviceHandler,
+        saveToDbHandler,
+        resp.pageMeta,
+      );
     }
   }
 

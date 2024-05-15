@@ -16,7 +16,6 @@ import { FrontService } from './services/front';
 import { GithubService } from './services/github';
 import { JiraService } from './services/jira';
 import { GorgiasService } from './services/gorgias';
-import { GitlabService } from './services/gitlab';
 
 @Module({
   imports: [

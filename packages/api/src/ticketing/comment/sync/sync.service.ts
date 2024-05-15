@@ -112,6 +112,9 @@ export class SyncService implements OnModuleInit {
                         ticket.id_tcg_ticket,
                       );
                     }
+                    this.logger.log(
+                      `comments sync completed for provider: ${provider} linked to user_id ${linkedUser.id_linked_user}`,
+                    );
                   } catch (error) {
                     handleServiceError(error, this.logger);
                   }
@@ -216,7 +219,7 @@ export class SyncService implements OnModuleInit {
           pageMeta,
         );
       };
-      this.utils.fetchDataRecurisvely(handleService, handleSaveTODb, {
+      await this.utils.fetchDataRecurisvely(handleService, handleSaveTODb, {
         isFirstPage: true,
       });
     } catch (error) {

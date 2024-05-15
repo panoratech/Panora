@@ -93,13 +93,16 @@ export class SyncService implements OnModuleInit {
             });
             linkedUsers.map(async (linkedUser) => {
               try {
-                const providers = ['jira'] || TICKETING_PROVIDERS;
+                const providers = TICKETING_PROVIDERS;
                 for (const provider of providers) {
                   try {
                     await this.syncUsersForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
                       id_project,
+                    );
+                    this.logger.log(
+                      `users sync completed for provider: ${provider} linked to user_id: ${linkedUser.id_linked_user}`,
                     );
                   } catch (error) {
                     handleServiceError(error, this.logger);
@@ -201,7 +204,7 @@ export class SyncService implements OnModuleInit {
           event.id_event,
         );
       };
-      this.utils.fetchDataRecurisvely(handleService, handleSaveToDb, {
+      await this.utils.fetchDataRecurisvely(handleService, handleSaveToDb, {
         isFirstPage: true,
       });
     } catch (error) {

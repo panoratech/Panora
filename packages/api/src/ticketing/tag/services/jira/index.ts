@@ -62,7 +62,7 @@ export class JiraService implements ITagService {
       );
 
       return {
-        data: conversation.tags,
+        data: conversation?.tags || [],
         message: 'Jira tags retrieved',
         statusCode: 200,
       };

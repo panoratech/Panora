@@ -156,7 +156,7 @@ export class JiraService implements ICommentService {
       this.logger.log(`Synced jira comments !`);
 
       return {
-        data: resp.data.comments,
+        data: resp.data?.comments || [],
         message: 'Jira comments retrieved',
         statusCode: 200,
       };
