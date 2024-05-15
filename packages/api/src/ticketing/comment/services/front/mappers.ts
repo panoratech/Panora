@@ -8,7 +8,7 @@ import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unifi
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { unify } from '@@core/utils/unification/unify';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
 
 export class FrontCommentMapper implements ICommentMapper {
   private readonly utils: Utils;
@@ -58,8 +58,7 @@ export class FrontCommentMapper implements ICommentMapper {
   ): Promise<UnifiedCommentOutput> {
     //map the front attachment to our unified version of attachment
     //unifying the original attachment object coming from Front
-    let opts;
-
+    let opts: any = {};
     if (comment.attachments && comment.attachments.length > 0) {
       const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
         sourceObject: comment.attachments,
@@ -91,7 +90,7 @@ export class FrontCommentMapper implements ICommentMapper {
 
     return {
       remote_id: comment.id,
-      ...res
+      ...res,
     };
   }
 }

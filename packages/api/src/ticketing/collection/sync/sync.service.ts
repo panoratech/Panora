@@ -76,6 +76,10 @@ export class SyncService implements OnModuleInit {
             }),
           ]
         : await this.prisma.users.findMany();
+      if (!users || users.length === 0) {
+        this.logger.warn(`No users found for syncing collections`);
+        return;
+      }
       if (users && users.length > 0) {
         for (const user of users) {
           const projects = await this.prisma.projects.findMany({
@@ -193,7 +197,7 @@ export class SyncService implements OnModuleInit {
       const handleService = async (pageMeta?: Pagination) => {
         return await service.syncCollections(linkedUserId, null, pageMeta);
       };
-      await this.utils.fetchDataRecurisvely(handleService, handleSaveTODb, {
+      await this.utils.fetchDataRecursively(handleService, handleSaveTODb, {
         isFirstPage: true,
       });
     } catch (error) {

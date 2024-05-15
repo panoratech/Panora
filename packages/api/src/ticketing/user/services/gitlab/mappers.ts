@@ -18,16 +18,6 @@ export class GitlabUserMapper implements IUserMapper {
       email: `${source.email_address}`,
       organization: `${source.account_id}`,
     };
-    if (customFieldMappings && source.field_mappings) {
-      for (const [k, v] of Object.entries(source.field_mappings)) {
-        const mapping = customFieldMappings.find(
-          (mapping) => mapping.slug === k,
-        );
-        if (mapping) {
-          result[mapping.remote_id] = v;
-        }
-      }
-    }
     return result;
   }
 
@@ -54,13 +44,6 @@ export class GitlabUserMapper implements IUserMapper {
     }[],
   ): UnifiedUserOutput {
     const field_mappings: { [key: string]: any } = {};
-
-    if (customFieldMappings && user.custom_attributes) {
-      for (const mapping of customFieldMappings) {
-        field_mappings[mapping.slug] =
-          user.custom_attributes[mapping.remote_id];
-      }
-    }
     const unifiedUser: UnifiedUserOutput = {
       remote_id: `${user.id}`,
       name: `${user.name}`,

@@ -211,6 +211,9 @@ export class Utils {
         },
         distinct: ['id_tcg_user'],
       });
+      if (!res || res?.length === 0) {
+        return [];
+      }
       return res;
     } catch (err) {
       throw new Error(err);
@@ -288,7 +291,7 @@ export class Utils {
     }
   }
 
-  async fetchDataRecurisvely(
+  async fetchDataRecursively(
     serviceHandler: (
       pageMeta?: Record<string, any>,
     ) => Promise<ApiResponse<TicketingObjectOutput[]>>,
@@ -307,7 +310,7 @@ export class Utils {
       'isLastPage' in resp.pageMeta &&
       !resp.pageMeta.isLastPage
     ) {
-      await this.fetchDataRecurisvely(
+      await this.fetchDataRecursively(
         serviceHandler,
         saveToDbHandler,
         resp.pageMeta,

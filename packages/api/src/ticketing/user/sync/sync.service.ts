@@ -204,7 +204,7 @@ export class SyncService implements OnModuleInit {
           event.id_event,
         );
       };
-      await this.utils.fetchDataRecurisvely(handleService, handleSaveToDb, {
+      await this.utils.fetchDataRecursively(handleService, handleSaveToDb, {
         isFirstPage: true,
       });
     } catch (error) {

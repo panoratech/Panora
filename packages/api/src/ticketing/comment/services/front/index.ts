@@ -9,7 +9,7 @@ import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { FrontCommentInput, FrontCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class FrontService implements ICommentService {

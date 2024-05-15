@@ -55,6 +55,7 @@ export class GitlabService implements ICollectionService {
           },
         }));
       if (!baseUrl) {
+        this.logger.log(`Fetching current user from GitLab`);
         const currentUser = (
           await this.utils.sendRequestWithRetry({
             url: `${connection.account_url}/user`,
@@ -75,6 +76,7 @@ export class GitlabService implements ICollectionService {
         };
       }
       const apiUrl = this.utils.getPaginateUrl(baseUrl, 'gitlab', pageMeta);
+      this.logger.log(`Fetching collections from GitLab API: ${apiUrl}`);
       const resp = await this.utils.sendRequestWithRetry({
         url: apiUrl,
         method: 'get',
@@ -100,7 +102,7 @@ export class GitlabService implements ICollectionService {
       this.logger.log(
         `fetched the gitlab collections of size ${resp?.data?.length}. ${
           newPageMeta?.isLastPage
-            ? `This is this last page.`
+            ? `This is this last page. Syncing into system...`
             : `Syncing into system and waiting for next page results....}`
         }}`,
       );
@@ -111,6 +113,10 @@ export class GitlabService implements ICollectionService {
         pageMeta: newPageMeta,
       };
     } catch (error) {
+      this.logger.error(
+        `Error in syncCollections: ${error.message}`,
+        error.stack,
+      );
       handleServiceError(
         error,
         this.logger,

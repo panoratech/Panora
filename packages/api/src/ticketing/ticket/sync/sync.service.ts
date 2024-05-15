@@ -207,7 +207,7 @@ export class SyncService implements OnModuleInit {
         );
         console.log(`Synced the tickets of batch: ${batch++}`);
       };
-      await this.utils.fetchDataRecurisvely(handleService, handleSaveToDb, {
+      await this.utils.fetchDataRecursively(handleService, handleSaveToDb, {
         isFirstPage: true,
       });
     } catch (error) {

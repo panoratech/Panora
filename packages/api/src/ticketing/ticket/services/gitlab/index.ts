@@ -37,6 +37,10 @@ export class GitlabService implements ITicketService {
           vertical: 'ticketing',
         },
       });
+      this.logger.log(
+        `Sending request to GitLab API: ${connection.account_url}/projects/${ticketData.id}/issues`,
+      );
+
       const resp = await this.utils.sendRequestWithRetry({
         url: `${connection.account_url}/projects/${ticketData.id}/issues`,
         method: 'post',
@@ -54,6 +58,7 @@ export class GitlabService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
+      this.logger.error(`Error in addTicket: ${error.message}`, error.stack);
       handleServiceError(
         error,
         this.logger,
@@ -88,6 +93,7 @@ export class GitlabService implements ITicketService {
         };
       }
       const apiUrl = this.utils.getPaginateUrl(baseUrl, 'gitlab', pageMeta);
+      this.logger.log(`Sending request to GitLab API: ${apiUrl}`);
       const resp = await this.utils.sendRequestWithRetry({
         url: apiUrl,
         method: 'get',
@@ -122,6 +128,7 @@ export class GitlabService implements ITicketService {
         pageMeta: newPageMeta,
       };
     } catch (error) {
+      this.logger.error(`Error in syncTicket: ${error.message}`, error.stack);
       handleServiceError(
         error,
         this.logger,
