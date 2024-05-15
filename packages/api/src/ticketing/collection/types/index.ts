@@ -3,10 +3,7 @@ import {
   UnifiedCollectionInput,
   UnifiedCollectionOutput,
 } from './model.unified';
-import {
-  OriginalCollectionOutput,
-  OriginalCollectionInput,
-} from '@@core/utils/types/original/original.ticketing';
+import { OriginalCollectionOutput } from '@@core/utils/types/original/original.ticketing';
 import { ApiResponse, Pagination } from '@@core/utils/types';
 
 export interface ICollectionService {

@@ -1,7 +1,6 @@
 import { ApiResponse, Pagination } from '@@core/utils/types';
 import { TicketingObjectOutput } from '@@core/utils/types/original/original.ticketing';
 import { PrismaClient } from '@prisma/client';
-import { UnifiedTicketInput } from '@ticketing/ticket/types/model.unified';
 import axios, { AxiosResponse } from 'axios';
 import * as fs from 'fs';
 
