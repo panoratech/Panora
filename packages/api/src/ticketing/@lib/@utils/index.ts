@@ -103,12 +103,18 @@ export class Utils {
   }
 
   async getRemoteDataByResourceOwnerId(uuid: string) {
-    const remoteData = await this.prisma.remote_data.findFirst({
-      where: {
-        ressource_owner_id: uuid,
-      },
-    });
-    return remoteData;
+    try {
+      const remoteData = await this.prisma.remote_data.findFirst({
+        where: {
+          ressource_owner_id: uuid,
+        },
+      });
+      if (!remoteData)
+        throw new Error(`ressource_owner_id not found for uuid ${uuid}`);
+      return remoteData;
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async getAsigneeRemoteIdFromUserUuid(uuid: string) {

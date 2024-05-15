@@ -42,45 +42,52 @@ export class GitlabTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<GitlabTicketInput> {
-    if (!source.project_id) {
-      // we are getting remote_id from the user.
-      throw new Error('For gitlab provider, project_id is mandatory!');
-    }
-    const projectRemoteId = await this.utils.getCollectionRemoteIdFromUuid(
-      source.project_id,
-    );
-
-    const result: GitlabTicketInput = {
-      id: parseInt(projectRemoteId),
-      title: source.name ?? '',
-      description: source.description ?? '',
-      issue_type: this.getIssueType(source.type?.toLowerCase()),
-    };
-
-    // Assuming that 'assigned_to' contains user UUIDs that need to be converted to GitHub usernames
-    if (source.assigned_to && source.assigned_to.length > 0) {
-      const assingesTo = await this.utils.getAssigneeFromUuids(
-        source.assigned_to,
-      );
-      const remoteIds = assingesTo.map((user) => Number(user.remote_id));
-      if (assingesTo.length) {
-        result.assignee_ids = remoteIds;
-        result.assignee_id = remoteIds[0];
+    try {
+      if (!source.project_id) {
+        // we are getting remote_id from the user.
+        throw new Error('For gitlab provider, project_id is mandatory!');
       }
-    }
+      const projectRemoteId = await this.utils.getCollectionRemoteIdFromUuid(
+        source.project_id,
+      );
 
-    if (source.due_date) {
-      result.due_date = new Date(source.due_date).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      });
-    }
-    if (source.tags) {
-      result.labels = (source.tags || []).join(',');
-    }
+      const result: GitlabTicketInput = {
+        id: parseInt(projectRemoteId),
+        title: source.name ?? '',
+        description: source.description ?? '',
+        issue_type: this.getIssueType(source.type?.toLowerCase()),
+      };
 
-    return result;
+      // Assuming that 'assigned_to' contains user UUIDs that need to be converted to GitHub usernames
+      if (source.assigned_to && source.assigned_to.length > 0) {
+        const assingesTo = await this.utils.getAssigneeFromUuids(
+          source.assigned_to,
+        );
+        const remoteIds = assingesTo.map((user) => Number(user.remote_id));
+        if (assingesTo.length) {
+          result.assignee_ids = remoteIds;
+          result.assignee_id = remoteIds[0];
+        }
+      }
+
+      if (source.due_date) {
+        result.due_date = new Date(source.due_date).toLocaleDateString(
+          'en-GB',
+          {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          },
+        );
+      }
+      if (source.tags) {
+        result.labels = (source.tags || []).join(',');
+      }
+
+      return result;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async unify(
