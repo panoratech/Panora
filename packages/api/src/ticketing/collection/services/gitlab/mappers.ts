@@ -19,16 +19,6 @@ export class GitlabCollectionMapper implements ICollectionMapper {
       description: source.description ?? '',
       path: source.name,
     };
-    if (customFieldMappings && source.field_mappings) {
-      for (const [k, v] of Object.entries(source.field_mappings)) {
-        const mapping = customFieldMappings.find(
-          (mapping) => mapping.slug === k,
-        );
-        if (mapping) {
-          result[mapping.remote_id] = v;
-        }
-      }
-    }
     return result;
   }
 

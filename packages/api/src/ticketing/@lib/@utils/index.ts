@@ -204,7 +204,7 @@ export class Utils {
     }
   }
 
-  async getAssigneFromUuids(uuids: string[]) {
+  async getAssigneeFromUuids(uuids: string[]) {
     try {
       const res = await this.prisma.tcg_users.findMany({
         where: {

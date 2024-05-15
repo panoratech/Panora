@@ -59,7 +59,7 @@ export class GitlabTicketMapper implements ITicketMapper {
 
     // Assuming that 'assigned_to' contains user UUIDs that need to be converted to GitHub usernames
     if (source.assigned_to && source.assigned_to.length > 0) {
-      const assingesTo = await this.utils.getAssigneFromUuids(
+      const assingesTo = await this.utils.getAssigneeFromUuids(
         source.assigned_to,
       );
       const remoteIds = assingesTo.map((user) => Number(user.remote_id));
@@ -80,20 +80,6 @@ export class GitlabTicketMapper implements ITicketMapper {
       result.labels = (source.tags || []).join(',');
     }
 
-    if (customFieldMappings && source.field_mappings) {
-      for (const [k, v] of Object.entries(source.field_mappings)) {
-        const mapping = customFieldMappings.find(
-          (mapping) => mapping.slug === k,
-        );
-        if (mapping) {
-          result[mapping.remote_id] = v;
-          // TODO: Since GitHub API doesn't support arbitrary custom fields directly,
-          // you might need to handle these mappings in a specific way,
-          // such as appending them to the body or handling them externally.
-        }
-      }
-    }
-
     return result;
   }
 
@@ -101,52 +87,55 @@ export class GitlabTicketMapper implements ITicketMapper {
     source: GitlabTicketOutput | GitlabTicketOutput[],
   ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
     // If the source is not an array, convert it to an array for mapping
-    const sourcesArray = Array.isArray(source) ? source : [source];
+    try {
+      const sourcesArray = Array.isArray(source) ? source : [source];
+      return Promise.all(
+        sourcesArray.map(async (ticket) => {
+          const field_mappings: { [key: string]: any } = {};
 
-    return Promise.all(
-      sourcesArray.map(async (ticket) => {
-        const field_mappings: { [key: string]: any } = {};
+          let opts: any = {};
 
-        let opts: any = {};
-
-        if (ticket.assignees && ticket.assignees.length > 0) {
-          opts.assigned_to = await this.utils.getUsersUUidFromRemoteIds(
-            ticket.assignees.map((user) => `${user.id ?? ''}`),
-            'gitlab',
-          );
-        }
-
-        if (ticket.project_id) {
-          const tcg_collection_id =
-            await this.utils.getCollectionUuidFromRemoteId(
-              String(ticket.project_id),
+          if (ticket.assignees && ticket.assignees.length > 0) {
+            opts.assigned_to = await this.utils.getUsersUUidFromRemoteIds(
+              ticket.assignees.map((user) => `${user.id ?? ''}`),
               'gitlab',
             );
-          if (tcg_collection_id) {
-            opts = { ...opts, project_id: tcg_collection_id };
           }
-        }
 
-        if (ticket.closed_at) {
-          opts.completed_at = new Date(ticket.closed_at).toISOString();
-        }
-        if (ticket.due_date) {
-          opts.due_date = new Date(ticket.due_date).toISOString();
-        }
-        const unifiedTicket: UnifiedTicketOutput = {
-          remote_id: String(ticket.id),
-          name: ticket.title,
-          description: ticket.description ?? '',
-          status: ticket.state,
-          tags: ticket.labels || [],
-          type: this.getIssueType(ticket.issue_type?.toLowerCase(), true),
-          state: ticket.state?.toUpperCase() ?? '',
-          priority: ticket.severity,
-          field_mappings: field_mappings,
-          ...opts,
-        };
-        return unifiedTicket;
-      }),
-    );
+          if (ticket.project_id) {
+            const tcg_collection_id =
+              await this.utils.getCollectionUuidFromRemoteId(
+                String(ticket.project_id),
+                'gitlab',
+              );
+            if (tcg_collection_id) {
+              opts = { ...opts, project_id: tcg_collection_id };
+            }
+          }
+
+          if (ticket.closed_at) {
+            opts.completed_at = new Date(ticket.closed_at).toISOString();
+          }
+          if (ticket.due_date) {
+            opts.due_date = new Date(ticket.due_date).toISOString();
+          }
+          const unifiedTicket: UnifiedTicketOutput = {
+            remote_id: String(ticket.id),
+            name: ticket.title,
+            description: ticket.description ?? '',
+            status: ticket.state,
+            tags: ticket.labels || [],
+            type: this.getIssueType(ticket.issue_type?.toLowerCase(), true),
+            state: ticket.state?.toUpperCase() ?? '',
+            priority: ticket.severity,
+            field_mappings: field_mappings,
+            ...opts,
+          };
+          return unifiedTicket;
+        }),
+      );
+    } catch (err) {
+      throw err;
+    }
   }
 }
