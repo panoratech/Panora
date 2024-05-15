@@ -33,8 +33,8 @@ interface References {
 interface TimeStats {
   time_estimate: number;
   total_time_spent: number;
-  human_time_estimate: string | null;
-  human_total_time_spent: string | null;
+  human_time_estimate: any;
+  human_total_time_spent: any;
 }
 
 interface Links {
@@ -56,7 +56,7 @@ interface Issue {
   created_at: string;
   iid: number;
   title: string;
-  state: 'opened' | 'closed';
+  state: string;
   assignees: any[]; // You might want to define a type for assignees if needed
   assignee: any | null; // You might want to define a type for assignee if needed
   type: string;

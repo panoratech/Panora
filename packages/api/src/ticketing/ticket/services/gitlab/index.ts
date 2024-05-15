@@ -4,11 +4,11 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, Pagination } from '@@core/utils/types';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GitlabTicketInput, GitlabTicketOutput } from './types';
-import { Pagination, Utils } from '@ticketing/@lib/@utils';
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class GitlabService implements ITicketService {

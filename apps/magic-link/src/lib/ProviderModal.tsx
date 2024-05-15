@@ -35,13 +35,7 @@ const ProviderModal = () => {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
-    console.log("queryParams", queryParams);
-    console.log("window.location.search", window.location.search);
     const uniqueId = queryParams.get('uniqueLink');
-    console.log("entries", queryParams.entries);
-    console.log("toString", queryParams.toString());
-    console.log("uniqueId", uniqueId);
-
     if (uniqueId) {
       setUniqueMagicLinkId(uniqueId);
     }
@@ -49,10 +43,7 @@ const ProviderModal = () => {
 
 
   const { data: magicLink } = useUniqueMagicLink(uniqueMagicLinkId);
-  console.log("magicLink==========>", magicLink)
   const { data: linkedUser } = useLinkedUser(magicLink?.id_linked_user as string);
-  console.log("linkedUser==========>", linkedUser)
-
 
   const { open, isReady } = useOAuth({
     providerName: selectedProvider,

@@ -5,7 +5,6 @@ export type CallbackParams = {
   projectId: string;
   code: string;
   location?: string; //for zoho
-  state?: string; // for gitlab
 };
 
 export type RefreshParams = {

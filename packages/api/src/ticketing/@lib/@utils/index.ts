@@ -1,27 +1,18 @@
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, Pagination } from '@@core/utils/types';
 import { TicketingObjectOutput } from '@@core/utils/types/original/original.ticketing';
 import { PrismaClient } from '@prisma/client';
-import { Prisma } from '@sentry/node/types/tracing/integrations';
 import { UnifiedTicketInput } from '@ticketing/ticket/types/model.unified';
 import axios, { AxiosResponse } from 'axios';
 import * as fs from 'fs';
 
-export type Pagination = {
-  isFirstPage: boolean;
-  isLastPage?: boolean;
-  queryParams?: Record<string, any>;
-  [key: string]: any;
-};
 export class Utils {
   private readonly prisma: PrismaClient;
-  private readonly unifiedTicketInstance: UnifiedTicketInput;
 
   constructor() {
     this.prisma = new PrismaClient();
     /*this.cryptoService = new EncryptionService(
       new EnvironmentService(new ConfigService()), 
     );*/
-    this.unifiedTicketInstance = new UnifiedTicketInput();
   }
 
   async fetchFileStreamFromURL(file_url: string) {
@@ -149,20 +140,6 @@ export class Utils {
     }
   }
 
-  async getCollectionRemoteIdFromUuid(uuid: string) {
-    try {
-      const res = await this.prisma.tcg_collections.findFirst({
-        where: {
-          id_tcg_collection: uuid,
-        },
-      });
-      if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
-      return res.remote_id;
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
   async getCollectionUuidFromRemoteId(
     remote_id: string,
     remote_platform: string,
@@ -176,6 +153,20 @@ export class Utils {
       });
       if (!res) return;
       return res.id_tcg_collection;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async getCollectionRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.tcg_collections.findFirst({
+        where: {
+          id_tcg_collection: uuid,
+        },
+      });
+      if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
+      return res.remote_id;
     } catch (error) {
       throw new Error(error);
     }

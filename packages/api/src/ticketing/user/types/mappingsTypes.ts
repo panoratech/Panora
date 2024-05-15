@@ -24,7 +24,7 @@ export const userUnificationMapping = {
   },
   gorgias: {
     unify: gorgiasUserMapper.unify.bind(gorgiasUserMapper),
-    desunify: gorgiasUserMapper.desunify,
+    desunify: gorgiasUserMapper.desunify.bind(gorgiasUserMapper),
   },
   jira: {
     unify: jiraUserMapper.unify.bind(jiraUserMapper),

@@ -1,6 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedTicketInput, UnifiedTicketOutput } from './model.unified';
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, Pagination } from '@@core/utils/types';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 
 export interface ITicketService {
@@ -12,7 +12,7 @@ export interface ITicketService {
   syncTickets(
     linkedUserId: string,
     custom_properties?: string[],
-    pageMeta?: Record<string, any>,
+    pageMeta?: Pagination,
   ): Promise<ApiResponse<OriginalTicketOutput[]>>;
 }
 export interface ITicketMapper {

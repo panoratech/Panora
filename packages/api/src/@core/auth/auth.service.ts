@@ -273,7 +273,6 @@ export class AuthService {
   async validateApiKey(apiKey: string): Promise<boolean> {
     try {
       // Decode the JWT to verify if it's valid and get the payload
-      console.log('validateApiKey =========>', apiKey);
       const decoded = this.jwtService.verify(apiKey, {
         secret: process.env.JWT_SECRET,
       });

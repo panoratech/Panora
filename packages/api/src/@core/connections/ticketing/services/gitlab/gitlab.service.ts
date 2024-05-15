@@ -144,11 +144,9 @@ export class GitlabConnectionService implements ITicketingConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
-        redirect_uri: REDIRECT_URI,
       });
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,

@@ -3,16 +3,18 @@ import {
   UnifiedCollectionInput,
   UnifiedCollectionOutput,
 } from './model.unified';
-import { OriginalCollectionOutput, OriginalCollectionInput } from '@@core/utils/types/original/original.ticketing';
-import { ApiResponse } from '@@core/utils/types';
+import {
+  OriginalCollectionOutput,
+  OriginalCollectionInput,
+} from '@@core/utils/types/original/original.ticketing';
+import { ApiResponse, Pagination } from '@@core/utils/types';
 
 export interface ICollectionService {
   syncCollections(
     linkedUserId: string,
-    custom_properties?: string[] | null,
-    pageMeta?: Record<string, any>,
+    custom_properties?: string[],
+    pageMeta?: Pagination,
   ): Promise<ApiResponse<OriginalCollectionOutput[]>>;
-
 }
 
 export interface ICollectionMapper {

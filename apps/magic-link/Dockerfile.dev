@@ -21,7 +21,6 @@ RUN corepack enable
 WORKDIR /app
 RUN pnpm add -g turbo
 
-EXPOSE 5173
 
 # run the ML
 CMD cd apps/magic-link && pnpm install && pnpm run dev --host

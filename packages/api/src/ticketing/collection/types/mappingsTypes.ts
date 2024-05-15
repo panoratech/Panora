@@ -2,7 +2,6 @@ import { GitlabCollectionMapper } from '../services/gitlab/mappers';
 import { JiraCollectionMapper } from '../services/jira/mappers';
 
 const jiraCollectionMapper = new JiraCollectionMapper();
-const gitLabCollectionMapper = new GitlabCollectionMapper();
 
 const gitlabCollectionMapper = new GitlabCollectionMapper();
 export const collectionUnificationMapping = {

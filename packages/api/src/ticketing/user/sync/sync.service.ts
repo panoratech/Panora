@@ -3,7 +3,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, Pagination } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
@@ -157,7 +157,7 @@ export class SyncService implements OnModuleInit {
 
       const service: IUserService =
         this.serviceRegistry.getService(integrationId);
-      const handleService = async (pageMeta?: Record<string, any>) => {
+      const handleService = async (pageMeta?: Pagination) => {
         return await service.syncUsers(
           linkedUserId,
           remoteProperties,
@@ -167,7 +167,7 @@ export class SyncService implements OnModuleInit {
       const handleSaveToDb = async (
         resp: ApiResponse<OriginalUserOutput[]>,
       ) => {
-        const sourceObject: OriginalUserOutput[] = resp?.data;
+        const sourceObject = (resp?.data || []) as OriginalUserOutput[];
         //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
         //unify the data accordiGitLab may impose rate limits on API requests to prevent abuse or excessive load on their servers. Ensure that you're not hitting API endpoints too frequently or exceeding any rate limits imposed by GitLab. Consider implementing backoff strategies or exponential retry mechanisms to handle rate limiting gracefully.ng to the target obj wanted
         const unifiedObject = (await unify<OriginalUserOutput[]>({

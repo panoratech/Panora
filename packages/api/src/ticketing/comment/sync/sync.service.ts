@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, Pagination } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { unify } from '@@core/utils/unification/unify';
@@ -17,7 +17,7 @@ import { ServiceRegistry } from '../services/registry.service';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { Pagination, Utils } from '@ticketing/@lib/@utils';
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -172,7 +172,7 @@ export class SyncService implements OnModuleInit {
       const handleSaveTODb = async (
         resp: ApiResponse<OriginalCommentOutput[]>,
       ) => {
-        const sourceObject: OriginalCommentOutput[] = resp?.data || [];
+        const sourceObject = (resp?.data || []) as OriginalCommentOutput[];
         //unify the data according to the target obj wanted
         const unifiedObject = (await unify<OriginalCommentOutput[]>({
           sourceObject,

@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, Pagination } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { unify } from '@@core/utils/unification/unify';
@@ -156,7 +156,7 @@ export class SyncService implements OnModuleInit {
       let batch = 1;
       const service: ITicketService =
         this.serviceRegistry.getService(integrationId);
-      const handleService = async (pageMeta?: Record<string, any>) => {
+      const handleService = async (pageMeta?: Pagination) => {
         return await service.syncTickets(
           linkedUserId,
           remoteProperties,
@@ -166,7 +166,7 @@ export class SyncService implements OnModuleInit {
       const handleSaveToDb = async (
         resp: ApiResponse<OriginalTicketOutput[]>,
       ) => {
-        const sourceObject: OriginalTicketOutput[] = resp?.data;
+        const sourceObject = (resp?.data || []) as OriginalTicketOutput[];
         //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
         //unify the data according to the target obj wanted
         const unifiedObject = (await unify<OriginalTicketOutput[]>({

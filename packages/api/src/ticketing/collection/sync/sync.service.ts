@@ -3,7 +3,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, Pagination } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
@@ -149,7 +149,7 @@ export class SyncService implements OnModuleInit {
       const handleSaveTODb = async (
         resp: ApiResponse<OriginalCollectionOutput[]>,
       ) => {
-        const sourceObject: OriginalCollectionOutput[] = resp?.data;
+        const sourceObject = (resp?.data || []) as OriginalCollectionOutput[];
         // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
         //unify the data according to the target obj wanted
         const unifiedObject = (await unify<OriginalCollectionOutput[]>({
@@ -190,7 +190,7 @@ export class SyncService implements OnModuleInit {
         );
       };
 
-      const handleService = async (pageMeta?: Record<string, any>) => {
+      const handleService = async (pageMeta?: Pagination) => {
         return await service.syncCollections(linkedUserId, null, pageMeta);
       };
       await this.utils.fetchDataRecurisvely(handleService, handleSaveTODb, {
