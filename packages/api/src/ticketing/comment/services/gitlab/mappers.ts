@@ -38,7 +38,7 @@ export class GitlabCommentMapper implements ICommentMapper {
   private async mapSingleCommentToUnified(
     comment: GitlabCommentOutput,
   ): Promise<UnifiedCommentOutput> {
-    let opts;
+    let opts: any = {};
 
     if (comment?.author?.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(

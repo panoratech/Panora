@@ -8,6 +8,10 @@ import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
   const provider = findProviderByName(providerName);
+  if (!provider) {
+    console.error(`Provider not found: ${providerName}`);
+    return null;
+  }
   return (
     <div className="fixed inset-0 flex justify-center items-center">
       <div className="text-center p-6 bg-[#1d1d1d] rounded-lg">

@@ -51,6 +51,9 @@ export class Utils {
         },
         distinct: ['id_tcg_user'],
       });
+      if (!res || res.length === 0) {
+        return [];
+      }
       return res?.map((user) => user.id_tcg_user);
     } catch (error) {
       throw new Error(error);
