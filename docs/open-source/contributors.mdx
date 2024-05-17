@@ -20,10 +20,10 @@ We made a docker file that builds Panora from sources, specifically to help you 
   </Step>
   <Step title="Rules for env variables"> 
     <Info>
-      You must create manually a custom oAuth2 app inside the 3rd party and copy the
-      critical values (_client id and client secret_)
+      You must manually create a custom OAuth2 App inside the 3rd party and copy the
+      critical values (likely _client id and client secret_)
     </Info>
-    You have the option to manage a custom 3rd party oAuth app.
+    You have the option to manage a custom 3rd party OAuth App.
 
     **Each custom 3rd party environment variable must be of the form `PROVIDER_VERTICAL_SOFTWAREMODE_ATTRIBUTE` where**
 
@@ -88,7 +88,7 @@ It should be available (if not [contact us](https://app.cal.com/rflih/30)) with 
 Actually an integration is built in 2 parts :
 
 - the **authentication part** (oauth, api key, basic etc) which is built by the Panora team
-- the **service integration** where the mapping is created with our unified model which is what you'll build
+- the **service integration** where the mapping with our unified model is created whixch is what you'll build in the next steps
 
 # Step 2: Build your provider service
 
@@ -224,6 +224,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ve
   </Step>
 
   <Step title="Enable your new service">
+   After these 3 files are successfully created and filled, you are ready to to fix all dependencies/linting issues that you may have. <br/>
     To make sure the service is enabled, dependencies and imports must be added. <br/>
     We built a script that does it in seconds. You can execute the given command from the root directory of Panora.
 

@@ -4,11 +4,13 @@ description: "Use Magic Links to invite your users to grant you access to their 
 icon: "wand-magic-sparkles"
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/generate-magic-link.gif"
-  alt="Hero Light"
-/>
+<Frame type="glass">
+  <img
+    className="block dark:hidden"
+    src="/images/generate-magic-link.gif"
+    alt="Hero Light"
+  />
+</Frame>
 
 ## Send your first Magic Link
 
@@ -31,4 +33,4 @@ icon: "wand-magic-sparkles"
 </Steps>
 
 Once the user successfully completes the granting auth flow, the connection will have a `status` value of `valid`.
-We recommend listening to [webhooks](/webhooks/overview) to get notified once a user connects.
+We recommend listening to [webhooks](/webhooks/overview) to get notified once a user connects and catch the connection token used for requests.

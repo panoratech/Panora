@@ -31,7 +31,7 @@ Depending on your setup, you should make requests to one of those endpoints:
 
     </Tabs>
 
-## Learn how to generate your API Keys and catch connection tokens.
+## Learn how to generate your API Keys
 
 <Steps>
 
@@ -46,31 +46,33 @@ Depending on your setup, you should make requests to one of those endpoints:
         Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
     </Step>
 
-    <Step title="Catch your connection token">
-
-    A `connection_token` is created everytime a user connects an account to your platform.
-    You need to setup a webhook and listen to events tagged as `connection.created` to catch a it.
-    The `connection_token` is a string, located in the _data_ object, inside a `connection.created` event.
-
-    <Info>Read more about webhooks [here](/webhooks/overview)</Info>
-
-    ```json Example connection.created event
-    {
-        "id_event": "dc2d12b9-dd07-4e33-a244-d0560a9eeed7",
-        "type": "connection.created",
-        "data": {
-            "id" : "6fc7017a-6596-4b05-81b6-595296a59f87"
-            "connection_token": "MY_CONNECTION_TOKEN",
-            "provider_slug": "hubspot",
-            ...
-        },
-        ...
-    }
-    ```
-    Congrats! You have everything you need to make authenticated requests.
-    </Step>
-
 </Steps>
+
+## Catch connection tokens
+
+A `connection_token` is created everytime a user connects an account to your platform.<br/>
+Once you've set up the auth flow through [magic-link or using the mbedded snippet](/quick-start), you need to setup a [webhook](/webhooks/overview) and listen to events tagged as `connection.created`.
+
+<Info>
+  The `connection_token` is a string, located in the _data_ object, inside a
+  `connection.created` event.
+</Info>
+
+```json Example connection.created event
+{
+    "id_event": "dc2d12b9-dd07-4e33-a244-d0560a9eeed7",
+    "type": "connection.created",
+    "data": {
+        "id" : "6fc7017a-6596-4b05-81b6-595296a59f87"
+        "connection_token": "MY_CONNECTION_TOKEN",
+        "provider_slug": "hubspot",
+        ...
+    },
+    ...
+}
+```
+
+Congrats ! You have everything you need to make authenticated requests.
 
 ## Make your first API request with your `API Key` and a `connection_token`
 
@@ -170,4 +172,4 @@ We also recommend practising by looking at the specific verticals you want to in
         ```
       </CodeGroup>
 
-Read more about our SDKs in [TypeScript](/backend-sdk/typescript), [Java](/backend-sdk/java), [Python](/backend-sdk/python)
+Read more about our SDKs in [TypeScript](/backend-sdk/typescript), [Python](/backend-sdk/python).
