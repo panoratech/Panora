@@ -1,5 +1,5 @@
 ---
-title: "Overview"
+title: "The Event Object"
 description: "Panora can send notifcations to your backend when the state of an object has changed. We use the concept of `events` to represent state changes in any object."
 ---
 
@@ -17,7 +17,7 @@ The typical implementation consists in listening for events and triggering workl
 ### Properties
 
 <RequestExample>
-```json JSON
+```json The Event Object
 {
     "id_event": "f4e1ff72-e727-409a-8935-a63a63d4891e",
     "type": "crm.contact.created",
@@ -46,11 +46,8 @@ The typical implementation consists in listening for events and triggering workl
         }
     }
 }
-
 ```
-
 </RequestExample>
-
 <ResponseField name="event" type="Event Object">
   <Expandable title="properties" defaultOpen="true">
 
@@ -68,9 +65,3 @@ The typical implementation consists in listening for events and triggering workl
 
   </Expandable>
 </ResponseField>
-
-
-
-## Securing your webhooks
-We use secrets to make sure your endpoints do not receive data from third-parties usurpating Panora.
-```

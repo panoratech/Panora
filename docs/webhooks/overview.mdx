@@ -1,7 +1,667 @@
 ---
-title: "Overview"
-description: "Panora can send notifcations through webhooks to your backend when the state of an object has changed. We use the concept of `events` to represent state changes in any object."
+title: "Quickstart Guide"
 icon: hockey-puck
 ---
 
-## Learn how to create a webhook
+To enable webhook events, you need to register webhook endpoints. After you register them, Panora can push real-time event data to your application’s webhook endpoint when [events](/webhooks/events/overview) happen in your Panora account. Panora uses HTTPS to send webhook events to your app as a JSON payload that includes an [Event object](/webhooks/events/overview).
+
+## Get Started 
+<Steps>
+    <Step title="Create a webhook endpoint handler to receive event data POST requests.">
+        <Note>
+            **TYPES OF EVENTS** <br/>
+            Use the Panora API reference to identify the [Event objects](/webhooks/events/overview) your webhook handler needs to process.
+        </Note>
+        Set up an HTTP or HTTPS endpoint function that can accept webhook requests with a POST method. If you’re still developing your endpoint function on your local machine, it can use HTTP. After it’s publicly accessible, your webhook endpoint function must use HTTPS.
+        Set up your endpoint function so that it:
+        - Handles POST requests with a JSON payload consisting of an event object.
+        - Quickly returns a successful status code (`2xx`) prior to any complex logic that could cause a timeout. For example, you must return a `200` response before updating a customer’s invoice as paid in your accounting system.
+
+        **Example endpoint** <br/>
+        This code snippet is a webhook function configured to check that the event type was received, to handle the event, and return a 200 response.
+
+        <CodeGroup>
+
+        ```javascript Node
+        // This example uses Express to receive webhooks
+        const express = require('express');
+        const app = express();
+
+        // Match the raw body to content type application/json
+        // If you are using Express v4 - v4.16 you need to use body-parser, not express, to retrieve the request body
+        app.post('/webhook', express.json({type: 'application/json'}), (request, response) => {
+            const event = request.body;
+
+            // Handle the event
+            switch (event.type) {
+                case 'payment_intent.succeeded':
+                    const paymentIntent = event.data.object;
+                    // Then define and call a method to handle the successful payment intent.
+                    // handlePaymentIntentSucceeded(paymentIntent);
+                    break;
+                case 'payment_method.attached':
+                    const paymentMethod = event.data.object;
+                    // Then define and call a method to handle the successful attachment of a PaymentMethod.
+                    // handlePaymentMethodAttached(paymentMethod);
+                    break;
+                // ... handle other event types
+                default:
+                    console.log(`Unhandled event type ${event.type}`);
+            }
+
+            // Return a response to acknowledge receipt of the event
+            response.json({received: true});
+        });
+
+        app.listen(8000, () => console.log('Running on port 8000'));
+        ```
+
+        ```python Python
+        import json
+        from django.http import HttpResponse
+
+        # Using Django
+        @csrf_exempt
+        def my_webhook_view(request):
+            payload = request.body
+            event = None
+
+            try:
+                event = stripe.Event.construct_from(
+                json.loads(payload), stripe.api_key
+                )
+            except ValueError as e:
+                # Invalid payload
+                return HttpResponse(status=400)
+
+            # Handle the event
+            if event.type == 'payment_intent.succeeded':
+                payment_intent = event.data.object # contains a stripe.PaymentIntent
+                # Then define and call a method to handle the successful payment intent.
+                # handle_payment_intent_succeeded(payment_intent)
+            elif event.type == 'payment_method.attached':
+                payment_method = event.data.object # contains a stripe.PaymentMethod
+                # Then define and call a method to handle the successful attachment of a PaymentMethod.
+                # handle_payment_method_attached(payment_method)
+            # ... handle other event types
+            else:
+                print('Unhandled event type {}'.format(event.type))
+
+            return HttpResponse(status=200)
+        ```
+
+        ```java Java
+        // Using the Spark framework (http://sparkjava.com)
+        public Object handle(Request request, Response response) {
+            String payload = request.body();
+            Event event = null;
+
+            try {
+                event = ApiResource.GSON.fromJson(payload, Event.class);
+            } catch (JsonSyntaxException e) {
+                // Invalid payload
+                response.status(400);
+                return "";
+            }
+
+            // Deserialize the nested object inside the event
+            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+            StripeObject stripeObject = null;
+            if (dataObjectDeserializer.getObject().isPresent()) {
+                stripeObject = dataObjectDeserializer.getObject().get();
+            } else {
+                // Deserialization failed, probably due to an API version mismatch.
+                // Refer to the Javadoc documentation on `EventDataObjectDeserializer` for
+                // instructions on how to handle this case, or return an error here.
+            }
+
+            // Handle the event
+            switch (event.getType()) {
+                case "payment_intent.succeeded":
+                    PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
+                    // Then define and call a method to handle the successful payment intent.
+                    // handlePaymentIntentSucceeded(paymentIntent);
+                    break;
+                case "payment_method.attached":
+                    PaymentMethod paymentMethod = (PaymentMethod) stripeObject;
+                    // Then define and call a method to handle the successful attachment of a PaymentMethod.
+                    // handlePaymentMethodAttached(paymentMethod);
+                    break;
+                // ... handle other event types
+                default:
+                    System.out.println("Unhandled event type: " + event.getType());
+            }
+
+            response.status(200);
+            return "";
+        }
+        ```
+
+        ```go Go
+        http.HandleFunc("/webhook", func(w http.ResponseWriter, req *http.Request) {
+            const MaxBodyBytes = int64(65536)
+            req.Body = http.MaxBytesReader(w, req.Body, MaxBodyBytes)
+            payload, err := ioutil.ReadAll(req.Body)
+            if err != nil {
+                fmt.Fprintf(os.Stderr, "Error reading request body: %v\n", err)
+                w.WriteHeader(http.StatusServiceUnavailable)
+                return
+            }
+
+            event := stripe.Event{}
+
+            if err := json.Unmarshal(payload, &event); err != nil {
+                fmt.Fprintf(os.Stderr, "Failed to parse webhook body json: %v\n", err.Error())
+                w.WriteHeader(http.StatusBadRequest)
+                return
+            }
+
+            // Unmarshal the event data into an appropriate struct depending on its Type
+            switch event.Type {
+                case "payment_intent.succeeded":
+                    var paymentIntent stripe.PaymentIntent
+                    err := json.Unmarshal(event.Data.Raw, &paymentIntent)
+                    if err != nil {
+                        fmt.Fprintf(os.Stderr, "Error parsing webhook JSON: %v\n", err)
+                        w.WriteHeader(http.StatusBadRequest)
+                        return
+                    }
+                    // Then define and call a func to handle the successful payment intent.
+                    // handlePaymentIntentSucceeded(paymentIntent)
+                case "payment_method.attached":
+                    var paymentMethod stripe.PaymentMethod
+                    err := json.Unmarshal(event.Data.Raw, &paymentMethod)
+                    if err != nil {
+                        fmt.Fprintf(os.Stderr, "Error parsing webhook JSON: %v\n", err)
+                        w.WriteHeader(http.StatusBadRequest)
+                        return
+                    }
+                    // Then define and call a func to handle the successful attachment of a PaymentMethod.
+                    // handlePaymentMethodAttached(paymentMethod)
+                // ... handle other event types
+                default:
+                    fmt.Fprintf(os.Stderr, "Unhandled event type: %s\n", event.Type)
+            }
+
+            w.WriteHeader(http.StatusOK)
+        })
+        ```
+
+        ```php Php
+        $payload = @file_get_contents('php://input');
+        $event = null;
+
+        try {
+            $event = \Stripe\Event::constructFrom(
+                json_decode($payload, true)
+            );
+        } catch(\UnexpectedValueException $e) {
+            // Invalid payload
+            http_response_code(400);
+            exit();
+        }
+
+        // Handle the event
+        switch ($event->type) {
+            case 'payment_intent.succeeded':
+                $paymentIntent = $event->data->object; // contains a \Stripe\PaymentIntent
+                // Then define and call a method to handle the successful payment intent.
+                // handlePaymentIntentSucceeded($paymentIntent);
+                break;
+            case 'payment_method.attached':
+                $paymentMethod = $event->data->object; // contains a \Stripe\PaymentMethod
+                // Then define and call a method to handle the successful attachment of a PaymentMethod.
+                // handlePaymentMethodAttached($paymentMethod);
+                break;
+            // ... handle other event types
+            default:
+                echo 'Received unknown event type ' . $event->type;
+        }
+
+        http_response_code(200);
+        ```
+
+        ```ruby Ruby
+        require 'json'
+
+        # Using Sinatra
+        post '/webhook' do
+            payload = request.body.read
+            event = nil
+
+            begin
+                event = Stripe::Event.construct_from(
+                JSON.parse(payload, symbolize_names: true)
+                )
+            rescue JSON::ParserError => e
+                # Invalid payload
+                status 400
+                return
+            end
+
+            # Handle the event
+            case event.type
+            when 'payment_intent.succeeded'
+                payment_intent = event.data.object # contains a Stripe::PaymentIntent
+                # Then define and call a method to handle the successful payment intent.
+                # handle_payment_intent_succeeded(payment_intent)
+            when 'payment_method.attached'
+                payment_method = event.data.object # contains a Stripe::PaymentMethod
+                # Then define and call a method to handle the successful attachment of a PaymentMethod.
+                # handle_payment_method_attached(payment_method)
+            # ... handle other event types
+            else
+                puts "Unhandled event type: #{event.type}"
+            end
+
+            status 200
+        end
+        ```
+
+        </CodeGroup>
+    </Step>
+    <Step title="Register your endpoint within Panora using the Dashboard or the API.">
+        Register the webhook endpoint’s accessible URL using the _Webhooks_ section or the API so Panora knows where to deliver events.<br/>    
+        
+        **Webhook URL format** <br/>
+        
+        The URL format to register a webhook endpoint is:
+        ``` 
+        https://<your-website>/<your-webhook-endpoint>
+        ```
+        For example, if your domain is `https://mycompanysite.com` and the route to your webhook endpoint is `@app.route('/panora_webhooks', methods=['POST'])`, specify `https://mycompanysite.com/panora_webhooks` as the Endpoint URL. <br/>
+
+        **Add a webhook endpoint** <br/>
+
+        _insert video_
+        <Steps>
+            <Step title="Navigate to the Webhooks page">
+            </Step>
+            <Step title="Click Add Endpoint">
+            </Step>
+            <Step title="Add your webhook endpoint’s HTTPS URL in Endpoint URL.">
+            </Step>
+            <Step title="Select the event types you’re currently receiving in your local webhook endpoint in Select events.">
+            </Step>
+            <Step title="Click Add endpoint.">
+            </Step>
+        </Steps>
+        
+        **Register a webhook endpoint with the Panora API** <br/>
+        
+        You can also programmatically create [webhook endpoints](/api-reference/webhook/add-webhook-metadata). <br/>
+        
+        The following example creates an endpoint that notifies you when charges succeed or fail.
+
+        <CodeGroup>
+        ```shell Curl
+        curl --request POST \
+            --url https://api.panora.dev/webhook \
+            --header 'Content-Type: application/json' \
+            --data '{
+                "url": "<string>",
+                "description": "<string>",
+                "id_project": "<string>",
+                "scope": [
+                    "<string>"
+                ]
+            }'
+        ```
+        </CodeGroup>
+
+    </Step>
+    <Step title="Secure your webhook endpoint.">
+        We highly recommend you secure your integration by ensuring your handler verifies that all webhook request are generated by Panora. You can choose to verify webhook signatures using our official libraries or verify them manually.<br/>
+        
+        **Verify webhook signatures with official library** <br/>
+        
+        We recommend using our official libraries to verify signatures. You perform the verification by providing the event payload, the `Panora-Signature` header, and the endpoint’s secret. If verification fails, you get an error.
+
+        <CodeGroup>
+        ```javascript Node
+        // Set your secret key. Remember to switch to your live secret key in production.
+        // See your keys here: https://dashboard.stripe.com/apikeys
+        const stripe = require('stripe')('sk_test_VePHdqKTYQjKNInc7u56JBrQ');
+
+        // If you are testing your webhook locally with the Stripe CLI you
+        // can find the endpoint's secret by running `stripe listen`
+        // Otherwise, find your endpoint's secret in your webhook settings in the Developer Dashboard
+        const endpointSecret = 'whsec_...';
+
+        // This example uses Express to receive webhooks
+        const express = require('express');
+
+        const app = express();
+
+        // Match the raw body to content type application/json
+        app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
+            const sig = request.headers['panora-signature'];
+
+            let event;
+
+            try {
+                event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+            }
+            catch (err) {
+                response.status(400).send(`Webhook Error: ${err.message}`);
+            }
+
+            // Handle the event
+            switch (event.type) {
+                case 'payment_intent.succeeded':
+                const paymentIntent = event.data.object;
+                console.log('PaymentIntent was successful!');
+                break;
+                case 'payment_method.attached':
+                const paymentMethod = event.data.object;
+                console.log('PaymentMethod was attached to a Customer!');
+                break;
+                // ... handle other event types
+                default:
+                console.log(`Unhandled event type ${event.type}`);
+            }
+
+            // Return a response to acknowledge receipt of the event
+            response.json({received: true});
+        });
+
+        app.listen(8080, () => console.log('Running on port 8080'));
+        ```
+
+
+        ```python Python
+        # Set your secret key. Remember to switch to your live secret key in production.
+        # See your keys here: https://dashboard.stripe.com/apikeys
+        stripe.api_key = 'sk_test_VePHdqKTYQjKNInc7u56JBrQ'
+
+        from django.http import HttpResponse
+
+        # If you are testing your webhook locally with the Stripe CLI you
+        # can find the endpoint's secret by running `stripe listen`
+        # Otherwise, find your endpoint's secret in your webhook settings in the Developer Dashboard
+        endpoint_secret = 'whsec_...'
+
+
+        # Using Django
+        @csrf_exempt
+        def my_webhook_view(request):
+            payload = request.body
+            sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+            event = None
+
+            try:
+                event = stripe.Webhook.construct_event(
+                payload, sig_header, endpoint_secret
+                )
+            except ValueError as e:
+                # Invalid payload
+                print('Error parsing payload: {}'.format(str(e)))
+                return HttpResponse(status=400)
+            except stripe.error.SignatureVerificationError as e:
+                # Invalid signature
+                print('Error verifying webhook signature: {}'.format(str(e)))
+                return HttpResponse(status=400)
+
+            # Handle the event
+            if event.type == 'payment_intent.succeeded':
+                payment_intent = event.data.object # contains a stripe.PaymentIntent
+                # Then define and call a method to handle the successful payment intent.
+                # handle_payment_intent_succeeded(payment_intent)
+            elif event.type == 'payment_method.attached':
+                payment_method = event.data.object # contains a stripe.PaymentMethod
+                # Then define and call a method to handle the successful attachment of a PaymentMethod.
+                # handle_payment_method_attached(payment_method)
+            # ... handle other event types
+            else:
+                print('Unhandled event type {}'.format(event.type))
+
+            return HttpResponse(status=200)
+        ```
+
+        ```java Java
+        // Set your secret key. Remember to switch to your live secret key in production.
+        // See your keys here: https://dashboard.stripe.com/apikeys
+        Stripe.apiKey = "sk_test_VePHdqKTYQjKNInc7u56JBrQ";
+
+        import com.stripe.Stripe;
+        import com.stripe.model.StripeObject;
+        import com.stripe.net.ApiResource;
+        import com.stripe.net.Webhook;
+        import com.stripe.model.Event;
+        import com.stripe.model.EventDataObjectDeserializer;
+        import com.stripe.model.PaymentIntent;
+        import com.stripe.exception.SignatureVerificationException;
+
+        // If you are testing your webhook locally with the Stripe CLI you
+        // can find the endpoint's secret by running `stripe listen`
+        // Otherwise, find your endpoint's secret in your webhook settings in the Developer Dashboard
+        String endpointSecret = "whsec_...";
+
+        // Using the Spark framework (http://sparkjava.com)
+        public Object handle(Request request, Response response) {
+            String payload = request.body();
+            String sigHeader = request.headers("Stripe-Signature");
+            Event event = null;
+
+            try {
+                event = Webhook.constructEvent(
+                payload, sigHeader, endpointSecret
+                );
+            } catch (JsonSyntaxException e) {
+                // Invalid payload
+                System.out.println("Error parsing payload: " + e.getMessage());
+                response.status(400);
+                return gson.toJson(new ErrorResponse(e.getMessage()));
+            } catch (SignatureVerificationException e) {
+                // Invalid signature
+                System.out.println("Error verifying webhook signature: " + e.getMessage());
+                response.status(400);
+                return gson.toJson(new ErrorResponse(e.getMessage()));
+            }
+
+            // Deserialize the nested object inside the event
+            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+            StripeObject stripeObject = null;
+            if (dataObjectDeserializer.getObject().isPresent()) {
+                stripeObject = dataObjectDeserializer.getObject().get();
+            } else {
+                // Deserialization failed, probably due to an API version mismatch.
+                // Refer to the Javadoc documentation on `EventDataObjectDeserializer` for
+                // instructions on how to handle this case, or return an error here.
+            }
+
+            // Handle the event
+            switch (event.getType()) {
+                case "payment_intent.succeeded":
+                PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
+                System.out.println("PaymentIntent was successful!");
+                break;
+                case "payment_method.attached":
+                PaymentMethod paymentMethod = (PaymentMethod) stripeObject;
+                System.out.println("PaymentMethod was attached to a Customer!");
+                break;
+                // ... handle other event types
+                default:
+                System.out.println("Unhandled event type: " + event.getType());
+            }
+
+            response.status(200);
+            return "";
+        }
+        ```
+
+        ```go Go
+        // Set your secret key. Remember to switch to your live secret key in production.
+        // See your keys here: https://dashboard.stripe.com/apikeys
+        stripe.Key = "sk_test_VePHdqKTYQjKNInc7u56JBrQ"
+        
+        http.HandleFunc("/webhook", func(w http.ResponseWriter, req *http.Request) {
+            const MaxBodyBytes = int64(65536)
+            req.Body = http.MaxBytesReader(w, req.Body, MaxBodyBytes)
+            payload, err := ioutil.ReadAll(req.Body)
+            if err != nil {
+                fmt.Fprintf(os.Stderr, "Error reading request body: %v\n", err)
+                w.WriteHeader(http.StatusServiceUnavailable)
+                return
+            }
+
+            // If you are testing your webhook locally with the Stripe CLI you
+            // can find the endpoint's secret by running `stripe listen`
+            // Otherwise, find your endpoint's secret in your webhook settings
+            // in the Developer Dashboard
+            endpointSecret := "whsec_...";
+
+            // Pass the request body and Stripe-Signature header to ConstructEvent, along
+            // with the webhook signing key.
+            event, err := webhook.ConstructEvent(payload, req.Header.Get("Stripe-Signature"),
+                endpointSecret)
+
+            if err != nil {
+                fmt.Fprintf(os.Stderr, "Error verifying webhook signature: %v\n", err)
+                w.WriteHeader(http.StatusBadRequest) // Return a 400 error on a bad signature
+                return
+            }
+
+            // Unmarshal the event data into an appropriate struct depending on its Type
+            switch event.Type {
+                case "payment_intent.succeeded":
+                    var paymentIntent stripe.PaymentIntent
+                    err := json.Unmarshal(event.Data.Raw, &paymentIntent)
+                    if err != nil {
+                        fmt.Fprintf(os.Stderr, "Error parsing webhook JSON: %v\n", err)
+                        w.WriteHeader(http.StatusBadRequest)
+                        return
+                    }
+                    // Then define and call a func to handle the successful payment intent.
+                    // handlePaymentIntentSucceeded(paymentIntent)
+                case "payment_method.attached":
+                    var paymentMethod stripe.PaymentMethod
+                    err := json.Unmarshal(event.Data.Raw, &paymentMethod)
+                    if err != nil {
+                        fmt.Fprintf(os.Stderr, "Error parsing webhook JSON: %v\n", err)
+                        w.WriteHeader(http.StatusBadRequest)
+                        return
+                    }
+                    // Then define and call a func to handle the successful attachment of a PaymentMethod.
+                    // handlePaymentMethodAttached(paymentMethod)
+                // ... handle other event types
+                default:
+                    fmt.Fprintf(os.Stderr, "Unhandled event type: %s\n", event.Type)
+            }
+
+            w.WriteHeader(http.StatusOK)
+        })
+        ```
+
+        ```php Php
+        // Set your secret key. Remember to switch to your live secret key in production.
+        // See your keys here: https://dashboard.stripe.com/apikeys
+        \Stripe\Stripe::setApiKey('sk_test_VePHdqKTYQjKNInc7u56JBrQ');
+
+        // If you are testing your webhook locally with the Stripe CLI you
+        // can find the endpoint's secret by running `stripe listen`
+        // Otherwise, find your endpoint's secret in your webhook settings in the Developer Dashboard
+        $endpoint_secret = 'whsec_...';
+
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+        $event = null;
+
+        try {
+            $event = \Stripe\Webhook::constructEvent(
+                $payload, $sig_header, $endpoint_secret
+            );
+        } catch(\UnexpectedValueException $e) {
+            // Invalid payload
+        http_response_code(400);
+        echo json_encode(['Error parsing payload: ' => $e->getMessage()]);
+        exit();
+        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+            // Invalid signature
+            http_response_code(400);
+            echo json_encode(['Error verifying webhook signature: ' => $e->getMessage()]);
+            exit();
+        }
+
+        // Handle the event
+        switch ($event->type) {
+            case 'payment_intent.succeeded':
+                $paymentIntent = $event->data->object; // contains a \Stripe\PaymentIntent
+                // Then define and call a method to handle the successful payment intent.
+                // handlePaymentIntentSucceeded($paymentIntent);
+                break;
+            case 'payment_method.attached':
+                $paymentMethod = $event->data->object; // contains a \Stripe\PaymentMethod
+                // Then define and call a method to handle the successful attachment of a PaymentMethod.
+                // handlePaymentMethodAttached($paymentMethod);
+                break;
+            // ... handle other event types
+            default:
+                echo 'Received unknown event type ' . $event->type;
+        }
+
+        http_response_code(200);
+        ```
+
+        ```ruby Ruby
+        # Set your secret key. Remember to switch to your live secret key in production.
+        # See your keys here: https://dashboard.stripe.com/apikeys
+        Stripe.api_key = 'sk_test_VePHdqKTYQjKNInc7u56JBrQ'
+
+        require 'stripe'
+        require 'sinatra'
+
+        # If you are testing your webhook locally with the Stripe CLI you
+        # can find the endpoint's secret by running `stripe listen`
+        # Otherwise, find your endpoint's secret in your webhook settings in
+        # the Developer Dashboard
+        endpoint_secret = 'whsec_...'
+
+        # Using the Sinatra framework
+        set :port, 4242
+
+
+        # Using Sinatra
+        post '/webhook' do
+            payload = request.body.read
+            sig_header = request.env['HTTP_STRIPE_SIGNATURE']
+            event = nil
+
+            begin
+                event = Stripe::Webhook.construct_event(
+                payload, sig_header, endpoint_secret
+                )
+            rescue JSON::ParserError => e
+                # Invalid payload
+                puts "Error parsing payload: #{e.message}"
+                status 400
+                return
+            rescue Stripe::SignatureVerificationError => e
+                # Invalid signature
+                puts "Error verifying webhook signature: #{e.message}"
+                status 400
+                return
+            end
+
+            # Handle the event
+            case event.type
+            when 'payment_intent.succeeded'
+                payment_intent = event.data.object # contains a Stripe::PaymentIntent
+                # Then define and call a method to handle the successful payment intent.
+                # handle_payment_intent_succeeded(payment_intent)
+            when 'payment_method.attached'
+                payment_method = event.data.object # contains a Stripe::PaymentMethod
+                # Then define and call a method to handle the successful attachment of a PaymentMethod.
+                # handle_payment_method_attached(payment_method)
+            # ... handle other event types
+            else
+                puts "Unhandled event type: #{event.type}"
+            end
+
+            status 200
+        end
+        ```
+        </CodeGroup>
+
+    </Step>
+</Steps>

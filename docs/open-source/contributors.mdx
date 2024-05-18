@@ -15,7 +15,7 @@ We made a docker file that builds Panora from sources, specifically to help you 
 <Steps>
   <Step title="Copy env variables">
     ```bash 
-      cp .env.example .env 
+    cp .env.example .env 
     ```
   </Step>
   <Step title="Rules for env variables"> 
@@ -122,41 +122,41 @@ For the sake of this guide, let's map the common object `contact` under `crm` ve
       <Step title="Create the index.ts file">
           It must implement the `IContactService` interface.
           ```ts
-            export interface IContactService {
-              addContact(
-                contactData: DesunifyReturnType,
-                linkedUserId: string
-              ): Promise<ApiResponse<OriginalContactOutput>>;
+          export interface IContactService {
+            addContact(
+              contactData: DesunifyReturnType,
+              linkedUserId: string
+            ): Promise<ApiResponse<OriginalContactOutput>>;
 
-              syncContacts(
-                linkedUserId: string
-              ): Promise<ApiResponse<OriginalContactOutput[]>>;
-            }
+            syncContacts(
+              linkedUserId: string
+            ): Promise<ApiResponse<OriginalContactOutput[]>>;
+          }
           ```
 
           ```ts
-              @Injectable()
-              export class My3rdPartyService implements IContactService {
-                constructor(
-                  private prisma: PrismaService,
-                  private logger: LoggerService,
-                  private cryptoService: EncryptionService,
-                  private registry: ServiceRegistry,
-                ) {
-                  this.logger.setContext(
-                    CrmObject.contact.toUpperCase() + ':' + My3rdPartyService.name,
-                  );
-                  this.registry.registerService('my3rdParty', this);
-                }
-                async addContact(
-                  contactData: 3rdPartyContactInput,
-                  linkedUserId: string,
-                ): Promise<ApiResponse<3rdPartyContactOutput>> {}
+          @Injectable()
+          export class My3rdPartyService implements IContactService {
+            constructor(
+              private prisma: PrismaService,
+              private logger: LoggerService,
+              private cryptoService: EncryptionService,
+              private registry: ServiceRegistry,
+            ) {
+              this.logger.setContext(
+                CrmObject.contact.toUpperCase() + ':' + My3rdPartyService.name,
+              );
+              this.registry.registerService('my3rdParty', this);
+            }
+            async addContact(
+              contactData: 3rdPartyContactInput,
+              linkedUserId: string,
+            ): Promise<ApiResponse<3rdPartyContactOutput>> {}
 
-                async syncContacts(
-                  linkedUserId: string,
-                ): Promise<ApiResponse<3rdPartyContactOutput[]>> {}
-              }
+            async syncContacts(
+              linkedUserId: string,
+            ): Promise<ApiResponse<3rdPartyContactOutput[]>> {}
+          }
           ```
           Check other implementations under `/crm/contacts/services` to fill the core functions.
       </Step>
@@ -166,7 +166,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ve
         Go to the 3rd party API and insert the correct types asked by the API.
         ```ts
         export interface 3rdPartyContact {
-            //INSERT THE CORRECT TYPE HERE
+          //INSERT THE CORRECT TYPE HERE
         }
         export type 3rdPartyContactInput = Partial<3rdPartyContact>;
         export type 3rdPartyContactOutput = 3rdPartyContactInput;
