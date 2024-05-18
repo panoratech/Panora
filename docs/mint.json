@@ -50,7 +50,7 @@
   },
   "tabs": [
     {
-      "name": "CRM",
+      "name": "Crm",
       "url": "crm"
     },
     {
@@ -113,7 +113,7 @@
       "group": "",
       "pages": [
         "ticketing/overview",
-        "ticketing/try"
+        "ticketing/quick-start"
       ]
     },
     {
@@ -403,9 +403,20 @@
       ]
     },
     {
+      "group": "Receipes",
+      "pages": [
+        "receipes/share-magic-link", 
+        "receipes/embed-catalog", 
+        "receipes/import-existing-users", 
+        "receipes/catch-connection-token",
+        "receipes/add-custom-provider-creds"
+      ]
+    },
+    {
       "group": "Glossary",
       "pages": ["glossary/connection-object", "glossary/linked-account-object"]
     },
+
     {
       "group": "Devtools",
       "pages": [

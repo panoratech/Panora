@@ -16,27 +16,25 @@ icon: "key"
 Depending on your setup, you should make requests to one of those endpoints:
 
 <Tabs>
+  <Tab title="US Servers">
+      `https://api.panora.dev/`
+  </Tab>
 
-        <Tab title="US Servers">
-            `https://api.panora.dev/`
-        </Tab>
+  <Tab title="EU Servers">
+      `https://api-eu.panora.dev/`
+  </Tab>
 
-        <Tab title="EU Servers">
-            `https://api-eu.panora.dev/`
-        </Tab>
-
-        <Tab title="Self-Hosted">
-            `http://localhost:3000/`
-        </Tab>
-
-    </Tabs>
+  <Tab title="Self-Hosted">
+      `http://localhost:3000/`
+  </Tab>
+</Tabs>
 
 ## Learn how to generate your API Keys
 
 <Steps>
 
     <Step title="Creating your API Key">
-        Go to your dashboard, and visit the _API Keys_ section. Click the `Create New Key` button.
+        Go to your [dashboard](https://dashboard.panora.dev), and visit the _API Keys_ [section](https://dashboard.panora.dev/api-keys). Click the `Create New Key` button.
             <Frame type="glass">
                 <img src="/images/api-keys.png" />
             </Frame>
@@ -51,7 +49,7 @@ Depending on your setup, you should make requests to one of those endpoints:
 ## Catch connection tokens
 
 A `connection_token` is created everytime a user connects an account to your platform.<br/>
-Once you've set up the auth flow through [magic-link or using the mbedded snippet](/quick-start), you need to setup a [webhook](/webhooks/overview) and listen to events tagged as `connection.created`.
+Once you've set up the auth flow through [magic-link or using the embedded snippet](/quick-start), you need to setup a [webhook](/webhooks/overview) and listen to events tagged as `connection.created`.
 
 <Info>
   The `connection_token` is a string, located in the _data_ object, inside a
@@ -147,7 +145,7 @@ In this example, we will create a contact in a CRM. Visit other sections of the 
   print(results)
   ```
 
-  ```shell curl
+  ```shell Curl
   curl --request POST \
   --url https://api.panora.dev/crm/contacts \
   --header 'Authorization: Bearer <MY_API_KEY>' \
