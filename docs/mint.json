@@ -17,7 +17,7 @@
     }
   },
   "modeToggle": {
-    "default": "dark",
+    "default": "light",
     "isHidden": false
   },
   "logo": {
