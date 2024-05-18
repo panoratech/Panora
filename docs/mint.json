@@ -403,13 +403,13 @@
       ]
     },
     {
-      "group": "Receipes",
+      "group": "Recipes",
       "pages": [
-        "receipes/share-magic-link", 
-        "receipes/embed-catalog", 
-        "receipes/import-existing-users", 
-        "receipes/catch-connection-token",
-        "receipes/add-custom-provider-creds"
+        "recipes/share-magic-link", 
+        "recipes/embed-catalog", 
+        "recipes/import-existing-users", 
+        "recipes/catch-connection-token",
+        "recipes/add-custom-provider-creds"
       ]
     },
     {
