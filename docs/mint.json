@@ -17,7 +17,7 @@
     }
   },
   "modeToggle": {
-    "default": "light",
+    "default": "dark",
     "isHidden": false
   },
   "logo": {
@@ -26,9 +26,9 @@
   },
   "favicon": "logo/favicon.png",
   "colors": {
-    "primary": "#000000",
-    "light": "#ffffff",
-    "dark": "#000000",
+    "primary": "#085faf",
+    "light": "#085faf",
+    "dark": "#073763",
     "anchors": {
       "from": "#000000",
       "to": "#000000"
