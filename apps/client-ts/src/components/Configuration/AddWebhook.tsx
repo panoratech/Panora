@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -28,20 +27,13 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { scopes } from "@panora/shared/src/webhookScopes"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { usePostHog } from 'posthog-js/react'
 import config from "@/lib/config"
+import { DataTableFacetedFilterWebhook } from "../shared/data-table-webhook-scopes"
 
 
 const formSchema = z.object({
@@ -51,7 +43,7 @@ const formSchema = z.object({
     url: z.string().min(2, {
         message: "url must be at least 2 characters.",
     }),
-    event: z.string(),
+    scopes: z.string(),
 })
 
 const AddWebhook = () => {
@@ -66,11 +58,12 @@ const AddWebhook = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            description: "",
-            url: "",
-            event: scopes[0]
+          description: "",
+          url: "",
+          scopes: "",
         },
-    })
+      })
+    
 
     const handleOpenChange = (openVal : boolean) => {
         setOpen(openVal);
@@ -78,129 +71,117 @@ const AddWebhook = () => {
       };
     
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
-        mutate({ 
+        const selectedScopes = values.scopes ? values.scopes.split(' ') : [];
+        console.log({ ...values, scopes: selectedScopes });
+        mutate({
             url: values.url,
             description: values.description,
             id_project: idProject,
-            scope: [values.event],
+            scope: selectedScopes,
         });
-        handleOpenChange(false);  
+        handleOpenChange(false);
         posthog?.capture("webhook_created", {
             id_project: idProject,
             mode: config.DISTRIBUTION
         })
     }
   
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogTrigger asChild>
-        <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className={cn("w-[160px] justify-between")}
-            onClick={ () => {
-                posthog?.capture("add_webhook_button_clicked", {
-                    id_project: idProject,
-                    mode: config.DISTRIBUTION
-                })
-            }}
-          >
-            <PlusCircledIcon className=" h-5 w-5" />
-            Add Webhook
-        </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:w-[450px]">
-        <Form {...form}>
+    return (
+        <Dialog open={open} onOpenChange={handleOpenChange}>
+            <DialogTrigger asChild>
+            <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className={cn("w-[160px] justify-between")}
+                onClick={ () => {
+                    posthog?.capture("add_webhook_button_clicked", {
+                        id_project: idProject,
+                        mode: config.DISTRIBUTION
+                    })
+                }}
+            >
+                <PlusCircledIcon className=" h-5 w-5" />
+                Add Webhook
+            </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:w-[450px]">
+            <Form {...form}>
 
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-                <CardHeader>
-                    <CardTitle>Create a webhook</CardTitle>
-                    <CardDescription>
-                    Set up your webhook endpoint to receive live events from Panora.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-6">
-                    <div className="grid gap-4">
-                        <div className="grid gap-2">
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <CardHeader>
+                        <CardTitle>Create a webhook</CardTitle>
+                        <CardDescription>
+                        Set up your webhook endpoint to receive live events from Panora.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid gap-6">
+                        <div className="grid gap-4">
+                            <div className="grid gap-2">
                             <FormField
                                 control={form.control}
-                                name="event"
+                                name="scopes"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="event">Event</FormLabel>
+                                        <FormLabel htmlFor="scopes">Scopes</FormLabel>
                                         <FormControl>
-                                            <Select 
-                                                onValueChange={field.onChange} defaultValue={field.value}
-                                            >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {
-                                                scopes.map((scope) => {
-                                                    return (
-                                                    <SelectItem key={scope} value={scope}>{scope}</SelectItem>
-                                                    )
-                                                })
-                                                }
-                                            </SelectContent>
-                                            </Select>
+                                            <div className="flex flex-col">
+                                                <DataTableFacetedFilterWebhook title="Add" field={field} />
+                                            </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+                            </div>
                         </div>
-                    </div>
-                    <div className="grid gap-2">
-                        <FormField
-                            control={form.control}
-                            name="url"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Endpoint URL</FormLabel>
-                                <FormControl>
-                                <Input 
-                                    placeholder="https://yourdomain/webhook_endpoint" {...field} 
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                                />
-                                </FormControl>
-                                <FormDescription>
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                    </div>
-                    <div className="grid gap-2">
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Description</FormLabel>
-                                <FormControl>
-                                <Input 
-                                    placeholder="Give your endpoint a short, descriptive name." {...field} 
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                                />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                    </div>
-                </CardContent>
-                <CardFooter className="justify-between space-x-2">
-                    <Button type="submit">Add Endpoint</Button>
-                </CardFooter>
-            </form>
-            </Form>
-        </DialogContent>
-    </Dialog>   
-  )
+                        <div className="grid gap-2">
+                            <FormField
+                                control={form.control}
+                                name="url"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Endpoint URL</FormLabel>
+                                    <FormControl>
+                                    <Input 
+                                        placeholder="https://yourdomain/webhook_endpoint" {...field} 
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                                    />
+                                    </FormControl>
+                                    <FormDescription>
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl>
+                                    <Input 
+                                        placeholder="Give your endpoint a short, descriptive name." {...field} 
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                                    />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                        </div>
+                    </CardContent>
+                    <CardFooter className="justify-between space-x-2">
+                        <Button type="submit">Add Endpoint</Button>
+                    </CardFooter>
+                </form>
+                </Form>
+            </DialogContent>
+        </Dialog>   
+    )
 }
 
 export default AddWebhook;

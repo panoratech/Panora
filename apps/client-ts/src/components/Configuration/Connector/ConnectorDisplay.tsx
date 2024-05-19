@@ -17,10 +17,34 @@ import useConnectionStrategyAuthCredentialsMutation from "@/hooks/mutations/useC
 import { usePostHog } from 'posthog-js/react'
 import { Input } from "@/components/ui/input"
 import useConnectionStrategies from "@/hooks/useConnectionStrategies"
+import { DataTableFacetedFilter } from "@/components/shared/data-table-faceted-filter"
 
 interface ItemDisplayProps {
   item?: Provider 
 }
+
+export const statuses = [
+  {
+    value: "backlog",
+    label: "Backlog",
+  },
+  {
+    value: "todo",
+    label: "Todo",
+  },
+  {
+    value: "in progress",
+    label: "In Progress",
+  },
+  {
+    value: "done",
+    label: "Done",
+  },
+  {
+    value: "canceled",
+    label: "Canceled",
+  },
+]
 
 const formSchema = z.object({
   client_id : z.string({
@@ -305,9 +329,9 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                         control={form.control}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="flex flex-col">Scope</FormLabel>
+                            <FormLabel className="flex flex-col">Scopes</FormLabel>
                             <FormControl>
-                              <Input {...field} placeholder="Enter Scopes" />
+                              <DataTableFacetedFilter title="Add" field={field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

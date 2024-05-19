@@ -37,7 +37,7 @@ export function WebhooksPage({
 
   useEffect(() => {
       setWebhooks(initialWebhooks);
-  }, [initialWebhooks]);
+  }, [initialWebhooks]); 
 
   return (
     <div className="space-y-8">
@@ -47,7 +47,9 @@ export function WebhooksPage({
         
         <div className="ml-4 space-y-1">
             <p className="text-sm text-left text-muted-foreground mb-2">
-                <Badge className="">{isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : webhook.scope}</Badge>
+              {(webhook.scope as string[]).map((scope)=> {
+                return (<Badge className="mr-2">{isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : scope}</Badge>)
+              })}
             </p>
             <p className="text-sm font-medium text-left leading-none">
             <Badge variant="outline">{isLoading ? <Skeleton className="w-[100px] h-[20px] rounded-md" /> : webhook.url}</Badge>

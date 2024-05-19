@@ -13,26 +13,29 @@ import {
   CommandSeparator,
 } from "@/components/ui/command"
 import {
-  Popover, 
+  Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
 import { useEffect } from "react"
+import { scopes } from "@panora/shared"
 
-export function DataTableFacetedFilter({ title, field }: { title?: string, field: any }) {
+export function DataTableFacetedFilterWebhook({ title, field }: { title?: string, field: any }) {
   const [inputValue, setInputValue] = React.useState<string>("");
   const [selectedValues, setSelectedValues] = React.useState<Set<string>>(new Set());
+
   useEffect(() => {
-    if(field.value !== " "){
+    if (field.value && field.value.trim() !== "") {
       setSelectedValues(new Set(field.value.split(' ')));
     }
   }, [field.value]);
-  
-  const handleAddScope = () => {
-    if (inputValue && !selectedValues.has(inputValue)) {
-      setSelectedValues(new Set([...selectedValues, inputValue]));
-      field.onChange(Array.from(new Set([...selectedValues, inputValue])).join(' '));
+
+  const handleAddScope = (scope: string) => {
+    if (scope && !selectedValues.has(scope)) {
+      const newSelectedValues = new Set([...selectedValues, scope]);
+      setSelectedValues(newSelectedValues);
+      field.onChange(Array.from(newSelectedValues).join(' '));
       setInputValue("");
     }
   };
@@ -48,6 +51,10 @@ export function DataTableFacetedFilter({ title, field }: { title?: string, field
     setSelectedValues(new Set());
     field.onChange('');
   };
+
+  const filteredScopes = scopes.filter(scope =>
+    scope.toLowerCase().includes(inputValue.toLowerCase()) && !selectedValues.has(scope)
+  );
 
   return (
     <Popover>
@@ -65,7 +72,7 @@ export function DataTableFacetedFilter({ title, field }: { title?: string, field
                 {selectedValues.size}
               </Badge>
               <div className="hidden space-x-1 lg:flex">
-                {selectedValues.size > 5 ? (
+                {selectedValues.size > 2 ? (
                   <Badge
                     variant="secondary"
                     className="rounded-sm px-1 font-normal"
@@ -88,20 +95,9 @@ export function DataTableFacetedFilter({ title, field }: { title?: string, field
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0" align="start">
+      <PopoverContent className="w-[300px] p-0" align="start">
         <Command>
-          <CommandInput
-            placeholder="Enter scope"
-            value={inputValue}
-            onValueChange={setInputValue}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                handleAddScope();
-              }
-            }}
-          />
-          <CommandList>
+          <CommandList className="max-h-60 overflow-y-auto">
             <CommandGroup>
               {Array.from(selectedValues).map((value) => (
                 <CommandItem
@@ -110,13 +106,30 @@ export function DataTableFacetedFilter({ title, field }: { title?: string, field
                 >
                   <div
                     className={cn(
-                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                      "bg-primary text-primary-foreground"
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                        "bg-primary text-primary-foreground"
                     )}
                   >
                     <CheckIcon className={cn("h-4 w-4")} />
                   </div>
                   <span>{value}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandGroup>
+              {filteredScopes.map((scope) => (
+                <CommandItem
+                  key={scope}
+                  onSelect={() => handleAddScope(scope)}
+                >
+                  <div
+                    className={cn(
+                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary"
+                    )}
+                  >
+                    {selectedValues.has(scope) && <CheckIcon className={cn("h-4 w-4")} />}
+                  </div>
+                  <span>{scope}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -128,7 +141,7 @@ export function DataTableFacetedFilter({ title, field }: { title?: string, field
                     onSelect={handleClearScopes}
                     className="justify-center text-center"
                   >
-                    Clear filters
+                    Clear scopes
                   </CommandItem>
                 </CommandGroup>
               </>
@@ -139,4 +152,3 @@ export function DataTableFacetedFilter({ title, field }: { title?: string, field
     </Popover>
   )
 }
-

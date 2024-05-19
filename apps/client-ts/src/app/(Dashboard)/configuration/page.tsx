@@ -49,7 +49,7 @@ export default function Page() {
 
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
   const { data: webhooks, isLoading: isWebhooksLoading, error: isWebhooksError } = useWebhooks();
-  const {data: ConnectionStrategies, isLoading: isConnectionStrategiesLoading,error: isConnectionStategiesError} = useConnectionStrategies()
+  const {data: connectionStrategies, isLoading: isConnectionStrategiesLoading,error: isConnectionStategiesError} = useConnectionStrategies()
 
   const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
   const [open, setOpen] = useState(false);
@@ -101,7 +101,7 @@ export default function Page() {
 
   // console.log(ConnectionStrategies)
 
-  const mappingConnectionStrategies = ConnectionStrategies?.map(cs => ({
+  const mappingConnectionStrategies = connectionStrategies?.map(cs => ({
     id_cs : cs.id_connection_strategy,
     provider_name : extractProvider(cs.type),
     auth_type: extractAuthMode(cs.type),
