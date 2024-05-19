@@ -42,6 +42,7 @@ import AuthCredentialsTable from "@/components/Configuration/AuthCredentialsTabl
 import useConnectionStrategies from "@/hooks/useConnectionStrategies";
 import { extractAuthMode,extractProvider,extractVertical} from '@panora/shared'
 import { Heading } from "@/components/ui/heading";
+import CustomConnectorPage from "@/components/Configuration/CustomConnectorPage";
 
 export default function Page() {
   const {idProject} = useProjectStore();
@@ -108,7 +109,7 @@ export default function Page() {
     type: cs.type,
     status: cs.status
   }))
-
+ 
   console.log(mappingConnectionStrategies)
 
   return (
@@ -130,8 +131,8 @@ export default function Page() {
               <TabsTrigger value="webhooks">
                 Webhooks
               </TabsTrigger>
-              <TabsTrigger value="0auth">
-                OAuth Credentials
+              <TabsTrigger value="custom">
+                Manage Connectors
               </TabsTrigger>
             </TabsList>
             <TabsContent value="linked-accounts" className="space-y-4">
@@ -227,6 +228,11 @@ export default function Page() {
                 </Card>
               </div>
             </TabsContent>
+
+            <TabsContent value="custom" className="space-y-4">
+              <CustomConnectorPage />
+            </TabsContent>
+
           </Tabs>
         </div>
 

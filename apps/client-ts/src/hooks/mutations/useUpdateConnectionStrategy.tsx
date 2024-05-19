@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 
 interface IUpdateConnectionStrategyDto {
     id_cs?: string
-    ToUpdateToggle: boolean,
+    updateToggle: boolean,
     projectId?: string,
     type?: string,
     status?: boolean,
@@ -20,7 +20,7 @@ const useUpdateConnectionStrategyMutation = () => {
     
     const addConnectionStrategy = async (connectionStrategyData: IUpdateConnectionStrategyDto) => {
 
-        if(connectionStrategyData.ToUpdateToggle)
+        if(connectionStrategyData.updateToggle)
         {
             console.log(connectionStrategyData.id_cs)
             const response = await fetch(`${config.API_URL}/connections-strategies/toggle`, {

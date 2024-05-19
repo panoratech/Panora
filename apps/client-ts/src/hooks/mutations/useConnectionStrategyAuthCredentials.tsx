@@ -34,15 +34,6 @@ const useConnectionStrategyAuthCredentialsMutation = () => {
 
     return useMutation({
         mutationFn: getCSCredentials,
-        onMutate: () => {
-            toast("Connection Strategy Credentials is being fetched !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
         onError: (error) => {
             toast("The CS credentials fetching failed !", {
                 description: error as any,
@@ -56,14 +47,6 @@ const useConnectionStrategyAuthCredentialsMutation = () => {
             // queryClient.setQueryData<IFetchConnectionStrategyDto[]>(['connection-strategies'], (oldQueryData = []) => {
             //     return [...oldQueryData, data];
             // });
-            toast("New Connection Strategy Credentials successfully fetched !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            });
-
             return data
         },
         onSettled: () => {

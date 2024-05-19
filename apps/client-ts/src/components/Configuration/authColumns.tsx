@@ -41,7 +41,7 @@ const UpdateStatusCellComponent = ({row}:{row:any}) => {
         mutate(
           {
             id_cs:row.original.id_cs,
-            ToUpdateToggle:true
+            updateToggle:true
           }, {
             onSuccess : () => setDisable(false),
             onError : () => setDisable(false)
