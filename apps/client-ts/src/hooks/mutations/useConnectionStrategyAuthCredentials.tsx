@@ -8,19 +8,16 @@ interface IFetchedData {
   }
 
 interface IGetCSCredentialsData {
-    projectId : string,
     type?:string,
     attributes:string[]
   }
 
 
-const useConnectionStrategyAuthCredentialsMutation = () => {
-    // const queryClient = useQueryClient();
-    
-    const getCSCredentials = async (GetCSCredentialsData : IGetCSCredentialsData): Promise<string[]> => {
+const useConnectionStrategyAuthCredentialsMutation = () => {    
+    const getCSCredentials = async (data : IGetCSCredentialsData): Promise<string[]> => {
         const response = await fetch(`${config.API_URL}/connections-strategies/credentials`,{
           method: 'POST',
-          body: JSON.stringify(GetCSCredentialsData),
+          body: JSON.stringify(data),
           headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${Cookies.get('access_token')}`,

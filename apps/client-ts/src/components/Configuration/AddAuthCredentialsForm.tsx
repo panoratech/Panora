@@ -132,7 +132,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 console.log(prop.data)
 
                 fetchCredentials({
-                    projectId:idProject,
                     type: prop.data?.type,
                     attributes: prop.data?.auth_type===AuthStrategy.oauth2 ? ["client_id","client_secret","scope"]
                     : prop.data?.auth_type===AuthStrategy.api_key ? ["api_key"] : ["username","secret"]
@@ -227,7 +226,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 else
                 {
                     createCS({
-                        projectId:idProject,
                         type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.oauth2),
                         attributes:["client_id","client_secret","scope"],
                         values:[client_id,client_secret,scope]
@@ -269,7 +267,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
                     else
                     {
                         createCS({
-                            projectId:idProject,
                             type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.api_key),
                             attributes:["api_key"],
                             values:[api_key]
@@ -319,7 +316,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         else
                         {
                             createCS({
-                                projectId:idProject,
                                 type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.basic),
                                 attributes:["username","secret"],
                                 values:[username,secret]

@@ -108,7 +108,6 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
           });
         } else {
           createCS({
-            projectId: idProject,
             type: providerToType(item?.name, item?.vertical!, AuthStrategy.oauth2),
             attributes: ["client_id", "client_secret", "scope"],
             values: [client_id, client_secret, scope]
@@ -142,7 +141,6 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
           });
         } else {
           createCS({
-            projectId: idProject,
             type: providerToType(item?.name, item?.vertical!, AuthStrategy.api_key),
             attributes: ["api_key"],
             values: [api_key]
@@ -181,7 +179,6 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
           });
         } else {
           createCS({
-            projectId: idProject,
             type: providerToType(item?.name, item?.vertical!, AuthStrategy.basic),
             attributes: ["username", "secret"],
             values: [username, secret]
@@ -200,7 +197,6 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
   useEffect(() => {
     if (mappingConnectionStrategies && mappingConnectionStrategies.length > 0) {
       fetchCredentials({
-        projectId: idProject,
         type: mappingConnectionStrategies[0].type,
         attributes: item?.authStrategy === AuthStrategy.oauth2 ? ["client_id", "client_secret", "scope"]
           : item?.authStrategy === AuthStrategy.api_key ? ["api_key"] : ["username", "secret"]

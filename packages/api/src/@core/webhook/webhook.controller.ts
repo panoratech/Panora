@@ -11,7 +11,7 @@ import {
 import { LoggerService } from '@@core/logger/logger.service';
 import { ApiBody, ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { WebhookService } from './webhook.service';
-import { WebhookDto } from './dto/webhook.dto';
+import { SignatureVerificationDto, WebhookDto } from './dto/webhook.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
 @ApiTags('webhook')
@@ -59,5 +59,22 @@ export class WebhookController {
   @Post()
   async addWebhook(@Body() data: WebhookDto) {
     return this.webhookService.createWebhookEndpoint(data);
+  }
+
+  @ApiOperation({
+    operationId: 'verifyEvent',
+    summary: 'Verify payload sgnature of the webhook',
+  })
+  @ApiBody({ type: SignatureVerificationDto })
+  @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
+  @Post('verifyEvent')
+  async verifyPayloadSignature(@Body() data: SignatureVerificationDto) {
+    const { payload, signature, secret } = data;
+    return this.webhookService.verifyPayloadSignature(
+      payload,
+      signature,
+      secret,
+    );
   }
 }

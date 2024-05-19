@@ -4,15 +4,13 @@ import { toast } from "sonner"
 import Cookies from 'js-cookie';
 
 interface IConnectionStrategyDto {
-    projectId: string,
     type: string,
     attributes: string[],
     values: string[],
 }
 
 interface IFetchConnectionStrategyDto {
-    id_cs:string,
-    projectId: string,
+    id_cs: string,
     type: string,
     attributes: string[],
     values: string[],

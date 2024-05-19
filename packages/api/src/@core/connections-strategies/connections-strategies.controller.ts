@@ -36,11 +36,13 @@ export class ConnectionsStrategiesController {
   @UseGuards(JwtAuthGuard)
   @Post('create')
   async createConnectionStrategy(
+    @Request() req: any,
     @Body() connectionStrategyCreateDto: CreateConnectionStrategyDto,
   ) {
-    const { projectId, type, attributes, values } = connectionStrategyCreateDto;
+    const { id_project } = req.user;
+    const { type, attributes, values } = connectionStrategyCreateDto;
     return await this.connectionsStrategiesService.createConnectionStrategy(
-      projectId,
+      id_project,
       type,
       attributes,
       values,
@@ -101,12 +103,14 @@ export class ConnectionsStrategiesController {
   @UseGuards(JwtAuthGuard)
   @Post('credentials')
   async getConnectionStrategyCredential(
+    @Request() req: any,
     @Body() data: ConnectionStrategyCredentials,
   ) {
     // validate user against project_id
-    const { attributes, projectId, type } = data;
+    const { id_project } = req.user;
+    const { attributes, type } = data;
     return await this.connectionsStrategiesService.getConnectionStrategyData(
-      projectId,
+      id_project,
       type,
       attributes,
     );
