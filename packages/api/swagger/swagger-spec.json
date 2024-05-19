@@ -400,6 +400,31 @@
         ]
       }
     },
+    "/webhook/verifyEvent": {
+      "post": {
+        "operationId": "verifyEvent",
+        "summary": "Verify payload sgnature of the webhook",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatureVerificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "webhook"
+        ]
+      }
+    },
     "/linked-users": {
       "post": {
         "operationId": "addLinkedUser",
@@ -4615,6 +4640,21 @@
           "scope"
         ]
       },
+      "SignatureVerificationDto": {
+        "type": "object",
+        "properties": {
+          "signature": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "signature",
+          "secret"
+        ]
+      },
       "CreateLinkedUserDto": {
         "type": "object",
         "properties": {
@@ -4786,9 +4826,6 @@
       "CreateConnectionStrategyDto": {
         "type": "object",
         "properties": {
-          "projectId": {
-            "type": "string"
-          },
           "type": {
             "type": "string"
           },
@@ -4806,7 +4843,6 @@
           }
         },
         "required": [
-          "projectId",
           "type",
           "attributes",
           "values"
@@ -4866,9 +4902,6 @@
       "ConnectionStrategyCredentials": {
         "type": "object",
         "properties": {
-          "projectId": {
-            "type": "string"
-          },
           "type": {
             "type": "string"
           },
@@ -4880,7 +4913,6 @@
           }
         },
         "required": [
-          "projectId",
           "type",
           "attributes"
         ]

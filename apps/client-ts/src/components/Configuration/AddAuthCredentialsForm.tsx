@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/form"
 import {PasswordInput} from '@/components/ui/password-input'
 import { ALL_PROVIDERS,getLogoURL,providerToType,AuthStrategy } from "@panora/shared"
-import * as z from "zod"
+import { z } from "zod"
 import { cn } from "@/lib/utils"
 import useProjectStore from "@/state/projectStore"
 import useConnectionStrategyMutation from '@/hooks/mutations/useConnectionStrategy'
@@ -77,7 +77,6 @@ const formSchema = z.object({
     secret: z.string({
         required_error: "Please Enter Secret",
     }),
-
 })
 
   interface propType {
@@ -106,7 +105,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
     const {idProject} = useProjectStore()
     const {mutate : createCS} = useConnectionStrategyMutation();
     const {mutate :updateCS} = useUpdateConnectionStrategyMutation()
-    const {mutateAsync : fetchCredentials,data : fetchedData} = useConnectionStrategyAuthCredentialsMutation();
+    const {mutateAsync : fetchCredentials, data : fetchedData} = useConnectionStrategyAuthCredentialsMutation();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -133,7 +132,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 console.log(prop.data)
 
                 fetchCredentials({
-                    projectId:idProject,
                     type: prop.data?.type,
                     attributes: prop.data?.auth_type===AuthStrategy.oauth2 ? ["client_id","client_secret","scope"]
                     : prop.data?.auth_type===AuthStrategy.api_key ? ["api_key"] : ["username","secret"]
@@ -166,7 +164,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
             )
             }
 
-},[])
+    },[])
 
     const handlePopOverClose = () => {
         setPopOverOpen(false);
@@ -215,7 +213,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 {
                     updateCS({
                         id_cs:prop.data?.id_cs,
-                        ToUpdateToggle: false,
+                        updateToggle: false,
                         status:prop.data?.status,
                         attributes:["client_id","client_secret","scope"],
                         values:[client_id,client_secret,scope]
@@ -228,7 +226,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
                 else
                 {
                     createCS({
-                        projectId:idProject,
                         type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.oauth2),
                         attributes:["client_id","client_secret","scope"],
                         values:[client_id,client_secret,scope]
@@ -257,7 +254,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                     {
                         updateCS({
                             id_cs:prop.data?.id_cs,
-                            ToUpdateToggle: false,
+                            updateToggle: false,
                             status:prop.data?.status,
                             attributes:["api_key"],
                             values:[api_key]
@@ -270,7 +267,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
                     else
                     {
                         createCS({
-                            projectId:idProject,
                             type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.api_key),
                             attributes:["api_key"],
                             values:[api_key]
@@ -307,7 +303,7 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         {
                             updateCS({
                                 id_cs:prop.data?.id_cs,
-                                ToUpdateToggle: false,
+                                updateToggle: false,
                                 status:prop.data?.status,
                                 attributes:["username","secret"],
                                 values:[username,secret]
@@ -320,7 +316,6 @@ const AddAuthCredentialsForm = (prop : propType) => {
                         else
                         {
                             createCS({
-                                projectId:idProject,
                                 type: providerToType(provider_name.split("-")[0],provider_name.split("-")[1],AuthStrategy.basic),
                                 attributes:["username","secret"],
                                 values:[username,secret]
@@ -350,267 +345,267 @@ const AddAuthCredentialsForm = (prop : propType) => {
     <>
     <Form {...form}>
 
-<form onSubmit={form.handleSubmit(onSubmit)}>
-    <CardHeader>
-        <CardTitle>Add OAuth Credentials</CardTitle>
-        <CardDescription>
-        In the event that you are using your own OAuth credentials, Panora gives you have the option to import them instead of using our pre-made OAuth apps.
-        </CardDescription>
-    </CardHeader>
-    <CardContent className="grid gap-5">
-        <div className="grid gap-4">
-            <FormField
-            control={form.control}
-            // disabled={prop.performUpdate}
-            name="provider_name"
-            render={({ field }) => (
-                <FormItem className="flex flex-col">
-                <FormLabel>Provider</FormLabel>
-                <Popover modal open={popoverOpen} onOpenChange={setPopOverOpen}>
-                    <PopoverTrigger asChild>
-                    <FormControl>
-                        <Button
-                        variant="outline"
-                        role="combobox"
-                        disabled={prop.performUpdate}
-                        className={cn(
-                            "justify-between",
-                            !field.value && "text-muted-foreground"
-                        )}
-                        >
-                        {field.value
-                            ? field.value.charAt(0).toUpperCase()+field.value.slice(1)
-                            : "Select provider"}
-                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                    </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent  side="bottom" className="p-0">
-                    <Command  className="w-full">
-                        <CommandInput
-                        placeholder="Search provider..."
-                        className="h-9 w-full"
-                        
-                        />
-                        <CommandEmpty>No Provider found.</CommandEmpty>
-                        <ScrollArea className="h-40 w-full">
-
-                        <CommandGroup>
-                        {ALL_PROVIDERS.map((provider) => (
-                            <CommandItem
-                            value={provider.value+'-'+provider.vertical}
-                            key={provider.vertical+"-"+provider.value}
-                            onSelect={() => {
-                                form.setValue("provider_name", `${provider.value}-${provider.vertical}`)
-                                form.clearErrors("provider_name")
-                                handlePopOverClose();
-                            }}
-                            className={field.value===`${provider.value}-${provider.vertical}` ? "bg-gray-200 w-full" : "w-full"}
-                            
-                            >
-                            <div
-                            // key={index}
-                            className="flex items-center justify-between px-4 py-2 w-full cursor-pointer"
-                            // onClick={() => handleWalletClick(provider.name)}
-                            >
-                            <div className="flex items-center w-full">
-                                <img className="w-4 h-4 rounded-lg mr-3" src={getLogoURL(provider.value)} alt={provider.value} />
-                                <span className='w-full'>{provider.value.charAt(0).toUpperCase() + provider.value.slice(1)} - {provider.vertical}</span>
-                                
-                            </div>
-                            {/* <CheckIcon
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardHeader>
+                <CardTitle>Add OAuth Credentials</CardTitle>
+                <CardDescription>
+                In the event that you are using your own OAuth credentials, Panora gives you have the option to import them instead of using our pre-made OAuth apps.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-5">
+                <div className="grid gap-4">
+                    <FormField
+                    control={form.control}
+                    // disabled={prop.performUpdate}
+                    name="provider_name"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                        <FormLabel>Provider</FormLabel>
+                        <Popover modal open={popoverOpen} onOpenChange={setPopOverOpen}>
+                            <PopoverTrigger asChild>
+                            <FormControl>
+                                <Button
+                                variant="outline"
+                                role="combobox"
+                                disabled={prop.performUpdate}
                                 className={cn(
-                                "h-4 w-4 flex ",
-                                provider.value === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
+                                    "justify-between",
+                                    !field.value && "text-muted-foreground"
                                 )}
-                                /> */}
-                            
-                            
-                            </div>
-                            
-                                    </CommandItem>
-                        ))}
-                        </CommandGroup>
-                        </ScrollArea>
-                            </Command>
-                            </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                </FormItem>
+                                >
+                                {field.value
+                                    ? field.value.charAt(0).toUpperCase()+field.value.slice(1)
+                                    : "Select provider"}
+                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent  side="bottom" className="p-0">
+                            <Command  className="w-full">
+                                <CommandInput
+                                placeholder="Search provider..."
+                                className="h-9 w-full"
+                                
+                                />
+                                <CommandEmpty>No Provider found.</CommandEmpty>
+                                <ScrollArea className="h-40 w-full">
+
+                                <CommandGroup>
+                                {ALL_PROVIDERS.map((provider) => (
+                                    <CommandItem
+                                    value={provider.value+'-'+provider.vertical}
+                                    key={provider.vertical+"-"+provider.value}
+                                    onSelect={() => {
+                                        form.setValue("provider_name", `${provider.value}-${provider.vertical}`)
+                                        form.clearErrors("provider_name")
+                                        handlePopOverClose();
+                                    }}
+                                    className={field.value===`${provider.value}-${provider.vertical}` ? "bg-gray-200 w-full" : "w-full"}
+                                    
+                                    >
+                                    <div
+                                    // key={index}
+                                    className="flex items-center justify-between px-4 py-2 w-full cursor-pointer"
+                                    // onClick={() => handleWalletClick(provider.name)}
+                                    >
+                                    <div className="flex items-center w-full">
+                                        <img className="w-4 h-4 rounded-lg mr-3" src={getLogoURL(provider.value)} alt={provider.value} />
+                                        <span className='w-full'>{provider.value.charAt(0).toUpperCase() + provider.value.slice(1)} - {provider.vertical}</span>
+                                        
+                                    </div>
+                                    {/* <CheckIcon
+                                        className={cn(
+                                        "h-4 w-4 flex ",
+                                        provider.value === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                        /> */}
+                                    
+                                    
+                                    </div>
+                                    
+                                            </CommandItem>
+                                ))}
+                                </CommandGroup>
+                                </ScrollArea>
+                                    </Command>
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                        </FormItem>
+                            )}
+                        />
+
+                    {/* </div> */}
+                </div>
+                <div className="grid gap-4">
+                    <FormField
+                    control={form.control}
+                    name="auth_type"
+                    // disabled={prop.performUpdate}
+                    render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="flex flex-col">Authentication Method</FormLabel>
+                                <FormControl>
+                                    <Select 
+                                    disabled={prop.performUpdate}
+                                        onValueChange={field.onChange} defaultValue={field.value}
+                                    >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Authentication Method" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value={AuthStrategy.oauth2}>OAuth2</SelectItem>
+                                        <SelectItem value={AuthStrategy.api_key}>API</SelectItem>
+                                        <SelectItem value={AuthStrategy.basic}>Basic Auth</SelectItem>
+                                    </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
                     )}
-                />
-
-            {/* </div> */}
-        </div>
-        <div className="grid gap-4">
-            <FormField
-            control={form.control}
-            name="auth_type"
-            // disabled={prop.performUpdate}
-            render={({field}) => (
-                    <FormItem>
-                        <FormLabel className="flex flex-col">Authentication Method</FormLabel>
-                        <FormControl>
-                            <Select 
-                            disabled={prop.performUpdate}
-                                onValueChange={field.onChange} defaultValue={field.value}
-                            >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select Authentication Method" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value={AuthStrategy.oauth2}>OAuth2</SelectItem>
-                                <SelectItem value={AuthStrategy.api_key}>API</SelectItem>
-                                <SelectItem value={AuthStrategy.basic}>Basic Auth</SelectItem>
-                            </SelectContent>
-                            </Select>
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-            )}
-            />
-
-        </div>
-
-        {/* If Authentication Method is OAuth2 */}
-
-        {Watch.auth_type===AuthStrategy.oauth2 ? 
-            <>
-            <div className="flex flex-col">
-                <FormField
-                name="client_id"
-                control={form.control}
-                render={({field}) => (
-                    <FormItem>
-                        <FormLabel className="flex flex-col">Client ID</FormLabel>
-                        <FormControl>
-                        <PasswordInput {...field}  placeholder="Enter Client ID" />
-                        </FormControl>
-                        <FormMessage/>
-                    </FormItem>
-                )}
-                />
-            </div>
-            <div className="flex flex-col">
-                <FormField
-                name="client_secret"
-                control={form.control}
-                render={({field}) => (
-                    <FormItem>
-                        <FormLabel className="flex flex-col">Client Secret</FormLabel>
-                        <FormControl>
-                        <PasswordInput {...field} placeholder="Enter Client Secret" />
-                        </FormControl>
-                        <FormMessage/>
-                    </FormItem>
-                )}
-                />
-            </div>
-            <div className="flex flex-col">
-                <FormField
-                name="scope"
-                control={form.control}
-                render={({field}) => (
-                    <FormItem>
-                        <FormLabel className="flex flex-col">Scope</FormLabel>
-                        <FormControl>
-                        <Input {...field} placeholder="Enter Scopes" />
-                        </FormControl>
-                        <FormMessage/>
-                    </FormItem>
-                )}
-                />
-            </div>
-            <div className="flex flex-col">
-                <FormLabel className="flex flex-col">Redirect URI</FormLabel>
-                <div className="flex gap-2 mt-1">
-                    {/* <p className=" text-gray-500">localhost:3000/connections/oauth/callback</p> */}
-                    <Input value="localhost:3000/connections/oauth/callback" readOnly/>
-                    <Button type="button" onClick={handleCopy}>
-                        {copied ? 'Copied!' :
-                        <>
-                        <p className="mr-1">Copy</p>
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 2V1H10V2H5ZM4.75 0C4.33579 0 4 0.335786 4 0.75V1H3.5C2.67157 1 2 1.67157 2 2.5V12.5C2 13.3284 2.67157 14 3.5 14H11.5C12.3284 14 13 13.3284 13 12.5V2.5C13 1.67157 12.3284 1 11.5 1H11V0.75C11 0.335786 10.6642 0 10.25 0H4.75ZM11 2V2.25C11 2.66421 10.6642 3 10.25 3H4.75C4.33579 3 4 2.66421 4 2.25V2H3.5C3.22386 2 3 2.22386 3 2.5V12.5C3 12.7761 3.22386 13 3.5 13H11.5C11.7761 13 12 12.7761 12 12.5V2.5C12 2.22386 11.7761 2 11.5 2H11Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-                    
-                        </>}
-
-                    </Button>
-
-
-                    
-                    
+                    />
 
                 </div>
-                
-            </div>
-            </>   
-            :
-            <></>}
 
-        {Watch.auth_type===AuthStrategy.api_key ? 
-            <>
-            <div className="flex flex-col">
-                <FormField
-                name="api_key"
-                control={form.control}
-                render={({field}) => (
-                    <FormItem>
-                        <FormLabel className="flex flex-col">API Key</FormLabel>
-                        <FormControl>
-                        <PasswordInput {...field} placeholder="Enter API Key" />
-                        </FormControl>
-                        <FormMessage/>
-                    </FormItem>
-                )}
-                />
-            </div>
-            </>   
-            :
-            <></>}
+                {/* If Authentication Method is OAuth2 */}
 
-        {Watch.auth_type===AuthStrategy.basic ? 
-            <>
-            <div className="flex flex-col">
-                <FormField
-                name="username"
-                control={form.control}
-                render={({field}) => (
-                    <FormItem>
-                        <FormLabel className="flex flex-col">Username</FormLabel>
-                        <FormControl>
-                        <PasswordInput {...field} placeholder="Enter API Key" />
-                        </FormControl>
-                        <FormMessage/>
-                    </FormItem>
-                )}
-                />
-            </div>
-            <div className="flex flex-col">
-                <FormField
-                name="secret"
-                control={form.control}
-                render={({field}) => (
-                    <FormItem>
-                        <FormLabel className="flex flex-col">Secret</FormLabel>
-                        <FormControl>
-                        <PasswordInput {...field} placeholder="Enter API Key" />
-                        </FormControl>
-                        <FormMessage/>
-                    </FormItem>
-                )}
-                />
-            </div>
-            </>   
-            :
-            <></>}
-        </CardContent>
-        <CardFooter className="justify-between space-x-2">
-            <Button type="submit">Save</Button>
-        </CardFooter>
-</form>
-</Form>
+                {Watch.auth_type===AuthStrategy.oauth2 ? 
+                    <>
+                    <div className="flex flex-col">
+                        <FormField
+                        name="client_id"
+                        control={form.control}
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="flex flex-col">Client ID</FormLabel>
+                                <FormControl>
+                                <PasswordInput {...field}  placeholder="Enter Client ID" />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <FormField
+                        name="client_secret"
+                        control={form.control}
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="flex flex-col">Client Secret</FormLabel>
+                                <FormControl>
+                                <PasswordInput {...field} placeholder="Enter Client Secret" />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <FormField
+                        name="scope"
+                        control={form.control}
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="flex flex-col">Scope</FormLabel>
+                                <FormControl>
+                                <Input {...field} placeholder="Enter Scopes" />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <FormLabel className="flex flex-col">Redirect URI</FormLabel>
+                        <div className="flex gap-2 mt-1">
+                            {/* <p className=" text-gray-500">localhost:3000/connections/oauth/callback</p> */}
+                            <Input value="localhost:3000/connections/oauth/callback" readOnly/>
+                            <Button type="button" onClick={handleCopy}>
+                                {copied ? 'Copied!' :
+                                <>
+                                <p className="mr-1">Copy</p>
+                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 2V1H10V2H5ZM4.75 0C4.33579 0 4 0.335786 4 0.75V1H3.5C2.67157 1 2 1.67157 2 2.5V12.5C2 13.3284 2.67157 14 3.5 14H11.5C12.3284 14 13 13.3284 13 12.5V2.5C13 1.67157 12.3284 1 11.5 1H11V0.75C11 0.335786 10.6642 0 10.25 0H4.75ZM11 2V2.25C11 2.66421 10.6642 3 10.25 3H4.75C4.33579 3 4 2.66421 4 2.25V2H3.5C3.22386 2 3 2.22386 3 2.5V12.5C3 12.7761 3.22386 13 3.5 13H11.5C11.7761 13 12 12.7761 12 12.5V2.5C12 2.22386 11.7761 2 11.5 2H11Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                            
+                                </>}
+
+                            </Button>
+
+
+                            
+                            
+
+                        </div>
+                        
+                    </div>
+                    </>   
+                    :
+                    <></>}
+
+                {Watch.auth_type===AuthStrategy.api_key ? 
+                    <>
+                    <div className="flex flex-col">
+                        <FormField
+                        name="api_key"
+                        control={form.control}
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="flex flex-col">API Key</FormLabel>
+                                <FormControl>
+                                <PasswordInput {...field} placeholder="Enter API Key" />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                        />
+                    </div>
+                    </>   
+                    :
+                    <></>}
+
+                {Watch.auth_type===AuthStrategy.basic ? 
+                    <>
+                    <div className="flex flex-col">
+                        <FormField
+                        name="username"
+                        control={form.control}
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="flex flex-col">Username</FormLabel>
+                                <FormControl>
+                                <PasswordInput {...field} placeholder="Enter API Key" />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <FormField
+                        name="secret"
+                        control={form.control}
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="flex flex-col">Secret</FormLabel>
+                                <FormControl>
+                                <PasswordInput {...field} placeholder="Enter API Key" />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                        />
+                    </div>
+                    </>   
+                    :
+                    <></>}
+                </CardContent>
+                <CardFooter className="justify-between space-x-2">
+                    <Button type="submit">Save</Button>
+                </CardFooter>
+        </form>
+        </Form>
     </>
   )
 }

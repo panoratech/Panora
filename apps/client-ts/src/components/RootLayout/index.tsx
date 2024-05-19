@@ -8,11 +8,11 @@ import TeamSwitcher from '@/components/shared/team-switcher';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
 import { cn } from "@/lib/utils";
-import useProfileStore from '@/state/profileStore';
 import useProjectStore from '@/state/projectStore';
 import { ThemeToggle } from '@/components/Nav/theme-toggle';
 import useProjects from '@/hooks/useProjects';
 import useRefreshAccessTokenMutation from '@/hooks/mutations/useRefreshAccessTokenMutation';
+import { useTheme } from 'next-themes';
 
 export const RootLayout = ({children}:{children:React.ReactNode}) => {
   const router = useRouter()
@@ -20,6 +20,7 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
   const {data : projectsData} = useProjects();
   const { idProject, setIdProject } = useProjectStore();
   const {mutate : refreshAccessToken} = useRefreshAccessTokenMutation()
+  const { theme } = useTheme()
 
   useEffect(() => {
     if(projectsData)
@@ -47,7 +48,7 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
           <nav className="h-14 flex items-center justify-between px-4">
             <div className="hidden lg:block">
               <Link href='/'>
-                {<img src="/logo-panora-black.png" className='w-14' />}
+                {theme == "light" ? <img src="/logo-panora-black.png" className='w-14' /> : <img src="/logo-panora-white-hq.png" className='w-14' />}
               </Link>
             </div>
             <div className={cn("block lg:!hidden")}>

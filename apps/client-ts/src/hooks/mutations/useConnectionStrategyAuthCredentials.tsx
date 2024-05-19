@@ -8,19 +8,16 @@ interface IFetchedData {
   }
 
 interface IGetCSCredentialsData {
-    projectId : string,
     type?:string,
     attributes:string[]
   }
 
 
-const useConnectionStrategyAuthCredentialsMutation = () => {
-    // const queryClient = useQueryClient();
-    
-    const getCSCredentials = async (GetCSCredentialsData : IGetCSCredentialsData): Promise<string[]> => {
+const useConnectionStrategyAuthCredentialsMutation = () => {    
+    const getCSCredentials = async (data : IGetCSCredentialsData): Promise<string[]> => {
         const response = await fetch(`${config.API_URL}/connections-strategies/credentials`,{
           method: 'POST',
-          body: JSON.stringify(GetCSCredentialsData),
+          body: JSON.stringify(data),
           headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${Cookies.get('access_token')}`,
@@ -34,15 +31,6 @@ const useConnectionStrategyAuthCredentialsMutation = () => {
 
     return useMutation({
         mutationFn: getCSCredentials,
-        onMutate: () => {
-            toast("Connection Strategy Credentials is being fetched !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
         onError: (error) => {
             toast("The CS credentials fetching failed !", {
                 description: error as any,
@@ -56,14 +44,6 @@ const useConnectionStrategyAuthCredentialsMutation = () => {
             // queryClient.setQueryData<IFetchConnectionStrategyDto[]>(['connection-strategies'], (oldQueryData = []) => {
             //     return [...oldQueryData, data];
             // });
-            toast("New Connection Strategy Credentials successfully fetched !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            });
-
             return data
         },
         onSettled: () => {
