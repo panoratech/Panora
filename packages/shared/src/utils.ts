@@ -1,4 +1,4 @@
-import { categoriesVerticals } from "./providers";
+import { categoriesVerticals } from './providers';
 
 export enum AuthStrategy {
   oauth2 = '0Auth2',
