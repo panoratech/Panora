@@ -1,6 +1,6 @@
 import * as React from "react"
 import useVerticalStore from "@/state/verticalStore";
-import { ConnectorLayout } from "./connector-components/connector-layout"
+import { ConnectorLayout } from "./Connector/ConnectorLayout"
 import { providersArray, Provider } from "@panora/shared"
 
 export default function CustomConnectorPage() {

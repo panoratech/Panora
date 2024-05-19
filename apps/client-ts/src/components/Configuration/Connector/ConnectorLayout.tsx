@@ -7,9 +7,9 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Separator } from "@/components/ui/separator"
 import { Tabs } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { ConnectorDisplay } from "./connector-display"
-import { ConnectorList } from "./connector-list"
-import { VerticalSelector } from "./vertical-selector"
+import { ConnectorDisplay } from "./ConnectorDisplay"
+import { ConnectorList } from "./ConnectorList"
+import { VerticalSelector } from "./VerticalSelector"
 import { Provider } from "@panora/shared"
 import { useConnector } from "./useConnector"
 
