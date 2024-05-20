@@ -6,10 +6,10 @@ import { DataTableLoading } from "@/components/shared/data-table-loading";
 import { useEffect, useState } from "react";
 import { useColumns } from "./columns";
 
-interface Webhook {
-  scope: string;
+export interface Webhook {
+  scope: string[];
   url: string;
-  endpoint_description: string;
+  endpoint_description: string | null;
   secret: string;
   id_webhook_endpoint: string;
   active: boolean;

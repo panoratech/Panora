@@ -30,7 +30,6 @@ import useFieldMappings from "@/hooks/get/useFieldMappings";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import AddWebhook from "@/components/Configuration/Webhooks/AddWebhook";
-import { cn } from "@/lib/utils";
 import { WebhooksPage } from "@/components/Configuration/Webhooks/WebhooksPage";
 import useWebhooks from "@/hooks/get/useWebhooks";
 import { usePostHog } from 'posthog-js/react'
@@ -40,7 +39,6 @@ import useConnectionStrategies from "@/hooks/get/useConnectionStrategies";
 import { extractAuthMode,extractProvider,extractVertical} from '@panora/shared'
 import { Heading } from "@/components/ui/heading";
 import CustomConnectorPage from "@/components/Configuration/Connector/CustomConnectorPage";
-import { PlusCircle } from "lucide-react";
 
 export default function Page() {
   const {idProject} = useProjectStore();
@@ -93,15 +91,6 @@ export default function Page() {
     source_field: mapping.remote_id, 
     destination_field: mapping.slug,
     data_type: mapping.data_type,
-  }))
-
-  const mappingConnectionStrategies = connectionStrategies?.map(cs => ({
-    id_cs : cs.id_connection_strategy,
-    provider_name : extractProvider(cs.type),
-    auth_type: extractAuthMode(cs.type),
-    vertical: extractVertical(cs.type),
-    type: cs.type,
-    status: cs.status
   }))
  
   return (

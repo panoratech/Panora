@@ -3,7 +3,6 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
-import { Webhook } from "./schema"
 import { PasswordInput } from "@/components/ui/password-input"
 import { useState } from "react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -12,19 +11,10 @@ import { DataTableColumnHeader } from "@/components/shared/data-table-column-hea
 import { DataTableRowActions } from "@/components/shared/data-table-row-actions"
 import { Switch } from "@/components/ui/switch"
 import useUpdateWebhookStatus from "@/hooks/update/useUpdateWebhookStatus"
-import { Input } from "@/components/ui/input"
-import { Archive } from "lucide-react"
+import { Webhook } from "./WebhooksPage"
 
-interface WebhookType {
-  scope: string;
-  url: string;
-  endpoint_description: string;
-  secret: string;
-  id_webhook_endpoint: string;
-  active: boolean;
-}
 
-export function useColumns(webhooks: WebhookType[] | undefined, setWebhooks: React.Dispatch<React.SetStateAction<WebhookType[] | undefined>>) {
+export function useColumns(webhooks: Webhook[] | undefined, setWebhooks: React.Dispatch<React.SetStateAction<Webhook[] | undefined>>) {
   const [copiedState, setCopiedState] = useState<{ [key: string]: boolean }>({});
   const { mutate } = useUpdateWebhookStatus();
 
@@ -185,5 +175,5 @@ export function useColumns(webhooks: WebhookType[] | undefined, setWebhooks: Rea
       id: "actions",
       cell: ({ row }) => <DataTableRowActions row={row} object={"webhook"} />,
     },
-  ] as ColumnDef<WebhookType>[];
+  ] as ColumnDef<Webhook>[];
 }
