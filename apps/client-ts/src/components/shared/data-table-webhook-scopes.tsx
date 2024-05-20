@@ -24,6 +24,7 @@ import { scopes } from "@panora/shared"
 export function DataTableFacetedFilterWebhook({ title, field }: { title?: string, field: any }) {
   const [inputValue, setInputValue] = React.useState<string>("");
   const [selectedValues, setSelectedValues] = React.useState<Set<string>>(new Set());
+  const [selectedAll, setSelectedAll] = React.useState(false);
 
   useEffect(() => {
     if (field.value && field.value.trim() !== "") {
@@ -50,6 +51,18 @@ export function DataTableFacetedFilterWebhook({ title, field }: { title?: string
   const handleClearScopes = () => {
     setSelectedValues(new Set());
     field.onChange('');
+  };
+
+  const handleSelectAll = () => {
+    if (selectedValues.size === scopes.length) {
+      setSelectedAll(false);
+      handleClearScopes();
+    } else {
+      const allScopes = new Set(scopes);
+      setSelectedValues(allScopes);
+      field.onChange(Array.from(allScopes).join(' '));
+      setSelectedAll(true);
+    }
   };
 
   const filteredScopes = scopes.filter(scope =>
@@ -99,6 +112,18 @@ export function DataTableFacetedFilterWebhook({ title, field }: { title?: string
         <Command>
           <CommandList className="overflow-y-auto max-h-60">
             <CommandGroup>
+              <CommandItem
+                onSelect={handleSelectAll}
+              >
+                <div
+                  className={cn(
+                    "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary"
+                  )}
+                >
+                  {selectedAll && <CheckIcon className={cn("h-4 w-4")} />}
+                </div>
+                <span>Select All</span>
+              </CommandItem>
               {Array.from(selectedValues).map((value) => (
                 <CommandItem
                   key={value}
