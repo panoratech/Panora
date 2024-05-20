@@ -18,40 +18,38 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { LinkedUsersPage } from "@/components/Configuration/LinkedUsersPage";
+import { LinkedUsersPage } from "@/components/Configuration/LinkedUsers/LinkedUsersPage";
 import { Button } from "@/components/ui/button";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
-import { FModal } from "@/components/Configuration/FieldMappingModal"
+import { FModal } from "@/components/Configuration/FieldMappings/FieldMappingModal"
 import { Separator } from "@/components/ui/separator";
-import FieldMappingsTable from "@/components/Configuration/FieldMappingsTable";
-import AddLinkedAccount from "@/components/Configuration/AddLinkedAccount";
-import useLinkedUsers from "@/hooks/useLinkedUsers";
-import useFieldMappings from "@/hooks/useFieldMappings";
+import FieldMappingsTable from "@/components/Configuration/FieldMappings/FieldMappingsTable";
+import AddLinkedAccount from "@/components/Configuration/LinkedUsers/AddLinkedAccount";
+import useLinkedUsers from "@/hooks/get/useLinkedUsers";
+import useFieldMappings from "@/hooks/get/useFieldMappings";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
-import { LoadingSpinner } from "@/components/Connection/LoadingSpinner";
-import AddWebhook from "@/components/Configuration/AddWebhook";
+import AddWebhook from "@/components/Configuration/Webhooks/AddWebhook";
 import { cn } from "@/lib/utils";
-import { WebhooksPage } from "@/components/Configuration/WebhooksPage";
-import useWebhooks from "@/hooks/useWebhooks";
+import { WebhooksPage } from "@/components/Configuration/Webhooks/WebhooksPage";
+import useWebhooks from "@/hooks/get/useWebhooks";
 import { usePostHog } from 'posthog-js/react'
 import config from "@/lib/config";
 import useProjectStore from "@/state/projectStore";
-import AddAuthCredentials from "@/components/Configuration/AddAuthCredentials";
-import AuthCredentialsTable from "@/components/Configuration/AuthCredentialsTable";
-import useConnectionStrategies from "@/hooks/useConnectionStrategies";
+import useConnectionStrategies from "@/hooks/get/useConnectionStrategies";
 import { extractAuthMode,extractProvider,extractVertical} from '@panora/shared'
 import { Heading } from "@/components/ui/heading";
-import CustomConnectorPage from "@/components/Configuration/CustomConnectorPage";
+import CustomConnectorPage from "@/components/Configuration/Connector/CustomConnectorPage";
+import { PlusCircle } from "lucide-react";
 
 export default function Page() {
   const {idProject} = useProjectStore();
 
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
   const { data: webhooks, isLoading: isWebhooksLoading, error: isWebhooksError } = useWebhooks();
-  const {data: connectionStrategies, isLoading: isConnectionStrategiesLoading,error: isConnectionStategiesError} = useConnectionStrategies()
-
+  const { data: connectionStrategies, isLoading: isConnectionStrategiesLoading, error: isConnectionStategiesError} = useConnectionStrategies()
   const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
+
   const [open, setOpen] = useState(false);
   const handleClose = () => {
     setOpen(false);
@@ -79,13 +77,11 @@ export default function Page() {
     console.log("error fetching webhooks..");
   }
 
-  if(isConnectionStrategiesLoading)
-  {
+  if(isConnectionStrategiesLoading){
     console.log("loading Connection Strategies...");
   }
 
-  if(isConnectionStategiesError)
-  {
+  if(isConnectionStategiesError){
     console.log("error Fetching connection Strategies!")
   }
 
@@ -99,8 +95,6 @@ export default function Page() {
     data_type: mapping.data_type,
   }))
 
-  // console.log(ConnectionStrategies)
-
   const mappingConnectionStrategies = connectionStrategies?.map(cs => ({
     id_cs : cs.id_connection_strategy,
     provider_name : extractProvider(cs.type),
@@ -110,8 +104,6 @@ export default function Page() {
     status: cs.status
   }))
  
-  console.log(mappingConnectionStrategies)
-
   return (
     
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
@@ -157,19 +149,19 @@ export default function Page() {
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className={cn("w-[200px] justify-between")}
+                  <Button 
+                    size="sm" 
+                    className="h-7 gap-1 w-[180px]" 
                     onClick={() => {
                       posthog?.capture("add_field_mappings_button_clicked", {
                         id_project: idProject,
                         mode: config.DISTRIBUTION
                     })}}
                   >
-                    <PlusCircledIcon className="mr-2 h-5 w-5" />
-                    Add Field Mappings
+                    <span className="flex flex-row justify-center sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    <PlusCircledIcon className="h-3.5 w-3.5 mt-[3px] mr-1" />
+                      Create Field Mappings
+                    </span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:w-[450px] lg:max-w-screen-lg overflow-y-scroll max-h-screen">
@@ -211,28 +203,9 @@ export default function Page() {
               </div>
             </TabsContent>
 
-            <TabsContent value="0auth" className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
-                <AddAuthCredentials/>
-                <Card className="col-span-12">
-                  <CardHeader>
-                    <CardTitle className="text-left">Your Providers</CardTitle>
-                    <CardDescription className="text-left">
-                      Use and setup the credentials of your providers.
-                    </CardDescription>
-                  </CardHeader>
-                  <Separator className="mb-10"/>
-                  <CardContent>
-                    <AuthCredentialsTable mappings={mappingConnectionStrategies} isLoading={false} />
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
             <TabsContent value="custom" className="space-y-4">
               <CustomConnectorPage />
             </TabsContent>
-
           </Tabs>
         </div>
 

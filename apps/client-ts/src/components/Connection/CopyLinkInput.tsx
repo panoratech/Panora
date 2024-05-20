@@ -12,7 +12,6 @@ const CopyLinkInput = () => {
 
   const {uniqueLink} = useMagicLinkStore();
 
-
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(`${config.MAGIC_LINK_DOMAIN}/?uniqueLink=${uniqueLink}`);

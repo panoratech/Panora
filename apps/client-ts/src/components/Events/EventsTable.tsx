@@ -1,17 +1,16 @@
 import { columns } from "./columns"
 import { ApiDataTable } from '../shared/api-data-table';
-import useEvents from "@/hooks/useEvents";
+import useEvents from "@/hooks/get/useEvents";
 import { DataTableLoading } from "../shared/data-table-loading";
 import { events as Event } from "api";
-import { useEventsCount } from '@/hooks/useEventsCount';
-import { useQueryPagination } from '@/hooks/useQueryPagination';
+import { useEventsCount } from '@/hooks/get/useEventsCount';
+import { useQueryPagination } from '@/hooks/get/useQueryPagination';
 import useProjectStore from "@/state/projectStore";
 
 export default function EventsTable() {
   const { data: eventsCount } = useEventsCount();
   
   const pagination = useQueryPagination({ totalItems: eventsCount });
-  const {idProject} = useProjectStore();
 
   const {
     data: events,
@@ -33,9 +32,6 @@ export default function EventsTable() {
     date: event.timestamp.toLocaleString(), // convert Date to string
   }));
 
-  // Already did it at api level
-  // const sortedTransformedEvents = transformedEvents?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  
   if(isLoading){
     return (
       <DataTableLoading data={[]} columns={columns}/>
@@ -45,7 +41,6 @@ export default function EventsTable() {
   if(error){
     console.log("error events..");
   }
-
 
   return (
     <>

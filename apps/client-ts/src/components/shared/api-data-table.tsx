@@ -17,7 +17,7 @@ import { ApiDataTablePagination } from './api-data-table-pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { LoadingSpinner } from '../Connection/LoadingSpinner';
 
-import { type UseQueryPaginationReturn } from '@/hooks/useQueryPagination';
+import { type UseQueryPaginationReturn } from '@/hooks/get/useQueryPagination';
 
 interface DataTableProps<TData, TValue> extends UseQueryPaginationReturn {
   columns: ColumnDef<TData, TValue>[];

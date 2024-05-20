@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { DataTableColumnHeader } from "../shared/data-table-column-header"
-import { Event } from "./data/schema"
+import { Event } from "./schema"
 import { getLogoURL } from "@panora/shared"
 
 export const columns: ColumnDef<Event>[] = [

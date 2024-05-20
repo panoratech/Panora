@@ -34,11 +34,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { PlusCircledIcon } from "@radix-ui/react-icons"
-import { cn } from "@/lib/utils"
 import { useState } from "react"
 import useOrganisationStore from "@/state/organisationStore"
 import useProjectStore from "@/state/projectStore"
-import useMagicLinkMutation from "@/hooks/mutations/useMagicLinkMutation"
+import useCreateMagicLink from "@/hooks/create/useCreateMagicLink"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -53,7 +52,6 @@ const formSchema = z.object({
     message: "linkedUserMail must be at least 2 characters.",
   }),
 })
-
 interface LinkedUserModalObj {
   open: boolean;
   import?: boolean;
@@ -74,7 +72,7 @@ const AddConnectionButton = ({
 
   const posthog = usePostHog()
 
-  const { mutate, isError, error } = useMagicLinkMutation();
+  const { mutate, isError, error } = useCreateMagicLink();
 
   const {nameOrg} = useOrganisationStore();
   const {idProject} = useProjectStore();
@@ -119,13 +117,10 @@ const AddConnectionButton = ({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            aria-label="Select a team"
-            className={cn("w-[180px] justify-between")}
+            size="sm" 
+            className="h-7 gap-1 w-[180px]"
           >
-            <PlusCircledIcon className="mr-2 h-5 w-5" />
+            <PlusCircledIcon className="mr-1 h-4.5 w-4.5" />
             Create Magic Link
           </Button>
         </PopoverTrigger>
@@ -260,7 +255,7 @@ const AddConnectionButton = ({
               Cancel
             </Button>
           </DialogClose>
-          <Button type="submit">Create Magic Link</Button>
+          <Button type="submit" size="sm" className="h-7 gap-1" >Create Magic Link</Button>
         </DialogFooter>
         </form>
         </Form>

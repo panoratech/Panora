@@ -11,17 +11,15 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import useProfileStore from "@/state/profileStore";
-import useFetchUserMutation from "@/hooks/mutations/useFetchUserMutation";
+import useUser from "@/hooks/get/useUser";
 
 export default function Page() {
-
     const [userInitialized,setUserInitialized] = useState(true)
-    const {mutate : fetchUserMutate} = useFetchUserMutation()
+    const {mutate} = useUser()
     const router = useRouter()
     const {profile} = useProfileStore();
 
     useEffect(() => {
-
         if(profile)
         {
             router.replace('/connections');
@@ -38,7 +36,7 @@ export default function Page() {
 
         if(Cookies.get('access_token') && !profile)
         {
-            fetchUserMutate(Cookies.get('access_token'),{
+            mutate(Cookies.get('access_token'),{
                 onError: () => setUserInitialized(false)
             })
         }

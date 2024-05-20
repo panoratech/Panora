@@ -67,6 +67,14 @@ export class WebhookService {
     }
   }
 
+  async deleteWebhook(whId: string) {
+    return await this.prisma.webhook_endpoints.delete({
+      where: {
+        id_webhook_endpoint: whId,
+      },
+    });
+  }
+
   async handleWebhook(
     data: any,
     eventType: string,

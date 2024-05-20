@@ -10,8 +10,8 @@ import { useRouter } from 'next/navigation';
 import { cn } from "@/lib/utils";
 import useProjectStore from '@/state/projectStore';
 import { ThemeToggle } from '@/components/Nav/theme-toggle';
-import useProjects from '@/hooks/useProjects';
-import useRefreshAccessTokenMutation from '@/hooks/mutations/useRefreshAccessTokenMutation';
+import useProjects from '@/hooks/get/useProjects';
+import useRefreshAccessTokenMutation from '@/hooks/create/useRefreshAccessToken';
 import { useTheme } from 'next-themes';
 
 export const RootLayout = ({children}:{children:React.ReactNode}) => {

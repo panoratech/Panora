@@ -57,7 +57,7 @@ export function DataTableFacetedFilterWebhook({ title, field }: { title?: string
   );
 
   return (
-    <Popover>
+    <Popover modal={true}>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircledIcon className="mr-2 h-4 w-4" />
@@ -97,7 +97,7 @@ export function DataTableFacetedFilterWebhook({ title, field }: { title?: string
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="start">
         <Command>
-          <CommandList className="max-h-60 overflow-y-auto">
+          <CommandList className="overflow-y-auto max-h-60">
             <CommandGroup>
               {Array.from(selectedValues).map((value) => (
                 <CommandItem

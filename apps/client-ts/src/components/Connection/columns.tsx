@@ -5,9 +5,9 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { Connection } from "./data/schema"
+import { Connection } from "./schema"
 import { DataTableColumnHeader } from "./../shared/data-table-column-header"
-import React,{ useState } from "react"
+import React from "react"
 import { ClipboardIcon } from '@radix-ui/react-icons'
 import { toast } from "sonner"
 import { getLogoURL } from "@panora/shared"

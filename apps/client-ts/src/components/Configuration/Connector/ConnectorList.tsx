@@ -13,11 +13,11 @@ export function ConnectorList({ items }: ConnectorListProps) {
   const [connector, setConnector] = useConnector()
   
   return (
-    <ScrollArea className="h-full max-h-[calc(100vh-150px)]">
+    <ScrollArea className="h-full max-h-[calc(100vh-150px)] overflow-y-auto">
       <div className="flex flex-col gap-2 p-4 pt-0">
         {items.map((item) => (
           <button
-            key={item.name}
+            key={`${item.vertical}-${item.name}`}
             className={cn(
               "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all",
               connector.selected === `${item.vertical}-${item.name}` && "border border-sky-700"

@@ -22,14 +22,14 @@ export function SmallNav({
   const [open, setOpen] = useState(false);
   const navItemClassName = (itemName: string) =>
     `text-sm border-b font-medium w-full text-left mx-0 py-2 dark:hover:bg-zinc-900 hover:bg-zinc-200 cursor-pointer ${
-      selectedItem === itemName ? "dark:bg-zinc-800 bg-zinc-200" : "text-muted-foreground"
-    } transition-colors`;
-  
-    function click(name: string) {
-      setSelectedItem(name);
-      onLinkClick(name);
-      setOpen(false);
-    }
+    selectedItem === itemName ? "dark:bg-zinc-800 bg-zinc-200" : "text-muted-foreground"
+  } transition-colors`;
+
+  function click(name: string) {
+    setSelectedItem(name);
+    onLinkClick(name);
+    setOpen(false);
+  }
   return (
     <div className="flex flex-row mx-0 px-0">
       <Sheet key={"left"} open={open} onOpenChange={setOpen}>
