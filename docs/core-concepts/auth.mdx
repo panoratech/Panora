@@ -8,7 +8,7 @@ icon: "key"
   This guide assumes you have a Panora account, or a working self-hosted version
 </Note>
 
-### The Panora API uses uses two elements to indentify requests.
+### The Panora API uses two parameters to indentify requests.
 
 - `API key` which is a Bearer Acess Token used to authenticate yourself to our backend.
 - `connection_token` which serves to identify which of your user's you're making API calls for.
@@ -31,21 +31,16 @@ Depending on your setup, you should make requests to one of those endpoints:
 
 ## Learn how to generate your API Keys
 
-<Steps>
 
-    <Step title="Creating your API Key">
-        Go to your [dashboard](https://dashboard.panora.dev), and visit the _API Keys_ [section](https://dashboard.panora.dev/api-keys). Click the `Create New Key` button.
-            <Frame type="glass">
-                <img src="/images/api-keys.png" />
-            </Frame>
-    </Step>
-
-    <Step title="Safely store your API Key">
-        Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
-    </Step>
-
-</Steps>
-
+    **Creating your API Key**  <br/>      
+    Go to your [dashboard](https://dashboard.panora.dev), and visit the _API Keys_ [section](https://dashboard.panora.dev/api-keys). Click the `Create New Key` button.
+    <Frame type="glass">
+        <img src="/images/api-keys.png" />
+    </Frame>
+    <Info>
+    Safely store your API Key
+    Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+    </Info>
 ## Catch connection tokens
 
 A `connection_token` is created everytime a user connects an account to your platform.<br/>

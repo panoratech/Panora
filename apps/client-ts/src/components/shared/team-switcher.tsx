@@ -46,7 +46,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import useProjectMutation from "@/hooks/mutations/useProjectMutation"
+import useProjectMutation from "@/hooks/create/useCreateProject"
 import { useEffect, useState } from "react"
 import useProjectStore from "@/state/projectStore"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -56,7 +56,7 @@ import config from "@/lib/config"
 import { Skeleton } from "@/components/ui/skeleton";
 import useProfileStore from "@/state/profileStore"
 import { projects as Project } from 'api';
-import useRefreshAccessTokenMutation from "@/hooks/mutations/useRefreshAccessTokenMutation"
+import useRefreshAccessTokenMutation from "@/hooks/create/useRefreshAccessToken"
 
 
 const projectFormSchema = z.object({
@@ -126,13 +126,23 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
             role="combobox"
             aria-expanded={open}
             aria-label="Select a team"
-            className={cn("w-[250px] justify-between", className)}
+            className={cn("w-[250px] justify-between rounded-xl", className)}
           >
             {
                projects && projects.length > 0
-               ? projects.find(p => p.id_project === idProject)?.name || "Selected project not found"
-               : "No projects found"
+               ? <>
+                  <Avatar className="mr-2 h-5 w-5">
+              <AvatarImage
+                src={`https://avatar.vercel.sh/${projects.find(p => p.id_project === idProject)?.name}.png`}
+                alt={projects.find(p => p.id_project === idProject)?.name}
+                className=""
+              />
+              <AvatarFallback>SC</AvatarFallback>
+            </Avatar>
+                  {projects.find(p => p.id_project === idProject)?.name || "Selected project not found"}
+                </> : "No projects found"
             }
+            
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -248,10 +258,10 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" type="reset">
+              <Button variant="outline" type="reset" size="sm" className="h-7 gap-1">
                 Cancel
               </Button>
-              <Button type="submit">Create</Button>
+              <Button type="submit" size="sm" className="h-7 gap-1" >Create</Button>
             </DialogFooter>
           </form>
           </Form>

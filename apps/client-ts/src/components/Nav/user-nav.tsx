@@ -20,11 +20,10 @@ import Cookies from 'js-cookie';
 import useProjectStore from "@/state/projectStore"
 import { useQueryClient } from '@tanstack/react-query';
 
-  
 export function UserNav() {
   const router = useRouter();
   const { profile, setProfile } = useProfileStore();
-  const { idProject, setIdProject } = useProjectStore();
+  const { setIdProject } = useProjectStore();
   const queryClient = useQueryClient();
 
   const onLogout = () => {
@@ -33,7 +32,6 @@ export function UserNav() {
     setProfile(null)
     setIdProject("")
     queryClient.clear()
-
   }
   return (
     <DropdownMenu>

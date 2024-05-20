@@ -7,6 +7,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { WebhookDto } from './dto/webhook.dto';
 import axios from 'axios';
+import crypto from 'crypto';
 
 @Injectable()
 export class WebhookService {
@@ -16,6 +17,13 @@ export class WebhookService {
     private logger: LoggerService,
   ) {
     this.logger.setContext(WebhookService.name);
+  }
+
+  generateSignature(payload: any, secret: string): string {
+    return crypto
+      .createHmac('sha256', secret)
+      .update(JSON.stringify(payload))
+      .digest('hex');
   }
 
   async getWebhookEndpoints(project_id: string) {
@@ -57,6 +65,14 @@ export class WebhookService {
     } catch (error) {
       handleServiceError(error, this.logger);
     }
+  }
+
+  async deleteWebhook(whId: string) {
+    return await this.prisma.webhook_endpoints.delete({
+      where: {
+        id_webhook_endpoint: whId,
+      },
+    });
   }
 
   async handleWebhook(
@@ -187,7 +203,10 @@ export class WebhookService {
             },
             {
               headers: {
-                'Panora-Signature': deliveryAttempt.webhook_endpoints.secret,
+                'Panora-Signature': this.generateSignature(
+                  deliveryAttempt.webhooks_payloads.data,
+                  deliveryAttempt.webhook_endpoints.secret,
+                ),
               },
             },
           );
@@ -246,6 +265,22 @@ export class WebhookService {
       );
     } catch (error) {
       handleServiceError(error, this.logger);
+    }
+  }
+
+  async verifyPayloadSignature(
+    payload: { [key: string]: any },
+    signature: string,
+    secret: string,
+  ) {
+    try {
+      const expected = this.generateSignature(payload, secret);
+      if (expected !== signature) {
+        throw new Error('Invalid signature');
+      }
+      return 200;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 }

@@ -1,7 +1,5 @@
 import * as React from "react"
 import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons"
-import { Column } from "@tanstack/react-table"
-
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -15,29 +13,41 @@ import {
   CommandSeparator,
 } from "@/components/ui/command"
 import {
-  Popover,
+  Popover, 
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
+import { useEffect } from "react"
 
-interface DataTableFacetedFilterProps<TData, TValue> {
-  column?: Column<TData, TValue>
-  title?: string
-  options: {
-    label: string
-    value: string
-    icon?: React.ComponentType<{ className?: string }>
-  }[]
-}
+export function DataTableFacetedFilter({ title, field }: { title?: string, field: any }) {
+  const [inputValue, setInputValue] = React.useState<string>("");
+  const [selectedValues, setSelectedValues] = React.useState<Set<string>>(new Set());
+  useEffect(() => {
+    if(field.value !== " "){
+      setSelectedValues(new Set(field.value.split(' ')));
+    }
+  }, [field.value]);
+  
+  const handleAddScope = () => {
+    if (inputValue && !selectedValues.has(inputValue)) {
+      setSelectedValues(new Set([...selectedValues, inputValue]));
+      field.onChange(Array.from(new Set([...selectedValues, inputValue])).join(' '));
+      setInputValue("");
+    }
+  };
 
-export function DataTableFacetedFilter<TData, TValue>({
-  column,
-  title,
-  options,
-}: DataTableFacetedFilterProps<TData, TValue>) {
-  const facets = column?.getFacetedUniqueValues()
-  const selectedValues = new Set(column?.getFilterValue() as string[])
+  const handleRemoveScope = (value: string) => {
+    const newSelectedValues = new Set(selectedValues);
+    newSelectedValues.delete(value);
+    setSelectedValues(newSelectedValues);
+    field.onChange(Array.from(newSelectedValues).join(' '));
+  };
+
+  const handleClearScopes = () => {
+    setSelectedValues(new Set());
+    field.onChange('');
+  };
 
   return (
     <Popover>
@@ -45,7 +55,7 @@ export function DataTableFacetedFilter<TData, TValue>({
         <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircledIcon className="mr-2 h-4 w-4" />
           {title}
-          {selectedValues?.size > 0 && (
+          {selectedValues.size > 0 && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4" />
               <Badge
@@ -55,7 +65,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                 {selectedValues.size}
               </Badge>
               <div className="hidden space-x-1 lg:flex">
-                {selectedValues.size > 2 ? (
+                {selectedValues.size > 5 ? (
                   <Badge
                     variant="secondary"
                     className="rounded-sm px-1 font-normal"
@@ -63,17 +73,15 @@ export function DataTableFacetedFilter<TData, TValue>({
                     {selectedValues.size} selected
                   </Badge>
                 ) : (
-                  options
-                    .filter((option) => selectedValues.has(option.value))
-                    .map((option) => (
-                      <Badge
-                        variant="secondary"
-                        key={option.value}
-                        className="rounded-sm px-1 font-normal"
-                      >
-                        {option.label}
-                      </Badge>
-                    ))
+                  Array.from(selectedValues).map((value) => (
+                    <Badge
+                      variant="secondary"
+                      key={value}
+                      className="rounded-sm px-1 font-normal"
+                    >
+                      {value}
+                    </Badge>
+                  ))
                 )}
               </div>
             </>
@@ -82,56 +90,42 @@ export function DataTableFacetedFilter<TData, TValue>({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
-          <CommandInput placeholder={title} />
+          <CommandInput
+            placeholder="Enter scope"
+            value={inputValue}
+            onValueChange={setInputValue}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddScope();
+              }
+            }}
+          />
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
-              {options.map((option) => {
-                const isSelected = selectedValues.has(option.value)
-                return (
-                  <CommandItem
-                    key={option.value}
-                    onSelect={() => {
-                      if (isSelected) {
-                        selectedValues.delete(option.value)
-                      } else {
-                        selectedValues.add(option.value)
-                      }
-                      const filterValues = Array.from(selectedValues)
-                      column?.setFilterValue(
-                        filterValues.length ? filterValues : undefined
-                      )
-                    }}
+              {Array.from(selectedValues).map((value) => (
+                <CommandItem
+                  key={value}
+                  onSelect={() => handleRemoveScope(value)}
+                >
+                  <div
+                    className={cn(
+                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                      "bg-primary text-primary-foreground"
+                    )}
                   >
-                    <div
-                      className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                        isSelected
-                          ? "bg-primary text-primary-foreground"
-                          : "opacity-50 [&_svg]:invisible"
-                      )}
-                    >
-                      <CheckIcon className={cn("h-4 w-4")} />
-                    </div>
-                    {option.icon && (
-                      <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                    )}
-                    <span>{option.label}</span>
-                    {facets?.get(option.value) && (
-                      <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
-                        {facets.get(option.value)}
-                      </span>
-                    )}
-                  </CommandItem>
-                )
-              })}
+                    <CheckIcon className={cn("h-4 w-4")} />
+                  </div>
+                  <span>{value}</span>
+                </CommandItem>
+              ))}
             </CommandGroup>
             {selectedValues.size > 0 && (
               <>
                 <CommandSeparator />
                 <CommandGroup>
                   <CommandItem
-                    onSelect={() => column?.setFilterValue(undefined)}
+                    onSelect={handleClearScopes}
                     className="justify-center text-center"
                   >
                     Clear filters
@@ -145,3 +139,4 @@ export function DataTableFacetedFilter<TData, TValue>({
     </Popover>
   )
 }
+

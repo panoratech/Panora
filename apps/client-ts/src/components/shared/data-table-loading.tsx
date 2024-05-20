@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/table"
 
 import { DataTablePagination } from "./data-table-pagination"
-import { DataTableToolbar } from "./data-table-toolbar"
 import { Skeleton } from "../ui/skeleton"
 
 interface DataTableProps<TData, TValue> {
@@ -70,7 +69,6 @@ export function DataTableLoading<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

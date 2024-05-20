@@ -1,0 +1,49 @@
+name: New Integration Request
+description: Need an Integration that isn't in our catalog yet? Ask here!
+title: "feat: Add integration with: #SOFTWARE_NAME"
+labels: ["backend", "embedded-catalog", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: "How can we get in touch with you if we need more info? (We'll edit the issue to hide your email)"
+      placeholder: ex. email@example.com
+    validations:
+      required: true
+  - type: dropdown
+    id: software_category
+    attributes:
+      label: Category
+      multiple: true
+      description: "What type of software do you want to build integrations with?"
+      options:
+        - Accounting
+        - Calendar
+        - Cybersecurity
+        - CRM
+        - Data Warehouse
+        - Document Signature
+        - Ecommerce
+        - Email
+        - File Storage
+        - HRIS
+        - Logging
+        - Marketing Automation
+        - Payments
+        - Point of Sale
+        - Source Code Management
+        - Telematics and IOT
+        - Ticketing
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: platforms
+    attributes:
+      label: Platforms
+      description: "Which specific platforms would you integrate with? (example: Salesforce, Hubspot, Zendesk, Jira...)"

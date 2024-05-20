@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "../ui/button";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import CopyLinkInput from "./CopyLinkInput";
-import useConnections from "@/hooks/useConnections";
+import useConnections from "@/hooks/get/useConnections";
 import { DataTableLoading } from "../shared/data-table-loading";
 import { Suspense, useState } from "react";
 import AddConnectionButton from "./AddConnectionButton";
@@ -21,7 +21,6 @@ import useMagicLinkStore from "@/state/magicLinkStore";
 import useOrganisationStore from "@/state/organisationStore";
 import { usePostHog } from 'posthog-js/react'
 import useProjectStore from "@/state/projectStore";
-import Cookies from 'js-cookie';
 
 export default function ConnectionTable() {
   

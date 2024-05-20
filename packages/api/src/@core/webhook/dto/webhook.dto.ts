@@ -4,3 +4,9 @@ export class WebhookDto {
   id_project: string;
   scope: string[];
 }
+
+export class SignatureVerificationDto {
+  payload: { [key: string]: any };
+  signature: string;
+  secret: string;
+}

@@ -8,24 +8,41 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
+import useDeleteApiKey from "@/hooks/delete/useDeleteApiKey"
+import useDeleteWebhook from "@/hooks/delete/useDeleteWebhook"
 
 interface DataTableRowActionsProps<TData> {
-  row: Row<TData>
+  row: Row<TData>;
+  object: "webhook" | "api-key" | "field-mapping"
 }
 
 export function DataTableRowActions<TData>({
   row,
+  object
 }: DataTableRowActionsProps<TData>) {
-  //const task = taskSchema.parse(row.original)
-  //console.log(row);
+
+  const {mutate: removeApiKey} = useDeleteApiKey();
+  const {mutate: removeWebhook} = useDeleteWebhook();
+
+  const handleDeletion = () => {
+    switch(object) {
+      case 'webhook':
+        removeWebhook({
+          id_webhook: (row.original as any).id_webhook_endpoint
+        })
+        break;
+      case 'api-key':
+        removeApiKey({
+          id_api_key: (row.original as any).id_api_key
+        })
+        break;
+      default:
+        break;
+    }
+  }
   
   return (
     <DropdownMenu>
@@ -39,24 +56,7 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            {/*<DropdownMenuRadioGroup value={task.label}>
-              {labels.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-              </DropdownMenuRadioGroup>*/}
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDeletion}>
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>

@@ -162,6 +162,33 @@
         ]
       }
     },
+    "/auth/api-keys/{id}": {
+      "delete": {
+        "operationId": "deleteApiKey",
+        "summary": "Delete API Keys",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/auth/generate-apikey": {
       "post": {
         "operationId": "generateApiKey",
@@ -377,6 +404,31 @@
       }
     },
     "/webhook/{id}": {
+      "delete": {
+        "operationId": "deleteWebhook",
+        "summary": "Delete Webhook",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "webhook"
+        ]
+      },
       "put": {
         "operationId": "updateWebhookStatus",
         "summary": "Update webhook status",
@@ -392,6 +444,31 @@
         ],
         "responses": {
           "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "webhook"
+        ]
+      }
+    },
+    "/webhook/verifyEvent": {
+      "post": {
+        "operationId": "verifyEvent",
+        "summary": "Verify payload sgnature of the webhook",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatureVerificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
             "description": ""
           }
         },
@@ -4664,6 +4741,21 @@
           "scope"
         ]
       },
+      "SignatureVerificationDto": {
+        "type": "object",
+        "properties": {
+          "signature": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "signature",
+          "secret"
+        ]
+      },
       "CreateLinkedUserDto": {
         "type": "object",
         "properties": {
@@ -4835,9 +4927,6 @@
       "CreateConnectionStrategyDto": {
         "type": "object",
         "properties": {
-          "projectId": {
-            "type": "string"
-          },
           "type": {
             "type": "string"
           },
@@ -4855,7 +4944,6 @@
           }
         },
         "required": [
-          "projectId",
           "type",
           "attributes",
           "values"
@@ -4915,9 +5003,6 @@
       "ConnectionStrategyCredentials": {
         "type": "object",
         "properties": {
-          "projectId": {
-            "type": "string"
-          },
           "type": {
             "type": "string"
           },
@@ -4929,7 +5014,6 @@
           }
         },
         "required": [
-          "projectId",
           "type",
           "attributes"
         ]

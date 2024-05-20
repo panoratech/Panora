@@ -1,3 +1,5 @@
+import { categoriesVerticals } from './providers';
+
 export enum AuthStrategy {
   oauth2 = '0Auth2',
   api_key = 'API Key',
@@ -2145,7 +2147,8 @@ export const getDescription = (name: string): string | null => {
   return provider ? provider.description : null;
 };
 
-interface Provider {
+export interface Provider {
+  vertical?: string;
   name: string;
   urls: {
     docsUrl: string;
@@ -2155,22 +2158,48 @@ interface Provider {
   scopes?: string;
   logoPath: string;
   description?: string;
+  authStrategy?: AuthStrategy;
 };
 
-export function providersArray(vertical: string): Provider[] {
-  const activeProviders = getActiveProvidersForVertical(vertical);
-  return Object.entries(activeProviders).map(([providerName, config]) => ({
-
-    name: providerName,
-    urls: {
-      docsUrl: config.urls.docsUrl,
-      apiUrl: config.urls.apiUrl,
-      authBaseUrl: config.urls.authBaseUrl,
-    },
-    scopes: config.scopes,
-    logoPath: config.logoPath,
-    description: config.description,
-  }));
+export function providersArray(vertical?: string): Provider[] {
+  if (vertical) {
+    // If a specific vertical is provided, return providers for that vertical
+    const activeProviders = getActiveProvidersForVertical(vertical);
+    return Object.entries(activeProviders).map(([providerName, config]) => ({
+      vertical: vertical.toLowerCase(),
+      name: providerName,
+      urls: {
+        docsUrl: config.urls.docsUrl,
+        apiUrl: config.urls.apiUrl,
+        authBaseUrl: config.urls.authBaseUrl,
+      },
+      scopes: config.scopes,
+      logoPath: config.logoPath,
+      description: config.description,
+      authStrategy: config.authStrategy,
+    }));
+  } else {
+    // If no vertical is provided, return providers for all verticals
+    let allProviders: Provider[] = [];
+    categoriesVerticals.forEach(vertical => {
+      const activeProviders = getActiveProvidersForVertical(vertical);
+      const providersForVertical = Object.entries(activeProviders).map(([providerName, config]) => ({
+        vertical: vertical.toLowerCase(),
+        name: providerName,
+        urls: {
+          docsUrl: config.urls.docsUrl,
+          apiUrl: config.urls.apiUrl,
+          authBaseUrl: config.urls.authBaseUrl,
+        },
+        scopes: config.scopes,
+        logoPath: config.logoPath,
+        description: config.description,
+        authStrategy: config.authStrategy,
+      }));
+      allProviders = allProviders.concat(providersForVertical);
+    });
+    return allProviders;
+  }
 }
 
 export const findProviderVertical = (providerName: string): string | null => {
