@@ -16,7 +16,7 @@ import useDeleteWebhook from "@/hooks/delete/useDeleteWebhook"
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
-  object: "webhook" | "api-key"
+  object: "webhook" | "api-key" | "field-mapping"
 }
 
 export function DataTableRowActions<TData>({
@@ -31,14 +31,16 @@ export function DataTableRowActions<TData>({
     switch(object) {
       case 'webhook':
         removeWebhook({
-          id_webhook: row.original.id_webhook_endpoint
+          id_webhook: (row.original as any).id_webhook_endpoint
         })
         break;
       case 'api-key':
         removeApiKey({
-          id_api_key: row.original.id_api_key
+          id_api_key: (row.original as any).id_api_key
         })
-        break; 
+        break;
+      default:
+        break;
     }
   }
   
