@@ -1,6 +1,5 @@
 name: New Integration Request
 description: Need an Integration that isn't in our catalog yet? Ask here!
-projects: ["panoratech/5"]
 labels: ["backend", "embedded-catalog", "good first issue"]
 body:
   - type: markdown
@@ -11,25 +10,26 @@ body:
     id: contact
     attributes:
       label: Contact Details
-      description: How can we get in touch with you if we need more info?
+      description: "How can we get in touch with you if we need more info? (We'll edit the issue to hide your email)"
       placeholder: ex. email@example.com
     validations:
-      required: false
+      required: true
   - type: dropdown
     id: vertical
     attributes:
       label: Verticals
-      description: What type of software do you want to build integrations with?
+      description: "What type of software do you want to build integrations with?"
       options:
         - CRM 
         - Ticketing 
         - HRIS
         - Accounting
         - Ecommerce
+        - Other
     validations:
       required: true
   - type: textarea
     id: platforms
     attributes:
       label: Platforms
-      description: Which specific platforms would you integrate with? (ex: Salesforce, Hubspot, Jira...)
+      description: "Which specific platforms would you integrate with? (example: Salesforce, Hubspot, Zendesk, Jira...)"
