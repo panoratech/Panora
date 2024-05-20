@@ -4172,6 +4172,55 @@
         ]
       }
     },
+    "/catalog-options": {
+      "post": {
+        "operationId": "CreateCatalogOptions",
+        "summary": "Add or Update Catalog",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCatalogOptionsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "catalog-options"
+        ]
+      }
+    },
+    "/catalog-options/single": {
+      "get": {
+        "operationId": "getCatalog",
+        "summary": "Retrieve a Catalog Options by User ID",
+        "parameters": [
+          {
+            "name": "userID",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "catalog-options"
+        ]
+      }
+    },
     "/ticketing/attachments": {
       "get": {
         "operationId": "getAttachments",
@@ -6120,6 +6169,21 @@
           "name",
           "description",
           "field_mappings"
+        ]
+      },
+      "CreateCatalogOptionsDto": {
+        "type": "object",
+        "properties": {
+          "id_user": {
+            "type": "string"
+          },
+          "selected_catalog": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_user",
+          "selected_catalog"
         ]
       },
       "UnifiedAttachmentInput": {

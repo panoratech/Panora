@@ -1,4 +1,6 @@
 
+
+
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -87,6 +89,18 @@ STYTCH_B2C';
 COMMENT ON COLUMN users.created_at IS 'DEFAULT NOW() to automatically insert a value if nothing supplied';
 
 COMMENT ON CONSTRAINT force_stytch_id_unique ON users IS 'force unique on stytch id';
+
+-- ************************************** catalog_options
+
+CREATE TABLE catalog_options
+(
+    id_catalog_option uuid NOT NULL,
+    id_user        uuid NOT NULL,
+    selected_catalog text NOT NULL,
+    CONSTRAINT PK_catalog_options PRIMARY KEY ( id_catalog_option ),
+    CONSTRAINT FK_catalog_option_user FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
+);
+
 
 
 
