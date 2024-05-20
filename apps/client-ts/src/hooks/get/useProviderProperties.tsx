@@ -11,7 +11,7 @@ const useProviderProperties = (linkedUserId: string, providerId: string, vertica
         method: 'GET',
         headers: {
             'Content-Type': 'application/json', 
-            'Authorization': `Bearer ${Cookies.get('access_token')}`,
+            'Authorization': `Bearer ${Cookies.get('access_token')}`, 
         },
       });
         if (!response.ok) {
