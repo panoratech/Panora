@@ -18,6 +18,7 @@ body:
     id: vertical
     attributes:
       label: Verticals
+      multiple: true
       description: "What type of software do you want to build integrations with?"
       options:
         - CRM 
