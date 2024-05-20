@@ -7,6 +7,7 @@ import {
   Param,
   UseGuards,
   Request,
+  Delete,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ApiBody, ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -34,6 +35,14 @@ export class WebhookController {
   getWebhooks(@Request() req: any) {
     const { id_project } = req.user;
     return this.webhookService.getWebhookEndpoints(id_project);
+  }
+
+  @ApiOperation({ operationId: 'deleteWebhook', summary: 'Delete Webhook' })
+  @ApiResponse({ status: 201 })
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deleteWebhook(@Param('id') whId: string) {
+    return await this.webhookService.deleteWebhook(whId);
   }
 
   @ApiOperation({

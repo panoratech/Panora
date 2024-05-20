@@ -15,7 +15,6 @@ import * as z from "zod"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -24,7 +23,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { PasswordInput } from '@/components/ui/password-input'
-import useCreateUserMutation from '@/hooks/mutations/useCreateUserMutation'
+import useCreateUser from '@/hooks/create/useCreateUser'
 
 const formSchema = z.object({
     first_name: z.string().min(2,{
@@ -44,7 +43,7 @@ const formSchema = z.object({
 
 const CreateUserForm = () => {
 
-    const {mutate : createUserMutate} = useCreateUserMutation();
+    const {mutate : createUserMutate} = useCreateUser();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -153,7 +152,7 @@ const CreateUserForm = () => {
             </div>
             </CardContent>
             <CardFooter>
-                <Button type='submit'>Create an account</Button>
+                <Button type='submit' size="sm" className="h-7 gap-1" >Create an account</Button>
             </CardFooter>
         </Card>
         </form>

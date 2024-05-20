@@ -18,12 +18,9 @@ import { useQueryClient } from '@tanstack/react-query';
 
 
 const Profile = () => {
-
     const { profile, setProfile } = useProfileStore();
     const { setIdProject } = useProjectStore();
     const queryClient = useQueryClient();
-
-
     
     const router = useRouter();
 
@@ -33,7 +30,6 @@ const Profile = () => {
         setProfile(null)
         setIdProject("")
         queryClient.clear()
-
     }
 
     return (
@@ -67,6 +63,5 @@ const Profile = () => {
         </div> 
     ); 
 };
-
 
 export default Profile;

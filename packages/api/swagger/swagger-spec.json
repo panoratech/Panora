@@ -162,6 +162,33 @@
         ]
       }
     },
+    "/auth/api-keys/{id}": {
+      "delete": {
+        "operationId": "deleteApiKey",
+        "summary": "Delete API Keys",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/auth/generate-apikey": {
       "post": {
         "operationId": "generateApiKey",
@@ -377,6 +404,31 @@
       }
     },
     "/webhook/{id}": {
+      "delete": {
+        "operationId": "deleteWebhook",
+        "summary": "Delete Webhook",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "webhook"
+        ]
+      },
       "put": {
         "operationId": "updateWebhookStatus",
         "summary": "Update webhook status",

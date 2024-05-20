@@ -13,14 +13,15 @@ export function MainNav({
 }) {
   const [selectedItem, setSelectedItem] = useState<string>("");
   const pathname = usePathname();
+
   useEffect(() => {
     setSelectedItem(pathname.substring(1))
   }, [pathname])
 
   const navItemClassName = (itemName: string) =>
     `group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground cursor-pointer ${
-      selectedItem === itemName ? 'bg-accent' : 'transparent'
-    } transition-colors`;
+    selectedItem === itemName ? 'bg-accent' : 'transparent'
+  } transition-colors`;
   
   function click(e: MouseEvent, name: string) {
     e.preventDefault();

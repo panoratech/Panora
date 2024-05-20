@@ -1,13 +1,10 @@
 'use client'
-import { Inter } from "next/font/google";
 import "./../globals.css";
 import { RootLayout } from "@/components/RootLayout";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
-import useFetchUserMutation from "@/hooks/mutations/useFetchUserMutation";
-
-const inter = Inter({ subsets: ["latin"] });
+import useUser from "@/hooks/get/useUser";
 
 export default function Layout({
   children,
@@ -17,27 +14,21 @@ export default function Layout({
 
   const [userInitialized,setUserInitialized] = useState(false)
   const router = useRouter()
-  const {mutate: fetchUserMutate} = useFetchUserMutation()
-
-
+  const { mutate } = useUser()
 
   useEffect(() => {
-    if(!Cookies.get('access_token'))
-    {
-        router.replace("/b2c/login")
-    }
-    else
-    {
-      
-      fetchUserMutate(Cookies.get('access_token'),{
+    if(!Cookies.get('access_token')) {
+      router.replace("/b2c/login")
+    }else {
+      mutate(
+        Cookies.get('access_token'),
+        {
         onError: () => router.replace("/b2c/login"),
         onSuccess: () => setUserInitialized(true)
-      })
+        }
+      )
     }
   },[])
-
-
-
   
   return (
     <>   {userInitialized ? (

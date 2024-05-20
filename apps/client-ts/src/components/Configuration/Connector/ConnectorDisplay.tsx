@@ -11,40 +11,17 @@ import config from "@/lib/config"
 import { AuthStrategy, providerToType, Provider, extractProvider, extractVertical } from "@panora/shared"
 import { useEffect, useState } from "react"
 import useProjectStore from "@/state/projectStore"
-import useConnectionStrategyMutation from "@/hooks/mutations/useConnectionStrategy"
-import useUpdateConnectionStrategyMutation from "@/hooks/mutations/useUpdateConnectionStrategy"
-import useConnectionStrategyAuthCredentialsMutation from "@/hooks/mutations/useConnectionStrategyAuthCredentials"
 import { usePostHog } from 'posthog-js/react'
 import { Input } from "@/components/ui/input"
-import useConnectionStrategies from "@/hooks/useConnectionStrategies"
+import useConnectionStrategies from "@/hooks/get/useConnectionStrategies"
 import { DataTableFacetedFilter } from "@/components/shared/data-table-faceted-filter"
+import useCreateConnectionStrategy from "@/hooks/create/useCreateConnectionStrategy"
+import useUpdateConnectionStrategy from "@/hooks/update/useUpdateConnectionStrategy"
+import useConnectionStrategyAuthCredentials from "@/hooks/get/useConnectionStrategyAuthCredentials"
 
 interface ItemDisplayProps {
   item?: Provider 
 }
-
-export const statuses = [
-  {
-    value: "backlog",
-    label: "Backlog",
-  },
-  {
-    value: "todo",
-    label: "Todo",
-  },
-  {
-    value: "in progress",
-    label: "In Progress",
-  },
-  {
-    value: "done",
-    label: "Done",
-  },
-  {
-    value: "canceled",
-    label: "Canceled",
-  },
-]
 
 const formSchema = z.object({
   client_id : z.string({
@@ -72,9 +49,10 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
   const [switchEnabled, setSwitchEnabled] = useState(false);
   const { idProject } = useProjectStore()
   const { data: connectionStrategies, isLoading: isConnectionStrategiesLoading, error: isConnectionStategiesError } = useConnectionStrategies()
-  const { mutate: createCS } = useConnectionStrategyMutation();
-  const { mutate: updateCS } = useUpdateConnectionStrategyMutation()
-  const { mutateAsync: fetchCredentials, data: fetchedData } = useConnectionStrategyAuthCredentialsMutation();
+  const { mutate: createCS } = useCreateConnectionStrategy();
+  const { mutate: updateCS } = useUpdateConnectionStrategy()
+  const { mutateAsync: fetchCredentials, data: fetchedData } = useConnectionStrategyAuthCredentials();
+  
   const posthog = usePostHog()
 
   const mappingConnectionStrategies = connectionStrategies?.filter((cs) => extractVertical(cs.type).toLowerCase() == item?.vertical && extractProvider(cs.type).toLowerCase() == item?.name)
@@ -92,7 +70,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText("localhost:3000/connections/oauth/callback")
+      await navigator.clipboard.writeText(`${config.API_URL}/connections/oauth/callback`)
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset copied state after 2 seconds
     } catch (err) {
@@ -341,7 +319,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                     <div className="flex flex-col">
                       <FormLabel className="flex flex-col">Redirect URI</FormLabel>
                       <div className="flex gap-2 mt-1">
-                        <Input value="localhost:3000/connections/oauth/callback" readOnly />
+                        <Input value={`${config.API_URL}/connections/oauth/callback`} readOnly />
                         <Button type="button" onClick={handleCopy}>
                           {copied ? 'Copied!' : (
                             <>
@@ -409,7 +387,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                       </div>
                     </> 
                 }
-                <Button type="submit" className="mt-4">Save</Button>
+                <Button type="submit" size="sm" className="mt-4 h-7 gap-1">Save</Button>
               </form>
             </Form>
           </div>

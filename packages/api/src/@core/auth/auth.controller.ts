@@ -5,6 +5,8 @@ import {
   Get,
   UseGuards,
   Request,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
@@ -63,6 +65,14 @@ export class AuthController {
   async getApiKeys(@Request() req: any) {
     const { id_project } = req.user;
     return this.authService.getApiKeys(id_project);
+  }
+
+  @ApiOperation({ operationId: 'deleteApiKey', summary: 'Delete API Keys' })
+  @ApiResponse({ status: 201 })
+  @Delete('api-keys/:id')
+  @UseGuards(JwtAuthGuard)
+  async deleteApiKey(@Param('id') apiKeyId: string) {
+    return await this.authService.deleteApiKey(apiKeyId);
   }
 
   @ApiOperation({ operationId: 'generateApiKey', summary: 'Create API Key' })

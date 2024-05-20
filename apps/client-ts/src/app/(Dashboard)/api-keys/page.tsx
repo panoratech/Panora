@@ -2,7 +2,6 @@
 
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button"
-import { columns } from "@/components/ApiKeys/data/columns";
 import { DataTable } from "@/components/shared/data-table";
 import {
   Dialog,
@@ -22,9 +21,9 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
-import useApiKeys from "@/hooks/useApiKeys";
+import useApiKeys from "@/hooks/get/useApiKeys";
 import useProjectStore from "@/state/projectStore";
-import useApiKeyMutation from "@/hooks/mutations/useApiKeyMutation";
+import useCreateApiKey from "@/hooks/create/useCreateApiKey";
 import useProfileStore from "@/state/profileStore";
 import { Suspense, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -35,6 +34,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { DataTableLoading } from "@/components/shared/data-table-loading";
 import {CustomHeading}  from "@/components/shared/custom-heading";
+import { useColumns } from "@/components/ApiKeys/columns";
+import { PlusCircle } from "lucide-react";
 
 const formSchema = z.object({
   apiKeyIdentifier: z.string().min(2, {
@@ -43,9 +44,10 @@ const formSchema = z.object({
 })
 
 interface TSApiKeys {
-  name : string,
-  token : string,
-  created : string
+  id_api_key: string;
+  name : string;
+  token : string;
+  created : string;
 }
 
 export default function Page() {
@@ -56,20 +58,18 @@ export default function Page() {
   const {profile} = useProfileStore();
 
   const { data: apiKeys, isLoading, error } = useApiKeys();
-  const { mutate } = useApiKeyMutation();
+  const { mutate } = useCreateApiKey();
+  const columns = useColumns();
 
   useEffect(() => {
     const temp_tsApiKeys = apiKeys?.map((key) => ({
+      id_api_key: key.id_api_key,
       name: key.name || "",
       token: key.api_key_hash,
       created: new Date().toISOString()
     }))
-
     setTSApiKeys(temp_tsApiKeys)
-    
   },[apiKeys])
-
-
 
   const posthog = usePostHog()
 
@@ -96,10 +96,6 @@ export default function Page() {
 
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // e.preventDefault(); // Prevent default form submission
-    console.log("user data is => "+ JSON.stringify(profile))
-    console.log("id_user is "+ profile!.id_user)
-    console.log("idProject is "+ idProject)
     mutate({ 
       userId: profile!.id_user,
       projectId: idProject,
@@ -111,7 +107,6 @@ export default function Page() {
     })
 
     setOpen(!open)
-
 
   };
 
@@ -132,19 +127,19 @@ export default function Page() {
         <div>
           <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-label="Select an api key"
-              className={cn("w-[180px] justify-between")}
+            <Button 
+              size="sm" 
+              className="h-7 gap-1" 
               onClick={() => {
                 posthog?.capture("add_new_api_key_button_clicked", {
                   id_project: idProject,
                   mode: config.DISTRIBUTION
               })}}
             >
-              <PlusCircledIcon className="mr-2 h-5 w-5" />
-              Create New Key
+              <PlusCircle className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Create New Api Key
+              </span>
             </Button>
             </DialogTrigger>
             <DialogContent>
@@ -192,8 +187,10 @@ export default function Page() {
                     </div>
                   </div>
                 <DialogFooter>
-                  <Button variant='outline' type="reset" onClick={() => onCancel()}>Cancel</Button>
-                  <Button type='submit'>Create</Button>
+                  <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCancel()}>Cancel</Button>
+                  <Button type='submit' size="sm" className="h-7 gap-1">
+                    Create
+                  </Button>
                 </DialogFooter>
                   </form>
                 </Form>
