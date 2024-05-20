@@ -1,9 +1,7 @@
 name: New Integration Request
-about: Need an Integration that isn't in our catalog yet? Ask here!
-title: Add XXXXX integration to Panora
-labels: backend, embedded-catalog, good first issue
-assignees: ''
-
+description: Need an Integration that isn't in our catalog yet? Ask here!
+projects: ["panoratech/5"]
+labels: ["backend", "embedded-catalog", "good first issue"]
 body:
   - type: markdown
     attributes:
