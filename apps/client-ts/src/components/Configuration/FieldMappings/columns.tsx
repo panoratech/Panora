@@ -141,6 +141,6 @@ export const columns: ColumnDef<Mapping>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row }) => <DataTableRowActions row={row} object={"field-mapping"} />,
   },
 ]
