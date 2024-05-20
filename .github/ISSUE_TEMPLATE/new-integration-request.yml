@@ -1,5 +1,6 @@
 name: New Integration Request
 description: Need an Integration that isn't in our catalog yet? Ask here!
+title: "feat: Add integration with: #SOFTWARE_NAME"
 labels: ["backend", "embedded-catalog", "good first issue"]
 body:
   - type: markdown
@@ -15,17 +16,29 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: vertical
+    id: software_category
     attributes:
-      label: Verticals
+      label: Category
       multiple: true
       description: "What type of software do you want to build integrations with?"
       options:
-        - CRM 
-        - Ticketing 
-        - HRIS
         - Accounting
+        - Calendar
+        - Cybersecurity
+        - CRM
+        - Data Warehouse
+        - Document Signature
         - Ecommerce
+        - Email
+        - File Storage
+        - HRIS
+        - Logging
+        - Marketing Automation
+        - Payments
+        - Point of Sale
+        - Source Code Management
+        - Telematics and IOT
+        - Ticketing
         - Other
     validations:
       required: true
