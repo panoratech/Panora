@@ -38,6 +38,7 @@ import * as z from "zod"
 import { usePostHog } from 'posthog-js/react'
 import config from "@/lib/config"
 import { CRM_PROVIDERS, providersArray } from "@panora/shared"
+import { LoadingSpinner } from "@/components/ui/loading-spinner"
 
 const mapFormSchema = z.object({
   attributeId: z.string().min(2, {
@@ -238,7 +239,7 @@ export function MapForm({ onClose, fieldToMap }: {onClose: () => void; fieldToMa
                     </SelectTrigger>
                     <SelectContent>
                     <SelectGroup>
-                    {isLoading ? "Loading..." : error ? "Error fetching properties" : sourceCustomFieldsData.map(field => (
+                    {isLoading ? <p className="text-sm font-bold flex flex-row items-center"><LoadingSpinner className="w-4 mr-2"/>Loading...</p> : error ? <p className="text-sm font-bold">Error fetching properties</p> : sourceCustomFieldsData.map(field => (
                         <SelectItem key={field.name} value={field.name}>{field.name}</SelectItem>
                     ))}
                     </SelectGroup>

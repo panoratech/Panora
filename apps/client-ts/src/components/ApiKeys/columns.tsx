@@ -83,16 +83,6 @@ export function useColumns() {
       },
     },
     {
-      accessorKey: "created",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created" />
-      ),
-      cell: ({ row }) => <div><Badge variant="outline">{row.getValue("created")}</Badge></div>,
-      filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id))
-      },
-    },
-    {
       id: "actions",
       cell: ({ row }) => <DataTableRowActions row={row} object={"api-key"}/>,
     },

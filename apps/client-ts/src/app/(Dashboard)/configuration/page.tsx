@@ -30,6 +30,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { CatalogWidget } from "@/components/Configuration/Catalog/CatalogWidget";
+import { CopySnippet } from "@/components/Configuration/Catalog/CopySnippet";
 
 export default function Page() {
 
@@ -97,6 +100,9 @@ export default function Page() {
               <TabsTrigger value="webhooks">
                 Webhooks
               </TabsTrigger>
+              <TabsTrigger value="catalog">
+                Manage Catalog Widget
+              </TabsTrigger>
               <TabsTrigger value="custom">
                 Manage Connectors
               </TabsTrigger>
@@ -121,8 +127,10 @@ export default function Page() {
                             </PopoverTrigger>
                             <PopoverContent className="flex w-[420px] p-0">
                               <div className="flex flex-col gap-2 px-2 py-4">
-                                <div className="grid min-w-[250px] gap-1 ">
-                                  <p className="font-bold text-sm">What are linked accounts ? </p>
+                                <div className="grid min-w-[250px] gap-1 gap-y-2">
+                                  <p className="font-bold text-md">What are linked accounts ? </p>
+                                  <p className="text-sm">The linked-user object represents your end-user entity inside our system.</p>
+                                  <p className="text-sm">It is a mirror of the end-user that exist in your backend. It helps Panora have the same source of truth about your user’s information. </p>
                                 </div>
                               </div>
                             </PopoverContent>
@@ -131,8 +139,8 @@ export default function Page() {
                         </Tooltip>     
                       </TooltipProvider>  
                     </CardTitle>
-                    <CardDescription className="text-left">
-                      You connected {linkedUsers ? linkedUsers.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} linked accounts.
+                    <CardDescription className="text-left flex flex-row items-center">
+                      You connected {linkedUsers ? linkedUsers.length : <LoadingSpinner className="w-4 mr-2"/>} linked accounts.
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
@@ -162,8 +170,18 @@ export default function Page() {
                             </PopoverTrigger>
                             <PopoverContent className="flex w-[420px] p-0">
                               <div className="flex flex-col gap-2 px-2 py-4">
-                                <div className="grid min-w-[250px] gap-1 ">
-                                  <p className="font-bold text-sm">What are field mappings ? </p>
+                                <div className="grid min-w-[250px] gap-1 gap-y-2 ">
+                                  <p className="font-bold text-md">What are field mappings ? </p>
+                                  <p className="text-sm">
+                                    By default, our unified models are predefined as you can see in the API reference. <br/>
+                                  </p>
+                                  <p className="text-sm">Now with field mappings, you have the option to map your custom fields (that may exist in your end-customer&apos;s tools) to our unified model !</p>
+                                  <p className="text-sm">
+                                    It is done in 2 steps. First you must define your custom field so it is recognized by Panora. Lastly, you must map this field to your remote field that exist in a 3rd party.
+                                  </p>
+                                  <p className="text-sm">
+                                  <br/>That way, Panora can retrieve the newly created custom field directly within the unified model.
+                                  </p>
                                 </div>
                               </div>
                             </PopoverContent>
@@ -172,8 +190,8 @@ export default function Page() {
                         </Tooltip>     
                       </TooltipProvider>                
                     </CardTitle>
-                    <CardDescription className="text-left">
-                      You built {mappings ? mappings.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} fields mappings.
+                    <CardDescription className="text-left flex flex-row items-center">
+                      You built {mappings ? mappings.length : <LoadingSpinner className="w-4 mr-2"/>} fields mappings.
                         <a href="https://docs.panora.dev/core-concepts/custom-fields" className="font-bold" target="_blank" rel="noopener noreferrer"> Learn more about custom field mappings in our docs !</a>
                     </CardDescription>
                   </CardHeader>
@@ -191,8 +209,8 @@ export default function Page() {
                 <Card className="col-span-12">
                   <CardHeader>
                     <CardTitle className="text-left">Your Webhooks</CardTitle>
-                    <CardDescription className="text-left">
-                      You enabled {webhooks ? webhooks.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} webhooks.
+                    <CardDescription className="text-left flex flex-row items-center">
+                      You enabled {webhooks ? webhooks.length : <LoadingSpinner className="w-4 mr-2"/>} webhooks.
                       <a href="https://docs.panora.dev/webhooks/overview" target="_blank" rel="noopener noreferrer"><strong> Read more about webhooks from our documentation</strong></a>
                     </CardDescription>
                   </CardHeader>
@@ -206,6 +224,24 @@ export default function Page() {
 
             <TabsContent value="custom" className="space-y-4">
               <CustomConnectorPage />
+            </TabsContent>
+
+            <TabsContent value="catalog" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
+                <CopySnippet/>
+                <Card className="col-span-12">
+                  <CardHeader>
+                    <CardTitle className="text-left">Customize Your Embedded Widget</CardTitle>
+                    <CardDescription className="text-left flex flex-row items-center">
+                      Select connectors you would like to have in the UI widget catalog. By default, they are all displayed.
+                    </CardDescription>
+                  </CardHeader>
+                  <Separator className="mb-[15px]"/>
+                  <CardContent>
+                    <CatalogWidget/>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

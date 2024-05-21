@@ -12,7 +12,7 @@ export default function CustomConnectorPage() {
     setSearchQuery(query)
   }
 
-  const filteredConnectors = vertical === ""
+  const filteredConnectors = vertical === "All"
     ? providersArray()
     : providersArray(vertical);
 

@@ -10,7 +10,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/ui/command"
+} from "@/components/ui/command" 
 import {
   Popover,
   PopoverContent,
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/popover"
 import useVerticalStore from "@/state/verticalStore"
 import { categoriesVerticals } from '@panora/shared';
+import { Separator } from "@/components/ui/separator"
 
 export const verticals = categoriesVerticals as string[];
 
@@ -45,6 +46,26 @@ export function VerticalSelector({ onSelectVertical }: { onSelectVertical: (vert
           <CommandInput placeholder="Search vertical..." />
           <CommandEmpty>No verticals found.</CommandEmpty>
           <CommandGroup heading="Categories">
+            <CommandItem
+                key={"All"}
+                onSelect={() => {
+                  setVertical("All")
+                  setSelectedVertical("All")
+                  setOpen(false)
+                  onSelectVertical("All")
+                }}
+              >
+                All
+                <CheckIcon
+                  className={cn(
+                    "ml-auto h-4 w-4",
+                    selectedVertical === "All"
+                      ? "opacity-100"
+                      : "opacity-0"
+                  )}
+                />
+              </CommandItem>
+            <Separator  />
             {verticals.map((vertical) => (
               <CommandItem
                 key={vertical}
