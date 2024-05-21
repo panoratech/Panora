@@ -1,53 +1,14 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-
 import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
-
 import { Connection } from "./schema"
 import { DataTableColumnHeader } from "./../shared/data-table-column-header"
 import React from "react"
 import { ClipboardIcon } from '@radix-ui/react-icons'
 import { toast } from "sonner"
 import { getLogoURL } from "@panora/shared"
-
-
-function truncateMiddle(str: string, maxLength: number) {
-  if (str.length <= maxLength) {
-    return str;
-  }
-
-  const start = str.substring(0, maxLength / 2);
-  const end = str.substring(str.length - maxLength / 2);
-  return `${start}...${end}`;
-}
-
-function insertDots(originalString: string): string {
-  if(!originalString) return "";
-  // if (originalString.length <= 50) {
-  //   return originalString;
-  // }
-  return originalString.substring(0, 7) + '...';
-}
-
-function formatISODate(ISOString: string): string {
-  const date = new Date(ISOString);
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: 'long',  // "Monday"
-    year: 'numeric',  // "2024"
-    month: 'long',    // "April"
-    day: 'numeric',   // "27"
-    hour: '2-digit',  // "02"
-    minute: '2-digit',  // "58"
-    second: '2-digit',  // "59"
-    timeZoneName: 'short'  // "GMT"
-  };
-
-  // Create a formatter (using US English locale as an example)
-  const formatter = new Intl.DateTimeFormat('en-US', options);
-  return formatter.format(date);
-}
+import { formatISODate, truncateMiddle } from "@/lib/utils"
 
 const connectionTokenComponent = ({row}:{row:any}) => {
   const handleCopy = async () => {
@@ -70,30 +31,6 @@ const connectionTokenComponent = ({row}:{row:any}) => {
 }
 
 export const columns: ColumnDef<Connection>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ), 
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   /*{
     accessorKey: "organisation",
     header: ({ column }) => (

@@ -1,5 +1,4 @@
 'use client'
-
 import {
   Card,
   CardContent,
@@ -8,20 +7,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { LinkedUsersPage } from "@/components/Configuration/LinkedUsers/LinkedUsersPage";
-import { Button } from "@/components/ui/button";
-import { PlusCircledIcon } from "@radix-ui/react-icons";
-import { FModal } from "@/components/Configuration/FieldMappings/FieldMappingModal"
 import { Separator } from "@/components/ui/separator";
 import FieldMappingsTable from "@/components/Configuration/FieldMappings/FieldMappingsTable";
 import AddLinkedAccount from "@/components/Configuration/LinkedUsers/AddLinkedAccount";
@@ -32,16 +23,18 @@ import { useState } from "react";
 import AddWebhook from "@/components/Configuration/Webhooks/AddWebhook";
 import { WebhooksPage } from "@/components/Configuration/Webhooks/WebhooksPage";
 import useWebhooks from "@/hooks/get/useWebhooks";
-import { usePostHog } from 'posthog-js/react'
-import config from "@/lib/config";
-import useProjectStore from "@/state/projectStore";
 import useConnectionStrategies from "@/hooks/get/useConnectionStrategies";
-import { extractAuthMode,extractProvider,extractVertical} from '@panora/shared'
 import { Heading } from "@/components/ui/heading";
 import CustomConnectorPage from "@/components/Configuration/Connector/CustomConnectorPage";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { CatalogWidget } from "@/components/Configuration/Catalog/CatalogWidget";
+import { CopySnippet } from "@/components/Configuration/Catalog/CopySnippet";
 
 export default function Page() {
-  const {idProject} = useProjectStore();
 
   const { data: linkedUsers, isLoading, error } = useLinkedUsers();
   const { data: webhooks, isLoading: isWebhooksLoading, error: isWebhooksError } = useWebhooks();
@@ -49,11 +42,6 @@ export default function Page() {
   const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
 
   const [open, setOpen] = useState(false);
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const posthog = usePostHog()
 
   if(error){
     console.log("error linked users..");
@@ -87,7 +75,7 @@ export default function Page() {
     standard_object: mapping.ressource_owner_type,
     source_app: mapping.source,
     status: mapping.status,
-    category: mapping.ressource_owner_type, 
+    category: mapping.ressource_owner_type.split('.')[0], 
     source_field: mapping.remote_id, 
     destination_field: mapping.slug,
     data_type: mapping.data_type,
@@ -112,6 +100,9 @@ export default function Page() {
               <TabsTrigger value="webhooks">
                 Webhooks
               </TabsTrigger>
+              <TabsTrigger value="catalog">
+                Manage Catalog Widget
+              </TabsTrigger>
               <TabsTrigger value="custom">
                 Manage Connectors
               </TabsTrigger>
@@ -121,9 +112,35 @@ export default function Page() {
                 <AddLinkedAccount/>
                 <Card className="col-span-12">
                   <CardHeader>
-                    <CardTitle className="text-left">Your Linked Accounts</CardTitle>
-                    <CardDescription className="text-left">
-                      You connected {linkedUsers ? linkedUsers.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} linked accounts.
+                    <CardTitle className="text-left flex items-center">
+                      <span>Your Linked Accounts</span>
+                      <TooltipProvider>  
+                        <Tooltip>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <TooltipTrigger asChild>
+                                <Button variant={"link"} size="icon">
+                                  <HelpCircle className="h-4 w-4" />
+                                  <span className="sr-only">Help</span>
+                                </Button>
+                              </TooltipTrigger>
+                            </PopoverTrigger>
+                            <PopoverContent className="flex w-[420px] p-0">
+                              <div className="flex flex-col gap-2 px-2 py-4">
+                                <div className="grid min-w-[250px] gap-1 gap-y-2">
+                                  <p className="font-bold text-md">What are linked accounts ? </p>
+                                  <p className="text-sm">The linked-user object represents your end-user entity inside our system.</p>
+                                  <p className="text-sm">It is a mirror of the end-user that exist in your backend. It helps Panora have the same source of truth about your user’s information. </p>
+                                </div>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                          <TooltipContent>Help</TooltipContent>
+                        </Tooltip>     
+                      </TooltipProvider>  
+                    </CardTitle>
+                    <CardDescription className="text-left flex flex-row items-center">
+                      You connected {linkedUsers ? linkedUsers.length : <LoadingSpinner className="w-4 mr-2"/>} linked accounts.
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
@@ -136,33 +153,46 @@ export default function Page() {
 
             <TabsContent value="field-mappings" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <Button 
-                    size="sm" 
-                    className="h-7 gap-1 w-[180px]" 
-                    onClick={() => {
-                      posthog?.capture("add_field_mappings_button_clicked", {
-                        id_project: idProject,
-                        mode: config.DISTRIBUTION
-                    })}}
-                  >
-                    <span className="flex flex-row justify-center sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    <PlusCircledIcon className="h-3.5 w-3.5 mt-[3px] mr-1" />
-                      Create Field Mappings
-                    </span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:w-[450px] lg:max-w-screen-lg overflow-y-scroll max-h-screen">
-                  <FModal onClose={handleClose}/>
-                </DialogContent>
-              </Dialog>
                 <Card className="col-span-12">
                   <CardHeader>
-                    <CardTitle className="text-left">Your Fields Mapping</CardTitle>
-                    <CardDescription className="text-left">
-                      You built {mappings ? mappings.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} fields mappings.
-                        <a href="https://docs.panora.dev/core-concepts/custom-fields" target="_blank" rel="noopener noreferrer">Learn more about custom field mappings</a>
+                    <CardTitle className="text-left flex items-center">
+                      <span>Your Fields Mappings</span>
+                      <TooltipProvider>  
+                        <Tooltip>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <TooltipTrigger asChild>
+                                <Button variant={"link"} size="icon">
+                                  <HelpCircle className="h-4 w-4" />
+                                  <span className="sr-only">Help</span>
+                                </Button>
+                              </TooltipTrigger>
+                            </PopoverTrigger>
+                            <PopoverContent className="flex w-[420px] p-0">
+                              <div className="flex flex-col gap-2 px-2 py-4">
+                                <div className="grid min-w-[250px] gap-1 gap-y-2 ">
+                                  <p className="font-bold text-md">What are field mappings ? </p>
+                                  <p className="text-sm">
+                                    By default, our unified models are predefined as you can see in the API reference. <br/>
+                                  </p>
+                                  <p className="text-sm">Now with field mappings, you have the option to map your custom fields (that may exist in your end-customer&apos;s tools) to our unified model !</p>
+                                  <p className="text-sm">
+                                    It is done in 2 steps. First you must define your custom field so it is recognized by Panora. Lastly, you must map this field to your remote field that exist in a 3rd party.
+                                  </p>
+                                  <p className="text-sm">
+                                  <br/>That way, Panora can retrieve the newly created custom field directly within the unified model.
+                                  </p>
+                                </div>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                          <TooltipContent>Help</TooltipContent>
+                        </Tooltip>     
+                      </TooltipProvider>                
+                    </CardTitle>
+                    <CardDescription className="text-left flex flex-row items-center">
+                      You built {mappings ? mappings.length : <LoadingSpinner className="w-4 mr-2"/>} fields mappings.
+                        <a href="https://docs.panora.dev/core-concepts/custom-fields" className="font-bold" target="_blank" rel="noopener noreferrer"> Learn more about custom field mappings in our docs !</a>
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
@@ -179,8 +209,8 @@ export default function Page() {
                 <Card className="col-span-12">
                   <CardHeader>
                     <CardTitle className="text-left">Your Webhooks</CardTitle>
-                    <CardDescription className="text-left">
-                      You enabled {webhooks ? webhooks.length : <Skeleton className="w-[20px] h-[12px] rounded-md" />} webhooks.
+                    <CardDescription className="text-left flex flex-row items-center">
+                      You enabled {webhooks ? webhooks.length : <LoadingSpinner className="w-4 mr-2"/>} webhooks.
                       <a href="https://docs.panora.dev/webhooks/overview" target="_blank" rel="noopener noreferrer"><strong> Read more about webhooks from our documentation</strong></a>
                     </CardDescription>
                   </CardHeader>
@@ -194,6 +224,24 @@ export default function Page() {
 
             <TabsContent value="custom" className="space-y-4">
               <CustomConnectorPage />
+            </TabsContent>
+
+            <TabsContent value="catalog" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
+                <CopySnippet/>
+                <Card className="col-span-12">
+                  <CardHeader>
+                    <CardTitle className="text-left">Customize Your Embedded Widget</CardTitle>
+                    <CardDescription className="text-left flex flex-row items-center">
+                      Select connectors you would like to have in the UI widget catalog. By default, they are all displayed.
+                    </CardDescription>
+                  </CardHeader>
+                  <Separator className="mb-[15px]"/>
+                  <CardContent>
+                    <CatalogWidget/>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

@@ -142,26 +142,17 @@ export class FieldMappingService {
         },
       });
       const provider = providersConfig[vertical][providerId.toLowerCase()];
-      //TODO: handle case where apiUrl is == "" or starts with "/"
       if (!provider.urls.apiUrl || !provider.urls.customPropertiesUrl)
         throw new Error('proivder urls are invalid');
 
-      this.logger.log(
-        'url for properties is ' +
-          provider.urls.apiUrl +
-          provider.urls.customPropertiesUrl,
-      );
-      const resp = await axios.get(
-        'https://api.hubapi.com/properties/v1/contacts/properties', // todo : provider.urls.apiUrl + provider.urls.customPropertiesUrl,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const resp = await axios.get(provider.urls.customPropertiesUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
       this.logger.log('properties are ' + JSON.stringify(resp.data));
       return {
         data: resp.data,

@@ -120,7 +120,7 @@ export function useColumns(webhooks: Webhook[] | undefined, setWebhooks: React.D
         <Badge
         variant="outline"
         key={row.getValue("endpoint_description")}
-        className="rounded-lg p-1 m-1 font-normal"
+        className="rounded-lg p-2 m-1 font-normal"
       >
         {row.getValue("endpoint_description")}
       </Badge>,

@@ -24,11 +24,12 @@ export function DataTableFacetedFilter({ title, field }: { title?: string, field
   const [inputValue, setInputValue] = React.useState<string>("");
   const [selectedValues, setSelectedValues] = React.useState<Set<string>>(new Set());
   useEffect(() => {
-    if(field.value !== " "){
+    if (field.value && field.value.trim()!== "") {
       setSelectedValues(new Set(field.value.split(' ')));
+    } else {
+      setSelectedValues(new Set());
     }
   }, [field.value]);
-  
   const handleAddScope = () => {
     if (inputValue && !selectedValues.has(inputValue)) {
       setSelectedValues(new Set([...selectedValues, inputValue]));

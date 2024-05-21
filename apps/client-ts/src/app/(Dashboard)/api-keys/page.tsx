@@ -47,7 +47,6 @@ interface TSApiKeys {
   id_api_key: string;
   name : string;
   token : string;
-  created : string;
 }
 
 export default function Page() {
@@ -66,7 +65,6 @@ export default function Page() {
       id_api_key: key.id_api_key,
       name: key.name || "",
       token: key.api_key_hash,
-      created: new Date().toISOString()
     }))
     setTSApiKeys(temp_tsApiKeys)
   },[apiKeys])
