@@ -6,7 +6,7 @@ interface VerticalState {
 }
 
 const useVerticalStore = create<VerticalState>()((set) => ({
-  vertical: "",
+  vertical: "All",
   setVertical: (name) => set({ vertical: name }),
 }));
 
