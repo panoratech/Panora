@@ -30,28 +30,28 @@ const useCreateWebhook = () => {
     return useMutation({
         mutationFn: add,
         onMutate: () => {
-            toast("Webhook endpoint has been created !", {
+            /*toast("Webhook endpoint has been created !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("Webhook endpoint creation has failed !", {
+            /*toast("Webhook endpoint creation has failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
             queryClient.setQueryData<IWebhookDto[]>(['webhooks'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });            
-            toast("Webhook endpoint has been created! ", {
+            toast("Webhook created ! ", {
                 description: "",
                 action: {
                   label: "Close",

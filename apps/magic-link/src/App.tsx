@@ -8,7 +8,7 @@ function App() {
       <div className="">
         <ProviderModal/>
       </div>
-      </ThemeProvider>
+    </ThemeProvider>
   )
 }
 

@@ -30,22 +30,22 @@ const useDeleteConnectionStrategy = () => {
     return useMutation({
         mutationFn: remove,
         onMutate: () => {
-            toast("Connection Strategy is being deleted !", {
+            /*toast("Connection Strategy is being deleted !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("The deleting of Connection Strategy has failed !", {
+            /*toast("The deleting of Connection Strategy has failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data : ConnectionStrategies) => {
             console.log("After Delete Data Received : ",JSON.stringify(data))

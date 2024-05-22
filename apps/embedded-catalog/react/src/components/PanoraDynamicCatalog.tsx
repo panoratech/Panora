@@ -1,191 +1,145 @@
-import React,{useState,useEffect} from 'react'
-import {findProviderByName, providersArray,categoriesVerticals,getLogoURL} from '@panora/shared';
+import {useState,useEffect} from 'react'
+import {providersArray, ConnectorCategory, categoryFromSlug, Provider} from '@panora/shared';
 import useOAuth from '@/hooks/useOAuth';
-import config from '@/helpers/config';
+import useProjectConnectors from '@/hooks/queries/useProjectConnectors';
+import { Card } from './ui/card';
+import { Button } from './ui/button2'
+import { ArrowRightIcon } from '@radix-ui/react-icons';
 
-interface DynamicCardProp {
+export interface DynamicCardProp {
   projectId: string;
   returnUrl: string;
   linkedUserId: string;
+  category?: ConnectorCategory;
   optionalApiUrl?: string,
 }
 
+const DynamicCatalog = ({projectId,returnUrl,linkedUserId, category, optionalApiUrl} : DynamicCardProp) => {
 
-type DataState = { [key: string]: string[] };
+  // by default we render all integrations but if category is provided we filter by category
 
-const DynamicCatalog = ({projectId,returnUrl,linkedUserId,optionalApiUrl} : DynamicCardProp) => {
+  const [selectedProvider, setSelectedProvider] = useState<{
+    provider: string;
+    category: string;
+  }>();  
+  
+  const [loading, setLoading] = useState<{
+    status: boolean; provider: string
+  }>({status: false, provider: ''});
 
-  const [selectedVertical, setSelectedVertical] = useState(''); // Default to the first category
-  const [selectedProvider, setSelectedProvider] = useState('');
-  const [data,setData] = useState<DataState>({});
-  const [isLoading,setLoading] = useState(true);
-  const [error,setError] = useState(false)
+  const [error,setError] = useState(false);
+  const [startFlow, setStartFlow] = useState(false);
+  
+  const [data, setData] = useState<Provider[]>([]);
 
   const { open, isReady } = useOAuth({
-    providerName: selectedProvider.toLowerCase(),
-    vertical: selectedVertical.toLowerCase(),
+    providerName: selectedProvider?.provider!,
+    vertical: selectedProvider?.category! as ConnectorCategory,
     returnUrl: returnUrl,
     projectId: projectId,
     linkedUserId: linkedUserId,
-    optionalApiUrl: optionalApiUrl,
     onSuccess: () => console.log('OAuth successful'),
   });
 
+  const {data: connectorsForProject} = useProjectConnectors(projectId);
+
+  const onWindowClose = () => {
+    setSelectedProvider({
+      provider: '',
+      category: ''
+    });
+    setLoading({
+        status: false,
+        provider: ''
+    })
+    setStartFlow(false);
+  }
+
   useEffect(() => {
-
-    const FetchData = async () => {
-      try{
-        const res = await fetch(`${optionalApiUrl? optionalApiUrl : config.API_URL!}/project-connectors/single?projectID=${projectId}`,{
-        method:'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+    if (startFlow && isReady) {
+      open(onWindowClose);
+    } else if (startFlow && !isReady) {
+      setLoading({
+        status: false,
+        provider: ''
       });
-      if(!res.ok)
-        {
-          throw new Error("Not found")
-        }
-      let data = await res.json();
+    }
+  }, [startFlow, isReady, open]);
 
-      data = JSON.parse(data.selected_catalog)
-      // console.log(data)
-      setData(data);
-      if(Object.keys(data).length >0)
-        {
-          setSelectedVertical(Object.keys(data)[0])
-        }
-      setError(false);
-      setLoading(false);
-
-      } 
-      catch(error)
-      {
-        setError(true);
-        setLoading(false);
-        console.log(error)
-      }
+  useEffect(()=>{
+    const PROVIDERS = !category ? providersArray() : providersArray(category);
+    const getConnectorsToDisplay = () => {
+      // First, check if the company selected custom connectors in the UI or not
+      const unwanted_connectors = transformConnectorsStatus(connectorsForProject).filter(connector => connector.status === "false");
+      // Filter out the providers present in the unwanted connectors array
+      const filteredProviders = PROVIDERS.filter(provider => {
+          return !unwanted_connectors.some( (unwanted) => 
+            unwanted.category === provider.vertical && unwanted.connector_name === provider.name
+          );
+      });
+      return filteredProviders;
     }
 
-    if(projectId===undefined || !projectId.match('[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'))
-      {
-        setError(true);
-        setLoading(false);
-        return;
+    if(connectorsForProject) {
+      setData(getConnectorsToDisplay())
+    }
+  }, [connectorsForProject, category])
+
+  const handleStartFlow = (walletName: string, category: string) => {
+    setSelectedProvider({provider: walletName.toLowerCase(), category: category.toLowerCase()});
+    setLoading({status: true, provider: selectedProvider?.provider!});
+    setStartFlow(true);
+  }
+
+  function transformConnectorsStatus(connectors : {[key: string]: boolean}): { connector_name: string;category: string; status: string }[] {
+    return Object.entries(connectors).flatMap(([key, value]) => {
+      const [category_slug, connector_name] = key.split('_').map((part: string) => part.trim());
+      const category = categoryFromSlug(category_slug);
+      if (category != null) {
+          return [{
+              connector_name: connector_name,
+              category: category,
+              status: String(value)
+          }];
       }
-    
-
-    FetchData();
-  },[projectId])
-
-
-  const handleWalletClick = (walletName: string) => {
-    console.log(`Wallet selected: ${walletName}`);
-    setSelectedProvider(walletName.toLowerCase());
-  };
-
-  const handleCategoryClick = (category: string) => {    
-    setSelectedVertical(category);
-  };
-
-  const onConnect = () => {
-    open(() => {
-      console.log("Auth completed!")
+      return [];
     });
   }
 
-
-  if(isLoading)
-    {
-      return (
-        <>
-        </>
-      )
-    }
-    
-
+  
   return (
-    <>
-    {error ? 
-      (
-        <div className='w-[21rem] h-[10rem]'>
-        <div 
-        className=" bg-red-500 text-white font-bold rounded-t px-4 py-2 shadow p-4"
-        >
-          Incorrect Attributes!
-        </div>
-        <div className='border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700'>
-          <p>Please enter valid attributes for the Component.</p>
-        </div>
-        </div>
-      )
-      :
-      (
-        <>
-        <div 
-        className="w-[26rem] h-[26rem] p-2 bg-[#1d1d1d] border-[0.007em] border-gray-200 rounded-lg shadow dark:bg-[#1d1d1d] hover:border-gray-200  transition-colors duration-200"
-        >
-              <div className="flex items-center justify-center">
-                {/* <img src={img} width={"30px"} className="mx-3 mb-4 w-12 h-12 rounded-xl"/> */}
-                <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 text-white">Select your Integration</h5>
-    
-              </div> 
-
-              <div className="p-4 h-[19rem]">
-                {data && Object.keys(data).length==0 && (
-                  <>
-                    <h4 className='text-white'>Please select providers from dashboard to display in Catalog.</h4>
-                  </>
-                )}
-                      <div className="flex mb-4 outline-none flex-wrap">
-                        {data && Object.keys(data).length>0  && Object.keys(data).map((vertical) => (
-                        <button
-                            key={vertical}
-                            className={`px-3 py-1 mb-2 mr-1 rounded-full text-white text-xs font-medium transition duration-150 ${selectedVertical === vertical ? 'bg-indigo-600 hover:bg-indigo-500	' : 'bg-neutral-700 hover:bg-neutral-600'}`}
-                            onClick={() => handleCategoryClick(vertical)}
-                        >
-                            {vertical}
-                        </button>
-                        ))}
-                      </div>
-                      {(
-                      <>
-                      <div className='h-2/3 no-scrollbar overflow-y-auto px-2'>
-                        {selectedVertical!=='' && data && data[selectedVertical].map((provider)=> (
-                            <div
-                            key={provider}
-                            className={`flex items-center justify-between px-4 py-2 my-2 ${selectedProvider === provider.toLowerCase() ? 'bg-indigo-600 hover:bg-indigo-500' : 'bg-neutral-900 hover:bg-neutral-800'} border-black  hover:border-indigo-800 rounded-xl transition duration-150 cursor-pointer`}
-                            onClick={() => handleWalletClick(provider)}
-                            >
-                            <div className="flex items-center">
-                              <img className="w-8 h-8 rounded-lg mr-3" src={getLogoURL(provider.toLowerCase())} alt={provider} />
-                              <span className='text-white'>{provider.substring(0,1).toUpperCase().concat(provider.substring(1,provider.length))}</span>
-                            </div>
-                            
-                            </div>
-                        ))}
-                      </div>
-                      </>
-                  )}
+      <div className="flex flex-col gap-2 pt-0">
+        {data && data.map((item) => {
+          return (
+            <Card
+            key={`${item.name}-${item.vertical}`} 
+            className= "flex flex-col border w-1/2 items-start gap-2 rounded-lg p-3 text-left text-sm transition-all hover:border-stone-100"
+            >
+              <div className="flex w-full items-start justify-between">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <img src={item.logoPath} className="w-8 h-8 rounded-lg" />
+                    <div className="font-semibold">{`${item.name.substring(0, 1).toUpperCase()}${item.name.substring(1)}`}</div>
+                  </div>
+                  <div className="line-clamp-2 text-xs text-muted-foreground">
+                    {item.description!.substring(0, 300)}
+                  </div>
+                  <div className="line-clamp-2 mt-2 text-xs text-muted-foreground">
+                    <Button className='h-7 gap-1' size="sm" variant="expandIcon" Icon={ArrowRightIcon} iconPlacement="right" onClick={() => handleStartFlow(item.name, item.vertical!)} >
+                      Connect
+                    </Button>
                   </div>
             
-              <div className='flex m-2'>
-              <button 
-                onClick={() => onConnect()}
-                disabled={selectedProvider==='' || selectedVertical===''}
-                
-                className={`text-white ${(selectedProvider==='' || selectedVertical==='') ? "opacity-50 cursor-not-allowed" : ""}  focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded text-sm px-5 py-2.5 me-2 mb-2 bg-indigo-600 hover:bg-indigo-700 focus:ring-gray-700 border-gray-700 w-full`}
-                >
-                  Connect
-              </button>
-              
+                </div>
+                <div>
+                </div>
               </div>
-            
-          </div> 
-        </>
-      )  
-  }
-    </>
+            </Card>
+          )})
+        }
+      </div>
   )
-}
+} 
+
 
 export default DynamicCatalog

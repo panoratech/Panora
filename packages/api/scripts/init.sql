@@ -90,19 +90,6 @@ COMMENT ON COLUMN users.created_at IS 'DEFAULT NOW() to automatically insert a v
 
 COMMENT ON CONSTRAINT force_stytch_id_unique ON users IS 'force unique on stytch id';
 
--- ************************************** catalog_options
-
-CREATE TABLE catalog_options
-(
-    id_catalog_option uuid NOT NULL,
-    id_user        uuid NOT NULL,
-    selected_catalog text NOT NULL,
-    CONSTRAINT PK_catalog_options PRIMARY KEY ( id_catalog_option ),
-    CONSTRAINT FK_catalog_option_user FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
-);
-
-
-
 
 
 
@@ -450,7 +437,25 @@ COMMENT ON COLUMN projects.pull_frequency IS 'frequency in seconds for pulls
 ex 3600 for one hour';
 
 
+-- ************************************** project_connectors
 
+CREATE TABLE project_connectors
+(
+    id_project_connector uuid NOT NULL,
+    id_project        uuid NOT NULL,
+    crm_hubspot boolean NOT NULL,
+    crm_zoho boolean NOT NULL,
+    crm_zendesk boolean NOT NULL,
+    crm_pipedrive boolean NOT NULL,
+    crm_attio boolean NOT NULL,
+    tcg_zendesk boolean NOT NULL,
+    tcg_gorgias boolean NOT NULL,
+    tcg_front boolean NOT NULL,
+    tcg_jira boolean NOT NULL,
+    tcg_gitlab boolean NOT NULL,
+    CONSTRAINT PK_project_connectors PRIMARY KEY ( id_project_connector ),
+    CONSTRAINT FK_project_connectors FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
+);
 
 
 -- ************************************** crm_contacts

@@ -41,28 +41,28 @@ const useCreateConnectionStrategy = () => {
     return useMutation({
         mutationFn: add,
         onMutate: () => {
-            toast("Connection Strategy is being created !", {
+            /*toast("Connection Strategy is being created !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("The creation of Connection Strategy has failed !", {
+            /*toast("The creation of Connection Strategy has failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
             queryClient.setQueryData<IFetchConnectionStrategyDto[]>(['connection-strategies'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });
-            toast("New Connection Strategy has been created !", {
+            toast("Changes saved !", {
                 description: "",
                 action: {
                   label: "Close",

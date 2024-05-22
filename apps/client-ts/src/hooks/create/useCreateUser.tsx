@@ -31,26 +31,26 @@ const useCreateUser = () => {
     return useMutation({
         mutationFn: add,
         onMutate: () => {
-            toast("User is being created !", {
+            /*toast("User is being created !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("User generation failed !", {
+            /*toast("User generation failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
             
-            toast("User has been generated !", {
+            toast("User created !", {
                 description: "",
                 action: {
                   label: "Close",

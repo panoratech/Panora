@@ -31,13 +31,13 @@ const useRefreshAccessToken = () => {
         onMutate: () => {
         },
         onError: (error) => {
-            toast.error("Refreshing token generation failed !", {
+            /*toast.error("Refreshing token generation failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data : IRefreshOutputDto) => {
             Cookies.remove('access_token');

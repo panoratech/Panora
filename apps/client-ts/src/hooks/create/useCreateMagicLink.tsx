@@ -33,26 +33,26 @@ const useCreateMagicLink = () => {
     return useMutation({
         mutationFn: add,
         onMutate: () => {
-            toast("Magic link is being generated !", {
+            /*toast("Magic link is being generated !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("Magic link generation failed !", {
+            /*toast("Magic link generation failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
             setUniqueLink(data.id_invite_link)
-            toast("Magic link has been generated!", {
+            toast("Magic link generated!", {
                 description: "",
                 action: {
                   label: "Close",

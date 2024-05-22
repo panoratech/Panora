@@ -31,25 +31,25 @@ const useUpdateProjectConnectors = () => {
     return useMutation({
         mutationFn: update,
         onMutate: () => {
-            toast("Catalog option is being updated !", {
+            /*toast("Catalog option is being updated !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("The updating of Connection Strategy has failed !", {
+            /*toast("The updating of Connection Strategy has failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: () => {
-            toast("Connection Strategy has been updated !", {
+            toast("Changes saved !", {
                 description: "",
                 action: {
                   label: "Close",

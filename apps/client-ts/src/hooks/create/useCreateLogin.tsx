@@ -54,18 +54,18 @@ const useCreateLogin = () => {
             // })
         },
         onError: (error) => {
-            toast.error("User generation failed !", {
+            /*toast.error("User generation failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data : ILoginOutputDto) => {
             setProfile(data.user);
             Cookies.set('access_token',data.access_token,{expires:1});
-            toast.success("User has been generated !", {
+            toast.success("Logged In !", {
                 description: "",
                 action: {
                   label: "Close",

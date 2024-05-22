@@ -28,28 +28,28 @@ const useDeleteApiKey = () => {
     return useMutation({
         mutationFn: remove,
         onMutate: () => {
-            toast("api key is being deleted !", {
+            /*toast("api key is being deleted !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-                toast("The deleting of api key has failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
+                /*toast("The deleting of api key has failed !", {
+                    description: error as any,
+                    action: {
+                    label: "Close",
+                    onClick: () => console.log("Close"),
+                    },
+                })*/
         },
         onSuccess: (data: ApiKey) => {
             queryClient.setQueryData<ApiKey[]>(['api-keys'], (oldQueryData = []) => {
                 return oldQueryData.filter((api_key) => api_key.id_api_key !== data.id_api_key);
             });
-            toast("Api Key has been deleted successfully!", {
+            toast("Api Key deleted !", {
                 description: "The api key has been removed from your list.",
                 action: {
                     label: "Close",

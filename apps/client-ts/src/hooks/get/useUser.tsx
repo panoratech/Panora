@@ -46,23 +46,23 @@ const useUser = () => {
         },
         onError: (error) => {
             Cookies.remove('access_token')
-            toast.error("Fetch User failed !", {
+            /*toast.error("Fetch User failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data : IUserDto) => {
             setProfile(data);
-            toast.success("User has been fetched !", {
+            /*toast.success("User has been fetched !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSettled: () => {
         },

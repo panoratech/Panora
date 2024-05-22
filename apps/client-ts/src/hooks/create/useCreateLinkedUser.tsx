@@ -27,28 +27,28 @@ const useCreateLinkedUser = () => {
     return useMutation({
         mutationFn: add,
         onMutate: () => {
-            toast("Linked user is being created !", {
+            /*toast("Linked user is being created !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("The creation of linked user has failed !", {
+            /*toast("The creation of linked user has failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
             queryClient.setQueryData<ILinkedUserDto[]>(['linked-users'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });
-            toast("New linked user has been created !", {
+            toast("New linked user created !", {
                 description: "",
                 action: {
                   label: "Close",

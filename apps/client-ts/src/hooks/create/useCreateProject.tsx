@@ -30,28 +30,28 @@ const useCreateProject = () => {
     return useMutation({
         mutationFn: add,
         onMutate: () => {
-            toast("Project is being created !", {
+            /*toast("Project is being created !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("Project creation has failed !", {
+            /*toast("Project creation has failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
                 queryClient.setQueryData<IProDto[]>(['projects'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });
-            toast("Project has been created !", {
+            toast("Project created !", {
                 description: "",
                 action: {
                     label: "Close",

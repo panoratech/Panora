@@ -32,22 +32,22 @@ const useCreateProfile = () => {
     return useMutation({
         mutationFn: add,
         onMutate: () => {
-            toast("Profile is being created !", {
+            /*toast("Profile is being created !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("Profile creation has failed !", {
+            /*toast("Profile creation has failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries({
@@ -57,7 +57,7 @@ const useCreateProfile = () => {
             queryClient.setQueryData<IProfileDto[]>(['profiles'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });
-            toast("Profile has been created !", {
+            toast("Profile created !", {
                 description: "",
                 action: {
                   label: "Close",

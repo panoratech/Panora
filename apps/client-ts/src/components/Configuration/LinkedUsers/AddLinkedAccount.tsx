@@ -26,24 +26,22 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { PlusCircledIcon } from "@radix-ui/react-icons"
-import { cn } from "@/lib/utils"
 import { useState } from "react"
 import useCreateLinkedUser from "@/hooks/create/useCreateLinkedUser"
-import useOrganisationStore from "@/state/organisationStore"
 import useProjectStore from "@/state/projectStore"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { usePostHog } from 'posthog-js/react'
 import config from "@/lib/config"
-import { PlusCircle } from "lucide-react"
+import { FileUploader } from "@/components/ui/file-uploader"
+import * as XLSX from 'xlsx';
 
 interface LinkedUserModalObj {
   open: boolean;
@@ -61,6 +59,9 @@ const AddLinkedAccount = () => {
     open: false,
     import: false
   })
+  const [files, setFiles] = useState<File[]>([])
+  const [importing, setImporting] = useState(false);
+  const [successImporting, setSuccessImporting] = useState(false);
 
   const { mutate } = useCreateLinkedUser();
 
@@ -95,6 +96,36 @@ const AddLinkedAccount = () => {
     form.reset()
   }
   
+  const handleImport = async () => {
+    if (files.length === 0) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const data = e.target?.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+      if (json.length > 0) {
+        setImporting(true);
+        json.forEach((row: any) => {
+          const linked_user_origin_id = row[Object.keys(row)[0]]; // Assumes first column is the IDs
+          if (linked_user_origin_id) {
+            mutate({
+              linked_user_origin_id: linked_user_origin_id.toString(),
+              alias: '',
+              id_project: idProject
+            });
+          }
+        });
+        setImporting(false);
+        setSuccessImporting(true);
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+
   return (
     <Dialog open={showNewLinkedUserDialog.open} onOpenChange={handleOpenChange}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -162,52 +193,65 @@ const AddLinkedAccount = () => {
             {showNewLinkedUserDialog.import ? "You can upload a sheet of your existing linked users" : "Add a new linked user to your project"}
           </DialogDescription>
         </DialogHeader>
-        <Form {...form} >
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div>
-          <div className="space-y-4 py-2 pb-4">
-            {!showNewLinkedUserDialog.import ?
-              ( <>
-                  <div className="space-y-2">
-                  <FormField
-                        control={form.control}
-                        name="linkedUserIdentifier"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Origin User Identifier</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="acme-inc-user-123" {...field} 
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              This is the id of the user in your system.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                    />
-                  </div>
-                </>
-              ) : 
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="picture">Upload your file</Label>
-                  <Input className="h-20" id="picture" type="file" />
-                </div>
-              </>
+        { !showNewLinkedUserDialog.import ? 
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div>
+              <div className="space-y-4 py-2 pb-4">
+              
+                      <div className="space-y-2">
+                      <FormField
+                            control={form.control}
+                            name="linkedUserIdentifier"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Origin User Identifier</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    placeholder="acme-inc-user-123" {...field} 
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                                  />
+                                </FormControl>
+                                <FormDescription>
+                                  This is the id of the user in your system.
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                        />
+                      </div>
+              
+                
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" size="sm" className="h-7 gap-1"  type='reset' onClick={() => {form.reset(); setShowNewLinkedUserDialog({open: false})}}>
+                Cancel
+              </Button>
+              <Button type="submit" size="sm" className="h-7 gap-1" >Create</Button>
+            </DialogFooter>
+            </form>
+          </Form>
+        : 
+          <div>
+            {importing ? "Loading ....." : successImporting ? "Success !!" :
+            <>
+              <FileUploader
+                maxFiles={8}
+                maxSize={8 * 1024 * 1024}
+                onValueChange={setFiles}
+              />
+              <DialogFooter>
+                <Button variant="outline" size="sm" className="h-7 gap-1"  type='reset' onClick={() => {form.reset(); setShowNewLinkedUserDialog({open: false})}}>
+                  Cancel
+                </Button>
+                <Button type="submit" size="sm" className="h-7 gap-1" onClick={handleImport}>Import</Button>
+              </DialogFooter>
+            </>
             }
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" size="sm" className="h-7 gap-1"  type='reset' onClick={() => {form.reset(); setShowNewLinkedUserDialog({open: false})}}>
-            Cancel
-          </Button>
-          <Button type="submit" size="sm" className="h-7 gap-1" >{showNewLinkedUserDialog.import ? "Import" : "Create"}</Button>
-        </DialogFooter>
-        </form>
-        </Form>
+          </div>  
+        }
+        
       </DialogContent>
     </Dialog>    
   )

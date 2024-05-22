@@ -60,28 +60,28 @@ const useUpdateConnectionStrategy = () => {
     return useMutation({
         mutationFn: update,
         onMutate: () => {
-            toast("Connection Strategy is being updated !", {
+            /*toast("Connection Strategy is being updated !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("The updating of Connection Strategy has failed !", {
+            /*toast("The updating of Connection Strategy has failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data : ConnectionStrategies) => {
             queryClient.setQueryData<ConnectionStrategies[]>(['connection-strategies'], (oldQueryData = []) => {
                 return oldQueryData.map((CS) => CS.id_connection_strategy === data.id_connection_strategy ? data : CS)
             });
-            toast("Connection Strategy has been updated !", {
+            toast("Changes saved !", {
                 description: "",
                 action: {
                   label: "Close",

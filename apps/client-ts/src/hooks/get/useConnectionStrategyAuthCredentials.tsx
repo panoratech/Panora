@@ -27,13 +27,13 @@ const useConnectionStrategyAuthCredentials = () => {
     return useMutation({
         mutationFn: getCSCredentials,
         onError: (error) => {
-            toast("The CS credentials fetching failed !", {
+            /*toast("The CS credentials fetching failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
           return data

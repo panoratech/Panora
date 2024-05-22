@@ -32,28 +32,28 @@ const useDefineField = () => {
     return useMutation({
         mutationFn: define,
         onMutate: () => {
-            toast("Field mapping is being defined !", {
+            /*toast("Field mapping is being defined !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("Field mapping definition failed !", {
+            /*toast("Field mapping definition failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
             queryClient.setQueryData<IDefineTargetFieldDto[]>(['mappings'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });
-            toast("Field mapping has been defined !", {
+            toast("Custom field defined !", {
                 description: "",
                 action: {
                   label: "Close",

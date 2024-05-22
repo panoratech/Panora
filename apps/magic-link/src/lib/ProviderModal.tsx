@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import useOAuth from '@/hooks/useOAuth';
-import { findProviderByName, providersArray, categoryFromSlug, categoriesVerticals } from '@panora/shared';
+import { findProviderByName, providersArray, categoryFromSlug, Provider } from '@panora/shared/src';
+import { categoriesVerticals } from '@panora/shared/src/categories';
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,12 +42,18 @@ const ProviderModal = () => {
   const [startFlow, setStartFlow] = useState(false);
   const [preStartFlow, setPreStartFlow] = useState(false);
 
+  const [data, setData] = useState<Provider[]>([]);
+  
   const [loading, setLoading] = useState<{
     status: boolean; provider: string
   }>({status: false, provider: ''});
 
   const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState('');
 
+  const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
+  const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
+  const {data: connectorsForProject} = useProjectConnectors(linkedUser?.id_project as string);
+  
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
     const uniqueId = queryParams.get('uniqueLink');
@@ -55,10 +62,24 @@ const ProviderModal = () => {
     }
   }, []);
 
-  
-  const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
-  const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
-  const {data: connectorsForProject} = useProjectConnectors(linkedUser?.id_project as string);
+  useEffect(()=>{
+    const PROVIDERS = selectedCategory == "All" ? providersArray() : providersArray(selectedCategory);
+    const getConnectorsToDisplay = () => {
+      // First, check if the company selected custom connectors in the UI or not
+      const unwanted_connectors = transformConnectorsStatus(connectorsForProject).filter(connector => connector.status === "false");
+      // Filter out the providers present in the unwanted connectors array
+      const filteredProviders = PROVIDERS.filter(provider => {
+          return !unwanted_connectors.some( (unwanted) => 
+            unwanted.category === provider.vertical && unwanted.connector_name === provider.name
+          );
+      });
+      return filteredProviders;
+    }
+
+    if(connectorsForProject) {
+      setData(getConnectorsToDisplay())
+    }
+  }, [connectorsForProject, selectedCategory])
 
   
   const { open, isReady } = useOAuth({
@@ -130,19 +151,6 @@ const ProviderModal = () => {
     });
   }
 
-  const getConnectorsToDisplay = () => {
-    // First, check if the company selected custom connectors in the UI or not
-    const PROVIDERS = selectedCategory == "All" ? providersArray() : providersArray(selectedCategory);
-    const unwanted_connectors = transformConnectorsStatus(connectorsForProject).filter(connector => connector.status === "false");
-    // Filter out the providers present in the unwanted connectors array
-    const filteredProviders = PROVIDERS.filter(provider => {
-        return !unwanted_connectors.some( (unwanted) => 
-          unwanted.category === provider.vertical && unwanted.connector_name === provider.name
-        );
-    });
-    return filteredProviders;
-  }
-
 
   return (
     <Card className='w-[50vw]'>
@@ -171,7 +179,7 @@ const ProviderModal = () => {
       <CardContent className="grid gap-6">
         <div className='max-h-[400px] overflow-y-auto'>
         <RadioGroup defaultValue="card" className="grid grid-cols-3 gap-4">
-          {getConnectorsToDisplay().map((provider) => (
+          {(data as Provider[]).map((provider) => (
             <div>
             <RadioGroupItem 
               key={`${provider.name}-${provider.vertical}`} 

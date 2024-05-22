@@ -29,28 +29,28 @@ const useCreateApiKey = () => {
     return useMutation({
         mutationFn: addApiKey,
         onMutate: () => {
-            toast("Api key is being generated !", {
+            /*toast("Api key is being generated !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("Api key generation failed !", {
+            /*toast("Api key generation failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data) => {
             queryClient.setQueryData<IApiKeyDto[]>(['api-keys'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });
-            toast("Api key has been generated !", {
+            toast("Api key generated !", {
                 description: "",
                 action: {
                   label: "Close",

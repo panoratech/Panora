@@ -1,27 +1,26 @@
 import useOAuth from '@/hooks/useOAuth';
 import { useEffect, useState } from 'react';
-import { getDescription, CONNECTORS_METADATA } from '@panora/shared';
+import { CONNECTORS_METADATA, ConnectorCategory } from '@panora/shared';
+import { Button } from './ui/button2';
+import { Card } from './ui/card';
+import { ArrowRightIcon } from '@radix-ui/react-icons';
 
-interface ProviderCardProp {
-    name: string;
-    vertical: string;
-    projectId: string;
-    returnUrl: string;
-    linkedUserId: string;
-    optionalApiUrl?: string,
-  }
+export interface ProviderCardProp {
+  name: string;
+  category: ConnectorCategory;
+  projectId: string;
+  returnUrl: string;
+  linkedUserId: string;
+  optionalApiUrl?: string,
+}
 
-
-const PanoraIntegrationCard = ({name, vertical, projectId, returnUrl, linkedUserId, optionalApiUrl}: ProviderCardProp) => {
-    const [providerClicked, setProviderClicked] = useState(false);
+const PanoraIntegrationCard = ({name, category, projectId, returnUrl, linkedUserId, optionalApiUrl}: ProviderCardProp) => {
     const [loading, setLoading] = useState(false)
-  
-    //const vertical = findConnectorCategory(name.toLowerCase())
-    //if(!projectId || !linkedUserId) return;
-  
+    const [startFlow, setStartFlow] = useState(false);
+
     const { open, isReady } = useOAuth({
       providerName: name.toLowerCase(),
-      vertical: vertical.toLowerCase(),
+      vertical: category.toLowerCase() as ConnectorCategory,
       returnUrl: returnUrl,
       projectId: projectId,
       linkedUserId: linkedUserId,
@@ -35,52 +34,51 @@ const PanoraIntegrationCard = ({name, vertical, projectId, returnUrl, linkedUser
     }
   
     useEffect(() => {
-      if (loading && providerClicked && isReady) {
+      if (startFlow && isReady) {
         open(onWindowClose);
-        return;
+      } else if (startFlow && !isReady) {
+        setLoading(false);
       }
-    }, [providerClicked, isReady, open, loading]);
+    }, [startFlow, isReady, open]);
     
-  
-    const handleClick = () => {    
+
+    const handleStartFlow = () => {
       setLoading(true);
-      setProviderClicked(true);
-      return;
-    }; 
+      setStartFlow(true);
+    }
+
+    const CONNECTOR = CONNECTORS_METADATA[category!.toLowerCase()][name.toLowerCase()]
   
-    const img = CONNECTORS_METADATA[vertical!.toLowerCase()][name.toLowerCase()].logoPath;
+    const img = CONNECTOR.logoPath;
       
+
     return (
-        <div 
-        className="max-w-sm p-6 bg-white border-[0.007em] border-gray-200 rounded-lg shadow dark:bg-zinc-800 hover:border-gray-200  transition-colors duration-200"
-        >
-            <div className=" flex items-center justify-center">
-              <img src={img} width={"30px"} className="mx-3 mb-4 w-12 h-12 rounded-xl"/>
-              <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Integrate with xzx223 {name}</h5>
-  
-            </div>
-            
-            <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">{getDescription(name.toLowerCase())}</p>
-            {!loading ? 
-            <a 
-              href="#" className="inline-flex items-center text-indigo-600 hover:underline"
-              onClick={handleClick}
+      <div className="flex flex-col gap-2 pt-0">
+            <Card
+            key={`${name}-${category}`} 
+            className= "flex flex-col border w-1/2 items-start gap-2 rounded-lg p-3 text-left text-sm transition-all hover:border-stone-100"
             >
-                Connect in one click
-                <svg className="w-3 h-3 ms-2.5 rtl:rotate-[270deg]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"/>
-                </svg>
-            </a>
-  
-          : 
-           <>
-            <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">Continue in {name} </p>
-            <div className='flex justify-center items-center'>
+              <div className="flex w-full items-start justify-between">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <img src={img} className="w-8 h-8 rounded-lg" />
+                    <div className="font-semibold">{`${name.substring(0, 1).toUpperCase()}${name.substring(1)}`}</div>
+                  </div>
+                  <div className="line-clamp-2 text-xs text-muted-foreground">
+                    {CONNECTOR.description!.substring(0, 300)}
+                  </div>
+                  <div className="line-clamp-2 mt-2 text-xs text-muted-foreground">
+                    <Button className='h-7 gap-1' size="sm" variant="expandIcon" Icon={ArrowRightIcon} iconPlacement="right" onClick={handleStartFlow} >
+                      Connect
+                    </Button>
+                  </div>
             
-            </div>
-            </>
-          }
-        </div> 
+                </div>
+                <div>
+                </div>
+              </div>
+            </Card>
+      </div>
     )
   };
 

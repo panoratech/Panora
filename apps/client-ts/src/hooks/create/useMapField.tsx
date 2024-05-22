@@ -30,26 +30,26 @@ const useMapField = () => {
     return useMutation({
         mutationFn: map,
         onMutate: () => {
-            toast("Field is being mapped !", {
+            /*toast("Field is being mapped !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-            toast("Field mapping failed !", {
+            /*toast("Field mapping failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
             
         },
         onSuccess: () => {
-            toast("Field has been mapped !", {
+            toast("Custom field mapped !", {
                 description: "",
                 action: {
                   label: "Close",

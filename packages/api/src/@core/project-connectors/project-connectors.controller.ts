@@ -18,7 +18,19 @@ import {
 import { ProjectConnectorsService } from './project-connectors.service';
 import { ProjectConnectorsDto } from './dto/project-connectors.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-
+export interface TypeCustom {
+  id_project: string;
+  crm_hubspot: boolean;
+  crm_zoho: boolean;
+  crm_zendesk: boolean;
+  crm_pipedrive: boolean;
+  crm_attio: boolean;
+  tcg_zendesk: boolean;
+  tcg_gorgias: boolean;
+  tcg_front: boolean;
+  tcg_jira: boolean;
+  tcg_gitlab: boolean;
+}
 @ApiTags('project-connectors')
 @Controller('project-connectors')
 export class ProjectConnectorsController {
@@ -48,6 +60,11 @@ export class ProjectConnectorsController {
       status,
       id_project,
     );
+  }
+
+  @Post('create')
+  async createConnectorsToProject(@Body() data: TypeCustom) {
+    return await this.projectConnectorsService.createProjectConnectors(data);
   }
 
   // It should be public API and don't have to add AuthGuard

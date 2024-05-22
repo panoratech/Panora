@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { handleServiceError } from '@@core/utils/errors';
+import { TypeCustom } from './project-connectors.controller';
 
 @Injectable()
 export class ProjectConnectorsService {
@@ -31,7 +32,7 @@ export class ProjectConnectorsService {
         );
       }
 
-      const updateData = {
+      const updateData: any = {
         [column]: status, // Use computed property names to set the column dynamically
       };
 
@@ -39,6 +40,32 @@ export class ProjectConnectorsService {
         where: {
           id_project_connector: existingPConnectors.id_project_connector,
         },
+        data: updateData,
+      });
+      return res;
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
+  async createProjectConnectors(data: TypeCustom) {
+    try {
+      const updateData: any = {
+        id_project_connector: uuidv4(),
+        id_project: data.id_project,
+        crm_hubspot: data.crm_hubspot,
+        crm_zoho: data.crm_zoho,
+        crm_zendesk: data.crm_zendesk,
+        crm_pipedrive: data.crm_pipedrive,
+        crm_attio: data.crm_attio,
+        tcg_zendesk: data.tcg_zendesk,
+        tcg_gorgias: data.tcg_gorgias,
+        tcg_front: data.tcg_front,
+        tcg_jira: data.tcg_jira,
+        tcg_gitlab: data.tcg_gitlab,
+      };
+
+      const res = await this.prisma.project_connectors.create({
         data: updateData,
       });
       return res;

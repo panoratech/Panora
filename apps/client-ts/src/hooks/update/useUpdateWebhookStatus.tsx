@@ -27,7 +27,7 @@ const useUpdateWebhookStatus = () => {
     return useMutation({
         mutationFn: update,
         onError: (error) => {
-            toast("Webhook endpoint update has failed !", {
+            toast("Changes saved !", {
                 description: error as any,
                 action: {
                   label: "Close",

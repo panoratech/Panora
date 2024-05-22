@@ -4251,15 +4251,15 @@
     },
     "/project-connectors": {
       "post": {
-        "operationId": "CreateCatalogOptions",
-        "summary": "Add or Update Catalog",
+        "operationId": "updateConnectorsToProject",
+        "summary": "Update Connectors for a project",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCatalogOptionsDto"
+                "$ref": "#/components/schemas/ProjectConnectorsDto"
               }
             }
           }
@@ -4272,15 +4272,21 @@
         "tags": [
           "project-connectors"
         ]
-      }
-    },
-    "/project-connectors/single": {
+      },
       "get": {
-        "operationId": "getCatalog",
-        "summary": "Retrieve a Catalog Options by User ID",
+        "operationId": "getConnectorsFromProject",
+        "summary": "Retrieve connectors by Project Id",
         "parameters": [
           {
-            "name": "userID",
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "getConnectorsFromProject",
             "required": true,
             "in": "query",
             "schema": {
@@ -4290,6 +4296,20 @@
         ],
         "responses": {
           "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "project-connectors"
+        ]
+      }
+    },
+    "/project-connectors/create": {
+      "post": {
+        "operationId": "ProjectConnectorsController_createConnectorsToProject",
+        "parameters": [],
+        "responses": {
+          "201": {
             "description": ""
           }
         },
@@ -6255,19 +6275,19 @@
           "field_mappings"
         ]
       },
-      "CreateCatalogOptionsDto": {
+      "ProjectConnectorsDto": {
         "type": "object",
         "properties": {
-          "id_user": {
+          "column": {
             "type": "string"
           },
-          "selected_catalog": {
-            "type": "string"
+          "status": {
+            "type": "boolean"
           }
         },
         "required": [
-          "id_user",
-          "selected_catalog"
+          "column",
+          "status"
         ]
       },
       "UnifiedAttachmentInput": {

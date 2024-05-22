@@ -28,29 +28,29 @@ const useDeleteWebhook = () => {
     return useMutation({
         mutationFn: remove,
         onMutate: () => {
-            toast("api key is being deleted !", {
+            /*toast("api key is being deleted !", {
                 description: "",
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onError: (error) => {
-                toast("The deleting of api key has failed !", {
+                /*toast("The deleting of api key has failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data: Webhook) => {
             queryClient.setQueryData<Webhook[]>(['webhooks'], (oldQueryData = []) => {
                 return oldQueryData.filter((wh) => wh.id_webhook_endpoint !== data.id_webhook_endpoint);
             });
-            toast("Api Key has been deleted successfully!", {
-                description: "The api key has been removed from your list.",
+            toast("Webhook deleted !", {
+                description: "The webhook has been removed from your list.",
                 action: {
                     label: "Close",
                     onClick: () => console.log("Close"),
