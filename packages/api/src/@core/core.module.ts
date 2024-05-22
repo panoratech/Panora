@@ -13,7 +13,7 @@ import { EnvironmentModule } from './environment/environment.module';
 import { EncryptionService } from './encryption/encryption.service';
 import { ConnectionsStrategiesModule } from './connections-strategies/connections-strategies.module';
 import { SyncModule } from './sync/sync.module';
-import { CatalogOptionsModule } from './catalog-options/catalog-options.module';
+import { ProjectConnectorsModule } from './project-connectors/project-connectors.module';
 
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { CatalogOptionsModule } from './catalog-options/catalog-options.module';
     EnvironmentModule,
     ConnectionsStrategiesModule,
     SyncModule,
-    CatalogOptionsModule
+    ProjectConnectorsModule,
   ],
   exports: [
     AuthModule,
@@ -46,8 +46,8 @@ import { CatalogOptionsModule } from './catalog-options/catalog-options.module';
     EnvironmentModule,
     ConnectionsStrategiesModule,
     SyncModule,
-    CatalogOptionsModule
+    ProjectConnectorsModule,
   ],
   providers: [EncryptionService],
 })
-export class CoreModule { }
+export class CoreModule {}

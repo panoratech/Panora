@@ -251,11 +251,11 @@ const AddConnectionButton = ({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" type="reset">
+            <Button variant="outline" size="sm" type="reset" className="h-7 gap-1">
               Cancel
             </Button>
           </DialogClose>
-          <Button type="submit" size="sm" className="h-7 gap-1" >Create Magic Link</Button>
+          <Button type="submit" size="sm" className="h-7 gap-1">Create Magic Link</Button>
         </DialogFooter>
         </form>
         </Form>

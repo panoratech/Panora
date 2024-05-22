@@ -14,7 +14,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
-  providersConfig,
+  CONNECTORS_METADATA,
   providerToType,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
@@ -134,7 +134,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
             ),
             status: 'valid',
             created_at: new Date(),
-            account_url: apiDomain + providersConfig['crm']['zoho'].urls.apiUrl,
+            account_url: apiDomain + CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl,
           },
         });
       } else {
@@ -160,7 +160,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
             linked_users: {
               connect: { id_linked_user: linkedUserId },
             },
-            account_url: apiDomain + providersConfig['crm']['zoho'].urls.apiUrl,
+            account_url: apiDomain + CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl,
           },
         });
       }

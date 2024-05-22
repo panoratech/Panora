@@ -35,7 +35,7 @@ const DynamicCatalog = ({projectId,returnUrl,linkedUserId,optionalApiUrl} : Dyna
 
     const FetchData = async () => {
       try{
-        const res = await fetch(`${optionalApiUrl? optionalApiUrl : config.API_URL!}/catalog-options/single?projectID=${projectId}`,{
+        const res = await fetch(`${optionalApiUrl? optionalApiUrl : config.API_URL!}/project-connectors/single?projectID=${projectId}`,{
         method:'GET',
         headers: {
           'Content-Type': 'application/json',

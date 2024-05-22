@@ -4,7 +4,7 @@ import { unifyCrm } from '@crm/@lib/@unification';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { unifyTicketing } from '@ticketing/@lib/@unification';
 import { UnifySourceType } from '../types/unify.output';
-import { ProviderVertical } from '@panora/shared';
+import { ConnectorCategory } from '@panora/shared';
 
 /* to fetch data
 
@@ -31,7 +31,7 @@ export async function unify<T extends UnifySourceType | UnifySourceType[]>({
   if (sourceObject == null) return [];
   let targetType_;
   switch (vertical.toLowerCase()) {
-    case ProviderVertical.CRM:
+    case ConnectorCategory.Crm:
       targetType_ = targetType as CrmObject;
       return unifyCrm({
         sourceObject,
@@ -39,17 +39,17 @@ export async function unify<T extends UnifySourceType | UnifySourceType[]>({
         providerName,
         customFieldMappings,
       });
-    case ProviderVertical.ATS:
+    case ConnectorCategory.Ats:
       break;
-    case ProviderVertical.Accounting:
+    case ConnectorCategory.Accounting:
       break;
-    case ProviderVertical.FileStorage:
+    case ConnectorCategory.FileStorage:
       break;
-    case ProviderVertical.HRIS:
+    case ConnectorCategory.Hris:
       break;
-    case ProviderVertical.MarketingAutomation:
+    case ConnectorCategory.MarketingAutomation:
       break;
-    case ProviderVertical.Ticketing:
+    case ConnectorCategory.Ticketing:
       targetType_ = targetType as TicketingObject;
       return unifyTicketing({
         sourceObject,

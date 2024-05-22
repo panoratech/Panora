@@ -1,6 +1,6 @@
 import config from '@/helpers/config';
 import { useState, useEffect } from 'react';
-import { constructAuthUrl } from '@panora/shared/src/test';
+import { constructAuthUrl } from '@panora/shared';
 
 type UseOAuthProps = {
   clientId?: string;
@@ -22,29 +22,34 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
 
 
   const openModal = async (onWindowClose: () => void) => {
-    const apiUrl = config.API_URL;
-    const authUrl = await constructAuthUrl({
-      projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical
-    });
-    if(!authUrl) {
-      throw new Error("Auth Url is Invalid "+ authUrl)
-    }
-    const width = 600, height = 600;
-    const left = (window.innerWidth - width) / 2;
-    const top = (window.innerHeight - height) / 2;
-    const authWindow = window.open(authUrl as string, 'OAuth', `width=${width},height=${height},top=${top},left=${left}`);
-    
-    const interval = setInterval(() => {
-      if (authWindow!.closed) {
-        clearInterval(interval);
-        if (onWindowClose) {
-          onWindowClose();
-        }
-        onSuccess();
+    try {
+      const apiUrl = config.API_URL;
+      const authUrl = await constructAuthUrl({
+        projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical
+      });
+      if (!authUrl) {
+        throw new Error("Auth Url is Invalid " + authUrl);
       }
-    }, 500);
+      const width = 600, height = 600;
+      const left = (window.innerWidth - width) / 2;
+      const top = (window.innerHeight - height) / 2;
+      const authWindow = window.open(authUrl as string, 'OAuth', `width=${width},height=${height},top=${top},left=${left}`);
+      
+      const interval = setInterval(() => {
+        if (authWindow!.closed) {
+          clearInterval(interval);
+          if (onWindowClose) {
+            onWindowClose();
+          }
+          onSuccess();
+        }
+      }, 500);
 
-    return authWindow;
+      return authWindow;
+    } catch (error) {
+      console.error('Failed to open OAuth window', error);
+      onWindowClose();  // Reset the loading state
+    }
   };
 
   return { open: openModal, isReady };

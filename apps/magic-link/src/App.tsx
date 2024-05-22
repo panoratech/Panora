@@ -1,11 +1,14 @@
 import './App.css'
 import ProviderModal from './lib/ProviderModal'
+import { ThemeProvider } from "@/components/theme-provider"
 
 function App() {
   return (
-      <div className="card">
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <div className="">
         <ProviderModal/>
       </div>
+      </ThemeProvider>
   )
 }
 

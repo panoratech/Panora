@@ -15,7 +15,7 @@ interface IUpdateConnectionStrategyDto {
 }
 
 
-const useUpdateWebhook = () => {
+const useUpdateConnectionStrategy = () => {
     const queryClient = useQueryClient();
     
     const update = async (connectionStrategyData: IUpdateConnectionStrategyDto) => {
@@ -94,4 +94,4 @@ const useUpdateWebhook = () => {
     });
 };
 
-export default useUpdateWebhook;
+export default useUpdateConnectionStrategy;

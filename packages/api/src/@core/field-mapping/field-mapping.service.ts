@@ -10,7 +10,7 @@ import axios from 'axios';
 import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { CrmObject } from '@crm/@lib/@types';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { providersConfig } from '@panora/shared';
+import { CONNECTORS_METADATA } from '@panora/shared';
 
 @Injectable()
 export class FieldMappingService {
@@ -141,7 +141,7 @@ export class FieldMappingService {
           vertical: vertical.toLowerCase(),
         },
       });
-      const provider = providersConfig[vertical][providerId.toLowerCase()];
+      const provider = CONNECTORS_METADATA[vertical][providerId.toLowerCase()];
       if (!provider.urls.apiUrl || !provider.urls.customPropertiesUrl)
         throw new Error('proivder urls are invalid');
 

@@ -9,7 +9,7 @@ import {
   extractProvider,
   extractVertical,
   needsSubdomain,
-  providersConfig,
+  CONNECTORS_METADATA,
 } from '@panora/shared';
 import { SoftwareMode } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
@@ -224,13 +224,13 @@ export class ConnectionsStrategiesService {
           ),
         };
         const scopes =
-          providersConfig[vertical.toLowerCase()][provider.toLowerCase()]
+          CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()]
             .scopes;
         if (scopes) {
           data = {
             ...data,
             SCOPE:
-              providersConfig[vertical.toLowerCase()][provider.toLowerCase()]
+              CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()]
                 .scopes,
           };
         }

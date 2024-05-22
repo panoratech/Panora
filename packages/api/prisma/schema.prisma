@@ -64,17 +64,16 @@ model tcg_users {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model users {
-  id_user                 String            @id(map: "pk_users") @db.Uuid
+  id_user                 String     @id(map: "pk_users") @db.Uuid
   identification_strategy String
   email                   String?
   password_hash           String?
   first_name              String
   last_name               String
-  id_stytch               String?           @unique(map: "force_stytch_id_unique")
-  created_at              DateTime          @default(now()) @db.Timestamp(6)
-  modified_at             DateTime          @default(now()) @db.Timestamp(6)
+  id_stytch               String?    @unique(map: "force_stytch_id_unique")
+  created_at              DateTime   @default(now()) @db.Timestamp(6)
+  modified_at             DateTime   @default(now()) @db.Timestamp(6)
   api_keys                api_keys[]
-  catalog_options         catalog_options[]
   projects                projects[]
 }
 
@@ -639,11 +638,4 @@ model webhook_delivery_attempts {
   @@index([id_webhook_endpoint], map: "fk_we_webhookendpointid")
   @@index([id_event], map: "fk_webhook_delivery_attempt_eventid")
   @@index([id_webhooks_reponse], map: "fk_webhook_delivery_attempt_webhook_responseid")
-}
-
-model catalog_options {
-  id_catalog_option String @id(map: "pk_catalog_options") @db.Uuid
-  id_user           String @db.Uuid
-  selected_catalog  String
-  users             users  @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_catalog_option_user")
 }

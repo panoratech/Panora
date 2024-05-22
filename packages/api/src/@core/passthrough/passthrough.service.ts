@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { providersConfig } from '@panora/shared';
+import { CONNECTORS_METADATA } from '@panora/shared';
 
 @Injectable()
 export class PassthroughService {
@@ -43,7 +43,7 @@ export class PassthroughService {
       });
       const intId = integrationId.toLowerCase();
       const providerUrl =
-        providersConfig[vertical.toLowerCase()][intId].urls.apiUrl;
+        CONNECTORS_METADATA[vertical.toLowerCase()][intId].urls.apiUrl;
       const BASE_URL = `${providerUrl}${path}`;
       const connection = await this.prisma.connections.findFirst({
         where: {

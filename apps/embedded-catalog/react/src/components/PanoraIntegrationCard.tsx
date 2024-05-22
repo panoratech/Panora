@@ -1,6 +1,6 @@
 import useOAuth from '@/hooks/useOAuth';
 import { useEffect, useState } from 'react';
-import { getDescription, providersConfig } from '@panora/shared';
+import { getDescription, CONNECTORS_METADATA } from '@panora/shared';
 
 interface ProviderCardProp {
     name: string;
@@ -16,7 +16,7 @@ const PanoraIntegrationCard = ({name, vertical, projectId, returnUrl, linkedUser
     const [providerClicked, setProviderClicked] = useState(false);
     const [loading, setLoading] = useState(false)
   
-    //const vertical = findProviderVertical(name.toLowerCase())
+    //const vertical = findConnectorCategory(name.toLowerCase())
     //if(!projectId || !linkedUserId) return;
   
     const { open, isReady } = useOAuth({
@@ -48,7 +48,7 @@ const PanoraIntegrationCard = ({name, vertical, projectId, returnUrl, linkedUser
       return;
     }; 
   
-    const img = providersConfig[vertical!.toLowerCase()][name.toLowerCase()].logoPath;
+    const img = CONNECTORS_METADATA[vertical!.toLowerCase()][name.toLowerCase()].logoPath;
       
     return (
         <div 

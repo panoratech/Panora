@@ -14,7 +14,7 @@ import {
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
-  providersConfig,
+  CONNECTORS_METADATA,
   providerToType,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
@@ -90,7 +90,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
       const connection_token = uuidv4();
       const BASE_API_URL =
         CREDENTIALS.SUBDOMAIN +
-        providersConfig['ticketing']['gorgias'].urls.apiUrl;
+        CONNECTORS_METADATA['ticketing']['gorgias'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({

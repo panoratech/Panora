@@ -12,7 +12,7 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy, providersConfig } from '@panora/shared';
+import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -107,7 +107,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'gitlab',
             vertical: 'ticketing',
-            account_url: providersConfig['ticketing']['gitlab'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['gitlab'].urls.apiUrl,
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

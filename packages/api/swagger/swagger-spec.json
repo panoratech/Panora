@@ -4249,7 +4249,7 @@
         ]
       }
     },
-    "/catalog-options": {
+    "/project-connectors": {
       "post": {
         "operationId": "CreateCatalogOptions",
         "summary": "Add or Update Catalog",
@@ -4270,11 +4270,11 @@
           }
         },
         "tags": [
-          "catalog-options"
+          "project-connectors"
         ]
       }
     },
-    "/catalog-options/single": {
+    "/project-connectors/single": {
       "get": {
         "operationId": "getCatalog",
         "summary": "Retrieve a Catalog Options by User ID",
@@ -4294,7 +4294,7 @@
           }
         },
         "tags": [
-          "catalog-options"
+          "project-connectors"
         ]
       }
     },

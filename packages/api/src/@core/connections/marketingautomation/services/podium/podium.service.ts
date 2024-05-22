@@ -12,7 +12,7 @@ import {
   IMarketingAutomationConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy, providersConfig } from '@panora/shared';
+import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -94,7 +94,7 @@ export class PodiumConnectionService
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url:
-              providersConfig['marketingautomation']['podium'].urls.apiUrl,
+              CONNECTORS_METADATA['marketingautomation']['podium'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + 10 * 60 * 60 * 1000,
             ),
@@ -111,7 +111,7 @@ export class PodiumConnectionService
             vertical: 'marketingautomation',
             token_type: 'oauth',
             account_url:
-              providersConfig['marketingautomation']['pdoum'].urls.apiUrl,
+              CONNECTORS_METADATA['marketingautomation']['pdoum'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
