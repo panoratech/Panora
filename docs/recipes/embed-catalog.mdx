@@ -3,3 +3,68 @@ title: "Frontend Widget"
 description: ""
 icon: "square-terminal"
 ---
+
+**insert**video
+
+# Step 1: Import the code snippet
+
+<CodeGroup>
+    ```shell React
+    npm i @panora/embedded-card-react
+    ```
+</CodeGroup>
+
+<Note>
+  By default, all connectors are rendered but you have the option to use the
+  `category` prop to filter them by category. Learn more about values accepted
+  [here](/glossary/metadata/category).
+</Note>
+
+#### Import a single connector card
+
+<CodeGroup>
+    ```javascript React
+    import "@panora/embedded-card-react/dist/index.css";
+    import PanoraProviderCard from "@panora/embedded-card-react";
+
+    const MyPage = () => {
+        return (
+            <PanoraProviderCard
+                name={"hubspot"} # name of the provider
+                category={"crm"} # vertical where provider belongs to
+                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
+                returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
+                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
+            />
+        )
+    }
+    ```
+</CodeGroup>
+#### Import the whole connector catalog
+<CodeGroup>
+    ```javascript React
+    import "@panora/embedded-card-react/dist/index.css";
+    import PanoraDynamicCatalog from "@panora/embedded-card-react";
+
+    const MyPage = () => {
+        return (
+            <PanoraDynamicCatalog
+                category={"crm"} # optional but if provided it returns only connectors of the category
+                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
+                returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
+                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
+            />
+        )
+    }
+    ```
+</CodeGroup>
+
+Congrats ! You should be able to see the displayed connectors !
+
+# Step 2 (optional): Select your own connectors
+ 
+**insert**video
+
+You have the ability to choose which connectors will be rendered (also applied to magic-link).
+
+Go to _Manage Catalog Widget_ [section](https://dashboard.panora.dev/configuration), locate the connector you wish to add/remove and switch it on/off.
