@@ -19,6 +19,7 @@ import {
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 export type CapsuleOAuthResponse = {
   access_token: string;
@@ -32,6 +33,7 @@ export type CapsuleOAuthResponse = {
 @Injectable()
 export class CapsuleConnectionService implements ICrmConnectionService {
   private readonly type: string;
+  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -122,7 +124,12 @@ export class CapsuleConnectionService implements ICrmConnectionService {
               connect: { id_project: projectId },
             },
             linked_users: {
-              connect: { id_linked_user: linkedUserId },
+              connect: {
+                id_linked_user: await this.connectionUtils.getLinkedUserId(
+                  projectId,
+                  linkedUserId,
+                ),
+              },
             },
           },
         });

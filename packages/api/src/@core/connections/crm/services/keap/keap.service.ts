@@ -19,6 +19,7 @@ import {
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 export type KeapOAuthResponse = {
   access_token: string;
@@ -29,6 +30,7 @@ export type KeapOAuthResponse = {
 @Injectable()
 export class KeapConnectionService implements ICrmConnectionService {
   private readonly type: string;
+  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -120,7 +122,12 @@ export class KeapConnectionService implements ICrmConnectionService {
               connect: { id_project: projectId },
             },
             linked_users: {
-              connect: { id_linked_user: linkedUserId },
+              connect: {
+                id_linked_user: await this.connectionUtils.getLinkedUserId(
+                  projectId,
+                  linkedUserId,
+                ),
+              },
             },
           },
         });

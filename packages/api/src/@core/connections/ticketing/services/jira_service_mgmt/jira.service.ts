@@ -15,6 +15,7 @@ import { ServiceRegistry } from '../registry.service';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 export type JiraCloudIdInformation = {
   id: string;
@@ -39,6 +40,7 @@ export class JiraServiceMgmtConnectionService
   implements ITicketingConnectionService
 {
   private readonly type: string;
+  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -158,7 +160,12 @@ export class JiraServiceMgmtConnectionService
               connect: { id_project: projectId },
             },
             linked_users: {
-              connect: { id_linked_user: linkedUserId },
+              connect: {
+                id_linked_user: await this.connectionUtils.getLinkedUserId(
+                  projectId,
+                  linkedUserId,
+                ),
+              },
             },
           },
         });

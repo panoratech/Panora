@@ -15,6 +15,7 @@ import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 export type AhaOAuthResponse = {
   access_token: string;
@@ -24,6 +25,7 @@ export type AhaOAuthResponse = {
 @Injectable()
 export class AhaConnectionService implements ITicketingConnectionService {
   private readonly type: string;
+  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -82,7 +84,8 @@ export class AhaConnectionService implements ITicketingConnectionService {
       const connection_token = uuidv4();
       //get the right BASE URL API
       const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN + CONNECTORS_METADATA['ticketing']['aha'].urls.apiUrl;
+        CREDENTIALS.SUBDOMAIN +
+        CONNECTORS_METADATA['ticketing']['aha'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -112,7 +115,12 @@ export class AhaConnectionService implements ITicketingConnectionService {
               connect: { id_project: projectId },
             },
             linked_users: {
-              connect: { id_linked_user: linkedUserId },
+              connect: {
+                id_linked_user: await this.connectionUtils.getLinkedUserId(
+                  projectId,
+                  linkedUserId,
+                ),
+              },
             },
           },
         });

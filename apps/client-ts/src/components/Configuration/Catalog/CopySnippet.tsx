@@ -25,11 +25,12 @@ export const CopySnippet = () => {
 
     const handleCopyLeft = () => {
         navigator.clipboard.writeText(
-            `<DynamicCatalog>
-            projectId={'c9a1b1f8-466d-442d-a95e-11cdd00baf49'}
-            returnUrl={'https://acme.inc'}
-            linkedUserId={'b860d6c1-28f9-485c-86cd-fb09e60f10a2'}
-            </DynamicCatalog>`
+            `<PanoraDynamicCatalog
+                category={"crm"}
+                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"}
+                returnUrl={"https://acme.inc"}
+                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}
+            />`
         );
         toast.success("Code snippet copied", {
             action: {
@@ -45,13 +46,13 @@ export const CopySnippet = () => {
 
     const handleCopyRight = () => {
         navigator.clipboard.writeText(
-            `<PanoraProviderCard>
-            name={'hubspot'}
-            vertical={'crm'}
-            projectId={'c9a1b1f8-466d-442d-a95e-11cdd00baf49'}
-            returnUrl={'https://acme.inc'}
-            linkedUserId={'b860d6c1-28f9-485c-86cd-fb09e60f10a2'}
-            </PanoraProviderCard>`
+            `<PanoraProviderCard
+            name={"hubspot"}
+            category={"crm"}
+            projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"}
+            returnUrl={"https://acme.inc"}
+            linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"} 
+          />`
         );
         toast.success("Code snippet copied", {
             action: {
@@ -120,8 +121,11 @@ export const CopySnippet = () => {
                     <span className="flex flex-col gap-2">
                         <span className="flex-1">
                         <span>
-                            {`<DynamicCatalog>`}
+                            {`<PanoraDynamicCatalog>`}
                         </span>
+                        </span>
+                        <span className="pl-4">
+                            <span className="text-green-800">category</span>{`=crm`}
                         </span>
                         <span className="pl-4">
                             <span className="text-cyan-600">projectId</span>{`={'c9a1b1f8-466d-442d-a95e-11cdd00baf49'}`}
@@ -134,7 +138,7 @@ export const CopySnippet = () => {
                         </span> 
                         <span className="flex-1">
                         <span>
-                            {`</DynamicCatalog>`}
+                            {`</PanoraDynamicCatalog>`}
                         </span>
                         </span>
                     </span>
@@ -181,7 +185,7 @@ export const CopySnippet = () => {
                       <span className="text-lime-500">name</span>{`={'hubspot'}`}
                     </span>
                     <span className="pl-4">
-                        <span className="text-fuchsia-200">vertical</span>{`={'crm'}`}
+                        <span className="text-fuchsia-200">category</span>{`={'crm'}`}
                     </span>
                     <span className="pl-4">
                         <span className="text-cyan-600">projectId</span>{`={'c9a1b1f8-466d-442d-a95e-11cdd00baf49'}`}
