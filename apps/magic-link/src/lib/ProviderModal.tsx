@@ -1,4 +1,3 @@
-/* eslint-disable react/no-non-null-asserted-optional-chain */
 import { useEffect, useState } from 'react';
 import useOAuth from '@/hooks/useOAuth';
 import { findProviderByName, providersArray, categoryFromSlug, Provider } from '@panora/shared/src';
