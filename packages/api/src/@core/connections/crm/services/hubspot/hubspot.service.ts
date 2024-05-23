@@ -19,6 +19,7 @@ import {
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 export interface HubspotOAuthResponse {
   refresh_token: string;
@@ -29,6 +30,7 @@ export interface HubspotOAuthResponse {
 @Injectable()
 export class HubspotConnectionService implements ICrmConnectionService {
   private readonly type: string;
+  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -46,9 +48,6 @@ export class HubspotConnectionService implements ICrmConnectionService {
   async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
-      /* this.logger.log(
-        'linkeduserid is ' + linkedUserId + ' inside callback hubspot',
-      );*/
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -123,7 +122,12 @@ export class HubspotConnectionService implements ICrmConnectionService {
               connect: { id_project: projectId },
             },
             linked_users: {
-              connect: { id_linked_user: linkedUserId },
+              connect: {
+                id_linked_user: await this.connectionUtils.getLinkedUserId(
+                  projectId,
+                  linkedUserId,
+                ),
+              },
             },
           },
         });

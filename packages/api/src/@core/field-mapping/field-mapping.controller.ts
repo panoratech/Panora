@@ -10,6 +10,7 @@ import {
 import { LoggerService } from '../logger/logger.service';
 import { FieldMappingService } from './field-mapping.service';
 import {
+  CustomFieldCreateDto,
   DefineTargetFieldDto,
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
@@ -78,6 +79,19 @@ export class FieldMappingController {
       defineTargetFieldDto,
       id_project,
     );
+  }
+
+  @ApiOperation({
+    operationId: 'createCustomField',
+    summary: 'Create Custom Field',
+  })
+  @ApiBody({ type: CustomFieldCreateDto })
+  @ApiResponse({ status: 201 })
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  createCustomField(@Request() req: any, @Body() data: CustomFieldCreateDto) {
+    const { id_project } = req.user;
+    return this.fieldMappingService.createCustomField(data, id_project);
   }
 
   @ApiOperation({ operationId: 'mapField', summary: 'Map Custom Field' })

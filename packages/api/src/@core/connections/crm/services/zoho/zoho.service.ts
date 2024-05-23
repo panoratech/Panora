@@ -19,6 +19,7 @@ import {
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 type ZohoUrlType = {
   [key: string]: {
@@ -61,6 +62,7 @@ export interface ZohoOAuthResponse {
 @Injectable()
 export class ZohoConnectionService implements ICrmConnectionService {
   private readonly type: string;
+  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -134,7 +136,8 @@ export class ZohoConnectionService implements ICrmConnectionService {
             ),
             status: 'valid',
             created_at: new Date(),
-            account_url: apiDomain + CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl,
+            account_url:
+              apiDomain + CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl,
           },
         });
       } else {
@@ -158,9 +161,15 @@ export class ZohoConnectionService implements ICrmConnectionService {
               connect: { id_project: projectId },
             },
             linked_users: {
-              connect: { id_linked_user: linkedUserId },
+              connect: {
+                id_linked_user: await this.connectionUtils.getLinkedUserId(
+                  projectId,
+                  linkedUserId,
+                ),
+              },
             },
-            account_url: apiDomain + CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl,
+            account_url:
+              apiDomain + CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl,
           },
         });
       }

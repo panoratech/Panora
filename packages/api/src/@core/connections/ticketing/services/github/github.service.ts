@@ -15,6 +15,7 @@ import { ServiceRegistry } from '../registry.service';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 export type GithubOAuthResponse = {
   access_token: string;
@@ -28,6 +29,7 @@ export type GithubOAuthResponse = {
 @Injectable()
 export class GithubConnectionService implements ITicketingConnectionService {
   private readonly type: string;
+  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -118,7 +120,12 @@ export class GithubConnectionService implements ITicketingConnectionService {
               connect: { id_project: projectId },
             },
             linked_users: {
-              connect: { id_linked_user: linkedUserId },
+              connect: {
+                id_linked_user: await this.connectionUtils.getLinkedUserId(
+                  projectId,
+                  linkedUserId,
+                ),
+              },
             },
           },
         });

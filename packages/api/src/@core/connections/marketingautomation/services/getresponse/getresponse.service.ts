@@ -15,6 +15,7 @@ import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 export type GetresponseOAuthResponse = {
   access_token: string;
@@ -29,6 +30,7 @@ export class GetresponseConnectionService
   implements IMarketingAutomationConnectionService
 {
   private readonly type: string;
+  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -98,7 +100,8 @@ export class GetresponseConnectionService
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url:
-              CONNECTORS_METADATA['marketingautomation']['getresponse'].urls.apiUrl,
+              CONNECTORS_METADATA['marketingautomation']['getresponse'].urls
+                .apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -115,7 +118,8 @@ export class GetresponseConnectionService
             vertical: 'marketingautomation',
             token_type: 'oauth',
             account_url:
-              CONNECTORS_METADATA['marketingautomation']['getresponse'].urls.apiUrl,
+              CONNECTORS_METADATA['marketingautomation']['getresponse'].urls
+                .apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -127,7 +131,12 @@ export class GetresponseConnectionService
               connect: { id_project: projectId },
             },
             linked_users: {
-              connect: { id_linked_user: linkedUserId },
+              connect: {
+                id_linked_user: await this.connectionUtils.getLinkedUserId(
+                  projectId,
+                  linkedUserId,
+                ),
+              },
             },
           },
         });

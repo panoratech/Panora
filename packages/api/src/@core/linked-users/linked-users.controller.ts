@@ -54,13 +54,13 @@ export class LinkedUsersController {
   }
 
   @ApiOperation({
-    operationId: 'getLinkedUsers',
+    operationId: 'fetchLinkedUsers',
     summary: 'Retrieve Linked Users',
   })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @Get()
-  getLinkedUsers(@Request() req: any) {
+  fetchLinkedUsers(@Request() req: any) {
     const { id_project } = req.user;
     return this.linkedUsersService.getLinkedUsers(id_project);
   }
@@ -79,14 +79,14 @@ export class LinkedUsersController {
   }
 
   @ApiOperation({
-    operationId: 'getLinkedUser',
-    summary: 'Retrieve a Linked User',
+    operationId: 'linkedUserFromRemoteId',
+    summary: 'Retrieve a Linked User From A Remote Id',
   })
-  @ApiQuery({ name: 'originId', required: true, type: String })
+  @ApiQuery({ name: 'remoteId', required: true, type: String })
   @ApiResponse({ status: 200 })
   //@UseGuards(JwtAuthGuard)
-  @Get('single')
-  getLinkedUserV2(@Query('originId') id: string) {
+  @Get('fromRemoteId')
+  linkedUserFromRemoteId(@Query('remoteId') id: string) {
     // validate project_id against user
     return this.linkedUsersService.getLinkedUserV2(id);
   }

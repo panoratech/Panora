@@ -405,7 +405,6 @@
     {
       "group": "Recipes",
       "pages": [
-        "recipes/share-magic-link", 
         "recipes/embed-catalog", 
         "recipes/import-existing-users", 
         "recipes/catch-connection-token",
@@ -414,7 +413,11 @@
     },
     {
       "group": "Glossary",
-      "pages": ["glossary/connection-object", "glossary/linked-account-object"]
+      "pages": ["glossary/connection-object", "glossary/linked-account-object",
+      {
+        "group": "Metadata",
+        "pages": ["glossary/metadata/category", "glossary/metadata/connectors"]
+      }]
     },
 
     {

@@ -502,7 +502,7 @@
         ]
       },
       "get": {
-        "operationId": "getLinkedUsers",
+        "operationId": "fetchLinkedUsers",
         "summary": "Retrieve Linked Users",
         "parameters": [],
         "responses": {
@@ -546,7 +546,31 @@
         "summary": "Retrieve a Linked User",
         "parameters": [
           {
-            "name": "originId",
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
+    "/linked-users/fromRemoteId": {
+      "get": {
+        "operationId": "linkedUserFromRemoteId",
+        "summary": "Retrieve a Linked User From A Remote Id",
+        "parameters": [
+          {
+            "name": "remoteId",
             "required": true,
             "in": "query",
             "schema": {
@@ -698,6 +722,31 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/DefineTargetFieldDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mappings"
+        ]
+      }
+    },
+    "/field-mappings": {
+      "post": {
+        "operationId": "createCustomField",
+        "summary": "Create Custom Field",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldCreateDto"
               }
             }
           }
@@ -4896,6 +4945,41 @@
           "name",
           "description",
           "data_type"
+        ]
+      },
+      "CustomFieldCreateDto": {
+        "type": "object",
+        "properties": {
+          "object_type_owner": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "data_type": {
+            "type": "string"
+          },
+          "source_custom_field_id": {
+            "type": "string"
+          },
+          "source_provider": {
+            "type": "string"
+          },
+          "linked_user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_type_owner",
+          "name",
+          "description",
+          "data_type",
+          "source_custom_field_id",
+          "source_provider",
+          "linked_user_id"
         ]
       },
       "MapFieldToProviderDto": {

@@ -19,6 +19,7 @@ import {
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 type AcceloOAuthResponse = {
   access_token: string;
@@ -32,6 +33,7 @@ type AcceloOAuthResponse = {
 @Injectable()
 export class AcceloConnectionService implements ICrmConnectionService {
   private readonly type: string;
+  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -90,7 +92,8 @@ export class AcceloConnectionService implements ICrmConnectionService {
       const connection_token = uuidv4();
       //get the right BASE URL API
       const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN + CONNECTORS_METADATA['crm']['accelo'].urls.apiUrl;
+        CREDENTIALS.SUBDOMAIN +
+        CONNECTORS_METADATA['crm']['accelo'].urls.apiUrl;
 
       if (isNotUnique) {
         // Update existing connection
@@ -128,7 +131,12 @@ export class AcceloConnectionService implements ICrmConnectionService {
               connect: { id_project: projectId },
             },
             linked_users: {
-              connect: { id_linked_user: linkedUserId },
+              connect: {
+                id_linked_user: await this.connectionUtils.getLinkedUserId(
+                  projectId,
+                  linkedUserId,
+                ),
+              },
             },
           },
         });
