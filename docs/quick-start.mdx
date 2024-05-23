@@ -14,7 +14,7 @@ Before you begin, make sure you have the following:
 
 ## **Step 1: Get access to your users data**
 
-You either have the option to use a **no-code magic link** or the **embedded frontend snippet** to get access to your user's data.
+You either have the option to use a [**no-code magic link**](/core-concepts/magic-links) or the [**embedded frontend snippet**](/recipes/embed-catalog) to get access to your user's data.
 Choose the one that fits your needs !
 
 <Steps titleSize="h3">
@@ -38,7 +38,8 @@ Choose the one that fits your needs !
         You'll be asked for two informations: an `Origin User Email` (of the user
         you're creating the link for) and an `Origin User Identifier`. The `Origin
         User Identifier` is the id of the user you're inviting, as represented in your
-        sofwtare.
+        sofwtare. If you already have created a [Linked User](/recipes/import-existing-users) you have the option to select
+        it.
       </Step>
       <Step>Click `Generate`</Step>
     </Steps>
@@ -65,22 +66,36 @@ Choose the one that fits your needs !
                 ```javascript React
                 import "@panora/embedded-card-react/dist/index.css";
                 import PanoraProviderCard from "@panora/embedded-card-react";
+                import PanoraDynamicCatalog from "@panora/embedded-card-react";
                 ```
             </CodeGroup>
         </Step>
 
-        <Step title="Use the catalog in your integrations page:">
+        <Step title="Use the catalog in your integrations page">
+            You can either import a single connector card or a catalog of all connectors that you select in the UI dashboard configuration (see [here](//recipes/embed-catalog) for more details).
+            <Info>In order to fill the `linkedUserId` prop, use your own remote id that exist in your system **OR** check this [recipe](/recipes/import-existing-users) ! </Info>
             <CodeGroup>
-                ```javascript React
+                ```javascript Single Connector Card
                 <PanoraProviderCard
                     name={"hubspot"} # name of the provider
-                    vertical={"crm"} # vertical where provider belongs to
+                    category={"crm"} # vertical where provider belongs to
+                    projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
+                    returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
+                    linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
+                />
+                ```
+                ```javascript Whole Connector Catalog
+                <PanoraDynamicCatalog
+                    category={"crm"} # optional but if provided it returns only connectors of the category
                     projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
                     returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
                     linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
                 />
                 ```
             </CodeGroup>
+            You should see a card or catalog being rendered client-side !
+
+            __insert photo__
         </Step>
     </Steps>
 

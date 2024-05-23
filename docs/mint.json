@@ -405,7 +405,6 @@
     {
       "group": "Recipes",
       "pages": [
-        "recipes/share-magic-link", 
         "recipes/embed-catalog", 
         "recipes/import-existing-users", 
         "recipes/catch-connection-token",

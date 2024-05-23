@@ -502,7 +502,7 @@
         ]
       },
       "get": {
-        "operationId": "getLinkedUsers",
+        "operationId": "fetchLinkedUsers",
         "summary": "Retrieve Linked Users",
         "parameters": [],
         "responses": {
@@ -546,7 +546,31 @@
         "summary": "Retrieve a Linked User",
         "parameters": [
           {
-            "name": "originId",
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
+    "/linked-users/fromRemoteId": {
+      "get": {
+        "operationId": "linkedUserFromRemoteId",
+        "summary": "Retrieve a Linked User From A Remote Id",
+        "parameters": [
+          {
+            "name": "remoteId",
             "required": true,
             "in": "query",
             "schema": {
