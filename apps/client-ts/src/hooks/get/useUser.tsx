@@ -35,34 +35,18 @@ const useUser = () => {
     };
     return useMutation({
         mutationFn: getUser,
-        onMutate: () => {
-            // toast("Fetching the user !", {
-            //     description: "",
-            //     action: {
-            //       label: "Close",
-            //       onClick: () => console.log("Close"),
-            //     },
-            // })
-        },
         onError: (error) => {
             Cookies.remove('access_token')
-            toast.error("Fetch User failed !", {
+            /*toast.error("Fetch User failed !", {
                 description: error as any,
                 action: {
                   label: "Close",
                   onClick: () => console.log("Close"),
                 },
-            })
+            })*/
         },
         onSuccess: (data : IUserDto) => {
             setProfile(data);
-            toast.success("User has been fetched !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
         },
         onSettled: () => {
         },

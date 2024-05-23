@@ -1,6 +1,5 @@
 import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from "sonner"
 import Cookies from 'js-cookie';
 
 interface IRefreshOutputDto {
@@ -28,22 +27,9 @@ const useRefreshAccessToken = () => {
     };
     return useMutation({
         mutationFn: refreshAccessToken,
-        onMutate: () => {
-        },
-        onError: (error) => {
-            toast.error("Refreshing token generation failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
         onSuccess: (data : IRefreshOutputDto) => {
             Cookies.remove('access_token');
             Cookies.set('access_token', data.access_token, {expires:1});
-        },
-        onSettled: () => {
         },
     });
 };

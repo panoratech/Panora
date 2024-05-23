@@ -14,7 +14,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
-  providersConfig,
+  CONNECTORS_METADATA,
   providerToType,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
@@ -112,7 +112,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
             provider_slug: 'zendesk',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: providersConfig['crm']['zendesk'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['zendesk'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token
               ? this.cryptoService.encrypt(data.refresh_token)

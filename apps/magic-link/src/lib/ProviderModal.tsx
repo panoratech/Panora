@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react';
 import useOAuth from '@/hooks/useOAuth';
-import { categoriesVerticals } from '@panora/shared/src/providers';
-import {findProviderByName, providersArray} from '@panora/shared/src/utils';
+import { findProviderByName, providersArray, categoryFromSlug, Provider } from '@panora/shared/src';
+import { categoriesVerticals } from '@panora/shared/src/categories';
 import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import useProjectConnectors from '@/hooks/queries/useProjectConnectors';
 
 
 const LoadingOverlay = ({ providerName }: { providerName: string }) => {
@@ -26,13 +33,27 @@ const LoadingOverlay = ({ providerName }: { providerName: string }) => {
 };
 
 const ProviderModal = () => {
-  const [selectedCategory, setSelectedCategory] = useState(categoriesVerticals[0] as string); // Default to the first category
-  const [selectedProvider, setSelectedProvider] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedProvider, setSelectedProvider] = useState<{
+    provider: string;
+    category: string;
+  }>();
+
+  const [startFlow, setStartFlow] = useState(false);
+  const [preStartFlow, setPreStartFlow] = useState(false);
+
+  const [data, setData] = useState<Provider[]>([]);
+  
   const [loading, setLoading] = useState<{
     status: boolean; provider: string
   }>({status: false, provider: ''});
+
   const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState('');
 
+  const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
+  const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
+  const {data: connectorsForProject} = useProjectConnectors(linkedUser?.id_project as string);
+  
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
     const uniqueId = queryParams.get('uniqueLink');
@@ -41,91 +62,148 @@ const ProviderModal = () => {
     }
   }, []);
 
-  
-  const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
-  const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
+  useEffect(()=>{
+    const PROVIDERS = selectedCategory == "All" ? providersArray() : providersArray(selectedCategory);
+    const getConnectorsToDisplay = () => {
+      // First, check if the company selected custom connectors in the UI or not
+      const unwanted_connectors = transformConnectorsStatus(connectorsForProject).filter(connector => connector.status === "false");
+      // Filter out the providers present in the unwanted connectors array
+      const filteredProviders = PROVIDERS.filter(provider => {
+          return !unwanted_connectors.some( (unwanted) => 
+            unwanted.category === provider.vertical && unwanted.connector_name === provider.name
+          );
+      });
+      return filteredProviders;
+    }
+
+    if(connectorsForProject) {
+      setData(getConnectorsToDisplay())
+    }
+  }, [connectorsForProject, selectedCategory])
+
   
   const { open, isReady } = useOAuth({
-    providerName: selectedProvider,
-    vertical: selectedCategory,
-    returnUrl: "https://google.com", //TODO: handle the redirection URL (let customer put their confetti or success page redirect url ? )
+    providerName: selectedProvider?.provider!,
+    vertical: selectedProvider?.category!,
+    returnUrl: "https://google.com", 
     projectId: linkedUser?.id_project as string,
     linkedUserId: linkedUser?.id_linked_user as string,
     onSuccess: () => console.log('OAuth successful'),
   });
 
   const onWindowClose = () => {
-    setSelectedProvider('');
+    setSelectedProvider({
+      provider: '',
+      category: ''
+    });
     setLoading({
         status: false,
         provider: ''
     })
+    setStartFlow(false);
+    setPreStartFlow(false);
   }
 
   useEffect(() => {
-    if (selectedProvider && isReady) {
-        open(onWindowClose);
+    if (startFlow && isReady) {
+      open(onWindowClose);
+    } else if (startFlow && !isReady) {
+      setLoading({
+        status: false,
+        provider: ''
+      });
     }
-    
-  }, [selectedProvider, isReady, open]);
+  }, [startFlow, isReady, open]);
+
   
-  const handleWalletClick = (walletName: string) => {
-    console.log(`Wallet selected: ${walletName}`);
-    setSelectedProvider(walletName.toLowerCase());
-    setLoading({status: true, provider: walletName});
+  
+  const handleWalletClick = (walletName: string, category: string) => {
+    setSelectedProvider({provider: walletName.toLowerCase(), category: category.toLowerCase()});
+    setPreStartFlow(true);
   };
 
-  const handleCategoryClick = (category: string) => {    
+  const handleStartFlow = () => {
+    setLoading({status: true, provider: selectedProvider?.provider!});
+    setStartFlow(true);
+  }
+
+  const handleCategoryClick = (category: string) => {  
+    setPreStartFlow(false);  
+    setSelectedProvider({
+      provider: '',
+      category: ''
+    });
     setSelectedCategory(category);
   };
-  
-  const PROVIDERS = providersArray(selectedCategory);
+
+  function transformConnectorsStatus(connectors : {[key: string]: boolean}): { connector_name: string;category: string; status: string }[] {
+    return Object.entries(connectors).flatMap(([key, value]) => {
+      const [category_slug, connector_name] = key.split('_').map((part: string) => part.trim());
+      const category = categoryFromSlug(category_slug);
+      if (category != null) {
+          return [{
+              connector_name: connector_name,
+              category: category,
+              status: String(value)
+          }];
+      }
+      return [];
+    });
+  }
 
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center">
-      <div className="w-[26rem] rounded-3xl bg-[#1d1d1d] text-white">
-        {!loading.status && <div className="flex justify-between items-center border-b border-gray-600 p-4">
-          <h3 className="text-lg font-medium">Select Integrations</h3>
-          <button className="text-gray-400 hover:text-white transition duration-150">&times;</button>
-        </div>}
-        {!loading.status ? 
-            <div className="p-4 max-h-[32rem] overflow-auto scrollbar-hide">
-                <div className="flex mb-4 outline-none flex-wrap">
-                    {categoriesVerticals.map((category, index) => (
-                    <button
-                        key={index}
-                        className={`px-3 py-1 mb-2 mr-1 rounded-full text-xs font-medium transition duration-150 ${selectedCategory === category ? 'bg-indigo-600 hover:bg-indigo-500	' : 'bg-neutral-700 hover:bg-neutral-600'}`}
-                        onClick={() => handleCategoryClick(category)}
-                    >
-                        {category}
-                    </button>
-                    ))}
-                </div>
-                {(
-                    <>
-                    {PROVIDERS.map((provider, index) => (
-                        <div
-                        key={index}
-                        className="flex items-center justify-between px-4 py-2 my-2 bg-neutral-900 hover:bg-neutral-800 border-black  hover:border-indigo-800 rounded-xl transition duration-150 cursor-pointer"
-                        onClick={() => handleWalletClick(provider.name)}
-                        >
-                        <div className="flex items-center">
-                        <img className="w-8 h-8 rounded-lg mr-3" src={provider.logoPath} alt={provider.name} />
-                            <span>{provider.name.substring(0,1).toUpperCase().concat(provider.name.substring(1,provider.name.length))}</span>
-                        </div>
-                        
-                        </div>
-                    ))}
-                    
-                    </>
-                )}
-            </div>
-            :
-            <LoadingOverlay providerName={loading.provider}/>
-        }
-      </div>
-    </div>
+    <Card className='w-[50vw]'>
+      <CardHeader>
+        <CardTitle className='flex flex-row items-start mb-2'>Connect to your software</CardTitle>
+        <Select onValueChange={(value) => handleCategoryClick(value)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Categories</SelectLabel>
+              <SelectItem key="All" value="All">
+                All
+                </SelectItem>
+              <SelectSeparator/>
+              {categoriesVerticals.map((vertical) => (
+                <SelectItem key={vertical} value={vertical}>
+                  {vertical}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </CardHeader>
+      <CardContent className="grid gap-6">
+        <div className='max-h-[400px] overflow-y-auto'>
+        <RadioGroup defaultValue="card" className="grid grid-cols-3 gap-4">
+          {(data as Provider[]).map((provider) => (
+            <div>
+            <RadioGroupItem 
+              key={`${provider.name}-${provider.vertical}`} 
+              value={`${provider.name}-${provider.vertical}`} 
+              id={`${provider.name}-${provider.vertical}`} 
+              className="peer sr-only" 
+              onClick={() => handleWalletClick(provider.name, provider.vertical!)}
+            />
+            <Label
+              htmlFor={`${provider.name}-${provider.vertical}`}
+              className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+            >
+              <img className="w-14 h-14 rounded-lg mb-2" src={provider.logoPath} alt={provider.name} />
+              <span>{provider.name.substring(0,1).toUpperCase().concat(provider.name.substring(1,provider.name.length))}</span>
+            </Label>
+          </div>
+          ))}
+        </RadioGroup>
+        </div>
+      </CardContent>
+      <CardFooter>
+        {loading.status ? <Button className='w-full flex flex-row items-center' disabled><LoadingSpinner className="w-4 mr-2"/>Loading</Button> : <Button className="w-full" onClick={handleStartFlow} disabled={!preStartFlow}>Continue</Button>}
+      </CardFooter>
+    </Card>
   );
 };
 

@@ -14,7 +14,7 @@ import {
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
-  providersConfig,
+  CONNECTORS_METADATA,
   providerToType,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
@@ -83,7 +83,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
       const connection_token = uuidv4();
       //get the right BASE URL API
       const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN + providersConfig['crm']['teamwork'].urls.apiUrl;
+        CREDENTIALS.SUBDOMAIN + CONNECTORS_METADATA['crm']['teamwork'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({

@@ -1,11 +1,11 @@
 import config from '@/helpers/config';
 import { useState, useEffect } from 'react';
-import { constructAuthUrl } from '@panora/shared';
+import { ConnectorCategory, constructAuthUrl } from '@panora/shared';
 
 type UseOAuthProps = {
   clientId?: string;
   providerName: string;           // Name of the OAuth provider
-  vertical: string;               // Vertical (Crm, Ticketing, etc)
+  vertical: ConnectorCategory;               // Vertical (Crm, Ticketing, etc)
   returnUrl: string;              // Return URL after OAuth flow
   projectId: string;              // Project ID
   linkedUserId: string;           // Linked User ID

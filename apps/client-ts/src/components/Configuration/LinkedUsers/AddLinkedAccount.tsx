@@ -26,24 +26,26 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { PlusCircledIcon } from "@radix-ui/react-icons"
-import { cn } from "@/lib/utils"
 import { useState } from "react"
 import useCreateLinkedUser from "@/hooks/create/useCreateLinkedUser"
-import useOrganisationStore from "@/state/organisationStore"
 import useProjectStore from "@/state/projectStore"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { usePostHog } from 'posthog-js/react'
 import config from "@/lib/config"
-import { PlusCircle } from "lucide-react"
+import { FileUploader } from "@/components/ui/file-uploader"
+import * as XLSX from 'xlsx';
+import { toast } from "sonner"
+import { Badge } from "@/components/ui/badge"
+import { useQueryClient } from "@tanstack/react-query"
+import useCreateBatchLinkedUser from "@/hooks/create/useCreateBatchLinkedUser"
 
 interface LinkedUserModalObj {
   open: boolean;
@@ -61,8 +63,14 @@ const AddLinkedAccount = () => {
     open: false,
     import: false
   })
+  const [files, setFiles] = useState<File[]>([])
+  const [importing, setImporting] = useState(false);
+  const [successImporting, setSuccessImporting] = useState(false);
 
-  const { mutate } = useCreateLinkedUser();
+  const { createLinkedUserPromise } = useCreateLinkedUser();
+  const { createBatchLinkedUserPromise } = useCreateBatchLinkedUser();
+
+  const queryClient = useQueryClient();
 
   const handleOpenChange = (open: boolean) => {
     setShowNewLinkedUserDialog(prevState => ({ ...prevState, open }));
@@ -81,11 +89,31 @@ const AddLinkedAccount = () => {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    mutate({ 
-      linked_user_origin_id: values.linkedUserIdentifier, 
-      alias: "", //TODO
-      id_project: idProject
+    toast.promise(
+      createLinkedUserPromise({ 
+        linked_user_origin_id: values.linkedUserIdentifier, 
+        alias: "", //TODO
+        id_project: idProject
+      }), 
+      {
+      loading: 'Loading...',
+      success: (data: any) => {
+        queryClient.setQueryData<any[]>(['linked-users'], (oldQueryData = []) => {
+          return [...oldQueryData, data];
+        });
+        return (
+          <div className="flex flex-row items-center">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.877045C3.84222 0.877045 0.877075 3.84219 0.877075 7.49988C0.877075 11.1575 3.84222 14.1227 7.49991 14.1227C11.1576 14.1227 14.1227 11.1575 14.1227 7.49988C14.1227 3.84219 11.1576 0.877045 7.49991 0.877045ZM1.82708 7.49988C1.82708 4.36686 4.36689 1.82704 7.49991 1.82704C10.6329 1.82704 13.1727 4.36686 13.1727 7.49988C13.1727 10.6329 10.6329 13.1727 7.49991 13.1727C4.36689 13.1727 1.82708 10.6329 1.82708 7.49988ZM10.1589 5.53774C10.3178 5.31191 10.2636 5.00001 10.0378 4.84109C9.81194 4.68217 9.50004 4.73642 9.34112 4.96225L6.51977 8.97154L5.35681 7.78706C5.16334 7.59002 4.84677 7.58711 4.64973 7.78058C4.45268 7.97404 4.44978 8.29061 4.64325 8.48765L6.22658 10.1003C6.33054 10.2062 6.47617 10.2604 6.62407 10.2483C6.77197 10.2363 6.90686 10.1591 6.99226 10.0377L10.1589 5.53774Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+            <div className="ml-2">
+              Linked account
+              <Badge variant="secondary" className="rounded-sm px-1 mx-2 font-normal">{`${data.linked_user_origin_id}`}</Badge>
+              has been created
+            </div>
+          </div>
+        )
+        ;
+      },
+      error: 'Error',
     });
     setShowNewLinkedUserDialog({open: false})  
     posthog?.capture("linked_account_created", {
@@ -95,6 +123,61 @@ const AddLinkedAccount = () => {
     form.reset()
   }
   
+  const handleImport = async () => {
+    if (files.length === 0) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const data = e.target?.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+      if (json.length > 0) {
+        setImporting(true);
+        const ids: string[] = []; // Initialize an empty array to hold the IDs
+        json.forEach((row: any) => {
+            const linked_user_origin_id = row[Object.keys(row)[0]]; 
+            if(linked_user_origin_id){
+              ids.push(linked_user_origin_id); 
+            }
+        });
+        toast.promise(
+          createBatchLinkedUserPromise({ 
+            linked_user_origin_ids: ids, 
+            alias: "", //TODO
+            id_project: idProject
+          }), 
+          {
+          loading: 'Loading...',
+          success: (data: any) => {
+            queryClient.setQueryData<any[]>(['linked-users'], (oldQueryData = []) => {
+              return [...oldQueryData, data];
+            });
+            setSuccessImporting(true);
+            setImporting(false);
+            return (
+              <div className="flex flex-row items-center">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.877045C3.84222 0.877045 0.877075 3.84219 0.877075 7.49988C0.877075 11.1575 3.84222 14.1227 7.49991 14.1227C11.1576 14.1227 14.1227 11.1575 14.1227 7.49988C14.1227 3.84219 11.1576 0.877045 7.49991 0.877045ZM1.82708 7.49988C1.82708 4.36686 4.36689 1.82704 7.49991 1.82704C10.6329 1.82704 13.1727 4.36686 13.1727 7.49988C13.1727 10.6329 10.6329 13.1727 7.49991 13.1727C4.36689 13.1727 1.82708 10.6329 1.82708 7.49988ZM10.1589 5.53774C10.3178 5.31191 10.2636 5.00001 10.0378 4.84109C9.81194 4.68217 9.50004 4.73642 9.34112 4.96225L6.51977 8.97154L5.35681 7.78706C5.16334 7.59002 4.84677 7.58711 4.64973 7.78058C4.45268 7.97404 4.44978 8.29061 4.64325 8.48765L6.22658 10.1003C6.33054 10.2062 6.47617 10.2604 6.62407 10.2483C6.77197 10.2363 6.90686 10.1591 6.99226 10.0377L10.1589 5.53774Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                <div className="ml-2">
+                  Linked accounts have been imported
+                </div>
+              </div>
+            )
+            ;
+          },
+          error: 'Error',
+        });
+        posthog?.capture("batch_linked_account_created", {
+          id_project: idProject,
+          mode: config.DISTRIBUTION
+        })
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+
   return (
     <Dialog open={showNewLinkedUserDialog.open} onOpenChange={handleOpenChange}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -162,52 +245,65 @@ const AddLinkedAccount = () => {
             {showNewLinkedUserDialog.import ? "You can upload a sheet of your existing linked users" : "Add a new linked user to your project"}
           </DialogDescription>
         </DialogHeader>
-        <Form {...form} >
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div>
-          <div className="space-y-4 py-2 pb-4">
-            {!showNewLinkedUserDialog.import ?
-              ( <>
-                  <div className="space-y-2">
-                  <FormField
-                        control={form.control}
-                        name="linkedUserIdentifier"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Origin User Identifier</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="acme-inc-user-123" {...field} 
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              This is the id of the user in your system.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                    />
-                  </div>
-                </>
-              ) : 
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="picture">Upload your file</Label>
-                  <Input className="h-20" id="picture" type="file" />
-                </div>
-              </>
+        { !showNewLinkedUserDialog.import ? 
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div>
+              <div className="space-y-4 py-2 pb-4">
+              
+                      <div className="space-y-2">
+                      <FormField
+                            control={form.control}
+                            name="linkedUserIdentifier"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Origin User Identifier</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    placeholder="acme-inc-user-123" {...field} 
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                                  />
+                                </FormControl>
+                                <FormDescription>
+                                  This is the id of the user in your system.
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                        />
+                      </div>
+              
+                
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" size="sm" className="h-7 gap-1"  type='reset' onClick={() => {form.reset(); setShowNewLinkedUserDialog({open: false})}}>
+                Cancel
+              </Button>
+              <Button type="submit" size="sm" className="h-7 gap-1" >Create</Button>
+            </DialogFooter>
+            </form>
+          </Form>
+        : 
+          <div>
+            {importing ? "Loading ....." : successImporting ? "Success !!" :
+            <>
+              <FileUploader
+                maxFiles={8}
+                maxSize={8 * 1024 * 1024}
+                onValueChange={setFiles}
+              />
+              <DialogFooter>
+                <Button variant="outline" size="sm" className="h-7 gap-1"  type='reset' onClick={() => {form.reset(); setShowNewLinkedUserDialog({open: false})}}>
+                  Cancel
+                </Button>
+                <Button type="submit" size="sm" className="h-7 gap-1" onClick={handleImport}>Import</Button>
+              </DialogFooter>
+            </>
             }
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" size="sm" className="h-7 gap-1"  type='reset' onClick={() => {form.reset(); setShowNewLinkedUserDialog({open: false})}}>
-            Cancel
-          </Button>
-          <Button type="submit" size="sm" className="h-7 gap-1" >{showNewLinkedUserDialog.import ? "Import" : "Create"}</Button>
-        </DialogFooter>
-        </form>
-        </Form>
+          </div>  
+        }
+        
       </DialogContent>
     </Dialog>    
   )

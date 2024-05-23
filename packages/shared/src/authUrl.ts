@@ -1,5 +1,8 @@
+import { CONNECTORS_METADATA } from './connectors/metadata';
 import { OAuth2AuthData, providerToType } from './envConfig';
-import { AuthStrategy, providersConfig, ProviderConfig } from './utils';
+import { AuthStrategy, ProviderConfig } from './types';
+import { randomString } from './utils';
+
 interface AuthParams {
   projectId: string;
   linkedUserId: string;
@@ -9,16 +12,6 @@ interface AuthParams {
   vertical: string;
 }
 
-const randomString = () => {
-  const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * charSet.length);
-    result += charSet[randomIndex];
-  }
-  return result;
-}
-
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
 export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
@@ -26,12 +19,12 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl);
-  // const vertical = findProviderVertical(providerName);
+  // const vertical = findConnectorCategory(providerName);
   if (vertical == null) {
     throw new Error('vertical is null');
   }
 
-  const config = providersConfig[vertical.toLowerCase()][providerName];
+  const config = CONNECTORS_METADATA[vertical.toLowerCase()][providerName];
   if (!config) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }

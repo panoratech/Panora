@@ -14,7 +14,7 @@ import { ServiceRegistry } from '../registry.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   OAuth2AuthData,
-  providersConfig,
+  CONNECTORS_METADATA,
   providerToType,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
@@ -90,7 +90,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
       const connection_token = uuidv4();
       //get the right BASE URL API
       const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN + providersConfig['crm']['accelo'].urls.apiUrl;
+        CREDENTIALS.SUBDOMAIN + CONNECTORS_METADATA['crm']['accelo'].urls.apiUrl;
 
       if (isNotUnique) {
         // Update existing connection

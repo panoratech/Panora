@@ -81,7 +81,7 @@ First choose wisely which vertical the 3rd party belongs to among these:
 
 # Step 1: Ensure 3rd party metadata is set
 
-Look into the `packages/shared/src/utils.ts` file and check if the provider you want to build has its metadata set inside the `providersConfig` object.
+Look into the `packages/shared/src/utils.ts` file and check if the provider you want to build has its metadata set inside the `CONNECTORS_METADATA` object.
 
 It should be available (if not [contact us](https://app.cal.com/rflih/30)) with `active` field set to `false` meaning the integration has not been built.
 
@@ -101,7 +101,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ve
 <Info>
   **An integration is considered valid when all common objects have been mapped.
   Then, after the PR is accepted we'll be able to set `active` field to `true`
-  inside `providersConfig`**
+  inside `CONNECTORS_METADATA`**
 </Info>
 
 <Steps>

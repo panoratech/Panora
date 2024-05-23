@@ -14,7 +14,7 @@ import {
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
-  providersConfig,
+  CONNECTORS_METADATA,
   providerToType,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
@@ -104,7 +104,7 @@ export class CopperConnectionService implements ICrmConnectionService {
             provider_slug: 'copper',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: providersConfig['crm']['copper'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['copper'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

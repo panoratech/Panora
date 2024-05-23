@@ -13,7 +13,7 @@ import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
-import { ProviderVertical } from '@panora/shared';
+import { ConnectorCategory } from '@panora/shared';
 import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
 import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
@@ -69,7 +69,7 @@ export class ConnectionsController {
       const { projectId, vertical, linkedUserId, providerName, returnUrl } =
         stateData;
       switch (vertical.toLowerCase()) {
-        case ProviderVertical.CRM:
+        case ConnectorCategory.Crm:
           const zohoLocation_ = zohoLocation ? zohoLocation : '';
           this.crmConnectionsService.handleCRMCallBack(
             projectId,
@@ -79,9 +79,9 @@ export class ConnectionsController {
             zohoLocation_,
           );
           break;
-        case ProviderVertical.ATS:
+        case ConnectorCategory.Ats:
           break;
-        case ProviderVertical.Accounting:
+        case ConnectorCategory.Accounting:
           this.accountingConnectionsService.handleAccountingCallBack(
             projectId,
             linkedUserId,
@@ -89,11 +89,11 @@ export class ConnectionsController {
             code,
           );
           break;
-        case ProviderVertical.FileStorage:
+        case ConnectorCategory.FileStorage:
           break;
-        case ProviderVertical.HRIS:
+        case ConnectorCategory.Hris:
           break;
-        case ProviderVertical.MarketingAutomation:
+        case ConnectorCategory.MarketingAutomation:
           this.marketingAutomationConnectionsService.handleMarketingAutomationCallBack(
             projectId,
             linkedUserId,
@@ -101,7 +101,7 @@ export class ConnectionsController {
             code,
           );
           break;
-        case ProviderVertical.Ticketing:
+        case ConnectorCategory.Ticketing:
           this.ticketingConnectionsService.handleTicketingCallBack(
             projectId,
             linkedUserId,

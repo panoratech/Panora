@@ -1,4 +1,5 @@
-import { AuthStrategy, providersConfig, SoftwareMode } from './utils';
+import { CONNECTORS_METADATA } from './connectors/metadata';
+import { AuthStrategy, SoftwareMode } from './types';
 
 export type BasicAuthData = {
     USERNAME: string;
@@ -77,19 +78,19 @@ export function extractAuthMode(type: string): AuthStrategy {
 
 export function needsSubdomain(provider: string, vertical: string): boolean {
     // Check if the vertical exists in the config
-    if (!providersConfig[vertical]) {
-        console.error(`Vertical ${vertical} not found in providersConfig.`);
+    if (!CONNECTORS_METADATA[vertical]) {
+        console.error(`Vertical ${vertical} not found in CONNECTORS_METADATA.`);
         return false;
     }
 
     // Check if the provider exists under the specified vertical
-    if (!providersConfig[vertical][provider]) {
+    if (!CONNECTORS_METADATA[vertical][provider]) {
         console.error(`Provider ${provider} not found under vertical ${vertical}.`);
         return false;
     }
 
     // Extract the provider's config
-    const providerConfig = providersConfig[vertical][provider];
+    const providerConfig = CONNECTORS_METADATA[vertical][provider];
 
     const authBaseUrlStartsWithSlash = providerConfig.urls.authBaseUrl!.substring(0,1) === '/';
     const apiUrlStartsWithSlash = providerConfig.urls.apiUrl!.substring(0,1) === '/';

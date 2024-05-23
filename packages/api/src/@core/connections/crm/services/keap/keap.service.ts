@@ -14,7 +14,7 @@ import {
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
-  providersConfig,
+  CONNECTORS_METADATA,
   providerToType,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
@@ -108,7 +108,7 @@ export class KeapConnectionService implements ICrmConnectionService {
             provider_slug: 'keap',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: providersConfig['crm']['keap'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['keap'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

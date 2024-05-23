@@ -1,7 +1,5 @@
-import useMagicLinkStore from '@/state/magicLinkStore';
 import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from "sonner"
 import Cookies from 'js-cookie';
 
 interface ILinkDto {
@@ -28,41 +26,23 @@ const useCreateMagicLink = () => {
         
         return response.json();
     };
-    const {setUniqueLink} = useMagicLinkStore();
-
-    return useMutation({
-        mutationFn: add,
-        onMutate: () => {
-            toast("Magic link is being generated !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onError: (error) => {
-            toast("Magic link generation failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSuccess: (data) => {
-            setUniqueLink(data.id_invite_link)
-            toast("Magic link has been generated!", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+    const createMagicLinkPromise = (data: ILinkDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await add(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    return {
+        mutationFn: useMutation({
+            mutationFn: add,
+        }),
+        createMagicLinkPromise
+    };
 };
 
 export default useCreateMagicLink;

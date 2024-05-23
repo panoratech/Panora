@@ -4,7 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrmConnectionsService } from '../connections/crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ProviderVertical } from '@panora/shared';
+import { ConnectorCategory } from '@panora/shared';
 import { AccountingConnectionsService } from '@@core/connections/accounting/services/accounting.connection.service';
 import { MarketingAutomationConnectionsService } from '@@core/connections/marketingautomation/services/marketingautomation.connection.service';
 import { TicketingConnectionsService } from '@@core/connections/ticketing/services/ticketing.connection.service';
@@ -18,7 +18,7 @@ export class TasksService implements OnModuleInit {
     private readonly accountingConnectionsService: AccountingConnectionsService,
     private readonly marketingAutomationConnectionsService: MarketingAutomationConnectionsService,
     private logger: LoggerService,
-  ) { }
+  ) {}
 
   onModuleInit() {
     this.handleCron();
@@ -43,7 +43,7 @@ export class TasksService implements OnModuleInit {
           connection.provider_slug == 'zoho' ? connection.account_url : '';
 
         switch (connection.vertical) {
-          case ProviderVertical.CRM:
+          case ConnectorCategory.Crm:
             await this.crmConnectionsService.handleCRMTokensRefresh(
               connection.id_connection,
               connection.provider_slug,
@@ -53,10 +53,10 @@ export class TasksService implements OnModuleInit {
             );
             break;
 
-          case ProviderVertical.ATS:
+          case ConnectorCategory.Ats:
             break;
 
-          case ProviderVertical.Accounting:
+          case ConnectorCategory.Accounting:
             this.accountingConnectionsService.handleAccountingTokensRefresh(
               connection.id_connection,
               connection.provider_slug,
@@ -66,13 +66,13 @@ export class TasksService implements OnModuleInit {
             );
             break;
 
-          case ProviderVertical.FileStorage:
+          case ConnectorCategory.FileStorage:
             break;
 
-          case ProviderVertical.HRIS:
+          case ConnectorCategory.Hris:
             break;
 
-          case ProviderVertical.MarketingAutomation:
+          case ConnectorCategory.MarketingAutomation:
             this.marketingAutomationConnectionsService.handleMarketingAutomationTokensRefresh(
               connection.id_connection,
               connection.provider_slug,
@@ -82,7 +82,7 @@ export class TasksService implements OnModuleInit {
             );
             break;
 
-          case ProviderVertical.Ticketing:
+          case ConnectorCategory.Ticketing:
             this.ticketingConnectionsService.handleTicketingTokensRefresh(
               connection.id_connection,
               connection.provider_slug,
@@ -92,7 +92,6 @@ export class TasksService implements OnModuleInit {
             );
             break;
         }
-
       }
     }
   }

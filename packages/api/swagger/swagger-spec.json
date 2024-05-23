@@ -515,6 +515,31 @@
         ]
       }
     },
+    "/linked-users/batch": {
+      "post": {
+        "operationId": "addBatchLinkedUsers",
+        "summary": "Add Batch Linked Users",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBatchLinkedUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
     "/linked-users/single": {
       "get": {
         "operationId": "getLinkedUser",
@@ -4249,6 +4274,75 @@
         ]
       }
     },
+    "/project-connectors": {
+      "post": {
+        "operationId": "updateConnectorsToProject",
+        "summary": "Update Connectors for a project",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectConnectorsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "project-connectors"
+        ]
+      },
+      "get": {
+        "operationId": "getConnectorsFromProject",
+        "summary": "Retrieve connectors by Project Id",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "getConnectorsFromProject",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "project-connectors"
+        ]
+      }
+    },
+    "/project-connectors/create": {
+      "post": {
+        "operationId": "ProjectConnectorsController_createConnectorsToProject",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "project-connectors"
+        ]
+      }
+    },
     "/ticketing/attachments": {
       "get": {
         "operationId": "getAttachments",
@@ -4722,6 +4816,28 @@
         },
         "required": [
           "linked_user_origin_id",
+          "alias",
+          "id_project"
+        ]
+      },
+      "CreateBatchLinkedUserDto": {
+        "type": "object",
+        "properties": {
+          "linked_user_origin_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "alias": {
+            "type": "string"
+          },
+          "id_project": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "linked_user_origin_ids",
           "alias",
           "id_project"
         ]
@@ -6204,6 +6320,21 @@
           "name",
           "description",
           "field_mappings"
+        ]
+      },
+      "ProjectConnectorsDto": {
+        "type": "object",
+        "properties": {
+          "column": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "column",
+          "status"
         ]
       },
       "UnifiedAttachmentInput": {

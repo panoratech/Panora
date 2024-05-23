@@ -4,7 +4,7 @@ import { desunifyCrm } from '@crm/@lib/@unification';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { desunifyTicketing } from '@ticketing/@lib/@unification';
 import { DesunifyReturnType } from '../types/desunify.input';
-import { ProviderVertical } from '@panora/shared';
+import { ConnectorCategory } from '@panora/shared';
 
 /* to insert data
 
@@ -30,7 +30,7 @@ export async function desunify<T extends Unified>({
 }): Promise<DesunifyReturnType> {
   let targetType_;
   switch (vertical.toLowerCase()) {
-    case ProviderVertical.CRM:
+    case ConnectorCategory.Crm:
       targetType_ = targetType as CrmObject;
       return desunifyCrm({
         sourceObject,
@@ -38,17 +38,17 @@ export async function desunify<T extends Unified>({
         providerName,
         customFieldMappings,
       });
-    case ProviderVertical.ATS:
+    case ConnectorCategory.Ats:
       break;
-    case ProviderVertical.Accounting:
+    case ConnectorCategory.Accounting:
       break;
-    case ProviderVertical.FileStorage:
+    case ConnectorCategory.FileStorage:
       break;
-    case ProviderVertical.HRIS:
+    case ConnectorCategory.Hris:
       break;
-    case ProviderVertical.MarketingAutomation:
+    case ConnectorCategory.MarketingAutomation:
       break;
-    case ProviderVertical.Ticketing:
+    case ConnectorCategory.Ticketing:
       targetType_ = targetType as TicketingObject;
       return desunifyTicketing({
         sourceObject,

@@ -1,6 +1,5 @@
 import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from "sonner"
 import Cookies from 'js-cookie';
 
 interface IWebhookUpdateDto {
@@ -24,18 +23,25 @@ const useUpdateWebhookStatus = () => {
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: update,
-        onError: (error) => {
-            toast("Webhook endpoint update has failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-    });
+
+    const updateWebhookPromise = (data: IWebhookUpdateDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await update(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    return {
+        mutate: useMutation({
+            mutationFn: update,
+        }),
+        updateWebhookPromise,
+    };
 };
 
 export default useUpdateWebhookStatus;

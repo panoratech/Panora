@@ -1,14 +1,11 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
 interface ILinkedUserDto {
     linked_user_origin_id: string;
     alias: string;
     id_project: string;
 }
-const useCreateLinkedUser = () => {
-    const queryClient = useQueryClient();
-    
+const useCreateLinkedUser = () => {    
     const add = async (linkedUserData: ILinkedUserDto) => {
         const response = await fetch(`${config.API_URL}/linked-users`, {
             method: 'POST',
@@ -24,41 +21,23 @@ const useCreateLinkedUser = () => {
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: add,
-        onMutate: () => {
-            toast("Linked user is being created !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onError: (error) => {
-            toast("The creation of linked user has failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSuccess: (data) => {
-            queryClient.setQueryData<ILinkedUserDto[]>(['linked-users'], (oldQueryData = []) => {
-                return [...oldQueryData, data];
-            });
-            toast("New linked user has been created !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+    const createLinkedUserPromise = (data: ILinkedUserDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await add(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    return {
+        mutationFn: useMutation({
+            mutationFn: add,
+        }),
+        createLinkedUserPromise
+    };
 };
 
 export default useCreateLinkedUser;

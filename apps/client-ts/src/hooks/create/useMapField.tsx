@@ -1,6 +1,5 @@
 import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from "sonner"
 import Cookies from 'js-cookie';
 
 interface IMapTargetFieldDto {
@@ -27,39 +26,23 @@ const useMapField = () => {
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: map,
-        onMutate: () => {
-            toast("Field is being mapped !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onError: (error) => {
-            toast("Field mapping failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-            
-        },
-        onSuccess: () => {
-            toast("Field has been mapped !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+    const mapMappingPromise = (data: IMapTargetFieldDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await map(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    return {
+        mutationFn: useMutation({
+            mutationFn: map,
+        }),
+        mapMappingPromise
+    }
 };
 
 export default useMapField;

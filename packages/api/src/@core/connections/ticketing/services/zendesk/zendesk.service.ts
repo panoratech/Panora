@@ -12,7 +12,7 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy, providersConfig } from '@panora/shared';
+import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
@@ -83,7 +83,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       const connection_token = uuidv4();
       const BASE_API_URL =
         CREDENTIALS.SUBDOMAIN +
-        providersConfig['ticketing']['zendesk'].urls.apiUrl;
+        CONNECTORS_METADATA['ticketing']['zendesk'].urls.apiUrl;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({

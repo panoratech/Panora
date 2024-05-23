@@ -1,15 +1,15 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
-interface IApiKeyDto {
+export interface IApiKeyDto {
     projectId: string;
     userId: string;
     keyName?: string;
 }
+
+// Adjusted useCreateApiKey hook to include a promise-returning function
 const useCreateApiKey = () => {
-    const queryClient = useQueryClient();
     const addApiKey = async (data: IApiKeyDto) => {
         const response = await fetch(`${config.API_URL}/auth/generate-apikey`, {
             method: 'POST',
@@ -26,41 +26,26 @@ const useCreateApiKey = () => {
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: addApiKey,
-        onMutate: () => {
-            toast("Api key is being generated !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onError: (error) => {
-            toast("Api key generation failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSuccess: (data) => {
-            queryClient.setQueryData<IApiKeyDto[]>(['api-keys'], (oldQueryData = []) => {
-                return [...oldQueryData, data];
-            });
-            toast("Api key has been generated !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+
+    // Expose a promise-returning function alongside mutate
+    const createApiKeyPromise = (data: IApiKeyDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await addApiKey(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    return {
+        mutate: useMutation({
+            mutationFn: addApiKey,
+        }),
+        createApiKeyPromise,
+    };
 };
 
 export default useCreateApiKey;

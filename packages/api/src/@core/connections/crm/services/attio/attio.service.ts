@@ -14,7 +14,7 @@ import { ServiceRegistry } from '../registry.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   OAuth2AuthData,
-  providersConfig,
+  CONNECTORS_METADATA,
   providerToType,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
@@ -108,7 +108,7 @@ export class AttioConnectionService implements ICrmConnectionService {
             provider_slug: 'attio',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: providersConfig['crm']['attio'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['attio'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

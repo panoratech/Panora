@@ -1,8 +1,5 @@
 import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from "sonner"
-import useProfileStore from '@/state/profileStore';
-import Cookies from 'js-cookie';
 
 type IUserDto = {
   id_user: string;
@@ -23,9 +20,6 @@ interface ILoginOutputDto {
 }
 
 const useCreateLogin = () => {
-
-    const {setProfile} = useProfileStore()
-
     const add = async (userData: ILoginInputDto) => {
         // Fetch the token
         const response = await fetch(`${config.API_URL}/auth/login`, {
@@ -42,40 +36,23 @@ const useCreateLogin = () => {
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: add,
-        onMutate: () => {
-            // toast("Logging the user !", {
-            //     description: "",
-            //     action: {
-            //       label: "Close",
-            //       onClick: () => console.log("Close"),
-            //     },
-            // })
-        },
-        onError: (error) => {
-            toast.error("User generation failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSuccess: (data : ILoginOutputDto) => {
-            setProfile(data.user);
-            Cookies.set('access_token',data.access_token,{expires:1});
-            toast.success("User has been generated !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+    const loginPromise = (data: ILoginInputDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await add(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    return {
+        mutationFn: useMutation({
+            mutationFn: add,
+        }),
+        loginPromise
+    }
 };
 
 export default useCreateLogin;
