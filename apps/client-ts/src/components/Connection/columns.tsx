@@ -14,7 +14,12 @@ const connectionTokenComponent = ({row}:{row:any}) => {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(row.getValue("connectionToken"));
-      toast("Connection Token copied to clipboard!!")
+      toast.success("Connection token copied", {
+        action: {
+          label: "Close",
+          onClick: () => console.log("Close"),
+        },
+      })
     } catch (err) {
       console.error('Failed to copy: ', err);
     }
@@ -24,7 +29,6 @@ const connectionTokenComponent = ({row}:{row:any}) => {
     <div className="flex items-center">
         <Badge variant="outline">{truncateMiddle(row.getValue("connectionToken"),6)}   
         <ClipboardIcon onClick={handleCopy} className="mx-2"/>
-
         </Badge>
     </div>
   )

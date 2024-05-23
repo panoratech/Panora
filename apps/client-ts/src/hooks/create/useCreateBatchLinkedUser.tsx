@@ -1,13 +1,14 @@
 import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
+
 interface ILinkedUserDto {
-    linked_user_origin_id: string;
+    linked_user_origin_ids: string[];
     alias: string;
     id_project: string;
 }
-const useCreateLinkedUser = () => {    
+const useCreateBatchLinkedUser = () => {    
     const add = async (linkedUserData: ILinkedUserDto) => {
-        const response = await fetch(`${config.API_URL}/linked-users`, {
+        const response = await fetch(`${config.API_URL}/linked-users/batch`, {
             method: 'POST',
             body: JSON.stringify(linkedUserData),
             headers: {
@@ -16,12 +17,12 @@ const useCreateLinkedUser = () => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to add linked user');
+            throw new Error('Failed to batch add linked user');
         }
         
         return response.json();
     };
-    const createLinkedUserPromise = (data: ILinkedUserDto) => {
+    const createBatchLinkedUserPromise = (data: ILinkedUserDto) => {
         return new Promise(async (resolve, reject) => {
             try {
                 const result = await add(data);
@@ -36,8 +37,8 @@ const useCreateLinkedUser = () => {
         mutationFn: useMutation({
             mutationFn: add,
         }),
-        createLinkedUserPromise
+        createBatchLinkedUserPromise
     };
 };
 
-export default useCreateLinkedUser;
+export default useCreateBatchLinkedUser;

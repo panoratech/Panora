@@ -1,6 +1,5 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
 interface IWebhookDto {
@@ -10,7 +9,6 @@ interface IWebhookDto {
     scope: string[];
 }
 const useCreateWebhook = () => {
-    const queryClient = useQueryClient();
     const add = async (data: IWebhookDto) => {
         const response = await fetch(`${config.API_URL}/webhook`, {
             method: 'POST',
@@ -27,41 +25,25 @@ const useCreateWebhook = () => {
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: add,
-        onMutate: () => {
-            /*toast("Webhook endpoint has been created !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onError: (error) => {
-            /*toast("Webhook endpoint creation has failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onSuccess: (data) => {
-            queryClient.setQueryData<IWebhookDto[]>(['webhooks'], (oldQueryData = []) => {
-                return [...oldQueryData, data];
-            });            
-            toast("Webhook created ! ", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+
+    const createWebhookPromise = (data: IWebhookDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await add(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    return {
+        mutationFn: useMutation({
+            mutationFn: add,
+        }),
+        createWebhookPromise
+    }
 };
 
 export default useCreateWebhook;

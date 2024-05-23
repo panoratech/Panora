@@ -515,6 +515,31 @@
         ]
       }
     },
+    "/linked-users/batch": {
+      "post": {
+        "operationId": "addBatchLinkedUsers",
+        "summary": "Add Batch Linked Users",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBatchLinkedUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
     "/linked-users/single": {
       "get": {
         "operationId": "getLinkedUser",
@@ -4791,6 +4816,28 @@
         },
         "required": [
           "linked_user_origin_id",
+          "alias",
+          "id_project"
+        ]
+      },
+      "CreateBatchLinkedUserDto": {
+        "type": "object",
+        "properties": {
+          "linked_user_origin_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "alias": {
+            "type": "string"
+          },
+          "id_project": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "linked_user_origin_ids",
           "alias",
           "id_project"
         ]

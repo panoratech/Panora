@@ -1,6 +1,5 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
 interface IProDto {
@@ -8,9 +7,7 @@ interface IProDto {
     id_user: string; 
 }
 
-const useCreateProject = () => {
-    const queryClient = useQueryClient();
-    
+const useCreateProject = () => {    
     const add = async (data: IProDto) => {
         const response = await fetch(`${config.API_URL}/projects`, {
             method: 'POST',
@@ -27,41 +24,23 @@ const useCreateProject = () => {
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: add,
-        onMutate: () => {
-            /*toast("Project is being created !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onError: (error) => {
-            /*toast("Project creation has failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onSuccess: (data) => {
-                queryClient.setQueryData<IProDto[]>(['projects'], (oldQueryData = []) => {
-                return [...oldQueryData, data];
-            });
-            toast("Project created !", {
-                description: "",
-                action: {
-                    label: "Close",
-                    onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+    const createProjectsPromise = (data: IProDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await add(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    return {
+        mutationFn: useMutation({
+            mutationFn: add,
+        }),
+        createProjectsPromise
+    }
 };
 
 export default useCreateProject;

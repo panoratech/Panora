@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateLinkedUserDto } from './dto/create-linked-user.dto';
+import {
+  CreateBatchLinkedUserDto,
+  CreateLinkedUserDto,
+} from './dto/create-linked-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -53,6 +56,27 @@ export class LinkedUsersService {
           id_project: id_project,
         },
       });
+      return res;
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+  async addBatchLinkedUsers(data: CreateBatchLinkedUserDto) {
+    try {
+      const { linked_user_origin_ids, alias, id_project } = data;
+
+      const linkedUsersData = linked_user_origin_ids.map((id) => ({
+        id_linked_user: uuidv4(), // Ensure each user gets a unique ID
+        linked_user_origin_id: id,
+        alias,
+        id_project,
+      }));
+
+      const res = await this.prisma.linked_users.createMany({
+        data: linkedUsersData,
+        skipDuplicates: true, // Optional: skip entries if they already exist
+      });
+
       return res;
     } catch (error) {
       handleServiceError(error, this.logger);

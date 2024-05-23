@@ -1,6 +1,5 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
 interface IDefineTargetFieldDto{
@@ -11,8 +10,6 @@ interface IDefineTargetFieldDto{
 }
 
 const useDefineField = () => {
-    const queryClient = useQueryClient()
-
     const define = async (data: IDefineTargetFieldDto) => {
         const response = await fetch(`${config.API_URL}/field-mappings/define`, {
             method: 'POST',
@@ -29,41 +26,24 @@ const useDefineField = () => {
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: define,
-        onMutate: () => {
-            /*toast("Field mapping is being defined !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onError: (error) => {
-            /*toast("Field mapping definition failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onSuccess: (data) => {
-            queryClient.setQueryData<IDefineTargetFieldDto[]>(['mappings'], (oldQueryData = []) => {
-                return [...oldQueryData, data];
-            });
-            toast("Custom field defined !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+
+    const defineMappingPromise = (data: IDefineTargetFieldDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await define(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    return {
+        mutationFn: useMutation({
+            mutationFn: define,
+        }),
+        defineMappingPromise
+    }
 };
 
 export default useDefineField;

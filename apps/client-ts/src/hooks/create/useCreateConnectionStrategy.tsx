@@ -1,6 +1,5 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
 interface IConnectionStrategyDto {
@@ -9,17 +8,7 @@ interface IConnectionStrategyDto {
     values: string[],
 }
 
-interface IFetchConnectionStrategyDto {
-    id_cs: string,
-    type: string,
-    attributes: string[],
-    values: string[],
-}
-
-
-const useCreateConnectionStrategy = () => {
-    const queryClient = useQueryClient();
-    
+const useCreateConnectionStrategy = () => {    
     const add = async (connectionStrategyData: IConnectionStrategyDto) => {
         const response = await fetch(`${config.API_URL}/connections-strategies/create`, {
             method: 'POST',
@@ -30,49 +19,32 @@ const useCreateConnectionStrategy = () => {
             },
         });
 
-        // console.log(response.status)
-        
         if (!response.ok) {
             throw new Error('Failed to add Connection Strategy');
         }
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: add,
-        onMutate: () => {
-            /*toast("Connection Strategy is being created !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onError: (error) => {
-            /*toast("The creation of Connection Strategy has failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onSuccess: (data) => {
-            queryClient.setQueryData<IFetchConnectionStrategyDto[]>(['connection-strategies'], (oldQueryData = []) => {
-                return [...oldQueryData, data];
-            });
-            toast("Changes saved !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+
+     // Expose a promise-returning function alongside mutate
+     const createCsPromise = (data: IConnectionStrategyDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await add(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    return {
+        mutationFn: useMutation({
+            mutationFn: add,
+        }),
+        createCsPromise
+    };
 };
 
 export default useCreateConnectionStrategy;

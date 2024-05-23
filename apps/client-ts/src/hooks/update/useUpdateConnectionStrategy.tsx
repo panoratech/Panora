@@ -1,9 +1,6 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
-import { connection_strategies as ConnectionStrategies } from 'api';
+import { useMutation } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
-
 interface IUpdateConnectionStrategyDto {
     id_cs?: string
     updateToggle: boolean,
@@ -15,9 +12,7 @@ interface IUpdateConnectionStrategyDto {
 }
 
 
-const useUpdateConnectionStrategy = () => {
-    const queryClient = useQueryClient();
-    
+const useUpdateConnectionStrategy = () => {    
     const update = async (connectionStrategyData: IUpdateConnectionStrategyDto) => {
         if(connectionStrategyData.updateToggle) {
             console.log(connectionStrategyData.id_cs)
@@ -57,41 +52,25 @@ const useUpdateConnectionStrategy = () => {
         }
         
     };
-    return useMutation({
-        mutationFn: update,
-        onMutate: () => {
-            /*toast("Connection Strategy is being updated !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onError: (error) => {
-            /*toast("The updating of Connection Strategy has failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onSuccess: (data : ConnectionStrategies) => {
-            queryClient.setQueryData<ConnectionStrategies[]>(['connection-strategies'], (oldQueryData = []) => {
-                return oldQueryData.map((CS) => CS.id_connection_strategy === data.id_connection_strategy ? data : CS)
-            });
-            toast("Changes saved !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+
+    const updateCsPromise = (data: IUpdateConnectionStrategyDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await update(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    return {
+        mutate: useMutation({
+            mutationFn: update,
+        }),
+        updateCsPromise,
+    };
+
 };
 
 export default useUpdateConnectionStrategy;

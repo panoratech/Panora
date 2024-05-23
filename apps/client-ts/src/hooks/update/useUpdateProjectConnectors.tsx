@@ -1,6 +1,5 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
 interface IUpdateProjectConnectorsDto {
@@ -8,9 +7,7 @@ interface IUpdateProjectConnectorsDto {
     status: boolean;
 }
 
-const useUpdateProjectConnectors = () => {
-    const queryClient = useQueryClient();
-    
+const useUpdateProjectConnectors = () => {    
     const update = async (data: IUpdateProjectConnectorsDto) => {
         const response = await fetch(`${config.API_URL}/project-connectors`, {
             method: 'POST',
@@ -28,38 +25,25 @@ const useUpdateProjectConnectors = () => {
         return response.json();
         
     };
-    return useMutation({
-        mutationFn: update,
-        onMutate: () => {
-            /*toast("Catalog option is being updated !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onError: (error) => {
-            /*toast("The updating of Connection Strategy has failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onSuccess: () => {
-            toast("Changes saved !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+
+    const updateProjectConnectorPromise = (data: IUpdateProjectConnectorsDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await update(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    return {
+        mutate: useMutation({
+            mutationFn: update,
+        }),
+        updateProjectConnectorPromise,
+    };
 };
 
 export default useUpdateProjectConnectors;

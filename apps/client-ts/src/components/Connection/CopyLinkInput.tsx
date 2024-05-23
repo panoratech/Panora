@@ -6,6 +6,7 @@ import useMagicLinkStore from '@/state/magicLinkStore';
 import config from '@/lib/config';
 import { useState } from 'react';
 import { LoadingSpinner } from './LoadingSpinner';
+import { toast } from 'sonner';
 
 const CopyLinkInput = () => {
   const [copied, setCopied] = useState(false);
@@ -15,6 +16,12 @@ const CopyLinkInput = () => {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(`${config.MAGIC_LINK_DOMAIN}/?uniqueLink=${uniqueLink}`);
+      toast.success("Magic link copied", {
+        action: {
+          label: "Close",
+          onClick: () => console.log("Close"),
+        },
+      })
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset copied state after 2 seconds
     } catch (err) {

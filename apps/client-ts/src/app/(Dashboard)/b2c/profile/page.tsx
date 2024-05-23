@@ -16,6 +16,7 @@ import useProfileStore from "@/state/profileStore";
 import useProjectStore from "@/state/projectStore"
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from "react";
+import { toast } from "sonner";
 
 
 const Profile = () => {
@@ -30,6 +31,12 @@ const Profile = () => {
         try {
           await navigator.clipboard.writeText(email)
           setCopied(true);
+          toast.success("Email copied", {
+            action: {
+              label: "Close",
+              onClick: () => console.log("Close"),
+            },
+          })
           setTimeout(() => setCopied(false), 2000); // Reset copied state after 2 seconds
         } catch (err) {
           console.error('Failed to copy: ', err);

@@ -18,7 +18,6 @@ import FieldMappingsTable from "@/components/Configuration/FieldMappings/FieldMa
 import AddLinkedAccount from "@/components/Configuration/LinkedUsers/AddLinkedAccount";
 import useLinkedUsers from "@/hooks/get/useLinkedUsers";
 import useFieldMappings from "@/hooks/get/useFieldMappings";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import AddWebhook from "@/components/Configuration/Webhooks/AddWebhook";
 import { WebhooksPage } from "@/components/Configuration/Webhooks/WebhooksPage";
@@ -33,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { CatalogWidget } from "@/components/Configuration/Catalog/CatalogWidget";
 import { CopySnippet } from "@/components/Configuration/Catalog/CopySnippet";
+import {Button as Button2} from "@/components/ui/button2"
 
 export default function Page() {
 
@@ -191,8 +191,10 @@ export default function Page() {
                       </TooltipProvider>                
                     </CardTitle>
                     <CardDescription className="text-left flex flex-row items-center">
-                      You built {mappings ? mappings.length : <LoadingSpinner className="w-4 mr-2"/>} fields mappings.
+                      You built {mappings ? mappings.length : <LoadingSpinner className="w-4 mr-1"/>} fields mappings.
+                      <Button2 variant="linkHover2">
                         <a href="https://docs.panora.dev/core-concepts/custom-fields" className="font-bold" target="_blank" rel="noopener noreferrer"> Learn more about custom field mappings in our docs !</a>
+                      </Button2>
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>
@@ -210,8 +212,10 @@ export default function Page() {
                   <CardHeader>
                     <CardTitle className="text-left">Your Webhooks</CardTitle>
                     <CardDescription className="text-left flex flex-row items-center">
-                      You enabled {webhooks ? webhooks.length : <LoadingSpinner className="w-4 mr-2"/>} webhooks.
-                      <a href="https://docs.panora.dev/webhooks/overview" target="_blank" rel="noopener noreferrer"><strong> Read more about webhooks from our documentation</strong></a>
+                      You enabled {webhooks ? webhooks.length : <LoadingSpinner className="w-4 mr-1"/>} webhooks.
+                      <Button2 variant="linkHover2">
+                        <a href="https://docs.panora.dev/webhooks/overview" target="_blank" rel="noopener noreferrer"><strong> Read more about webhooks from our documentation</strong></a>
+                      </Button2>
                     </CardDescription>
                   </CardHeader>
                   <Separator className="mb-10"/>

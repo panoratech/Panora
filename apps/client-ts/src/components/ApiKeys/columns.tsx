@@ -9,6 +9,8 @@ import { PasswordInput } from "../ui/password-input"
 import { useState } from "react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import { Button } from "../ui/button"
+import { toast } from "sonner"
+import { Card } from "antd"
 
 export function useColumns() {
   const [copiedState, setCopiedState] = useState<{ [key: string]: boolean }>({});
@@ -19,6 +21,12 @@ export function useColumns() {
       ...prevState,
       [token]: true,
     }));
+    toast.success("Api key copied", {
+      action: {
+        label: "Close",
+        onClick: () => console.log("Close"),
+      },
+    })
     setTimeout(() => {
       setCopiedState((prevState) => ({
         ...prevState,

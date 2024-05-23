@@ -9,7 +9,10 @@ import {
 } from '@nestjs/common';
 import { LinkedUsersService } from './linked-users.service';
 import { LoggerService } from '../logger/logger.service';
-import { CreateLinkedUserDto } from './dto/create-linked-user.dto';
+import {
+  CreateBatchLinkedUserDto,
+  CreateLinkedUserDto,
+} from './dto/create-linked-user.dto';
 import {
   ApiBody,
   ApiOperation,
@@ -36,6 +39,18 @@ export class LinkedUsersController {
   @Post()
   addLinkedUser(@Body() linkedUserCreateDto: CreateLinkedUserDto) {
     return this.linkedUsersService.addLinkedUser(linkedUserCreateDto);
+  }
+
+  @ApiOperation({
+    operationId: 'addBatchLinkedUsers',
+    summary: 'Add Batch Linked Users',
+  })
+  @ApiBody({ type: CreateBatchLinkedUserDto })
+  @ApiResponse({ status: 201 })
+  //@UseGuards(JwtAuthGuard)
+  @Post('batch')
+  addBatchLinkedUsers(@Body() data: CreateBatchLinkedUserDto) {
+    return this.linkedUsersService.addBatchLinkedUsers(data);
   }
 
   @ApiOperation({

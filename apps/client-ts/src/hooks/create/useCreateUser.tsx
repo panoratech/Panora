@@ -1,6 +1,5 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
 
 interface IUserDto {
     first_name: string,
@@ -11,7 +10,6 @@ interface IUserDto {
     id_organisation?: string,
 }
 const useCreateUser = () => {
-
     const add = async (userData: IUserDto) => {
         // Fetch the token
         const response = await fetch(`${config.API_URL}/auth/register`, {
@@ -28,39 +26,24 @@ const useCreateUser = () => {
 
         return response.json();
     };
-    return useMutation({
-        mutationFn: add,
-        onMutate: () => {
-            /*toast("User is being created !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onError: (error) => {
-            /*toast("User generation failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onSuccess: (data) => {
-            
-            toast("User created !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+    const createUserPromise = (data: IUserDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await add(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    return {
+        mutationFn: useMutation({
+            mutationFn: add,
+        }),
+        createUserPromise
+    }
+
 };
 
 export default useCreateUser;

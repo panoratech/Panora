@@ -1,6 +1,5 @@
 import config from '@/lib/config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
 
 interface IProfileDto {
     first_name: string;
@@ -11,9 +10,7 @@ interface IProfileDto {
     id_organization?: string
 }
 
-const useCreateProfile = () => {
-    const queryClient = useQueryClient();
-    
+const useCreateProfile = () => {    
     const add = async (data: IProfileDto) => {
         const response = await fetch(`${config.API_URL}/auth/users/create`, {
             method: 'POST',
@@ -29,45 +26,32 @@ const useCreateProfile = () => {
         
         return response.json();
     };
-    return useMutation({
-        mutationFn: add,
-        onMutate: () => {
-            /*toast("Profile is being created !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onError: (error) => {
-            /*toast("Profile creation has failed !", {
-                description: error as any,
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })*/
-        },
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({
+    const createProfilePromise = (data: IProfileDto) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await add(data);
+                resolve(result);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    return {
+        mutationFn: useMutation({
+            mutationFn: add,
+        }),
+        createProfilePromise
+        /*
+        queryClient.invalidateQueries({
                 queryKey: ['profiles'],
                 refetchType: 'active',
             })
             queryClient.setQueryData<IProfileDto[]>(['profiles'], (oldQueryData = []) => {
                 return [...oldQueryData, data];
             });
-            toast("Profile created !", {
-                description: "",
-                action: {
-                  label: "Close",
-                  onClick: () => console.log("Close"),
-                },
-            })
-        },
-        onSettled: () => {
-        },
-    });
+        */
+    };
 };
 
 export default useCreateProfile;

@@ -12,6 +12,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Copy } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const CopySnippet = () => {
     const [open,setOpen] = useState(false);
@@ -30,6 +31,12 @@ export const CopySnippet = () => {
             linkedUserId={'b860d6c1-28f9-485c-86cd-fb09e60f10a2'}
             </DynamicCatalog>`
         );
+        toast.success("Code snippet copied", {
+            action: {
+              label: "Close",
+              onClick: () => console.log("Close"),
+            },
+          })
         setCopiedLeft(true);
         setTimeout(() => {
             setCopiedLeft(false);
@@ -46,6 +53,12 @@ export const CopySnippet = () => {
             linkedUserId={'b860d6c1-28f9-485c-86cd-fb09e60f10a2'}
             </PanoraProviderCard>`
         );
+        toast.success("Code snippet copied", {
+            action: {
+              label: "Close",
+              onClick: () => console.log("Close"),
+            },
+          })
         setCopiedRight(true);
         setTimeout(() => {
             setCopiedRight(false);
