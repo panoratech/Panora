@@ -21,7 +21,7 @@ In this video we define a field and then once a connection is available we fetch
   ></video>
 </Frame>
 
-## Create a custom field mapping using the our UI dashboard
+## Create a custom field mapping using our UI dashboard
 
 <Steps>
 
@@ -48,6 +48,25 @@ You will now find all the fields your user has in its software. Pick the one tha
 </Steps>
 
 ## Create a custom field mapping using our API
+
+The following example creates a custom field mapping in two steps (**define and map**) where we map a remote field called `hair_color_hubspot_123_id` (existing in the `Husbpot` provider) and mapping it to the `crm.contact` unified model of Panora under the name of `hair_color`.
+
+ ```shell Create custom field
+        curl --request POST \
+             --url https://api.panora.dev/field-mappings \
+             --header 'Authorization: Bearer <MY_API_KEY>' \
+             --header 'Content-Type: application/json' \
+             --data '{
+                "object_type_owner": "crm.contact",
+                "name": "hair_color",
+                "description": "My hair_color field mapping",
+                "data_type": "text",
+                "source_custom_field_id": "hair_color_hubspot_123_id",  # id of the remote field inside the remote provider
+                "source_provider": "hubspot",
+                "linked_user_id": "acme_customer_a"
+             }'
+        ```
+<Info>You may want to define it in two steps if you miss some information to map in the 1st step.</Info>
 
 The following example creates a custom field mapping in two steps (**define and map**) where we map a remote field called `hair_color_hubspot_123_id` (existing in the `Husbpot` provider) and mapping it to the `crm.contact` unified model of Panora under the name of `hair_color`.
 
