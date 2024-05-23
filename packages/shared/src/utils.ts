@@ -149,19 +149,19 @@ export const ALL_PROVIDERS: { vertical: string, value: string }[] = mergeAllProv
 export function slugFromCategory(category: ConnectorCategory) {
   switch(category) {
     case ConnectorCategory.Crm:
-      return "crm";
+      return 'crm';
     case ConnectorCategory.Hris:
-      return "hris";
+      return 'hris';
     case ConnectorCategory.Ats:
-      return "ats";
+      return 'ats';
     case ConnectorCategory.Ticketing:
-      return "tcg";
+      return 'tcg';
     case ConnectorCategory.MarketingAutomation:
-      return "mktg";
+      return 'mktg';
     case ConnectorCategory.FileStorage:
-      return "fstg";
+      return 'fstg';
     case ConnectorCategory.Accounting:
-      return "actng";
+      return 'actng';
     default: 
       return null;
   }
@@ -169,19 +169,19 @@ export function slugFromCategory(category: ConnectorCategory) {
 
 export function categoryFromSlug(slug: string): ConnectorCategory | null {
   switch (slug) {
-    case "crm":
+    case 'crm':
       return ConnectorCategory.Crm;
-    case "hris":
+    case 'hris':
       return ConnectorCategory.Hris;
-    case "ats":
+    case 'ats':
       return ConnectorCategory.Ats;
-    case "tcg":
+    case 'tcg':
       return ConnectorCategory.Ticketing;
-    case "mktg":
+    case 'mktg':
       return ConnectorCategory.MarketingAutomation;
-    case "fstg":
+    case 'fstg':
       return ConnectorCategory.FileStorage;
-    case "actng":
+    case 'actng':
       return ConnectorCategory.Accounting;
     default:
       return null;

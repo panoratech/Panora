@@ -1,7 +1,7 @@
 // If authBaseUrl or apiUrl both start with / it means a subdomain is likely needed
 // If authBaseUrl is blank then it must be manually built in the client given the provider (meaning its not deterministic)
 
-import { AuthStrategy, ProvidersConfig } from "../types";
+import { AuthStrategy, ProvidersConfig } from '../types';
 
 export const CONNECTORS_METADATA: ProvidersConfig = {
     'crm': {
@@ -2086,4 +2086,5 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       },
     }
 };
+
   
