@@ -1,4 +1,3 @@
-
 -- ************************************** webhooks_reponses
 
 CREATE TABLE webhooks_reponses
@@ -12,9 +11,6 @@ CREATE TABLE webhooks_reponses
 
 
 COMMENT ON COLUMN webhooks_reponses.http_status_code IS 'anything that is not 2xx is failed, and leads to retry';
-
-
-
 
 
 -- ************************************** webhooks_payloads
@@ -318,6 +314,31 @@ CREATE TABLE crm_deals_stages
 
 
 
+-- ************************************** connector_sets
+
+CREATE TABLE connector_sets
+(
+ id_connector_set uuid NOT NULL,
+ crm_hubspot      boolean NOT NULL,
+ crm_freshsales   boolean NOT NULL,
+ crm_zoho         boolean NOT NULL,
+ crm_attio        boolean NOT NULL,
+ crm_pipedrive    boolean NOT NULL,
+ tcg_zendesk      boolean NOT NULL,
+ tcg_jira         boolean NOT NULL,
+ tcg_gorgias      boolean NOT NULL,
+ tcg_gitlab       boolean NOT NULL,
+ tcg_front        boolean NOT NULL,
+ CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
+);
+
+
+
+
+
+
+
+
 -- ************************************** connection_strategies
 
 CREATE TABLE connection_strategies
@@ -418,13 +439,15 @@ CREATE INDEX FK_tcg_contact_tcg_account_id ON tcg_contacts
 
 CREATE TABLE projects
 (
- id_project     uuid NOT NULL,
- name           text NOT NULL,
- sync_mode      text NOT NULL,
- pull_frequency bigint NULL,
- redirect_url   text NULL,
- id_user        uuid NOT NULL,
+ id_project            uuid NOT NULL,
+ name                  text NOT NULL,
+ sync_mode             text NOT NULL,
+ pull_frequency        bigint NULL,
+ redirect_url          text NULL,
+ id_user               uuid NOT NULL,
+ id_project_connectors uuid NOT NULL,
  CONSTRAINT PK_projects PRIMARY KEY ( id_project ),
+ CONSTRAINT FK_47_2 FOREIGN KEY ( id_project_connectors ) REFERENCES connector_sets ( id_connector_set ),
  CONSTRAINT FK_46_1 FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
 );
 
