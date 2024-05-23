@@ -1,4 +1,3 @@
-/* eslint-disable react/no-explicit-any */
 import { useQuery } from '@tanstack/react-query';
 import config from '@/helpers/config';
 
