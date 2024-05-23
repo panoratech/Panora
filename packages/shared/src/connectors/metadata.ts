@@ -2086,5 +2086,3 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       },
     }
 };
-
-  

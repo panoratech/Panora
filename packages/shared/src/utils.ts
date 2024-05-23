@@ -3,7 +3,6 @@ import { ACCOUNTING_PROVIDERS, ATS_PROVIDERS, CRM_PROVIDERS, FILESTORAGE_PROVIDE
 import { AuthStrategy, VerticalConfig } from './types';
 import { categoriesVerticals, ConnectorCategory } from './categories';
 
-
 export const randomString = () => {
   const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -13,7 +12,6 @@ export const randomString = () => {
   }
   return result;
 }
-
 
 function getActiveProvidersForVertical(vertical: string): VerticalConfig {
   const verticalConfig = CONNECTORS_METADATA[vertical.toLowerCase()];
