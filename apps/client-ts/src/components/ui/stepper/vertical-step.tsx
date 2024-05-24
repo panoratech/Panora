@@ -84,9 +84,7 @@ const VerticalStep = React.forwardRef<HTMLDivElement, VerticalStepProps>(
 
 		const renderChildren = () => {
 			if (!expandVerticalSteps) {
-				return (
-					{children}
-				);
+				return <></>;
 			}
 			return children;
 		};

@@ -92,7 +92,7 @@ const AddConnectionButton = ({
     },
   })
 
-  const onUserSelect = (value) => {
+  const onUserSelect = (value: string) => {
     if (value === 'Clear') {
       form.reset(); 
     } else {
