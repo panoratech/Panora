@@ -129,4 +129,6 @@ const StepIcon = React.forwardRef<HTMLDivElement, StepIconProps>(
 	},
 );
 
+StepIcon.displayName = 'StepIcon';
+
 export { StepIcon };

@@ -72,4 +72,7 @@ const Step = React.forwardRef<HTMLLIElement, StepProps>(
 	},
 );
 
+Step.displayName = 'Step';
+
+
 export { Step };
