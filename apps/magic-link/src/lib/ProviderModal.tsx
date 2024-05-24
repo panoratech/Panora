@@ -51,6 +51,7 @@ const ProviderModal = () => {
   const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState('');
 
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
+  //TODO; do that server side
   const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
   const {data: connectorsForProject} = useProjectConnectors(linkedUser?.id_project as string);
   
