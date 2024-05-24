@@ -46,6 +46,8 @@ import config from "@/lib/config"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 import useMagicLinkStore from "@/state/magicLinkStore"
+import useLinkedUsers from "@/hooks/get/useLinkedUsers"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 const formSchema = z.object({
   linkedUserIdentifier: z.string().min(2, {
@@ -80,6 +82,7 @@ const AddConnectionButton = ({
   const {nameOrg} = useOrganisationStore();
   const {idProject} = useProjectStore();
   const queryClient = useQueryClient();
+  const {data: linkedUsers} = useLinkedUsers();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -89,6 +92,15 @@ const AddConnectionButton = ({
     },
   })
 
+  const onUserSelect = (value) => {
+    if (value === 'Clear') {
+      form.reset(); 
+    } else {
+      form.setValue('linkedUserIdentifier', value);
+    }
+  };
+
+ 
   function onSubmit(values: z.infer<typeof formSchema>) {
     toast.promise(
       createMagicLinkPromise({ 
@@ -215,6 +227,38 @@ const AddConnectionButton = ({
           <div className="space-y-4 py-2 pb-4">
             {!showNewLinkedUserDialog.import ?
               ( <>
+                <div>
+                {linkedUsers && linkedUsers.length > 0 && (
+                        <FormField
+                        control={form.control}
+                        name="linkedUserIdentifier"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Select an Existing Linked User</FormLabel>
+                            <FormControl>
+                              <Select onValueChange={onUserSelect} defaultValue={field.value}>
+                                <SelectTrigger className="w-[180px]">
+                                  <SelectValue placeholder="Select an object" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                  <SelectItem key="clear_value" value="Clear">Clear</SelectItem>
+                                    {linkedUsers.map(user => (
+                                      <SelectItem key={user.id_linked_user} value={user.linked_user_origin_id}>{user.linked_user_origin_id}</SelectItem>
+                                    ))}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormDescription>
+                              Select from existing linked users or create a new identifier.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                  )}
+                </div>
                 <div className="space-y-2 items-center gap-4">
                     <FormField
                         control={form.control}

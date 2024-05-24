@@ -16,7 +16,7 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) =>{ 
       return (
         <div className="w-[80px]">
-          <Badge variant="outline">{row.getValue("method")}</Badge>
+          <Badge variant="outline" className="rounded-sm py-1 font-normal">{row.getValue("method")}</Badge>
         </div>
       )
     },
@@ -31,7 +31,7 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-         <Badge variant="outline">{row.getValue("url")}</Badge>       
+         <Badge variant="outline" className="rounded-sm py-1 font-normal">{row.getValue("url")}</Badge>       
         </div>
       )
     },
@@ -44,7 +44,7 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex w-[100px] items-center">
-          <Badge variant="outline">{row.getValue("status")}</Badge>     
+          <Badge variant="outline" className="rounded-sm py-1 font-normal">{row.getValue("status")}</Badge>     
         </div>
       )
     },
@@ -60,7 +60,7 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center">
-          <Badge variant="outline">{row.getValue("direction")}</Badge>
+          <Badge variant="outline" className="rounded-sm py-1 font-normal">{row.getValue("direction")}</Badge>
         </div>
       )
     },
@@ -78,7 +78,7 @@ export const columns: ColumnDef<Event>[] = [
 
       return (
         <div className="flex w-[100px] items-center">
-            <Badge variant={"outline"} className="p-1 pr-2">
+            <Badge variant={"outline"} className="rounded-sm py-1 pr-2 font-normal">
               <img src={getLogoURL(provider)} className="w-5 h-5 rounded-sm mr-2" 
               />
               {provider}
@@ -98,7 +98,7 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-          <Badge variant="outline">{formatISODate(row.getValue("date"))}</Badge>
+          <Badge variant="outline" className="rounded-sm py-1 font-normal">{formatISODate(row.getValue("date"))}</Badge>
         </div>
       )
     },

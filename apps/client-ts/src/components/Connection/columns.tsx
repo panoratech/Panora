@@ -9,6 +9,7 @@ import { ClipboardIcon } from '@radix-ui/react-icons'
 import { toast } from "sonner"
 import { getLogoURL } from "@panora/shared"
 import { formatISODate, truncateMiddle } from "@/lib/utils"
+import { Button } from "../ui/button"
 
 const connectionTokenComponent = ({row}:{row:any}) => {
   const handleCopy = async () => {
@@ -27,23 +28,14 @@ const connectionTokenComponent = ({row}:{row:any}) => {
 
   return (
     <div className="flex items-center">
-        <Badge variant="outline">{truncateMiddle(row.getValue("connectionToken"),6)}   
-        <ClipboardIcon onClick={handleCopy} className="mx-2"/>
+        <Badge variant="outline" className="rounded-sm py-1 font-normal">{truncateMiddle(row.getValue("connectionToken"),6)}   
+        <ClipboardIcon onClick={handleCopy} className=""/>
         </Badge>
     </div>
   )
 }
 
 export const columns: ColumnDef<Connection>[] = [
-  /*{
-    accessorKey: "organisation",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Organisation" />
-    ),
-    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{row.getValue("organisation") as string}</Badge></div>,
-    enableSorting: false,
-    enableHiding: false,
-  },*/
   {
     accessorKey: "app", 
     header: ({ column }) => (
@@ -53,9 +45,9 @@ export const columns: ColumnDef<Connection>[] = [
       const provider = (row.getValue("app") as string).toLowerCase();
       return (
         <div className="flex space-x-2">
-          <Badge variant={"outline"} className="p-1 pr-2">
+          <Badge variant={"outline"} className="rounded-sm pr-6 py-1 font-normal">
               <img src={getLogoURL(provider)} className="w-5 h-5 rounded-sm mr-2" 
-              />
+          />
               {provider}
           </Badge>
         </div>
@@ -73,7 +65,7 @@ export const columns: ColumnDef<Connection>[] = [
           {/*status.icon && (
             <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )*/}
-          <Badge variant="outline">{row.getValue("category")}</Badge>
+          <Badge variant="outline" className="rounded-sm py-1 font-normal">{row.getValue("category")}</Badge>
         </div>
       )
     },
@@ -86,7 +78,7 @@ export const columns: ColumnDef<Connection>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Vertical" />
     ),
-    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline">{row.getValue("vertical") as string}</Badge></div>,
+    cell: ({ row }) => <div className="w-[80px]"><Badge variant="outline" className="rounded-sm py-1 font-normal">{row.getValue("vertical") as string}</Badge></div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -106,7 +98,7 @@ export const columns: ColumnDef<Connection>[] = [
 
       return (
         <div className="flex items-center">
-          <Badge variant="outline">{row.getValue("status")}</Badge>
+          <Badge variant="outline" className="rounded-sm py-1 font-normal">{row.getValue("status")}</Badge>
         </div>
       )
     },
@@ -130,7 +122,7 @@ export const columns: ColumnDef<Connection>[] = [
 
       return (
         <div className="flex w-[100px] items-center">
-          <Badge variant="outline">{truncateMiddle(row.getValue("linkedUser"), 10)}</Badge>
+          <Badge variant="outline" className="rounded-sm py-1 font-normal">{truncateMiddle(row.getValue("linkedUser"), 10)}</Badge>
         </div>
       )
     },
@@ -148,7 +140,7 @@ export const columns: ColumnDef<Connection>[] = [
 
       return (
         <div className="flex">
-          <Badge variant="outline">{formatISODate(row.getValue("date"))}</Badge>
+          <Badge variant="outline" className="rounded-sm py-1 font-normal">{formatISODate(row.getValue("date"))}</Badge>
         </div>
       )
     },

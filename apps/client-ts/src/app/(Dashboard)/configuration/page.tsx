@@ -197,7 +197,7 @@ export default function Page() {
                       </Button2>
                     </CardDescription>
                   </CardHeader>
-                  <Separator className="mb-10"/>
+                  <Separator className="mb-7"/>
                   <CardContent>
                     <FieldMappingsTable mappings={mappingTs} isLoading={isFieldMappingsLoading} />
                   </CardContent>
