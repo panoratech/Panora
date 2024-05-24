@@ -47,6 +47,7 @@
     "next-themes": "^0.2.1",
     "posthog-js": "^1.96.1",
     "react": "^18",
+    "react-confetti-boom": "^1.0.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",

@@ -20,6 +20,7 @@ import {
 import { DefineForm } from "./defineForm";
 import { useState } from "react";
 import { MapForm } from "./mapForm";
+import StepperForm from "./Stepper/stepper-form";
 export interface Mapping {
   standard_object: string; 
   source_app: string; 
@@ -36,6 +37,8 @@ export default function FieldMappingsTable({
 }: { mappings: Mapping[] | undefined; isLoading: boolean }) {
   const [defineOpen, setDefineOpen] = useState(false);
   const [mapOpen, setMapOpen] = useState(false);
+  const [stepperClose, setStepperClose] = useState(true);
+
   const columns =  useColumns();
   const handleDefineClose = () => {
     setDefineOpen(false);
@@ -48,11 +51,34 @@ export default function FieldMappingsTable({
 
   const countDefined = mappings?.filter(mapping => mapping.status === "defined").length;
   const countMapped = mappings?.filter(mapping => mapping.status === "mapped").length;
+
+  const handleStepper = () => {
+    setStepperClose(false);
+  }
+  const handleStepperClose = () => {
+		setStepperClose(true); 
+	};
+
   if(isLoading){
     return <DataTableLoading data={[]} columns={columns}/>;
   }
+
   return (
     <>
+    {
+      stepperClose ? 
+        <Button 
+        size="sm" 
+        className="h-7 gap-1 mb-4" 
+        onClick={handleStepper}
+        >
+            <span className="flex flex-row justify-center sr-only sm:not-sr-only sm:whitespace-nowrap mx-4">
+            <PlusCircledIcon className="h-3.5 w-3.5 mt-[3px] mr-1" />
+            Add Field Mappings
+            </span>
+      </Button>
+      : <StepperForm setClose={handleStepperClose}/>
+    }
       <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
       <div className="flex items-center space-x-4 justify-between flex-row">
       <Card className="relative w-1/2">

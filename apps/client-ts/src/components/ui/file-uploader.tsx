@@ -96,7 +96,6 @@ export function FileUploader(props: FileUploaderProps) {
     onValueChange,
     onUpload,
     progresses,
-    accept = { "image/*": [] },
     maxSize = 1024 * 1024 * 2,
     maxFiles = 1,
     multiple = false,
@@ -186,7 +185,6 @@ export function FileUploader(props: FileUploaderProps) {
     <div className="relative flex flex-col gap-6 overflow-hidden">
       <Dropzone
         onDrop={onDrop}
-        accept={accept}
         maxSize={maxSize}
         maxFiles={maxFiles}
         multiple={maxFiles > 1 || multiple}
