@@ -1,5 +1,11 @@
 RELEASE 1.0.0
 
+## 1.3.0
+
+### Minor Changes
+
+- 04aec74: added updates
+
 ## 1.2.2
 
 ### Patch Changes
