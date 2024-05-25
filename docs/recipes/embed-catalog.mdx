@@ -22,19 +22,24 @@ icon: "square-terminal"
 
 #### Import a single connector card
 
+You must import both `@panora/shared` (which contains the types) and `@panora/embedded-card-react`. 
+
+Don't forget to import the styles as well `import "@panora/embedded-card-react/dist/index.css";`
+
 <CodeGroup>
     ```javascript React
     import "@panora/embedded-card-react/dist/index.css";
-    import PanoraProviderCard from "@panora/embedded-card-react";
+    import { PanoraProviderCard } from "@panora/embedded-card-react";
+    import { ConnectorCategory } from '@panora/shared'
 
     const MyPage = () => {
         return (
             <PanoraProviderCard
-                name={"hubspot"} # name of the provider
-                category={"crm"} # vertical where provider belongs to
-                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
-                returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
-                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
+                name={"hubspot"} // name of the provider
+                category={ConnectorCategory.Crm} // category where provider belongs to
+                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} // the project id tied to your organization
+                returnUrl={"https://acme.inc"} // the url you want to redirect users to after the connection flow is successful
+                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  // the linked id of the user if already created in Panora system or user's info in your system
             />
         )
     } 
@@ -44,15 +49,16 @@ icon: "square-terminal"
 <CodeGroup>
     ```javascript React
     import "@panora/embedded-card-react/dist/index.css";
-    import PanoraDynamicCatalog from "@panora/embedded-card-react";
+    import { PanoraDynamicCatalogCard } from "@panora/embedded-card-react";
+    import { ConnectorCategory } from '@panora/shared'
 
     const MyPage = () => {
         return (
-            <PanoraDynamicCatalog
-                category={"crm"} # optional but if provided it returns only connectors of the category
-                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
-                returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
-                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
+            <PanoraDynamicCatalogCard
+                category={ConnectorCategory.Crm} // optional but if provided it returns only connectors of the category
+                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} // the project id tied to your organization
+                returnUrl={"https://acme.inc"} // the url you want to redirect users to after the connection flow is successful
+                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  // the linked id of the user if already created in Panora system or user's info in your system
             />
         )
     }

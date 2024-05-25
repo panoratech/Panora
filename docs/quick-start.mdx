@@ -77,20 +77,28 @@ Choose the one that fits your needs !
             <Info>In order to fill the `linkedUserId` prop, use your own remote id that exist in your system **OR** check this [recipe](/recipes/import-existing-users) ! </Info>
             <CodeGroup>
                 ```javascript Single Connector Card
+                import "@panora/embedded-card-react/dist/index.css";
+                import { PanoraProviderCard } from "@panora/embedded-card-react";
+                import { ConnectorCategory } from '@panora/shared'
+
                 <PanoraProviderCard
-                    name={"hubspot"} # name of the provider
-                    category={"crm"} # vertical where provider belongs to
-                    projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
-                    returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
-                    linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
+                    name={"hubspot"} // name of the provider
+                    category={ConnectorCategory.Crm} // category where provider belongs to
+                    projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} // the project id tied to your organization
+                    returnUrl={"https://acme.inc"} // the url you want to redirect users to after the connection flow is successful
+                    linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  // the linked id of the user if already created in Panora system or user's info in your system
                 />
                 ```
                 ```javascript Whole Connector Catalog
-                <PanoraDynamicCatalog
-                    category={"crm"} # optional but if provided it returns only connectors of the category
-                    projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
-                    returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
-                    linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
+                import "@panora/embedded-card-react/dist/index.css";
+                import { PanoraDynamicCatalogCard } from "@panora/embedded-card-react";
+                import { ConnectorCategory } from '@panora/shared'
+                
+                <PanoraDynamicCatalogCard
+                    category={ConnectorCategory.Crm} // optional but if provided it returns only connectors of the category
+                    projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} // the project id tied to your organization
+                    returnUrl={"https://acme.inc"} // the url you want to redirect users to after the connection flow is successful
+                    linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  // the linked id of the user if already created in Panora system or user's info in your system
                 />
                 ```
             </CodeGroup>

@@ -21,11 +21,20 @@ export class MagicLinkService {
 
   async getMagicLink(id: string) {
     try {
-      return await this.prisma.invite_links.findFirst({
+      const inviteLink = await this.prisma.invite_links.findFirst({
         where: {
           id_invite_link: id,
         },
       });
+      const linkedUser = await this.prisma.linked_users.findFirst({
+        where: {
+          id_linked_user: inviteLink.id_linked_user,
+        },
+      });
+      return {
+        ...inviteLink,
+        id_project: linkedUser.id_project,
+      };
     } catch (error) {
       handleServiceError(error, this.logger);
     }
