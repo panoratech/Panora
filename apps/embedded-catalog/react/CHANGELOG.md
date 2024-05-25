@@ -1,5 +1,11 @@
 # @panora/embedded-card-react
 
+## 1.2.1
+
+### Patch Changes
+
+- 6810504: patch update
+
 ## 1.2.0
 
 ### Minor Changes
