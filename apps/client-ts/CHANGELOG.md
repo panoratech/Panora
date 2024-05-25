@@ -1,5 +1,13 @@
 # client-ts
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [04aec74]
+  - @panora/shared@1.3.0
+  - api@0.0.8
+
 ## 0.1.6
 
 ### Patch Changes
