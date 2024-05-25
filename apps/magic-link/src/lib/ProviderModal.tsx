@@ -85,7 +85,7 @@ const ProviderModal = () => {
     providerName: selectedProvider?.provider!,
     vertical: selectedProvider?.category!,
     returnUrl: "https://google.com", 
-    projectId: magicLink?.id_project,
+    projectId: magicLink!.id_project,
     linkedUserId: magicLink?.id_linked_user as string,
     onSuccess: () => console.log('OAuth successful'),
   });
