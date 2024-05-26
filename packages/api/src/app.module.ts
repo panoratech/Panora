@@ -31,8 +31,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     TicketingModule,
     ThrottlerModule.forRoot([
       {
-        ttl: parseInt(process.env.THROTTLER_TTL),
-        limit: parseInt(process.env.THROTTLER_LIMIT),
+        ttl: 60000,
+        limit: 100,
       },
     ]),
     ConfigModule.forRoot({ isGlobal: true }),

@@ -17,6 +17,9 @@ Before you begin, make sure you have the following:
 You either have the option to use a [**no-code magic link**](/core-concepts/magic-links) or the [**embedded frontend snippet**](/recipes/embed-catalog) to get access to your user's data.
 Choose the one that fits your needs !
 
+[We recommend listening to webhooks to get notified once a user connects and catch the connection token used for requests.
+](/recipes/catch-connection-token)
+
 <Steps titleSize="h3">
   <Step title="No Code: Magic links">
     Let's send our first magic link so you can ask your customers to grant you access to their tools, without writing code.
@@ -112,7 +115,6 @@ Choose the one that fits your needs !
 </Steps>
 
 Once the user successfully completes the granting auth flow, the connection will have a `status` value of `valid`.
-We recommend listening to [webhooks](/webhooks/overview) to get notified once a user connects and catch the connection token used for requests.
 
 ## **Step 2: Send your first unified API requests**
 

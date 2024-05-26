@@ -83,12 +83,12 @@ export class SyncService implements OnModuleInit {
       */
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -161,7 +161,7 @@ export class SyncService implements OnModuleInit {
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
           linkedUserId,
-          'ticketing.company',
+          'crm.company',
         );
       const remoteProperties: string[] = customFieldMappings.map(
         (mapping) => mapping.remote_id,
@@ -182,8 +182,6 @@ export class SyncService implements OnModuleInit {
         vertical: 'crm',
         customFieldMappings,
       })) as UnifiedCompanyOutput[];
-
-
 
       //insert the data in the DB with the fieldMappings (value table)
       const companies_data = await this.saveCompanysInDb(

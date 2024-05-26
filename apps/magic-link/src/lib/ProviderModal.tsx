@@ -38,10 +38,9 @@ const ProviderModal = () => {
     provider: string;
     category: string;
   }>();
-
   const [startFlow, setStartFlow] = useState(false);
   const [preStartFlow, setPreStartFlow] = useState(false);
-
+  const [projectId, setProjectId] = useState("");
   const [data, setData] = useState<Provider[]>([]);
   
   const [loading, setLoading] = useState<{
@@ -51,8 +50,8 @@ const ProviderModal = () => {
   const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState('');
 
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
-  const {data: connectorsForProject} = useProjectConnectors(magicLink?.id_project as string);
-  
+  const {data: connectorsForProject} = useProjectConnectors(projectId);
+
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
     const uniqueId = queryParams.get('uniqueLink');
@@ -60,6 +59,13 @@ const ProviderModal = () => {
       setUniqueMagicLinkId(uniqueId);
     }
   }, []);
+
+  useEffect(() => { 
+    if (magicLink) {
+      setProjectId(magicLink?.id_project);
+    }
+  }, [magicLink]);
+
 
   useEffect(()=>{
     const PROVIDERS = selectedCategory == "All" ? providersArray() : providersArray(selectedCategory);
@@ -85,7 +91,7 @@ const ProviderModal = () => {
     providerName: selectedProvider?.provider!,
     vertical: selectedProvider?.category!,
     returnUrl: "https://google.com", 
-    projectId: magicLink!.id_project,
+    projectId: projectId,
     linkedUserId: magicLink?.id_linked_user as string,
     onSuccess: () => console.log('OAuth successful'),
   });
