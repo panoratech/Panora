@@ -34,14 +34,26 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
       const left = (window.innerWidth - width) / 2;
       const top = (window.innerHeight - height) / 2;
       const authWindow = window.open(authUrl as string, 'OAuth', `width=${width},height=${height},top=${top},left=${left}`);
-      
+
       const interval = setInterval(() => {
+        try {
+          const redirectedURL = authWindow!.location.protocol + '//' + authWindow!.location.hostname + (authWindow!.location.port ? ':' + authWindow!.location.port : '');
+          console.log("Redirected URL auth 0Auth : ", redirectedURL, " Actual returnURL : ", returnUrl);
+          if (redirectedURL === returnUrl) {
+            clearInterval(interval);
+            authWindow!.close();
+            onSuccess();
+          }
+        } catch (e) {
+          // To handle cross-origin error
+          console.log(e)
+        }
+
         if (authWindow!.closed) {
           clearInterval(interval);
           if (onWindowClose) {
             onWindowClose();
           }
-          onSuccess();
         }
       }, 500);
 
