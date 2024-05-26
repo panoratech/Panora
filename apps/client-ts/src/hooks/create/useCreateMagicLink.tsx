@@ -15,8 +15,8 @@ const useCreateMagicLink = () => {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Cookies.get('access_token')}`,
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Cookies.get('access_token')}`,
             },
         });
         

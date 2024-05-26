@@ -38,6 +38,7 @@ const DynamicCatalog = ({projectId,returnUrl,linkedUserId, category, optionalApi
     returnUrl: returnUrl,
     projectId: projectId,
     linkedUserId: linkedUserId,
+    optionalApiUrl: optionalApiUrl,
     onSuccess: () => console.log('OAuth successful'),
   });
 

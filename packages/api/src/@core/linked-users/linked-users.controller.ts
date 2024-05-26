@@ -35,7 +35,7 @@ export class LinkedUsersController {
   @ApiOperation({ operationId: 'addLinkedUser', summary: 'Add Linked User' })
   @ApiBody({ type: CreateLinkedUserDto })
   @ApiResponse({ status: 201 })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   addLinkedUser(@Body() linkedUserCreateDto: CreateLinkedUserDto) {
     return this.linkedUsersService.addLinkedUser(linkedUserCreateDto);
@@ -47,7 +47,7 @@ export class LinkedUsersController {
   })
   @ApiBody({ type: CreateBatchLinkedUserDto })
   @ApiResponse({ status: 201 })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('batch')
   addBatchLinkedUsers(@Body() data: CreateBatchLinkedUserDto) {
     return this.linkedUsersService.addBatchLinkedUsers(data);
@@ -71,7 +71,7 @@ export class LinkedUsersController {
   })
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiResponse({ status: 200 })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('single')
   getLinkedUser(@Query('id') id: string) {
     // validate project_id against user
@@ -84,7 +84,7 @@ export class LinkedUsersController {
   })
   @ApiQuery({ name: 'remoteId', required: true, type: String })
   @ApiResponse({ status: 200 })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('fromRemoteId')
   linkedUserFromRemoteId(@Query('remoteId') id: string) {
     // validate project_id against user

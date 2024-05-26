@@ -1,5 +1,7 @@
 import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
+
 interface ILinkedUserDto {
     linked_user_origin_id: string;
     alias: string;
@@ -11,7 +13,8 @@ const useCreateLinkedUser = () => {
             method: 'POST',
             body: JSON.stringify(linkedUserData),
             headers: {
-            'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Cookies.get('access_token')}`,
             },
         });
         

@@ -50,9 +50,8 @@ const ProviderModal = () => {
 
   const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState('');
 
-  const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId);
-  const {data: linkedUser} = useLinkedUser(magicLink?.id_linked_user as string);
-  const {data: connectorsForProject} = useProjectConnectors(linkedUser?.id_project as string);
+  const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
+  const {data: connectorsForProject} = useProjectConnectors(magicLink?.id_project as string);
   
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
@@ -86,8 +85,8 @@ const ProviderModal = () => {
     providerName: selectedProvider?.provider!,
     vertical: selectedProvider?.category!,
     returnUrl: "https://google.com", 
-    projectId: linkedUser?.id_project as string,
-    linkedUserId: linkedUser?.id_linked_user as string,
+    projectId: magicLink!.id_project,
+    linkedUserId: magicLink?.id_linked_user as string,
     onSuccess: () => console.log('OAuth successful'),
   });
 

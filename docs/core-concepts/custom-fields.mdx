@@ -13,11 +13,14 @@ Creating a `Field Mapping` involves two majors actions:
 
 In this video we define a field and then once a connection is available we fetch fields inside your user's software so you can map the custom field with Panora.
 
+In our case we first creating a custom field inside Hubspot called `favorite_color` and then we do the field mapping within Panora.
+
+You must have a connection, hence a valid linked user so you can create custom fields on their behalf. In this example, we create the custom field in the linked user software but in real use case it would be already done by him and Panora would fetch all fields to map.
 <Frame type="glass">
   <video
     controls
     className="w-full aspect-video"
-    src="/images/definefields.mp4"
+    src="/images/customfields1.mp4"
   ></video>
 </Frame>
 
@@ -51,21 +54,21 @@ You will now find all the fields your user has in its software. Pick the one tha
 
 The following example creates a custom field mapping in two steps (**define and map**) where we map a remote field called `hair_color_hubspot_123_id` (existing in the `Husbpot` provider) and mapping it to the `crm.contact` unified model of Panora under the name of `hair_color`.
 
- ```shell Create custom field
-        curl --request POST \
-             --url https://api.panora.dev/field-mappings \
-             --header 'Authorization: Bearer <MY_API_KEY>' \
-             --header 'Content-Type: application/json' \
-             --data '{
-                "object_type_owner": "crm.contact",
-                "name": "hair_color",
-                "description": "My hair_color field mapping",
-                "data_type": "text",
-                "source_custom_field_id": "hair_color_hubspot_123_id",  # id of the remote field inside the remote provider
-                "source_provider": "hubspot",
-                "linked_user_id": "acme_customer_a"
-             }'
-        ```
+```shell Create custom field
+curl --request POST \
+         --url https://api.panora.dev/field-mappings \
+         --header 'Authorization: Bearer <MY_API_KEY>' \
+         --header 'Content-Type: application/json' \
+         --data '{
+            "object_type_owner": "crm.contact",
+            "name": "hair_color",
+            "description": "My hair_color field mapping",
+            "data_type": "text",
+            "source_custom_field_id": "hair_color_hubspot_123_id",  # id of the remote field inside the remote provider
+            "source_provider": "hubspot",
+            "linked_user_id": "acme_customer_a"
+         }'
+```
 <Info>You may want to define it in two steps if you miss some information to map in the 1st step.</Info>
 
 The following example creates a custom field mapping in two steps (**define and map**) where we map a remote field called `hair_color_hubspot_123_id` (existing in the `Husbpot` provider) and mapping it to the `crm.contact` unified model of Panora under the name of `hair_color`.
