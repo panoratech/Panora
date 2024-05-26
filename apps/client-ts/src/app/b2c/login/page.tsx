@@ -54,8 +54,10 @@ export default function Page() {
         {!userInitialized ? 
         (
             <div className='min-h-screen grid lg:grid-cols-2 mx-auto text-left'>
-                <div className='flex-1 flex flex-col py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
+                <div className='flex-1 flex flex-col py-12 sm:items-center lg:flex-none lg:px-20 xl:px-24'>
+                    <div className="w-[400px]">
                     <img src="/logo.png" className='w-14' /> 
+                    </div>
                     <Tabs defaultValue="login" className="w-[400px] space-y-4">
                         <TabsList className="grid w-full grid-cols-2">
                             <TabsTrigger value="login">Login</TabsTrigger>
