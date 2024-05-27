@@ -94,9 +94,8 @@ const ProviderModal = () => {
   const { open, isReady } = useOAuth({
     providerName: selectedProvider?.provider!,
     vertical: selectedProvider?.category!,
+    // Providing current URL to avoid cross origin error
     returnUrl: window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : ''),
-    // returnUrl: "https://google.com", 
-    // returnUrl: window.location.hostname + (window.location.port ? ':' + window.location.port : ''),
     projectId: projectId,
     linkedUserId: magicLink?.id_linked_user as string,
     onSuccess: () => {
@@ -234,7 +233,7 @@ const ProviderModal = () => {
             
             </div>
 
-            <div className={`text-white transition-all ease-in delay-200 ${openSuccessDialog ? "opacity-100 scale-100" : "opacity-0 scale-125"} font-semibold text-xl items-center`}>Connected !</div>
+            <div className={`text-white transition-all ease-in delay-200 ${openSuccessDialog ? "opacity-100 scale-100" : "opacity-0 scale-125"} font-semibold text-xl items-center`}>Connection Successful!</div>
 
             <div className={`text-sm transition-all ease-in delay-200 ${openSuccessDialog ? "opacity-100 scale-100" : "opacity-0 scale-125"} text-gray-400 items-center align-middle text-center`}>The connection was successfully established. You can visit the Dashboard and verify the status.</div>
 
