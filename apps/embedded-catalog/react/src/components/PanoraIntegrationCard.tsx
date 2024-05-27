@@ -11,12 +11,11 @@ export interface ProviderCardProp {
   name: string;
   category: ConnectorCategory;
   projectId: string;
-  returnUrl: string;
   linkedUserId: string;
   optionalApiUrl?: string,
 }
 
-const PanoraIntegrationCard = ({name, category, projectId, returnUrl, linkedUserId, optionalApiUrl}: ProviderCardProp) => {
+const PanoraIntegrationCard = ({name, category, projectId, linkedUserId, optionalApiUrl}: ProviderCardProp) => {
     const [loading, setLoading] = useState(false);
     const [openSuccessDialog,setOpenSuccessDialog] = useState<boolean>(false);
     const [startFlow, setStartFlow] = useState(false);
