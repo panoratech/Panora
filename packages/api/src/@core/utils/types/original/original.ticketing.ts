@@ -155,7 +155,9 @@ export type OriginalUserInput =
   | JiraUserInput;
 //| JiraServiceMgmtUserInput;
 /* account */
-export type OriginalAccountInput = ZendeskAccountInput | FrontAccountInput;
+export type OriginalAccountInput =
+  | ZendeskAccountInput
+  | FrontAccountInput;
 /* contact */
 export type OriginalContactInput =
   | ZendeskContactInput
@@ -178,7 +180,9 @@ export type OriginalTeamInput =
 
 /* attachment */
 export type OriginalAttachmentInput = null;
-export type OriginalCollectionInput = JiraCollectionInput | GitlabCollectionInput;
+export type OriginalCollectionInput =
+  | JiraCollectionInput
+  | GitlabCollectionInput;
 
 export type TicketingObjectInput =
   | OriginalTicketInput
@@ -217,7 +221,9 @@ export type OriginalUserOutput =
   | GorgiasUserOutput
   | JiraUserOutput;
 /* account */
-export type OriginalAccountOutput = ZendeskAccountOutput | FrontAccountOutput;
+export type OriginalAccountOutput =
+  | ZendeskAccountOutput
+  | FrontAccountOutput;
 /* contact */
 export type OriginalContactOutput =
   | ZendeskContactOutput
@@ -247,7 +253,9 @@ export type OriginalAttachmentOutput =
 
 /* collection */
 
-export type OriginalCollectionOutput = JiraCollectionOutput | GitlabCollectionOutput;
+export type OriginalCollectionOutput =
+  | JiraCollectionOutput
+  | GitlabCollectionOutput;
 
 
 export type TicketingObjectOutput =
