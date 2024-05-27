@@ -1,11 +1,11 @@
 import config from '@/helpers/config';
 import { useState, useEffect, useRef } from 'react';
-import { ConnectorCategory, constructAuthUrl } from '@panora/shared/src/test';
+import { constructAuthUrl } from '@panora/shared/src/test';
 
 type UseOAuthProps = {
   clientId?: string;
   providerName: string;           // Name of the OAuth provider
-  vertical: ConnectorCategory;    // Vertical (Crm, Ticketing, etc)
+  vertical: string;    // Vertical (Crm, Ticketing, etc)
   returnUrl: string;              // Return URL after OAuth flow
   projectId: string;              // Project ID
   linkedUserId: string;           // Linked User ID
@@ -15,7 +15,7 @@ type UseOAuthProps = {
 
 const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, optionalApiUrl, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<number | ReturnType<typeof setInterval> | null>(null);
   const authWindowRef = useRef<Window | null>(null);
 
   useEffect(() => {
