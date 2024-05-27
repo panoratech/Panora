@@ -11,13 +11,12 @@ import config from '@/helpers/config';
 
 export interface DynamicCardProp {
   projectId: string;
-  returnUrl: string;
   linkedUserId: string;
   category?: ConnectorCategory;
   optionalApiUrl?: string,
 }
 
-const DynamicCatalog = ({projectId,returnUrl,linkedUserId, category, optionalApiUrl} : DynamicCardProp) => {
+const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : DynamicCardProp) => {
 
   // by default we render all integrations but if category is provided we filter by category
 
