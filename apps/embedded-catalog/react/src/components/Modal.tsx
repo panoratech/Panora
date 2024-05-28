@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
-import {PartyPopper, Unplug,X} from 'lucide-react'
+import React from 'react'
 
-const Modal = ({open,setOpen,children} : {open:boolean,setOpen: (op : boolean) => void,children: React.ReactNode}) => {
+const Modal = ({open,setOpen,children} : {open:boolean,setOpen: React.Dispatch<React.SetStateAction<boolean>>,children: React.ReactNode}) => {
   return (
     <div
       onClick={() => setOpen(false)}

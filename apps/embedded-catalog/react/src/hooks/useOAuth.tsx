@@ -15,8 +15,18 @@ type UseOAuthProps = {
 
 const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, optionalApiUrl, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
-  const intervalRef = useRef<number | null>(null);
+  const intervalRef = useRef<number | ReturnType<typeof setInterval> | null>(null);
   const authWindowRef = useRef<Window | null>(null);
+
+  const clearExistingInterval = (clearAuthWindow : boolean) => {
+    if (clearAuthWindow && authWindowRef.current && !authWindowRef.current.closed) {
+      authWindowRef.current.close();
+    }
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
 
   useEffect(() => {
     // Perform any setup logic here
@@ -31,15 +41,7 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
     };
   }, []);
 
-  const clearExistingInterval = (clearAuthWindow : boolean) => {
-    if (clearAuthWindow && authWindowRef.current && !authWindowRef.current.closed) {
-      authWindowRef.current.close();
-    }
-    if (intervalRef.current !== null) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
+  
 
   const openModal = async (onWindowClose: () => void) => {
     const apiUrl = optionalApiUrl ? optionalApiUrl : config.API_URL!;
@@ -48,7 +50,7 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
     });
 
     if (!authUrl) {
-      throw new Error("Auth Url is Invalid " + authUrl);
+      throw new Error(`Auth Url is Invalid: ${authUrl}`);
     }
 
     const width = 600, height = 600;
