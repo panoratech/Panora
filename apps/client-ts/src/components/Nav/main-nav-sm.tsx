@@ -61,7 +61,6 @@ export function SmallNav({
           <SheetHeader className="flex items-center">
             <SheetTitle className="mx-4 my-4">
               <Link href="/" className="flex flex-row" onClick={() => setOpen(false)}>
-                {/* <img src="./../../../../public/logo.png" className="w-10 mr-1"/><span className="font-bold">Panora.</span> */}
                 {theme == "light" ? <img src="/logo-panora-black.png" className='w-12' /> : <img src="/logo-panora-white-hq.png" className='w-12' />}
               
               </Link>
@@ -70,18 +69,6 @@ export function SmallNav({
           <nav
               className={`flex flex-col items-start mt-6`}
             >
-            {/*<a
-                className={navItemClassName('quickstart')}
-                onClick={() => click('quickstart')}
-              >
-                <p className="mx-4">Quick Start</p>
-              </a>
-              <a
-                className={navItemClassName('dashboard')}
-                onClick={() => click('dashboard')}
-              >
-                <p className="mx-4">Dashboard</p>
-              </a>*/}
             <a
                 className={navItemClassName('connections')}
                 onClick={() => click('connections')}

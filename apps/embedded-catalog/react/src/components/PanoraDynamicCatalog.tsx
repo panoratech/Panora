@@ -44,7 +44,6 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
     providerName: selectedProvider?.provider!,
     vertical: selectedProvider?.category! as ConnectorCategory,
     returnUrl: returnUrlWithWindow,
-    // returnUrl: returnUrl,
     projectId: projectId,
     linkedUserId: linkedUserId,
     optionalApiUrl: optionalApiUrl,
