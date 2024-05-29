@@ -17,6 +17,7 @@ import { ConnectorCategory } from '@panora/shared';
 import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
 import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { CoreSyncService } from '@@core/sync/sync.service';
 
 export type StateDataType = {
   projectId: string;
@@ -34,6 +35,7 @@ export class ConnectionsController {
     private readonly ticketingConnectionsService: TicketingConnectionsService,
     private readonly accountingConnectionsService: AccountingConnectionsService,
     private readonly marketingAutomationConnectionsService: MarketingAutomationConnectionsService,
+    private readonly coreSyncService: CoreSyncService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
@@ -49,7 +51,7 @@ export class ConnectionsController {
   @ApiQuery({ name: 'location', required: true, type: String })
   @ApiResponse({ status: 200 })
   @Get('oauth/callback')
-  handleCallback(
+  async handleCallback(
     @Res() res: Response,
     @Query('state') state: string,
     @Query('code') code: string,
@@ -71,18 +73,20 @@ export class ConnectionsController {
       switch (vertical.toLowerCase()) {
         case ConnectorCategory.Crm:
           const zohoLocation_ = zohoLocation ? zohoLocation : '';
-          this.crmConnectionsService.handleCRMCallBack(
+          await this.crmConnectionsService.handleCRMCallBack(
             projectId,
             linkedUserId,
             providerName,
             code,
             zohoLocation_,
           );
+          // Add Initial Sync Service Here but sync (No async) way or after res.redirect() <---- verify
+
           break;
         case ConnectorCategory.Ats:
           break;
         case ConnectorCategory.Accounting:
-          this.accountingConnectionsService.handleAccountingCallBack(
+          await this.accountingConnectionsService.handleAccountingCallBack(
             projectId,
             linkedUserId,
             providerName,
@@ -94,7 +98,7 @@ export class ConnectionsController {
         case ConnectorCategory.Hris:
           break;
         case ConnectorCategory.MarketingAutomation:
-          this.marketingAutomationConnectionsService.handleMarketingAutomationCallBack(
+          await this.marketingAutomationConnectionsService.handleMarketingAutomationCallBack(
             projectId,
             linkedUserId,
             providerName,
@@ -102,7 +106,7 @@ export class ConnectionsController {
           );
           break;
         case ConnectorCategory.Ticketing:
-          this.ticketingConnectionsService.handleTicketingCallBack(
+          await this.ticketingConnectionsService.handleTicketingCallBack(
             projectId,
             linkedUserId,
             providerName,
@@ -110,7 +114,18 @@ export class ConnectionsController {
           );
           break;
       }
+      // Performing Core Sync Service
+      this.coreSyncService.initialSync(vertical.toLowerCase(), providerName, linkedUserId, projectId);
+
+      this.logger.log("Performing Redirect - MS")
+
+
       res.redirect(returnUrl);
+
+
+
+
+
     } catch (error) {
       handleServiceError(error, this.logger);
     }
