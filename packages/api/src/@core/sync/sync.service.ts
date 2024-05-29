@@ -46,7 +46,7 @@ export class CoreSyncService {
     this.logger.setContext(CoreSyncService.name);
   }
 
-  //Initial sync which will happen after connection is successfully established
+  //Initial sync which will execute when connection is successfully established
   async initialSync(
     vertical: string,
     provider: string,
@@ -135,17 +135,11 @@ export class CoreSyncService {
     } catch (error) {
       handleServiceError(error, this.logger);
     }
-
-
   }
-
-
 
   // we must have a sync_jobs table with 7 (verticals) rows, one of each is syncing details
   async getSyncStatus(vertical: string) {
     try {
-
-
 
     } catch (error) {
       handleServiceError(error, this.logger);

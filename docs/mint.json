@@ -8,7 +8,11 @@
   "analytics": {
     "posthog": {
         "apiKey": "phc_WhWJfNPOHAuWVdyTacGxrPa9JW54scnofA9KVEjFcFw"
-      }
+      },
+      "hotjar": {
+        "hjid": "5154921",
+        "hjsv": "e2Bs3cIPcF08ngtrjwX+JBB8"
+    }
   },
   "api": {
     "baseUrl": "https://api.panora.dev",
@@ -20,11 +24,16 @@
     "default": "light",
     "isHidden": false
   },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true,
+    "raiseIssue": true
+  },
   "logo": {
     "dark": "/logo/logo-panora-white-hq.png",
     "light": "/logo/logo-panora-white.png"
   },
-  "favicon": "logo/favicon.png",
+  "favicon": "logo/fav.png",
   "colors": {
     "primary": "#085faf",
     "light": "#085faf",
@@ -50,7 +59,7 @@
   },
   "tabs": [
     {
-      "name": "Crm",
+      "name": "CRM",
       "url": "crm"
     },
     {
@@ -162,7 +171,7 @@
       "group": "Unified Objects",
       "pages": [
         {
-          "group": "Crm", 
+          "group": "CRM", 
           "pages": [
             {
               "group": "Contact",

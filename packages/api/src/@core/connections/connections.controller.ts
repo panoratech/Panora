@@ -80,8 +80,6 @@ export class ConnectionsController {
             code,
             zohoLocation_,
           );
-          // Add Initial Sync Service Here but sync (No async) way or after res.redirect() <---- verify
-
           break;
         case ConnectorCategory.Ats:
           break;
@@ -116,16 +114,7 @@ export class ConnectionsController {
       }
       // Performing Core Sync Service
       this.coreSyncService.initialSync(vertical.toLowerCase(), providerName, linkedUserId, projectId);
-
-      this.logger.log("Performing Redirect - MS")
-
-
       res.redirect(returnUrl);
-
-
-
-
-
     } catch (error) {
       handleServiceError(error, this.logger);
     }
