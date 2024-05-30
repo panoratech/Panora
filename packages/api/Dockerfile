@@ -42,6 +42,8 @@ RUN pnpm run build
 
 # ========================================================================
 FROM base AS runner
+RUN apk add --no-cache libc6-compat netcat-openbsd curl
+
 WORKDIR /app
 
 COPY --from=installer ./app .
