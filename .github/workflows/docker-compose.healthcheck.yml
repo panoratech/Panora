@@ -10,6 +10,7 @@ jobs:
   docker:
     name: Run containers
     runs-on: ubuntu-latest
+    environment: SELF_HOSTED
     env:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -21,10 +22,6 @@ jobs:
       REDIS_PASS: ${{ secrets.REDIS_PASS }}
       NEXT_PUBLIC_BACKEND_DOMAIN: ${{ secrets.NEXT_PUBLIC_BACKEND_DOMAIN }}
       NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${{ secrets.NEXT_PUBLIC_MAGIC_LINK_DOMAIN }}
-      NEXT_PUBLIC_STYTCH_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_STYTCH_PROJECT_ID }}
-      NEXT_PUBLIC_STYTCH_SECRET: ${{ secrets.NEXT_PUBLIC_STYTCH_SECRET }}
-      NEXT_PUBLIC_STYTCH_PROJECT_ENV: ${{ secrets.NEXT_PUBLIC_STYTCH_PROJECT_ENV }}
-      NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN: ${{ secrets.NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - uses: isbang/compose-action@v1.5.1
