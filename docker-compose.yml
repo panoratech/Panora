@@ -26,6 +26,7 @@ services:
     image: panoradotdev/backend-api:selfhosted
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
+      PORT: ${BACKEND_PORT}
       DISTRIBUTION: ${DISTRIBUTION}
       JWT_SECRET: ${JWT_SECRET}
       REDIS_HOST: ${REDIS_HOST}
@@ -114,7 +115,12 @@ services:
         condition: service_healthy
     networks:
       - backend
-
+    healthcheck:
+      #test: ["CMD", "nc", "-z", "localhost", "${BACKEND_PORT}"]
+      test: ["CMD", "curl", "-f", "http://api:3000/health"] # Alternative healthcheck method
+      interval: 10s
+      timeout: 1s
+      retries: 5
 
   redis:
     image: valkey/valkey:7.2-alpine
@@ -134,7 +140,8 @@ services:
     ports:
       - 81:80
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - backend
       - frontend
@@ -142,10 +149,6 @@ services:
   webapp-next:
     image: panoradotdev/frontend-webapp:selfhosted
     environment:
-      NEXT_PUBLIC_STYTCH_PROJECT_ID: ${NEXT_PUBLIC_STYTCH_PROJECT_ID}
-      NEXT_PUBLIC_STYTCH_SECRET: ${NEXT_PUBLIC_STYTCH_SECRET}
-      NEXT_PUBLIC_STYTCH_PROJECT_ENV: ${NEXT_PUBLIC_STYTCH_PROJECT_ENV}
-      NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN: ${NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN}
       NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
       NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
       NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
@@ -154,7 +157,8 @@ services:
     ports:
       - 80:8090
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - backend
       - frontend
