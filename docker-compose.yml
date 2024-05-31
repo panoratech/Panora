@@ -120,7 +120,7 @@ services:
       #test: ["CMD", "curl", "-f", "http://api:3000/health"] # Alternative healthcheck method
       interval: 10s
       timeout: 1s
-      retries: 5
+      retries: 50
 
   redis:
     image: valkey/valkey:7.2-alpine
