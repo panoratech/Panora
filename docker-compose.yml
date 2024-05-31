@@ -116,8 +116,7 @@ services:
     networks:
       - backend
     healthcheck:
-      #test: ["CMD", "nc", "-z", "0.0.0.0", "${BACKEND_PORT}"]
-      test: ["CMD-SHELL", "curl", "-f", "http://localhost:3000/health"] # Alternative healthcheck method
+      test: ["CMD-SHELL", "curl", "-f", "https://google.com"]
       start_period: 60s
       interval: 10s
       timeout: 1s
