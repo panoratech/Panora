@@ -116,7 +116,7 @@ services:
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "${BACKEND_PORT}"]
+      test: ["CMD", "nc", "-z", "0.0.0.0", "${BACKEND_PORT}"]
       #test: ["CMD", "curl", "-f", "http://api:3000/health"] # Alternative healthcheck method
       interval: 10s
       timeout: 1s
