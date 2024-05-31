@@ -106,6 +106,7 @@ services:
       MAILCHIMP_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET: ${MAILCHIMP_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET}
       PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_ID: ${PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_ID}
       PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET: ${PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET}
+
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -116,10 +117,10 @@ services:
       - backend
     healthcheck:
       #test: ["CMD", "nc", "-z", "0.0.0.0", "${BACKEND_PORT}"]
-      test: curl --fail http://localhost || exit 1 # Alternative healthcheck method
+      test: ["CMD-SHELL", "curl", "-f", "http://localhost:3000/health"] # Alternative healthcheck method
       start_period: 60s
       interval: 10s
-      timeout: 5s
+      timeout: 1s
       retries: 50
 
   redis:
