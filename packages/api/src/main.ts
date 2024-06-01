@@ -29,10 +29,6 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
   app.use(cookieParser());
 
-
-  // Passing a host is required by some PaaS providers such as flightcontrol
-  const port = process.env.BACKEND_PORT || 3000; 
-  const host = process.env.BACKEND_HOSTNAME || '0.0.0.0';
-  await app.listen(port, host);
+  await app.listen(3000);
 }
 bootstrap();
