@@ -29,6 +29,7 @@ services:
       DISTRIBUTION: ${DISTRIBUTION}
       JWT_SECRET: ${JWT_SECRET}
       REDIS_HOST: ${REDIS_HOST}
+      REDIS_USER: ${REDIS_USER}
       REDIS_PASS: ${REDIS_PASS}
       REDIS_PORT: ${REDIS_PORT}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
@@ -130,6 +131,12 @@ services:
       - ./redis-data:/data
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
       
 
   magic-link-frontend:

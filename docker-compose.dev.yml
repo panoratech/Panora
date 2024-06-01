@@ -35,6 +35,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PASS: ${REDIS_PASS}
+      REDIS_USER: ${REDIS_USER}
       REDIS_PORT: ${REDIS_PORT}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}
@@ -136,7 +137,13 @@ services:
       - ./redis-data:/data
     networks:
       - backend
-
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    
   webapp-nextjs:
     build:
       dockerfile: ./apps/client-ts/Dockerfile.dev

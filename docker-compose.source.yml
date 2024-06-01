@@ -35,6 +35,7 @@ services:
       DISTRIBUTION: ${DISTRIBUTION}
       JWT_SECRET: ${JWT_SECRET}
       REDIS_HOST: ${REDIS_HOST}
+      REDIS_USER: ${REDIS_USER}
       REDIS_PASS: ${REDIS_PASS}
       BACKEND_PORT: ${BACKEND_PORT}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
@@ -117,6 +118,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - backend
     healthcheck:
@@ -136,6 +139,12 @@ services:
       - ./redis-data:/data
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
       
   webapp-next:
     build:
