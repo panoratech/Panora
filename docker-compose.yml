@@ -21,7 +21,7 @@ services:
       - ./packages/api/scripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
     networks:
       - backend
-
+      
   api:
     image: panoradotdev/backend-api:selfhosted
     environment:
@@ -31,8 +31,6 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PASS: ${REDIS_PASS}
       REDIS_PORT: ${REDIS_PORT}
-      BACKEND_HOSTNAME: ${BACKEND_HOSTNAME}
-      BACKEND_PORT: ${BACKEND_PORT}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}
       HUBSPOT_CRM_CLOUD_CLIENT_SECRET: ${HUBSPOT_CRM_CLOUD_CLIENT_SECRET}
