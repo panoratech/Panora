@@ -67,7 +67,9 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         port: Number(process.env.REDIS_PORT) || 6379,
         password: process.env.REDIS_PASS,
         username: process.env.REDIS_USER || 'default',
-        db: Number(process.env.REDIS_DB) || 0
+        db: Number(process.env.REDIS_DB) || 0,
+        enableReadyCheck: false,
+        maxRetriesPerRequest: null
       },
     }),
   ],
