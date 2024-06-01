@@ -54,6 +54,8 @@ WORKDIR /app/packages/api
 # # # # # # # # # # # # 
 # DEV: Maintain the /app/packages/api folder as context (Breaking)
 # # # # # # # # # # # # 
+
+EXPOSE 3000
 CMD node dist/src/main.js
 
 # # # # # # # # # # # # 
