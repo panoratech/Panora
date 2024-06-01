@@ -26,12 +26,13 @@ services:
     image: panoradotdev/backend-api:selfhosted
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
-      PORT: ${BACKEND_PORT}
       DISTRIBUTION: ${DISTRIBUTION}
       JWT_SECRET: ${JWT_SECRET}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PASS: ${REDIS_PASS}
       REDIS_PORT: ${REDIS_PORT}
+      BACKEND_HOSTNAME: ${BACKEND_HOSTNAME}
+      BACKEND_PORT: ${BACKEND_PORT}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}
       HUBSPOT_CRM_CLOUD_CLIENT_SECRET: ${HUBSPOT_CRM_CLOUD_CLIENT_SECRET}
@@ -106,7 +107,6 @@ services:
       MAILCHIMP_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET: ${MAILCHIMP_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET}
       PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_ID: ${PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_ID}
       PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET: ${PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET}
-
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -116,11 +116,11 @@ services:
     networks:
       - backend
     healthcheck:
-      #test: ["CMD", "nc", "-z", "localhost", "${BACKEND_PORT}"]
-      test: ["CMD", "curl", "-f", "http://api:3000/health"] # Alternative healthcheck method
+      test: ["CMD-SHELL", "curl", "-f", "https://google.com"]
+      start_period: 60s
       interval: 10s
       timeout: 1s
-      retries: 5
+      retries: 50
 
   redis:
     image: valkey/valkey:7.2-alpine

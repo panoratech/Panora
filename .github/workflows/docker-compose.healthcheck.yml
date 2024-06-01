@@ -13,6 +13,7 @@ jobs:
     environment: SELF_HOSTED
     env:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      BACKEND_PORT: ${{ secrets.BACKEND_PORT }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
