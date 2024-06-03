@@ -45,6 +45,7 @@ body:
       label: "Which specific objects would you integrate with?"
       description: "(example: Deals and Contacts from CRMs)"
   - type: dropdown
+    id: readwrite
     attributes:
       label: Do you anticipate to mostly read, or write data?
       multiple: true
@@ -54,3 +55,7 @@ body:
         - Read and write
     validations:
       required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: "Please share any detail you want here"    
