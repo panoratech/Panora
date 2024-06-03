@@ -7,20 +7,11 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this!
-  - type: input
-    id: contact
-    attributes:
-      label: Contact Details
-      description: "How can we get in touch with you if we need more info? (We'll edit the issue to hide your email)"
-      placeholder: ex. email@example.com
-    validations:
-      required: true
   - type: dropdown
     id: software_category
     attributes:
-      label: Category
+      label: "What type of software do you want to build integrations with?"
       multiple: true
-      description: "What type of software do you want to build integrations with?"
       options:
         - Accounting
         - Calendar
@@ -45,5 +36,10 @@ body:
   - type: textarea
     id: platforms
     attributes:
-      label: Platforms
-      description: "Which specific platforms would you integrate with? (example: Salesforce, Hubspot, Zendesk, Jira...)"
+      label:  "Which specific platforms would you integrate with?"
+      description: " (example: Salesforce, Hubspot, Zendesk, Jira...)"
+  - type: textarea
+    id: objects
+    attributes:
+      label: "Which specific objects would you integrate with?"
+      description: "(example: Deals and Contacts from CRMs)"
