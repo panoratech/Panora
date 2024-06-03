@@ -44,3 +44,13 @@ body:
     attributes:
       label: "Which specific objects would you integrate with?"
       description: "(example: Deals and Contacts from CRMs)"
+  - type: dropdown
+    attributes:
+      label: Do you anticipate to mostly read, or write data?
+      multiple: true
+      options:
+        - Read mostly
+        - Write mostly
+        - Read and write
+    validations:
+      required: true
