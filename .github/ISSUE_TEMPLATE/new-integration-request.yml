@@ -6,7 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this!
+        Thanks for taking the time to fill out this! 
+        Please fill one ticket per platform you want to integrate with.
   - type: dropdown
     id: software_category
     attributes:
