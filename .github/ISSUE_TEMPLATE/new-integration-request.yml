@@ -1,7 +1,7 @@
 name: New Integration Request
 description: Need an Integration that isn't in our catalog yet? Ask here!
 title: "feat: Add integration with: #SOFTWARE_NAME"
-labels: ["backend", "embedded-catalog", "good first issue"]
+labels: ["backend", "embedded-catalog", "good first issue", "🔌 Connector"]
 body:
   - type: markdown
     attributes:
