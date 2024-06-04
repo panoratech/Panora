@@ -1549,6 +1549,24 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {

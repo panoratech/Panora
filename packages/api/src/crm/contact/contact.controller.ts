@@ -8,6 +8,8 @@ import {
   Param,
   UseGuards,
   Headers,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -26,6 +28,7 @@ import {
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiCustomResponse } from '@@core/utils/types';
+import { GetContactsQueryDto } from './types/dto/get-contacts-query.dto'
 
 @ApiTags('crm/contacts')
 @Controller('crm/contacts')
@@ -55,22 +58,38 @@ export class ContactController {
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
   })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    type: Number,
+    description: 'Set to get the number of records.'
+  })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    type: String,
+    description: 'Set to get the number of records after this cursor.'
+  })
   @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getContacts(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: GetContactsQueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, pageSize, cursor } = query;
       return this.contactService.getContacts(
         remoteSource,
         linkedUserId,
         remote_data,
+        pageSize,
+        cursor
       );
     } catch (error) {
       throw new Error(error);

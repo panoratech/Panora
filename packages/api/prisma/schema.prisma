@@ -164,7 +164,7 @@ model crm_contacts {
   id_crm_contact      String                @id(map: "pk_crm_contacts") @db.Uuid
   first_name          String
   last_name           String
-  created_at          DateTime              @db.Timestamp(6)
+  created_at          DateTime              @unique(map: "force_createdat_unique") @default(now()) @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
   remote_id           String
   remote_platform     String

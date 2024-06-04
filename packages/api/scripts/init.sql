@@ -465,13 +465,14 @@ CREATE TABLE crm_contacts
  id_crm_contact  uuid NOT NULL,
  first_name      text NOT NULL,
  last_name       text NOT NULL,
- created_at      timestamp NOT NULL,
+ created_at      timestamp NOT NULL DEFAULT NOW(),
  modified_at     timestamp NOT NULL,
  remote_id       text NOT NULL,
  remote_platform text NOT NULL,
  id_crm_user     uuid NULL,
  id_linked_user  uuid NULL,
  CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
+ CONSTRAINT force_createdAt_unique UNIQUE ( created_at ),
  CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
 
