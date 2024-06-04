@@ -30,7 +30,7 @@ export class ConnectionsStrategiesService {
     private prisma: PrismaService,
     private crypto: EncryptionService,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   async isCustomCredentials(projectId: string, type: string) {
     const res = await this.prisma.connection_strategies.findFirst({
@@ -82,7 +82,7 @@ export class ConnectionsStrategiesService {
           id_cs_attribute: uuidv4(),
           id_cs_entity: entity.id_cs_entity,
           attribute_slug: attribute_slug,
-          data_type: 'string', //TODO
+          data_type: 'string',
         },
       });
       const value_ = await this.prisma.cs_values.create({
@@ -230,8 +230,9 @@ export class ConnectionsStrategiesService {
           data = {
             ...data,
             SCOPE:
-              CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()]
-                .scopes,
+              CONNECTORS_METADATA[vertical.toLowerCase()][
+                provider.toLowerCase()
+              ].scopes,
           };
         }
         /*const isSubdomain = needsSubdomain(
@@ -337,7 +338,7 @@ export class ConnectionsStrategiesService {
     values: string[],
   ) {
     try {
-      console.log("In updateAPI xzx")
+      console.log('In updateAPI xzx');
       const cs = await this.prisma.connection_strategies.findFirst({
         where: {
           id_connection_strategy: id_cs,
@@ -368,7 +369,7 @@ export class ConnectionsStrategiesService {
           where: {
             id_cs_entity: id_cs_entity,
             attribute_slug: attribute_slug,
-            data_type: 'string', //TODO
+            data_type: 'string',
           },
         });
         const value_ = await this.prisma.cs_values.updateMany({
@@ -382,8 +383,8 @@ export class ConnectionsStrategiesService {
       }
       return cs;
     } catch (error) {
-      console.log("Error xzx")
-      console.log(error)
+      console.log('Error xzx');
+      console.log(error);
       throw new Error('Update Failed');
     }
   }
