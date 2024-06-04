@@ -7,6 +7,23 @@ import { TicketingConnectionModule } from './ticketing/ticketing.connection.modu
 import { AccountingConnectionModule } from './accounting/accounting.connection.module';
 import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
 import { ValidateUserService } from '@@core/utils/services/validateUser.service';
+import { CoreSyncService } from '@@core/sync/sync.service';
+import { CompanyModule } from '@crm/company/company.module';
+import { ContactModule } from '@crm/contact/contact.module';
+import { DealModule } from '@crm/deal/deal.module';
+import { EngagementModule } from '@crm/engagement/engagement.module';
+import { NoteModule } from '@crm/note/note.module';
+import { StageModule } from '@crm/stage/stage.module';
+import { TaskModule } from '@crm/task/task.module';
+import { UserModule } from '@crm/user/user.module';
+import { AccountModule } from '@ticketing/account/account.module';
+import { CollectionModule } from '@ticketing/collection/collection.module';
+import { CommentModule } from '@ticketing/comment/comment.module';
+import { ContactModule as TContactModule } from '@ticketing/contact/contact.module';
+import { TagModule } from '@ticketing/tag/tag.module';
+import { TeamModule } from '@ticketing/team/team.module';
+import { TicketModule } from '@ticketing/ticket/ticket.module';
+import { UserModule as TUserModule } from '@ticketing/user/user.module';
 
 @Module({
   controllers: [ConnectionsController],
@@ -15,8 +32,24 @@ import { ValidateUserService } from '@@core/utils/services/validateUser.service'
     TicketingConnectionModule,
     AccountingConnectionModule,
     MarketingAutomationConnectionsModule,
+    CompanyModule,
+    ContactModule,
+    DealModule,
+    EngagementModule,
+    NoteModule,
+    StageModule,
+    TaskModule,
+    UserModule,
+    AccountModule,
+    CollectionModule,
+    CommentModule,
+    TContactModule,
+    TagModule,
+    TeamModule,
+    TicketModule,
+    TUserModule
   ],
-  providers: [LoggerService, PrismaService, ValidateUserService],
+  providers: [LoggerService, PrismaService, ValidateUserService, CoreSyncService],
   exports: [
     CrmConnectionModule,
     TicketingConnectionModule,
@@ -24,4 +57,4 @@ import { ValidateUserService } from '@@core/utils/services/validateUser.service'
     MarketingAutomationConnectionsModule,
   ],
 })
-export class ConnectionsModule {}
+export class ConnectionsModule { }

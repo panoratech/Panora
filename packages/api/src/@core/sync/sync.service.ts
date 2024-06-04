@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { LoggerService } from '../logger/logger.service';
+import { ConnectorCategory } from '@panora/shared';
+import { CrmObject, ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
+import { PrismaService } from '@@core/prisma/prisma.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { SyncService as CrmCompanySyncService } from '@crm/company/sync/sync.service';
 import { SyncService as CrmContactSyncService } from '@crm/contact/sync/sync.service';
@@ -22,6 +25,7 @@ import { SyncService as TicketingUserSyncService } from '@ticketing/user/sync/sy
 export class CoreSyncService {
   constructor(
     private logger: LoggerService,
+    private prisma: PrismaService,
     private CrmCompanySyncService: CrmCompanySyncService,
     private CrmContactSyncService: CrmContactSyncService,
     private CrmDealSyncService: CrmDealSyncService,
@@ -42,9 +46,101 @@ export class CoreSyncService {
     this.logger.setContext(CoreSyncService.name);
   }
 
+  //Initial sync which will execute when connection is successfully established
+  async initialSync(
+    vertical: string,
+    provider: string,
+    linkedUserId: string,
+    id_project: string
+  ) {
+    try {
+
+      const tasks = [];
+
+      switch (vertical) {
+        case ConnectorCategory.Crm:
+          // logic
+          tasks.push(() => this.CrmUserSyncService.syncUsersForLinkedUser(provider, linkedUserId, id_project));
+          tasks.push(() => this.CrmCompanySyncService.syncCompaniesForLinkedUser(provider, linkedUserId, id_project));
+          tasks.push(() => this.CrmContactSyncService.syncContactsForLinkedUser(provider, linkedUserId, id_project));
+          tasks.push(() => this.CrmDealSyncService.syncDealsForLinkedUser(provider, linkedUserId, id_project));
+
+          for (const type of ENGAGEMENTS_TYPE) {
+            tasks.push(() => this.CrmEngagementSyncService.syncEngagementsForLinkedUser(provider, linkedUserId, id_project, type));
+          }
+
+          tasks.push(() => this.CrmNoteSyncService.syncNotesForLinkedUser(provider, linkedUserId, id_project));
+          tasks.push(() => this.CrmTaskSyncService.syncTasksForLinkedUser(provider, linkedUserId, id_project));
+
+          for (const task of tasks) {
+            try {
+              await task();
+            } catch (error) {
+              handleServiceError(error, this.logger);
+            }
+          }
+
+          const deals = await this.prisma.crm_deals.findMany({
+            where: {
+              remote_platform: provider,
+              id_linked_user: linkedUserId,
+            },
+          });
+          for (const deal of deals) {
+            await this.CrmStageSyncService.syncStagesForLinkedUser(
+              provider,
+              linkedUserId,
+              id_project,
+              deal.id_crm_deal,
+            );
+          }
+          break;
+
+        case ConnectorCategory.Ticketing:
+          // logic
+          tasks.push(() => this.TicketingUserSyncService.syncUsersForLinkedUser(provider, linkedUserId, id_project));
+          tasks.push(() => this.TicketingAccountSyncService.syncAccountsForLinkedUser(provider, linkedUserId, id_project));
+          tasks.push(() => this.TicketingCollectionSyncService.syncCollectionsForLinkedUser(provider, linkedUserId, id_project));
+          tasks.push(() => this.TicketingTicketSyncService.syncTicketsForLinkedUser(provider, linkedUserId, id_project));
+          tasks.push(() => this.TicketingTeamSyncService.syncTeamsForLinkedUser(provider, linkedUserId, id_project));
+          tasks.push(() => this.TicketingContactSyncService.syncContactsForLinkedUser(provider, linkedUserId, id_project));
+
+          for (const task of tasks) {
+            try {
+              await task();
+            } catch (error) {
+              handleServiceError(error, this.logger);
+            }
+          }
+
+          const tickets = await this.prisma.tcg_tickets.findMany({
+            where: {
+              remote_platform: provider,
+              id_linked_user: linkedUserId,
+            },
+          });
+
+          for (const ticket of tickets) {
+            try {
+              await this.TicketingCommentSyncService.syncCommentsForLinkedUser(provider, linkedUserId, id_project, ticket.id_tcg_ticket);
+              await this.TicketingTagSyncService.syncTagsForLinkedUser(provider, linkedUserId, id_project, ticket.id_tcg_ticket);
+            } catch (error) {
+              handleServiceError(error, this.logger);
+            }
+          }
+
+          break;
+      }
+
+    } catch (error) {
+      handleServiceError(error, this.logger);
+    }
+  }
+
   // we must have a sync_jobs table with 7 (verticals) rows, one of each is syncing details
   async getSyncStatus(vertical: string) {
     try {
+
     } catch (error) {
       handleServiceError(error, this.logger);
     }

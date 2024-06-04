@@ -477,762 +477,6 @@
         ]
       }
     },
-    "/linked-users": {
-      "post": {
-        "operationId": "addLinkedUser",
-        "summary": "Add Linked User",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateLinkedUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "linked-users"
-        ]
-      },
-      "get": {
-        "operationId": "fetchLinkedUsers",
-        "summary": "Retrieve Linked Users",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "linked-users"
-        ]
-      }
-    },
-    "/linked-users/batch": {
-      "post": {
-        "operationId": "addBatchLinkedUsers",
-        "summary": "Add Batch Linked Users",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateBatchLinkedUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "linked-users"
-        ]
-      }
-    },
-    "/linked-users/single": {
-      "get": {
-        "operationId": "getLinkedUser",
-        "summary": "Retrieve a Linked User",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "linked-users"
-        ]
-      }
-    },
-    "/linked-users/fromRemoteId": {
-      "get": {
-        "operationId": "linkedUserFromRemoteId",
-        "summary": "Retrieve a Linked User From A Remote Id",
-        "parameters": [
-          {
-            "name": "remoteId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "linked-users"
-        ]
-      }
-    },
-    "/organisations": {
-      "get": {
-        "operationId": "getOrganisations",
-        "summary": "Retrieve Organisations",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "organisations"
-        ]
-      }
-    },
-    "/organisations/create": {
-      "post": {
-        "operationId": "createOrganisation",
-        "summary": "Create an Organisation",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOrganizationDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "organisations"
-        ]
-      }
-    },
-    "/projects": {
-      "get": {
-        "operationId": "getProjects",
-        "summary": "Retrieve projects",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "projects"
-        ]
-      },
-      "post": {
-        "operationId": "createProject",
-        "summary": "Create a project",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateProjectDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "projects"
-        ]
-      }
-    },
-    "/field-mappings/entities": {
-      "get": {
-        "operationId": "getFieldMappingsEntities",
-        "summary": "Retrieve field mapping entities",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "field-mappings"
-        ]
-      }
-    },
-    "/field-mappings/attribute": {
-      "get": {
-        "operationId": "getFieldMappings",
-        "summary": "Retrieve field mappings",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "field-mappings"
-        ]
-      }
-    },
-    "/field-mappings/value": {
-      "get": {
-        "operationId": "getFieldMappingValues",
-        "summary": "Retrieve field mappings values",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "field-mappings"
-        ]
-      }
-    },
-    "/field-mappings/define": {
-      "post": {
-        "operationId": "defineTargetField",
-        "summary": "Define target Field",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DefineTargetFieldDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "field-mappings"
-        ]
-      }
-    },
-    "/field-mappings": {
-      "post": {
-        "operationId": "createCustomField",
-        "summary": "Create Custom Field",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomFieldCreateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "field-mappings"
-        ]
-      }
-    },
-    "/field-mappings/map": {
-      "post": {
-        "operationId": "mapField",
-        "summary": "Map Custom Field",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MapFieldToProviderDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "field-mappings"
-        ]
-      }
-    },
-    "/field-mappings/properties": {
-      "get": {
-        "operationId": "getCustomProviderProperties",
-        "summary": "Retrieve Custom Properties",
-        "parameters": [
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "providerId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "vertical",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "field-mappings"
-        ]
-      }
-    },
-    "/events": {
-      "get": {
-        "operationId": "getEvents",
-        "summary": "Retrieve Events",
-        "parameters": [
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "default": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "default": 10,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "events"
-        ]
-      }
-    },
-    "/events/count": {
-      "get": {
-        "operationId": "getEventsCount",
-        "summary": "Retrieve Events Count",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "number"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "events"
-        ]
-      }
-    },
-    "/magic-links": {
-      "post": {
-        "operationId": "createMagicLink",
-        "summary": "Create a Magic Link",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateMagicLinkDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "magic-links"
-        ]
-      },
-      "get": {
-        "operationId": "getMagicLinks",
-        "summary": "Retrieve Magic Links",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "magic-links"
-        ]
-      }
-    },
-    "/magic-links/single": {
-      "get": {
-        "operationId": "getMagicLink",
-        "summary": "Retrieve a Magic Link",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "magic-links"
-        ]
-      }
-    },
-    "/passthrough": {
-      "post": {
-        "operationId": "passthroughRequest",
-        "summary": "Make a passthrough request",
-        "parameters": [
-          {
-            "name": "integrationId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "vertical",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PassThroughRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PassThroughResponse"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PassThroughResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "passthrough"
-        ]
-      }
-    },
-    "/connections-strategies/create": {
-      "post": {
-        "operationId": "createConnectionStrategy",
-        "summary": "Create Connection Strategy",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateConnectionStrategyDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "connections-strategies"
-        ]
-      }
-    },
-    "/connections-strategies/toggle": {
-      "post": {
-        "operationId": "toggleConnectionStrategy",
-        "summary": "Activate/Deactivate Connection Strategy",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ToggleStrategyDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "connections-strategies"
-        ]
-      }
-    },
-    "/connections-strategies/delete": {
-      "post": {
-        "operationId": "deleteConnectionStrategy",
-        "summary": "Delete Connection Strategy",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteCSDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "connections-strategies"
-        ]
-      }
-    },
-    "/connections-strategies/update": {
-      "post": {
-        "operationId": "updateConnectionStrategy",
-        "summary": "Update Connection Strategy",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateCSDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "connections-strategies"
-        ]
-      }
-    },
-    "/connections-strategies/credentials": {
-      "post": {
-        "operationId": "getConnectionStrategyCredentials",
-        "summary": "Get Connection Strategy Credential",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConnectionStrategyCredentials"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "connections-strategies"
-        ]
-      }
-    },
-    "/connections-strategies/getCredentials": {
-      "get": {
-        "operationId": "getCredentials",
-        "summary": "Fetch credentials info needed for connections",
-        "parameters": [
-          {
-            "name": "projectId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "type",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "connections-strategies"
-        ]
-      }
-    },
-    "/connections-strategies/getConnectionStrategiesForProject": {
-      "get": {
-        "operationId": "getConnectionStrategiesForProject",
-        "summary": "Fetch All Connection Strategies for Project",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "connections-strategies"
-        ]
-      }
-    },
-    "/syncs/status/{vertical}": {
-      "get": {
-        "operationId": "getSyncStatus",
-        "summary": "Retrieve sync status of a certain vertical",
-        "parameters": [
-          {
-            "name": "vertical",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "syncs"
-        ]
-      }
-    },
-    "/syncs/resyncs/{vertical}": {
-      "get": {
-        "operationId": "resync",
-        "summary": "Resync common objects across a vertical",
-        "parameters": [
-          {
-            "name": "vertical",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "syncs"
-        ]
-      }
-    },
     "/crm/companies": {
       "get": {
         "operationId": "getCompanies",
@@ -4323,6 +3567,762 @@
         ]
       }
     },
+    "/linked-users": {
+      "post": {
+        "operationId": "addLinkedUser",
+        "summary": "Add Linked User",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLinkedUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      },
+      "get": {
+        "operationId": "fetchLinkedUsers",
+        "summary": "Retrieve Linked Users",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
+    "/linked-users/batch": {
+      "post": {
+        "operationId": "addBatchLinkedUsers",
+        "summary": "Add Batch Linked Users",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBatchLinkedUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
+    "/linked-users/single": {
+      "get": {
+        "operationId": "getLinkedUser",
+        "summary": "Retrieve a Linked User",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
+    "/linked-users/fromRemoteId": {
+      "get": {
+        "operationId": "linkedUserFromRemoteId",
+        "summary": "Retrieve a Linked User From A Remote Id",
+        "parameters": [
+          {
+            "name": "remoteId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "linked-users"
+        ]
+      }
+    },
+    "/organisations": {
+      "get": {
+        "operationId": "getOrganisations",
+        "summary": "Retrieve Organisations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "organisations"
+        ]
+      }
+    },
+    "/organisations/create": {
+      "post": {
+        "operationId": "createOrganisation",
+        "summary": "Create an Organisation",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "organisations"
+        ]
+      }
+    },
+    "/projects": {
+      "get": {
+        "operationId": "getProjects",
+        "summary": "Retrieve projects",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "projects"
+        ]
+      },
+      "post": {
+        "operationId": "createProject",
+        "summary": "Create a project",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/field-mappings/entities": {
+      "get": {
+        "operationId": "getFieldMappingsEntities",
+        "summary": "Retrieve field mapping entities",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mappings"
+        ]
+      }
+    },
+    "/field-mappings/attribute": {
+      "get": {
+        "operationId": "getFieldMappings",
+        "summary": "Retrieve field mappings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mappings"
+        ]
+      }
+    },
+    "/field-mappings/value": {
+      "get": {
+        "operationId": "getFieldMappingValues",
+        "summary": "Retrieve field mappings values",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mappings"
+        ]
+      }
+    },
+    "/field-mappings/define": {
+      "post": {
+        "operationId": "defineTargetField",
+        "summary": "Define target Field",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefineTargetFieldDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mappings"
+        ]
+      }
+    },
+    "/field-mappings": {
+      "post": {
+        "operationId": "createCustomField",
+        "summary": "Create Custom Field",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mappings"
+        ]
+      }
+    },
+    "/field-mappings/map": {
+      "post": {
+        "operationId": "mapField",
+        "summary": "Map Custom Field",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MapFieldToProviderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mappings"
+        ]
+      }
+    },
+    "/field-mappings/properties": {
+      "get": {
+        "operationId": "getCustomProviderProperties",
+        "summary": "Retrieve Custom Properties",
+        "parameters": [
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vertical",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "field-mappings"
+        ]
+      }
+    },
+    "/events": {
+      "get": {
+        "operationId": "getEvents",
+        "summary": "Retrieve Events",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/events/count": {
+      "get": {
+        "operationId": "getEventsCount",
+        "summary": "Retrieve Events Count",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/magic-links": {
+      "post": {
+        "operationId": "createMagicLink",
+        "summary": "Create a Magic Link",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMagicLinkDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "magic-links"
+        ]
+      },
+      "get": {
+        "operationId": "getMagicLinks",
+        "summary": "Retrieve Magic Links",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "magic-links"
+        ]
+      }
+    },
+    "/magic-links/single": {
+      "get": {
+        "operationId": "getMagicLink",
+        "summary": "Retrieve a Magic Link",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "magic-links"
+        ]
+      }
+    },
+    "/passthrough": {
+      "post": {
+        "operationId": "passthroughRequest",
+        "summary": "Make a passthrough request",
+        "parameters": [
+          {
+            "name": "integrationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedUserId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vertical",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PassThroughRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassThroughResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassThroughResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "passthrough"
+        ]
+      }
+    },
+    "/connections-strategies/create": {
+      "post": {
+        "operationId": "createConnectionStrategy",
+        "summary": "Create Connection Strategy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConnectionStrategyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/toggle": {
+      "post": {
+        "operationId": "toggleConnectionStrategy",
+        "summary": "Activate/Deactivate Connection Strategy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleStrategyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/delete": {
+      "post": {
+        "operationId": "deleteConnectionStrategy",
+        "summary": "Delete Connection Strategy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteCSDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/update": {
+      "post": {
+        "operationId": "updateConnectionStrategy",
+        "summary": "Update Connection Strategy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCSDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/credentials": {
+      "post": {
+        "operationId": "getConnectionStrategyCredentials",
+        "summary": "Get Connection Strategy Credential",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectionStrategyCredentials"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/getCredentials": {
+      "get": {
+        "operationId": "getCredentials",
+        "summary": "Fetch credentials info needed for connections",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/connections-strategies/getConnectionStrategiesForProject": {
+      "get": {
+        "operationId": "getConnectionStrategiesForProject",
+        "summary": "Fetch All Connection Strategies for Project",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections-strategies"
+        ]
+      }
+    },
+    "/syncs/status/{vertical}": {
+      "get": {
+        "operationId": "getSyncStatus",
+        "summary": "Retrieve sync status of a certain vertical",
+        "parameters": [
+          {
+            "name": "vertical",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "syncs"
+        ]
+      }
+    },
+    "/syncs/resyncs/{vertical}": {
+      "get": {
+        "operationId": "resync",
+        "summary": "Resync common objects across a vertical",
+        "parameters": [
+          {
+            "name": "vertical",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "syncs"
+        ]
+      }
+    },
     "/project-connectors": {
       "post": {
         "operationId": "updateConnectorsToProject",
@@ -4848,325 +4848,6 @@
         "required": [
           "signature",
           "secret"
-        ]
-      },
-      "CreateLinkedUserDto": {
-        "type": "object",
-        "properties": {
-          "linked_user_origin_id": {
-            "type": "string"
-          },
-          "alias": {
-            "type": "string"
-          },
-          "id_project": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "linked_user_origin_id",
-          "alias",
-          "id_project"
-        ]
-      },
-      "CreateBatchLinkedUserDto": {
-        "type": "object",
-        "properties": {
-          "linked_user_origin_ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "alias": {
-            "type": "string"
-          },
-          "id_project": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "linked_user_origin_ids",
-          "alias",
-          "id_project"
-        ]
-      },
-      "CreateOrganizationDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "stripe_customer_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "stripe_customer_id"
-        ]
-      },
-      "CreateProjectDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "id_organization": {
-            "type": "string"
-          },
-          "id_user": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "id_user"
-        ]
-      },
-      "DefineTargetFieldDto": {
-        "type": "object",
-        "properties": {
-          "object_type_owner": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "data_type": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "object_type_owner",
-          "name",
-          "description",
-          "data_type"
-        ]
-      },
-      "CustomFieldCreateDto": {
-        "type": "object",
-        "properties": {
-          "object_type_owner": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "data_type": {
-            "type": "string"
-          },
-          "source_custom_field_id": {
-            "type": "string"
-          },
-          "source_provider": {
-            "type": "string"
-          },
-          "linked_user_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "object_type_owner",
-          "name",
-          "description",
-          "data_type",
-          "source_custom_field_id",
-          "source_provider",
-          "linked_user_id"
-        ]
-      },
-      "MapFieldToProviderDto": {
-        "type": "object",
-        "properties": {
-          "attributeId": {
-            "type": "string"
-          },
-          "source_custom_field_id": {
-            "type": "string"
-          },
-          "source_provider": {
-            "type": "string"
-          },
-          "linked_user_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "attributeId",
-          "source_custom_field_id",
-          "source_provider",
-          "linked_user_id"
-        ]
-      },
-      "CreateMagicLinkDto": {
-        "type": "object",
-        "properties": {
-          "linked_user_origin_id": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "alias": {
-            "type": "string"
-          },
-          "id_project": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "linked_user_origin_id",
-          "email",
-          "alias",
-          "id_project"
-        ]
-      },
-      "PassThroughRequestDto": {
-        "type": "object",
-        "properties": {
-          "method": {
-            "enum": [
-              "GET",
-              "POST",
-              "PATCH",
-              "DELETE",
-              "PUT"
-            ],
-            "type": "string"
-          },
-          "path": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object"
-          },
-          "headers": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "method",
-          "path"
-        ]
-      },
-      "PassThroughResponse": {
-        "type": "object",
-        "properties": {
-          "url": {
-            "type": "string"
-          },
-          "status": {
-            "type": "number"
-          },
-          "data": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "url",
-          "status",
-          "data"
-        ]
-      },
-      "CreateConnectionStrategyDto": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "attributes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "values": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "type",
-          "attributes",
-          "values"
-        ]
-      },
-      "ToggleStrategyDto": {
-        "type": "object",
-        "properties": {
-          "id_cs": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id_cs"
-        ]
-      },
-      "DeleteCSDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id"
-        ]
-      },
-      "UpdateCSDto": {
-        "type": "object",
-        "properties": {
-          "id_cs": {
-            "type": "string"
-          },
-          "status": {
-            "type": "boolean"
-          },
-          "attributes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "values": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "id_cs",
-          "status",
-          "attributes",
-          "values"
-        ]
-      },
-      "ConnectionStrategyCredentials": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "attributes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "type",
-          "attributes"
         ]
       },
       "ApiResponse": {
@@ -6404,6 +6085,325 @@
           "name",
           "description",
           "field_mappings"
+        ]
+      },
+      "CreateLinkedUserDto": {
+        "type": "object",
+        "properties": {
+          "linked_user_origin_id": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "id_project": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "linked_user_origin_id",
+          "alias",
+          "id_project"
+        ]
+      },
+      "CreateBatchLinkedUserDto": {
+        "type": "object",
+        "properties": {
+          "linked_user_origin_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "alias": {
+            "type": "string"
+          },
+          "id_project": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "linked_user_origin_ids",
+          "alias",
+          "id_project"
+        ]
+      },
+      "CreateOrganizationDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "stripe_customer_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "stripe_customer_id"
+        ]
+      },
+      "CreateProjectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id_organization": {
+            "type": "string"
+          },
+          "id_user": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "id_user"
+        ]
+      },
+      "DefineTargetFieldDto": {
+        "type": "object",
+        "properties": {
+          "object_type_owner": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "data_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_type_owner",
+          "name",
+          "description",
+          "data_type"
+        ]
+      },
+      "CustomFieldCreateDto": {
+        "type": "object",
+        "properties": {
+          "object_type_owner": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "data_type": {
+            "type": "string"
+          },
+          "source_custom_field_id": {
+            "type": "string"
+          },
+          "source_provider": {
+            "type": "string"
+          },
+          "linked_user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_type_owner",
+          "name",
+          "description",
+          "data_type",
+          "source_custom_field_id",
+          "source_provider",
+          "linked_user_id"
+        ]
+      },
+      "MapFieldToProviderDto": {
+        "type": "object",
+        "properties": {
+          "attributeId": {
+            "type": "string"
+          },
+          "source_custom_field_id": {
+            "type": "string"
+          },
+          "source_provider": {
+            "type": "string"
+          },
+          "linked_user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "attributeId",
+          "source_custom_field_id",
+          "source_provider",
+          "linked_user_id"
+        ]
+      },
+      "CreateMagicLinkDto": {
+        "type": "object",
+        "properties": {
+          "linked_user_origin_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "id_project": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "linked_user_origin_id",
+          "email",
+          "alias",
+          "id_project"
+        ]
+      },
+      "PassThroughRequestDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "enum": [
+              "GET",
+              "POST",
+              "PATCH",
+              "DELETE",
+              "PUT"
+            ],
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          },
+          "headers": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "method",
+          "path"
+        ]
+      },
+      "PassThroughResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "status": {
+            "type": "number"
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "url",
+          "status",
+          "data"
+        ]
+      },
+      "CreateConnectionStrategyDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "attributes",
+          "values"
+        ]
+      },
+      "ToggleStrategyDto": {
+        "type": "object",
+        "properties": {
+          "id_cs": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_cs"
+        ]
+      },
+      "DeleteCSDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "UpdateCSDto": {
+        "type": "object",
+        "properties": {
+          "id_cs": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id_cs",
+          "status",
+          "attributes",
+          "values"
+        ]
+      },
+      "ConnectionStrategyCredentials": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "attributes"
         ]
       },
       "ProjectConnectorsDto": {

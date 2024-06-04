@@ -126,7 +126,7 @@ export class Utils {
           id_tcg_collection: uuid,
         },
       });
-      if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
+      if (!res) return;
       return res.remote_id;
     } catch (error) {
       throw new Error(error);
