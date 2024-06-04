@@ -35,8 +35,10 @@ services:
       DISTRIBUTION: ${DISTRIBUTION}
       JWT_SECRET: ${JWT_SECRET}
       REDIS_HOST: ${REDIS_HOST}
+      REDIS_USER: ${REDIS_USER}
       REDIS_PASS: ${REDIS_PASS}
-      REDIS_PORT: ${REDIS_PORT}
+      BACKEND_PORT: ${BACKEND_PORT}
+      REDIS_DB: ${REDIS_DB}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}
       HUBSPOT_CRM_CLOUD_CLIENT_SECRET: ${HUBSPOT_CRM_CLOUD_CLIENT_SECRET}
@@ -117,8 +119,16 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - backend
+    healthcheck:
+      test: ["CMD-SHELL", "curl", "-f", "http://localhost:3000/health"]
+      start_period: 60s
+      interval: 10s
+      timeout: 1s
+      retries: 50
 
   redis:
     image: valkey/valkey:7.2-alpine
@@ -130,16 +140,18 @@ services:
       - ./redis-data:/data
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
       
   webapp-next:
     build:
       dockerfile: ./apps/client-ts/Dockerfile
       context: ./
       args:
-        NEXT_PUBLIC_STYTCH_PROJECT_ID: ${NEXT_PUBLIC_STYTCH_PROJECT_ID}
-        NEXT_PUBLIC_STYTCH_SECRET: ${NEXT_PUBLIC_STYTCH_SECRET}
-        NEXT_PUBLIC_STYTCH_PROJECT_ENV: ${NEXT_PUBLIC_STYTCH_PROJECT_ENV}
-        NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN: ${NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN}
         NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
         NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
         NEXT_PUBLIC_FRONTEND_DOMAIN: ${NEXT_PUBLIC_FRONTEND_DOMAIN}
@@ -148,7 +160,8 @@ services:
     ports:
       - 80:8090
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - backend
       - frontend
@@ -163,7 +176,8 @@ services:
     ports:
       - 81:80
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - backend
       - frontend

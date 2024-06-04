@@ -276,7 +276,7 @@ function updateEnumFile(enumFilePath, newServiceDirs, vertical) {
   const base = vertical.substring(0, 1).toUpperCase() + vertical.substring(1);
 
   // Define the enum name to be updated based on the vertical
-  let enumName = `${base}Providers`;
+  let enumName = `${base}Connectors`;
   // Extract the enum content
   const enumRegex = new RegExp(`export enum ${enumName} {([\\s\\S]*?)}\n`, 'm');
   const match = fileContent.match(enumRegex);
@@ -328,9 +328,9 @@ function updateObjectTypes(baseDir, objectType, vertical) {
   // Extract the current provider arrays from providers.ts and enum.ts
   const providersFilePath = path.join(
     __dirname,
-    '../../shared/src/providers.ts',
+    '../../shared/src/connectors/index.ts',
   );
-  const enumFilePath = path.join(__dirname, '../../shared/src/enum.ts');
+  const enumFilePath = path.join(__dirname, '../../shared/src/connectors/enum.ts');
   const currentProviders = extractArrayFromFile(
     providersFilePath,
     `${vertical.toUpperCase()}_PROVIDERS`,
@@ -377,7 +377,7 @@ function updateObjectTypes(baseDir, objectType, vertical) {
     baseDir,
     objectType,
   );
-  console.log(importStatements)
+  // console.log(importStatements)
   updateTargetFile(targetFile, importStatements, possibleProviderForImportStatements, objectType);
 }
 

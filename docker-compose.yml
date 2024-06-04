@@ -21,7 +21,7 @@ services:
       - ./packages/api/scripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
     networks:
       - backend
-
+      
   api:
     image: panoradotdev/backend-api:selfhosted
     environment:
@@ -29,8 +29,10 @@ services:
       DISTRIBUTION: ${DISTRIBUTION}
       JWT_SECRET: ${JWT_SECRET}
       REDIS_HOST: ${REDIS_HOST}
+      REDIS_USER: ${REDIS_USER}
       REDIS_PASS: ${REDIS_PASS}
       REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}
       HUBSPOT_CRM_CLOUD_CLIENT_SECRET: ${HUBSPOT_CRM_CLOUD_CLIENT_SECRET}
@@ -105,7 +107,6 @@ services:
       MAILCHIMP_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET: ${MAILCHIMP_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET}
       PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_ID: ${PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_ID}
       PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET: ${PODIUM_MARKETINGAUTOMATION_CLOUD_CLIENT_SECRET}
-
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -114,7 +115,12 @@ services:
         condition: service_healthy
     networks:
       - backend
-
+    healthcheck:
+      test: ["CMD-SHELL", "curl", "-f", "https://google.com"]
+      start_period: 60s
+      interval: 10s
+      timeout: 1s
+      retries: 50
 
   redis:
     image: valkey/valkey:7.2-alpine
@@ -126,6 +132,12 @@ services:
       - ./redis-data:/data
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
       
 
   magic-link-frontend:
@@ -134,7 +146,8 @@ services:
     ports:
       - 81:80
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - backend
       - frontend
@@ -142,10 +155,6 @@ services:
   webapp-next:
     image: panoradotdev/frontend-webapp:selfhosted
     environment:
-      NEXT_PUBLIC_STYTCH_PROJECT_ID: ${NEXT_PUBLIC_STYTCH_PROJECT_ID}
-      NEXT_PUBLIC_STYTCH_SECRET: ${NEXT_PUBLIC_STYTCH_SECRET}
-      NEXT_PUBLIC_STYTCH_PROJECT_ENV: ${NEXT_PUBLIC_STYTCH_PROJECT_ENV}
-      NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN: ${NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN}
       NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
       NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
       NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
@@ -154,7 +163,8 @@ services:
     ports:
       - 80:8090
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - backend
       - frontend

@@ -42,6 +42,8 @@ RUN pnpm run build
 
 # ========================================================================
 FROM base AS runner
+RUN apk add --no-cache libc6-compat netcat-openbsd curl
+
 WORKDIR /app
 
 COPY --from=installer ./app .
@@ -52,6 +54,8 @@ WORKDIR /app/packages/api
 # # # # # # # # # # # # 
 # DEV: Maintain the /app/packages/api folder as context (Breaking)
 # # # # # # # # # # # # 
+
+EXPOSE 3000
 CMD node dist/src/main.js
 
 # # # # # # # # # # # # 
