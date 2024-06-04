@@ -69,7 +69,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         username: process.env.REDIS_USER || 'default',
         db: Number(process.env.REDIS_DB) || 0,
         enableReadyCheck: false,
-        maxRetriesPerRequest: null
+        maxRetriesPerRequest: null,
+        tls: process.env.REDIS_TLS ? { rejectUnauthorized: false } : undefined,
       },
     }),
   ],
