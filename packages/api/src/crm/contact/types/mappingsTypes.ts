@@ -3,7 +3,9 @@ import { HubspotContactMapper } from '../services/hubspot/mappers';
 import { PipedriveContactMapper } from '../services/pipedrive/mappers';
 import { ZendeskContactMapper } from '../services/zendesk/mappers';
 import { ZohoContactMapper } from '../services/zoho/mappers';
+import { AffinityMapper } from '../services/affinity/mappers';
 
+const affinityContactMapper = new AffinityMapper();
 const hubspotContactMapper = new HubspotContactMapper();
 const zendeskContactMapper = new ZendeskContactMapper();
 const zohoContactMapper = new ZohoContactMapper();
@@ -30,5 +32,9 @@ export const contactUnificationMapping = {
   attio: {
     unify: attioContactMapper.unify.bind(attioContactMapper),
     desunify: attioContactMapper.desunify.bind(attioContactMapper),
+  },
+  affinity: {
+    unify: affinityContactMapper.unify,
+    desunify: affinityContactMapper.desunify,
   },
 };

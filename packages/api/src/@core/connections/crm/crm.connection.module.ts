@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
+import { AffinityConnectionService } from './services/affinity/affinity.service';
 import { CrmConnectionsService } from './services/crm.connection.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -15,7 +17,7 @@ import { AttioConnectionService } from './services/attio/attio.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, HttpModule,],
   providers: [
     CrmConnectionsService,
     PrismaService,
@@ -31,6 +33,7 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
     ZohoConnectionService,
     ZendeskConnectionService,
     PipedriveConnectionService,
+    AffinityConnectionService,
   ],
   exports: [CrmConnectionsService],
 })
