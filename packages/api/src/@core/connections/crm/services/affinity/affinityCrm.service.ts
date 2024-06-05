@@ -99,7 +99,7 @@ export class AffinityConnectionService implements ICrmConnectionService {
       return { access_token, refresh_token, expires_in };
     } catch (error) {
       this.logger.error('Error refreshing token for Affinity', error);
-      throw new Error('Failed to refresh token for Affinity');
+      throw new Error(`Failed to refresh token for Affinity: ${error.message}`);
     }
   }
 }
