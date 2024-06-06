@@ -106,7 +106,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
   // Adding scope for providers that require it, except for 'pipedrive'
-  if (scopes) {
+  const ignoreScopes = ['close']
+  if (scopes && !ignoreScopes.includes(providerName)) {
     params += `&scope=${encodeURIComponent(scopes)}`;
   }
 

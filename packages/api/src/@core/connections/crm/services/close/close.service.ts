@@ -100,7 +100,7 @@ export class CloseConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['crm']['close'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['close']?.urls?.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -153,10 +153,10 @@ export class CloseConnectionService implements ICrmConnectionService {
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
+        grant_type: 'refresh_token',
       });
       const res = await axios.post(
         'https://api.close.com/oauth2/token',
@@ -168,18 +168,21 @@ export class CloseConnectionService implements ICrmConnectionService {
         },
       );
       const data: CloseOAuthResponse = res.data;
-      await this.prisma.connections.update({
-        where: {
-          id_connection: connectionId,
-        },
-        data: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_in) * 1000,
-          ),
-        },
-      });
+      if (res?.data?.access_token) {
+        //only update when it is successful
+        await this.prisma.connections.update({
+          where: {
+            id_connection: connectionId,
+          },
+          data: {
+            access_token: this.cryptoService.encrypt(data?.access_token),
+            refresh_token: this.cryptoService.encrypt(data?.refresh_token),
+            expiration_timestamp: new Date(
+              new Date().getTime() + Number(data?.expires_in) * 1000,
+            ),
+          },
+        });
+      }
       this.logger.log('OAuth credentials updated : close ');
     } catch (error) {
       handleServiceError(error, this.logger, 'close', Action.oauthRefresh);

@@ -448,6 +448,7 @@ CREATE TABLE project_connectors
     crm_zendesk boolean NOT NULL,
     crm_pipedrive boolean NOT NULL,
     crm_attio boolean NOT NULL,
+    crm_close boolean NOT NULL,
     tcg_zendesk boolean NOT NULL,
     tcg_gorgias boolean NOT NULL,
     tcg_front boolean NOT NULL,

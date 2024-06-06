@@ -30,6 +30,7 @@ export interface TypeCustom {
   tcg_front: boolean;
   tcg_jira: boolean;
   tcg_gitlab: boolean;
+  crm_close: boolean;
 }
 @ApiTags('project-connectors')
 @Controller('project-connectors')

@@ -3,7 +3,8 @@ export enum CrmConnectors {
     ZENDESK = 'zendesk',
     HUBSPOT = 'hubspot',
     PIPEDRIVE = 'pipedrive',
-    ATTIO = 'attio'
+    ATTIO = 'attio',
+    CLOSE = 'close'
 }
 
 export enum TicketingConnectors {
