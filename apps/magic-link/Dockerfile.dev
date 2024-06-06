@@ -19,7 +19,7 @@ ENV VITE_FRONTEND_DOMAIN="$VITE_FRONTEND_DOMAIN"
 RUN corepack enable
 
 WORKDIR /app
-RUN pnpm add -g turbo
+RUN pnpm add -g turbo@1.13.4
 
 # run the ML
 CMD cd apps/magic-link && pnpm install && pnpm run dev --host
