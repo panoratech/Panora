@@ -91,6 +91,10 @@ export class CloseDealMapper implements IDealMapper {
       }
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f88d7e43 (feat:Add integration with Close CRM)
     let opts: any = {};
     if (deal.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
@@ -132,7 +136,11 @@ export class CloseDealMapper implements IDealMapper {
       remote_id: deal.id,
       name: deal.note,
       description: deal.note, // Placeholder if there's no direct mapping
+<<<<<<< HEAD
       amount: parseFloat(`${deal.value || 0}`),
+=======
+      amount: parseFloat(`${deal.expected_value || 0}`),
+>>>>>>> f88d7e43 (feat:Add integration with Close CRM)
       //TODO; stage_id: deal.properties.dealstage,
       field_mappings,
       ...opts,
