@@ -132,7 +132,7 @@ export class CloseDealMapper implements IDealMapper {
       remote_id: deal.id,
       name: deal.note,
       description: deal.note, // Placeholder if there's no direct mapping
-      amount: parseFloat(`${deal.expected_value || 0}`),
+      amount: parseFloat(`${deal.value || 0}`),
       //TODO; stage_id: deal.properties.dealstage,
       field_mappings,
       ...opts,
