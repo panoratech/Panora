@@ -83,6 +83,10 @@ import {
   ZohoStageOutput,
 } from '@crm/stage/services/zoho/types';
 import {
+  CloseStageInput,
+  CloseStageOutput,
+} from '@crm/stage/services/close/types';
+import {
   HubspotTaskInput,
   HubspotTaskOutput,
 } from '@crm/task/services/hubspot/types';
@@ -178,7 +182,8 @@ export type OriginalStageInput =
   | HubspotStageInput
   | ZohoStageInput
   | ZendeskStageInput
-  | PipedriveStageInput;
+  | PipedriveStageInput
+  | CloseStageInput;
 
 /* engagementType */
 
@@ -256,7 +261,8 @@ export type OriginalStageOutput =
   | HubspotStageOutput
   | ZohoStageOutput
   | ZendeskStageOutput
-  | PipedriveStageOutput;
+  | PipedriveStageOutput
+  | CloseStageOutput;
 
 /* engagementType */
 

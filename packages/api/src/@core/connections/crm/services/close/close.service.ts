@@ -85,10 +85,7 @@ export class CloseConnectionService implements ICrmConnectionService {
         },
       );
       const data: CloseOAuthResponse = res.data;
-      this.logger.log(
-        'OAuth credentials : close ticketing ' + JSON.stringify(data),
-      );
-
+      this.logger.log('OAuth credentials : close CRM ' + JSON.stringify(data));
       let db_res;
       const connection_token = uuidv4();
 
