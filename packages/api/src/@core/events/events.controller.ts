@@ -41,7 +41,6 @@ export class EventsController {
     return await this.eventsService.findEvents(dto, id_project);
   }
 
-  // todo
   @ApiOperation({
     operationId: 'getEventsCount',
     summary: 'Retrieve Events Count',

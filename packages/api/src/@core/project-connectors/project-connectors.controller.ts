@@ -67,8 +67,6 @@ export class ProjectConnectorsController {
     return await this.projectConnectorsService.createProjectConnectors(data);
   }
 
-  // It should be public API and don't have to add AuthGuard
-  // TODO: add admin control
   @ApiOperation({
     operationId: 'getConnectorsFromProject',
     summary: 'Retrieve connectors by Project Id',

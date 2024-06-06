@@ -21,7 +21,7 @@ export type GithubOAuthResponse = {
   access_token: string;
   refresh_token: string;
   expires_in: string;
-  refresh_token_expires_in: string; //TODO
+  refresh_token_expires_in: string;
   token_type: string;
   scope: string;
 };

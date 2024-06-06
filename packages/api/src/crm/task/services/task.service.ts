@@ -130,11 +130,10 @@ export class TaskService {
       // add the task inside our db
       const source_task = resp.data;
       const target_task = unifiedObject[0];
-      const originId = 'id' in source_task ? String(source_task.id) : undefined; //TODO
 
       const existingTask = await this.prisma.crm_tasks.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_task.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -187,7 +186,7 @@ export class TaskService {
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_task.remote_id,
           remote_platform: integrationId,
         };
 
