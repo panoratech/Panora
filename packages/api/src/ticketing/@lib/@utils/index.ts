@@ -34,12 +34,7 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-<<<<<<< HEAD
-      // if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
-      if (!res) return;
-=======
       if (!res) throw new ReferenceError(`tcg_user not found for uuid ${uuid}`);
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
       return res.remote_id;
     } catch (error) {
       throw error;
@@ -71,13 +66,8 @@ export class Utils {
           id_tcg_contact: uuid,
         },
       });
-<<<<<<< HEAD
-      // if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
-      if (!res) return;
-=======
       if (!res)
         throw new ReferenceError(`tcg_contact not found for uuid ${uuid}`);
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
       return res.remote_id;
     } catch (error) {
       throw error;
@@ -105,12 +95,7 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-<<<<<<< HEAD
-      // if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
-      if (!res) return;
-=======
       if (!res) throw new ReferenceError(`tcg_user not found for uuid ${uuid}`);
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
       return res.email_address;
     } catch (error) {
       throw error;
@@ -178,13 +163,8 @@ export class Utils {
           id_tcg_ticket: uuid,
         },
       });
-<<<<<<< HEAD
-      // if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
-      if (!res) return;
-=======
       if (!res)
         throw new ReferenceError(`tcg_contact not found for uuid ${uuid}`);
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
       return res.remote_id;
     } catch (error) {
       throw error;

@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-<<<<<<< HEAD
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-=======
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { UnifiedTagOutput } from '../types/model.unified';
 
 @Injectable()
@@ -75,11 +71,13 @@ export class TagService {
 
       return res;
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_TAG_ERROR",
-        message: "TagService.getTag() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TAG_ERROR',
+          message: 'TagService.getTag() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -88,8 +86,12 @@ export class TagService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedTagOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedTagOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -101,21 +103,23 @@ export class TagService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_tag: cursor
-          }
+            id_tcg_tag: cursor,
+          },
         });
         if (!isCursorPresent) {
           throw new NotFoundError(`The provided cursor does not exist!`);
         }
       }
 
-      let tags = await this.prisma.tcg_tags.findMany({
+      const tags = await this.prisma.tcg_tags.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_tag: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_tag: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -123,8 +127,10 @@ export class TagService {
         },
       });
 
-      if (tags.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(tags[tags.length - 1].id_tcg_tag).toString('base64');
+      if (tags.length === pageSize + 1) {
+        next_cursor = Buffer.from(tags[tags.length - 1].id_tcg_tag).toString(
+          'base64',
+        );
         tags.pop();
       }
 
@@ -201,14 +207,16 @@ export class TagService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_TAGS_ERROR",
-        message: "TagService.getTags() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TAGS_ERROR',
+          message: 'TagService.getTags() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

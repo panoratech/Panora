@@ -24,20 +24,6 @@ export class GitlabService implements IUserService {
     this.registry.registerService('gitlab', this);
   }
 
-<<<<<<< HEAD
-    async syncUsers(
-        linkedUserId: string,
-        remote_user_id?: string,
-    ): Promise<ApiResponse<GitlabUserOutput[]>> {
-        try {
-            const connection = await this.prisma.connections.findFirst({
-                where: {
-                    id_linked_user: linkedUserId,
-                    provider_slug: 'gitlab',
-                    vertical: 'ticketing',
-                },
-            });
-=======
   async syncUsers(
     linkedUserId: string,
   ): Promise<ApiResponse<GitlabUserOutput[]>> {
@@ -49,7 +35,6 @@ export class GitlabService implements IUserService {
           vertical: 'ticketing',
         },
       });
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 
       const resp = await axios.get(`${connection.account_url}/users`, {
         headers: {

@@ -55,30 +55,11 @@ export class UserController {
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
-<<<<<<< HEAD
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      const { remote_data, pageSize, cursor } = query;
-      return this.userService.getUsers(
-        remoteSource,
-        linkedUserId,
-        pageSize,
-        remote_data,
-        cursor
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-=======
     const { linkedUserId, remoteSource } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
   }
 
   @ApiOperation({

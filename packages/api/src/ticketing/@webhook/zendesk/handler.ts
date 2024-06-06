@@ -6,13 +6,6 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { mapToRemoteEvent } from './utils';
 import * as crypto from 'crypto';
-<<<<<<< HEAD
-import { NonTicketPayload, Payload } from './types';
-import { SyncService as TicketSyncService } from '@ticketing/ticket/sync/sync.service';
-import { SyncService as UserSyncService } from '@ticketing/user/sync/sync.service';
-import { SyncService as ContactSyncService } from '@ticketing/contact/sync/sync.service';
-import { SyncService as AccountSyncService } from '@ticketing/account/sync/sync.service';
-=======
 import {
   Action,
   ActionType,
@@ -20,7 +13,6 @@ import {
   ManagedWebhooksError,
   throwTypedError,
 } from '@@core/utils/errors';
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 
 @Injectable()
 export class ZendeskHandlerService {
@@ -313,7 +305,7 @@ export class ZendeskHandlerService {
             action: 'UPDATE',
             data: { remote_id: payload.ticketId as string },
           },
-        ); 
+        );
       } else {
         //non-ticket payload
         const payload_ = payload as NonTicketPayload;
@@ -395,7 +387,6 @@ export class ZendeskHandlerService {
     const values = afterPrefix.split(':');
     return [values[0], values[1]];
   }
-
 
   async verifyWebhookAuthenticity(
     signature: string,

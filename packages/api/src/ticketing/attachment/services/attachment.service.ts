@@ -3,11 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-<<<<<<< HEAD
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-=======
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedAttachmentInput,
@@ -229,8 +225,12 @@ export class AttachmentService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedAttachmentOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedAttachmentOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       let prev_cursor = null;
@@ -241,20 +241,22 @@ export class AttachmentService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_attachment: cursor
-          }
+            id_tcg_attachment: cursor,
+          },
         });
         if (!isCursorPresent) {
           throw new NotFoundError(`The provided cursor does not exist!`);
         }
       }
-      let attachments = await this.prisma.tcg_attachments.findMany({
+      const attachments = await this.prisma.tcg_attachments.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_attachment: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_attachment: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -262,8 +264,10 @@ export class AttachmentService {
         },
       });
 
-      if (attachments.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(attachments[attachments.length - 1].id_tcg_attachment).toString('base64');
+      if (attachments.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          attachments[attachments.length - 1].id_tcg_attachment,
+        ).toString('base64');
         attachments.pop();
       }
 
@@ -343,7 +347,7 @@ export class AttachmentService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
       throwTypedError(

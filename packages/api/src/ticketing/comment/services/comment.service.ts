@@ -3,11 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-<<<<<<< HEAD
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-=======
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedCommentInput,
@@ -192,13 +188,13 @@ export class CommentService {
       const opts =
         target_comment.creator_type === 'contact'
           ? {
-            id_tcg_contact: unifiedCommentData.contact_id,
-          }
+              id_tcg_contact: unifiedCommentData.contact_id,
+            }
           : target_comment.creator_type === 'user'
-            ? {
+          ? {
               id_tcg_user: unifiedCommentData.user_id,
             }
-            : {}; //case where nothing is passed for creator or a not authorized value;
+          : {}; //case where nothing is passed for creator or a not authorized value;
 
       if (existingComment) {
         // Update the existing comment
@@ -403,8 +399,12 @@ export class CommentService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedCommentOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedCommentOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       let prev_cursor = null;
       let next_cursor = null;
@@ -414,21 +414,23 @@ export class CommentService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_comment: cursor
-          }
+            id_tcg_comment: cursor,
+          },
         });
         if (!isCursorPresent) {
           throw new NotFoundError(`The provided cursor does not exist!`);
         }
       }
 
-      let comments = await this.prisma.tcg_comments.findMany({
+      const comments = await this.prisma.tcg_comments.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_comment: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_comment: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -436,8 +438,10 @@ export class CommentService {
         },
       });
 
-      if (comments.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(comments[comments.length - 1].id_tcg_comment).toString('base64');
+      if (comments.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          comments[comments.length - 1].id_tcg_comment,
+        ).toString('base64');
         comments.pop();
       }
 
@@ -520,7 +524,7 @@ export class CommentService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
       throwTypedError(

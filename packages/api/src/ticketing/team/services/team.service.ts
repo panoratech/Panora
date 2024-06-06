@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-<<<<<<< HEAD
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-=======
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { UnifiedTeamOutput } from '../types/model.unified';
 
 @Injectable()
@@ -76,11 +72,13 @@ export class TeamService {
 
       return res;
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_TEAM_ERROR",
-        message: "TeamService.getTeam() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TEAM_ERROR',
+          message: 'TeamService.getTeam() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -89,8 +87,12 @@ export class TeamService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedTeamOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedTeamOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -102,21 +104,23 @@ export class TeamService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_team: cursor
-          }
+            id_tcg_team: cursor,
+          },
         });
         if (!isCursorPresent) {
           throw new NotFoundError(`The provided cursor does not exist!`);
         }
       }
 
-      let teams = await this.prisma.tcg_teams.findMany({
+      const teams = await this.prisma.tcg_teams.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_team: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_team: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -124,8 +128,10 @@ export class TeamService {
         },
       });
 
-      if (teams.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(teams[teams.length - 1].id_tcg_team).toString('base64');
+      if (teams.length === pageSize + 1) {
+        next_cursor = Buffer.from(teams[teams.length - 1].id_tcg_team).toString(
+          'base64',
+        );
         teams.pop();
       }
 
@@ -203,14 +209,16 @@ export class TeamService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_TEAMS_ERROR",
-        message: "TeamService.getTeams() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TEAMS_ERROR',
+          message: 'TeamService.getTeams() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

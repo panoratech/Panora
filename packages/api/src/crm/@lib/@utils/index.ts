@@ -88,7 +88,7 @@ export class Utils {
       if (!res) return;
       return res.remote_id;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -103,7 +103,7 @@ export class Utils {
       if (!res) return;
       return res;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -123,7 +123,7 @@ export class Utils {
       }
       return res.id_crm_user;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -136,12 +136,11 @@ export class Utils {
         },
       });
 
-      if (!res) {
-        throw new ReferenceError(`crm_companies not found for id ${id}`);
-      }
+      if (!res) return;
+
       return res.name;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -153,12 +152,12 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res)
-        throw new ReferenceError(`crm_deals_stage not found for uuid ${id}`);
+
+      if (!res) return;
 
       return res.stage_name;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -175,7 +174,7 @@ export class Utils {
       }
       return res.remote_id;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -195,7 +194,7 @@ export class Utils {
       }
       return res.id_crm_company;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -210,7 +209,7 @@ export class Utils {
       if (!res) return;
       return res.remote_id;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -245,7 +244,7 @@ export class Utils {
       if (!res) return;
       return res.remote_id;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -264,7 +263,7 @@ export class Utils {
       if (!res) return;
       return res.id_crm_contact;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -279,7 +278,7 @@ export class Utils {
       if (!res) return;
       return res.remote_id;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -298,7 +297,7 @@ export class Utils {
       if (!res) return;
       return res.id_crm_deal;
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -306,12 +305,12 @@ export class Utils {
     try {
       switch (provider_name.toLowerCase()) {
         default:
-          throw new ReferenceError(
+          throw new Error(
             'Provider not supported for status custom task mapping',
           );
       }
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   }
 

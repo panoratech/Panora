@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-<<<<<<< HEAD
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-=======
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { UnifiedContactOutput } from '../types/model.unified';
 
 @Injectable()
@@ -78,11 +74,13 @@ export class ContactService {
 
       return res;
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_CONTACT_ERROR",
-        message: "ContactService.getContact() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_CONTACT_ERROR',
+          message: 'ContactService.getContact() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -91,8 +89,12 @@ export class ContactService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedContactOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedContactOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
       let prev_cursor = null;
@@ -103,21 +105,23 @@ export class ContactService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_contact: cursor
-          }
+            id_tcg_contact: cursor,
+          },
         });
         if (!isCursorPresent) {
           throw new NotFoundError(`The provided cursor does not exist!`);
         }
       }
 
-      let contacts = await this.prisma.tcg_contacts.findMany({
+      const contacts = await this.prisma.tcg_contacts.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_contact: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_contact: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -125,8 +129,10 @@ export class ContactService {
         },
       });
 
-      if (contacts.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(contacts[contacts.length - 1].id_tcg_contact).toString('base64');
+      if (contacts.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          contacts[contacts.length - 1].id_tcg_contact,
+        ).toString('base64');
         contacts.pop();
       }
 
@@ -206,14 +212,16 @@ export class ContactService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_CONTACTS_ERROR",
-        message: "ContactService.getContacts() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_CONTACTS_ERROR',
+          message: 'ContactService.getContacts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

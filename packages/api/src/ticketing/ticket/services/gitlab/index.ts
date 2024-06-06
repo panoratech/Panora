@@ -63,21 +63,6 @@ export class GitlabService implements ITicketService {
         ActionType.POST,
       );
     }
-<<<<<<< HEAD
-    async syncTickets(
-        linkedUserId: string,
-        remote_ticket_id?: string,
-        custom_properties?: string[],
-    ): Promise<ApiResponse<GitlabTicketOutput[]>> {
-        try {
-            const connection = await this.prisma.connections.findFirst({
-                where: {
-                    id_linked_user: linkedUserId,
-                    provider_slug: 'gitlab',
-                    vertical: 'ticketing',
-                },
-            });
-=======
   }
   async syncTickets(
     linkedUserId: string,
@@ -91,7 +76,6 @@ export class GitlabService implements ITicketService {
           vertical: 'ticketing',
         },
       });
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 
       const resp = await axios.get(
         `${connection.account_url}/issues?scope=created_by_me&scope=assigned_to_me`,

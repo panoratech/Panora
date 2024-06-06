@@ -3,10 +3,6 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-<<<<<<< HEAD
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-=======
->>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedTicketInput,
@@ -442,8 +438,12 @@ export class TicketService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedTicketOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedTicketOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -455,21 +455,23 @@ export class TicketService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_ticket: cursor
-          }
+            id_tcg_ticket: cursor,
+          },
         });
         if (!isCursorPresent) {
           throw new NotFoundError(`The provided cursor does not exist!`);
         }
       }
 
-      let tickets = await this.prisma.tcg_tickets.findMany({
+      const tickets = await this.prisma.tcg_tickets.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_ticket: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_ticket: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -481,8 +483,10 @@ export class TicketService {
         },*/
       });
 
-      if (tickets.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(tickets[tickets.length - 1].id_tcg_ticket).toString('base64');
+      if (tickets.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          tickets[tickets.length - 1].id_tcg_ticket,
+        ).toString('base64');
         tickets.pop();
       }
 
@@ -572,7 +576,7 @@ export class TicketService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
       throwTypedError(

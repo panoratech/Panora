@@ -564,9 +564,6 @@ CREATE INDEX FK_fs_folder_driveID ON fs_folders
 
 CREATE INDEX FK_fs_folder_permissionID ON fs_folders
 (
-<<<<<<< HEAD
- id_fs_permission
-=======
     id_project_connector uuid NOT NULL,
     id_project        uuid NOT NULL,
     crm_hubspot boolean NOT NULL,
@@ -582,7 +579,6 @@ CREATE INDEX FK_fs_folder_permissionID ON fs_folders
     tcg_gitlab boolean NOT NULL,
     CONSTRAINT PK_project_connectors PRIMARY KEY ( id_project_connector ),
     CONSTRAINT FK_project_connectors FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
->>>>>>> f88d7e43 (feat:Add integration with Close CRM)
 );
 
 
