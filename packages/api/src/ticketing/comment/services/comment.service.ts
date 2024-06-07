@@ -163,12 +163,10 @@ export class CommentService {
       // add the comment inside our db
       const source_comment = resp.data;
       const target_comment = unifiedObject[0];
-      const originId =
-        'id' in source_comment ? String(source_comment.id) : undefined; //TODO
 
       const existingComment = await this.prisma.tcg_comments.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_comment.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -222,7 +220,7 @@ export class CommentService {
           modified_at: new Date(),
           id_tcg_ticket: unifiedCommentData.ticket_id,
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_comment.remote_id,
           remote_platform: integrationId,
         };
 

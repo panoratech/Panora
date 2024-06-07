@@ -23,7 +23,6 @@ export class UnifiedUserInput {
   @IsOptional()
   teams?: string[];
 
-  //TODO
   @ApiPropertyOptional({
     type: String,
     description: 'The account or organization the user is part of',

@@ -10,6 +10,11 @@ INSERT INTO projects (id_project, name, sync_mode, id_user) VALUES
     ('4c641a21-a7f8-4ffe-b7e8-e7d32db87557', 'Project 2', 'pool', '0ce39030-2901-4c56-8db0-5e326182ec6b'),
     ('2b198012-c79c-4bb6-971e-9635830e8c15', 'Project 3', 'pool', '0ce39030-2901-4c56-8db0-5e326182ec6b');
 
+INSERT INTO project_connectors (id_project_connector,id_project,crm_hubspot,crm_zoho,crm_zendesk,crm_pipedrive,crm_attio,tcg_zendesk,tcg_gorgias,tcg_front,tcg_jira,tcg_gitlab) VALUES
+    ('1709da40-17f7-4d3a-93a0-96dc5da6ddd7','1e468c15-aa57-4448-aa2b-7fed640d1e3d',TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE),
+    ('852dfff8-ab63-4530-ae49-e4b2924407f8','4c641a21-a7f8-4ffe-b7e8-e7d32db87557',TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE),
+    ('aed0f856-f802-4a79-8640-66d441581a99','2b198012-c79c-4bb6-971e-9635830e8c15',TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE);
+
 -- DO $$
 -- DECLARE
     --org_id UUID;

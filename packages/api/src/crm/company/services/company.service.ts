@@ -113,12 +113,10 @@ export class CompanyService {
       // add the company inside our db
       const source_company = resp.data;
       const target_company = unifiedObject[0];
-      const originId =
-        'id' in source_company ? String(source_company.id) : undefined; //TODO
 
       const existingCompany = await this.prisma.crm_companies.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_company.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -253,7 +251,7 @@ export class CompanyService {
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_company.remote_id,
           remote_platform: integrationId,
         };
 

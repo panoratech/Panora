@@ -37,6 +37,7 @@ services:
       REDIS_PASS: ${REDIS_PASS}
       REDIS_USER: ${REDIS_USER}
       REDIS_PORT: ${REDIS_PORT}
+      #REDIS_TLS: 1 # set this variable to 1 when Redis is AWS hosted 
       REDIS_DB: ${REDIS_DB}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}

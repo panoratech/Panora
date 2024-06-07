@@ -70,17 +70,6 @@ export class SyncService implements OnModuleInit {
   async syncCompanies(user_id?: string) {
     try {
       this.logger.log(`Syncing companies....`);
-      // TODO: insert inside sync_jobs table ?
-      /* 
-      {
-        "common_object": "company",
-        "vertical": "crm",
-        "last_sync_start": "",
-        "next_sync_start": "",
-        "status": "SYNCING",
-        "is_initial_sync": true,
-      }
-      */
       const users = user_id
         ? [
             await this.prisma.users.findUnique({

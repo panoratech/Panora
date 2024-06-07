@@ -139,12 +139,10 @@ export class EngagementService {
       // add the engagement inside our db
       const source_engagement = resp.data;
       const target_engagement = unifiedObject[0];
-      const originId =
-        'id' in source_engagement ? String(source_engagement.id) : undefined; //TODO
 
       const existingEngagement = await this.prisma.crm_engagements.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_engagement.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -202,7 +200,7 @@ export class EngagementService {
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_engagement.remote_id,
           remote_platform: integrationId,
         };
 
