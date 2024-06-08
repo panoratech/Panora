@@ -91,6 +91,22 @@ export const columns: ColumnDef<Event>[] = [
     },
   },
   {
+    accessorKey: "id_linked_user",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Id Linked User" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center">
+          <Badge variant="outline" className="rounded-sm py-1 font-normal">{row.getValue("id_linked_user")}</Badge>
+        </div>
+      )
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+  },
+  {
     accessorKey: "date",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Date" />

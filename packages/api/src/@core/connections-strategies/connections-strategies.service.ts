@@ -82,7 +82,7 @@ export class ConnectionsStrategiesService {
           id_cs_attribute: uuidv4(),
           id_cs_entity: entity.id_cs_entity,
           attribute_slug: attribute_slug,
-          data_type: 'string', //TODO
+          data_type: 'string',
         },
       });
       const value_ = await this.prisma.cs_values.create({
@@ -369,7 +369,7 @@ export class ConnectionsStrategiesService {
           where: {
             id_cs_entity: id_cs_entity,
             attribute_slug: attribute_slug,
-            data_type: 'string', //TODO
+            data_type: 'string',
           },
         });
         const value_ = await this.prisma.cs_values.updateMany({

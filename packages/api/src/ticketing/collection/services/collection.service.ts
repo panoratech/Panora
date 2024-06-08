@@ -68,7 +68,7 @@ export class CollectionService {
     remote_data?: boolean,
   ): Promise<UnifiedCollectionOutput[]> {
     try {
-      console.log("In collection service : ", integrationId)
+      console.log('In collection service : ', integrationId);
       const collections = await this.prisma.tcg_collections.findMany({
         where: {
           remote_platform: integrationId.toLowerCase(),

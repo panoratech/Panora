@@ -141,11 +141,10 @@ export class NoteService {
       // add the note inside our db
       const source_note = resp.data;
       const target_note = unifiedObject[0];
-      const originId = 'id' in source_note ? String(source_note.id) : undefined; //TODO
 
       const existingNote = await this.prisma.crm_notes.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_note.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -189,7 +188,7 @@ export class NoteService {
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_note.remote_id,
           remote_platform: integrationId,
         };
         if (target_note.content) {

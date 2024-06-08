@@ -14,7 +14,6 @@ import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 
-//TODO: Ensure the JWT is used for user session authentication and that it's short-lived.
 @Injectable()
 export class AuthService {
   constructor(

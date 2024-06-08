@@ -144,12 +144,10 @@ export class TicketService {
       // add the ticket inside our db
       const source_ticket = resp.data;
       const target_ticket = unifiedObject[0];
-      const originId =
-        'id' in source_ticket ? String(source_ticket.id) : undefined; //TODO
 
       const existingTicket = await this.prisma.tcg_tickets.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_ticket.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -206,7 +204,7 @@ export class TicketService {
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_ticket.remote_id,
           remote_platform: integrationId,
         };
         if (target_ticket.name) {

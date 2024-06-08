@@ -112,16 +112,10 @@ export class ContactService {
       // add the contact inside our db
       const source_contact = resp.data;
       const target_contact = unifiedObject[0];
-      const originId =
-        'id' in source_contact
-          ? String(source_contact.id)
-          : 'contact_id' in source_contact
-          ? String(source_contact.contact_id)
-          : undefined;
 
       const existingContact = await this.prisma.crm_contacts.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_contact.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -253,7 +247,7 @@ export class ContactService {
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_contact.remote_id,
           remote_platform: integrationId,
         };
 
