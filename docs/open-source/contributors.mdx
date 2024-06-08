@@ -120,6 +120,8 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
     - `types.ts` where the 3rd party specific API types are defined
     - `mappers.ts` where the mapping between our unified common model and the 3rd party one is handled
 
+    <Info>After copying the following code you'll end up with linting/deps errors. It is fixed by our script at Step 2.</Info>
+
     <Steps>
       <Step title="Create the index.ts file">
           It must implement the `IContactService` interface.
@@ -226,7 +228,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
   </Step>
 
   <Step title="Enable your new service">
-   After these 3 files are successfully created and filled, you are ready to to fix all dependencies/linting issues that you may have. <br/>
+    After these 3 files are successfully created and filled, you are ready to fix all dependencies/linting issues that you may have. <br/>
     To make sure the service is enabled, dependencies and imports must be added. <br/>
     We built a script that does it in seconds. You can execute the given command from the root directory of Panora.
 

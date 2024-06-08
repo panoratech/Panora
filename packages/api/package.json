@@ -22,7 +22,6 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "ci": "pnpm run lint && pnpm run build",
     "copy-types-to-shared": "cp ./exports.ts ../shared/index.ts",
-    "prisma:seed": "ts-node ./scripts/seed.webapp.ts",
     "validate-connectors": "node --experimental-detect-module ./scripts/connectorUpdate.js",
     "prebuild-oauth-connector": "node --experimental-detect-module ./scripts/oauthConnector.js"
   },

@@ -19,12 +19,17 @@ export class ProjectConnectorsService {
     id_project: string,
   ) {
     try {
-      const existingPConnectors =
-        await this.prisma.project_connectors.findFirst({
-          where: {
-            id_project: id_project,
-          },
-        });
+      const project = await this.prisma.projects.findFirst({
+        where: {
+          id_project: id_project,
+        },
+      });
+
+      const existingPConnectors = await this.prisma.connector_sets.findFirst({
+        where: {
+          id_connector_set: project.id_project_connectors,
+        },
+      });
 
       if (!existingPConnectors) {
         throw new Error(
@@ -36,9 +41,9 @@ export class ProjectConnectorsService {
         [column]: status, // Use computed property names to set the column dynamically
       };
 
-      const res = await this.prisma.project_connectors.update({
+      const res = await this.prisma.connector_sets.update({
         where: {
-          id_project_connector: existingPConnectors.id_project_connector,
+          id_connector_set: existingPConnectors.id_connector_set,
         },
         data: updateData,
       });
@@ -65,7 +70,7 @@ export class ProjectConnectorsService {
         tcg_gitlab: data.tcg_gitlab,
       };
 
-      const res = await this.prisma.project_connectors.create({
+      const res = await this.prisma.connector_sets.create({
         data: updateData,
       });
       return res;
@@ -86,9 +91,9 @@ export class ProjectConnectorsService {
         throw new NotFoundException('Project does not exist!');
       }
 
-      const res = await this.prisma.project_connectors.findFirst({
+      const res = await this.prisma.connector_sets.findFirst({
         where: {
-          id_project: id_project,
+          id_connector_set: project.id_project_connectors,
         },
       });
       if (!res) {
