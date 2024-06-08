@@ -215,9 +215,12 @@ COMMENT ON COLUMN remote_data."format" IS 'can be json, xml';
 
 CREATE TABLE managed_webhooks
 (
- id_managed_webhook uuid NOT NULL,
- id_connection      uuid NOT NULL,
- endpoint           uuid NOT NULL,
+ id_managed_webhook    uuid NOT NULL,
+ id_connection         uuid NOT NULL,
+ endpoint              uuid NOT NULL,
+ api_version           text NULL,
+ active_events         text[] NULL,
+ remote_signing_secret text NULL,
  CONSTRAINT PK_managed_webhooks PRIMARY KEY ( id_managed_webhook )
 );
 
