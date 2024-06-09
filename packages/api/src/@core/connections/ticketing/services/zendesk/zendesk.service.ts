@@ -16,6 +16,7 @@ import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ManagedWebhooksService } from '@@core/managed-webhooks/managed-webhooks.service';
 
 export interface ZendeskOAuthResponse {
   access_token: string;
@@ -34,6 +35,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private mwService: ManagedWebhooksService,
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
     this.registry.registerService('zendesk', this);
@@ -52,7 +54,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -127,6 +129,22 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
               },
             },
           },
+        });
+      }
+      // upsert the creation of a managed webhook + 3rdpartywebhook
+      if (
+        CONNECTORS_METADATA['ticketing']['zendesk'].realTimeWebhookMetadata
+          .method == 'API'
+      ) {
+        await this.mwService.createManagedWebhook({
+          id_connection: db_res.id_connection,
+          scopes:
+            CONNECTORS_METADATA['ticketing']['zendesk'].realTimeWebhookMetadata
+              .events,
+        });
+        await this.mwService.createRemoteThirdPartyWebhook({
+          id_connection: db_res.id_connection,
+          data: { name: 'Panora Webhook Events' },
         });
       }
       return db_res;

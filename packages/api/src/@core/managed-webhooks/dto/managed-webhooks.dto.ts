@@ -10,3 +10,8 @@ export class SignatureVerificationDto {
   signature: string;
   secret: string;
 }
+
+export class RemoteThirdPartyCreationDto {
+  data: { [key: string]: any };
+  id_connection: string;
+}

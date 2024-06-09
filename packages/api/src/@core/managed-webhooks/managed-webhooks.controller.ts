@@ -11,11 +11,10 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { ApiBody, ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ManagedWebhooksService } from './managed-webhooks.service';
 import {
-  SignatureVerificationDto,
   ManagedWebhooksDto,
+  RemoteThirdPartyCreationDto,
 } from './dto/managed-webhooks.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-
 @ApiTags('managed-webhooks')
 @Controller('managed-webhooks')
 export class ManagedWebhooksController {
@@ -63,6 +62,20 @@ export class ManagedWebhooksController {
   @Post()
   async addManagedWebhook(@Body() data: ManagedWebhooksDto) {
     return this.managedWebhookService.createManagedWebhook(data);
+  }
+
+  @ApiOperation({
+    operationId: 'createRemoteThirdPartyWebhook',
+    summary: 'Create Remote Third Party Webhook',
+  })
+  @ApiBody({ type: RemoteThirdPartyCreationDto })
+  @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard)
+  @Post('remoteThirdPartyCreation')
+  async createRemoteThirdPartyWebhook(
+    @Body() data: RemoteThirdPartyCreationDto,
+  ) {
+    return this.managedWebhookService.createRemoteThirdPartyWebhook(data);
   }
 
   /*@ApiOperation({

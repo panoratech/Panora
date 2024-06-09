@@ -309,7 +309,19 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
-        authStrategy: AuthStrategy.oauth2
+        authStrategy: AuthStrategy.oauth2,
+        realTimeWebhookMetadata: {
+          method: 'API',
+          events: [
+            'ticketing.tickets.events',
+            'ticketing.comments.events',
+            'ticketing.tags.events',
+            'ticketing.attachments.events',
+            'ticketing.accounts.events',
+            'ticketing.users.events',
+            'ticketing.contacts.events',
+          ]
+        },
       },
       'gorgias': {
         scopes: 'write:all openid email profile offline',

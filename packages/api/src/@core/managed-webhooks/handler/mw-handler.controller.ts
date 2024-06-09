@@ -16,6 +16,7 @@ export class MWHandlerController {
     this.loggerService.setContext(MWHandlerController.name);
   }
 
+  //TODO: insert into a queue to distribute load
   @ApiOperation({
     operationId: 'handleThirdPartyWebhook',
     summary: 'Handle Third Party Webhook',
@@ -40,7 +41,6 @@ export class MWHandlerController {
     });
     const metadata = {
       connector_name: connection.provider_slug,
-      endpoint_uuid: uuid,
       id_connection: id_connection,
       payload: data,
       headers: headers,
