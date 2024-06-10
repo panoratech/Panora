@@ -1,0 +1,10 @@
+version: 2
+authtoken: YOUR_NGROK_KEY_HERE
+log_level: debug
+log: stdout
+
+tunnels:
+  api-tunnel:
+    proto: http
+    addr: 3000
+    domain: moving-eagle-singularly.ngrok-free.appngrok
