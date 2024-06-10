@@ -486,15 +486,15 @@ export class ContactService {
   async getContacts(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-    pageSize?: number,
     cursor?: string
   ): Promise<{ data: UnifiedContactOutput[], prev_cursor: null | string, next_cursor: null | string }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
-      // Default PageSize
-      const defaultPageSize = 10;
+      let prev_cursor = null;
+      let next_cursor = null;
 
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_contacts.findFirst({
@@ -510,12 +510,12 @@ export class ContactService {
       }
 
       let contacts = await this.prisma.crm_contacts.findMany({
-        take: pageSize ? pageSize + 1 : defaultPageSize + 1,
+        take: pageSize + 1,
         cursor: cursor ? {
           id_crm_contact: cursor
         } : undefined,
         orderBy: {
-          modified_at: 'asc'
+          created_at: 'asc'
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -528,10 +528,7 @@ export class ContactService {
         },
       });
 
-      let prev_cursor = null;
-      let next_cursor = null;
-
-      if ((pageSize && contacts.length === (pageSize + 1)) || (!pageSize && contacts.length === (defaultPageSize + 1))) {
+      if (contacts.length === (pageSize + 1)) {
         next_cursor = Buffer.from(contacts[contacts.length - 1].id_crm_contact).toString('base64');
         contacts.pop();
       }

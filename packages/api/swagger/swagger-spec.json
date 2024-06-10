@@ -495,9 +495,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Crm software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -526,6 +545,11 @@
         },
         "tags": [
           "crm/companies"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "post": {
@@ -597,6 +621,11 @@
         },
         "tags": [
           "crm/companies"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "patch": {
@@ -637,6 +666,11 @@
         },
         "tags": [
           "crm/companies"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -690,6 +724,11 @@
         },
         "tags": [
           "crm/companies"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -768,6 +807,11 @@
         },
         "tags": [
           "crm/companies"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -789,7 +833,7 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original CRM software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
             }
@@ -800,6 +844,7 @@
             "in": "query",
             "description": "Set to get the number of records.",
             "schema": {
+              "default": 50,
               "type": "number"
             }
           },
@@ -838,6 +883,11 @@
         },
         "tags": [
           "crm/contacts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "post": {
@@ -909,6 +959,11 @@
         },
         "tags": [
           "crm/contacts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "patch": {
@@ -938,6 +993,11 @@
         },
         "tags": [
           "crm/contacts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -991,6 +1051,11 @@
         },
         "tags": [
           "crm/contacts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1069,6 +1134,11 @@
         },
         "tags": [
           "crm/contacts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1090,9 +1160,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Crm software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1121,6 +1210,11 @@
         },
         "tags": [
           "crm/deals"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "post": {
@@ -1192,6 +1286,11 @@
         },
         "tags": [
           "crm/deals"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1245,6 +1344,11 @@
         },
         "tags": [
           "crm/deals"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "patch": {
@@ -1285,6 +1389,11 @@
         },
         "tags": [
           "crm/deals"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1363,6 +1472,11 @@
         },
         "tags": [
           "crm/deals"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1384,9 +1498,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Crm software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1415,6 +1548,11 @@
         },
         "tags": [
           "crm/engagements"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "post": {
@@ -1486,6 +1624,11 @@
         },
         "tags": [
           "crm/engagements"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "patch": {
@@ -1526,6 +1669,11 @@
         },
         "tags": [
           "crm/engagements"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1579,6 +1727,11 @@
         },
         "tags": [
           "crm/engagements"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1657,6 +1810,11 @@
         },
         "tags": [
           "crm/engagements"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1678,9 +1836,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Crm software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1709,6 +1886,11 @@
         },
         "tags": [
           "crm/notes"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "post": {
@@ -1780,6 +1962,11 @@
         },
         "tags": [
           "crm/notes"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1833,6 +2020,11 @@
         },
         "tags": [
           "crm/notes"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1911,6 +2103,11 @@
         },
         "tags": [
           "crm/notes"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -1932,9 +2129,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Crm software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1963,6 +2179,11 @@
         },
         "tags": [
           "crm/stages"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2016,6 +2237,11 @@
         },
         "tags": [
           "crm/stages"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2037,9 +2263,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Crm software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2068,6 +2313,11 @@
         },
         "tags": [
           "crm/tasks"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "post": {
@@ -2139,6 +2389,11 @@
         },
         "tags": [
           "crm/tasks"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "patch": {
@@ -2179,6 +2434,11 @@
         },
         "tags": [
           "crm/tasks"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2232,6 +2492,11 @@
         },
         "tags": [
           "crm/tasks"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2310,6 +2575,11 @@
         },
         "tags": [
           "crm/tasks"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2331,9 +2601,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Crm software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2362,6 +2651,11 @@
         },
         "tags": [
           "crm/users"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2415,6 +2709,11 @@
         },
         "tags": [
           "crm/users"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -4727,6 +5026,13 @@
   "tags": [],
   "servers": [],
   "components": {
+    "securitySchemes": {
+      "JWT": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
     "schemas": {
       "CreateUserDto": {
         "type": "object",

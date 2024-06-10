@@ -13,6 +13,10 @@ async function bootstrap() {
     .setTitle('Unified Panora API')
     .setDescription('The Panora API description')
     .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'JWT'
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
 

@@ -24,12 +24,15 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { GetContactsQueryDto } from './types/dto/get-contacts-query.dto'
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+
+@ApiBearerAuth('JWT')
 @ApiTags('crm/contacts')
 @Controller('crm/contacts')
 export class ContactController {
@@ -52,31 +55,13 @@ export class ContactController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original CRM software.',
-  })
-  @ApiQuery({
-    name: 'pageSize',
-    required: false,
-    type: Number,
-    description: 'Set to get the number of records.'
-  })
-  @ApiQuery({
-    name: 'cursor',
-    required: false,
-    type: String,
-    description: 'Set to get the number of records after this cursor.'
-  })
   @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getContacts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: GetContactsQueryDto,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource } =
@@ -87,8 +72,8 @@ export class ContactController {
       return this.contactService.getContacts(
         remoteSource,
         linkedUserId,
-        remote_data,
         pageSize,
+        remote_data,
         cursor
       );
     } catch (error) {

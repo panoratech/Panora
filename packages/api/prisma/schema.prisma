@@ -141,7 +141,7 @@ model crm_companies {
   name                String?
   industry            String?
   number_of_employees BigInt?
-  created_at          DateTime              @db.Timestamp(6)
+  created_at          DateTime              @unique(map: "force_createdat_unique_crm_companies") @default(now()) @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
   remote_id           String?
   remote_platform     String?
@@ -164,7 +164,7 @@ model crm_contacts {
   id_crm_contact      String                @id(map: "pk_crm_contacts") @db.Uuid
   first_name          String
   last_name           String
-  created_at          DateTime              @unique(map: "force_createdat_unique") @default(now()) @db.Timestamp(6)
+  created_at          DateTime              @unique(map: "force_createdat_unique_crm_contacts") @default(now()) @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
   remote_id           String
   remote_platform     String
@@ -184,8 +184,8 @@ model crm_deals {
   id_crm_deal        String            @id(map: "pk_crm_deal") @db.Uuid
   name               String
   description        String
-  amount             BigInt
-  created_at         DateTime          @db.Timestamp(6)
+  amount             BigInt?
+  created_at         DateTime          @unique(map: "force_createdat_unique_crm_deals") @default(now()) @db.Timestamp(6)
   modified_at        DateTime          @db.Timestamp(6)
   remote_id          String?
   remote_platform    String?
@@ -207,7 +207,7 @@ model crm_deals {
 model crm_deals_stages {
   id_crm_deals_stage String      @id(map: "pk_crm_deal_stages") @db.Uuid
   stage_name         String?
-  created_at         DateTime    @db.Timestamp(6)
+  created_at         DateTime    @unique(map: "force_createdat_unique_crm_deals_stages") @default(now()) @db.Timestamp(6)
   modified_at        DateTime    @db.Timestamp(6)
   id_linked_user     String?     @db.Uuid
   remote_id          String?
@@ -251,7 +251,7 @@ model crm_engagements {
   subject                 String?
   start_at                DateTime?                 @db.Timestamp(6)
   end_time                DateTime?                 @db.Timestamp(6)
-  created_at              DateTime?                 @db.Timestamp(6)
+  created_at              DateTime                  @unique(map: "force_createdat_unique_crm_engagements") @default(now()) @db.Timestamp(6)
   modified_at             DateTime?                 @db.Timestamp(6)
   remote_id               String?
   id_linked_user          String?                   @db.Uuid
@@ -269,7 +269,7 @@ model crm_engagements {
 model crm_notes {
   id_crm_note     String         @id(map: "pk_crm_notes") @db.Uuid
   content         String
-  created_at      DateTime       @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_crm_notes") @default(now()) @db.Timestamp(6)
   modified_at     DateTime       @db.Timestamp(6)
   id_crm_company  String?        @db.Uuid
   id_crm_contact  String?        @db.Uuid
@@ -312,7 +312,7 @@ model crm_tasks {
   status          String?
   due_date        DateTime?      @db.Timestamp(6)
   finished_date   DateTime?      @db.Timestamp(6)
-  created_at      DateTime       @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_crm_tasks") @default(now()) @db.Timestamp(6)
   modified_at     DateTime       @db.Timestamp(6)
   id_crm_user     String?        @db.Uuid
   id_crm_company  String?        @db.Uuid
@@ -333,7 +333,7 @@ model crm_users {
   id_crm_user     String            @id(map: "pk_crm_users") @db.Uuid
   name            String?
   email           String?
-  created_at      DateTime          @db.Timestamp(6)
+  created_at      DateTime          @unique(map: "force_createdat_unique_crm_users") @default(now()) @db.Timestamp(6)
   modified_at     DateTime          @db.Timestamp(6)
   id_linked_user  String?           @db.Uuid
   remote_id       String?

@@ -283,11 +283,12 @@ CREATE TABLE crm_users
  id_crm_user     uuid NOT NULL,
  name            text NULL,
  email           text NULL,
- created_at      timestamp NOT NULL,
+ created_at      timestamp NOT NULL DEFAULT NOW(),
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
  remote_id       text NULL,
  remote_platform text NULL,
+ CONSTRAINT force_createdAt_unique_crm_users UNIQUE ( created_at ),
  CONSTRAINT PK_crm_users PRIMARY KEY ( id_crm_user )
 );
 
@@ -304,11 +305,12 @@ CREATE TABLE crm_deals_stages
 (
  id_crm_deals_stage uuid NOT NULL,
  stage_name         text NULL,
- created_at         timestamp NOT NULL,
+ created_at         timestamp NOT NULL DEFAULT NOW(),
  modified_at        timestamp NOT NULL,
  id_linked_user     uuid NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
+ CONSTRAINT force_createdAt_unique_crm_deals_stages UNIQUE ( created_at ),
  CONSTRAINT PK_crm_deal_stages PRIMARY KEY ( id_crm_deals_stage )
 );
 
@@ -472,7 +474,7 @@ CREATE TABLE crm_contacts
  id_crm_user     uuid NULL,
  id_linked_user  uuid NULL,
  CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
- CONSTRAINT force_createdAt_unique UNIQUE ( created_at ),
+ CONSTRAINT force_createdAt_unique_crm_contacts UNIQUE ( created_at ),
  CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
 
@@ -497,13 +499,14 @@ CREATE TABLE crm_companies
  name                text NULL,
  industry            text NULL,
  number_of_employees bigint NULL,
- created_at          timestamp NOT NULL,
+ created_at      timestamp NOT NULL DEFAULT NOW(),
  modified_at         timestamp NOT NULL,
  remote_id           text NULL,
  remote_platform     text NULL,
  id_crm_user         uuid NULL,
  id_linked_user      uuid NULL,
  CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
+ CONSTRAINT force_createdAt_unique_crm_companies UNIQUE ( created_at ),
  CONSTRAINT FK_24 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
 
@@ -744,7 +747,7 @@ CREATE TABLE crm_engagements
  subject           text NULL,
  start_at          timestamp NULL,
  end_time          timestamp NULL,
- created_at        timestamp NULL,
+ created_at        timestamp NOT NULL DEFAULT NOW(),
  modified_at       timestamp NULL,
  remote_id         text NULL,
  id_linked_user    uuid NULL,
@@ -752,6 +755,7 @@ CREATE TABLE crm_engagements
  id_crm_company    uuid NULL,
  id_crm_user       uuid NULL,
  CONSTRAINT PK_crm_engagement PRIMARY KEY ( id_crm_engagement ),
+ CONSTRAINT force_createdAt_unique_crm_engagements UNIQUE ( created_at ),
  CONSTRAINT FK_crm_engagement_crm_user FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
 );
@@ -818,8 +822,8 @@ CREATE TABLE crm_deals
  id_crm_deal        uuid NOT NULL,
  name               text NOT NULL,
  description        text NOT NULL,
- amount             bigint NOT NULL,
- created_at         timestamp NOT NULL,
+ amount             bigint NULL,
+ created_at         timestamp NOT NULL DEFAULT NOW(),
  modified_at        timestamp NOT NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
@@ -828,6 +832,7 @@ CREATE TABLE crm_deals
  id_linked_user     uuid NULL,
  id_crm_company     uuid NULL,
  CONSTRAINT PK_crm_deal PRIMARY KEY ( id_crm_deal ),
+ CONSTRAINT force_createdAt_unique_crm_deals UNIQUE ( created_at ),
  CONSTRAINT FK_22 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_21 FOREIGN KEY ( id_crm_deals_stage ) REFERENCES crm_deals_stages ( id_crm_deals_stage ),
  CONSTRAINT FK_47_1 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1036,7 +1041,7 @@ CREATE TABLE crm_tasks
  status          text NULL,
  due_date        timestamp NULL,
  finished_date   timestamp NULL,
- created_at      timestamp NOT NULL,
+ created_at      timestamp NOT NULL DEFAULT NOW(),
  modified_at     timestamp NOT NULL,
  id_crm_user     uuid NULL,
  id_crm_company  uuid NULL,
@@ -1045,6 +1050,7 @@ CREATE TABLE crm_tasks
  remote_id       text NULL,
  remote_platform text NULL,
  CONSTRAINT PK_crm_task PRIMARY KEY ( id_crm_task ),
+ CONSTRAINT force_createdAt_unique_crm_tasks UNIQUE ( created_at ),
  CONSTRAINT FK_26 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_25 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_27 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )
@@ -1078,7 +1084,7 @@ CREATE TABLE crm_notes
 (
  id_crm_note     uuid NOT NULL,
  content         text NOT NULL,
- created_at      timestamp NOT NULL,
+ created_at      timestamp NOT NULL DEFAULT NOW(),
  modified_at     timestamp NOT NULL,
  id_crm_company  uuid NULL,
  id_crm_contact  uuid NULL,
@@ -1088,6 +1094,7 @@ CREATE TABLE crm_notes
  remote_platform text NULL,
  id_crm_user     uuid NULL,
  CONSTRAINT PK_crm_notes PRIMARY KEY ( id_crm_note ),
+ CONSTRAINT force_createdAt_unique_crm_notes UNIQUE ( created_at ),
  CONSTRAINT FK_19 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_18 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_20 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )

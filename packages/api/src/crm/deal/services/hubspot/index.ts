@@ -53,8 +53,11 @@ export class HubspotService implements IDealService {
           },
         },
       );
+
+      this.logger.log(`Synced hubspot deals !`);
+
       return {
-        data: resp.data,
+        data: resp.data.results,
         message: 'Hubspot deal created',
         statusCode: 201,
       };
