@@ -5001,10 +5001,17 @@
         "properties": {
           "id_connection": {
             "type": "string"
+          },
+          "mw_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
-          "id_connection"
+          "id_connection",
+          "mw_ids"
         ]
       },
       "ApiResponse": {

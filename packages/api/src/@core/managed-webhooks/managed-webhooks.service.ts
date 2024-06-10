@@ -16,19 +16,11 @@ import { TicketingWebhookHandlerService } from '@ticketing/@webhook/handler.serv
 @Injectable()
 export class ManagedWebhooksService {
   constructor(
-    @InjectQueue('webhookDelivery') private queue: Queue,
     private prisma: PrismaService,
     private logger: LoggerService,
     private ticketingHandler: TicketingWebhookHandlerService,
   ) {
     this.logger.setContext(ManagedWebhooksService.name);
-  }
-
-  generateSignature(payload: any, secret: string): string {
-    return crypto
-      .createHmac('sha256', secret)
-      .update(JSON.stringify(payload))
-      .digest('hex');
   }
 
   async getManagedWebhook(conn_id: string) {
@@ -86,6 +78,7 @@ export class ManagedWebhooksService {
           return await this.ticketingHandler.createExternalWebhook(
             data.id_connection,
             data.data,
+            data.mw_ids,
           );
       }
     } catch (error) {

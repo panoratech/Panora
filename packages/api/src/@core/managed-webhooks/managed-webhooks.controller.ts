@@ -77,21 +77,4 @@ export class ManagedWebhooksController {
   ) {
     return this.managedWebhookService.createRemoteThirdPartyWebhook(data);
   }
-
-  /*@ApiOperation({
-    operationId: 'verifyEvent',
-    summary: 'Verify payload sgnature of the webhook',
-  })
-  @ApiBody({ type: SignatureVerificationDto })
-  @ApiResponse({ status: 201 })
-  @UseGuards(JwtAuthGuard)
-  @Post('verifyEvent')
-  async verifyPayloadSignature(@Body() data: SignatureVerificationDto) {
-    const { payload, signature, secret } = data;
-    return this.managedWebhookService.verifyPayloadSignature(
-      payload,
-      signature,
-      secret,
-    );
-  }*/
 }

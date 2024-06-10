@@ -69,6 +69,8 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
         scope: 'read',
       });
 
+      this.logger.log('Data Form is ' + JSON.stringify(formData));
+
       const res = await axios.post(
         `${CREDENTIALS.SUBDOMAIN}/oauth/tokens`,
         formData.toString(),
@@ -136,15 +138,36 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
         CONNECTORS_METADATA['ticketing']['zendesk'].realTimeWebhookMetadata
           .method == 'API'
       ) {
-        await this.mwService.createManagedWebhook({
+        const scopes =
+          CONNECTORS_METADATA['ticketing']['zendesk'].realTimeWebhookMetadata
+            .events;
+        const exclude: string[] = [
+          'ticketing.tickets.events',
+          'ticketing.comments.events',
+          'ticketing.tags.events',
+          'ticketing.attachments.events',
+        ];
+
+        // Filter the array to exclude specified elements
+        const filteredEvents = scopes.filter(
+          (event) => !exclude.includes(event),
+        );
+
+        const basic_mw = await this.mwService.createManagedWebhook({
           id_connection: db_res.id_connection,
-          scopes:
-            CONNECTORS_METADATA['ticketing']['zendesk'].realTimeWebhookMetadata
-              .events,
+          scopes: filteredEvents,
+        });
+        const trigger_mw = await this.mwService.createManagedWebhook({
+          id_connection: db_res.id_connection,
+          scopes: exclude,
         });
         await this.mwService.createRemoteThirdPartyWebhook({
           id_connection: db_res.id_connection,
-          data: { name: 'Panora Webhook Events' },
+          mw_ids: [basic_mw.id_managed_webhook, trigger_mw.id_managed_webhook],
+          data: {
+            name_basic: 'Panora Webhook Events',
+            name_trigger: 'Panora Tickets Related Events Webhook',
+          },
         });
       }
       return db_res;

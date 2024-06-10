@@ -14,4 +14,5 @@ export class SignatureVerificationDto {
 export class RemoteThirdPartyCreationDto {
   data: { [key: string]: any };
   id_connection: string;
+  mw_ids: string[];
 }

@@ -27,7 +27,7 @@ export class ProjectConnectorsService {
 
       const existingPConnectors = await this.prisma.connector_sets.findFirst({
         where: {
-          id_connector_set: project.id_project_connectors,
+          id_connector_set: project.id_connector_set,
         },
       });
 
@@ -93,7 +93,7 @@ export class ProjectConnectorsService {
 
       const res = await this.prisma.connector_sets.findFirst({
         where: {
-          id_connector_set: project.id_project_connectors,
+          id_connector_set: project.id_connector_set,
         },
       });
       if (!res) {

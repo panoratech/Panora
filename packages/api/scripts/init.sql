@@ -353,7 +353,6 @@ CREATE TABLE connector_sets
 (
  id_connector_set uuid NOT NULL,
  crm_hubspot      boolean NOT NULL,
- crm_freshsales   boolean NOT NULL,
  crm_zoho         boolean NOT NULL,
  crm_attio        boolean NOT NULL,
  crm_pipedrive    boolean NOT NULL,
@@ -472,15 +471,15 @@ CREATE INDEX FK_tcg_contact_tcg_account_id ON tcg_contacts
 
 CREATE TABLE projects
 (
- id_project            uuid NOT NULL,
- name                  text NOT NULL,
- sync_mode             text NOT NULL,
- pull_frequency        bigint NULL,
- redirect_url          text NULL,
- id_user               uuid NOT NULL,
- id_project_connectors uuid NOT NULL,
+ id_project       uuid NOT NULL,
+ name             text NOT NULL,
+ sync_mode        text NOT NULL,
+ pull_frequency   bigint NULL,
+ redirect_url     text NULL,
+ id_user          uuid NOT NULL,
+ id_connector_set uuid NOT NULL,
  CONSTRAINT PK_projects PRIMARY KEY ( id_project ),
- CONSTRAINT FK_47_2 FOREIGN KEY ( id_project_connectors ) REFERENCES connector_sets ( id_connector_set ),
+ CONSTRAINT FK_project_connectorsetid FOREIGN KEY ( id_connector_set ) REFERENCES connector_sets ( id_connector_set ),
  CONSTRAINT FK_46_1 FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
 );
 

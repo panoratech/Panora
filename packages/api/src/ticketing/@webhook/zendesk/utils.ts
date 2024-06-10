@@ -1,13 +1,5 @@
 export const mapToRemoteEvent = (unified_event: string) => {
   switch (unified_event) {
-    case 'ticketing.tickets.events':
-      return '';
-    case 'ticketing.comments.events':
-      return '';
-    case 'ticketing.tags.events':
-      return '';
-    case 'ticketing.attachments.events':
-      return '';
     case 'ticketing.accounts.events':
       return [
         'zen:event-type:organization.created',
@@ -24,6 +16,9 @@ export const mapToRemoteEvent = (unified_event: string) => {
         'zen:event-type:user.custom_field_changed',
         'zen:event-type:user.deleted',
         'zen:event-type:user.role_changed',
+        'zen:event-type:user.custom_role_changed',
+        'zen:event-type:user.organization_membership_created',
+        'zen:event-type:user.organization_membership_deleted',
         'zen:event-type:user.name_changed',
         'zen:event-type:user.details_changed',
       ];

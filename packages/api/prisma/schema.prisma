@@ -427,18 +427,18 @@ model linked_users {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model projects {
-  id_project            String         @id(map: "pk_projects") @db.Uuid
-  name                  String
-  sync_mode             String
-  pull_frequency        BigInt?
-  redirect_url          String?
-  id_user               String         @db.Uuid
-  id_project_connectors String         @db.Uuid
-  api_keys              api_keys[]
-  connections           connections[]
-  linked_users          linked_users[]
-  users                 users          @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
-  connector_sets        connector_sets @relation(fields: [id_project_connectors], references: [id_connector_set], onDelete: NoAction, onUpdate: NoAction, map: "fk_47_2")
+  id_project       String         @id(map: "pk_projects") @db.Uuid
+  name             String
+  sync_mode        String
+  pull_frequency   BigInt?
+  redirect_url     String?
+  id_user          String         @db.Uuid
+  id_connector_set String         @db.Uuid
+  api_keys         api_keys[]
+  connections      connections[]
+  linked_users     linked_users[]
+  users            users          @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
+  connector_sets   connector_sets @relation(fields: [id_connector_set], references: [id_connector_set], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectorsetid")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -645,7 +645,6 @@ model webhook_delivery_attempts {
 model connector_sets {
   id_connector_set String     @id(map: "pk_project_connector") @db.Uuid
   crm_hubspot      Boolean
-  crm_freshsales   Boolean
   crm_zoho         Boolean
   crm_attio        Boolean
   crm_pipedrive    Boolean

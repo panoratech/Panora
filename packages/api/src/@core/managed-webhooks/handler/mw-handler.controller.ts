@@ -1,22 +1,19 @@
 import { Body, Controller, Post, Param, Headers } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
-import { TicketingWebhookHandlerService } from '@ticketing/@webhook/handler.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ConnectorCategory } from '@panora/shared';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 
 @ApiTags('mw')
 @Controller('mw')
 export class MWHandlerController {
   constructor(
+    @InjectQueue('realTimeWebhookQueue') private queue: Queue,
     private loggerService: LoggerService,
-    private prisma: PrismaService,
-    private ticketingHandler: TicketingWebhookHandlerService,
   ) {
     this.loggerService.setContext(MWHandlerController.name);
   }
 
-  //TODO: insert into a queue to distribute load
   @ApiOperation({
     operationId: 'handleThirdPartyWebhook',
     summary: 'Handle Third Party Webhook',
@@ -28,28 +25,9 @@ export class MWHandlerController {
     @Headers() headers: any,
     @Param('uuid') uuid: string,
   ) {
-    const res = await this.prisma.managed_webhooks.findFirst({
-      where: {
-        endpoint: uuid,
-      },
-    });
-    const id_connection = res.id_connection;
-    const connection = await this.prisma.connections.findFirst({
-      where: {
-        id_connection: id_connection,
-      },
-    });
-    const metadata = {
-      connector_name: connection.provider_slug,
-      id_connection: id_connection,
-      payload: data,
-      headers: headers,
-    };
-    switch (connection.vertical) {
-      case ConnectorCategory.Ticketing:
-        return await this.ticketingHandler.handleExternalIncomingWebhook(
-          metadata,
-        );
-    }
+    this.loggerService.log(
+      'Realtime Webhook Received with Payload ---- ' + JSON.stringify(data),
+    );
+    await this.queue.add({ uuid, data, headers });
   }
 }

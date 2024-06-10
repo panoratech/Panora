@@ -1,4 +1,4 @@
-export class Payload {
+export type NonTicketPayload = {
   type: string;
   account_id: number;
   id: string;
@@ -12,15 +12,10 @@ export class Payload {
   event: {
     [key: string]: any;
   };
-}
+};
 
-// events supported by Zendesk (unified Panora form)
-export const webhookEvents = [
-  'ticketing.tickets.events',
-  'ticketing.comments.events',
-  'ticketing.tags.events',
-  'ticketing.attachments.events',
-  'ticketing.accounts.events',
-  'ticketing.users.events',
-  'ticketing.contacts.events',
-];
+export type TicketPayload = {
+  ticket_id: string;
+};
+
+export type Payload = NonTicketPayload | TicketPayload;

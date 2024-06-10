@@ -104,10 +104,11 @@ export class AuthService {
           created_at: new Date(),
         },
       });
-      await this.projectService.createProject({
+      const pro = await this.projectService.createProject({
         name: 'Project 1',
         id_user: user_.id_user,
       });
+      this.logger.log('proj is ' + JSON.stringify(pro));
       return user_;
     } catch (error) {
       console.log(error);

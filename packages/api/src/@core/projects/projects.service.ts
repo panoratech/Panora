@@ -41,7 +41,7 @@ export class ProjectsService {
       const ACTIVE_CONNECTORS = providersArray();
       // update project-connectors table for the project
       const updateData: any = {
-        id_project_connector: uuidv4(),
+        id_connector_set: uuidv4(),
       };
 
       ACTIVE_CONNECTORS.forEach((connector) => {
@@ -64,7 +64,7 @@ export class ProjectsService {
           sync_mode: 'pool',
           id_project: uuidv4(),
           id_user: data.id_user,
-          id_project_connectors: cSet.id_connector_set,
+          id_connector_set: cSet.id_connector_set,
         },
       });
       return res;

@@ -16,6 +16,7 @@ export class TicketingWebhookHandlerService {
   async createExternalWebhook(
     id_connection: string,
     data: { [key: string]: any },
+    mw_ids: string[],
   ) {
     const conn = await this.prisma.connections.findFirst({
       where: {
@@ -24,7 +25,7 @@ export class TicketingWebhookHandlerService {
     });
     switch (conn.provider_slug) {
       case 'zendesk':
-        return await this.zendesk.createWebhook(id_connection, data);
+        return await this.zendesk.createWebhook(data, mw_ids);
       default:
         return;
     }
@@ -32,7 +33,7 @@ export class TicketingWebhookHandlerService {
 
   async handleExternalIncomingWebhook(metadata: {
     connector_name: string;
-    id_connection: string;
+    id_managed_webhook: string;
     payload: any;
     headers: any;
   }) {
@@ -41,7 +42,7 @@ export class TicketingWebhookHandlerService {
         return await this.zendesk.handler(
           metadata.payload,
           metadata.headers,
-          metadata.id_connection,
+          metadata.id_managed_webhook,
         );
       default:
         return;

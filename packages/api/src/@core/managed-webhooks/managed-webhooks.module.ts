@@ -11,14 +11,14 @@ import { TicketingWebhookHandlerModule } from '@ticketing/@webhook/handler.modul
 @Module({
   imports: [
     BullModule.registerQueue({
-      name: 'webhookDelivery',
+      name: 'realTimeWebhookQueue',
     }),
     TicketingWebhookHandlerModule,
   ],
   controllers: [ManagedWebhooksController, MWHandlerController],
   exports: [
     BullModule.registerQueue({
-      name: 'webhookDelivery',
+      name: 'realTimeWebhookQueue',
     }),
     ManagedWebhooksService,
   ],
