@@ -7,4 +7,4 @@ tunnels:
   api-tunnel:
     proto: http
     addr: 3000
-    domain: moving-eagle-singularly.ngrok-free.appngrok
+    domain: your_ngrok_domain_here
