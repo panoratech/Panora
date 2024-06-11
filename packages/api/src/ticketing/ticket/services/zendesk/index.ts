@@ -112,6 +112,7 @@ export class ZendeskService implements ITicketService {
       );
     }
   }
+
   async syncTickets(
     linkedUserId: string,
     custom_properties?: string[],
@@ -151,5 +152,46 @@ export class ZendeskService implements ITicketService {
     }
   }
 
-  //todo: create a syncTicket(remote_ticket_id)
+  async syncTicket(
+    linkedUserId: string,
+    remote_id: string,
+    custom_properties?: string[],
+  ): Promise<ApiResponse<ZendeskTicketOutput[]>> {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'zendesk',
+          vertical: 'ticketing',
+        },
+      });
+
+      const resp = await axios.get(
+        `${connection.account_url}/tickets/${remote_id}.json`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+      this.logger.log(`Synced zendesk unique ticket !`);
+
+      return {
+        data: [resp.data.ticket],
+        message: 'Zendesk ticket retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Zendesk',
+        TicketingObject.ticket,
+        ActionType.GET,
+      );
+    }
+  }
 }

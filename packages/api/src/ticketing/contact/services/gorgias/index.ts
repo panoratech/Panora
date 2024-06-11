@@ -30,8 +30,6 @@ export class GorgiasService implements IContactService {
     remote_account_id: string,
   ): Promise<ApiResponse<GorgiasContactOutput[]>> {
     try {
-      if (!remote_account_id) throw new Error('remote account id not found');
-
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -64,5 +62,17 @@ export class GorgiasService implements IContactService {
         ActionType.GET,
       );
     }
+  }
+
+  async syncContact(
+    linkedUserId: string,
+    custom_properties?: string[],
+    remote_account_id?: string,
+  ): Promise<ApiResponse<any[]>> {
+    return {
+      data: [],
+      message: 'Default syncContact implementation',
+      statusCode: 200,
+    };
   }
 }

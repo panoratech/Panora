@@ -8,6 +8,12 @@ export interface IAccountService {
     linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalAccountOutput[]>>;
+
+  syncAccount(
+    linkedUserId: string,
+    remote_id: string,
+    custom_properties?: string[],
+  ): Promise<ApiResponse<OriginalAccountOutput[]>>;
 }
 
 export interface IAccountMapper {

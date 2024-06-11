@@ -68,4 +68,16 @@ export class ZendeskService implements IContactService {
       );
     }
   }
+
+  async syncContact(
+    linkedUserId: string,
+    custom_properties?: string[],
+    remote_account_id?: string,
+  ): Promise<ApiResponse<any[]>> {
+    return {
+      data: [],
+      message: 'Default syncContact implementation',
+      statusCode: 200,
+    };
+  }
 }

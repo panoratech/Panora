@@ -119,6 +119,12 @@ export class SyncService implements OnModuleInit {
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    wh_real_time_trigger?: {
+      action: 'UPDATE' | 'DELETE';
+      data: {
+        remote_id: string;
+      };
+    },
   ) {
     try {
       this.logger.log(
@@ -151,11 +157,30 @@ export class SyncService implements OnModuleInit {
 
       const service: ITicketService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalTicketOutput[]> =
-        await service.syncTickets(linkedUserId, remoteProperties);
+
+      let resp: ApiResponse<OriginalTicketOutput[]>;
+      if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
+        //meaning the call has been from a real time webhook that received data from a 3rd party
+        switch (wh_real_time_trigger.action) {
+          case 'DELETE':
+            return await this.removeTicketInDb(
+              linkedUserId,
+              integrationId,
+              wh_real_time_trigger.data.remote_id,
+            );
+          default:
+            resp = await service.syncTicket(
+              linkedUserId,
+              wh_real_time_trigger.data.remote_id,
+              remoteProperties,
+            );
+            break;
+        }
+      } else {
+        resp = await service.syncTickets(linkedUserId, remoteProperties);
+      }
 
       const sourceObject: OriginalTicketOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalTicketOutput[]>({
         sourceObject,
@@ -375,5 +400,24 @@ export class SyncService implements OnModuleInit {
     } catch (error) {
       handleServiceError(error, this.logger);
     }
+  }
+
+  async removeTicketInDb(
+    linkedUserId: string,
+    originSource: string,
+    remote_id: string,
+  ) {
+    const existingTicket = await this.prisma.tcg_tickets.findFirst({
+      where: {
+        remote_id: remote_id,
+        remote_platform: originSource,
+        id_linked_user: linkedUserId,
+      },
+    });
+    await this.prisma.tcg_tickets.delete({
+      where: {
+        id_tcg_ticket: existingTicket.id_tcg_ticket,
+      },
+    });
   }
 }

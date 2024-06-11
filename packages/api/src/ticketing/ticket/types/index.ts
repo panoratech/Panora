@@ -13,6 +13,12 @@ export interface ITicketService {
     linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalTicketOutput[]>>;
+
+  syncTicket(
+    linkedUserId: string,
+    remote_id: string,
+    custom_properties?: string[],
+  ): Promise<ApiResponse<OriginalTicketOutput[]>>;
 }
 export interface ITicketMapper {
   desunify(

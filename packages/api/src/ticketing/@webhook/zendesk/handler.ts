@@ -4,9 +4,13 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { Payload } from './types';
+import { NonTicketPayload, Payload } from './types';
 import { mapToRemoteEvent } from './utils';
 import * as crypto from 'crypto';
+import { SyncService as TicketSyncService } from '@ticketing/ticket/sync/sync.service';
+import { SyncService as UserSyncService } from '@ticketing/user/sync/sync.service';
+import { SyncService as ContactSyncService } from '@ticketing/contact/sync/sync.service';
+import { SyncService as AccountSyncService } from '@ticketing/account/sync/sync.service';
 
 @Injectable()
 export class ZendeskHandlerService {
@@ -15,6 +19,10 @@ export class ZendeskHandlerService {
     private prisma: PrismaService,
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
+    private syncTicketsService: TicketSyncService,
+    private syncUsersService: UserSyncService,
+    private syncContactsService: ContactSyncService,
+    private syncAccountsService: AccountSyncService,
   ) {
     this.logger.setContext(ZendeskHandlerService.name);
   }
@@ -244,15 +252,100 @@ export class ZendeskHandlerService {
         payload,
         id_managed_webhook,
       );
+      const mw = await this.prisma.managed_webhooks.findUnique({
+        where: {
+          id_managed_webhook: id_managed_webhook,
+        },
+      });
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: mw.id_connection,
+        },
+      });
       if ('ticketId' in payload) {
         // ticket payload
-        // TODO:update the tickzt inside our db
+        await this.syncTicketsService.syncTicketsForLinkedUser(
+          connection.provider_slug.toLowerCase(),
+          connection.id_linked_user,
+          connection.id_project,
+          {
+            action: 'UPDATE',
+            data: { remote_id: payload.ticketId as string },
+          },
+        );
       } else {
         //non-ticket payload
+        const payload_ = payload as NonTicketPayload;
+        const [event_type, event_action] = this.extractValue(payload_.type);
+        switch (event_type) {
+          case 'user':
+            if (payload_.detail.role) {
+              if (payload_.detail.role == 'end-user') {
+                await this.syncContactsService.syncContactsForLinkedUser(
+                  connection.provider_slug.toLowerCase(),
+                  connection.id_linked_user,
+                  connection.id_project,
+                  payload_.detail.id,
+                  {
+                    action:
+                      event_action.toLowerCase() == 'deleted'
+                        ? 'DELETE'
+                        : 'UPDATE',
+                    data: { remote_id: payload_.detail.id as string },
+                  },
+                );
+              } else if (
+                payload_.detail.role == 'admin' ||
+                payload_.detail.role == 'agent'
+              ) {
+                await this.syncUsersService.syncUsersForLinkedUser(
+                  connection.provider_slug.toLowerCase(),
+                  connection.id_linked_user,
+                  connection.id_project,
+                  {
+                    action:
+                      event_action.toLowerCase() == 'deleted'
+                        ? 'DELETE'
+                        : 'UPDATE',
+                    data: { remote_id: payload_.detail.id as string },
+                  },
+                );
+              } else {
+                break;
+              }
+            }
+            break;
+          case 'organization':
+            await this.syncAccountsService.syncAccountsForLinkedUser(
+              connection.provider_slug.toLowerCase(),
+              connection.id_linked_user,
+              connection.id_project,
+              {
+                action:
+                  event_action.toLowerCase() == 'deleted' ? 'DELETE' : 'UPDATE',
+                data: { remote_id: payload_.detail.id as string },
+              },
+            );
+          default:
+            break;
+        }
       }
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  extractValue(typeString: string): string[] {
+    const prefix = 'zen:event-type:';
+    const startIndex = typeString.indexOf(prefix);
+
+    if (startIndex === -1) {
+      throw new Error('Prefix not found in the string.');
+    }
+
+    const afterPrefix = typeString.substring(startIndex + prefix.length);
+    const values = afterPrefix.split(':');
+    return [values[0], values[1]];
   }
 
   async verifyWebhookAuthenticity(

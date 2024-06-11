@@ -49,7 +49,9 @@ export class ZendeskService implements IUserService {
       });
       this.logger.log(`Synced zendesk users !`);
       const users: ZendeskUserOutput[] = resp.data.users;
-      const filteredUsers = users.filter((user) => user.role === 'agent');
+      const filteredUsers = users.filter(
+        (user) => user.role === 'agent' || user.role === 'admin',
+      );
 
       return {
         data: filteredUsers,
@@ -65,5 +67,16 @@ export class ZendeskService implements IUserService {
         ActionType.GET,
       );
     }
+  }
+
+  async syncUser(
+    linkedUserId: string,
+    remote_id: string,
+  ): Promise<ApiResponse<any[]>> {
+    return {
+      data: [],
+      message: 'Default syncUser implementation',
+      statusCode: 200,
+    };
   }
 }

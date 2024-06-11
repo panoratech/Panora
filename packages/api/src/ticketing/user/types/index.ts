@@ -8,6 +8,12 @@ export interface IUserService {
     linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalUserOutput[]>>;
+
+  syncUser(
+    linkedUserId: string,
+    remote_id: string,
+    custom_properties?: string[],
+  ): Promise<ApiResponse<OriginalUserOutput[]>>;
 }
 
 export interface IUserMapper {

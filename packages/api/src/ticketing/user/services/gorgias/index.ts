@@ -61,4 +61,15 @@ export class GorgiasService implements IUserService {
       );
     }
   }
+
+  async syncUser(
+    linkedUserId: string,
+    remote_id: string,
+  ): Promise<ApiResponse<any[]>> {
+    return {
+      data: [],
+      message: 'Default syncUser implementation',
+      statusCode: 200,
+    };
+  }
 }

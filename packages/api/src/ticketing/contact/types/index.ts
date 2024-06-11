@@ -9,6 +9,12 @@ export interface IContactService {
     custom_properties?: string[],
     remote_account_id?: string,
   ): Promise<ApiResponse<OriginalContactOutput[]>>;
+
+  syncContact(
+    linkedUserId: string,
+    custom_properties?: string[],
+    remote_account_id?: string,
+  ): Promise<ApiResponse<OriginalContactOutput[]>>;
 }
 
 export interface IContactMapper {

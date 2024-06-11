@@ -12,55 +12,66 @@ import { GitlabUserOutput } from './types';
 
 @Injectable()
 export class GitlabService implements IUserService {
-    constructor(
-        private prisma: PrismaService,
-        private logger: LoggerService,
-        private cryptoService: EncryptionService,
-        private registry: ServiceRegistry,
-    ) {
-        this.logger.setContext(
-            TicketingObject.user.toUpperCase() + ':' + GitlabService.name,
-        );
-        this.registry.registerService('gitlab', this);
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
+  ) {
+    this.logger.setContext(
+      TicketingObject.user.toUpperCase() + ':' + GitlabService.name,
+    );
+    this.registry.registerService('gitlab', this);
+  }
+
+  async syncUsers(
+    linkedUserId: string,
+  ): Promise<ApiResponse<GitlabUserOutput[]>> {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'gitlab',
+          vertical: 'ticketing',
+        },
+      });
+
+      const resp = await axios.get(`${connection.account_url}/users`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
+      this.logger.log(`Synced gitlab users !`);
+
+      // console.log("Users Data : ", resp.data);
+
+      return {
+        data: resp.data,
+        message: 'gitlab users retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      handleServiceError(
+        error,
+        this.logger,
+        'Gitlab',
+        TicketingObject.user,
+        ActionType.GET,
+      );
     }
+  }
 
-    async syncUsers(
-        linkedUserId: string,
-    ): Promise<ApiResponse<GitlabUserOutput[]>> {
-        try {
-            const connection = await this.prisma.connections.findFirst({
-                where: {
-                    id_linked_user: linkedUserId,
-                    provider_slug: 'gitlab',
-                    vertical: 'ticketing',
-                },
-            });
-
-            const resp = await axios.get(`${connection.account_url}/users`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${this.cryptoService.decrypt(
-                        connection.access_token,
-                    )}`,
-                },
-            });
-            this.logger.log(`Synced gitlab users !`);
-
-            // console.log("Users Data : ", resp.data);
-
-            return {
-                data: resp.data,
-                message: 'gitlab users retrieved',
-                statusCode: 200,
-            };
-        } catch (error) {
-            handleServiceError(
-                error,
-                this.logger,
-                'Gitlab',
-                TicketingObject.user,
-                ActionType.GET,
-            );
-        }
-    }
+  async syncUser(
+    linkedUserId: string,
+    remote_id: string,
+  ): Promise<ApiResponse<any[]>> {
+    return {
+      data: [],
+      message: 'Default syncUser implementation',
+      statusCode: 200,
+    };
+  }
 }

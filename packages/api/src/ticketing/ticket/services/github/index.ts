@@ -10,7 +10,6 @@ import { ActionType, handleServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GithubTicketInput, GithubTicketOutput } from './types';
 
-//TODO
 @Injectable()
 export class GithubService implements ITicketService {
   constructor(
@@ -104,5 +103,15 @@ export class GithubService implements ITicketService {
         ActionType.GET,
       );
     }
+  }
+  async syncTicket(
+    linkedUserId: string,
+    remote_id: string,
+  ): Promise<ApiResponse<any[]>> {
+    return {
+      data: [],
+      message: 'Default syncTicket implementation',
+      statusCode: 200,
+    };
   }
 }

@@ -141,4 +141,15 @@ export class GorgiasService implements ITicketService {
       );
     }
   }
+
+  async syncTicket(
+    linkedUserId: string,
+    remote_id: string,
+  ): Promise<ApiResponse<any[]>> {
+    return {
+      data: [],
+      message: 'Default syncTicket implementation',
+      statusCode: 200,
+    };
+  }
 }

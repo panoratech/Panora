@@ -61,4 +61,15 @@ export class FrontService implements IAccountService {
       );
     }
   }
+
+  async syncAccount(
+    linkedUserId: string,
+    remote_id: string,
+  ): Promise<ApiResponse<any[]>> {
+    return {
+      data: [],
+      message: 'Default syncAccount implementation',
+      statusCode: 200,
+    };
+  }
 }
