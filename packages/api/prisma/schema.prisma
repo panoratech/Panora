@@ -472,7 +472,7 @@ model tcg_accounts {
   name            String?
   domains         String[]
   remote_platform String?
-  created_at      DateTime       @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_tcg_accounts") @default(now()) @db.Timestamp(6)
   modified_at     DateTime       @db.Timestamp(6)
   id_linked_user  String?        @db.Uuid
   tcg_contacts    tcg_contacts[]
@@ -486,7 +486,7 @@ model tcg_attachments {
   file_name         String?
   file_url          String?
   uploader          String        @db.Uuid
-  created_at        DateTime      @db.Timestamp(6)
+  created_at        DateTime      @unique(map: "force_createdat_unique_tcg_attachments") @default(now()) @db.Timestamp(6)
   modified_at       DateTime      @db.Timestamp(6)
   id_linked_user    String?       @db.Uuid
   id_tcg_ticket     String?       @db.Uuid
@@ -506,7 +506,7 @@ model tcg_collections {
   remote_platform   String?
   collection_type   String?
   parent_collection String?  @db.Uuid
-  created_at        DateTime @db.Timestamp(6)
+  created_at        DateTime @unique(map: "force_createdat_unique_tcg_collections") @default(now()) @db.Timestamp(6)
   modified_at       DateTime @db.Timestamp(6)
   id_linked_user    String   @db.Uuid
 }
@@ -519,7 +519,7 @@ model tcg_comments {
   is_private        Boolean?
   remote_id         String?
   remote_platform   String?
-  created_at        DateTime?         @db.Timestamp(6)
+  created_at        DateTime          @unique(map: "force_createdat_unique_tcg_comments") @default(now()) @db.Timestamp(6)
   modified_at       DateTime?         @db.Timestamp(6)
   creator_type      String?
   id_tcg_attachment String[]
@@ -545,7 +545,7 @@ model tcg_contacts {
   details         String?
   remote_id       String?
   remote_platform String?
-  created_at      DateTime?      @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_tcg_contacts") @default(now()) @db.Timestamp(6)
   modified_at     DateTime?      @db.Timestamp(6)
   id_tcg_account  String?        @db.Uuid
   id_linked_user  String?        @db.Uuid
@@ -560,7 +560,7 @@ model tcg_tags {
   name            String?
   remote_id       String?
   remote_platform String?
-  created_at      DateTime     @db.Timestamp(6)
+  created_at      DateTime     @unique(map: "force_createdat_unique_tcg_tags") @default(now()) @db.Timestamp(6)
   modified_at     DateTime     @db.Timestamp(6)
   id_tcg_ticket   String?      @db.Uuid
   id_linked_user  String?      @db.Uuid
@@ -575,7 +575,7 @@ model tcg_teams {
   remote_platform String?
   name            String?
   description     String?
-  created_at      DateTime @db.Timestamp(6)
+  created_at      DateTime @unique(map: "force_createdat_unique_tcg_teams") @default(now()) @db.Timestamp(6)
   modified_at     DateTime @db.Timestamp(6)
   id_linked_user  String?  @db.Uuid
 }
@@ -593,7 +593,7 @@ model tcg_tickets {
   collections     String[]
   completed_at    DateTime?         @db.Timestamp(6)
   priority        String?
-  created_at      DateTime          @db.Timestamp(6)
+  created_at      DateTime          @unique(map: "force_createdat_unique_tcg_tickets") @default(now()) @db.Timestamp(6)
   modified_at     DateTime          @db.Timestamp(6)
   assigned_to     String[]
   remote_id       String?
@@ -616,7 +616,7 @@ model tcg_users {
   remote_id       String?
   remote_platform String?
   teams           String[]
-  created_at      DateTime?      @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_tcg_users") @default(now()) @db.Timestamp(6)
   modified_at     DateTime?      @db.Timestamp(6)
   id_linked_user  String?        @db.Uuid
   tcg_comments    tcg_comments[]

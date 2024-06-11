@@ -2735,9 +2735,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2766,6 +2785,11 @@
         },
         "tags": [
           "ticketing/accounts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2819,6 +2843,11 @@
         },
         "tags": [
           "ticketing/accounts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2840,9 +2869,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2871,6 +2919,11 @@
         },
         "tags": [
           "ticketing/collections"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2924,6 +2977,11 @@
         },
         "tags": [
           "ticketing/collections"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -2945,9 +3003,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2976,6 +3053,11 @@
         },
         "tags": [
           "ticketing/comments"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "post": {
@@ -3047,6 +3129,11 @@
         },
         "tags": [
           "ticketing/comments"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3100,6 +3187,11 @@
         },
         "tags": [
           "ticketing/comments"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3178,6 +3270,11 @@
         },
         "tags": [
           "ticketing/comments"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3199,9 +3296,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -3230,6 +3346,11 @@
         },
         "tags": [
           "ticketing/contacts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3283,6 +3404,11 @@
         },
         "tags": [
           "ticketing/contacts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3304,9 +3430,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -3335,6 +3480,11 @@
         },
         "tags": [
           "ticketing/tags"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3388,6 +3538,11 @@
         },
         "tags": [
           "ticketing/tags"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3409,9 +3564,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -3440,6 +3614,11 @@
         },
         "tags": [
           "ticketing/teams"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3493,6 +3672,11 @@
         },
         "tags": [
           "ticketing/teams"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3514,9 +3698,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -3545,6 +3748,11 @@
         },
         "tags": [
           "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "post": {
@@ -3616,6 +3824,11 @@
         },
         "tags": [
           "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "patch": {
@@ -3645,6 +3858,11 @@
         },
         "tags": [
           "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3698,6 +3916,11 @@
         },
         "tags": [
           "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3776,6 +3999,11 @@
         },
         "tags": [
           "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3797,9 +4025,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -3828,6 +4075,11 @@
         },
         "tags": [
           "ticketing/users"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -3881,6 +4133,11 @@
         },
         "tags": [
           "ticketing/users"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -4727,9 +4984,28 @@
             "name": "remote_data",
             "required": false,
             "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
+            "description": "Set to true to include data from the original software.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -4758,6 +5034,11 @@
         },
         "tags": [
           "ticketing/attachments"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       },
       "post": {
@@ -4829,6 +5110,11 @@
         },
         "tags": [
           "ticketing/attachments"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -4882,6 +5168,11 @@
         },
         "tags": [
           "ticketing/attachments"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -4935,6 +5226,11 @@
         },
         "tags": [
           "ticketing/attachments"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     },
@@ -5013,6 +5309,11 @@
         },
         "tags": [
           "ticketing/attachments"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
         ]
       }
     }

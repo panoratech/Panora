@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
+import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedCommentInput,
@@ -176,13 +176,13 @@ export class CommentService {
       const opts =
         target_comment.creator_type === 'contact'
           ? {
-              id_tcg_contact: unifiedCommentData.contact_id,
-            }
+            id_tcg_contact: unifiedCommentData.contact_id,
+          }
           : target_comment.creator_type === 'user'
-          ? {
+            ? {
               id_tcg_user: unifiedCommentData.user_id,
             }
-          : {}; //case where nothing is passed for creator or a not authorized value;
+            : {}; //case where nothing is passed for creator or a not authorized value;
 
       if (existingComment) {
         // Update the existing comment
@@ -373,15 +373,49 @@ export class CommentService {
   async getComments(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedCommentOutput[]> {
+    cursor?: string
+  ): Promise<{ data: UnifiedCommentOutput[], prev_cursor: null | string, next_cursor: null | string }> {
     try {
-      const comments = await this.prisma.tcg_comments.findMany({
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.tcg_comments.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_tcg_comment: cursor
+          }
+        });
+        if (!isCursorPresent) {
+          throw new NotFoundError(`The provided cursor does not exist!`);
+        }
+      }
+
+      let comments = await this.prisma.tcg_comments.findMany({
+        take: pageSize + 1,
+        cursor: cursor ? {
+          id_tcg_comment: cursor
+        } : undefined,
+        orderBy: {
+          created_at: 'asc'
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
+
+      if (comments.length === (pageSize + 1)) {
+        next_cursor = Buffer.from(comments[comments.length - 1].id_tcg_comment).toString('base64');
+        comments.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedComments: UnifiedCommentOutput[] = await Promise.all(
         comments.map(async (comment) => {
@@ -455,7 +489,11 @@ export class CommentService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor
+      };
     } catch (error) {
       handleServiceError(error, this.logger);
     }

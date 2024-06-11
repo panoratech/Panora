@@ -280,7 +280,7 @@ export class SyncService implements OnModuleInit {
           this.logger.log('engagement not exists');
           let data: any = {
             id_crm_engagement: uuidv4(),
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

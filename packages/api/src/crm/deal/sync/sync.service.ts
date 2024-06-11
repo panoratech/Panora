@@ -265,7 +265,7 @@ export class SyncService implements OnModuleInit {
           this.logger.log('deal not exists');
           let data: any = {
             id_crm_deal: uuidv4(),
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             description: '',
