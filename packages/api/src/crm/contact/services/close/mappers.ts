@@ -44,7 +44,11 @@ export class CloseContactMapper implements IContactMapper {
       ),
     };
 
-    result.lead_id = source?.field_mappings?.['company_id'];
+    if (source.user_id) {
+      result.lead_id = await this.utils.getRemoteIdFromCompanyUuid(
+        source.user_id,
+      );
+    }
 
     if (customFieldMappings && source.field_mappings) {
       for (const [k, v] of Object.entries(source.field_mappings)) {
@@ -68,28 +72,36 @@ export class CloseContactMapper implements IContactMapper {
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
+      return await this.mapSingleContactToUnified(source, customFieldMappings);
     }
     // Handling array of CloseContactOutput
-    return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+    return await Promise.all(
+      source.map((contact) =>
+        this.mapSingleContactToUnified(contact, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleContactToUnified(
+  private async mapSingleContactToUnified(
     contact: CloseContactOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput {
+  ): Promise<UnifiedContactOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
         field_mappings[mapping.slug] = contact[mapping.remote_id];
       }
     }
-
+    const opts: any = {};
+    if (contact.lead_id) {
+      opts.user_id = await this.utils.getCompanyUuidFromRemoteId(
+        contact.lead_id,
+        'close',
+      );
+    }
     return {
       remote_id: contact.id,
       first_name: contact.name,
@@ -105,6 +117,7 @@ export class CloseContactMapper implements IContactMapper {
         owner_type: 'contact',
       })),
       field_mappings,
+      ...opts,
       addresses: [],
     };
   }
