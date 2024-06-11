@@ -113,7 +113,7 @@ export class CloseConnectionService implements ICrmConnectionService {
             provider_slug: 'close',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['close'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']?.close?.urls?.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

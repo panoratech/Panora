@@ -88,42 +88,22 @@ export class CloseTaskMapper implements ITaskMapper {
         field_mappings[mapping.slug] = task[mapping.remote_id];
       }
     }
-    let opts: any = {};
-    if (task.assigned_to) {
-      const owner_id = await this.utils.getUserUuidFromRemoteId(
-        task.assigned_to,
-        'close',
-      );
-      if (owner_id) {
-        opts = {
-          user_id: owner_id,
-        };
-      }
-    }
-    if (task.contact_id) {
-      const contact_id = await this.utils.getContactUuidFromRemoteId(
-        task.contact_id,
-        'close',
-      );
-      if (contact_id) {
-        opts = {
-          ...opts,
-          contact_id: contact_id,
-        };
-      }
-    }
-    if (task.lead_id) {
-      const lead_id = await this.utils.getCompanyUuidFromRemoteId(
-        task.lead_id,
-        'close',
-      );
-      if (lead_id) {
-        opts = {
-          ...opts,
-          company_id: lead_id,
-        };
-      }
-    }
+    const emptyPromise = new Promise<string>((resolve) => {
+      return resolve('');
+    });
+    const promises = [];
+
+    promises.push(
+      task.assigned_to
+        ? await this.utils.getUserUuidFromRemoteId(task.assigned_to, 'close')
+        : emptyPromise,
+    );
+    promises.push(
+      task.lead_id
+        ? await this.utils.getCompanyUuidFromRemoteId(task.lead_id, 'close')
+        : emptyPromise,
+    );
+    const [user_id, company_id] = await Promise.all(promises);
 
     return {
       remote_id: task.id,
@@ -131,10 +111,10 @@ export class CloseTaskMapper implements ITaskMapper {
       content: task.text,
       status: task?.is_complete ? 'COMPLETED' : 'PENDING',
       due_date: new Date(task.due_date),
-      finished_date: task.finished_date ? new Date(task.finished_date) : '',
+      finished_date: task.finished_date ? new Date(task.finished_date) : null,
       field_mappings,
-      ...opts,
-      // Additional fields mapping based on UnifiedTaskOutput structure
+      user_id,
+      company_id,
     };
   }
 }
