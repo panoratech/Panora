@@ -70,25 +70,14 @@ export class SyncService implements OnModuleInit {
   async syncCompanies(user_id?: string) {
     try {
       this.logger.log(`Syncing companies....`);
-      // TODO: insert inside sync_jobs table ?
-      /* 
-      {
-        "common_object": "company",
-        "vertical": "crm",
-        "last_sync_start": "",
-        "next_sync_start": "",
-        "status": "SYNCING",
-        "is_initial_sync": true,
-      }
-      */
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -364,7 +353,7 @@ export class SyncService implements OnModuleInit {
           const uuid = uuidv4();
           let data: any = {
             id_crm_company: uuid,
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

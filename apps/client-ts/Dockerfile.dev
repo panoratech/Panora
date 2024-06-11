@@ -21,7 +21,7 @@ ENV VITE_STYTCH_TOKEN="$VITE_STYTCH_TOKEN"
 RUN corepack enable
 
 WORKDIR /app
-RUN pnpm add -g turbo
+RUN pnpm add -g turbo@1.13.4
 
 # Start the Webapp
 CMD cd apps/client-ts && pnpm install && pnpm run dev

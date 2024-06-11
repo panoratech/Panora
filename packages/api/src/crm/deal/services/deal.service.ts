@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
+import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedDealInput, UnifiedDealOutput } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
@@ -118,11 +118,10 @@ export class DealService {
       // add the deal inside our db
       const source_deal = resp.data;
       const target_deal = unifiedObject[0];
-      const originId = 'id' in source_deal ? String(source_deal.id) : undefined; //TODO
 
       const existingDeal = await this.prisma.crm_deals.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_deal.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -171,7 +170,7 @@ export class DealService {
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_deal.remote_id,
           remote_platform: integrationId,
           description: '',
         };
@@ -319,15 +318,50 @@ export class DealService {
   async getDeals(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedDealOutput[]> {
+    cursor?: string
+  ): Promise<{ data: UnifiedDealOutput[], prev_cursor: null | string, next_cursor: null | string }> {
     try {
-      const deals = await this.prisma.crm_deals.findMany({
+
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.crm_deals.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_crm_deal: cursor
+          }
+        });
+        if (!isCursorPresent) {
+          throw new NotFoundError(`The provided cursor does not exist!`);
+        }
+      }
+
+      let deals = await this.prisma.crm_deals.findMany({
+        take: pageSize + 1,
+        cursor: cursor ? {
+          id_crm_deal: cursor
+        } : undefined,
+        orderBy: {
+          created_at: 'asc'
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
+
+      if (deals.length === (pageSize + 1)) {
+        next_cursor = Buffer.from(deals[deals.length - 1].id_crm_deal).toString('base64');
+        deals.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedDeals: UnifiedDealOutput[] = await Promise.all(
         deals.map(async (deal) => {
@@ -399,7 +433,11 @@ export class DealService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor
+      };
     } catch (error) {
       handleServiceError(error, this.logger);
     }

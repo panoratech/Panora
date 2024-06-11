@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { LoggerService } from '@@core/logger/logger.service';
 import { AuthController } from './auth.controller';
 import { ValidateUserService } from '@@core/utils/services/validateUser.service';
+import { ProjectsService } from '@@core/projects/projects.service';
 
 @Module({
   controllers: [AuthController],
@@ -19,6 +20,7 @@ import { ValidateUserService } from '@@core/utils/services/validateUser.service'
     ApiKeyStrategy,
     PrismaService,
     ConfigService,
+    ProjectsService,
     LoggerService,
     ValidateUserService,
   ],

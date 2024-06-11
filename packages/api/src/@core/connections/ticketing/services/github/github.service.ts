@@ -21,7 +21,7 @@ export type GithubOAuthResponse = {
   access_token: string;
   refresh_token: string;
   expires_in: string;
-  refresh_token_expires_in: string; //TODO
+  refresh_token_expires_in: string;
   token_type: string;
   scope: string;
 };
@@ -56,7 +56,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
-      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,

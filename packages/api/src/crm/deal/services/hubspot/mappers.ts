@@ -101,11 +101,17 @@ export class HubspotDealMapper implements IDealMapper {
       }
     }
 
+    if (deal.properties.amount) {
+      opts = {
+        ...opts,
+        amount: parseFloat(deal.properties.amount)
+      }
+    }
+
     return {
       remote_id: deal.id,
       name: deal.properties.dealname,
       description: deal.properties.dealname, // Placeholder if there's no direct mapping
-      amount: parseFloat(deal.properties.amount),
       //TODO; stage_id: deal.properties.dealstage,
       field_mappings,
       ...opts,

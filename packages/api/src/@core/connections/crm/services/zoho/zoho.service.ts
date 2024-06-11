@@ -91,7 +91,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -182,7 +182,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, account_url, projectId } = opts;
-      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,

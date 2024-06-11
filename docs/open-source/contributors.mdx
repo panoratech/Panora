@@ -25,10 +25,10 @@ We made a docker file that builds Panora from sources, specifically to help you 
     </Info>
     You have the option to manage a custom 3rd party OAuth App.
 
-    **Each custom 3rd party environment variable must be of the form `PROVIDER_VERTICAL_SOFTWAREMODE_ATTRIBUTE` where**
+    **Each custom 3rd party environment variable must be of the form `PROVIDER_category_SOFTWAREMODE_ATTRIBUTE` where**
 
     - `PROVIDER` is any 3rd party name
-    - `VERTICAL` is for example [CRM, TICKETING, MARKETINGAUTOMATION, ...]
+    - `category` is for example [CRM, TICKETING, MARKETINGAUTOMATION, ...]
     - `SOFTWAREMODE` is [ CLOUD, ONPREMISE ]
     - `ATTRIBUTE` is for example [ CLIENT_ID, CLIENT_SECRET, SUBDOMAIN, ... ]
 
@@ -64,7 +64,7 @@ Make sure you are inside `packages/api/src` where the server lives !
 
 _Ie: Slack, Hubspot, Jira, Shopify ..._
 
-First choose wisely which vertical the 3rd party belongs to among these:
+First choose wisely which category the 3rd party belongs to among these:
 
 - `crm`
 - `ticketing`
@@ -74,14 +74,16 @@ First choose wisely which vertical the 3rd party belongs to among these:
 - `hris`
 - `marketingautomation`
 
+You can find all categories inside [`packages/shared/src/categories.ts`](https://github.com/panoratech/Panora/blob/main/packages/shared/src/categories.ts).
+
 <Info>
   For the sake of the guide, now on we'll consider adding a 3rd party belonging
-  to the `crm` vertical.
+  to the `crm` category.
 </Info>
 
 # Step 1: Ensure 3rd party metadata is set
 
-Look into the `packages/shared/src/utils.ts` file and check if the provider you want to build has its metadata set inside the `CONNECTORS_METADATA` object.
+Look into the `packages/shared/src/connectors/metadata.ts` file and check if the provider you want to build has its metadata set inside the `CONNECTORS_METADATA` object.
 
 It should be available (if not [contact us](https://app.cal.com/rflih/30)) with `active` field set to `false` meaning the integration has not been built.
 
@@ -96,7 +98,7 @@ Actually an integration is built in 2 parts :
 
 _Ie: Contact, Ticket, Deal, Company ..._
 
-For the sake of this guide, let's map the common object `contact` under `crm` vertical to _my3rdParty_ (in reality it would be a real 3rd party name).
+For the sake of this guide, let's map the common object `contact` under `crm` category to _my3rdParty_ (in reality it would be a real 3rd party name).
 
 <Info>
   **An integration is considered valid when all common objects have been mapped.
@@ -117,6 +119,8 @@ For the sake of this guide, let's map the common object `contact` under `crm` ve
     - `index.ts` where your service is created and direct interaction with your 3rd party API is handled
     - `types.ts` where the 3rd party specific API types are defined
     - `mappers.ts` where the mapping between our unified common model and the 3rd party one is handled
+
+    <Info>After copying the following code you'll end up with linting/deps errors. It is fixed by our script at Step 2.</Info>
 
     <Steps>
       <Step title="Create the index.ts file">
@@ -224,12 +228,12 @@ For the sake of this guide, let's map the common object `contact` under `crm` ve
   </Step>
 
   <Step title="Enable your new service">
-   After these 3 files are successfully created and filled, you are ready to to fix all dependencies/linting issues that you may have. <br/>
+    After these 3 files are successfully created and filled, you are ready to fix all dependencies/linting issues that you may have. <br/>
     To make sure the service is enabled, dependencies and imports must be added. <br/>
     We built a script that does it in seconds. You can execute the given command from the root directory of Panora.
 
     ```bash
-    cd packages/api && pnpm install && pnpm run validate-connectors --vertical="crm" --objectType="contact"
+    cd packages/api && pnpm install && pnpm run validate-connectors --category="crm" --objectType="contact"
     ```
 
     The script will automatically scan the `/crm/contact/services` folder and detect any new service folder so all dependencies and imports are updated across the codebase.

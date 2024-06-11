@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
+import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedNoteInput, UnifiedNoteOutput } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
@@ -141,11 +141,10 @@ export class NoteService {
       // add the note inside our db
       const source_note = resp.data;
       const target_note = unifiedObject[0];
-      const originId = 'id' in source_note ? String(source_note.id) : undefined; //TODO
 
       const existingNote = await this.prisma.crm_notes.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_note.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -189,7 +188,7 @@ export class NoteService {
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_note.remote_id,
           remote_platform: integrationId,
         };
         if (target_note.content) {
@@ -334,15 +333,49 @@ export class NoteService {
   async getNotes(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedNoteOutput[]> {
+    cursor?: string
+  ): Promise<{ data: UnifiedNoteOutput[], prev_cursor: null | string, next_cursor: null | string }> {
     try {
-      const notes = await this.prisma.crm_notes.findMany({
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.crm_notes.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_crm_note: cursor
+          }
+        });
+        if (!isCursorPresent) {
+          throw new NotFoundError(`The provided cursor does not exist!`);
+        }
+      }
+
+      let notes = await this.prisma.crm_notes.findMany({
+        take: pageSize + 1,
+        cursor: cursor ? {
+          id_crm_note: cursor
+        } : undefined,
+        orderBy: {
+          created_at: 'asc'
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
+
+      if (notes.length === (pageSize + 1)) {
+        next_cursor = Buffer.from(notes[notes.length - 1].id_crm_note).toString('base64');
+        notes.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedNotes: UnifiedNoteOutput[] = await Promise.all(
         notes.map(async (note) => {
@@ -414,7 +447,11 @@ export class NoteService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor
+      };
     } catch (error) {
       handleServiceError(error, this.logger);
     }

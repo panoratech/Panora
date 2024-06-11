@@ -118,7 +118,7 @@ export class WebhookService {
           id_webhook_endpoint: webhook.id_webhook_endpoint,
           status: 'queued', // queued | processed | failed | success
           id_webhooks_payload: w_payload.id_webhooks_payload,
-          attempt_count: 0, //TODO
+          attempt_count: 0,
         },
       });
       this.logger.log('adding webhook to the queue ');
@@ -174,7 +174,7 @@ export class WebhookService {
           id_webhook_endpoint: webhook.id_webhook_endpoint,
           status: 'processed', // queued | processed | failed | success
           id_webhooks_payload: w_payload.id_webhooks_payload,
-          attempt_count: 0, //TODO
+          attempt_count: 0,
         },
       });
       this.logger.log('sending the webhook to the client ');

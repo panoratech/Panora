@@ -29,8 +29,8 @@ export class EnvironmentService {
   getDatabaseURL(): string {
     return this.configService.get<string>('DATABASE_URL');
   }
-  getOAuthRredirectBaseUrl(): string {
-    return this.configService.get<string>('OAUTH_REDIRECT_BASE');
+  getPanoraBaseUrl(): string {
+    return this.configService.get<string>('PANORA_BASE_API_URL');
   }
   getRedisHost(): string {
     return this.configService.get<string>('REDIS_HOST');

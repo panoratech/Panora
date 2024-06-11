@@ -7,6 +7,7 @@ import { StageModule } from './stage/stage.module';
 import { TaskModule } from './task/task.module';
 import { UserModule } from './user/user.module';
 import { CompanyModule } from './company/company.module';
+import { CrmWebhookHandlerModule } from './@webhook/handler.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CompanyModule } from './company/company.module';
     StageModule,
     TaskModule,
     UserModule,
+    CrmWebhookHandlerModule,
   ],
   providers: [],
   exports: [
@@ -29,6 +31,7 @@ import { CompanyModule } from './company/company.module';
     StageModule,
     TaskModule,
     UserModule,
+    CrmWebhookHandlerModule,
   ],
 })
 export class CrmModule {}

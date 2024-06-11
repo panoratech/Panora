@@ -125,7 +125,7 @@ export class ZendeskService implements ITicketService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/tickets.json`, {
+      const resp = await axios.get(`${connection.account_url}/tickets/.json`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -150,4 +150,6 @@ export class ZendeskService implements ITicketService {
       );
     }
   }
+
+  //todo: create a syncTicket(remote_ticket_id)
 }

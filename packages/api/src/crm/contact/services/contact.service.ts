@@ -11,7 +11,7 @@ import {
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
+import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
@@ -112,16 +112,10 @@ export class ContactService {
       // add the contact inside our db
       const source_contact = resp.data;
       const target_contact = unifiedObject[0];
-      const originId =
-        'id' in source_contact
-          ? String(source_contact.id)
-          : 'contact_id' in source_contact
-          ? String(source_contact.contact_id)
-          : undefined;
 
       const existingContact = await this.prisma.crm_contacts.findFirst({
         where: {
-          remote_id: originId,
+          remote_id: target_contact.remote_id,
           remote_platform: integrationId,
           id_linked_user: linkedUserId,
         },
@@ -253,7 +247,7 @@ export class ContactService {
           created_at: new Date(),
           modified_at: new Date(),
           id_linked_user: linkedUserId,
-          remote_id: originId,
+          remote_id: target_contact.remote_id,
           remote_platform: integrationId,
         };
 
@@ -492,12 +486,37 @@ export class ContactService {
   async getContacts(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedContactOutput[]> {
+    cursor?: string
+  ): Promise<{ data: UnifiedContactOutput[], prev_cursor: null | string, next_cursor: null | string }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
-      const contacts = await this.prisma.crm_contacts.findMany({
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.crm_contacts.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_crm_contact: cursor
+          }
+        });
+        if (!isCursorPresent) {
+          throw new NotFoundError(`The provided cursor does not exist!`);
+        }
+      }
+
+      let contacts = await this.prisma.crm_contacts.findMany({
+        take: pageSize + 1,
+        cursor: cursor ? {
+          id_crm_contact: cursor
+        } : undefined,
+        orderBy: {
+          created_at: 'asc'
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
@@ -508,6 +527,15 @@ export class ContactService {
           crm_addresses: true,
         },
       });
+
+      if (contacts.length === (pageSize + 1)) {
+        next_cursor = Buffer.from(contacts[contacts.length - 1].id_crm_contact).toString('base64');
+        contacts.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedContacts: UnifiedContactOutput[] = await Promise.all(
         contacts.map(async (contact) => {
@@ -587,7 +615,11 @@ export class ContactService {
           id_linked_user: linkedUserId,
         },
       });
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor
+      };
     } catch (error) {
       handleServiceError(error, this.logger);
     }

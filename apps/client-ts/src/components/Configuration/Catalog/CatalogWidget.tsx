@@ -32,7 +32,7 @@ export function CatalogWidget() {
     useEffect(() => {
       if (data) {
           const filteredData = Object.entries(data).reduce((acc, [key, value]) => {
-              if (key !== 'id_project' && key !== 'id_project_connector') {
+              if (key !== 'id_connector_set') {
                   acc[key] = Boolean(value);
               }
               return acc;

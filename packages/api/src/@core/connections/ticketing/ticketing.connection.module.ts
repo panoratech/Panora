@@ -17,9 +17,10 @@ import { GitlabConnectionService } from './services/gitlab/gitlab.service';
 import { ClickupConnectionService } from './services/clickup/clickup.service';
 import { GorgiasConnectionService } from './services/gorgias/gorgias.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ManagedWebhooksModule } from '@@core/managed-webhooks/managed-webhooks.module';
 
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, ManagedWebhooksModule],
   providers: [
     TicketingConnectionsService,
     PrismaService,

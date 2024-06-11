@@ -141,7 +141,7 @@ model crm_companies {
   name                String?
   industry            String?
   number_of_employees BigInt?
-  created_at          DateTime              @db.Timestamp(6)
+  created_at          DateTime              @unique(map: "force_createdat_unique_crm_companies") @default(now()) @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
   remote_id           String?
   remote_platform     String?
@@ -164,7 +164,7 @@ model crm_contacts {
   id_crm_contact      String                @id(map: "pk_crm_contacts") @db.Uuid
   first_name          String
   last_name           String
-  created_at          DateTime              @db.Timestamp(6)
+  created_at          DateTime              @unique(map: "force_createdat_unique_crm_contacts") @default(now()) @db.Timestamp(6)
   modified_at         DateTime              @db.Timestamp(6)
   remote_id           String
   remote_platform     String
@@ -184,8 +184,8 @@ model crm_deals {
   id_crm_deal        String            @id(map: "pk_crm_deal") @db.Uuid
   name               String
   description        String
-  amount             BigInt
-  created_at         DateTime          @db.Timestamp(6)
+  amount             BigInt?
+  created_at         DateTime          @unique(map: "force_createdat_unique_crm_deals") @default(now()) @db.Timestamp(6)
   modified_at        DateTime          @db.Timestamp(6)
   remote_id          String?
   remote_platform    String?
@@ -207,7 +207,7 @@ model crm_deals {
 model crm_deals_stages {
   id_crm_deals_stage String      @id(map: "pk_crm_deal_stages") @db.Uuid
   stage_name         String?
-  created_at         DateTime    @db.Timestamp(6)
+  created_at         DateTime    @unique(map: "force_createdat_unique_crm_deals_stages") @default(now()) @db.Timestamp(6)
   modified_at        DateTime    @db.Timestamp(6)
   id_linked_user     String?     @db.Uuid
   remote_id          String?
@@ -251,7 +251,7 @@ model crm_engagements {
   subject                 String?
   start_at                DateTime?                 @db.Timestamp(6)
   end_time                DateTime?                 @db.Timestamp(6)
-  created_at              DateTime?                 @db.Timestamp(6)
+  created_at              DateTime                  @unique(map: "force_createdat_unique_crm_engagements") @default(now()) @db.Timestamp(6)
   modified_at             DateTime?                 @db.Timestamp(6)
   remote_id               String?
   id_linked_user          String?                   @db.Uuid
@@ -269,7 +269,7 @@ model crm_engagements {
 model crm_notes {
   id_crm_note     String         @id(map: "pk_crm_notes") @db.Uuid
   content         String
-  created_at      DateTime       @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_crm_notes") @default(now()) @db.Timestamp(6)
   modified_at     DateTime       @db.Timestamp(6)
   id_crm_company  String?        @db.Uuid
   id_crm_contact  String?        @db.Uuid
@@ -312,7 +312,7 @@ model crm_tasks {
   status          String?
   due_date        DateTime?      @db.Timestamp(6)
   finished_date   DateTime?      @db.Timestamp(6)
-  created_at      DateTime       @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_crm_tasks") @default(now()) @db.Timestamp(6)
   modified_at     DateTime       @db.Timestamp(6)
   id_crm_user     String?        @db.Uuid
   id_crm_company  String?        @db.Uuid
@@ -333,7 +333,7 @@ model crm_users {
   id_crm_user     String            @id(map: "pk_crm_users") @db.Uuid
   name            String?
   email           String?
-  created_at      DateTime          @db.Timestamp(6)
+  created_at      DateTime          @unique(map: "force_createdat_unique_crm_users") @default(now()) @db.Timestamp(6)
   modified_at     DateTime          @db.Timestamp(6)
   id_linked_user  String?           @db.Uuid
   remote_id       String?
@@ -425,35 +425,20 @@ model linked_users {
   @@index([id_project], map: "fk_proectid_linked_users")
 }
 
-model project_connectors {
-  id_project_connector String   @id(map: "pk_project_connectors") @db.Uuid
-  id_project           String   @db.Uuid
-  crm_hubspot          Boolean
-  crm_zoho             Boolean
-  crm_zendesk          Boolean
-  crm_pipedrive        Boolean
-  crm_attio            Boolean
-  tcg_zendesk          Boolean
-  tcg_gorgias          Boolean
-  tcg_front            Boolean
-  tcg_jira             Boolean
-  tcg_gitlab           Boolean
-  projects             projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectors")
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model projects {
-  id_project         String               @id(map: "pk_projects") @db.Uuid
-  name               String
-  sync_mode          String
-  pull_frequency     BigInt?
-  redirect_url       String?
-  id_user            String               @db.Uuid
-  api_keys           api_keys[]
-  connections        connections[]
-  linked_users       linked_users[]
-  project_connectors project_connectors[]
-  users              users                @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
+  id_project       String         @id(map: "pk_projects") @db.Uuid
+  name             String
+  sync_mode        String
+  pull_frequency   BigInt?
+  redirect_url     String?
+  id_user          String         @db.Uuid
+  id_connector_set String         @db.Uuid
+  api_keys         api_keys[]
+  connections      connections[]
+  linked_users     linked_users[]
+  users            users          @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
+  connector_sets   connector_sets @relation(fields: [id_connector_set], references: [id_connector_set], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectorsetid")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -472,7 +457,7 @@ model tcg_accounts {
   name            String?
   domains         String[]
   remote_platform String?
-  created_at      DateTime       @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_tcg_accounts") @default(now()) @db.Timestamp(6)
   modified_at     DateTime       @db.Timestamp(6)
   id_linked_user  String?        @db.Uuid
   tcg_contacts    tcg_contacts[]
@@ -486,7 +471,7 @@ model tcg_attachments {
   file_name         String?
   file_url          String?
   uploader          String        @db.Uuid
-  created_at        DateTime      @db.Timestamp(6)
+  created_at        DateTime      @unique(map: "force_createdat_unique_tcg_attachments") @default(now()) @db.Timestamp(6)
   modified_at       DateTime      @db.Timestamp(6)
   id_linked_user    String?       @db.Uuid
   id_tcg_ticket     String?       @db.Uuid
@@ -506,7 +491,7 @@ model tcg_collections {
   remote_platform   String?
   collection_type   String?
   parent_collection String?  @db.Uuid
-  created_at        DateTime @db.Timestamp(6)
+  created_at        DateTime @unique(map: "force_createdat_unique_tcg_collections") @default(now()) @db.Timestamp(6)
   modified_at       DateTime @db.Timestamp(6)
   id_linked_user    String   @db.Uuid
 }
@@ -519,7 +504,7 @@ model tcg_comments {
   is_private        Boolean?
   remote_id         String?
   remote_platform   String?
-  created_at        DateTime?         @db.Timestamp(6)
+  created_at        DateTime          @unique(map: "force_createdat_unique_tcg_comments") @default(now()) @db.Timestamp(6)
   modified_at       DateTime?         @db.Timestamp(6)
   creator_type      String?
   id_tcg_attachment String[]
@@ -545,7 +530,7 @@ model tcg_contacts {
   details         String?
   remote_id       String?
   remote_platform String?
-  created_at      DateTime?      @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_tcg_contacts") @default(now()) @db.Timestamp(6)
   modified_at     DateTime?      @db.Timestamp(6)
   id_tcg_account  String?        @db.Uuid
   id_linked_user  String?        @db.Uuid
@@ -560,7 +545,7 @@ model tcg_tags {
   name            String?
   remote_id       String?
   remote_platform String?
-  created_at      DateTime     @db.Timestamp(6)
+  created_at      DateTime     @unique(map: "force_createdat_unique_tcg_tags") @default(now()) @db.Timestamp(6)
   modified_at     DateTime     @db.Timestamp(6)
   id_tcg_ticket   String?      @db.Uuid
   id_linked_user  String?      @db.Uuid
@@ -575,7 +560,7 @@ model tcg_teams {
   remote_platform String?
   name            String?
   description     String?
-  created_at      DateTime @db.Timestamp(6)
+  created_at      DateTime @unique(map: "force_createdat_unique_tcg_teams") @default(now()) @db.Timestamp(6)
   modified_at     DateTime @db.Timestamp(6)
   id_linked_user  String?  @db.Uuid
 }
@@ -593,7 +578,7 @@ model tcg_tickets {
   collections     String[]
   completed_at    DateTime?         @db.Timestamp(6)
   priority        String?
-  created_at      DateTime          @db.Timestamp(6)
+  created_at      DateTime          @unique(map: "force_createdat_unique_tcg_tickets") @default(now()) @db.Timestamp(6)
   modified_at     DateTime          @db.Timestamp(6)
   assigned_to     String[]
   remote_id       String?
@@ -616,7 +601,7 @@ model tcg_users {
   remote_id       String?
   remote_platform String?
   teams           String[]
-  created_at      DateTime?      @db.Timestamp(6)
+  created_at      DateTime       @unique(map: "force_createdat_unique_tcg_users") @default(now()) @db.Timestamp(6)
   modified_at     DateTime?      @db.Timestamp(6)
   id_linked_user  String?        @db.Uuid
   tcg_comments    tcg_comments[]
@@ -655,4 +640,31 @@ model webhook_delivery_attempts {
   @@index([id_webhook_endpoint], map: "fk_we_webhookendpointid")
   @@index([id_event], map: "fk_webhook_delivery_attempt_eventid")
   @@index([id_webhooks_reponse], map: "fk_webhook_delivery_attempt_webhook_responseid")
+}
+
+model connector_sets {
+  id_connector_set String     @id(map: "pk_project_connector") @db.Uuid
+  crm_hubspot      Boolean
+  crm_zoho         Boolean
+  crm_attio        Boolean
+  crm_pipedrive    Boolean
+  tcg_zendesk      Boolean
+  tcg_jira         Boolean
+  tcg_gorgias      Boolean
+  tcg_gitlab       Boolean
+  tcg_front        Boolean
+  projects         projects[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model managed_webhooks {
+  id_managed_webhook    String   @id(map: "pk_managed_webhooks") @db.Uuid
+  active                Boolean
+  id_connection         String   @db.Uuid
+  endpoint              String   @db.Uuid
+  api_version           String?
+  active_events         String[]
+  remote_signing_secret String?
+  modified_at           DateTime @db.Timestamp(6)
+  created_at            DateTime @db.Timestamp(6)
 }

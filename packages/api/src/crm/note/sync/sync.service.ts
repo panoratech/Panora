@@ -260,7 +260,7 @@ export class SyncService implements OnModuleInit {
           this.logger.log('note not exists');
           let data: any = {
             id_crm_note: uuidv4(),
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

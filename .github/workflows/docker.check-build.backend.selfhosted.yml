@@ -27,7 +27,7 @@ jobs:
           push: false
           tags: panoradotdev/backend-api:selfhosted
           build-args: |
-            OAUTH_REDIRECT_BASE=${{ env.OAUTH_REDIRECT_BASE }}
+            PANORA_BASE_API_URL=${{ env.PANORA_BASE_API_URL }}
             DISTRIBUTION=${{ env.DISTRIBUTION }}
             ENV=${{ ENV }}
             DATABASE_URL=postgresql://${{env.POSTGRES_USER}}:${{secrets.POSTGRES_PASSWORD}}@${{env.POSTGRES_HOST}}:5432/${{env.POSTGRES_DB}}?ssl=false

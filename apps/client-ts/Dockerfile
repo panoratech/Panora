@@ -13,7 +13,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
 WORKDIR /app
-RUN pnpm add -g turbo
+RUN pnpm add -g turbo@1.13.4
 COPY . .
 RUN turbo prune client-ts --docker
 

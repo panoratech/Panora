@@ -19,12 +19,17 @@ export class ProjectConnectorsService {
     id_project: string,
   ) {
     try {
-      const existingPConnectors =
-        await this.prisma.project_connectors.findFirst({
-          where: {
-            id_project: id_project,
-          },
-        });
+      const project = await this.prisma.projects.findFirst({
+        where: {
+          id_project: id_project,
+        },
+      });
+
+      const existingPConnectors = await this.prisma.connector_sets.findFirst({
+        where: {
+          id_connector_set: project.id_connector_set,
+        },
+      });
 
       if (!existingPConnectors) {
         throw new Error(
@@ -36,9 +41,9 @@ export class ProjectConnectorsService {
         [column]: status, // Use computed property names to set the column dynamically
       };
 
-      const res = await this.prisma.project_connectors.update({
+      const res = await this.prisma.connector_sets.update({
         where: {
-          id_project_connector: existingPConnectors.id_project_connector,
+          id_connector_set: existingPConnectors.id_connector_set,
         },
         data: updateData,
       });
@@ -51,8 +56,7 @@ export class ProjectConnectorsService {
   async createProjectConnectors(data: TypeCustom) {
     try {
       const updateData: any = {
-        id_project_connector: uuidv4(),
-        id_project: data.id_project,
+        id_connector_set: uuidv4(),
         crm_hubspot: data.crm_hubspot,
         crm_zoho: data.crm_zoho,
         crm_zendesk: data.crm_zendesk,
@@ -66,7 +70,7 @@ export class ProjectConnectorsService {
         crm_close: data.crm_close,
       };
 
-      const res = await this.prisma.project_connectors.create({
+      const res = await this.prisma.connector_sets.create({
         data: updateData,
       });
       return res;
@@ -87,9 +91,9 @@ export class ProjectConnectorsService {
         throw new NotFoundException('Project does not exist!');
       }
 
-      const res = await this.prisma.project_connectors.findFirst({
+      const res = await this.prisma.connector_sets.findFirst({
         where: {
-          id_project: id_project,
+          id_connector_set: project.id_connector_set,
         },
       });
       if (!res) {
