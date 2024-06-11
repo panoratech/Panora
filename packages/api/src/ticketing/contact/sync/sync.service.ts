@@ -278,7 +278,7 @@ export class SyncService implements OnModuleInit {
             email_address: contact.email_address,
             phone_number: contact.phone_number,
             details: contact.details,
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

@@ -263,7 +263,7 @@ export class SyncService implements OnModuleInit {
           const data = {
             id_tcg_tag: uuidv4(),
             name: tag.name,
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_tcg_ticket: id_ticket,
             id_linked_user: linkedUserId,

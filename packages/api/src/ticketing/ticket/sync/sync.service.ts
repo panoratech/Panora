@@ -270,7 +270,7 @@ export class SyncService implements OnModuleInit {
 
           let data: any = {
             id_tcg_ticket: uuidv4(),
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

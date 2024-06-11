@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -17,13 +19,16 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TaskService } from './services/task.service';
 import { UnifiedTaskInput, UnifiedTaskOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('JWT')
 @ApiTags('crm/tasks')
 @Controller('crm/tasks')
 export class TaskController {
@@ -46,25 +51,28 @@ export class TaskController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Crm software.',
-  })
   @ApiCustomResponse(UnifiedTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getTasks(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.taskService.getTasks(remoteSource, linkedUserId, remote_data);
+      const { remote_data, pageSize, cursor } = query;
+
+      return this.taskService.getTasks(
+        remoteSource,
+        linkedUserId,
+        pageSize,
+        remote_data,
+        cursor
+      );
     } catch (error) {
       throw new Error(error);
     }

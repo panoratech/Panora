@@ -37,7 +37,8 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-      if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
+      // if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
+      if (!res) return;
       return res.remote_id;
     } catch (error) {
       throw new Error(error);
@@ -66,7 +67,8 @@ export class Utils {
           id_tcg_contact: uuid,
         },
       });
-      if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
+      // if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
+      if (!res) return;
       return res.remote_id;
     } catch (error) {
       throw new Error(error);
@@ -97,7 +99,8 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-      if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
+      // if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
+      if (!res) return;
       return res.email_address;
     } catch (error) {
       throw new Error(error);
@@ -158,7 +161,8 @@ export class Utils {
           id_tcg_ticket: uuid,
         },
       });
-      if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
+      // if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
+      if (!res) return;
       return res.remote_id;
     } catch (error) {
       throw new Error(error);

@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
+import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedTicketInput,
@@ -412,11 +412,37 @@ export class TicketService {
   async getTickets(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedTicketOutput[]> {
+    cursor?: string
+  ): Promise<{ data: UnifiedTicketOutput[], prev_cursor: null | string, next_cursor: null | string }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
-      const tickets = await this.prisma.tcg_tickets.findMany({
+
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.tcg_tickets.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_tcg_ticket: cursor
+          }
+        });
+        if (!isCursorPresent) {
+          throw new NotFoundError(`The provided cursor does not exist!`);
+        }
+      }
+
+      let tickets = await this.prisma.tcg_tickets.findMany({
+        take: pageSize + 1,
+        cursor: cursor ? {
+          id_tcg_ticket: cursor
+        } : undefined,
+        orderBy: {
+          created_at: 'asc'
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
@@ -426,6 +452,15 @@ export class TicketService {
           tcg_comments: true,
         },*/
       });
+
+      if (tickets.length === (pageSize + 1)) {
+        next_cursor = Buffer.from(tickets[tickets.length - 1].id_tcg_ticket).toString('base64');
+        tickets.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedTickets: UnifiedTicketOutput[] = await Promise.all(
         tickets.map(async (ticket) => {
@@ -506,7 +541,11 @@ export class TicketService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor
+      };
     } catch (error) {
       handleServiceError(error, this.logger);
     }
