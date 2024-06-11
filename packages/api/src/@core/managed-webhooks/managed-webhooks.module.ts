@@ -7,6 +7,7 @@ import { ManagedWebhooksController } from './managed-webhooks.controller';
 import { ValidateUserService } from '@@core/utils/services/validateUser.service';
 import { MWHandlerController } from './handler/mw-handler.controller';
 import { TicketingWebhookHandlerModule } from '@ticketing/@webhook/handler.module';
+import { CrmWebhookHandlerModule } from '@crm/@webhook/handler.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TicketingWebhookHandlerModule } from '@ticketing/@webhook/handler.modul
       name: 'realTimeWebhookQueue',
     }),
     TicketingWebhookHandlerModule,
+    CrmWebhookHandlerModule,
   ],
   controllers: [ManagedWebhooksController, MWHandlerController],
   exports: [

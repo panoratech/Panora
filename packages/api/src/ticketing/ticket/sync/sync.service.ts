@@ -67,12 +67,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing tickets....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -164,7 +164,6 @@ export class SyncService implements OnModuleInit {
         vertical: 'ticketing',
         customFieldMappings,
       })) as UnifiedTicketOutput[];
-
 
       //insert the data in the DB with the fieldMappings (value table)
       const tickets_data = await this.saveTicketsInDb(
@@ -302,7 +301,7 @@ export class SyncService implements OnModuleInit {
             data = { ...data, assigned_to: ticket.assigned_to };
           }
           if (ticket.project_id) {
-            data = { ...data, collections: [ticket.project_id] }
+            data = { ...data, collections: [ticket.project_id] };
           }
           /*
             parent_ticket: ticket.parent_ticket || 'd',

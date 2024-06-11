@@ -1,5 +1,6 @@
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
+import { CrmWebhookHandlerService } from '@crm/@webhook/handler.service';
 import { OnQueueActive, Process, Processor } from '@nestjs/bull';
 import { ConnectorCategory } from '@panora/shared';
 import { TicketingWebhookHandlerService } from '@ticketing/@webhook/handler.service';
@@ -11,6 +12,7 @@ export class MwHandlerProcessor {
     private logger: LoggerService,
     private prisma: PrismaService,
     private ticketingHandler: TicketingWebhookHandlerService,
+    private crmHandler: CrmWebhookHandlerService,
   ) {
     this.logger.setContext(MwHandlerProcessor.name);
   }
@@ -47,6 +49,18 @@ export class MwHandlerProcessor {
         return await this.ticketingHandler.handleExternalIncomingWebhook(
           metadata,
         );
+      case ConnectorCategory.Crm:
+        return await this.crmHandler.handleExternalIncomingWebhook(metadata);
+      case ConnectorCategory.Accounting:
+        return;
+      case ConnectorCategory.Ats:
+        return;
+      case ConnectorCategory.FileStorage:
+        return;
+      case ConnectorCategory.Hris:
+        return;
+      case ConnectorCategory.MarketingAutomation:
+        return;
     }
   }
 }
