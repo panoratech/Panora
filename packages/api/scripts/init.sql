@@ -234,6 +234,52 @@ COMMENT ON COLUMN managed_webhooks.endpoint IS 'UUID that will be used in the fi
 
 
 
+-- ************************************** fs_shared_links
+
+CREATE TABLE fs_shared_links
+(
+ id_fs_shared_link uuid NOT NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ CONSTRAINT PK_fs_shared_links PRIMARY KEY ( id_fs_shared_link )
+);
+
+
+-- ************************************** fs_permissions
+
+CREATE TABLE fs_permissions
+(
+ id_fs_permission uuid NOT NULL,
+ remote_id        text NULL,
+ created_at       timestamp NOT NULL,
+ modified_at      timestamp NOT NULL,
+ "user"           uuid NOT NULL,
+ "group"          uuid NOT NULL,
+ type             text[] NOT NULL,
+ roles            text[] NOT NULL,
+ CONSTRAINT PK_fs_permissions PRIMARY KEY ( id_fs_permission )
+);
+
+
+
+COMMENT ON COLUMN fs_permissions.roles IS 'read, write, owner';
+
+
+
+
+
+-- ************************************** fs_drives
+
+CREATE TABLE fs_drives
+(
+ id_fs_drive       uuid NOT NULL,
+ remote_created_at timestamp NULL,
+ drive_url         text NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ remote_id         text NULL,
+ CONSTRAINT PK_fs_drives PRIMARY KEY ( id_fs_drive )
+);
 
 
 -- ************************************** entity
@@ -366,11 +412,6 @@ CREATE TABLE connector_sets
 
 
 
-
-
-
-
-
 -- ************************************** connection_strategies
 
 CREATE TABLE connection_strategies
@@ -483,6 +524,11 @@ CREATE TABLE projects
  CONSTRAINT FK_46_1 FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
 );
 
+CREATE INDEX FK_connectors_sets ON projects
+(
+ id_connector_set
+);
+
 
 
 COMMENT ON COLUMN projects.sync_mode IS 'can be realtime or periodic_pull';
@@ -492,6 +538,32 @@ ex 3600 for one hour';
 
 
 
+-- ************************************** fs_folders
+
+CREATE TABLE fs_folders
+(
+ id_fs_folder     uuid NOT NULL,
+ folder_url       text NULL,
+ "size"           bigint NULL,
+ description      text NULL,
+ parent_folder    uuid NULL,
+ remote_id        text NULL,
+ created_at       timestamp NOT NULL,
+ modified_at      timestamp NOT NULL,
+ id_fs_drive      uuid NULL,
+ id_fs_permission uuid NOT NULL,
+ CONSTRAINT PK_fs_folders PRIMARY KEY ( id_fs_folder )
+);
+
+CREATE INDEX FK_fs_folder_driveID ON fs_folders
+(
+ id_fs_drive
+);
+
+CREATE INDEX FK_fs_folder_permissionID ON fs_folders
+(
+ id_fs_permission
+);
 
 
 -- ************************************** crm_contacts
@@ -728,6 +800,41 @@ CREATE INDEX FK_proectID_linked_users ON linked_users
 
 COMMENT ON COLUMN linked_users.linked_user_origin_id IS 'id of the customer, in our customers own systems';
 COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME company)';
+
+
+
+
+
+-- ************************************** fs_files
+
+CREATE TABLE fs_files
+(
+ id_fs_file       uuid NOT NULL,
+ name             text NULL,
+ type             text NULL,
+ "path"           text NULL,
+ mime_type        text NULL,
+ "size"           bigint NULL,
+ remote_id        text NULL,
+ id_fs_folder     uuid NULL,
+ created_at       timestamp NOT NULL,
+ modified_at      timestamp NOT NULL,
+ id_fs_permission uuid NOT NULL,
+ CONSTRAINT PK_fs_files PRIMARY KEY ( id_fs_file )
+);
+
+CREATE INDEX FK_fs_file_FolderID ON fs_files
+(
+ id_fs_folder
+);
+
+CREATE INDEX FK_fs_file_permissionID ON fs_files
+(
+ id_fs_permission
+);
+
+
+
 
 
 

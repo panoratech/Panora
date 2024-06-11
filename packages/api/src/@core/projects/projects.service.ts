@@ -67,6 +67,27 @@ export class ProjectsService {
           id_connector_set: cSet.id_connector_set,
         },
       });
+
+      const ACTIVE_CONNECTORS = providersArray();
+      // update project-connectors table for the project
+      const updateData: any = {
+        id_project_connector: uuidv4(),
+        id_project: res.id_project,
+      };
+
+      ACTIVE_CONNECTORS.forEach((connector) => {
+        if (connector.vertical) {
+          // Construct the property name using the vertical name
+          const propertyName = `${slugFromCategory(
+            connector.vertical as ConnectorCategory,
+          )}_`;
+          // Add the property to updateData with a value of true
+          updateData[propertyName + connector.name] = true;
+        }
+      });
+      await this.prisma.project_connectors.create({
+        data: updateData,
+      });
       return res;
     } catch (error) {
       handleServiceError(error, this.logger);
