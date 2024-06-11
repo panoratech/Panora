@@ -50,13 +50,20 @@ export class SyncService implements OnModuleInit {
       }
     }
     // Add new job to the queue with a CRON expression
-    await this.syncQueue.add(
-      jobName,
-      {},
-      {
-        repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
-      },
-    );
+    await this.syncQueue
+      .add(
+        jobName,
+        {},
+        {
+          repeat: { cron: '*/2 * * * *' }, // Runs once a day at midnight
+        },
+      )
+      .then(() => {
+        console.log('Crm Sync Deals Job added successfully');
+      })
+      .catch((error) => {
+        console.error('Failed to add job', error);
+      });
   }
   //function used by sync worker which populate our crm_deals table
   //its role is to fetch all deals from providers 3rd parties and save the info inside our db
@@ -67,12 +74,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing deals....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -159,7 +166,7 @@ export class SyncService implements OnModuleInit {
       );
 
       const sourceObject: OriginalDealOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+      // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalDealOutput[]>({
         sourceObject,
@@ -265,11 +272,10 @@ export class SyncService implements OnModuleInit {
           this.logger.log('deal not exists');
           let data: any = {
             id_crm_deal: uuidv4(),
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             description: '',
-            amount: deal.amount,
             remote_id: originId,
             remote_platform: originSource,
           };

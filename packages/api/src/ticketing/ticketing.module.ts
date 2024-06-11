@@ -8,6 +8,7 @@ import { AccountModule } from './account/account.module';
 import { TagModule } from './tag/tag.module';
 import { TeamModule } from './team/team.module';
 import { CollectionModule } from './collection/collection.module';
+import { TicketingWebhookHandlerModule } from './@webhook/handler.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CollectionModule } from './collection/collection.module';
     TagModule,
     TeamModule,
     CollectionModule,
+    TicketingWebhookHandlerModule,
   ],
   providers: [],
   controllers: [],
@@ -33,6 +35,7 @@ import { CollectionModule } from './collection/collection.module';
     TagModule,
     TeamModule,
     CollectionModule,
+    TicketingWebhookHandlerModule,
   ],
 })
 export class TicketingModule {}

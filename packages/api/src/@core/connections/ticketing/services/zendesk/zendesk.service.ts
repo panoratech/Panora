@@ -16,6 +16,7 @@ import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ManagedWebhooksService } from '@@core/managed-webhooks/managed-webhooks.service';
 
 export interface ZendeskOAuthResponse {
   access_token: string;
@@ -34,6 +35,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private mwService: ManagedWebhooksService,
   ) {
     this.logger.setContext(ZendeskConnectionService.name);
     this.registry.registerService('zendesk', this);
@@ -52,7 +54,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${this.env.getOAuthRredirectBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -66,6 +68,8 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
         client_secret: CREDENTIALS.CLIENT_SECRET,
         scope: 'read',
       });
+
+      this.logger.log('Data Form is ' + JSON.stringify(formData));
 
       const res = await axios.post(
         `${CREDENTIALS.SUBDOMAIN}/oauth/tokens`,
@@ -126,6 +130,43 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
                 ),
               },
             },
+          },
+        });
+      }
+      // upsert the creation of a managed webhook + 3rdpartywebhook
+      if (
+        CONNECTORS_METADATA['ticketing']['zendesk'].realTimeWebhookMetadata
+          .method == 'API'
+      ) {
+        const scopes =
+          CONNECTORS_METADATA['ticketing']['zendesk'].realTimeWebhookMetadata
+            .events;
+        const exclude: string[] = [
+          'ticketing.tickets.events',
+          'ticketing.comments.events',
+          'ticketing.tags.events',
+          'ticketing.attachments.events',
+        ];
+
+        // Filter the array to exclude specified elements
+        const filteredEvents = scopes.filter(
+          (event) => !exclude.includes(event),
+        );
+
+        const basic_mw = await this.mwService.createManagedWebhook({
+          id_connection: db_res.id_connection,
+          scopes: filteredEvents,
+        });
+        const trigger_mw = await this.mwService.createManagedWebhook({
+          id_connection: db_res.id_connection,
+          scopes: exclude,
+        });
+        await this.mwService.createRemoteThirdPartyWebhook({
+          id_connection: db_res.id_connection,
+          mw_ids: [basic_mw.id_managed_webhook, trigger_mw.id_managed_webhook],
+          data: {
+            name_basic: 'Panora Webhook Events',
+            name_trigger: 'Panora Tickets Related Events Webhook',
           },
         });
       }

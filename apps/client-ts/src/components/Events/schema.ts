@@ -8,6 +8,7 @@ export const eventSchema = z.object({
   status: z.string(),
   direction: z.string(),
   integration: z.string(),
+  id_linked_user: z.string(),
   date: z.string()
 })
 

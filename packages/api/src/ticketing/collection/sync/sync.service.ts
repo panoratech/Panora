@@ -237,7 +237,7 @@ export class SyncService implements OnModuleInit {
             name: collection.name,
             description: collection.description,
             collection_type: collection.collection_type,
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

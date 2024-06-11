@@ -245,7 +245,7 @@ export class SyncService implements OnModuleInit {
             id_tcg_account: uuidv4(),
             name: account.name,
             domains: account.domains,
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

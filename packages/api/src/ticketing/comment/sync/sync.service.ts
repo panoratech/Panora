@@ -350,7 +350,7 @@ export class SyncService implements OnModuleInit {
                 file_name: attchmt.file_name,
                 file_url: attchmt.file_url,
                 id_tcg_comment: unique_ticketing_comment_id,
-                created_at: new Date(),
+                // created_at: new Date(),
                 modified_at: new Date(),
                 uploader: linkedUserId, //TODO
                 id_tcg_ticket: id_ticket,

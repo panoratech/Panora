@@ -251,7 +251,7 @@ export class SyncService implements OnModuleInit {
             name: user.name,
             email_address: user.email_address,
             teams: user.teams || [],
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             // id_tcg_account: user.account_id || '',

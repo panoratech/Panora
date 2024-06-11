@@ -37,6 +37,7 @@ services:
       REDIS_PASS: ${REDIS_PASS}
       REDIS_USER: ${REDIS_USER}
       REDIS_PORT: ${REDIS_PORT}
+      #REDIS_TLS: 1 # set this variable to 1 when Redis is AWS hosted 
       REDIS_DB: ${REDIS_DB}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}
@@ -49,7 +50,7 @@ services:
       PIPEDRIVE_CRM_CLOUD_CLIENT_SECRET: ${PIPEDRIVE_CRM_CLOUD_CLIENT_SECRET}
       ZENDESK_CRM_CLOUD_CLIENT_ID: ${ZENDESK_CRM_CLOUD_CLIENT_ID}
       ZENDESK_CRM_CLOUD_CLIENT_SECRET: ${ZENDESK_CRM_CLOUD_CLIENT_SECRET}
-      OAUTH_REDIRECT_BASE: ${OAUTH_REDIRECT_BASE}
+      PANORA_BASE_API_URL: ${PANORA_BASE_API_URL}
       ZENDESK_TICKETING_CLOUD_CLIENT_ID: ${ZENDESK_TICKETING_CLOUD_CLIENT_ID}
       ZENDESK_TICKETING_CLOUD_CLIENT_SECRET: ${ZENDESK_TICKETING_CLOUD_CLIENT_SECRET}
       ZENDESK_TICKETING_CLOUD_SUBDOMAIN: ${ZENDESK_TICKETING_CLOUD_SUBDOMAIN}
@@ -186,6 +187,19 @@ services:
       - frontend
     volumes:
       - .:/app
+
+  ngrok:
+        image: ngrok/ngrok:latest
+        restart: always
+        command:
+          - "start"
+          - "--all"
+          - "--config"
+          - "/etc/ngrok.yml"
+        volumes:
+          - ./ngrok.yml:/etc/ngrok.yml
+        ports:
+          - 4040:4040
   
   docs:
     build:

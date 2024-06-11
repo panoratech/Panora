@@ -5,7 +5,6 @@ import { DataTableLoading } from "../shared/data-table-loading";
 import { events as Event } from "api";
 import { useEventsCount } from '@/hooks/get/useEventsCount';
 import { useQueryPagination } from '@/hooks/get/useQueryPagination';
-import useProjectStore from "@/state/projectStore";
 
 export default function EventsTable() {
   const { data: eventsCount } = useEventsCount();
@@ -22,14 +21,14 @@ export default function EventsTable() {
     pageSize: pagination.pageSize,
   });
   
-  //TODO
   const transformedEvents = events?.map((event: Event) => ({
-    method: event.method, // replace with actual value
-    url: event.url, // replace with actual value
+    method: event.method, 
+    url: event.url, 
     status: event.status,
-    direction: event.type, // replace with actual value
-    integration: event.provider, // replace with actual value + logo
-    date: event.timestamp.toLocaleString(), // convert Date to string
+    direction: event.type, 
+    integration: event.provider, 
+    id_linked_user: event.id_linked_user,
+    date: event.timestamp.toLocaleString(), 
   }));
 
   if(isLoading){
