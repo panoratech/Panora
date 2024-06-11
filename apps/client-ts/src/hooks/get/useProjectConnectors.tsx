@@ -1,16 +1,11 @@
 import config from '@/lib/config';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
-
-interface ProjectConnectorBase {
-  id_project: string;
-  id_project_connector: string;
-}
-
-interface ProjectConnector extends ProjectConnectorBase {
+interface ProjectConnector {
+  id_connector_set: string;
   [key: string]: boolean | string;
 }
-
+ 
 const useProjectConnectors = (id: string) => {
   return useQuery({
     queryKey: ['project-connectors'], 

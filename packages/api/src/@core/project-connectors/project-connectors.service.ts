@@ -56,8 +56,7 @@ export class ProjectConnectorsService {
   async createProjectConnectors(data: TypeCustom) {
     try {
       const updateData: any = {
-        id_project_connector: uuidv4(),
-        id_project: data.id_project,
+        id_connector_set: uuidv4(),
         crm_hubspot: data.crm_hubspot,
         crm_zoho: data.crm_zoho,
         crm_zendesk: data.crm_zendesk,

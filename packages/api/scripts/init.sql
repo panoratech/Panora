@@ -19,8 +19,6 @@ COMMENT ON COLUMN webhooks_reponses.http_status_code IS 'anything that is not 2x
 
 
 
-
-
 -- ************************************** webhooks_payloads
 
 CREATE TABLE webhooks_payloads
@@ -364,12 +362,6 @@ CREATE TABLE crm_users
  remote_platform text NULL,
  CONSTRAINT PK_crm_users PRIMARY KEY ( id_crm_user )
 );
-
-
-
-
-
-
 
 
 -- ************************************** crm_deals_stages
