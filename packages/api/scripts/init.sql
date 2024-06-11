@@ -400,6 +400,7 @@ CREATE TABLE connector_sets
  crm_zoho         boolean NOT NULL,
  crm_attio        boolean NOT NULL,
  crm_pipedrive    boolean NOT NULL,
+ crm_close        boolean NOT NULL,
  tcg_zendesk      boolean NOT NULL,
  tcg_jira         boolean NOT NULL,
  tcg_gorgias      boolean NOT NULL,

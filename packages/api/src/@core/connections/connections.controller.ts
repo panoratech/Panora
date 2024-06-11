@@ -113,12 +113,12 @@ export class ConnectionsController {
           break;
       }
       // Performing Core Sync Service
-      this.coreSyncService.initialSync(
+      /*this.coreSyncService.initialSync(
         vertical.toLowerCase(),
         providerName,
         linkedUserId,
         projectId,
-      );
+      );*/
       res.redirect(returnUrl);
     } catch (error) {
       handleServiceError(error, this.logger);

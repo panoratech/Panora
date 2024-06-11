@@ -5702,7 +5702,7 @@
           },
           "country": {
             "type": "string",
-            "description": "The country."
+            "description": "The country"
           },
           "address_type": {
             "type": "string",
