@@ -425,35 +425,20 @@ model linked_users {
   @@index([id_project], map: "fk_proectid_linked_users")
 }
 
-model project_connectors {
-  id_project_connector String   @id(map: "pk_project_connectors") @db.Uuid
-  id_project           String   @db.Uuid
-  crm_hubspot          Boolean
-  crm_zoho             Boolean
-  crm_zendesk          Boolean
-  crm_pipedrive        Boolean
-  crm_attio            Boolean
-  tcg_zendesk          Boolean
-  tcg_gorgias          Boolean
-  tcg_front            Boolean
-  tcg_jira             Boolean
-  tcg_gitlab           Boolean
-  projects             projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectors")
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model projects {
-  id_project         String               @id(map: "pk_projects") @db.Uuid
-  name               String
-  sync_mode          String
-  pull_frequency     BigInt?
-  redirect_url       String?
-  id_user            String               @db.Uuid
-  api_keys           api_keys[]
-  connections        connections[]
-  linked_users       linked_users[]
-  project_connectors project_connectors[]
-  users              users                @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
+  id_project       String         @id(map: "pk_projects") @db.Uuid
+  name             String
+  sync_mode        String
+  pull_frequency   BigInt?
+  redirect_url     String?
+  id_user          String         @db.Uuid
+  id_connector_set String         @db.Uuid
+  api_keys         api_keys[]
+  connections      connections[]
+  linked_users     linked_users[]
+  users            users          @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
+  connector_sets   connector_sets @relation(fields: [id_connector_set], references: [id_connector_set], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectorsetid")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -655,4 +640,31 @@ model webhook_delivery_attempts {
   @@index([id_webhook_endpoint], map: "fk_we_webhookendpointid")
   @@index([id_event], map: "fk_webhook_delivery_attempt_eventid")
   @@index([id_webhooks_reponse], map: "fk_webhook_delivery_attempt_webhook_responseid")
+}
+
+model connector_sets {
+  id_connector_set String     @id(map: "pk_project_connector") @db.Uuid
+  crm_hubspot      Boolean
+  crm_zoho         Boolean
+  crm_attio        Boolean
+  crm_pipedrive    Boolean
+  tcg_zendesk      Boolean
+  tcg_jira         Boolean
+  tcg_gorgias      Boolean
+  tcg_gitlab       Boolean
+  tcg_front        Boolean
+  projects         projects[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model managed_webhooks {
+  id_managed_webhook    String   @id(map: "pk_managed_webhooks") @db.Uuid
+  active                Boolean
+  id_connection         String   @db.Uuid
+  endpoint              String   @db.Uuid
+  api_version           String?
+  active_events         String[]
+  remote_signing_secret String?
+  modified_at           DateTime @db.Timestamp(6)
+  created_at            DateTime @db.Timestamp(6)
 }

@@ -20,6 +20,10 @@ export type ProviderConfig = {
         apiUrl: string;
         authBaseUrl?: string; // url used to authorize an application on behalf of the user (only when authStrategy is oauth2)
         customPropertiesUrl?: string;
+    };
+    realTimeWebhookMetadata?: {
+        method?: 'API' | 'MANUAL';
+        events?: string[];
     }
 };
 

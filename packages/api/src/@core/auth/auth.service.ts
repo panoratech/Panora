@@ -13,11 +13,13 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { handleServiceError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
+import { ProjectsService } from '@@core/projects/projects.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
+    private projectService: ProjectsService,
     private jwtService: JwtService,
     private logger: LoggerService,
   ) {
@@ -102,14 +104,11 @@ export class AuthService {
           created_at: new Date(),
         },
       });
-      const proj = await this.prisma.projects.create({
-        data: {
-          id_project: uuidv4(),
-          name: 'Project 1',
-          sync_mode: '',
-          id_user: user_.id_user,
-        },
+      const pro = await this.projectService.createProject({
+        name: 'Project 1',
+        id_user: user_.id_user,
       });
+      this.logger.log('proj is ' + JSON.stringify(pro));
       return user_;
     } catch (error) {
       console.log(error);

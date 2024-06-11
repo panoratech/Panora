@@ -19,8 +19,6 @@ COMMENT ON COLUMN webhooks_reponses.http_status_code IS 'anything that is not 2x
 
 
 
-
-
 -- ************************************** webhooks_payloads
 
 CREATE TABLE webhooks_payloads
@@ -234,8 +232,6 @@ COMMENT ON COLUMN managed_webhooks.endpoint IS 'UUID that will be used in the fi
 
 
 
-
-
 -- ************************************** fs_shared_links
 
 CREATE TABLE fs_shared_links
@@ -245,12 +241,6 @@ CREATE TABLE fs_shared_links
  modified_at       timestamp NOT NULL,
  CONSTRAINT PK_fs_shared_links PRIMARY KEY ( id_fs_shared_link )
 );
-
-
-
-
-
-
 
 
 -- ************************************** fs_permissions
@@ -288,12 +278,6 @@ CREATE TABLE fs_drives
  remote_id         text NULL,
  CONSTRAINT PK_fs_drives PRIMARY KEY ( id_fs_drive )
 );
-
-
-
-
-
-
 
 
 -- ************************************** entity
@@ -380,12 +364,6 @@ CREATE TABLE crm_users
 );
 
 
-
-
-
-
-
-
 -- ************************************** crm_deals_stages
 
 CREATE TABLE crm_deals_stages
@@ -413,7 +391,6 @@ CREATE TABLE connector_sets
 (
  id_connector_set uuid NOT NULL,
  crm_hubspot      boolean NOT NULL,
- crm_freshsales   boolean NOT NULL,
  crm_zoho         boolean NOT NULL,
  crm_attio        boolean NOT NULL,
  crm_pipedrive    boolean NOT NULL,
@@ -424,11 +401,6 @@ CREATE TABLE connector_sets
  tcg_front        boolean NOT NULL,
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
-
-
-
-
-
 
 
 
@@ -558,8 +530,6 @@ ex 3600 for one hour';
 
 
 
-
-
 -- ************************************** fs_folders
 
 CREATE TABLE fs_folders
@@ -586,12 +556,6 @@ CREATE INDEX FK_fs_folder_permissionID ON fs_folders
 (
  id_fs_permission
 );
-
-
-
-
-
-
 
 
 -- ************************************** crm_contacts

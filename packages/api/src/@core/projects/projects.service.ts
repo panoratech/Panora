@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { handleServiceError } from '@@core/utils/errors';
 import {
   ConnectorCategory,
-  CONNECTORS_METADATA,
   providersArray,
   slugFromCategory,
 } from '@panora/shared';
@@ -39,22 +38,10 @@ export class ProjectsService {
 
   async createProject(data: CreateProjectDto) {
     try {
-      // const { id_organization, ...rest } = data;
-      const res = await this.prisma.projects.create({
-        data: {
-          name: data.name,
-          sync_mode: 'pool',
-          id_project: uuidv4(),
-          id_user: data.id_user,
-          //id_organization: id_organization,
-        },
-      });
-
       const ACTIVE_CONNECTORS = providersArray();
       // update project-connectors table for the project
       const updateData: any = {
-        id_project_connector: uuidv4(),
-        id_project: res.id_project,
+        id_connector_set: uuidv4(),
       };
 
       ACTIVE_CONNECTORS.forEach((connector) => {
@@ -67,8 +54,18 @@ export class ProjectsService {
           updateData[propertyName + connector.name] = true;
         }
       });
-      await this.prisma.project_connectors.create({
+      const cSet = await this.prisma.connector_sets.create({
         data: updateData,
+      });
+
+      const res = await this.prisma.projects.create({
+        data: {
+          name: data.name,
+          sync_mode: 'pool',
+          id_project: uuidv4(),
+          id_user: data.id_user,
+          id_connector_set: cSet.id_connector_set,
+        },
       });
       return res;
     } catch (error) {

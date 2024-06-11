@@ -68,7 +68,7 @@ export class SyncService implements OnModuleInit {
         },
       )
       .then(() => {
-        console.log('Job added successfully');
+        console.log('Crm Sync Contact Job added successfully');
       })
       .catch((error) => {
         console.error('Failed to add job', error);

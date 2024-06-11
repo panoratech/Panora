@@ -104,7 +104,10 @@ export class Utils {
     }
   }
 
-  async getCollectionUuidFromRemoteId(remote_id: string, remote_platform: string) {
+  async getCollectionUuidFromRemoteId(
+    remote_id: string,
+    remote_platform: string,
+  ) {
     try {
       const res = await this.prisma.tcg_collections.findFirst({
         where: {

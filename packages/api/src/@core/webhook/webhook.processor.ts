@@ -18,7 +18,7 @@ export class WebhookProcessor {
 
   @OnQueueActive()
   onActive(job: Job) {
-    this.logger.log(`Processing job ${job.id} ...`);
+    this.logger.log(`[Panora Webhook Queue] Processing job ${job.id} ...`);
   }
 
   @Process({ concurrency: 5 })

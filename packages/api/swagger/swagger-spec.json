@@ -477,6 +477,128 @@
         ]
       }
     },
+    "/managed-webhooks/{id_connection}": {
+      "get": {
+        "operationId": "getManagedWebhooks",
+        "summary": "Retrieve managed webhooks",
+        "parameters": [
+          {
+            "name": "id_connection",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "managed-webhooks"
+        ]
+      }
+    },
+    "/managed-webhooks/{id}": {
+      "put": {
+        "operationId": "updateManagedWebhooksStatus",
+        "summary": "Update managed webhook status",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "managed-webhooks"
+        ]
+      }
+    },
+    "/managed-webhooks": {
+      "post": {
+        "operationId": "createManagedWebhook",
+        "summary": "Create managed webhook",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagedWebhooksDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "managed-webhooks"
+        ]
+      }
+    },
+    "/managed-webhooks/remoteThirdPartyCreation": {
+      "post": {
+        "operationId": "createRemoteThirdPartyWebhook",
+        "summary": "Create Remote Third Party Webhook",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoteThirdPartyCreationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "managed-webhooks"
+        ]
+      }
+    },
+    "/mw/{endpoint_uuid}": {
+      "post": {
+        "operationId": "handleThirdPartyWebhook",
+        "summary": "Handle Third Party Webhook",
+        "parameters": [
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "mw"
+        ]
+      }
+    },
     "/crm/companies": {
       "get": {
         "operationId": "getCompanies",
@@ -4848,6 +4970,48 @@
         "required": [
           "signature",
           "secret"
+        ]
+      },
+      "ManagedWebhooksDto": {
+        "type": "object",
+        "properties": {
+          "id_connection": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "api_version": {
+            "type": "string"
+          },
+          "remote_signature_secret": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_connection",
+          "scopes"
+        ]
+      },
+      "RemoteThirdPartyCreationDto": {
+        "type": "object",
+        "properties": {
+          "id_connection": {
+            "type": "string"
+          },
+          "mw_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id_connection",
+          "mw_ids"
         ]
       },
       "ApiResponse": {
