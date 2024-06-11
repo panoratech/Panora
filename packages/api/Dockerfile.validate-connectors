@@ -1,0 +1,30 @@
+################################################
+# 1/ move to the repo root directory
+# 2/ build the image : docker build -t validate_connectors -f ./packages/api/Dockerfile.validate-connectors .
+# 3/ run with: docker run -v $(pwd):/app/ -e VERTICAL=vertical -e OBJECT_TYPE=object validate_connectors
+# note: use lowercase for object and vertical values
+################################################
+
+FROM node:20-alpine AS base
+# =======================================================================
+FROM base AS builder
+RUN apk add --no-cache libc6-compat netcat-openbsd curl
+RUN apk update
+
+# Set pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+RUN pnpm add -g turbo@1.13.4
+
+# Start Script
+
+# Set environment variable
+ENV VERTICAL="$VERTICAL"
+ENV OBJECT_TYPE="$OBJECT_TYPE"
+
+WORKDIR /app/packages/api
+
+CMD pnpm install && pnpm run validate-connectors --vertical="${VERTICAL}" --objectType="${OBJECT_TYPE}"
