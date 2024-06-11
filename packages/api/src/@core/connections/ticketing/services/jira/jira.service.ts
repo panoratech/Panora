@@ -91,26 +91,31 @@ export class JiraConnectionService implements ITicketingConnectionService {
 
       // get the cloud id from atlassian jira, it is used across requests to the api
       //TODO: add a field inside our connections db to handle it
-      const res_ = await axios.post(
+      const res_ = await axios.get(
         `https://api.atlassian.com/oauth/token/accessible-resources`,
-        formData.toString(),
         {
           headers: {
             Authorization: `Bearer ${data.access_token}`,
-            'Content-Type': 'application/json',
+            Accept: 'application/json',
           },
         },
       );
       const sites_scopes: JiraCloudIdInformation[] = res_.data;
-      let cloud_id: string;
-      for (const site of sites_scopes) {
-        if (site.url == 'https://panora.atlassian.net') {
-          cloud_id = site.id;
-          break;
-        }
-      }
+      this.logger.log(
+        'sites scopes for jira are ----> ' + JSON.stringify(sites_scopes),
+      );
+      const cloud_id: string = sites_scopes[0].id; //todo
       let db_res;
       const connection_token = uuidv4();
+
+      const access_token = this.cryptoService.encrypt(data.access_token);
+      this.logger.log(
+        'non-encrypted token is ----> ' + JSON.stringify(data.access_token),
+      );
+
+      this.logger.log(
+        'encrypted token is ----> ' + JSON.stringify(access_token),
+      );
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -180,7 +185,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
         formData.toString(),
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            'Content-Type': 'application/json',
             Authorization: `Basic ${Buffer.from(
               `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,

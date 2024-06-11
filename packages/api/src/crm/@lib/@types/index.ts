@@ -415,7 +415,7 @@ export class Address {
 
   @ApiProperty({
     type: String,
-    description: 'The country.',
+    description: 'The country',
   })
   @IsString()
   country: string;

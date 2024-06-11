@@ -169,7 +169,9 @@ export class SyncService implements OnModuleInit {
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalEngagementOutput[]>({
         sourceObject,
-        targetType: CrmObject.engagement,
+        targetType: `engagement${
+          engagement_type ? `_${engagement_type}` : ''
+        }` as CrmObject,
         providerName: integrationId,
         vertical: 'crm',
         customFieldMappings,

@@ -67,6 +67,7 @@ export class ProjectConnectorsService {
         tcg_front: data.tcg_front,
         tcg_jira: data.tcg_jira,
         tcg_gitlab: data.tcg_gitlab,
+        crm_close: data.crm_close,
       };
 
       const res = await this.prisma.connector_sets.create({

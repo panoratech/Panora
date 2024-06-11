@@ -95,7 +95,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
   const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}` :
-    data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
+    data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl; 
 
   // console.log('BASE URL IS '+ BASE_URL)
   if (!baseUrl || !BASE_URL) {
@@ -106,7 +106,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
   // Adding scope for providers that require it, except for 'pipedrive'
-  if (scopes) {
+  const ignoreScopes = ['close']
+  if (scopes && !ignoreScopes.includes(providerName)) {
     params += `&scope=${encodeURIComponent(scopes)}`;
   }
 
@@ -116,8 +117,9 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       params += '&response_type=code&access_type=offline';
       break;
     case 'jira':
+      params = `audience=api.atlassian.com&${params}&prompt=consent&response_type=code`;
     case 'jira_service_mgmt':
-      params = `audience=api.atlassian.com&${params}&prompt=consent`;
+      params = `audience=api.atlassian.com&${params}&prompt=consen&response_type=codet`;
       break;
     case 'gitlab':
       params += '&response_type=code&code_challenge=&code_challenge_method=';
