@@ -28,7 +28,7 @@ export class ZendeskService implements IUserService {
 
   async syncUsers(
     linkedUserId: string,
-    custom_properties?: string[],
+    remote_user_id?: string,
   ): Promise<ApiResponse<ZendeskUserOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -38,8 +38,9 @@ export class ZendeskService implements IUserService {
           vertical: 'ticketing',
         },
       });
+      const request_url = remote_user_id ? `${connection.account_url}/users/${remote_user_id}.json` : `${connection.account_url}/users.json`;
 
-      const resp = await axios.get(`${connection.account_url}/users`, {
+      const resp = await axios.get(request_url, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -48,7 +49,7 @@ export class ZendeskService implements IUserService {
         },
       });
       this.logger.log(`Synced zendesk users !`);
-      const users: ZendeskUserOutput[] = resp.data.users;
+      const users: ZendeskUserOutput[] =  remote_user_id ? [resp.data.user] : resp.data.users;
       const filteredUsers = users.filter((user) => user.role === 'agent');
 
       return {

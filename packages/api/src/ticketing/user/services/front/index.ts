@@ -26,6 +26,7 @@ export class FrontService implements IUserService {
 
   async syncUsers(
     linkedUserId: string,
+    remote_user_id?: string,
   ): Promise<ApiResponse<FrontUserOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({

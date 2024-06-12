@@ -26,6 +26,7 @@ export class GorgiasService implements IUserService {
 
   async syncUsers(
     linkedUserId: string,
+    remote_user_id?: string,
   ): Promise<ApiResponse<GorgiasUserOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({

@@ -26,6 +26,7 @@ export class GitlabService implements IUserService {
 
     async syncUsers(
         linkedUserId: string,
+        remote_user_id?: string,
     ): Promise<ApiResponse<GitlabUserOutput[]>> {
         try {
             const connection = await this.prisma.connections.findFirst({

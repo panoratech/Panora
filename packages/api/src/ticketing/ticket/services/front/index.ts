@@ -163,6 +163,7 @@ export class FrontService implements ITicketService {
   }
   async syncTickets(
     linkedUserId: string,
+    remote_ticket_id?: string,
   ): Promise<ApiResponse<FrontTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
