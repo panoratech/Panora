@@ -708,6 +708,7 @@ model fs_folders {
   crm_zendesk          Boolean
   crm_pipedrive        Boolean
   crm_attio            Boolean
+  crm_close            Boolean
   tcg_zendesk          Boolean
   tcg_gorgias          Boolean
   tcg_front            Boolean
