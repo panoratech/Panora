@@ -14,6 +14,7 @@ import { PipedriveService } from './services/pipedrive';
 import { ZendeskService } from './services/zendesk';
 import { ZohoService } from './services/zoho';
 import { AttioService } from './services/attio';
+import { CloseService } from './services/close';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AttioService } from './services/attio';
     PipedriveService,
     HubspotService,
     AttioService,
+    CloseService,
   ],
   exports: [
     SyncService,
