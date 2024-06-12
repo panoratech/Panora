@@ -31,12 +31,12 @@ export class CloseDealMapper implements IDealMapper {
         : emptyPromise,
     );
 
-    promises.push(
-      source.stage_id
-        ? await this.utils.getStageIdFromStageUuid(source.stage_id)
-        : emptyPromise,
-    );
-    const [lead_id, status_id] = await Promise.all(promises);
+    // promises.push(
+    //   source.stage_id
+    //     ? await this.utils.getStageIdFromStageUuid(source.stage_id)
+    //     : emptyPromise,
+    // );
+    const [lead_id] = await Promise.all(promises);
     const result: CloseDealInput = {
       note: source.description,
       confidence: 0,
@@ -44,7 +44,7 @@ export class CloseDealMapper implements IDealMapper {
       value_period: 'monthly',
       custom: {},
       lead_id,
-      status_id,
+      status_id: source.stage_id,
     };
 
     if (customFieldMappings && source.field_mappings) {
@@ -107,13 +107,13 @@ export class CloseDealMapper implements IDealMapper {
         ? await this.utils.getCompanyUuidFromRemoteId(deal.lead_id, 'close')
         : emptyPromise,
     );
-    promises.push(
-      deal.status_id
-        ? await this.utils.getCompanyUuidFromRemoteId(deal.status_id, 'close')
-        : emptyPromise,
-    );
+    // promises.push(
+    //   deal.status_id
+    //     ? await this.utils.getStageUuidFromRemoteId(deal.status_id, 'close')
+    //     : emptyPromise,
+    // );
 
-    const [user_id, company_id, stage_id] = await Promise.all(promises);
+    const [user_id, company_id] = await Promise.all(promises);
 
     return {
       remote_id: deal.id,
@@ -123,7 +123,6 @@ export class CloseDealMapper implements IDealMapper {
       field_mappings,
       user_id,
       company_id,
-      stage_id,
     };
   }
 }

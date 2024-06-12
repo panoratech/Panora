@@ -436,9 +436,12 @@ model projects {
   id_connector_set String         @db.Uuid
   api_keys         api_keys[]
   connections      connections[]
+  fs_folders       fs_folders[]
   linked_users     linked_users[]
   users            users          @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
   connector_sets   connector_sets @relation(fields: [id_connector_set], references: [id_connector_set], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectorsetid")
+
+  @@index([id_connector_set], map: "fk_connectors_sets")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -647,6 +650,8 @@ model connector_sets {
   crm_hubspot      Boolean
   crm_zoho         Boolean
   crm_attio        Boolean
+  crm_close        Boolean
+  crm_zendesk      Boolean
   crm_pipedrive    Boolean
   tcg_zendesk      Boolean
   tcg_jira         Boolean
@@ -667,4 +672,64 @@ model managed_webhooks {
   remote_signing_secret String?
   modified_at           DateTime @db.Timestamp(6)
   created_at            DateTime @db.Timestamp(6)
+}
+
+model fs_drives {
+  id_fs_drive       String    @id(map: "pk_fs_drives") @db.Uuid
+  remote_created_at DateTime? @db.Timestamp(6)
+  drive_url         String?
+  created_at        DateTime  @db.Timestamp(6)
+  modified_at       DateTime  @db.Timestamp(6)
+  remote_id         String?
+}
+
+model fs_files {
+  id_fs_file       String   @id(map: "pk_fs_files") @db.Uuid
+  name             String?
+  type             String?
+  path             String?
+  mime_type        String?
+  size             BigInt?
+  remote_id        String?
+  id_fs_folder     String?  @db.Uuid
+  created_at       DateTime @db.Timestamp(6)
+  modified_at      DateTime @db.Timestamp(6)
+  id_fs_permission String   @db.Uuid
+
+  @@index([id_fs_folder], map: "fk_fs_file_folderid")
+  @@index([id_fs_permission], map: "fk_fs_file_permissionid")
+}
+
+model fs_folders {
+  id_project_connector String   @id(map: "pk_project_connectors") @db.Uuid
+  id_project           String   @db.Uuid
+  crm_hubspot          Boolean
+  crm_zoho             Boolean
+  crm_zendesk          Boolean
+  crm_pipedrive        Boolean
+  crm_attio            Boolean
+  tcg_zendesk          Boolean
+  tcg_gorgias          Boolean
+  tcg_front            Boolean
+  tcg_jira             Boolean
+  tcg_gitlab           Boolean
+  projects             projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectors")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model fs_permissions {
+  id_fs_permission String   @id(map: "pk_fs_permissions") @db.Uuid
+  remote_id        String?
+  created_at       DateTime @db.Timestamp(6)
+  modified_at      DateTime @db.Timestamp(6)
+  user             String   @db.Uuid
+  group            String   @db.Uuid
+  type             String[]
+  roles            String[]
+}
+
+model fs_shared_links {
+  id_fs_shared_link String   @id(map: "pk_fs_shared_links") @db.Uuid
+  created_at        DateTime @db.Timestamp(6)
+  modified_at       DateTime @db.Timestamp(6)
 }
