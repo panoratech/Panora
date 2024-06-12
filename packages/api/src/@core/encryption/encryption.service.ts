@@ -11,7 +11,7 @@ export class EncryptionService {
     this.secretKey = this.env.getCryptoKey();
   }
 
-  encrypt(data: string) {
+  encrypt(data: string): string {
     try {
       const cipher = crypto.createCipheriv(
         'aes-256-cbc',

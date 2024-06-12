@@ -334,7 +334,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.oauth2
       },
       'jira': {
-        scopes: 'read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider',
+        scopes: 'read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider offline_access',
         urls: {
           docsUrl: '',
           apiUrl: '/rest/api/3',

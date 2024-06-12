@@ -109,12 +109,14 @@ export class JiraConnectionService implements ITicketingConnectionService {
       const connection_token = uuidv4();
 
       const access_token = this.cryptoService.encrypt(data.access_token);
-      this.logger.log(
-        'non-encrypted token is ----> ' + JSON.stringify(data.access_token),
-      );
+      const refresh_token = this.cryptoService.encrypt(data.refresh_token);
 
       this.logger.log(
         'encrypted token is ----> ' + JSON.stringify(access_token),
+      );
+
+      this.logger.log(
+        'encrypted refresh token is ----> ' + JSON.stringify(refresh_token),
       );
 
       if (isNotUnique) {
@@ -123,8 +125,8 @@ export class JiraConnectionService implements ITicketingConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            access_token: access_token,
+            refresh_token: refresh_token,
             account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
@@ -142,8 +144,8 @@ export class JiraConnectionService implements ITicketingConnectionService {
             vertical: 'ticketing',
             token_type: 'oauth',
             account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
-            access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            access_token: access_token,
+            refresh_token: refresh_token,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -172,23 +174,25 @@ export class JiraConnectionService implements ITicketingConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
+
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
+
+      const formData = new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+      });
+    
       const res = await axios.post(
         `https://auth.atlassian.com/oauth/token`,
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
           },
         },
       );
