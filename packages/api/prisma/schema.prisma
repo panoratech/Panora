@@ -435,6 +435,7 @@ model projects {
   id_connector_set String         @db.Uuid
   api_keys         api_keys[]
   connections      connections[]
+  fs_folders       fs_folders[]
   linked_users     linked_users[]
   users            users          @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
   connector_sets   connector_sets @relation(fields: [id_connector_set], references: [id_connector_set], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectorsetid")
@@ -648,6 +649,8 @@ model connector_sets {
   crm_hubspot      Boolean
   crm_zoho         Boolean
   crm_attio        Boolean
+  crm_close        Boolean
+  crm_zendesk      Boolean
   crm_pipedrive    Boolean
   crm_zendesk      Boolean
   crm_close        Boolean

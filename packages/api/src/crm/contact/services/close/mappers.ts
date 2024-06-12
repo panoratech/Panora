@@ -96,16 +96,18 @@ export class CloseContactMapper implements IContactMapper {
       }
     }
     const opts: any = {};
-    if (contact.lead_id) {
-      opts.user_id = await this.utils.getCompanyUuidFromRemoteId(
-        contact.lead_id,
+    if (contact.created_by) {
+      opts.user_id = await this.utils.getUserUuidFromRemoteId(
+        contact.created_by,
         'close',
       );
     }
+
+    const [firstName, lastName] = contact?.name?.split(' ');
     return {
       remote_id: contact.id,
-      first_name: contact.name,
-      last_name: '',
+      first_name: firstName || contact?.name,
+      last_name: lastName ?? '',
       email_addresses: contact.emails?.map(({ email, type }) => ({
         email_address: email,
         email_address_type: type,

@@ -399,6 +399,8 @@ CREATE TABLE connector_sets
  crm_hubspot      boolean NOT NULL,
  crm_zoho         boolean NOT NULL,
  crm_attio        boolean NOT NULL,
+ crm_close        boolean NOT NULL,
+ crm_zendesk      boolean NOT NULL,
  crm_pipedrive    boolean NOT NULL,
  crm_zendesk      boolean NOT NULL,
  crm_close        boolean NOT NULL,
