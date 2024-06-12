@@ -31,7 +31,6 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-
 @ApiBearerAuth('JWT')
 @ApiTags('crm/contacts')
 @Controller('crm/contacts')
@@ -74,7 +73,7 @@ export class ContactController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
