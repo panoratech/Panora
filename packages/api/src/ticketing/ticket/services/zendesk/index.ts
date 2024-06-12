@@ -112,8 +112,10 @@ export class ZendeskService implements ITicketService {
       );
     }
   }
+
   async syncTickets(
     linkedUserId: string,
+    remote_ticket_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<ZendeskTicketOutput[]>> {
     try {
@@ -125,7 +127,9 @@ export class ZendeskService implements ITicketService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/tickets/.json`, {
+      const request_url = remote_ticket_id ? `${connection.account_url}/tickets/${remote_ticket_id}.json` : `${connection.account_url}/tickets.json`;
+
+      const resp = await axios.get(request_url, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -135,8 +139,10 @@ export class ZendeskService implements ITicketService {
       });
       this.logger.log(`Synced zendesk tickets !`);
 
+      const result = remote_ticket_id ? [resp.data.ticket] : resp.data.tickets;
+
       return {
-        data: resp.data.tickets,
+        data: result,
         message: 'Zendesk tickets retrieved',
         statusCode: 200,
       };
@@ -151,5 +157,4 @@ export class ZendeskService implements ITicketService {
     }
   }
 
-  //todo: create a syncTicket(remote_ticket_id)
 }

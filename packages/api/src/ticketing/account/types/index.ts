@@ -6,6 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 export interface IAccountService {
   syncAccounts(
     linkedUserId: string,
+    remote_account_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalAccountOutput[]>>;
 }

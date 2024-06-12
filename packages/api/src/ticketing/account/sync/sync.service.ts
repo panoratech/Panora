@@ -119,6 +119,12 @@ export class SyncService implements OnModuleInit {
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    wh_real_time_trigger?: {
+      action: 'UPDATE' | 'DELETE';
+      data: {
+        remote_id: string;
+      };
+    },
   ) {
     try {
       this.logger.log(
@@ -152,8 +158,28 @@ export class SyncService implements OnModuleInit {
 
       const service: IAccountService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalAccountOutput[]> =
-        await service.syncAccounts(linkedUserId, remoteProperties);
+     
+      let resp: ApiResponse<OriginalAccountOutput[]>;
+      if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
+        //meaning the call has been from a real time webhook that received data from a 3rd party
+        switch (wh_real_time_trigger.action) {
+          case 'DELETE':
+            return await this.removeAccountInDb(
+              linkedUserId,
+              integrationId,
+              wh_real_time_trigger.data.remote_id,
+            );
+          default:
+            resp = await service.syncAccounts(
+              linkedUserId,
+              wh_real_time_trigger.data.remote_id,
+              remoteProperties,
+            );
+            break;
+        }
+      } else {
+        resp = await service.syncAccounts(linkedUserId, undefined, remoteProperties);
+      }
 
       const sourceObject: OriginalAccountOutput[] = resp.data;
       // this.logger.log('resp is ' + sourceObject);
@@ -319,5 +345,24 @@ export class SyncService implements OnModuleInit {
     } catch (error) {
       handleServiceError(error, this.logger);
     }
+  }
+
+  async removeAccountInDb(
+    linkedUserId: string,
+    originSource: string,
+    remote_id: string,
+  ) {
+    const existingAccount = await this.prisma.tcg_accounts.findFirst({
+      where: {
+        remote_id: remote_id,
+        remote_platform: originSource,
+        id_linked_user: linkedUserId,
+      },
+    });
+    await this.prisma.tcg_accounts.delete({
+      where: {
+        id_tcg_account: existingAccount.id_tcg_account,
+      },
+    });
   }
 }

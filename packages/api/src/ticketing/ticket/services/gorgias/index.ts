@@ -106,6 +106,7 @@ export class GorgiasService implements ITicketService {
 
   async syncTickets(
     linkedUserId: string,
+    remote_ticket_id?: string,
   ): Promise<ApiResponse<GorgiasTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({

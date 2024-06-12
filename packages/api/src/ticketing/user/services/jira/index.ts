@@ -26,6 +26,7 @@ export class JiraService implements IUserService {
 
   async syncUsers(
     linkedUserId: string,
+    remote_user_id?: string,
   ): Promise<ApiResponse<JiraUserOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({

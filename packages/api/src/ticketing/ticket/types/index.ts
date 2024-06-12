@@ -11,6 +11,7 @@ export interface ITicketService {
 
   syncTickets(
     linkedUserId: string,
+    remote_ticket_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalTicketOutput[]>>;
 }
