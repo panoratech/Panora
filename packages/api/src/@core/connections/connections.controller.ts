@@ -5,6 +5,8 @@ import {
   Res,
   UseGuards,
   Request,
+  Post,
+  Body,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm.connection.service';
@@ -18,6 +20,8 @@ import { AccountingConnectionsService } from './accounting/services/accounting.c
 import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { CoreSyncService } from '@@core/sync/sync.service';
+import { v4 as uuidv4 } from 'uuid';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 export type StateDataType = {
   projectId: string;
@@ -30,6 +34,8 @@ export type StateDataType = {
 @ApiTags('connections')
 @Controller('connections')
 export class ConnectionsController {
+  private readonly connectionUtils = new ConnectionUtils();
+
   constructor(
     private readonly crmConnectionsService: CrmConnectionsService,
     private readonly ticketingConnectionsService: TicketingConnectionsService,
@@ -158,6 +164,38 @@ export class ConnectionsController {
     return await this.prisma.connections.findMany({
       where: {
         id_project: id_project,
+      },
+    });
+  }
+
+  @Post('create')
+  async createConnection(@Body() data: {access_token: string; refresh_token: string}) {
+    return await this.prisma.connections.create({
+      data: {
+        id_connection: uuidv4(),
+        connection_token: uuidv4(),
+        provider_slug: 'jira',
+        vertical: 'ticketing',
+        token_type: 'oauth',
+        account_url: `https://api.atlassian.com/ex/jira/9739da36-e4a6-42c8-b642-aab0c784d2ef`,
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+        expiration_timestamp: new Date(
+          new Date().getTime() + Number(3600) * 1000,
+        ),
+        status: 'valid',
+        created_at: new Date(),
+        projects: {
+          connect: { id_project: "1e468c15-aa57-4448-aa2b-7fed640d1e3d" },
+        },
+        linked_users: {
+          connect: {
+            id_linked_user: await this.connectionUtils.getLinkedUserId(
+              "1e468c15-aa57-4448-aa2b-7fed640d1e3d",
+              "d44076f4-c1e6-4238-8940-a5e6fbc9f878",
+            ),
+          },
+        },
       },
     });
   }
