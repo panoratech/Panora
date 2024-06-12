@@ -14,6 +14,8 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from './services/registry.service';
+import { AffinityService } from './services/affinity';
+
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { ServiceRegistry } from './services/registry.service';
     ZohoService,
     PipedriveService,
     HubspotService,
+    AffinityService,
   ],
   exports: [
     SyncService,

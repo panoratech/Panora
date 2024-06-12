@@ -1,12 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { IContactService } from '@crm/contact/types';
-import { CrmObject } from '@crm/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ApiResponse } from '@@core/utils/types';
+import { IContactService, ApiResponse, DesunifyReturnType } from '../../types';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { LoggerService } from '../../../logger/logger.service';
+import { EncryptionService } from '../../../encryption/encryption.service';
+import { ServiceRegistry } from '../../../registry/service.registry';
+import { AffinityContactInput, AffinityContactOutput } from './types';
+
+@Injectable()
+export class AffinityService implements IContactService {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
+  ) {
+    this.logger.setContext(
+      CrmObject.contact.toUpperCase() + ':' + AffinityService.name,
+    );
+    this.registry.registerService('affinity', this);
+  }
+
+  async addContact(
+    contactData: AffinityContactInput,
+    linkedUserId: string,
+  ): Promise<ApiResponse<AffinityContactOutput>> {
+    // Implementation for adding a contact to Affinity CRM
+    // This should interact with Affinity CRM's API to add a contact
+    return;
+  }
+
+  async syncContacts(
+    linkedUserId: string,
+  ): Promise<ApiResponse<AffinityContactOutput[]>> {
+    // Implementation for syncing contacts from Affinity CRM
+    // This should interact with Affinity CRM's API to fetch contacts
+    return;
+  }
+}
+
 import { ServiceRegistry } from '../registry.service';
 import { AttioContactInput, AttioContactOutput } from './types';
 
