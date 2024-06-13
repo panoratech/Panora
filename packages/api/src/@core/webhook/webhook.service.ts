@@ -135,18 +135,17 @@ export class WebhookService {
           active: true,
         },
       });
-      if (!webhooks)
-        throw ReferenceError(`Webhook not found for id_project=${projectId}`);
+
+      // we dont deliver the webhook
+      if (!webhooks) return;
 
       const webhook = webhooks.find((wh) => {
         const scopes = wh.scope;
         return scopes.includes(eventType);
       });
 
-      if (!webhook)
-        throw ReferenceError(
-          `Webhook not found for scope eventType=${eventType}`,
-        );
+      // we dont deliver the webhook
+      if (!webhook) return;
 
       this.logger.log('handling webhook payload....');
 
@@ -202,20 +201,14 @@ export class WebhookService {
           active: true,
         },
       });
-      if (!webhooks)
-        throw ReferenceError(
-          `Webhook endpoint undefined for id_project=${projectId}`,
-        );
+      if (!webhooks) return;
 
       const webhook = webhooks.find((wh) => {
         const scopes = wh.scope;
         return scopes.includes(eventType);
       });
 
-      if (!webhook)
-        throw ReferenceError(
-          `Webhook not found for scope eventType=${eventType}`,
-        );
+      if (!webhook) return;
 
       this.logger.log('handling webhook payload....');
 

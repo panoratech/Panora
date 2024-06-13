@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
 import { ConnectorSetError, throwTypedError } from '@@core/utils/errors';
-import { TypeCustom } from './project-connectors.controller';
 
 @Injectable()
 export class ProjectConnectorsService {
@@ -64,7 +62,7 @@ export class ProjectConnectorsService {
     }
   }
 
-  async createProjectConnectors(data: TypeCustom) {
+  /*async createProjectConnectors(data: TypeCustom) {
     try {
       const updateData: any = {
         id_connector_set: uuidv4(),
@@ -96,7 +94,7 @@ export class ProjectConnectorsService {
         this.logger,
       );
     }
-  }
+  }*/
 
   async getConnectorsByProjectId(id_project: string) {
     try {

@@ -394,6 +394,7 @@ CREATE TABLE connector_sets
  crm_zoho         boolean NOT NULL,
  crm_attio        boolean NOT NULL,
  crm_pipedrive    boolean NOT NULL,
+ crm_zendesk      boolean NOT NULL,
  crm_close        boolean NOT NULL,
  tcg_zendesk      boolean NOT NULL,
  tcg_jira         boolean NOT NULL,
@@ -1301,7 +1302,6 @@ CREATE TABLE connections
  id_project           uuid NOT NULL,
  id_linked_user       uuid NOT NULL,
  CONSTRAINT PK_connections PRIMARY KEY ( id_connection ),
- CONSTRAINT Index_3 UNIQUE ( access_token, refresh_token ),
  CONSTRAINT FK_9 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
  CONSTRAINT FK_11 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
 );

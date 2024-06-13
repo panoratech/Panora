@@ -152,7 +152,6 @@ export class CoreSyncService {
           break;
 
         case ConnectorCategory.Ticketing:
-          // logic
           tasks.push(() =>
             this.TicketingUserSyncService.syncUsersForLinkedUser(
               provider,

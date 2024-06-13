@@ -1,7 +1,10 @@
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ConnectionStrategiesError, throwTypedError } from '@@core/utils/errors';
+import {
+  ConnectionStrategiesError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -36,7 +39,7 @@ export class ConnectionsStrategiesService {
   ) {}
 
   async isCustomCredentials(projectId: string, type: string) {
-    try{
+    try {
       const res = await this.prisma.connection_strategies.findFirst({
         where: {
           id_project: projectId,
@@ -44,18 +47,19 @@ export class ConnectionsStrategiesService {
           status: true,
         },
       });
-      if (!res) throw ReferenceError('Connection strategy undefined')
+      if (!res) return false;
       return res.status;
-    }catch(error){
-      throwTypedError(new ConnectionStrategiesError(
-        {
-          name: "CUSTOM_CREDENTIALS_ERROR",
-          message: "ConnectionsStrategiesService.isCustomCredentials() call failed",
-          cause: error
-        }
-      ), this.logger)
+    } catch (error) {
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'CUSTOM_CREDENTIALS_ERROR',
+          message:
+            'ConnectionsStrategiesService.isCustomCredentials() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
-    
   }
 
   async createConnectionStrategy(
@@ -64,19 +68,20 @@ export class ConnectionsStrategiesService {
     attributes: string[],
     values: string[],
   ) {
-    try{
-      const checkCSDuplicate = await this.prisma.connection_strategies.findFirst({
-        where: {
-          id_project: projectId,
-          type: type,
-        },
-      });
+    try {
+      const checkCSDuplicate =
+        await this.prisma.connection_strategies.findFirst({
+          where: {
+            id_project: projectId,
+            type: type,
+          },
+        });
       if (checkCSDuplicate)
         throw new ConnectionStrategiesError({
-          name: "CONNECTION_STRATEGY_ALREADY_EXISTS",
-          message: `Connection strategy already exists for projectId=${projectId} and type=${type}`
+          name: 'CONNECTION_STRATEGY_ALREADY_EXISTS',
+          message: `Connection strategy already exists for projectId=${projectId} and type=${type}`,
         });
-  
+
       const cs = await this.prisma.connection_strategies.create({
         data: {
           id_connection_strategy: uuidv4(),
@@ -111,16 +116,18 @@ export class ConnectionsStrategiesService {
           },
         });
       }
-  
+
       return cs;
-    }catch(error){
-      throwTypedError(new ConnectionStrategiesError(
-        {
-          name: "CREATE_CONNECTION_STRATEGY_ERROR",
-          message: "ConnectionsStrategiesService.createConnectionStrategy() call failed",
-          cause: error
-        }
-      ), this.logger)
+    } catch (error) {
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'CREATE_CONNECTION_STRATEGY_ERROR',
+          message:
+            'ConnectionsStrategiesService.createConnectionStrategy() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -144,13 +151,14 @@ export class ConnectionsStrategiesService {
 
       return updatedCs;
     } catch (error) {
-      throwTypedError(new ConnectionStrategiesError(
-        {
-          name: "TOGGLE_CONNECTION_STRATEGY_ERROR",
-          message: "ConnectionsStrategiesService.toggle() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'TOGGLE_CONNECTION_STRATEGY_ERROR',
+          message: 'ConnectionsStrategiesService.toggle() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -173,7 +181,8 @@ export class ConnectionsStrategiesService {
         id_connection_strategy: cs.id_connection_strategy,
       },
     });
-    if (!entity) throw new ReferenceError('Connection strategy entity undefined !');
+    if (!entity)
+      throw new ReferenceError('Connection strategy entity undefined !');
 
     const authValues: string[] = [];
     for (let i = 0; i < attributes.length; i++) {
@@ -185,13 +194,15 @@ export class ConnectionsStrategiesService {
           attribute_slug: attribute_slug,
         },
       });
-      if (!attribute_) throw new ReferenceError('Connection Strategy Attribute undefined !');
+      if (!attribute_)
+        throw new ReferenceError('Connection Strategy Attribute undefined !');
       const value_ = await this.prisma.cs_values.findFirst({
         where: {
           id_cs_attribute: attribute_.id_cs_attribute,
         },
       });
-      if (!value_) throw new ReferenceError('Connection Strategy Value undefined !');
+      if (!value_)
+        throw new ReferenceError('Connection Strategy Value undefined !');
       authValues.push(this.crypto.decrypt(value_.value));
     }
     return authValues;
@@ -321,7 +332,7 @@ export class ConnectionsStrategiesService {
   }
 
   async getCredentials(projectId: string, type: string) {
-    try{
+    try {
       const isCustomCred = await this.isCustomCredentials(projectId, type);
       const provider = extractProvider(type);
       const vertical = extractVertical(type);
@@ -330,8 +341,10 @@ export class ConnectionsStrategiesService {
         throw new ReferenceError(`vertical not found for provider ${provider}`);
       const authStrategy = extractAuthMode(type);
       if (!authStrategy)
-        throw new ReferenceError(`auth strategy not found for provider ${provider}`);
-  
+        throw new ReferenceError(
+          `auth strategy not found for provider ${provider}`,
+        );
+
       if (isCustomCred) {
         //customer is using custom credentials (set in the webapp UI)
         //fetch the right credentials
@@ -351,16 +364,16 @@ export class ConnectionsStrategiesService {
           SoftwareMode.cloud,
         );
       }
-    }catch(error){
-      throwTypedError(new ConnectionStrategiesError(
-        {
-          name: "GET_CREDENTIALS_ERROR",
-          message: "ConnectionsStrategiesService.getCredentials() call failed",
-          cause: error
-        }
-      ), this.logger) 
+    } catch (error) {
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'GET_CREDENTIALS_ERROR',
+          message: 'ConnectionsStrategiesService.getCredentials() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
-    
   }
 
   async getConnectionStrategiesForProject(projectId: string) {
@@ -371,13 +384,15 @@ export class ConnectionsStrategiesService {
         },
       });
     } catch (error) {
-      throwTypedError(new ConnectionStrategiesError(
-        {
-          name: "GET_CONNECTION_STRATEGIES_BY_PROJECT_ERROR",
-          message: "ConnectionsStrategiesService.getConnectionStrategiesForProject() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'GET_CONNECTION_STRATEGIES_BY_PROJECT_ERROR',
+          message:
+            'ConnectionsStrategiesService.getConnectionStrategiesForProject() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -410,7 +425,8 @@ export class ConnectionsStrategiesService {
         },
       });
 
-      if (!id_cs_entity) throw new ReferenceError('Connection strategy entity undefined !');
+      if (!id_cs_entity)
+        throw new ReferenceError('Connection strategy entity undefined !');
 
       for (let i = 0; i < attributes.length; i++) {
         const attribute_slug = attributes[i];
@@ -435,13 +451,15 @@ export class ConnectionsStrategiesService {
       }
       return cs;
     } catch (error) {
-      throwTypedError(new ConnectionStrategiesError(
-        {
-          name: "UPDATE_CONNECTION_STRATEGY_ERROR",
-          message: "ConnectionsStrategiesService.updateConnectionStrategy() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'UPDATE_CONNECTION_STRATEGY_ERROR',
+          message:
+            'ConnectionsStrategiesService.updateConnectionStrategy() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -459,7 +477,8 @@ export class ConnectionsStrategiesService {
           id_connection_strategy: id_cs,
         },
       });
-      if (!id_cs_entity) throw new ReferenceError('Connection strategy entity undefined !');
+      if (!id_cs_entity)
+        throw new ReferenceError('Connection strategy entity undefined !');
 
       const attributes = await this.prisma.cs_attributes.findMany({
         where: {
@@ -500,13 +519,15 @@ export class ConnectionsStrategiesService {
 
       return deleteCS;
     } catch (error) {
-      throwTypedError(new ConnectionStrategiesError(
-        {
-          name: "DELETE_CONNECTION_STRATEGY_ERROR",
-          message: "ConnectionsStrategiesService.deleteConnectionStrategy() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'DELETE_CONNECTION_STRATEGY_ERROR',
+          message:
+            'ConnectionsStrategiesService.deleteConnectionStrategy() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }
