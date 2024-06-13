@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -134,7 +134,17 @@ export class KeapConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'keap', Action.oauthCallback);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_CALLBACK_CRM",
+          message: `KeapConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            "keap",
+            Action.oauthCallback,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)    
     }
   }
 
@@ -177,7 +187,17 @@ export class KeapConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : keap ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'keap', Action.oauthRefresh);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_REFRESH_CRM",
+          message: `KeapConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            "keap",
+            Action.oauthRefresh,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)     
     }
   }
 }

@@ -103,7 +103,7 @@ export function DefineForm({ onClose }: {onClose: () => void}) {
         )
         ;
       },
-      error: 'Error',
+      error: (err: any) => err.message || 'Error'
     });
     posthog?.capture("field_defined", {
       id_project: idProject,

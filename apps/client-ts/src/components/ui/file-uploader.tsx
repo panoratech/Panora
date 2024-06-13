@@ -151,8 +151,8 @@ export function FileUploader(props: FileUploaderProps) {
             setFiles([])
             return `${target} uploaded`
           },
-          error: `Failed to upload ${target}`,
-        })
+          error: (err: any) => err.message || 'Error'
+        });
       }
     },
 

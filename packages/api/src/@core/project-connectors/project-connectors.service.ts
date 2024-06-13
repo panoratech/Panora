@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { handleServiceError } from '@@core/utils/errors';
+import { ConnectorSetError, handleServiceError, throwTypedError } from '@@core/utils/errors';
 import { TypeCustom } from './project-connectors.controller';
 
 @Injectable()
@@ -25,6 +25,9 @@ export class ProjectConnectorsService {
         },
       });
 
+      if (!project) {
+        throw new ReferenceError('Project undefined!');
+      }
       const existingPConnectors = await this.prisma.connector_sets.findFirst({
         where: {
           id_connector_set: project.id_connector_set,
@@ -32,8 +35,8 @@ export class ProjectConnectorsService {
       });
 
       if (!existingPConnectors) {
-        throw new Error(
-          `No project connector entry found for project ${id_project}`,
+        throw new ReferenceError(
+          `No connector set entry found for project ${id_project}`,
         );
       }
 
@@ -49,7 +52,13 @@ export class ProjectConnectorsService {
       });
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new ConnectorSetError(
+        {
+          name: "UPDATE_CONNECTOR_SET_ERROR",
+          message: "ProjectConnectorsService.updateProjectConnectors() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 
@@ -75,7 +84,13 @@ export class ProjectConnectorsService {
       });
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new ConnectorSetError(
+        {
+          name: "CREATE_CONNECTOR_SET_ERROR",
+          message: "ProjectConnectorsService.createProjectConnectors() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 
@@ -88,7 +103,7 @@ export class ProjectConnectorsService {
       });
 
       if (!project) {
-        throw new NotFoundException('Project does not exist!');
+        throw new ReferenceError('Project undefined!');
       }
 
       const res = await this.prisma.connector_sets.findFirst({
@@ -97,13 +112,19 @@ export class ProjectConnectorsService {
         },
       });
       if (!res) {
-        throw new NotFoundException(
-          'Connectors not found for current project!',
+        throw new ReferenceError(
+          'Connector set undefined!',
         );
       }
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new ConnectorSetError(
+        {
+          name: "GET_CONNECTOR_SET_BY_PROJECT_ERROR",
+          message: "ProjectConnectorsService.getConnectorsbyProjectId() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 }

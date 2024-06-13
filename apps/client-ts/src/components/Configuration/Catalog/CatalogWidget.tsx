@@ -71,7 +71,7 @@ export function CatalogWidget() {
               )
               ;
             },
-            error: 'Error',
+            error: (err: any) => err.message || 'Error'
         });
     };
 

@@ -5,13 +5,11 @@ import {
   Res,
   UseGuards,
   Request,
-  Post,
-  Body,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { ConnectionsError, handleServiceError, throwTypedError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
@@ -20,8 +18,6 @@ import { AccountingConnectionsService } from './accounting/services/accounting.c
 import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { CoreSyncService } from '@@core/sync/sync.service';
-import { v4 as uuidv4 } from 'uuid';
-import { ConnectionUtils } from '@@core/connections/@utils';
 
 export type StateDataType = {
   projectId: string;
@@ -34,16 +30,14 @@ export type StateDataType = {
 @ApiTags('connections')
 @Controller('connections')
 export class ConnectionsController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly crmConnectionsService: CrmConnectionsService,
     private readonly ticketingConnectionsService: TicketingConnectionsService,
     private readonly accountingConnectionsService: AccountingConnectionsService,
     private readonly marketingAutomationConnectionsService: MarketingAutomationConnectionsService,
-    private readonly coreSyncService: CoreSyncService,
     private logger: LoggerService,
     private prisma: PrismaService,
+    private coreSync: CoreSyncService
   ) {
     this.logger.setContext(ConnectionsController.name);
   }
@@ -65,13 +59,19 @@ export class ConnectionsController {
   ) {
     try {
       if (!state)
-        throw new NotFoundError(
-          `No Callback Params found for state, found ${state}`,
-        );
+      new ConnectionsError(
+        {
+          name: "OAUTH_CALLBACK_STATE_NOT_FOUND_ERROR",
+          message: `No Callback Params found for state, found ${state}`,
+        }
+      )
       if (!code)
-        throw new NotFoundError(
-          `No Callback Params found for code, found ${code}`,
-        );
+        new ConnectionsError(
+          {
+            name: "OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR",
+            message: `No Callback Params found for code, found ${code}`,
+          }
+        )
 
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
       const { projectId, vertical, linkedUserId, providerName, returnUrl } =
@@ -119,15 +119,21 @@ export class ConnectionsController {
           break;
       }
       // Performing Core Sync Service
-      /*this.coreSyncService.initialSync(
+      this.coreSync.initialSync(
         vertical.toLowerCase(),
         providerName,
         linkedUserId,
         projectId,
-      );*/
+      );
       res.redirect(returnUrl);
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "OAUTH_CALLBACK_ERROR",
+          message: "ConnectionsController.handleCallback() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 
@@ -159,44 +165,22 @@ export class ConnectionsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getConnections(@Request() req: any) {
-    const { id_project } = req.user;
-    console.log('Req data is:', req.user);
-    return await this.prisma.connections.findMany({
-      where: {
-        id_project: id_project,
-      },
-    });
-  }
-
-  @Post('create')
-  async createConnection(@Body() data: {access_token: string; refresh_token: string}) {
-    return await this.prisma.connections.create({
-      data: {
-        id_connection: uuidv4(),
-        connection_token: uuidv4(),
-        provider_slug: 'jira',
-        vertical: 'ticketing',
-        token_type: 'oauth',
-        account_url: `https://api.atlassian.com/ex/jira/9739da36-e4a6-42c8-b642-aab0c784d2ef`,
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
-        expiration_timestamp: new Date(
-          new Date().getTime() + Number(3600) * 1000,
-        ),
-        status: 'valid',
-        created_at: new Date(),
-        projects: {
-          connect: { id_project: "1e468c15-aa57-4448-aa2b-7fed640d1e3d" },
+    try{
+      const { id_project } = req.user;
+      console.log('Req data is:', req.user);
+      return await this.prisma.connections.findMany({
+        where: {
+          id_project: id_project,
         },
-        linked_users: {
-          connect: {
-            id_linked_user: await this.connectionUtils.getLinkedUserId(
-              "1e468c15-aa57-4448-aa2b-7fed640d1e3d",
-              "d44076f4-c1e6-4238-8940-a5e6fbc9f878",
-            ),
-          },
-        },
-      },
-    });
+      });
+    }catch(error){
+      throwTypedError(new ConnectionsError(
+        {
+          name: "GET_CONNECTIONS_ERROR",
+          message: "ConnectionsController.getConnections() call failed",
+          cause: error
+        }
+      ), this.logger) 
+    }
   }
 }

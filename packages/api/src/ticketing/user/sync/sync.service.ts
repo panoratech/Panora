@@ -40,23 +40,27 @@ export class SyncService implements OnModuleInit {
   }
 
   private async scheduleSyncJob() {
-    const jobName = 'ticketing-sync-users';
+    try{
+      const jobName = 'ticketing-sync-users';
 
-    // Remove existing jobs to avoid duplicates in case of application restart
-    const jobs = await this.syncQueue.getRepeatableJobs();
-    for (const job of jobs) {
-      if (job.name === jobName) {
-        await this.syncQueue.removeRepeatableByKey(job.key);
+      // Remove existing jobs to avoid duplicates in case of application restart
+      const jobs = await this.syncQueue.getRepeatableJobs();
+      for (const job of jobs) {
+        if (job.name === jobName) {
+          await this.syncQueue.removeRepeatableByKey(job.key);
+        }
       }
+      // Add new job to the queue with a CRON expression
+      await this.syncQueue.add(
+        jobName,
+        {},
+        {
+          repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
+        },
+      );
+    }catch(error){
+      throw new Error(error);
     }
-    // Add new job to the queue with a CRON expression
-    await this.syncQueue.add(
-      jobName,
-      {},
-      {
-        repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
-      },
-    );
   }
   //function used by sync worker which populate our tcg_users table
   //its role is to fetch all users from providers 3rd parties and save the info inside our db

@@ -365,20 +365,6 @@
         ]
       }
     },
-    "/connections/create": {
-      "post": {
-        "operationId": "ConnectionsController_createConnection",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "connections"
-        ]
-      }
-    },
     "/webhook": {
       "get": {
         "operationId": "getWebhooksMetadata",

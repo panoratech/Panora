@@ -20,7 +20,8 @@ const useCreateWebhook = () => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to add project');
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Unknown error occurred");
         }
         
         return response.json();

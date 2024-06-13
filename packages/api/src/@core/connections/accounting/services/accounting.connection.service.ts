@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { ConnectionsError, NotFoundError, throwTypedError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
@@ -73,7 +73,13 @@ export class AccountingConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_CALLBACK_ACCOUNTING",
+          message: "AccountingConnectionsService.handleAccountngCallback() call failed",
+          cause: error
+        }
+      ), this.logger)     
     }
   }
 
@@ -98,7 +104,13 @@ export class AccountingConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_REFRESH_ACCOUNTING",
+          message: "AccountingConnectionsService.handleAccountingTokensRefresh() call failed",
+          cause: error
+        }
+      ), this.logger)     
     }
   }
 }

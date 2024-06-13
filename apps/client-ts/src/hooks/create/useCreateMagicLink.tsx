@@ -21,7 +21,8 @@ const useCreateMagicLink = () => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to generate link');
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Unknown error occurred");
         }
         
         return response.json();

@@ -147,8 +147,8 @@ function FirstStepForm({setClose}: {setClose: () => void}) {
 			)
 			;
 		  },
-		  error: 'Error',
-		});
+      error: (err: any) => err.message || 'Error'
+    });
 		posthog?.capture("field_defined", {
 		  id_project: idProject,
 		  mode: config.DISTRIBUTION
@@ -323,8 +323,8 @@ function SecondStepForm({setClose}: {setClose: () => void}) {
 			)
 			;
 		  },
-		  error: 'Error',
-		});
+		  error: (err: any) => err.message || 'Error'
+    });
 		nextStep();
 		posthog?.capture("field_mapped", {
 		  id_project: idProject,
