@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ConnectionsError, NotFoundError, throwTypedError } from '@@core/utils/errors';
+import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
@@ -43,7 +43,7 @@ export class MarketingAutomationConnectionsService {
       const service = this.serviceRegistry.getService(serviceName);
 
       if (!service) {
-        throw new NotFoundError(`Unknown provider, found ${providerName}`);
+        throw new ReferenceError(`Unknown provider, found ${providerName}`);
       }
       const callbackOpts: CallbackParams = {
         linkedUserId: linkedUserId,
@@ -73,13 +73,15 @@ export class MarketingAutomationConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_MARKETINGAUTOMATION",
-          message: "MarketingAutomationConnectionsService.handleMarketingAutomationCallBack() call failed",
-          cause: error
-        }
-      ), this.logger)     
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_MARKETINGAUTOMATION',
+          message:
+            'MarketingAutomationConnectionsService.handleMarketingAutomationCallBack() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -94,7 +96,7 @@ export class MarketingAutomationConnectionsService {
       const serviceName = providerName.toLowerCase();
       const service = this.serviceRegistry.getService(serviceName);
       if (!service) {
-        throw new NotFoundError(`Unknown provider, found ${providerName}`);
+        throw new ReferenceError(`Unknown provider, found ${providerName}`);
       }
       const refreshOpts: RefreshParams = {
         connectionId: connectionId,
@@ -104,13 +106,15 @@ export class MarketingAutomationConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_REFRESH_MARKETINGAUTOMATION",
-          message: "MarketingAutomationConnectionsService.handleMarketingAutomationTokensRefresh() call failed",
-          cause: error
-        }
-      ), this.logger)     
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_MARKETINGAUTOMATION',
+          message:
+            'MarketingAutomationConnectionsService.handleMarketingAutomationTokensRefresh() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }
