@@ -145,9 +145,7 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping tasks syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        throw ReferenceError(
-          `Connection undefined for id_linked_user=${linkedUserId} and integrationId=${integrationId}`,
-        );
+        
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =

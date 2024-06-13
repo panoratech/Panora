@@ -109,7 +109,6 @@ model connections {
   linked_users         linked_users @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_11")
   projects             projects     @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_9")
 
-  @@unique([access_token, refresh_token], map: "index_3")
   @@index([id_project], map: "fk_1")
   @@index([id_linked_user], map: "fk_connections_to_linkedusersid")
 }
@@ -650,6 +649,7 @@ model connector_sets {
   crm_zoho         Boolean
   crm_attio        Boolean
   crm_pipedrive    Boolean
+  crm_zendesk      Boolean
   crm_close        Boolean
   tcg_zendesk      Boolean
   tcg_jira         Boolean

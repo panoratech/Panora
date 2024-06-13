@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -101,23 +107,13 @@ export class JiraConnectionService implements ITicketingConnectionService {
         },
       );
       const sites_scopes: JiraCloudIdInformation[] = res_.data;
-      this.logger.log(
-        'sites scopes for jira are ----> ' + JSON.stringify(sites_scopes),
-      );
+
       const cloud_id: string = sites_scopes[0].id; //todo
       let db_res;
       const connection_token = uuidv4();
 
       const access_token = this.cryptoService.encrypt(data.access_token);
       const refresh_token = this.cryptoService.encrypt(data.refresh_token);
-
-      this.logger.log(
-        'encrypted token is ----> ' + JSON.stringify(access_token),
-      );
-
-      this.logger.log(
-        'encrypted refresh token is ----> ' + JSON.stringify(refresh_token),
-      );
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -167,17 +163,18 @@ export class JiraConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_TICKETING",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
           message: `JiraConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            "jira",
+            'jira',
             Action.oauthCallback,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)     
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -190,16 +187,16 @@ export class JiraConnectionService implements ITicketingConnectionService {
         this.type,
       )) as OAuth2AuthData;
 
-      const formData = new URLSearchParams({
+      const formData = {
         grant_type: 'refresh_token',
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
         refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
-    
+      };
+
       const res = await axios.post(
         `https://auth.atlassian.com/oauth/token`,
-        formData.toString(),
+        formData,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -221,17 +218,18 @@ export class JiraConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : jira ');
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_REFRESH_TICKETING",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
           message: `JiraConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            "jira",
+            'jira',
             Action.oauthRefresh,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)     
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

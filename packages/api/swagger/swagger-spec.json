@@ -5074,20 +5074,6 @@
         ]
       }
     },
-    "/project-connectors/create": {
-      "post": {
-        "operationId": "ProjectConnectorsController_createConnectorsToProject",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "project-connectors"
-        ]
-      }
-    },
     "/ticketing/attachments": {
       "get": {
         "operationId": "getAttachments",

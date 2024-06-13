@@ -12,6 +12,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { slugFromCategory } from '@panora/shared';
 
 // Function to scan the directory for new service directories
 function scanDirectory(dir) {
@@ -332,6 +333,82 @@ function updateEnumFile(enumFilePath, newServiceDirs, vertical) {
     console.error(`Could not find enum ${enumName} in file.`);
   }
 }
+
+// New function to update init.sql
+function updateInitSQLFile(initSQLFile, newServiceDirs, vertical) {
+  let fileContent = fs.readFileSync(initSQLFile, 'utf8');
+  const insertPoint = fileContent.indexOf(
+    'CONSTRAINT PK_project_connector PRIMARY KEY',
+  );
+
+  if (insertPoint === -1) {
+    console.error(
+      `Could not find the PRIMARY KEY constraint in ${initSQLFile}`,
+    );
+    return;
+  }
+
+  let newLines = '';
+  newServiceDirs.forEach((serviceName) => {
+    const columnName = `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`;
+    newLines += ` ${columnName} boolean NOT NULL,\n`;
+  });
+
+  fileContent = [
+    fileContent.slice(0, insertPoint),
+    newLines,
+    fileContent.slice(insertPoint),
+  ].join('');
+
+  fs.writeFileSync(initSQLFile, fileContent);
+}
+
+// New function to update seed.sql
+function updateSeedSQLFile(seedSQLFile, newServiceDirs, vertical) {
+  let fileContent = fs.readFileSync(seedSQLFile, 'utf8');
+
+  const tableInsertPoint = fileContent.indexOf('INSERT INTO connector_sets');
+  if (tableInsertPoint === -1) {
+    console.error(
+      `Could not find the INSERT INTO connector_sets statement in ${seedSQLFile}`,
+    );
+    return;
+  }
+
+  const columnInsertPoint = fileContent.indexOf('(', tableInsertPoint);
+  const valuesInsertPoint = fileContent.indexOf('VALUES', columnInsertPoint);
+  const rowsInsertPoint = fileContent.indexOf('(', valuesInsertPoint);
+
+  if (
+    columnInsertPoint === -1 ||
+    valuesInsertPoint === -1 ||
+    rowsInsertPoint === -1
+  ) {
+    console.error(
+      `Could not find the column or values insert points in ${seedSQLFile}`,
+    );
+    return;
+  }
+
+  let newColumns = '';
+  let newValues = '';
+  newServiceDirs.forEach((serviceName) => {
+    const columnName = `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`;
+    newColumns += `${columnName}, `;
+    newValues += 'TRUE, ';
+  });
+
+  const updatedFileContent = [
+    fileContent.slice(0, columnInsertPoint + 1),
+    newColumns,
+    fileContent.slice(columnInsertPoint + 1, rowsInsertPoint + 1),
+    newValues,
+    fileContent.slice(rowsInsertPoint + 1),
+  ].join('');
+
+  fs.writeFileSync(seedSQLFile, updatedFileContent);
+}
+
 // Main script logic
 function updateObjectTypes(baseDir, objectType, vertical) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -406,6 +483,13 @@ function updateObjectTypes(baseDir, objectType, vertical) {
     possibleProviderForImportStatements,
     objectType,
   );
+
+  // Update SQL files
+  const initSQLFile = path.join(__dirname, './init.sql');
+  updateInitSQLFile(initSQLFile, newServiceDirs, slugFromCategory(vertical));
+
+  const seedSQLFile = path.join(__dirname, './seed.sql');
+  updateSeedSQLFile(seedSQLFile, newServiceDirs, slugFromCategory(vertical));
 }
 
 // Example usage for ticketing/team

@@ -13,7 +13,7 @@ import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
-import { ConnectorCategory } from '@panora/shared';
+import { ConnectorCategory, CONNECTORS_METADATA } from '@panora/shared';
 import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
 import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
@@ -114,13 +114,18 @@ export class ConnectionsController {
           );
           break;
       }
-      // Performing Core Sync Service
-      this.coreSync.initialSync(
-        vertical.toLowerCase(),
-        providerName,
-        linkedUserId,
-        projectId,
-      );
+      if (
+        CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
+          .active !== false
+      ) {
+        // Performing Core Sync Service for active connectors
+        this.coreSync.initialSync(
+          vertical.toLowerCase(),
+          providerName,
+          linkedUserId,
+          projectId,
+        );
+      }
       res.redirect(returnUrl);
     } catch (error) {
       throwTypedError(
