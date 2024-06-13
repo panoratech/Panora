@@ -154,7 +154,6 @@ export class ConnectionsController {
   @Get()
   async getConnections(@Request() req: any) {
     const { id_project } = req.user;
-    console.log('Req data is:', req.user);
     return await this.prisma.connections.findMany({
       where: {
         id_project: id_project,
