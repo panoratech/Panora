@@ -63,7 +63,8 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
 
     const interval = setInterval(() => {
       try{
-        const redirectedURL = authWindow!.location.protocol + '//' + authWindow!.location.hostname + (authWindow!.location.port ? ':' + authWindow!.location.port : '');
+        const redirectedURL = authWindow!.location.href;
+        // const redirectedURL = authWindow!.location.protocol + '//' + authWindow!.location.hostname + (authWindow!.location.port ? ':' + authWindow!.location.port : '');
         if(redirectedURL===returnUrl)
           {
             onSuccess();

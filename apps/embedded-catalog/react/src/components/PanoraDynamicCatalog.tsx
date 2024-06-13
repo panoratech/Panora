@@ -5,10 +5,9 @@ import useProjectConnectors from '@/hooks/queries/useProjectConnectors';
 import { Card } from './ui/card';
 import { Button } from './ui/button2'
 import { ArrowRightIcon } from '@radix-ui/react-icons';
-import {Unplug,X} from 'lucide-react'
+import {ArrowLeftRight} from 'lucide-react'
 import Modal from './Modal';
 import config from '@/helpers/config';
-
 export interface DynamicCardProp {
   projectId: string;
   linkedUserId: string;
@@ -33,8 +32,9 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
   const [startFlow, setStartFlow] = useState(false);
   const [openSuccessDialog,setOpenSuccessDialog] = useState<boolean>(false);
   const [currentProviderLogoURL,setCurrentProviderLogoURL] = useState<string>('')
+  const [currentProvider,setCurrentProvider] = useState<string>('')
   const returnUrlWithWindow = (typeof window !== 'undefined') 
-    ? window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') 
+    ? window.location.href
     : '';
 
   
@@ -76,7 +76,7 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
         provider: ''
       });
     }
-  }, [startFlow, isReady, open]);
+  }, [startFlow, isReady]);
 
   useEffect(()=>{
     const PROVIDERS = !category ? providersArray() : providersArray(category);
@@ -101,6 +101,7 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
     setSelectedProvider({provider: walletName.toLowerCase(), category: category.toLowerCase()});
     const logoPath = CONNECTORS_METADATA[category.toLowerCase()][walletName.toLowerCase()].logoPath;
     setCurrentProviderLogoURL(logoPath)
+    setCurrentProvider(walletName.toLowerCase())
     setLoading({status: true, provider: selectedProvider?.provider!});
     setStartFlow(true);
   }
@@ -158,16 +159,16 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
             <div className='h-[12rem] w-[20rem] justify-center flex p-1'>
                     <div className='flex flex-col gap-2 items-center'>
                     <div className='flex h-1/3 items-center justify-center gap-2'>
-                    <Unplug className={`${openSuccessDialog ? "scale-100 opacity-100" : "scale-50 opacity-0"} transition-all duration-700`} size={60} color='#4CAF50' />
-                    <X size={25} className={`${openSuccessDialog ? "opacity-100" : "opacity-0"} transition-all duration-500 delay-200`} color='gray' />
-                    
+                    <img src={'https://i.postimg.cc/25G2FwWf/logo.png'} className={`${openSuccessDialog ? "opacity-100" : "opacity-0"} transition-all duration-500 delay-200`} width={60} height={60} />
+                    <ArrowLeftRight size={25} className={`${openSuccessDialog ? "opacity-100" : "opacity-0"} transition-all duration-500 delay-200`} color='gray' />
+            
                     <img className={`w-12 h-12 transition-all duration-700 delay-200 rounded-lg ml-3 ${openSuccessDialog ? "scale-100 opacity-100" : "scale-50 opacity-0"}`} src={currentProviderLogoURL} alt={selectedProvider?.provider} />
                     
                     </div>
 
                     <div className={`text-white transition-all ease-in delay-200 ${openSuccessDialog ? "opacity-100 scale-100" : "opacity-0 scale-125"} font-semibold text-xl items-center`}>Connection Successful!</div>
 
-                    <div className={`text-sm transition-all ease-in delay-200 ${openSuccessDialog ? "opacity-100 scale-100" : "opacity-0 scale-125"} text-gray-400 items-center align-middle text-center`}>The connection was successfully established. You can visit the Dashboard and verify the status.</div>
+                    <div className={`text-sm transition-all ease-in delay-200 ${openSuccessDialog ? "opacity-100 scale-100" : "opacity-0 scale-125"} text-gray-400 items-center align-middle text-center`}>The connection with {currentProvider} was successfully established. You can visit the Dashboard and verify the status.</div>
 
                     </div>
             </div>
