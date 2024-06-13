@@ -256,7 +256,7 @@ export class SyncService implements OnModuleInit {
         const originId = contact.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingContact = await this.prisma.tcg_contacts.findFirst({

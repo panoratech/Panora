@@ -249,7 +249,7 @@ export class SyncService implements OnModuleInit {
         const originId = user.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingUser = await this.prisma.tcg_users.findFirst({
