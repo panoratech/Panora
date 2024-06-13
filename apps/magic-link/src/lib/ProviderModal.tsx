@@ -247,12 +247,12 @@ const ProviderModal = () => {
         </RadioGroup>
         </div>
       </CardContent>
-      <CardFooter>
-        <div className='flex flex-col'>
-        {loading.status ? <Button className='w-full flex flex-row items-center' disabled><LoadingSpinner className="w-4 mr-2"/>Loading</Button> : <Button className="w-full" onClick={handleStartFlow} disabled={!preStartFlow}>Continue</Button>}
+      <CardFooter className='flex flex-col items-start'>
+        
+        {loading.status ? <Button className='w-full' disabled><LoadingSpinner className="w-4 mr-2"/>Loading</Button> : <Button className="w-full" onClick={handleStartFlow} disabled={!preStartFlow}>Continue</Button>}
         {errorResponse.errorPresent ? <p className='mt-2 text-red-700'>{errorResponse.errorMessage}</p> : (<></>)}
 
-        </div>
+          {/* </div> */}
       </CardFooter>
     </Card>
 
