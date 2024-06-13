@@ -72,7 +72,7 @@ export function extractAuthMode(type: string): AuthStrategy {
         case 'BASIC':
             return AuthStrategy.basic;
         default:
-            throw new Error('Auth mode not found');
+            throw new ReferenceError('Auth mode not found');
     }
 }
 

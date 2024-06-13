@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { UnifiedContactOutput } from '../types/model.unified';
 
 @Injectable()
@@ -74,7 +78,11 @@ export class ContactService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_CONTACT_ERROR",
+        message: "ContactService.getContact() call failed",
+        cause: error
+      }))
     }
   }
 
@@ -201,7 +209,11 @@ export class ContactService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_CONTACTS_ERROR",
+        message: "ContactService.getContacts() call failed",
+        cause: error
+      }))
     }
   }
 }

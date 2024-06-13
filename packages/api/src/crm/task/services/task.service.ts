@@ -3,7 +3,10 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedTaskInput, UnifiedTaskOutput } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
@@ -13,6 +16,7 @@ import { ServiceRegistry } from './registry.service';
 import { OriginalTaskOutput } from '@@core/utils/types/original/original.crm';
 import { unify } from '@@core/utils/unification/unify';
 import { ITaskService } from '../types';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class TaskService {
@@ -46,7 +50,13 @@ export class TaskService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_TASKS_ERROR',
+          message: 'TaskService.batchAddTasks() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -64,7 +74,7 @@ export class TaskService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
 
       const company = unifiedTaskData.company_id;
       //check if contact_id and account_id refer to real uuids
@@ -75,7 +85,9 @@ export class TaskService {
           },
         });
         if (!search)
-          throw new Error('You inserted a company_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a company_id which does not exist',
+          );
       }
       const user = unifiedTaskData.user_id;
       //check if contact_id and account_id refer to real uuids
@@ -86,7 +98,9 @@ export class TaskService {
           },
         });
         if (!search)
-          throw new Error('You inserted a user_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a user_id which does not exist',
+          );
       }
 
       const deal = unifiedTaskData.deal_id;
@@ -98,7 +112,9 @@ export class TaskService {
           },
         });
         if (!search)
-          throw new Error('You inserted a deal_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a deal_id which does not exist',
+          );
       }
 
       //desunify the data according to the target obj wanted
@@ -263,7 +279,13 @@ export class TaskService {
       );
       return result_task;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_TASK_ERROR',
+          message: 'TaskService.addTask() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -334,7 +356,13 @@ export class TaskService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_TASK_ERROR',
+          message: 'TaskService.getTask() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -463,7 +491,13 @@ export class TaskService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_TASKS_ERROR',
+          message: 'TaskService.getTasks() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

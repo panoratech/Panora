@@ -17,6 +17,7 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from './registry.service';
 import { Utils } from '@crm/@lib/@utils';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class ContactService {
@@ -53,7 +54,13 @@ export class ContactService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_CONTACTS_ERROR',
+          message: 'ContactService.batchAddContacts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -398,7 +405,13 @@ export class ContactService {
       );
       return result_contact;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_CONTACT_ERROR',
+          message: 'ContactService.addContact() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -479,7 +492,13 @@ export class ContactService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_CONTACT_ERROR',
+          message: 'ContactService.getContact() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -488,8 +507,12 @@ export class ContactService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedContactOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedContactOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -501,21 +524,23 @@ export class ContactService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_crm_contact: cursor
-          }
+            id_crm_contact: cursor,
+          },
         });
         if (!isCursorPresent) {
           throw new NotFoundError(`The provided cursor does not exist!`);
         }
       }
 
-      let contacts = await this.prisma.crm_contacts.findMany({
+      const contacts = await this.prisma.crm_contacts.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_crm_contact: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_crm_contact: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -528,8 +553,10 @@ export class ContactService {
         },
       });
 
-      if (contacts.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(contacts[contacts.length - 1].id_crm_contact).toString('base64');
+      if (contacts.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          contacts[contacts.length - 1].id_crm_contact,
+        ).toString('base64');
         contacts.pop();
       }
 
@@ -618,10 +645,16 @@ export class ContactService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_CONTACTS_ERROR',
+          message: 'ContactService.getContacts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
   //TODO
@@ -630,9 +663,7 @@ export class ContactService {
     updateContactData: Partial<UnifiedContactInput>,
   ): Promise<UnifiedContactOutput> {
     try {
-    } catch (error) {
-      handleServiceError(error, this.logger);
-    }
+    } catch (error) {}
     // TODO: fetch the contact from the database using 'id'
     // TODO: update the contact with 'updateContactData'
     // TODO: save the updated contact back to the database

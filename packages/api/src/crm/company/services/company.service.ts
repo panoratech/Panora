@@ -17,6 +17,7 @@ import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm'
 import { unify } from '@@core/utils/unification/unify';
 import { ICompanyService } from '../types';
 import { Utils } from '@crm/@lib/@utils';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class CompanyService {
@@ -52,7 +53,13 @@ export class CompanyService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_COMPANIES_ERROR',
+          message: 'CompanyService.batchAddCompanies() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -70,7 +77,7 @@ export class CompanyService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
 
       const user = unifiedCompanyData.user_id;
       //check if user_id refer to real uuids
@@ -81,7 +88,9 @@ export class CompanyService {
           },
         });
         if (!search)
-          throw new Error('You inserted a user_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a user_id which does not exist',
+          );
       }
 
       //desunify the data according to the target obj wanted
@@ -363,7 +372,13 @@ export class CompanyService {
       );
       return result_company;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_COMPANY_ERROR',
+          message: 'CompanyService.addCompany() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -447,7 +462,13 @@ export class CompanyService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_COMPANY_ERROR',
+          message: 'CompanyService.getCompany() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -456,10 +477,13 @@ export class CompanyService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedCompanyOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedCompanyOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
-
       let prev_cursor = null;
       let next_cursor = null;
 
@@ -468,21 +492,23 @@ export class CompanyService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_crm_company: cursor
-          }
+            id_crm_company: cursor,
+          },
         });
         if (!isCursorPresent) {
           throw new NotFoundError(`The provided cursor does not exist!`);
         }
       }
 
-      let companies = await this.prisma.crm_companies.findMany({
+      const companies = await this.prisma.crm_companies.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_crm_company: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_crm_company: cursor,
+            }
+          : undefined,
         orderBy: {
-          modified_at: 'asc'
+          modified_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -495,8 +521,10 @@ export class CompanyService {
         },
       });
 
-      if (companies.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(companies[companies.length - 1].id_crm_company).toString('base64');
+      if (companies.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          companies[companies.length - 1].id_crm_company,
+        ).toString('base64');
         companies.pop();
       }
 
@@ -586,10 +614,16 @@ export class CompanyService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_COMPANIES_ERROR',
+          message: 'CompanyService.getCompanies() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

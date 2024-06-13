@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { UnifiedUserOutput } from '../types/model.unified';
 
 @Injectable()
@@ -21,6 +25,8 @@ export class UserService {
           id_tcg_user: id_ticketing_user,
         },
       });
+
+      if(!user) throw new ReferenceError('User undefined')
 
       // Fetch field mappings for the ticket
       const values = await this.prisma.value.findMany({
@@ -73,7 +79,11 @@ export class UserService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_USER_ERROR",
+        message: "UserService.getUser() call failed",
+        cause: error
+      }))
     }
   }
 
@@ -201,7 +211,11 @@ export class UserService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_USERS_ERROR",
+        message: "UserService.getUsers() call failed",
+        cause: error
+      }))
     }
   }
 }

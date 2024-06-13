@@ -4,7 +4,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
-import { handleServiceError, throwTypedError, WebhooksError } from '@@core/utils/errors';
+import { throwTypedError, WebhooksError } from '@@core/utils/errors';
 import { WebhookDto } from './dto/webhook.dto';
 import axios from 'axios';
 import crypto from 'crypto';
@@ -20,19 +20,20 @@ export class WebhookService {
   }
 
   generateSignature(payload: any, secret: string): string {
-    try{
+    try {
       return crypto
-      .createHmac('sha256', secret)
-      .update(JSON.stringify(payload))
-      .digest('hex');
-    }catch(error){
-      throwTypedError(new WebhooksError(
-        {
-          name: "SIGNATURE_GENERATION_ERROR",
-          message: "WebhookService.generateSignature() call failed",
-          cause: error
-        }
-      ), this.logger) 
+        .createHmac('sha256', secret)
+        .update(JSON.stringify(payload))
+        .digest('hex');
+    } catch (error) {
+      throwTypedError(
+        new WebhooksError({
+          name: 'SIGNATURE_GENERATION_ERROR',
+          message: 'WebhookService.generateSignature() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -44,13 +45,14 @@ export class WebhookService {
         },
       });
     } catch (error) {
-      throwTypedError(new WebhooksError(
-        {
-          name: "GET_WEBHOOKS_ERROR",
-          message: "WebhookService.getWebhookEndpoints() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new WebhooksError({
+          name: 'GET_WEBHOOKS_ERROR',
+          message: 'WebhookService.getWebhookEndpoints() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -61,13 +63,14 @@ export class WebhookService {
         data: { active: active },
       });
     } catch (error) {
-      throwTypedError(new WebhooksError(
-        {
-          name: "UPDATE_WEBHOOK_STATUS_ERROR",
-          message: "WebhookService.updateStatusWebhookEndpoint() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new WebhooksError({
+          name: 'UPDATE_WEBHOOK_STATUS_ERROR',
+          message: 'WebhookService.updateStatusWebhookEndpoint() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -86,31 +89,33 @@ export class WebhookService {
         },
       });
     } catch (error) {
-      throwTypedError(new WebhooksError(
-        {
-          name: "CREATE_WEBHOOK_ERROR",
-          message: "WebhookService.createWebhookEndpoint() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new WebhooksError({
+          name: 'CREATE_WEBHOOK_ERROR',
+          message: 'WebhookService.createWebhookEndpoint() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
   async deleteWebhook(whId: string) {
-    try{
+    try {
       return await this.prisma.webhook_endpoints.delete({
         where: {
           id_webhook_endpoint: whId,
         },
       });
-    }catch(error){
-      throwTypedError(new WebhooksError(
-        {
-          name: "DELETE_WEBHOOK_ERROR",
-          message: "WebhookService.deleteWebhook() call failed",
-          cause: error
-        }
-      ), this.logger) 
+    } catch (error) {
+      throwTypedError(
+        new WebhooksError({
+          name: 'DELETE_WEBHOOK_ERROR',
+          message: 'WebhookService.deleteWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -130,14 +135,18 @@ export class WebhookService {
           active: true,
         },
       });
-      if (!webhooks) return;
+      if (!webhooks)
+        throw ReferenceError(`Webhook not found for id_project=${projectId}`);
 
       const webhook = webhooks.find((wh) => {
         const scopes = wh.scope;
         return scopes.includes(eventType);
       });
 
-      if (!webhook) return;
+      if (!webhook)
+        throw ReferenceError(
+          `Webhook not found for scope eventType=${eventType}`,
+        );
 
       this.logger.log('handling webhook payload....');
 
@@ -166,7 +175,14 @@ export class WebhookService {
         webhook_delivery_id: w_delivery.id_webhook_delivery_attempt,
       });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new WebhooksError({
+          name: 'DELIVERING_WEBHOOK_ERROR',
+          message: 'WebhookService.handleWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -186,14 +202,20 @@ export class WebhookService {
           active: true,
         },
       });
-      if (!webhooks) return;
+      if (!webhooks)
+        throw ReferenceError(
+          `Webhook endpoint undefined for id_project=${projectId}`,
+        );
 
       const webhook = webhooks.find((wh) => {
         const scopes = wh.scope;
         return scopes.includes(eventType);
       });
 
-      if (!webhook) return;
+      if (!webhook)
+        throw ReferenceError(
+          `Webhook not found for scope eventType=${eventType}`,
+        );
 
       this.logger.log('handling webhook payload....');
 
@@ -290,7 +312,14 @@ export class WebhookService {
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new WebhooksError({
+          name: 'DELIVERING_PRIORITY_WEBHOOK_ERROR',
+          message: 'WebhookService.handlePriorityWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -303,7 +332,14 @@ export class WebhookService {
         { delay: 60000 },
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new WebhooksError({
+          name: 'DELIVERING_FAILED_WEBHOOK_ERROR',
+          message: 'WebhookService.handleFailedWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -315,22 +351,21 @@ export class WebhookService {
     try {
       const expected = this.generateSignature(payload, secret);
       if (expected !== signature) {
-        throw new WebhooksError(
-          {
-            name: "INVALID_SIGNATURE_ERROR",
-            message: `Signature mismatch for the payload received with signature=${signature}`,
-          }
-        )
+        throw new WebhooksError({
+          name: 'INVALID_SIGNATURE_ERROR',
+          message: `Signature mismatch for the payload received with signature=${signature}`,
+        });
       }
       return 200;
     } catch (error) {
-      throwTypedError(new WebhooksError(
-        {
-          name: "VERIFY_PAYLOAD_ERROR",
-          message: "WebhookService.verifyPayloadSignature() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new WebhooksError({
+          name: 'VERIFY_PAYLOAD_ERROR',
+          message: 'WebhookService.verifyPayloadSignature() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

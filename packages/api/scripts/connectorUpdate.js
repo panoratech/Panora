@@ -31,35 +31,42 @@ function replaceRelativePaths(path) {
 }
 
 // Function to extract possible provider to generate import statements for new service types
-function getProvidersForImportStatements(file, allPossibleProviders, objectType) {
+function getProvidersForImportStatements(
+  file,
+  allPossibleProviders,
+  objectType,
+) {
   let fileContent = fs.readFileSync(file, 'utf8');
   const possibleImports = allPossibleProviders.filter((provider) => {
     const name =
       provider.substring(0, 1).toUpperCase() +
       provider.substring(1) +
-      objectType.substring(0, 1).toUpperCase() + objectType.substring(1);
+      objectType.substring(0, 1).toUpperCase() +
+      objectType.substring(1);
     const inputObjPattern = new RegExp(`(${name}Input)`);
     const outputObjPattern = new RegExp(`(${name}Output)`);
 
-    if (inputObjPattern.test(fileContent) || outputObjPattern.test(fileContent)) {
-      return false
+    if (
+      inputObjPattern.test(fileContent) ||
+      outputObjPattern.test(fileContent)
+    ) {
+      return false;
     }
     return true;
   });
 
   return possibleImports;
-
 }
 
 // Function to generate import statements for new service types
 function generateImportStatements(possibleProviders, basePath, objectType) {
-
   return possibleProviders.map((serviceName) => {
     const importPath = `${basePath}/${serviceName}/types`;
     const name =
       serviceName.substring(0, 1).toUpperCase() +
       serviceName.substring(1) +
-      objectType.substring(0, 1).toUpperCase() + objectType.substring(1);
+      objectType.substring(0, 1).toUpperCase() +
+      objectType.substring(1);
     return `import { ${name}Input, ${name}Output } from '${replaceRelativePaths(
       importPath,
     )}';`;
@@ -85,9 +92,14 @@ function updateTargetFile(file, importStatements, serviceNames, objectType) {
     // Update OriginalObjectTypeInput
 
     // checking whether OriginalObjectTypeInput assigns null
-    const inputNullRegex = new RegExp(`(export type Original${objectType}Input = null)`);
+    const inputNullRegex = new RegExp(
+      `(export type Original${objectType}Input = null)`,
+    );
     if (inputNullRegex.test(fileContent)) {
-      fileContent = fileContent.replace(inputNullRegex, `export type Original${objectType}Input =`)
+      fileContent = fileContent.replace(
+        inputNullRegex,
+        `export type Original${objectType}Input =`,
+      );
     }
     const inputRegex = new RegExp(`(export type Original${objectType}Input =)`);
     if (inputRegex.test(fileContent)) {
@@ -100,9 +112,14 @@ function updateTargetFile(file, importStatements, serviceNames, objectType) {
     // Update OriginalObjectTypeOutput
 
     // checking whether OriginalObjectTypeInput assigns null
-    const outputNullRegex = new RegExp(`(export type Original${objectType}Input = null)`);
+    const outputNullRegex = new RegExp(
+      `(export type Original${objectType}Input = null)`,
+    );
     if (outputNullRegex.test(fileContent)) {
-      fileContent = fileContent.replace(outputNullRegex, `export type Original${objectType}Output =`)
+      fileContent = fileContent.replace(
+        outputNullRegex,
+        `export type Original${objectType}Output =`,
+      );
     }
 
     const outputRegex = new RegExp(
@@ -330,13 +347,14 @@ function updateObjectTypes(baseDir, objectType, vertical) {
     __dirname,
     '../../shared/src/connectors/index.ts',
   );
-  const enumFilePath = path.join(__dirname, '../../shared/src/connectors/enum.ts');
+  const enumFilePath = path.join(
+    __dirname,
+    '../../shared/src/connectors/enum.ts',
+  );
   const currentProviders = extractArrayFromFile(
     providersFilePath,
     `${vertical.toUpperCase()}_PROVIDERS`,
   );
-
-
 
   // Compare the extracted arrays with the new service names
   const newProviders = newServiceDirs.filter(
@@ -369,7 +387,11 @@ function updateObjectTypes(baseDir, objectType, vertical) {
   // Call updateMappingsFile to update the mappings file with new services
   updateMappingsFile(mappingsFile, newServiceDirs, objectType, vertical);
 
-  const possibleProviderForImportStatements = getProvidersForImportStatements(targetFile, newServiceDirs, objectType);
+  const possibleProviderForImportStatements = getProvidersForImportStatements(
+    targetFile,
+    newServiceDirs,
+    objectType,
+  );
 
   // Continue with the rest of the updateObjectTypes function...
   const importStatements = generateImportStatements(
@@ -378,7 +400,12 @@ function updateObjectTypes(baseDir, objectType, vertical) {
     objectType,
   );
   // console.log(importStatements)
-  updateTargetFile(targetFile, importStatements, possibleProviderForImportStatements, objectType);
+  updateTargetFile(
+    targetFile,
+    importStatements,
+    possibleProviderForImportStatements,
+    objectType,
+  );
 }
 
 // Example usage for ticketing/team

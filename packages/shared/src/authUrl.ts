@@ -21,7 +21,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   // console.log('encodedRedirect URL : ', encodedRedirectUrl);
   // const vertical = findConnectorCategory(providerName);
   if (vertical == null) {
-    throw new Error('vertical is null');
+    throw new ReferenceError('vertical is null');
   }
 
   const config = CONNECTORS_METADATA[vertical.toLowerCase()][providerName];
@@ -85,13 +85,13 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // console.log("Fetched Data ", JSON.stringify(data))
 
   const clientId = data.CLIENT_ID;
-  if (!clientId) throw new Error(`No client id for type ${type}`)
+  if (!clientId) throw new ReferenceError(`No client id for type ${type}`)
   const scopes = data.SCOPE
 
   const { urls: urls } = config;
   const { authBaseUrl: baseUrl } = urls;
 
-  if (!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
+  if (!baseUrl) throw new ReferenceError(`No authBaseUrl found for type ${type}`)
 
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
   const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}` :

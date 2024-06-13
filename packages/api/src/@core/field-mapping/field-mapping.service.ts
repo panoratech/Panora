@@ -8,7 +8,12 @@ import {
 } from './dto/create-custom-field.dto';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-import { ActionType, CustomFieldsError, handleServiceError, throwTypedError } from '@@core/utils/errors';
+import {
+  ActionType,
+  CustomFieldsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { CrmObject } from '@crm/@lib/@types';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { CONNECTORS_METADATA } from '@panora/shared';
@@ -31,13 +36,14 @@ export class FieldMappingService {
         },
       });
     } catch (error) {
-      throwTypedError(new CustomFieldsError(
-        {
-          name: "GET_ATTRIBUTES_ERROR",
-          message: "FieldMappingService.getAttributes() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new CustomFieldsError({
+          name: 'GET_ATTRIBUTES_ERROR',
+          message: 'FieldMappingService.getAttributes() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -45,13 +51,14 @@ export class FieldMappingService {
     try {
       return await this.prisma.value.findMany();
     } catch (error) {
-      throwTypedError(new CustomFieldsError(
-        {
-          name: "GET_VALUES_ERROR",
-          message: "FieldMappingService.getValues() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new CustomFieldsError({
+          name: 'GET_VALUES_ERROR',
+          message: 'FieldMappingService.getValues() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -59,13 +66,14 @@ export class FieldMappingService {
     try {
       return await this.prisma.entity.findMany();
     } catch (error) {
-      throwTypedError(new CustomFieldsError(
-        {
-          name: "GET_ENTITIES_ERROR",
-          message: "FieldMappingService.getEntities() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new CustomFieldsError({
+          name: 'GET_ENTITIES_ERROR',
+          message: 'FieldMappingService.getEntities() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -87,13 +95,14 @@ export class FieldMappingService {
         },
       });
     } catch (error) {
-      throwTypedError(new CustomFieldsError(
-        {
-          name: "GET_CUSTOM_FIELDS_ERROR",
-          message: "FieldMappingService.getCustomFieldMappings() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new CustomFieldsError({
+          name: 'GET_CUSTOM_FIELDS_ERROR',
+          message: 'FieldMappingService.getCustomFieldMappings() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -121,13 +130,14 @@ export class FieldMappingService {
 
       return attribute;
     } catch (error) {
-      throwTypedError(new CustomFieldsError(
-        {
-          name: "CREATE_DEFINE_FIELD_ERROR",
-          message: "FieldMappingService.defineTargetField() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new CustomFieldsError({
+          name: 'CREATE_DEFINE_FIELD_ERROR',
+          message: 'FieldMappingService.defineTargetField() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -147,13 +157,14 @@ export class FieldMappingService {
 
       return updatedAttribute;
     } catch (error) {
-      throwTypedError(new CustomFieldsError(
-        {
-          name: "CREATE_MAP_FIELD_ERROR",
-          message: "FieldMappingService.mapFieldToProvider() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new CustomFieldsError({
+          name: 'CREATE_MAP_FIELD_ERROR',
+          message: 'FieldMappingService.mapFieldToProvider() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -189,13 +200,14 @@ export class FieldMappingService {
 
       return updatedAttribute;
     } catch (error) {
-      throwTypedError(new CustomFieldsError(
-        {
-          name: "CREATE_CUSTOM_FIELD_ERROR",
-          message: "FieldMappingService.createCustomField() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new CustomFieldsError({
+          name: 'CREATE_CUSTOM_FIELD_ERROR',
+          message: 'FieldMappingService.createCustomField() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -238,12 +250,17 @@ export class FieldMappingService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
-        error,
+      throwTypedError(
+        new CustomFieldsError({
+          name: 'GET_3RD_PARTY_REMOTE_PROPERTIES',
+          message: `FieldMappingService.getCustomProperties() call failed ---> ${format3rdPartyError(
+            providerId,
+            CrmObject.contact,
+            ActionType.GET,
+          )}`,
+          cause: error,
+        }),
         this.logger,
-        providerId,
-        CrmObject.contact,
-        ActionType.GET,
       );
     }
   }

@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedCollectionOutput } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -58,7 +62,11 @@ export class CollectionService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_COLLECTION_ERROR",
+        message: "CollectionService.getCollection() call failed",
+        cause: error
+      }))
     }
   }
 
@@ -158,7 +166,11 @@ export class CollectionService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_COLLECTIONS_ERROR",
+        message: "CollectionService.getCollections() call failed",
+        cause: error
+      }))
     }
   }
 }

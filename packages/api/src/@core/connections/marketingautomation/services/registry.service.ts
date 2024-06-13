@@ -19,7 +19,9 @@ export class ServiceRegistry {
   getService(integrationId: string): IMarketingAutomationConnectionService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
-      throw new Error(`Service not found for integration ID: ${integrationId}`);
+      throw new ReferenceError(
+        `Service not found for integration ID: ${integrationId}`,
+      );
     }
     return service;
   }

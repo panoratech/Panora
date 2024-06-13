@@ -3,7 +3,10 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedDealInput, UnifiedDealOutput } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
@@ -13,6 +16,7 @@ import { ServiceRegistry } from './registry.service';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
 import { unify } from '@@core/utils/unification/unify';
 import { IDealService } from '../types';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class DealService {
@@ -46,7 +50,13 @@ export class DealService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_DEALS_ERROR',
+          message: 'DealService.batchAddDeals() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -64,7 +74,7 @@ export class DealService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
 
       const stage = unifiedDealData.stage_id;
       //check if contact_id and account_id refer to real uuids
@@ -75,7 +85,9 @@ export class DealService {
           },
         });
         if (!search)
-          throw new Error('You inserted a stage_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a stage_id which does not exist',
+          );
       }
 
       const user = unifiedDealData.user_id;
@@ -87,7 +99,9 @@ export class DealService {
           },
         });
         if (!search)
-          throw new Error('You inserted a user_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a user_id which does not exist',
+          );
       }
 
       //desunify the data according to the target obj wanted
@@ -242,7 +256,13 @@ export class DealService {
       );
       return result_deal;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_DEAL_ERROR',
+          message: 'DealService.addDeal() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -311,7 +331,13 @@ export class DealService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_DEAL_ERROR',
+          message: 'DealService.getDeal() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -439,7 +465,13 @@ export class DealService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_DEALS_ERROR',
+          message: 'DealService.getDeals() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

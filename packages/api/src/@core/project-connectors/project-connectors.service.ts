@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { ConnectorSetError, handleServiceError, throwTypedError } from '@@core/utils/errors';
+import { ConnectorSetError, throwTypedError } from '@@core/utils/errors';
 import { TypeCustom } from './project-connectors.controller';
 
 @Injectable()
@@ -52,13 +52,15 @@ export class ProjectConnectorsService {
       });
       return res;
     } catch (error) {
-      throwTypedError(new ConnectorSetError(
-        {
-          name: "UPDATE_CONNECTOR_SET_ERROR",
-          message: "ProjectConnectorsService.updateProjectConnectors() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new ConnectorSetError({
+          name: 'UPDATE_CONNECTOR_SET_ERROR',
+          message:
+            'ProjectConnectorsService.updateProjectConnectors() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -84,13 +86,15 @@ export class ProjectConnectorsService {
       });
       return res;
     } catch (error) {
-      throwTypedError(new ConnectorSetError(
-        {
-          name: "CREATE_CONNECTOR_SET_ERROR",
-          message: "ProjectConnectorsService.createProjectConnectors() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new ConnectorSetError({
+          name: 'CREATE_CONNECTOR_SET_ERROR',
+          message:
+            'ProjectConnectorsService.createProjectConnectors() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -112,19 +116,19 @@ export class ProjectConnectorsService {
         },
       });
       if (!res) {
-        throw new ReferenceError(
-          'Connector set undefined!',
-        );
+        throw new ReferenceError('Connector set undefined!');
       }
       return res;
     } catch (error) {
-      throwTypedError(new ConnectorSetError(
-        {
-          name: "GET_CONNECTOR_SET_BY_PROJECT_ERROR",
-          message: "ProjectConnectorsService.getConnectorsbyProjectId() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new ConnectorSetError({
+          name: 'GET_CONNECTOR_SET_BY_PROJECT_ERROR',
+          message:
+            'ProjectConnectorsService.getConnectorsbyProjectId() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

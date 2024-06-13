@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { UnifiedAccountOutput } from '../types/model.unified';
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 
 @Injectable()
 export class AccountService {
@@ -72,7 +76,13 @@ export class AccountService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ACCOUNT_ERROR',
+          message: 'AccountService.getAccount() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -197,7 +207,13 @@ export class AccountService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ACCOUNTS_ERROR',
+          message: 'AccountService.getAccounts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

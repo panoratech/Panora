@@ -6,7 +6,7 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskTicketInput, ZendeskTicketOutput } from './types';
@@ -52,7 +52,9 @@ export class ZendeskService implements ITicketService {
               },
             });
             if (!res)
-              throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+              throw new ReferenceError(
+                `tcg_attachment not found for uuid ${uuid}`,
+              );
 
             //TODO:; fetch the right file from AWS s3
             const s3File = '';
@@ -103,10 +105,10 @@ export class ZendeskService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Zendesk',
+        'zendesk',
         TicketingObject.ticket,
         ActionType.POST,
       );
@@ -147,10 +149,10 @@ export class ZendeskService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Zendesk',
+        'zendesk',
         TicketingObject.ticket,
         ActionType.GET,
       );

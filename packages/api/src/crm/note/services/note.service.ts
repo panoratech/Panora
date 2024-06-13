@@ -3,7 +3,10 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedNoteInput, UnifiedNoteOutput } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
@@ -13,6 +16,7 @@ import { ServiceRegistry } from './registry.service';
 import { OriginalNoteOutput } from '@@core/utils/types/original/original.crm';
 import { unify } from '@@core/utils/unification/unify';
 import { INoteService } from '../types';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class NoteService {
@@ -46,7 +50,13 @@ export class NoteService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_NOTES_ERROR',
+          message: 'NoteService.batchAddNotes() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -64,7 +74,7 @@ export class NoteService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
 
       const user = unifiedNoteData.user_id;
       if (user) {
@@ -74,7 +84,9 @@ export class NoteService {
           },
         });
         if (!search)
-          throw new Error('You inserted a user_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a user_id which does not exist',
+          );
       }
 
       const company = unifiedNoteData.company_id;
@@ -86,7 +98,9 @@ export class NoteService {
           },
         });
         if (!search)
-          throw new Error('You inserted a company_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a company_id which does not exist',
+          );
       }
       const contact = unifiedNoteData.contact_id;
       //check if contact_id and account_id refer to real uuids
@@ -97,7 +111,9 @@ export class NoteService {
           },
         });
         if (!search)
-          throw new Error('You inserted a contact_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a contact_id which does not exist',
+          );
       }
 
       const deal = unifiedNoteData.deal_id;
@@ -109,7 +125,9 @@ export class NoteService {
           },
         });
         if (!search)
-          throw new Error('You inserted a deal_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a deal_id which does not exist',
+          );
       }
 
       //desunify the data according to the target obj wanted
@@ -257,7 +275,13 @@ export class NoteService {
       );
       return result_note;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_NOTE_ERROR',
+          message: 'NoteService.addNote()) call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -326,7 +350,13 @@ export class NoteService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_NOTE_ERROR',
+          message: 'NoteService.getNote() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -453,7 +483,13 @@ export class NoteService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_NOTES_ERROR',
+          message: 'NoteService.getNotes() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

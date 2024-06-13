@@ -2,11 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedUserOutput } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class UserService {
@@ -82,7 +86,13 @@ export class UserService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_USER_ERROR',
+          message: 'UserService.getUser() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -207,7 +217,13 @@ export class UserService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_USERS_ERROR',
+          message: 'UserService.getUsers() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

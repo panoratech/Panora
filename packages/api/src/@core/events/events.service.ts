@@ -1,7 +1,7 @@
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { PaginationDto } from '@@core/utils/dtos/pagination.dto';
-import { EventsError, handleServiceError, throwTypedError } from '@@core/utils/errors';
+import { EventsError, throwTypedError } from '@@core/utils/errors';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -36,13 +36,14 @@ export class EventsService {
         },
       });
     } catch (error) {
-      throwTypedError(new EventsError(
-        {
-          name: "GET_EVENTS_ERROR",
-          message: "EventsService.findEvents() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new EventsError({
+          name: 'GET_EVENTS_ERROR',
+          message: 'EventsService.findEvents() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -50,13 +51,14 @@ export class EventsService {
     try {
       return await this.prisma.events.count();
     } catch (error) {
-      throwTypedError(new EventsError(
-        {
-          name: "GET_EVENTS_COUNT_ERROR",
-          message: "EventsService.getEventsCount() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new EventsError({
+          name: 'GET_EVENTS_COUNT_ERROR',
+          message: 'EventsService.getEventsCount() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

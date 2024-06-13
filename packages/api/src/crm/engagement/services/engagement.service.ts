@@ -3,7 +3,11 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedEngagementInput,
@@ -49,7 +53,13 @@ export class EngagementService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_ENGAGEMENTS_ERROR',
+          message: 'EngagmentService.batchAddEngagements() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -67,7 +77,7 @@ export class EngagementService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
 
       const company = unifiedEngagementData.company_id;
       //check if contact_id and account_id refer to real uuids
@@ -78,16 +88,18 @@ export class EngagementService {
           },
         });
         if (!search)
-          throw new Error('You inserted a contact_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a contact_id which does not exist',
+          );
       }
       const type = unifiedEngagementData.type.toUpperCase();
       if (type) {
         if (!ENGAGEMENTS_TYPE.includes(type))
-          throw new Error(
+          throw new ReferenceError(
             'You inserted a engagement type which does not exist',
           );
       } else {
-        throw new Error('You didnt insert a type for your engagement');
+        throw new ReferenceError('You didnt insert a type for your engagement');
       }
 
       const engagement_contacts = unifiedEngagementData.contacts;
@@ -99,7 +111,7 @@ export class EngagementService {
             },
           });
           if (!search)
-            throw new Error(
+            throw new ReferenceError(
               'You inserted an id_crm_engagement_contact which does not exist',
             );
         });
@@ -286,7 +298,13 @@ export class EngagementService {
       );
       return result_engagement;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_ENGAGEMENT_ERROR',
+          message: 'EngagmentService.addEngagement() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -363,7 +381,13 @@ export class EngagementService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_ENGAGEMENT_ERROR',
+          message: 'EngagmentService.getEngagement() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -498,7 +522,13 @@ export class EngagementService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_ENGAGEMENTS_ERROR',
+          message: 'EngagmentService.getEngagements() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

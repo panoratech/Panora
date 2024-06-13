@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+<<<<<<< HEAD
 import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+=======
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
+>>>>>>> 0a8f4472 (:ambulance: Errors fixing new format)
 import { UnifiedTeamOutput } from '../types/model.unified';
 
 @Injectable()
@@ -72,7 +76,11 @@ export class TeamService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_TEAM_ERROR",
+        message: "TeamService.getTeam() call failed",
+        cause: error
+      }))
     }
   }
 
@@ -198,7 +206,11 @@ export class TeamService {
         next_cursor
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_TEAMS_ERROR",
+        message: "TeamService.getTeams() call failed",
+        cause: error
+      }))
     }
   }
 }
