@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { handleServiceError } from '@@core/utils/errors';
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { UnifiedTagOutput } from '../types/model.unified';
 
 @Injectable()
@@ -71,7 +71,11 @@ export class TagService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_TAG_ERROR",
+        message: "TagService.getTag() call failed",
+        cause: error
+      }))
     }
   }
 
@@ -157,7 +161,11 @@ export class TagService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new UnifiedTicketingError({
+        name: "GET_TAGS_ERROR",
+        message: "TagService.getTags() call failed",
+        cause: error
+      }))
     }
   }
 }

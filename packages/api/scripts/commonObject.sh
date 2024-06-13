@@ -51,12 +51,12 @@ export class ServiceRegistry {
   getService(integrationId: string): I${ObjectCap}Service {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
-      throw new Error(`Service not found for integration ID: ${integrationId}`);
+      throw new ReferenceError(`Service not found for integration ID: ${integrationId}`);
     }
     return service;
   }
 }
-EOF
+EOF 
 
 cat > "services/${objectType}.service.ts" <<EOF
 import { Injectable } from '@nestjs/common';
@@ -64,7 +64,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
+import { throwTypedError, Unified${VerticalCap}Error } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
@@ -107,7 +107,13 @@ export class ${ObjectCap}Service {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new Unified${VerticalCap}Error({
+          name: 'CREATE_${ObjectCap}S_ERROR',
+          message: '${ObjectCap}Service.batchAdd${ObjectCap}s() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -125,7 +131,7 @@ export class ${ObjectCap}Service {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
       const tick = unified${ObjectCap}Data.ticket_id;
       //check if contact_id and account_id refer to real uuids
       if (tick) {
@@ -135,7 +141,7 @@ export class ${ObjectCap}Service {
           },
         });
         if (!search)
-          throw new Error('You inserted a ticket_id which does not exist');
+          throw new ReferenceError('You inserted a ticket_id which does not exist');
       }
 
       const contact = unified${ObjectCap}Data.contact_id;
@@ -147,7 +153,7 @@ export class ${ObjectCap}Service {
           },
         });
         if (!search)
-          throw new Error('You inserted a contact_id which does not exist');
+          throw new ReferenceError('You inserted a contact_id which does not exist');
       }
       const user = unified${ObjectCap}Data.user_id;
       //check if contact_id and account_id refer to real uuids
@@ -158,7 +164,7 @@ export class ${ObjectCap}Service {
           },
         });
         if (!search)
-          throw new Error('You inserted a user_id which does not exist');
+          throw new ReferenceError('You inserted a user_id which does not exist');
       }
 
       const attachmts = unified${ObjectCap}Data.attachments;
@@ -171,7 +177,7 @@ export class ${ObjectCap}Service {
             },
           });
           if (!search)
-            throw new Error(
+            throw new ReferenceError(
               'You inserted an attachment_id which does not exist',
             );
         });
@@ -198,7 +204,7 @@ export class ${ObjectCap}Service {
         },
       });
       if (!ticket)
-        throw new Error(
+        throw new ReferenceError(
           'ticket does not exist for the ${objectType} you try to create',
         );
       const resp: ApiResponse<Original${ObjectCap}Output> = await service.add${ObjectCap}(
@@ -348,7 +354,13 @@ export class ${ObjectCap}Service {
       );
       return result_${objectType};
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new Unified${VerticalCap}Error({
+          name: 'CREATE_${ObjectCap}_ERROR',
+          message: '${ObjectCap}Service.add${ObjectCap}() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -421,7 +433,13 @@ export class ${ObjectCap}Service {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new Unified${VerticalCap}Error({
+          name: 'GET_${ObjectCap}_ERROR',
+          message: '${ObjectCap}Service.get${ObjectCap}() call failed',
+          cause: error,
+        }),
+      );    
     }
   }
 
@@ -513,7 +531,13 @@ export class ${ObjectCap}Service {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new Unified${VerticalCap}Error({
+          name: 'GET_${ObjectCap}S_ERROR',
+          message: '${ObjectCap}Service.get${ObjectCap}s() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }
@@ -523,7 +547,7 @@ cat > "sync/sync.service.ts" <<EOF
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { NotFoundError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -534,7 +558,7 @@ import { ${VerticalCap}Object } from '@${VerticalLow}/@utils/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { Unified${ObjectCap}Output } from '../types/model.unified';
 import { I${ObjectCap}Service } from '../types';
-
+ 
 @Injectable()
 export class SyncService implements OnModuleInit {
   constructor(

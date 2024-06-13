@@ -9,7 +9,7 @@ import {
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ConnectionsError, handleServiceError, throwTypedError } from '@@core/utils/errors';
+import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
@@ -37,7 +37,7 @@ export class ConnectionsController {
     private readonly marketingAutomationConnectionsService: MarketingAutomationConnectionsService,
     private logger: LoggerService,
     private prisma: PrismaService,
-    private coreSync: CoreSyncService
+    private coreSync: CoreSyncService,
   ) {
     this.logger.setContext(ConnectionsController.name);
   }
@@ -59,19 +59,15 @@ export class ConnectionsController {
   ) {
     try {
       if (!state)
-      new ConnectionsError(
-        {
-          name: "OAUTH_CALLBACK_STATE_NOT_FOUND_ERROR",
+        new ConnectionsError({
+          name: 'OAUTH_CALLBACK_STATE_NOT_FOUND_ERROR',
           message: `No Callback Params found for state, found ${state}`,
-        }
-      )
+        });
       if (!code)
-        new ConnectionsError(
-          {
-            name: "OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR",
-            message: `No Callback Params found for code, found ${code}`,
-          }
-        )
+        new ConnectionsError({
+          name: 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR',
+          message: `No Callback Params found for code, found ${code}`,
+        });
 
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
       const { projectId, vertical, linkedUserId, providerName, returnUrl } =
@@ -127,13 +123,14 @@ export class ConnectionsController {
       );
       res.redirect(returnUrl);
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "OAUTH_CALLBACK_ERROR",
-          message: "ConnectionsController.handleCallback() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new ConnectionsError({
+          name: 'OAUTH_CALLBACK_ERROR',
+          message: 'ConnectionsController.handleCallback() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -149,11 +146,18 @@ export class ConnectionsController {
     @Query('state') state: string,
   ) {
     try {
-      if (!account) throw new Error('account prop not found');
+      if (!account) throw new ReferenceError('account prop not found');
       const params = `?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}&state=${state}&nonce=${nonce}&scope=${scope}`;
       res.redirect(`https://${account}.gorgias.com/oauth/authorize${params}`);
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'OAUTH_CALLBACK_ERROR',
+          message: 'ConnectionsController.handleGorgiasAuthUrl() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -165,7 +169,7 @@ export class ConnectionsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getConnections(@Request() req: any) {
-    try{
+    try {
       const { id_project } = req.user;
       console.log('Req data is:', req.user);
       return await this.prisma.connections.findMany({
@@ -173,14 +177,15 @@ export class ConnectionsController {
           id_project: id_project,
         },
       });
-    }catch(error){
-      throwTypedError(new ConnectionsError(
-        {
-          name: "GET_CONNECTIONS_ERROR",
-          message: "ConnectionsController.getConnections() call failed",
-          cause: error
-        }
-      ), this.logger) 
+    } catch (error) {
+      throwTypedError(
+        new ConnectionsError({
+          name: 'GET_CONNECTIONS_ERROR',
+          message: 'ConnectionsController.getConnections() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

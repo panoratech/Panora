@@ -1,6 +1,6 @@
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { SyncError, throwTypedError } from '@@core/utils/errors';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
@@ -35,7 +35,7 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -67,12 +67,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing comments....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -109,18 +109,25 @@ export class SyncService implements OnModuleInit {
                       );
                     }
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'TICKETING_COMMENT_SYNC_ERROR',
+          message: 'SyncService.syncComments() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -147,7 +154,9 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping comments syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
+        throw ReferenceError(
+          `Connection undefined for id_linked_user=${linkedUserId} and integrationId=${integrationId}`,
+        );
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -205,7 +214,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -223,7 +232,7 @@ export class SyncService implements OnModuleInit {
         const originId = comment.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingComment = await this.prisma.tcg_comments.findFirst({
@@ -236,15 +245,15 @@ export class SyncService implements OnModuleInit {
 
         let unique_ticketing_comment_id: string;
         const opts =
-          (comment.creator_type === 'CONTACT' && comment.contact_id)
+          comment.creator_type === 'CONTACT' && comment.contact_id
             ? {
-              id_tcg_contact: comment.contact_id,
-            }
-            : (comment.creator_type === 'USER' && comment.user_id)
-              ? {
+                id_tcg_contact: comment.contact_id,
+              }
+            : comment.creator_type === 'USER' && comment.user_id
+            ? {
                 id_tcg_user: comment.user_id,
               }
-              : {};
+            : {};
         //case where nothing is passed for creator or a not authorized value;
 
         if (existingComment) {
@@ -403,7 +412,7 @@ export class SyncService implements OnModuleInit {
       }
       return comments_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 }

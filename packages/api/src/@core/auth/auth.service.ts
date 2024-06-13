@@ -1,6 +1,4 @@
-import {
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -28,13 +26,14 @@ export class AuthService {
     try {
       return await this.prisma.users.findMany();
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "GET_USERS_ERROR",
-          message: "AuthService.getUsers() call failed",
-          cause: error
-        }
-      ), this.logger)
+      throwTypedError(
+        new AuthError({
+          name: 'GET_USERS_ERROR',
+          message: 'AuthService.getUsers() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -52,13 +51,14 @@ export class AuthService {
 
       return verifyUser;
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "VERIFY_USER_ERROR",
-          message: "AuthService.verifyUser() call failed",
-          cause: error
-        }
-      ), this.logger)
+      throwTypedError(
+        new AuthError({
+          name: 'VERIFY_USER_ERROR',
+          message: 'AuthService.verifyUser() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -70,13 +70,14 @@ export class AuthService {
         },
       });
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "GET_API_KEYS_ERROR",
-          message: "AuthService.getApiKeys() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new AuthError({
+          name: 'GET_API_KEYS_ERROR',
+          message: 'AuthService.getApiKeys() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -87,23 +88,22 @@ export class AuthService {
       });
 
       if (foundUser) {
-        new AuthError(
-          {
-            name: "EMAIL_ALREADY_EXISTS_ERROR",
-            message: `Email already exists for user with email=${user.email}`,
-          }
-        )
+        new AuthError({
+          name: 'EMAIL_ALREADY_EXISTS_ERROR',
+          message: `Email already exists for user with email=${user.email}`,
+        });
       }
 
       return await this.createUser(user);
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "REGISTER_USER_ERROR",
-          message: "AuthService.register() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new AuthError({
+          name: 'REGISTER_USER_ERROR',
+          message: 'AuthService.register() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -125,16 +125,17 @@ export class AuthService {
       await this.projectService.createProject({
         name: 'Project 1',
         id_user: user_.id_user,
-      }); 
+      });
       return user_;
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "CREATE_USER_ERROR",
-          message: "AuthService.createUser() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new AuthError({
+          name: 'CREATE_USER_ERROR',
+          message: 'AuthService.createUser() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -165,7 +166,10 @@ export class AuthService {
         foundUser.password_hash,
       );
 
-      if (!isEq) throw new ReferenceError('Bcrypt Invalid credentials, mismatch in password.');
+      if (!isEq)
+        throw new ReferenceError(
+          'Bcrypt Invalid credentials, mismatch in password.',
+        );
 
       const { ...userData } = foundUser;
 
@@ -189,13 +193,14 @@ export class AuthService {
         }), // token used to generate api keys
       };
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "LOGIN_USER_ERROR",
-          message: "AuthService.login() call failed",
-          cause: error
-        }
-      ), this.logger)    
+      throwTypedError(
+        new AuthError({
+          name: 'LOGIN_USER_ERROR',
+          message: 'AuthService.login() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -220,27 +225,29 @@ export class AuthService {
         }),
       };
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "REFRESH_ACCESS_TOKEN_ERROR",
-          message: "AuthService.refreshAccessToken() call failed",
-          cause: error
-        }
-      ), this.logger)
+      throwTypedError(
+        new AuthError({
+          name: 'REFRESH_ACCESS_TOKEN_ERROR',
+          message: 'AuthService.refreshAccessToken() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
   hashApiKey(apiKey: string): string {
-    try{
+    try {
       return crypto.createHash('sha256').update(apiKey).digest('hex');
-    }catch(error){
-      throwTypedError(new AuthError(
-        {
-          name: "HASH_API_KEY_ERROR",
-          message: "AuthService.hashApiKey() call failed",
-          cause: error
-        }
-      ), this.logger)
+    } catch (error) {
+      throwTypedError(
+        new AuthError({
+          name: 'HASH_API_KEY_ERROR',
+          message: 'AuthService.hashApiKey() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -261,13 +268,14 @@ export class AuthService {
         }),
       };
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "GENERATE_API_KEY_ERROR",
-          message: "AuthService.generateApiKey() call failed",
-          cause: error
-        }
-      ), this.logger)
+      throwTypedError(
+        new AuthError({
+          name: 'GENERATE_API_KEY_ERROR',
+          message: 'AuthService.generateApiKey() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -281,21 +289,17 @@ export class AuthService {
         where: { id_project: projectId },
       });
       if (!foundProject) {
-        throw new ReferenceError(
-          'project undefined',
-        );
+        throw new ReferenceError('project undefined');
       }
       const foundUser = await this.prisma.users.findUnique({
         where: { id_user: userId },
       });
       if (!foundUser) {
-        throw new ReferenceError(
-          'user undefined',
-        );
+        throw new ReferenceError('user undefined');
       }
 
       /*if (foundProject.id_organization !== foundUser.id_organization) {
-        throw new Error('User is not inside the project');
+        throw new ReferenceError('User is not inside the project');
       }*/
       // Generate a new API key (use a secure method for generation)
       const { access_token } = await this.generateApiKey(projectId, userId);
@@ -316,31 +320,33 @@ export class AuthService {
 
       return { api_key: access_token, ...new_api_key };
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "GENERATE_API_KEY_ERROR",
-          message: "AuthService.generateApiKeyForUser() call failed",
-          cause: error
-        }
-      ), this.logger)
+      throwTypedError(
+        new AuthError({
+          name: 'GENERATE_API_KEY_ERROR',
+          message: 'AuthService.generateApiKeyForUser() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
   async deleteApiKey(apiKeyId: string) {
-    try{
+    try {
       return await this.prisma.api_keys.delete({
         where: {
           id_api_key: apiKeyId,
         },
       });
-    }catch(error){
-      throwTypedError(new AuthError(
-        {
-          name: "DELETE_API_KEY_ERROR",
-          message: "AuthService.deleteApiKey() call failed",
-          cause: error
-        }
-      ), this.logger)
+    } catch (error) {
+      throwTypedError(
+        new AuthError({
+          name: 'DELETE_API_KEY_ERROR',
+          message: 'AuthService.deleteApiKey() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -357,7 +363,7 @@ export class AuthService {
           api_key_hash: apiKey,
         },
       });
-      
+
       if (!saved_api_key) {
         throw new ReferenceError('Api Key undefined');
       }
@@ -375,13 +381,14 @@ export class AuthService {
       }
       return true;
     } catch (error) {
-      throwTypedError(new AuthError(
-        {
-          name: "VALIDATE_API_KEY_ERROR",
-          message: "AuthService.validateApiKey() call failed",
-          cause: error
-        }
-      ), this.logger)
+      throwTypedError(
+        new AuthError({
+          name: 'VALIDATE_API_KEY_ERROR',
+          message: 'AuthService.validateApiKey() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

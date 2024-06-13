@@ -5,7 +5,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ITagService } from '@ticketing/tag/types';
 import { JiraTagOutput } from './types';
@@ -67,10 +67,10 @@ export class JiraService implements ITagService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Jira',
+        'jira',
         TicketingObject.tag,
         ActionType.GET,
       );

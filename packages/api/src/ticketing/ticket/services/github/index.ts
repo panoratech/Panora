@@ -6,7 +6,7 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GithubTicketInput, GithubTicketOutput } from './types';
 
@@ -57,10 +57,10 @@ export class GithubService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Github',
+        'github',
         TicketingObject.ticket,
         ActionType.POST,
       );
@@ -96,10 +96,10 @@ export class GithubService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Github',
+        'github',
         TicketingObject.ticket,
         ActionType.GET,
       );

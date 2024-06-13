@@ -6,7 +6,7 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
 import { Utils } from '@ticketing/@lib/@utils';
@@ -54,7 +54,9 @@ export class FrontService implements ITicketService {
             },
           });
           if (!res)
-            throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+            throw new ReferenceError(
+              `tcg_attachment not found for uuid ${uuid}`,
+            );
           //TODO: construct the right binary attachment
           //get the AWS s3 right file
           //TODO: check how to send a stream of a url
@@ -152,10 +154,10 @@ export class FrontService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Front',
+        'front',
         TicketingObject.ticket,
         ActionType.POST,
       );
@@ -189,10 +191,10 @@ export class FrontService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Front',
+        'front',
         TicketingObject.ticket,
         ActionType.GET,
       );

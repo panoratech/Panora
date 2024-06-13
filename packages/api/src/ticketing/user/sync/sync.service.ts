@@ -1,7 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,6 +16,7 @@ import { UnifiedUserOutput } from '../types/model.unified';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { SyncError, throwTypedError } from '@@core/utils/errors';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -35,12 +35,12 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
   private async scheduleSyncJob() {
-    try{
+    try {
       const jobName = 'ticketing-sync-users';
 
       // Remove existing jobs to avoid duplicates in case of application restart
@@ -58,8 +58,8 @@ export class SyncService implements OnModuleInit {
           repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
         },
       );
-    }catch(error){
-      throw new Error(error);
+    } catch (error) {
+      throw error;
     }
   }
   //function used by sync worker which populate our tcg_users table
@@ -71,12 +71,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing users....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -103,18 +103,25 @@ export class SyncService implements OnModuleInit {
                       id_project,
                     );
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'TICKETING_USER_SYNC_ERROR',
+          message: 'SyncService.syncUsers() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -140,7 +147,9 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping users syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
+        throw ReferenceError(
+          `Connection undefined for id_linked_user=${linkedUserId} and integrationId=${integrationId}`,
+        );
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -172,8 +181,6 @@ export class SyncService implements OnModuleInit {
         customFieldMappings,
       })) as UnifiedUserOutput[];
 
-
-
       //insert the data in the DB with the fieldMappings (value table)
       const user_data = await this.saveUsersInDb(
         linkedUserId,
@@ -201,7 +208,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -330,7 +337,7 @@ export class SyncService implements OnModuleInit {
       }
       return users_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 }

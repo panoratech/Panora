@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedCommentInput,
@@ -47,7 +47,13 @@ export class CommentService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_COMMENTS_ERROR',
+          message: 'CommentService.addComments() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -65,7 +71,7 @@ export class CommentService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
       const tick = unifiedCommentData.ticket_id;
       //check if contact_id and account_id refer to real uuids
       if (tick) {
@@ -75,9 +81,11 @@ export class CommentService {
           },
         });
         if (!search)
-          throw new Error('You inserted a ticket_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a ticket_id which does not exist',
+          );
       } else {
-        throw new Error(
+        throw new ReferenceError(
           'You must attach your comment to a ticket, specify a ticket_id',
         );
       }
@@ -91,7 +99,9 @@ export class CommentService {
           },
         });
         if (!search)
-          throw new Error('You inserted a contact_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a contact_id which does not exist',
+          );
       }
       const user = unifiedCommentData.user_id;
       //check if contact_id and account_id refer to real uuids
@@ -102,7 +112,9 @@ export class CommentService {
           },
         });
         if (!search)
-          throw new Error('You inserted a user_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a user_id which does not exist',
+          );
       }
 
       const attachmts = unifiedCommentData.attachments;
@@ -115,7 +127,7 @@ export class CommentService {
             },
           });
           if (!search)
-            throw new Error(
+            throw new ReferenceError(
               'You inserted an attachment_id which does not exist',
             );
         });
@@ -142,7 +154,7 @@ export class CommentService {
         },
       });
       if (!ticket)
-        throw new Error(
+        throw new ReferenceError(
           'ticket does not exist for the comment you try to create',
         );
       const resp: ApiResponse<OriginalCommentOutput> = await service.addComment(
@@ -290,7 +302,13 @@ export class CommentService {
       );
       return result_comment;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_COMMENT_ERROR',
+          message: 'CommentService.addComment() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -364,7 +382,13 @@ export class CommentService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_COMMENT_ERROR',
+          message: 'CommentService.getComment() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -457,7 +481,13 @@ export class CommentService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_COMMENTS_ERROR',
+          message: 'CommentService.getComments() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

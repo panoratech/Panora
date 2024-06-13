@@ -2,11 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { handleServiceError } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedStageOutput } from '../types/model.unified';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from './registry.service';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class StageService {
@@ -75,7 +72,13 @@ export class StageService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_STAGE_ERROR',
+          message: 'StageService.getStage() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -160,7 +163,13 @@ export class StageService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_STAGES_ERROR',
+          message: 'StageService.getStages() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { handleServiceError, LinkedUserError, throwTypedError } from '@@core/utils/errors';
+import { LinkedUserError, throwTypedError } from '@@core/utils/errors';
 
 @Injectable()
 export class LinkedUsersService {
@@ -21,13 +21,14 @@ export class LinkedUsersService {
         },
       });
     } catch (error) {
-      throwTypedError(new LinkedUserError(
-        {
-          name: "GET_LINKED_USERS_ERROR",
-          message: "LinkedUsersService.getLinkedUsers() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new LinkedUserError({
+          name: 'GET_LINKED_USERS_ERROR',
+          message: 'LinkedUsersService.getLinkedUsers() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
   async getLinkedUser(id: string) {
@@ -38,13 +39,14 @@ export class LinkedUsersService {
         },
       });
     } catch (error) {
-      throwTypedError(new LinkedUserError(
-        {
-          name: "GET_LINKED_USER_ERROR",
-          message: "LinkedUsersService.getLinkedUser() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new LinkedUserError({
+          name: 'GET_LINKED_USER_ERROR',
+          message: 'LinkedUsersService.getLinkedUser() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
   async getLinkedUserV2(originId: string) {
@@ -55,13 +57,14 @@ export class LinkedUsersService {
         },
       });
     } catch (error) {
-      throwTypedError(new LinkedUserError(
-        {
-          name: "GET_LINKED_USER_FROM_REMOTE_ID_ERROR",
-          message: "LinkedUsersService.getLinkedUserV2() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new LinkedUserError({
+          name: 'GET_LINKED_USER_FROM_REMOTE_ID_ERROR',
+          message: 'LinkedUsersService.getLinkedUserV2() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
   async addLinkedUser(data: CreateLinkedUserDto) {
@@ -76,13 +79,14 @@ export class LinkedUsersService {
       });
       return res;
     } catch (error) {
-      throwTypedError(new LinkedUserError(
-        {
-          name: "CREATE_LINKED_USER_ERROR",
-          message: "LinkedUsersService.addlinkedUser() call failed",
-          cause: error
-        }
-      ), this.logger) ;
+      throwTypedError(
+        new LinkedUserError({
+          name: 'CREATE_LINKED_USER_ERROR',
+          message: 'LinkedUsersService.addlinkedUser() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
   async addBatchLinkedUsers(data: CreateBatchLinkedUserDto) {
@@ -103,13 +107,14 @@ export class LinkedUsersService {
 
       return res;
     } catch (error) {
-      throwTypedError(new LinkedUserError(
-        {
-          name: "CREATE_BATCH_LINKED_USER_ERROR",
-          message: "LinkedUsersService.addBatchLinkedUsers() call failed",
-          cause: error
-        }
-      ), this.logger) 
+      throwTypedError(
+        new LinkedUserError({
+          name: 'CREATE_BATCH_LINKED_USER_ERROR',
+          message: 'LinkedUsersService.addBatchLinkedUsers() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedAttachmentInput,
@@ -40,7 +40,13 @@ export class AttachmentService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_ATTACHMENTS_ERROR',
+          message: 'AttachmentService.batchAddAttachments() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -56,7 +62,7 @@ export class AttachmentService {
           id_linked_user: linkedUserId,
         },
       });
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
 
       //EXCEPTION: for Attachments we directly store them inside our db (no raw call to the provider)
       //the actual job to retrieve the attachment info would be done inside /comments
@@ -132,7 +138,13 @@ export class AttachmentService {
       );
       return result_attachment;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_ATTACHMENT_ERROR',
+          message: 'AttachmentService.addAttachment() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -198,7 +210,13 @@ export class AttachmentService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ATTACHMENT_ERROR',
+          message: 'AttachmentService.getAttachment() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -287,7 +305,13 @@ export class AttachmentService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ATTACHMENTS_ERROR',
+          message: 'AttachmentService.getAttachments() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

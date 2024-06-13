@@ -5,7 +5,7 @@ import { ZendeskUserOutput } from './types';
 import axios from 'axios';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
@@ -53,7 +53,7 @@ export class ZendeskService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
         'Zendesk',

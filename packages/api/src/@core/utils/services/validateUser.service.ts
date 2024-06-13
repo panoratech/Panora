@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { handleServiceError } from '@@core/utils/errors';
 
 @Injectable()
 export class ValidateUserService {
@@ -15,11 +14,11 @@ export class ValidateUserService {
         },
       });
       if (project.id_user !== user_id) {
-        throw new Error('Unauthorized call from sender');
+        throw new ReferenceError('User mismatch');
       }
       return true;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 }

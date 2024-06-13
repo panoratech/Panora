@@ -3,7 +3,6 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedCompanyInput,
@@ -17,6 +16,7 @@ import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm'
 import { unify } from '@@core/utils/unification/unify';
 import { ICompanyService } from '../types';
 import { Utils } from '@crm/@lib/@utils';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class CompanyService {
@@ -52,7 +52,13 @@ export class CompanyService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_COMPANIES_ERROR',
+          message: 'CompanyService.batchAddCompanies() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -70,7 +76,7 @@ export class CompanyService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
 
       const user = unifiedCompanyData.user_id;
       //check if user_id refer to real uuids
@@ -81,7 +87,9 @@ export class CompanyService {
           },
         });
         if (!search)
-          throw new Error('You inserted a user_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a user_id which does not exist',
+          );
       }
 
       //desunify the data according to the target obj wanted
@@ -363,7 +371,13 @@ export class CompanyService {
       );
       return result_company;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_COMPANY_ERROR',
+          message: 'CompanyService.addCompany() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -447,7 +461,13 @@ export class CompanyService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_COMPANY_ERROR',
+          message: 'CompanyService.getCompany() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -550,7 +570,13 @@ export class CompanyService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_COMPANIES_ERROR',
+          message: 'CompanyService.getCompanies() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

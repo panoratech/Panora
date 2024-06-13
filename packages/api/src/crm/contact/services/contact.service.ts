@@ -11,12 +11,12 @@ import {
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { ApiResponse } from '@@core/utils/types';
-import { handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from './registry.service';
 import { Utils } from '@crm/@lib/@utils';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class ContactService {
@@ -53,7 +53,13 @@ export class ContactService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_CONTACTS_ERROR',
+          message: 'ContactService.batchAddContacts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -398,7 +404,13 @@ export class ContactService {
       );
       return result_contact;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_CONTACT_ERROR',
+          message: 'ContactService.addContact() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -479,7 +491,13 @@ export class ContactService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_CONTACT_ERROR',
+          message: 'ContactService.getContact() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -583,7 +601,13 @@ export class ContactService {
       });
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_CONTACTS_ERROR',
+          message: 'ContactService.getContacts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
   //TODO
@@ -592,9 +616,7 @@ export class ContactService {
     updateContactData: Partial<UnifiedContactInput>,
   ): Promise<UnifiedContactOutput> {
     try {
-    } catch (error) {
-      handleServiceError(error, this.logger);
-    }
+    } catch (error) {}
     // TODO: fetch the contact from the database using 'id'
     // TODO: update the contact with 'updateContactData'
     // TODO: save the updated contact back to the database

@@ -56,15 +56,11 @@ export class UserController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
-    } catch (error) {
-      throw new Error(error);
-    }
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
   }
 
   @ApiOperation({
