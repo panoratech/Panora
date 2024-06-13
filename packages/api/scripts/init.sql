@@ -399,6 +399,8 @@ CREATE TABLE connector_sets
  crm_hubspot      boolean NOT NULL,
  crm_zoho         boolean NOT NULL,
  crm_attio        boolean NOT NULL,
+ crm_close        boolean NOT NULL,
+ crm_zendesk      boolean NOT NULL,
  crm_pipedrive    boolean NOT NULL,
  tcg_zendesk      boolean NOT NULL,
  tcg_jira         boolean NOT NULL,
@@ -542,27 +544,21 @@ ex 3600 for one hour';
 
 CREATE TABLE fs_folders
 (
- id_fs_folder     uuid NOT NULL,
- folder_url       text NULL,
- "size"           bigint NULL,
- description      text NULL,
- parent_folder    uuid NULL,
- remote_id        text NULL,
- created_at       timestamp NOT NULL,
- modified_at      timestamp NOT NULL,
- id_fs_drive      uuid NULL,
- id_fs_permission uuid NOT NULL,
- CONSTRAINT PK_fs_folders PRIMARY KEY ( id_fs_folder )
-);
-
-CREATE INDEX FK_fs_folder_driveID ON fs_folders
-(
- id_fs_drive
-);
-
-CREATE INDEX FK_fs_folder_permissionID ON fs_folders
-(
- id_fs_permission
+    id_project_connector uuid NOT NULL,
+    id_project        uuid NOT NULL,
+    crm_hubspot boolean NOT NULL,
+    crm_zoho boolean NOT NULL,
+    crm_zendesk boolean NOT NULL,
+    crm_pipedrive boolean NOT NULL,
+    crm_attio boolean NOT NULL,
+    crm_close boolean NOT NULL,
+    tcg_zendesk boolean NOT NULL,
+    tcg_gorgias boolean NOT NULL,
+    tcg_front boolean NOT NULL,
+    tcg_jira boolean NOT NULL,
+    tcg_gitlab boolean NOT NULL,
+    CONSTRAINT PK_project_connectors PRIMARY KEY ( id_project_connector ),
+    CONSTRAINT FK_project_connectors FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
 );
 
 

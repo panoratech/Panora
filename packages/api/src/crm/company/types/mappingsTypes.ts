@@ -3,12 +3,14 @@ import { HubspotCompanyMapper } from '../services/hubspot/mappers';
 import { PipedriveCompanyMapper } from '../services/pipedrive/mappers';
 import { ZendeskCompanyMapper } from '../services/zendesk/mappers';
 import { ZohoCompanyMapper } from '../services/zoho/mappers';
+import { CloseCompanyMapper } from '../services/close/mappers';
 
 const hubspotCompanyMapper = new HubspotCompanyMapper();
 const zendeskCompanyMapper = new ZendeskCompanyMapper();
 const zohoCompanyMapper = new ZohoCompanyMapper();
 const pipedriveCompanyMapper = new PipedriveCompanyMapper();
 const attioCompanyMapper = new AttioCompanyMapper();
+const closeCompanyMapper = new CloseCompanyMapper();
 
 export const companyUnificationMapping = {
   hubspot: {
@@ -30,5 +32,9 @@ export const companyUnificationMapping = {
   attio: {
     unify: attioCompanyMapper.unify.bind(attioCompanyMapper),
     desunify: attioCompanyMapper.desunify.bind(attioCompanyMapper),
+  },
+  close: {
+    unify: closeCompanyMapper.unify.bind(closeCompanyMapper),
+    desunify: closeCompanyMapper.desunify.bind(closeCompanyMapper),
   },
 };

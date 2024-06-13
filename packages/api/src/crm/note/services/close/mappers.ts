@@ -1,0 +1,125 @@
+import { CloseNoteInput, CloseNoteOutput } from './types';
+import {
+  UnifiedNoteInput,
+  UnifiedNoteOutput,
+} from '@crm/note/types/model.unified';
+import { INoteMapper } from '@crm/note/types';
+import { Utils } from '@crm/@lib/@utils';
+
+export class CloseNoteMapper implements INoteMapper {
+  private readonly utils: Utils;
+
+  constructor() {
+    this.utils = new Utils();
+  }
+
+  async desunify(
+    source: UnifiedNoteInput,
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+  ): Promise<CloseNoteInput> {
+    const result: CloseNoteInput = {
+      note_html: source.content,
+    };
+
+    if (source.company_id) {
+      const company_id = await this.utils.getRemoteIdFromCompanyUuid(
+        source.company_id,
+      );
+      if (company_id) {
+        result.lead_id = company_id;
+      }
+    }
+
+    if (customFieldMappings && source.field_mappings) {
+      for (const [k, v] of Object.entries(source.field_mappings)) {
+        const mapping = customFieldMappings.find(
+          (mapping) => mapping.slug === k,
+        );
+        if (mapping) {
+          result[mapping.remote_id] = v;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  async unify(
+    source: CloseNoteOutput | CloseNoteOutput[],
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
+    if (!Array.isArray(source)) {
+      return await this.mapSingleNoteToUnified(source, customFieldMappings);
+    }
+
+    return Promise.all(
+      source.map((note) =>
+        this.mapSingleNoteToUnified(note, customFieldMappings),
+      ),
+    );
+  }
+
+  private async mapSingleNoteToUnified(
+    note: CloseNoteOutput,
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+  ): Promise<UnifiedNoteOutput> {
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = note[mapping.remote_id];
+      }
+    }
+
+    let opts: any = {};
+    if (note.created_by || note.user_id) {
+      const owner_id = await this.utils.getUserUuidFromRemoteId(
+        note.created_by || note.user_id,
+        'close',
+      );
+      if (owner_id) {
+        opts = {
+          user_id: owner_id,
+        };
+      }
+    }
+    if (note.contact_id) {
+      const contact_id = await this.utils.getContactUuidFromRemoteId(
+        note.contact_id,
+        'close',
+      );
+      if (contact_id) {
+        opts = {
+          ...opts,
+          contact_id: contact_id,
+        };
+      }
+    }
+    if (note.lead_id) {
+      const lead_id = await this.utils.getCompanyUuidFromRemoteId(
+        note.lead_id,
+        'close',
+      );
+      if (lead_id) {
+        opts = {
+          ...opts,
+          company_id: lead_id,
+        };
+      }
+    }
+    return {
+      remote_id: note.id,
+      content: note.note_html,
+      field_mappings,
+      ...opts,
+    };
+  }
+}

@@ -13,6 +13,7 @@ import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
 import { PipedriveConnectionService } from './services/pipedrive/pipedrive.service';
 import { AttioConnectionService } from './services/attio/attio.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { CloseConnectionService } from './services/close/close.service';
 
 @Module({
   imports: [WebhookModule],
@@ -31,6 +32,7 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
     ZohoConnectionService,
     ZendeskConnectionService,
     PipedriveConnectionService,
+    CloseConnectionService,
   ],
   exports: [CrmConnectionsService],
 })
