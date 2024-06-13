@@ -26,7 +26,8 @@ const useUpdateConnectionStrategy = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to toggle cs');
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Unknown error occurred");
             }
             return response.json();
         } else {

@@ -129,7 +129,7 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
         )
         ;
       },
-      error: 'Error',
+      error: (err: any) => err.message || 'Error'
     });
     setShowNewDialog({open: false})  
     projectForm.reset();

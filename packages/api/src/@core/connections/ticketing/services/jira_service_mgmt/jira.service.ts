@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -172,12 +172,17 @@ export class JiraServiceMgmtConnectionService
       }
       return db_res;
     } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'jira_service_mgmt',
-        Action.oauthCallback,
-      );
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_CALLBACK_TICKETING",
+          message: `JiraServiceMgmtConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            "jira_service_mgmt",
+            Action.oauthCallback,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)     
     }
   }
 
@@ -219,12 +224,17 @@ export class JiraServiceMgmtConnectionService
       });
       this.logger.log('OAuth credentials updated : jira_service_mgmt ');
     } catch (error) {
-      handleServiceError(
-        error,
-        this.logger,
-        'jira_service_mgmt',
-        Action.oauthRefresh,
-      );
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_REFRESH_TICKETING",
+          message: `JiraServiceMgmtConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            "linear",
+            Action.oauthRefresh,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)     
     }
   }
 }

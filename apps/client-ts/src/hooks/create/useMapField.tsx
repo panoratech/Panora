@@ -21,7 +21,8 @@ const useMapField = () => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to map field mapping');
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Unknown error occurred");
         }
         
         return response.json();

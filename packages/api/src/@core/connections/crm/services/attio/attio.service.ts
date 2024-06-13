@@ -7,7 +7,7 @@ import {
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
@@ -131,7 +131,17 @@ export class AttioConnectionService implements ICrmConnectionService {
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'attio', Action.oauthCallback);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_CALLBACK_CRM",
+          message: `AttioConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            "attio",
+            Action.oauthCallback,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)    
     }
   }
 

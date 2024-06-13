@@ -85,7 +85,7 @@ const CreateUserForm = () => {
                 )
                 ;
             },
-            error: 'Error',
+            error: (err: any) => err.message || 'Error'
         });
     };
 

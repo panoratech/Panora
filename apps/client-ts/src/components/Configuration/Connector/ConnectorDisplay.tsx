@@ -130,7 +130,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                 )
                 ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_OAuth2_updated", {
             id_project: idProject,
@@ -159,7 +159,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                   )
                   ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_OAuth2_created", {
             id_project: idProject,
@@ -201,7 +201,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                 )
                 ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_API_KEY_updated", {
             id_project: idProject,
@@ -230,7 +230,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                   )
                   ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_API_KEY_created", {
             id_project: idProject,
@@ -277,7 +277,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                 )
                 ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_BASIC_AUTH_updated", {
             id_project: idProject,
@@ -307,7 +307,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                   )
                   ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_BASIC_AUTH_created", {
             id_project: idProject,
@@ -373,10 +373,9 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
             )
             ;
           },
-          error: 'Error',
-      });
+          error: (err: any) => err.message || 'Error'
+        });
 
-      
       setSwitchEnabled(enabled);
     }
   };

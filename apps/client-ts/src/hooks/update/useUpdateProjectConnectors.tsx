@@ -19,7 +19,8 @@ const useUpdateProjectConnectors = () => {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to update catalog option');
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Unknown error occurred");
         }
         
         return response.json();

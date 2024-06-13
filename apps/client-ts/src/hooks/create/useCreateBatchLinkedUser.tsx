@@ -19,7 +19,8 @@ const useCreateBatchLinkedUser = () => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to batch add linked user');
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Unknown error occurred");
         }
         
         return response.json();

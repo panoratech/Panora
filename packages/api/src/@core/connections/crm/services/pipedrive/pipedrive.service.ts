@@ -6,7 +6,7 @@ import {
   ICrmConnectionService,
   RefreshParams,
 } from '../../types';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -134,7 +134,17 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'pipedrive', Action.oauthCallback);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_CALLBACK_CRM",
+          message: `PipedriveConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            "pipedrive",
+            Action.oauthCallback,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)    
     }
   }
 
@@ -179,7 +189,17 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : pipedrive ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'pipedrive', Action.oauthRefresh);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_REFRESH_CRM",
+          message: `PipedriveConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            "pipedrive",
+            Action.oauthRefresh,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)     
     }
   }
 }

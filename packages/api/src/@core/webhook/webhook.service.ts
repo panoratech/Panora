@@ -4,7 +4,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
-import { handleServiceError } from '@@core/utils/errors';
+import { handleServiceError, throwTypedError, WebhooksError } from '@@core/utils/errors';
 import { WebhookDto } from './dto/webhook.dto';
 import axios from 'axios';
 import crypto from 'crypto';
@@ -20,10 +20,20 @@ export class WebhookService {
   }
 
   generateSignature(payload: any, secret: string): string {
-    return crypto
+    try{
+      return crypto
       .createHmac('sha256', secret)
       .update(JSON.stringify(payload))
       .digest('hex');
+    }catch(error){
+      throwTypedError(new WebhooksError(
+        {
+          name: "SIGNATURE_GENERATION_ERROR",
+          message: "WebhookService.generateSignature() call failed",
+          cause: error
+        }
+      ), this.logger) 
+    }
   }
 
   async getWebhookEndpoints(project_id: string) {
@@ -34,9 +44,16 @@ export class WebhookService {
         },
       });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new WebhooksError(
+        {
+          name: "GET_WEBHOOKS_ERROR",
+          message: "WebhookService.getWebhookEndpoints() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
+
   async updateStatusWebhookEndpoint(id: string, active: boolean) {
     try {
       return await this.prisma.webhook_endpoints.update({
@@ -44,7 +61,13 @@ export class WebhookService {
         data: { active: active },
       });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new WebhooksError(
+        {
+          name: "UPDATE_WEBHOOK_STATUS_ERROR",
+          message: "WebhookService.updateStatusWebhookEndpoint() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 
@@ -63,16 +86,32 @@ export class WebhookService {
         },
       });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new WebhooksError(
+        {
+          name: "CREATE_WEBHOOK_ERROR",
+          message: "WebhookService.createWebhookEndpoint() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 
   async deleteWebhook(whId: string) {
-    return await this.prisma.webhook_endpoints.delete({
-      where: {
-        id_webhook_endpoint: whId,
-      },
-    });
+    try{
+      return await this.prisma.webhook_endpoints.delete({
+        where: {
+          id_webhook_endpoint: whId,
+        },
+      });
+    }catch(error){
+      throwTypedError(new WebhooksError(
+        {
+          name: "DELETE_WEBHOOK_ERROR",
+          message: "WebhookService.deleteWebhook() call failed",
+          cause: error
+        }
+      ), this.logger) 
+    }
   }
 
   async handleWebhook(
@@ -276,11 +315,22 @@ export class WebhookService {
     try {
       const expected = this.generateSignature(payload, secret);
       if (expected !== signature) {
-        throw new Error('Invalid signature');
+        throw new WebhooksError(
+          {
+            name: "INVALID_SIGNATURE_ERROR",
+            message: `Signature mismatch for the payload received with signature=${signature}`,
+          }
+        )
       }
       return 200;
     } catch (error) {
-      throw new Error(error);
+      throwTypedError(new WebhooksError(
+        {
+          name: "VERIFY_PAYLOAD_ERROR",
+          message: "WebhookService.verifyPayloadSignature() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 }

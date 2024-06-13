@@ -101,7 +101,7 @@ const AddWebhook = () => {
               )
               ;
             },
-            error: 'Error',
+            error: (err: any) => err.message || 'Error'
         });
         handleOpenChange(false);
         posthog?.capture("webhook_created", {

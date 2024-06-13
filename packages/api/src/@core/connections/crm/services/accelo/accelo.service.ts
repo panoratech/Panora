@@ -7,7 +7,7 @@ import {
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
@@ -144,7 +144,17 @@ export class AcceloConnectionService implements ICrmConnectionService {
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'accelo', Action.oauthCallback);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_CALLBACK_CRM",
+          message: `AcceloConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            "accelo",
+            Action.oauthCallback,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)    
     }
   }
 
@@ -189,7 +199,17 @@ export class AcceloConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : accelo ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'accelo', Action.oauthRefresh);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_REFRESH_CRM",
+          message: `AcceloConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            "accelo",
+            Action.oauthRefresh,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)     
     }
   }
 }
