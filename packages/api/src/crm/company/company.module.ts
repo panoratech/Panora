@@ -1,3 +1,4 @@
+import { AffinityService } from './services/affinity';
 import { Module } from '@nestjs/common';
 import { CompanyController } from './company.controller';
 import { SyncService } from './sync/sync.service';
@@ -40,6 +41,7 @@ import { CloseService } from './services/close';
     HubspotService,
     AttioService,
     CloseService,
+    AffinityService,
   ],
   exports: [
     SyncService,

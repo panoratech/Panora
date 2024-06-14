@@ -1,3 +1,4 @@
+import { AffinityDealMapper } from '../services/affinity/mappers';
 import { HubspotDealMapper } from '../services/hubspot/mappers';
 import { PipedriveDealMapper } from '../services/pipedrive/mappers';
 import { ZendeskDealMapper } from '../services/zendesk/mappers';
@@ -10,6 +11,7 @@ const zohoDealMapper = new ZohoDealMapper();
 const pipedriveDealMapper = new PipedriveDealMapper();
 const closeDealMapper = new CloseDealMapper();
 
+const affinityDealMapper = new AffinityDealMapper();
 export const dealUnificationMapping = {
   hubspot: {
     unify: hubspotDealMapper.unify.bind(hubspotDealMapper),
@@ -30,5 +32,9 @@ export const dealUnificationMapping = {
   close: {
     unify: closeDealMapper.unify.bind(closeDealMapper),
     desunify: closeDealMapper.desunify.bind(closeDealMapper),
+  },
+  affinity: {
+    unify: affinityDealMapper.unify.bind(affinityDealMapper),
+    desunify: affinityDealMapper.desunify.bind(affinityDealMapper),
   },
 };

@@ -1,3 +1,13 @@
+import { AffinityUserInput, AffinityUserOutput } from '@crm/user/services/affinity/types';
+
+import { AffinityNoteInput, AffinityNoteOutput } from '@crm/note/services/affinity/types';
+
+import { AffinityDealInput, AffinityDealOutput } from '@crm/deal/services/affinity/types';
+
+import { AffinityCompanyInput, AffinityCompanyOutput } from '@crm/company/services/affinity/types';
+
+import { AffinityContactInput, AffinityContactOutput } from '@crm/contact/services/affinity/types';
+
 import { AttioCompanyOutput } from '@crm/company/services/attio/types';
 import { HubspotCompanyOutput } from '@crm/company/services/hubspot/types';
 import { PipedriveCompanyOutput } from '@crm/company/services/pipedrive/types';
@@ -129,6 +139,7 @@ import {
 
 /* contact */
 export type OriginalContactInput =
+  | AffinityContactInput
   | HubspotContactInput
   | ZohoContactInput
   | ZendeskContactInput
@@ -138,6 +149,7 @@ export type OriginalContactInput =
 
 /* deal */
 export type OriginalDealInput =
+  | AffinityDealInput
   | HubspotDealOutput
   | ZohoDealOutput
   | ZendeskDealOutput
@@ -146,6 +158,7 @@ export type OriginalDealInput =
 
 /* company */
 export type OriginalCompanyInput =
+  | AffinityCompanyInput
   | HubspotCompanyOutput
   | ZohoCompanyOutput
   | ZendeskCompanyOutput
@@ -163,6 +176,7 @@ export type OriginalEngagementInput =
 
 /* note */
 export type OriginalNoteInput =
+  | AffinityNoteInput
   | HubspotNoteInput
   | ZohoNoteInput
   | ZendeskNoteInput
@@ -189,6 +203,7 @@ export type OriginalStageInput =
 
 /* user */
 export type OriginalUserInput =
+  | AffinityUserInput
   | HubspotUserInput
   | ZohoUserInput
   | ZendeskUserInput
@@ -208,6 +223,7 @@ export type CrmObjectInput =
 /* OUTPUT */
 
 export type OriginalContactOutput =
+  | AffinityContactOutput
   | HubspotContactOutput
   | ZohoContactOutput
   | ZendeskContactOutput
@@ -217,6 +233,7 @@ export type OriginalContactOutput =
 
 /* deal */
 export type OriginalDealOutput =
+  | AffinityDealOutput
   | HubspotDealOutput
   | ZohoDealOutput
   | ZendeskDealOutput
@@ -225,6 +242,7 @@ export type OriginalDealOutput =
 
 /* company */
 export type OriginalCompanyOutput =
+  | AffinityCompanyOutput
   | HubspotCompanyOutput
   | ZohoCompanyOutput
   | ZendeskCompanyOutput
@@ -242,6 +260,7 @@ export type OriginalEngagementOutput =
 
 /* note */
 export type OriginalNoteOutput =
+  | AffinityNoteOutput
   | HubspotNoteOutput
   | ZohoNoteOutput
   | ZendeskNoteOutput
@@ -268,6 +287,7 @@ export type OriginalStageOutput =
 
 /* user */
 export type OriginalUserOutput =
+  | AffinityUserOutput
   | HubspotUserOutput
   | ZohoUserOutput
   | ZendeskUserOutput

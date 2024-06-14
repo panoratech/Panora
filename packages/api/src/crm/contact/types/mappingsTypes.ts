@@ -1,3 +1,4 @@
+import { AffinityContactMapper } from '../services/affinity/mappers';
 import { AttioContactMapper } from '../services/attio/mappers';
 import { HubspotContactMapper } from '../services/hubspot/mappers';
 import { PipedriveContactMapper } from '../services/pipedrive/mappers';
@@ -12,6 +13,7 @@ const pipedriveContactMapper = new PipedriveContactMapper();
 const attioContactMapper = new AttioContactMapper();
 const closeContactMapper = new CloseContactMapper();
 
+const affinityContactMapper = new AffinityContactMapper();
 export const contactUnificationMapping = {
   hubspot: {
     unify: hubspotContactMapper.unify.bind(hubspotContactMapper),
@@ -36,5 +38,9 @@ export const contactUnificationMapping = {
   close: {
     unify: closeContactMapper.unify.bind(closeContactMapper),
     desunify: closeContactMapper.desunify.bind(closeContactMapper),
+  },
+  affinity: {
+    unify: affinityContactMapper.unify.bind(affinityContactMapper),
+    desunify: affinityContactMapper.desunify.bind(affinityContactMapper),
   },
 };

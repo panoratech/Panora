@@ -1,3 +1,4 @@
+import { AffinityCompanyMapper } from '../services/affinity/mappers';
 import { AttioCompanyMapper } from '../services/attio/mappers';
 import { HubspotCompanyMapper } from '../services/hubspot/mappers';
 import { PipedriveCompanyMapper } from '../services/pipedrive/mappers';
@@ -12,6 +13,7 @@ const pipedriveCompanyMapper = new PipedriveCompanyMapper();
 const attioCompanyMapper = new AttioCompanyMapper();
 const closeCompanyMapper = new CloseCompanyMapper();
 
+const affinityCompanyMapper = new AffinityCompanyMapper();
 export const companyUnificationMapping = {
   hubspot: {
     unify: hubspotCompanyMapper.unify.bind(hubspotCompanyMapper),
@@ -36,5 +38,9 @@ export const companyUnificationMapping = {
   close: {
     unify: closeCompanyMapper.unify.bind(closeCompanyMapper),
     desunify: closeCompanyMapper.desunify.bind(closeCompanyMapper),
+  },
+  affinity: {
+    unify: affinityCompanyMapper.unify.bind(affinityCompanyMapper),
+    desunify: affinityCompanyMapper.desunify.bind(affinityCompanyMapper),
   },
 };

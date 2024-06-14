@@ -1,3 +1,4 @@
+import { AffinityNoteMapper } from '../services/affinity/mappers';
 import { HubspotNoteMapper } from '../services/hubspot/mappers';
 import { PipedriveNoteMapper } from '../services/pipedrive/mappers';
 import { ZendeskNoteMapper } from '../services/zendesk/mappers';
@@ -10,6 +11,7 @@ const zohoNoteMapper = new ZohoNoteMapper();
 const pipedriveNoteMapper = new PipedriveNoteMapper();
 const closeNoteMapper = new CloseNoteMapper();
 
+const affinityNoteMapper = new AffinityNoteMapper();
 export const noteUnificationMapping = {
   hubspot: {
     unify: hubspotNoteMapper.unify.bind(hubspotNoteMapper),
@@ -30,5 +32,9 @@ export const noteUnificationMapping = {
   close: {
     unify: closeNoteMapper.unify.bind(closeNoteMapper),
     desunify: closeNoteMapper.desunify.bind(closeNoteMapper),
+  },
+  affinity: {
+    unify: affinityNoteMapper.unify.bind(affinityNoteMapper),
+    desunify: affinityNoteMapper.desunify.bind(affinityNoteMapper),
   },
 };

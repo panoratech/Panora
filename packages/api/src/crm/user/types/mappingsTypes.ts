@@ -1,3 +1,4 @@
+import { AffinityUserMapper } from '../services/affinity/mappers';
 import { HubspotUserMapper } from '../services/hubspot/mappers';
 import { PipedriveUserMapper } from '../services/pipedrive/mappers';
 import { ZendeskUserMapper } from '../services/zendesk/mappers';
@@ -10,6 +11,7 @@ const zohoUserMapper = new ZohoUserMapper();
 const pipedriveUserMapper = new PipedriveUserMapper();
 const closeUserMapper = new CloseUserMapper();
 
+const affinityUserMapper = new AffinityUserMapper();
 export const userUnificationMapping = {
   hubspot: {
     unify: hubspotUserMapper.unify.bind(hubspotUserMapper),
@@ -30,5 +32,9 @@ export const userUnificationMapping = {
   close: {
     unify: closeUserMapper.unify.bind(closeUserMapper),
     desunify: closeUserMapper.desunify.bind(closeUserMapper),
+  },
+  affinity: {
+    unify: affinityUserMapper.unify.bind(affinityUserMapper),
+    desunify: affinityUserMapper.desunify.bind(affinityUserMapper),
   },
 };
