@@ -17,7 +17,6 @@ import { CRM_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { throwTypedError, SyncError } from '@@core/utils/errors';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -150,7 +149,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping engagements syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -229,7 +227,7 @@ export class SyncService implements OnModuleInit {
         const originId = engagement.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingEngagement = await this.prisma.crm_engagements.findFirst({
@@ -290,7 +288,7 @@ export class SyncService implements OnModuleInit {
           this.logger.log('engagement not exists');
           let data: any = {
             id_crm_engagement: uuidv4(),
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

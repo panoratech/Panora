@@ -72,28 +72,72 @@ export class TeamService {
 
       return res;
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_TEAM_ERROR",
-        message: "TeamService.getTeam() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TEAM_ERROR',
+          message: 'TeamService.getTeam() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getTeams(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedTeamOutput[]> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedTeamOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.tcg_teams.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_tcg_team: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const teams = await this.prisma.tcg_teams.findMany({
+        take: pageSize + 1,
+        cursor: cursor
+          ? {
+              id_tcg_team: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
+
+      if (teams.length === pageSize + 1) {
+        next_cursor = Buffer.from(teams[teams.length - 1].id_tcg_team).toString(
+          'base64',
+        );
+        teams.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedTeams: UnifiedTeamOutput[] = await Promise.all(
         teams.map(async (team) => {
@@ -162,13 +206,19 @@ export class TeamService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_TEAMS_ERROR",
-        message: "TeamService.getTeams() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TEAMS_ERROR',
+          message: 'TeamService.getTeams() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

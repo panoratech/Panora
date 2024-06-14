@@ -5,6 +5,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -13,13 +15,16 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { UserService } from './services/user.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { UnifiedUserOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('JWT')
 @ApiTags('ticketing/users')
 @Controller('ticketing/users')
 export class UserController {
@@ -42,25 +47,27 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Ticketing software.',
-  })
   @ApiCustomResponse(UnifiedUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getUsers(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     const { linkedUserId, remoteSource } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
-    return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
+    const { remote_data, pageSize, cursor } = query;
+
+    return this.userService.getUsers(
+      remoteSource,
+      linkedUserId,
+      pageSize,
+      remote_data,
+      cursor,
+    );
   }
 
   @ApiOperation({

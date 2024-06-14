@@ -58,27 +58,70 @@ export class CollectionService {
 
       return res;
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_COLLECTION_ERROR",
-        message: "CollectionService.getCollection() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_COLLECTION_ERROR',
+          message: 'CollectionService.getCollection() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getCollections(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedCollectionOutput[]> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedCollectionOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
-      console.log('In collection service : ', integrationId);
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.tcg_collections.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_tcg_collection: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const collections = await this.prisma.tcg_collections.findMany({
+        take: pageSize + 1,
+        cursor: cursor
+          ? {
+              id_tcg_collection: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
+
+      if (collections.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          collections[collections.length - 1].id_tcg_collection,
+        ).toString('base64');
+        collections.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedCollections: UnifiedCollectionOutput[] = await Promise.all(
         collections.map(async (collection) => {
@@ -122,13 +165,19 @@ export class CollectionService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_COLLECTIONS_ERROR",
-        message: "CollectionService.getCollections() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_COLLECTIONS_ERROR',
+          message: 'CollectionService.getCollections() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

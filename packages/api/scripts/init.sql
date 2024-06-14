@@ -1403,7 +1403,3 @@ CREATE INDEX id_job_jobs_status_history ON jobs_status_history
 
 COMMENT ON COLUMN jobs_status_history.previous_status IS 'void when first initialization';
 COMMENT ON COLUMN jobs_status_history.new_status IS 'pending, retry_scheduled, failed, success';
-
-
-
-

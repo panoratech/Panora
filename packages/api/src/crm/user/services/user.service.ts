@@ -95,15 +95,57 @@ export class UserService {
   async getUsers(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedUserOutput[]> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedUserOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.crm_users.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_crm_user: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const users = await this.prisma.crm_users.findMany({
+        take: pageSize + 1,
+        cursor: cursor
+          ? {
+              id_crm_user: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
+
+      if (users.length === pageSize + 1) {
+        next_cursor = Buffer.from(users[users.length - 1].id_crm_user).toString(
+          'base64',
+        );
+        users.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedUsers: UnifiedUserOutput[] = await Promise.all(
         users.map(async (user) => {
@@ -172,7 +214,11 @@ export class UserService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throwTypedError(
         new UnifiedCrmError({

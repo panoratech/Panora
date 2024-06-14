@@ -390,15 +390,57 @@ export class EngagementService {
   async getEngagements(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedEngagementOutput[]> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedEngagementOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.crm_engagements.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_crm_engagement: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const engagements = await this.prisma.crm_engagements.findMany({
+        take: pageSize + 1,
+        cursor: cursor
+          ? {
+              id_crm_engagement: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
+
+      if (engagements.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          engagements[engagements.length - 1].id_crm_engagement,
+        ).toString('base64');
+        engagements.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedEngagements: UnifiedEngagementOutput[] = await Promise.all(
         engagements.map(async (engagement) => {
@@ -478,7 +520,11 @@ export class EngagementService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throwTypedError(
         new UnifiedCrmError({

@@ -22,7 +22,7 @@ export class UserService {
         },
       });
 
-      if(!user) throw new ReferenceError('User undefined')
+      if (!user) throw new ReferenceError('User undefined');
 
       // Fetch field mappings for the ticket
       const values = await this.prisma.value.findMany({
@@ -75,27 +75,71 @@ export class UserService {
 
       return res;
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_USER_ERROR",
-        message: "UserService.getUser() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_USER_ERROR',
+          message: 'UserService.getUser() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getUsers(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedUserOutput[]> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedUserOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.tcg_users.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_tcg_user: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const users = await this.prisma.tcg_users.findMany({
+        take: pageSize + 1,
+        cursor: cursor
+          ? {
+              id_tcg_user: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
+
+      if (users.length === pageSize + 1) {
+        next_cursor = Buffer.from(users[users.length - 1].id_tcg_user).toString(
+          'base64',
+        );
+        users.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedUsers: UnifiedUserOutput[] = await Promise.all(
         users.map(async (user) => {
@@ -166,13 +210,19 @@ export class UserService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
-      throwTypedError(new UnifiedTicketingError({
-        name: "GET_USERS_ERROR",
-        message: "UserService.getUsers() call failed",
-        cause: error
-      }))
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_USERS_ERROR',
+          message: 'UserService.getUsers() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

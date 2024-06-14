@@ -474,10 +474,41 @@ export class CompanyService {
   async getCompanies(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedCompanyOutput[]> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedCompanyOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.crm_companies.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_crm_company: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const companies = await this.prisma.crm_companies.findMany({
+        take: pageSize + 1,
+        cursor: cursor
+          ? {
+              id_crm_company: cursor,
+            }
+          : undefined,
+        orderBy: {
+          modified_at: 'asc',
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
@@ -488,6 +519,17 @@ export class CompanyService {
           crm_addresses: true,
         },
       });
+
+      if (companies.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          companies[companies.length - 1].id_crm_company,
+        ).toString('base64');
+        companies.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedCompanies: UnifiedCompanyOutput[] = await Promise.all(
         companies.map(async (company) => {
@@ -568,7 +610,11 @@ export class CompanyService {
         },
       });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throwTypedError(
         new UnifiedCrmError({

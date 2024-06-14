@@ -173,7 +173,7 @@ export class SyncService implements OnModuleInit {
       );
 
       const sourceObject: OriginalDealOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
+      // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalDealOutput[]>({
         sourceObject,
@@ -279,11 +279,10 @@ export class SyncService implements OnModuleInit {
           this.logger.log('deal not exists');
           let data: any = {
             id_crm_deal: uuidv4(),
-            created_at: new Date(),
+            // created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             description: '',
-            amount: deal.amount,
             remote_id: originId,
             remote_platform: originSource,
           };

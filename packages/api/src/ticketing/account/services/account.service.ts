@@ -85,17 +85,59 @@ export class AccountService {
   async getAccounts(
     integrationId: string,
     linkedUserId: string,
+    pageSize: number,
     remote_data?: boolean,
-  ): Promise<UnifiedAccountOutput[]> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedAccountOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.tcg_accounts.findFirst({
+          where: {
+            remote_platform: integrationId.toLowerCase(),
+            id_linked_user: linkedUserId,
+            id_tcg_account: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const accounts = await this.prisma.tcg_accounts.findMany({
+        take: pageSize + 1,
+        cursor: cursor
+          ? {
+              id_tcg_account: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           remote_platform: integrationId.toLowerCase(),
           id_linked_user: linkedUserId,
         },
       });
+
+      if (accounts.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          accounts[accounts.length - 1].id_tcg_account,
+        ).toString('base64');
+        accounts.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedAccounts: UnifiedAccountOutput[] = await Promise.all(
         accounts.map(async (account) => {
@@ -163,7 +205,11 @@ export class AccountService {
           id_linked_user: linkedUserId,
         },
       });
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throwTypedError(
         new UnifiedTicketingError({
