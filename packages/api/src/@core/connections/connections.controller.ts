@@ -119,7 +119,7 @@ export class ConnectionsController {
           .active !== false
       ) {
         // Performing Core Sync Service for active connectors
-        this.coreSync.initialSync(
+        await this.coreSync.initialSync(
           vertical.toLowerCase(),
           providerName,
           linkedUserId,
