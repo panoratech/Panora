@@ -656,6 +656,8 @@ model connector_sets {
   tcg_gorgias      Boolean
   tcg_gitlab       Boolean
   tcg_front        Boolean
+  crm_zendesk      Boolean
+  crm_close        Boolean
   projects         projects[]
 }
 
