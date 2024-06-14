@@ -118,6 +118,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       break;
     case 'jira':
       params = `audience=api.atlassian.com&${params}&prompt=consent&response_type=code`;
+      break;
     case 'jira_service_mgmt':
       params = `audience=api.atlassian.com&${params}&prompt=consen&response_type=codet`;
       break;
