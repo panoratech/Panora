@@ -114,6 +114,7 @@ export class ConnectionsController {
           );
           break;
       }
+      res.redirect(returnUrl);
       if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
@@ -126,7 +127,6 @@ export class ConnectionsController {
           projectId,
         );
       }
-      res.redirect(returnUrl);
     } catch (error) {
       throwTypedError(
         new ConnectionsError({
