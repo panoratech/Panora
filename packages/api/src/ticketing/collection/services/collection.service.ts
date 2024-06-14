@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedCollectionOutput } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -58,7 +58,13 @@ export class CollectionService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_COLLECTION_ERROR',
+          message: 'CollectionService.getCollection() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -67,10 +73,13 @@ export class CollectionService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedCollectionOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedCollectionOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
-
       let prev_cursor = null;
       let next_cursor = null;
 
@@ -79,21 +88,23 @@ export class CollectionService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_collection: cursor
-          }
+            id_tcg_collection: cursor,
+          },
         });
         if (!isCursorPresent) {
-          throw new NotFoundError(`The provided cursor does not exist!`);
+          throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
 
-      let collections = await this.prisma.tcg_collections.findMany({
+      const collections = await this.prisma.tcg_collections.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_collection: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_collection: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -101,8 +112,10 @@ export class CollectionService {
         },
       });
 
-      if (collections.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(collections[collections.length - 1].id_tcg_collection).toString('base64');
+      if (collections.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          collections[collections.length - 1].id_tcg_collection,
+        ).toString('base64');
         collections.pop();
       }
 
@@ -155,10 +168,16 @@ export class CollectionService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_COLLECTIONS_ERROR',
+          message: 'CollectionService.getCollections() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

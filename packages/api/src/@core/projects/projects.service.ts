@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { handleServiceError } from '@@core/utils/errors';
+import { ProjectError, throwTypedError } from '@@core/utils/errors';
 import {
   ConnectorCategory,
   providersArray,
@@ -20,7 +20,13 @@ export class ProjectsService {
     try {
       return await this.prisma.projects.findMany();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new ProjectError(
+        {
+          name: "GET_PROJECTS_ERROR",
+          message: "ProjectsService.getProjects() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 
@@ -32,12 +38,24 @@ export class ProjectsService {
         },
       });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new ProjectError(
+        {
+          name: "GET_PROJECT_FOR_USER_ERROR",
+          message: "ProjectsService.getProjectsByUser() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 
   async createProject(data: CreateProjectDto) {
     try {
+      const user = await this.prisma.users.findUnique({
+        where: {
+          id_user: data.id_user
+        }
+      })
+      if(!user) throw ReferenceError("User undefined");
       const ACTIVE_CONNECTORS = providersArray();
       // update project-connectors table for the project
       const updateData: any = {
@@ -69,7 +87,13 @@ export class ProjectsService {
       });
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(new ProjectError(
+        {
+          name: "CREATE_PROJECT_ERROR",
+          message: "ProjectsService.createProject() call failed",
+          cause: error
+        }
+      ), this.logger) 
     }
   }
 }

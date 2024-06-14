@@ -44,11 +44,7 @@ export class CloseContactMapper implements IContactMapper {
       ),
     };
 
-    if (source.user_id) {
-      result.lead_id = await this.utils.getRemoteIdFromCompanyUuid(
-        source.user_id,
-      );
-    }
+    result.lead_id = source?.field_mappings?.['company_id'];
 
     if (customFieldMappings && source.field_mappings) {
       for (const [k, v] of Object.entries(source.field_mappings)) {
@@ -72,42 +68,32 @@ export class CloseContactMapper implements IContactMapper {
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleContactToUnified(source, customFieldMappings);
+      return this.mapSingleContactToUnified(source, customFieldMappings);
     }
     // Handling array of CloseContactOutput
-    return await Promise.all(
-      source.map((contact) =>
-        this.mapSingleContactToUnified(contact, customFieldMappings),
-      ),
+    return source.map((contact) =>
+      this.mapSingleContactToUnified(contact, customFieldMappings),
     );
   }
 
-  private async mapSingleContactToUnified(
+  private mapSingleContactToUnified(
     contact: CloseContactOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedContactOutput> {
+  ): UnifiedContactOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
         field_mappings[mapping.slug] = contact[mapping.remote_id];
       }
     }
-    const opts: any = {};
-    if (contact.created_by) {
-      opts.user_id = await this.utils.getUserUuidFromRemoteId(
-        contact.created_by,
-        'close',
-      );
-    }
 
-    const [firstName, lastName] = contact?.name?.split(' ');
     return {
       remote_id: contact.id,
-      first_name: firstName || contact?.name,
-      last_name: lastName ?? '',
+      first_name: contact.name,
+      last_name: '',
       email_addresses: contact.emails?.map(({ email, type }) => ({
         email_address: email,
         email_address_type: type,
@@ -119,7 +105,6 @@ export class CloseContactMapper implements IContactMapper {
         owner_type: 'contact',
       })),
       field_mappings,
-      ...opts,
       addresses: [],
     };
   }

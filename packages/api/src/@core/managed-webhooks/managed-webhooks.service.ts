@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
-import { handleServiceError } from '@@core/utils/errors';
+import { ManagedWebhooksError, throwTypedError } from '@@core/utils/errors';
 import {
   ManagedWebhooksDto,
   RemoteThirdPartyCreationDto,
 } from './dto/managed-webhooks.dto';
-import crypto from 'crypto';
 import { ConnectorCategory } from '@panora/shared';
 import { TicketingWebhookHandlerService } from '@ticketing/@webhook/handler.service';
 
@@ -31,7 +28,14 @@ export class ManagedWebhooksService {
         },
       });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new ManagedWebhooksError({
+          name: 'GET_MANAGED_WEBHOOKS_ERROR',
+          message: 'ManagedWebhooksService.getManagedWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -42,7 +46,15 @@ export class ManagedWebhooksService {
         data: { active: active },
       });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new ManagedWebhooksError({
+          name: 'UPDATE_MANAGED_WEBHOOK_STATUS_ERROR',
+          message:
+            'ManagedWebhooksService.updateStatusManagedWebhookEndpoint() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -62,7 +74,14 @@ export class ManagedWebhooksService {
         },
       });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new ManagedWebhooksError({
+          name: 'CREATE_MANAGED_WEBHOOK_ERROR',
+          message: 'ManagedWebhooksService.createManagedWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -73,6 +92,7 @@ export class ManagedWebhooksService {
           id_connection: data.id_connection,
         },
       });
+      if (!conn) throw new ReferenceError('Connection undefined');
       switch (conn.vertical) {
         case ConnectorCategory.Ticketing:
           return await this.ticketingHandler.createExternalWebhook(
@@ -82,7 +102,15 @@ export class ManagedWebhooksService {
           );
       }
     } catch (error) {
-      throw new Error(error);
+      throwTypedError(
+        new ManagedWebhooksError({
+          name: 'CREATE_REMOTE_WEBHOOK_ERROR',
+          message:
+            'ManagedWebhooksService.createRemoteThirdPartyWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

@@ -77,9 +77,9 @@ export class CloseCompanyMapper implements ICompanyMapper {
       }
     }
     let opts: any = {};
-    if (company?.created_by) {
+    if (company?.created_by || company?.custom?.close_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
-        company?.created_by as string,
+        (company?.created_by || company?.custom?.close_owner_id) as string,
         'close',
       );
       if (owner_id) {

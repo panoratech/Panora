@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { SyncError, throwTypedError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,7 +35,7 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -67,12 +67,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing accounts....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -99,18 +99,25 @@ export class SyncService implements OnModuleInit {
                       id_project,
                     );
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'TICKETING_ACCOUNT_SYNC_ERROR',
+          message: 'SyncService.syncAccounts() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -136,7 +143,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping accounts syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
       }
 
       // get potential fieldMappings and extract the original properties name
@@ -194,7 +200,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -211,7 +217,7 @@ export class SyncService implements OnModuleInit {
         const originId = account.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingAccount = await this.prisma.tcg_accounts.findFirst({
@@ -245,7 +251,7 @@ export class SyncService implements OnModuleInit {
             id_tcg_account: uuidv4(),
             name: account.name,
             domains: account.domains,
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,
@@ -317,7 +323,7 @@ export class SyncService implements OnModuleInit {
       }
       return accounts_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 }

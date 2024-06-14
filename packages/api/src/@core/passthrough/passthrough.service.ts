@@ -5,9 +5,9 @@ import axios, { AxiosResponse } from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/logger/logger.service';
-import { handleServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { CONNECTORS_METADATA } from '@panora/shared';
+import { PassthroughRequestError, throwTypedError } from '@@core/utils/errors';
 
 @Injectable()
 export class PassthroughService {
@@ -93,7 +93,14 @@ export class PassthroughService {
         data: response.data,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new PassthroughRequestError({
+          name: 'PASSTHROUGH_REMOTE_API_CALL_ERROR',
+          message: 'WebhookService.sendPassthroughRequest() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

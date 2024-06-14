@@ -200,7 +200,7 @@ services:
     #  - ./ngrok.yml:/etc/ngrok.yml
     #ports:
      # - 4040:4040
-    #epends_on:
+    #depends_on:
     #  api:
     #    condition: service_healthy
     #network_mode: "host"

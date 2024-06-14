@@ -4,7 +4,7 @@ import axios from 'axios';
 import { CrmObject } from '@crm/@lib/@types';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ICompanyService } from '@crm/company/types';
@@ -58,7 +58,7 @@ export class AttioService implements ICompanyService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
         'Attio',
@@ -97,7 +97,7 @@ export class AttioService implements ICompanyService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
         'Attio',

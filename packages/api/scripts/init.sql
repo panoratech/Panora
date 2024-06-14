@@ -416,6 +416,8 @@ CREATE TABLE connector_sets
  crm_zoho         boolean NOT NULL,
  crm_attio        boolean NOT NULL,
  crm_pipedrive    boolean NOT NULL,
+ crm_zendesk      boolean NOT NULL,
+ crm_close        boolean NOT NULL,
  tcg_zendesk      boolean NOT NULL,
  tcg_jira         boolean NOT NULL,
  tcg_gorgias      boolean NOT NULL,
@@ -581,15 +583,11 @@ CREATE TABLE fs_folders
 CREATE INDEX FK_fs_folder_driveID ON fs_folders
 (
  id_fs_drive
-);
 
 CREATE INDEX FK_fs_folder_permissionID ON fs_folders
 (
  id_fs_permission
 );
-
-
-
 
 
 
@@ -1438,7 +1436,3 @@ CREATE INDEX id_job_jobs_status_history ON jobs_status_history
 
 COMMENT ON COLUMN jobs_status_history.previous_status IS 'void when first initialization';
 COMMENT ON COLUMN jobs_status_history.new_status IS 'pending, retry_scheduled, failed, success';
-
-
-
-

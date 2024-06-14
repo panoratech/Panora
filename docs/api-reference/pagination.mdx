@@ -2,4 +2,4 @@
 title: "Pagination"
 description: ""
 ---
-Panora’s list API methods use cursor-based pagination through the `starting_after` and `ending_before` parameters. Both parameters accept an existing object ID value (see below) and return objects in reverse chronological order. The `ending_before` parameter returns objects listed before the named object. The `starting_after` parameter returns objects listed after the named object. These parameters are mutually exclusive. You can use either the `starting_after` or `ending_before` parameter, but not both simultaneously.
+Panora’s list API methods use cursor-based pagination through the `pageSize` and `cursor` parameters. 

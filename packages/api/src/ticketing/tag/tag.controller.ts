@@ -66,7 +66,7 @@ export class TagController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

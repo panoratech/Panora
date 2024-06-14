@@ -25,7 +25,7 @@ export function useColumns(webhooks: Webhook[] | undefined, setWebhooks: React.D
         id: webhook_id,
         active: status,
       }), 
-        {
+      {
         loading: 'Loading...',
         success: (data: any) => {
           const index = webhooks!.findIndex(webhook => webhook.id_webhook_endpoint === webhook_id);
@@ -44,8 +44,8 @@ export function useColumns(webhooks: Webhook[] | undefined, setWebhooks: React.D
           )
           ;
         },
-        error: 'Error',
-    });
+        error: (err: any) => err.message || 'Error'
+      });
   }
 
   const handleCopy = (token: string) => {

@@ -1,5 +1,10 @@
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
+import {
+  ConnectionStrategiesError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -30,18 +35,31 @@ export class ConnectionsStrategiesService {
     private prisma: PrismaService,
     private crypto: EncryptionService,
     private configService: ConfigService,
+    private logger: LoggerService,
   ) {}
 
   async isCustomCredentials(projectId: string, type: string) {
-    const res = await this.prisma.connection_strategies.findFirst({
-      where: {
-        id_project: projectId,
-        type: type,
-        status: true,
-      },
-    });
-    if (!res) return false;
-    return res.status;
+    try {
+      const res = await this.prisma.connection_strategies.findFirst({
+        where: {
+          id_project: projectId,
+          type: type,
+          status: true,
+        },
+      });
+      if (!res) return false;
+      return res.status;
+    } catch (error) {
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'CUSTOM_CREDENTIALS_ERROR',
+          message:
+            'ConnectionsStrategiesService.isCustomCredentials() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
+    }
   }
 
   async createConnectionStrategy(
@@ -50,51 +68,67 @@ export class ConnectionsStrategiesService {
     attributes: string[],
     values: string[],
   ) {
-    const checkCSDuplicate = await this.prisma.connection_strategies.findFirst({
-      where: {
-        id_project: projectId,
-        type: type,
-      },
-    });
-    if (checkCSDuplicate)
-      throw new Error('The Connection Strategy already exists!');
+    try {
+      const checkCSDuplicate =
+        await this.prisma.connection_strategies.findFirst({
+          where: {
+            id_project: projectId,
+            type: type,
+          },
+        });
+      if (checkCSDuplicate)
+        throw new ConnectionStrategiesError({
+          name: 'CONNECTION_STRATEGY_ALREADY_EXISTS',
+          message: `Connection strategy already exists for projectId=${projectId} and type=${type}`,
+        });
 
-    const cs = await this.prisma.connection_strategies.create({
-      data: {
-        id_connection_strategy: uuidv4(),
-        id_project: projectId,
-        type: type,
-        status: true,
-      },
-    });
-    const entity = await this.prisma.cs_entities.create({
-      data: {
-        id_cs_entity: uuidv4(),
-        id_connection_strategy: cs.id_connection_strategy,
-      },
-    });
-    for (let i = 0; i < attributes.length; i++) {
-      const attribute_slug = attributes[i];
-      const value = values[i];
-      //create all attributes (for oauth =>  client_id, client_secret)
-      const attribute_ = await this.prisma.cs_attributes.create({
+      const cs = await this.prisma.connection_strategies.create({
         data: {
-          id_cs_attribute: uuidv4(),
-          id_cs_entity: entity.id_cs_entity,
-          attribute_slug: attribute_slug,
-          data_type: 'string',
+          id_connection_strategy: uuidv4(),
+          id_project: projectId,
+          type: type,
+          status: true,
         },
       });
-      const value_ = await this.prisma.cs_values.create({
+      const entity = await this.prisma.cs_entities.create({
         data: {
-          id_cs_value: uuidv4(),
-          value: this.crypto.encrypt(value),
-          id_cs_attribute: attribute_.id_cs_attribute,
+          id_cs_entity: uuidv4(),
+          id_connection_strategy: cs.id_connection_strategy,
         },
       });
+      for (let i = 0; i < attributes.length; i++) {
+        const attribute_slug = attributes[i];
+        const value = values[i];
+        //create all attributes (for oauth =>  client_id, client_secret)
+        const attribute_ = await this.prisma.cs_attributes.create({
+          data: {
+            id_cs_attribute: uuidv4(),
+            id_cs_entity: entity.id_cs_entity,
+            attribute_slug: attribute_slug,
+            data_type: 'string',
+          },
+        });
+        const value_ = await this.prisma.cs_values.create({
+          data: {
+            id_cs_value: uuidv4(),
+            value: this.crypto.encrypt(value),
+            id_cs_attribute: attribute_.id_cs_attribute,
+          },
+        });
+      }
+
+      return cs;
+    } catch (error) {
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'CREATE_CONNECTION_STRATEGY_ERROR',
+          message:
+            'ConnectionsStrategiesService.createConnectionStrategy() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
-
-    return cs;
   }
 
   async toggle(id_cs: string) {
@@ -104,7 +138,7 @@ export class ConnectionsStrategiesService {
           id_connection_strategy: id_cs,
         },
       });
-      if (!cs) throw new Error('No connection strategies found !');
+      if (!cs) throw new ReferenceError('Connection strategy undefined !');
       // Toggle the 'active' value
       const updatedCs = await this.prisma.connection_strategies.update({
         where: {
@@ -117,7 +151,14 @@ export class ConnectionsStrategiesService {
 
       return updatedCs;
     } catch (error) {
-      throw new Error(error);
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'TOGGLE_CONNECTION_STRATEGY_ERROR',
+          message: 'ConnectionsStrategiesService.toggle() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -134,12 +175,15 @@ export class ConnectionsStrategiesService {
         type: type,
       },
     });
-    if (!cs) throw new Error('No connection strategies found !');
+    if (!cs) throw new ReferenceError('Connection strategy undefined !');
     const entity = await this.prisma.cs_entities.findFirst({
       where: {
         id_connection_strategy: cs.id_connection_strategy,
       },
     });
+    if (!entity)
+      throw new ReferenceError('Connection strategy entity undefined !');
+
     const authValues: string[] = [];
     for (let i = 0; i < attributes.length; i++) {
       const attribute_slug = attributes[i];
@@ -150,13 +194,15 @@ export class ConnectionsStrategiesService {
           attribute_slug: attribute_slug,
         },
       });
-      if (!attribute_) throw new Error('No attribute found !');
+      if (!attribute_)
+        throw new ReferenceError('Connection Strategy Attribute undefined !');
       const value_ = await this.prisma.cs_values.findFirst({
         where: {
           id_cs_attribute: attribute_.id_cs_attribute,
         },
       });
-      if (!value_) throw new Error('No value found !');
+      if (!value_)
+        throw new ReferenceError('Connection Strategy Value undefined !');
       authValues.push(this.crypto.decrypt(value_.value));
     }
     return authValues;
@@ -286,38 +332,50 @@ export class ConnectionsStrategiesService {
   }
 
   async getCredentials(projectId: string, type: string) {
-    const isCustomCred = await this.isCustomCredentials(projectId, type);
-    const provider = extractProvider(type);
-    const vertical = extractVertical(type);
-    //TODO: extract sofwtaremode
-    if (!vertical)
-      throw new Error(`vertical not found for provider ${provider}`);
-    const authStrategy = extractAuthMode(type);
-    if (!authStrategy)
-      throw new Error(`auth strategy not found for provider ${provider}`);
+    try {
+      const isCustomCred = await this.isCustomCredentials(projectId, type);
+      const provider = extractProvider(type);
+      const vertical = extractVertical(type);
+      //TODO: extract sofwtaremode
+      if (!vertical)
+        throw new ReferenceError(`vertical not found for provider ${provider}`);
+      const authStrategy = extractAuthMode(type);
+      if (!authStrategy)
+        throw new ReferenceError(
+          `auth strategy not found for provider ${provider}`,
+        );
 
-    if (isCustomCred) {
-      //customer is using custom credentials (set in the webapp UI)
-      //fetch the right credentials
-      return await this.getCustomCredentialsData(
-        projectId,
-        type,
-        provider,
-        vertical,
-        authStrategy,
-      );
-    } else {
-      // type is of form = HUBSPOT_CRM_CLOUD_OAUTH so we must extract the parts
-      return this.getEnvData(
-        provider,
-        vertical,
-        authStrategy,
-        SoftwareMode.cloud,
+      if (isCustomCred) {
+        //customer is using custom credentials (set in the webapp UI)
+        //fetch the right credentials
+        return await this.getCustomCredentialsData(
+          projectId,
+          type,
+          provider,
+          vertical,
+          authStrategy,
+        );
+      } else {
+        // type is of form = HUBSPOT_CRM_CLOUD_OAUTH so we must extract the parts
+        return this.getEnvData(
+          provider,
+          vertical,
+          authStrategy,
+          SoftwareMode.cloud,
+        );
+      }
+    } catch (error) {
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'GET_CREDENTIALS_ERROR',
+          message: 'ConnectionsStrategiesService.getCredentials() call failed',
+          cause: error,
+        }),
+        this.logger,
       );
     }
   }
 
-  // Fetching all connection strategies for Project
   async getConnectionStrategiesForProject(projectId: string) {
     try {
       return await this.prisma.connection_strategies.findMany({
@@ -326,11 +384,18 @@ export class ConnectionsStrategiesService {
         },
       });
     } catch (error) {
-      throw new Error('Connection Strategies for projectID is not found!');
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'GET_CONNECTION_STRATEGIES_BY_PROJECT_ERROR',
+          message:
+            'ConnectionsStrategiesService.getConnectionStrategiesForProject() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
-  // update connection strategy
   async updateConnectionStrategy(
     id_cs: string,
     status: boolean,
@@ -338,13 +403,13 @@ export class ConnectionsStrategiesService {
     values: string[],
   ) {
     try {
-      console.log('In updateAPI xzx');
       const cs = await this.prisma.connection_strategies.findFirst({
         where: {
           id_connection_strategy: id_cs,
         },
       });
-      if (!cs) throw new Error('No connection strategies found !');
+      if (!cs) throw new ReferenceError('Connection strategy undefined !');
+
       const updateCS = await this.prisma.connection_strategies.update({
         where: {
           id_connection_strategy: id_cs,
@@ -359,6 +424,9 @@ export class ConnectionsStrategiesService {
           id_connection_strategy: id_cs,
         },
       });
+
+      if (!id_cs_entity)
+        throw new ReferenceError('Connection strategy entity undefined !');
 
       for (let i = 0; i < attributes.length; i++) {
         const attribute_slug = attributes[i];
@@ -383,13 +451,18 @@ export class ConnectionsStrategiesService {
       }
       return cs;
     } catch (error) {
-      console.log('Error xzx');
-      console.log(error);
-      throw new Error('Update Failed');
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'UPDATE_CONNECTION_STRATEGY_ERROR',
+          message:
+            'ConnectionsStrategiesService.updateConnectionStrategy() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
-  // Delete connection strategy
   async deleteConnectionStrategy(id_cs: string) {
     try {
       const cs = await this.prisma.connection_strategies.findFirst({
@@ -397,13 +470,15 @@ export class ConnectionsStrategiesService {
           id_connection_strategy: id_cs,
         },
       });
-      if (!cs) throw new Error('No connection strategies found !');
+      if (!cs) throw new ReferenceError('Connection strategy undefined !');
 
       const { id_cs_entity } = await this.prisma.cs_entities.findFirst({
         where: {
           id_connection_strategy: id_cs,
         },
       });
+      if (!id_cs_entity)
+        throw new ReferenceError('Connection strategy entity undefined !');
 
       const attributes = await this.prisma.cs_attributes.findMany({
         where: {
@@ -444,7 +519,15 @@ export class ConnectionsStrategiesService {
 
       return deleteCS;
     } catch (error) {
-      throw new Error('Update Failed');
+      throwTypedError(
+        new ConnectionStrategiesError({
+          name: 'DELETE_CONNECTION_STRATEGY_ERROR',
+          message:
+            'ConnectionsStrategiesService.deleteConnectionStrategy() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

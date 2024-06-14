@@ -1,7 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +17,7 @@ import { CRM_PROVIDERS } from '@panora/shared';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { Utils } from '@crm/@lib/@utils';
+import { throwTypedError, SyncError } from '@@core/utils/errors';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -39,7 +39,7 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -106,18 +106,25 @@ export class SyncService implements OnModuleInit {
                       id_project,
                     );
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'CRM_COMPANY_SYNC_ERROR',
+          message: 'SyncService.syncCompanies() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -143,7 +150,7 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping companies syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
+        
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -199,7 +206,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -216,7 +223,7 @@ export class SyncService implements OnModuleInit {
         const originId = company.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingCompany = await this.prisma.crm_companies.findFirst({
@@ -481,7 +488,7 @@ export class SyncService implements OnModuleInit {
       }
       return companies_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 }

@@ -28,9 +28,9 @@ const useUser = () => {
 
         if (!response.ok) {
             Cookies.remove('access_token')
-            throw new Error("Fetch User Failed!!")
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Unknown error occurred");
         }
-         
         return response.json();
     };
     return useMutation({

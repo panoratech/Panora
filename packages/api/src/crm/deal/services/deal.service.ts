@@ -3,7 +3,6 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedDealInput, UnifiedDealOutput } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
@@ -13,6 +12,7 @@ import { ServiceRegistry } from './registry.service';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
 import { unify } from '@@core/utils/unification/unify';
 import { IDealService } from '../types';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class DealService {
@@ -46,7 +46,13 @@ export class DealService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_DEALS_ERROR',
+          message: 'DealService.batchAddDeals() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -64,7 +70,7 @@ export class DealService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
 
       const stage = unifiedDealData.stage_id;
       //check if contact_id and account_id refer to real uuids
@@ -75,7 +81,9 @@ export class DealService {
           },
         });
         if (!search)
-          throw new Error('You inserted a stage_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a stage_id which does not exist',
+          );
       }
 
       const user = unifiedDealData.user_id;
@@ -87,7 +95,9 @@ export class DealService {
           },
         });
         if (!search)
-          throw new Error('You inserted a user_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a user_id which does not exist',
+          );
       }
 
       //desunify the data according to the target obj wanted
@@ -242,7 +252,13 @@ export class DealService {
       );
       return result_deal;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_DEAL_ERROR',
+          message: 'DealService.addDeal() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -311,7 +327,13 @@ export class DealService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_DEAL_ERROR',
+          message: 'DealService.getDeal() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -320,10 +342,13 @@ export class DealService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedDealOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedDealOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
-
       let prev_cursor = null;
       let next_cursor = null;
 
@@ -332,21 +357,23 @@ export class DealService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_crm_deal: cursor
-          }
+            id_crm_deal: cursor,
+          },
         });
         if (!isCursorPresent) {
-          throw new NotFoundError(`The provided cursor does not exist!`);
+          throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
 
-      let deals = await this.prisma.crm_deals.findMany({
+      const deals = await this.prisma.crm_deals.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_crm_deal: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_crm_deal: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -354,8 +381,10 @@ export class DealService {
         },
       });
 
-      if (deals.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(deals[deals.length - 1].id_crm_deal).toString('base64');
+      if (deals.length === pageSize + 1) {
+        next_cursor = Buffer.from(deals[deals.length - 1].id_crm_deal).toString(
+          'base64',
+        );
         deals.pop();
       }
 
@@ -436,10 +465,16 @@ export class DealService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_DEALS_ERROR',
+          message: 'DealService.getDeals() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

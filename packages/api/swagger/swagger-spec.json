@@ -5074,20 +5074,6 @@
         ]
       }
     },
-    "/project-connectors/create": {
-      "post": {
-        "operationId": "ProjectConnectorsController_createConnectorsToProject",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "project-connectors"
-        ]
-      }
-    },
     "/ticketing/attachments": {
       "get": {
         "operationId": "getAttachments",
@@ -5702,7 +5688,7 @@
           },
           "country": {
             "type": "string",
-            "description": "The country."
+            "description": "The country"
           },
           "address_type": {
             "type": "string",
