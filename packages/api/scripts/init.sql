@@ -19,6 +19,8 @@ COMMENT ON COLUMN webhooks_reponses.http_status_code IS 'anything that is not 2x
 
 
 
+
+
 -- ************************************** webhooks_payloads
 
 CREATE TABLE webhooks_payloads
@@ -104,10 +106,9 @@ CREATE TABLE tcg_users
  remote_id       text NULL,
  remote_platform text NULL,
  teams           text[] NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NULL,
  modified_at     timestamp NULL,
  id_linked_user  uuid NULL,
- CONSTRAINT force_createdAt_unique_tcg_users UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_users PRIMARY KEY ( id_tcg_user )
 );
 
@@ -128,10 +129,9 @@ CREATE TABLE tcg_teams
  remote_platform text NULL,
  name            text NULL,
  description     text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
- CONSTRAINT force_createdAt_unique_tcg_teams UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_teams PRIMARY KEY ( id_tcg_team )
 );
 
@@ -153,10 +153,9 @@ CREATE TABLE tcg_collections
  remote_platform   text NULL,
  collection_type   text NULL,
  parent_collection uuid NULL,
- created_at        timestamp NOT NULL DEFAULT NOW(),
+ created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
  id_linked_user    uuid NOT NULL,
- CONSTRAINT force_createdAt_unique_tcg_collections UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_collections PRIMARY KEY ( id_tcg_collection )
 );
 
@@ -176,10 +175,9 @@ CREATE TABLE tcg_accounts
  name            text NULL,
  domains         text[] NULL,
  remote_platform text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
- CONSTRAINT force_createdAt_unique_tcg_accounts UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_account PRIMARY KEY ( id_tcg_account )
 );
 
@@ -236,6 +234,8 @@ COMMENT ON COLUMN managed_webhooks.endpoint IS 'UUID that will be used in the fi
 
 
 
+
+
 -- ************************************** fs_shared_links
 
 CREATE TABLE fs_shared_links
@@ -245,6 +245,12 @@ CREATE TABLE fs_shared_links
  modified_at       timestamp NOT NULL,
  CONSTRAINT PK_fs_shared_links PRIMARY KEY ( id_fs_shared_link )
 );
+
+
+
+
+
+
 
 
 -- ************************************** fs_permissions
@@ -282,6 +288,12 @@ CREATE TABLE fs_drives
  remote_id         text NULL,
  CONSTRAINT PK_fs_drives PRIMARY KEY ( id_fs_drive )
 );
+
+
+
+
+
+
 
 
 -- ************************************** entity
@@ -359,14 +371,19 @@ CREATE TABLE crm_users
  id_crm_user     uuid NOT NULL,
  name            text NULL,
  email           text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
  remote_id       text NULL,
  remote_platform text NULL,
- CONSTRAINT force_createdAt_unique_crm_users UNIQUE ( created_at ),
  CONSTRAINT PK_crm_users PRIMARY KEY ( id_crm_user )
 );
+
+
+
+
+
+
 
 
 -- ************************************** crm_deals_stages
@@ -375,12 +392,11 @@ CREATE TABLE crm_deals_stages
 (
  id_crm_deals_stage uuid NOT NULL,
  stage_name         text NULL,
- created_at         timestamp NOT NULL DEFAULT NOW(),
+ created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
  id_linked_user     uuid NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
- CONSTRAINT force_createdAt_unique_crm_deals_stages UNIQUE ( created_at ),
  CONSTRAINT PK_crm_deal_stages PRIMARY KEY ( id_crm_deals_stage )
 );
 
@@ -400,13 +416,22 @@ CREATE TABLE connector_sets
  crm_zoho         boolean NOT NULL,
  crm_attio        boolean NOT NULL,
  crm_pipedrive    boolean NOT NULL,
+ crm_zendesk      boolean NOT NULL,
+ crm_close        boolean NOT NULL,
  tcg_zendesk      boolean NOT NULL,
  tcg_jira         boolean NOT NULL,
  tcg_gorgias      boolean NOT NULL,
  tcg_gitlab       boolean NOT NULL,
  tcg_front        boolean NOT NULL,
+ crm_zendesk      boolean NOT NULL,
+ crm_close        boolean NOT NULL,
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
+
+
+
+
+
 
 
 
@@ -445,7 +470,7 @@ CREATE TABLE tcg_tickets
  collections     text[] NULL,
  completed_at    timestamp NULL,
  priority        text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  assigned_to     text[] NULL,
  remote_id       text NULL,
@@ -453,7 +478,6 @@ CREATE TABLE tcg_tickets
  creator_type    text NULL,
  id_tcg_user     uuid NULL,
  id_linked_user  uuid NOT NULL,
- CONSTRAINT force_createdAt_unique_tcg_tickets UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_tickets PRIMARY KEY ( id_tcg_ticket )
 );
 
@@ -487,12 +511,11 @@ CREATE TABLE tcg_contacts
  details         text NULL,
  remote_id       text NULL,
  remote_platform text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NULL,
  modified_at     timestamp NULL,
  id_tcg_account  uuid NULL,
  id_linked_user  uuid NULL,
  CONSTRAINT PK_tcg_contact PRIMARY KEY ( id_tcg_contact ),
- CONSTRAINT force_createdAt_unique_tcg_contacts UNIQUE ( created_at ),
  CONSTRAINT FK_49 FOREIGN KEY ( id_tcg_account ) REFERENCES tcg_accounts ( id_tcg_account )
 );
 
@@ -538,6 +561,8 @@ ex 3600 for one hour';
 
 
 
+
+
 -- ************************************** fs_folders
 
 CREATE TABLE fs_folders
@@ -558,12 +583,14 @@ CREATE TABLE fs_folders
 CREATE INDEX FK_fs_folder_driveID ON fs_folders
 (
  id_fs_drive
-);
 
 CREATE INDEX FK_fs_folder_permissionID ON fs_folders
 (
  id_fs_permission
 );
+
+
+
 
 
 -- ************************************** crm_contacts
@@ -573,14 +600,13 @@ CREATE TABLE crm_contacts
  id_crm_contact  uuid NOT NULL,
  first_name      text NOT NULL,
  last_name       text NOT NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  remote_id       text NOT NULL,
  remote_platform text NOT NULL,
  id_crm_user     uuid NULL,
  id_linked_user  uuid NULL,
  CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
- CONSTRAINT force_createdAt_unique_crm_contacts UNIQUE ( created_at ),
  CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
 
@@ -605,14 +631,13 @@ CREATE TABLE crm_companies
  name                text NULL,
  industry            text NULL,
  number_of_employees bigint NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at          timestamp NOT NULL,
  modified_at         timestamp NOT NULL,
  remote_id           text NULL,
  remote_platform     text NULL,
  id_crm_user         uuid NULL,
  id_linked_user      uuid NULL,
  CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
- CONSTRAINT force_createdAt_unique_crm_companies UNIQUE ( created_at ),
  CONSTRAINT FK_24 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
 
@@ -714,12 +739,11 @@ CREATE TABLE tcg_tags
  name            text NULL,
  remote_id       text NULL,
  remote_platform text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_tcg_ticket   uuid NULL,
  id_linked_user  uuid NULL,
  CONSTRAINT PK_tcg_tags PRIMARY KEY ( id_tcg_tag ),
- CONSTRAINT force_createdAt_unique_tcg_tags UNIQUE ( created_at ),
  CONSTRAINT FK_48 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
 );
 
@@ -745,7 +769,7 @@ CREATE TABLE tcg_comments
  is_private        boolean NULL,
  remote_id         text NULL,
  remote_platform   text NULL,
- created_at        timestamp NOT NULL DEFAULT NOW(),
+ created_at        timestamp NULL,
  modified_at       timestamp NULL,
  creator_type      text NULL,
  id_tcg_attachment text[] NULL,
@@ -754,7 +778,6 @@ CREATE TABLE tcg_comments
  id_tcg_user       uuid NULL,
  id_linked_user    uuid NULL,
  CONSTRAINT PK_tcg_comments PRIMARY KEY ( id_tcg_comment ),
- CONSTRAINT force_createdAt_unique_tcg_comments UNIQUE ( created_at ),
  CONSTRAINT FK_41 FOREIGN KEY ( id_tcg_contact ) REFERENCES tcg_contacts ( id_tcg_contact ),
  CONSTRAINT FK_40_1 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket ),
  CONSTRAINT FK_42 FOREIGN KEY ( id_tcg_user ) REFERENCES tcg_users ( id_tcg_user )
@@ -890,7 +913,7 @@ CREATE TABLE crm_engagements
  subject           text NULL,
  start_at          timestamp NULL,
  end_time          timestamp NULL,
- created_at        timestamp NOT NULL DEFAULT NOW(),
+ created_at        timestamp NULL,
  modified_at       timestamp NULL,
  remote_id         text NULL,
  id_linked_user    uuid NULL,
@@ -898,7 +921,6 @@ CREATE TABLE crm_engagements
  id_crm_company    uuid NULL,
  id_crm_user       uuid NULL,
  CONSTRAINT PK_crm_engagement PRIMARY KEY ( id_crm_engagement ),
- CONSTRAINT force_createdAt_unique_crm_engagements UNIQUE ( created_at ),
  CONSTRAINT FK_crm_engagement_crm_user FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
 );
@@ -965,8 +987,8 @@ CREATE TABLE crm_deals
  id_crm_deal        uuid NOT NULL,
  name               text NOT NULL,
  description        text NOT NULL,
- amount             bigint NULL,
- created_at         timestamp NOT NULL DEFAULT NOW(),
+ amount             bigint NOT NULL,
+ created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
@@ -975,7 +997,6 @@ CREATE TABLE crm_deals
  id_linked_user     uuid NULL,
  id_crm_company     uuid NULL,
  CONSTRAINT PK_crm_deal PRIMARY KEY ( id_crm_deal ),
- CONSTRAINT force_createdAt_unique_crm_deals UNIQUE ( created_at ),
  CONSTRAINT FK_22 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_21 FOREIGN KEY ( id_crm_deals_stage ) REFERENCES crm_deals_stages ( id_crm_deals_stage ),
  CONSTRAINT FK_47_1 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1089,13 +1110,12 @@ CREATE TABLE tcg_attachments
  file_name         text NULL,
  file_url          text NULL,
  uploader          uuid NOT NULL,
- created_at        timestamp NOT NULL DEFAULT NOW(),
+ created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
  id_linked_user    uuid NULL,
  id_tcg_ticket     uuid NULL,
  id_tcg_comment    uuid NULL,
  CONSTRAINT PK_tcg_attachments PRIMARY KEY ( id_tcg_attachment ),
- CONSTRAINT force_createdAt_unique_tcg_attachments UNIQUE ( created_at ),
  CONSTRAINT FK_51 FOREIGN KEY ( id_tcg_comment ) REFERENCES tcg_comments ( id_tcg_comment ),
  CONSTRAINT FK_50 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
 );
@@ -1185,7 +1205,7 @@ CREATE TABLE crm_tasks
  status          text NULL,
  due_date        timestamp NULL,
  finished_date   timestamp NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_crm_user     uuid NULL,
  id_crm_company  uuid NULL,
@@ -1194,7 +1214,6 @@ CREATE TABLE crm_tasks
  remote_id       text NULL,
  remote_platform text NULL,
  CONSTRAINT PK_crm_task PRIMARY KEY ( id_crm_task ),
- CONSTRAINT force_createdAt_unique_crm_tasks UNIQUE ( created_at ),
  CONSTRAINT FK_26 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_25 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_27 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )
@@ -1228,7 +1247,7 @@ CREATE TABLE crm_notes
 (
  id_crm_note     uuid NOT NULL,
  content         text NOT NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_crm_company  uuid NULL,
  id_crm_contact  uuid NULL,
@@ -1238,7 +1257,6 @@ CREATE TABLE crm_notes
  remote_platform text NULL,
  id_crm_user     uuid NULL,
  CONSTRAINT PK_crm_notes PRIMARY KEY ( id_crm_note ),
- CONSTRAINT force_createdAt_unique_crm_notes UNIQUE ( created_at ),
  CONSTRAINT FK_19 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_18 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_20 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )
@@ -1317,7 +1335,6 @@ CREATE TABLE connections
  id_project           uuid NOT NULL,
  id_linked_user       uuid NOT NULL,
  CONSTRAINT PK_connections PRIMARY KEY ( id_connection ),
- CONSTRAINT Index_3 UNIQUE ( access_token, refresh_token ),
  CONSTRAINT FK_9 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
  CONSTRAINT FK_11 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
 );
@@ -1419,7 +1436,3 @@ CREATE INDEX id_job_jobs_status_history ON jobs_status_history
 
 COMMENT ON COLUMN jobs_status_history.previous_status IS 'void when first initialization';
 COMMENT ON COLUMN jobs_status_history.new_status IS 'pending, retry_scheduled, failed, success';
-
-
-
-

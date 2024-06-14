@@ -55,22 +55,19 @@ export class UserController {
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      const { remote_data, pageSize, cursor } = query;
-      return this.userService.getUsers(
-        remoteSource,
-        linkedUserId,
-        pageSize,
-        remote_data,
-        cursor
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
+    const { remote_data, pageSize, cursor } = query;
+
+    return this.userService.getUsers(
+      remoteSource,
+      linkedUserId,
+      pageSize,
+      remote_data,
+      cursor,
+    );
   }
 
   @ApiOperation({

@@ -14,6 +14,7 @@ import { EncryptionService } from './encryption/encryption.service';
 import { ConnectionsStrategiesModule } from './connections-strategies/connections-strategies.module';
 import { SyncModule } from './sync/sync.module';
 import { ProjectConnectorsModule } from './project-connectors/project-connectors.module';
+import { LoggerService } from './logger/logger.service';
 
 @Module({
   imports: [
@@ -48,6 +49,6 @@ import { ProjectConnectorsModule } from './project-connectors/project-connectors
     SyncModule,
     ProjectConnectorsModule,
   ],
-  providers: [EncryptionService],
+  providers: [EncryptionService, LoggerService],
 })
 export class CoreModule {}

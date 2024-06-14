@@ -129,7 +129,7 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
         )
         ;
       },
-      error: 'Error',
+      error: (err: any) => err.message || 'Error'
     });
     setShowNewDialog({open: false})  
     projectForm.reset();
@@ -170,7 +170,7 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0 ml-20">
+        <PopoverContent className="w-[200px] p-0 ml-4">
           <Command>
             <CommandList>
               <CommandInput placeholder="Search..." />

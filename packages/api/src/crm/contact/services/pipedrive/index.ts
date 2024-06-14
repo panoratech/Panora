@@ -4,7 +4,7 @@ import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
@@ -55,7 +55,7 @@ export class PipedriveService implements IContactService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
         'Pipedrive',
@@ -63,7 +63,6 @@ export class PipedriveService implements IContactService {
         ActionType.POST,
       );
     }
-    return;
   }
 
   async syncContacts(
@@ -92,7 +91,7 @@ export class PipedriveService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
         'Pipedrive',

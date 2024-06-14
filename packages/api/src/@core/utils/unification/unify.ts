@@ -58,5 +58,4 @@ export async function unify<T extends UnifySourceType | UnifySourceType[]>({
         customFieldMappings,
       });
   }
-  return;
 }

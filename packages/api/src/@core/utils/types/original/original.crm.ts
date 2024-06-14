@@ -3,6 +3,7 @@ import { HubspotCompanyOutput } from '@crm/company/services/hubspot/types';
 import { PipedriveCompanyOutput } from '@crm/company/services/pipedrive/types';
 import { ZendeskCompanyOutput } from '@crm/company/services/zendesk/types';
 import { ZohoCompanyOutput } from '@crm/company/services/zoho/types';
+import { CloseCompanyOutput } from '@crm/company/services/close/types';
 import {
   AttioContactInput,
   AttioContactOutput,
@@ -19,10 +20,15 @@ import {
   ZohoContactInput,
   ZohoContactOutput,
 } from '@crm/contact/services/zoho/types';
+import {
+  CloseContactInput,
+  CloseContactOutput,
+} from '@crm/contact/services/close/types';
 import { HubspotDealOutput } from '@crm/deal/services/hubspot/types';
 import { PipedriveDealOutput } from '@crm/deal/services/pipedrive/types';
 import { ZendeskDealOutput } from '@crm/deal/services/zendesk/types';
 import { ZohoDealOutput } from '@crm/deal/services/zoho/types';
+import { CloseDealOutput } from '@crm/deal/services/close/types';
 import {
   HubspotEngagementInput,
   HubspotEngagementOutput,
@@ -40,6 +46,10 @@ import {
   ZohoEngagementOutput,
 } from '@crm/engagement/services/zoho/types';
 import {
+  CloseEngagementInput,
+  CloseEngagementOutput,
+} from '@crm/engagement/services/close/types';
+import {
   HubspotNoteInput,
   HubspotNoteOutput,
 } from '@crm/note/services/hubspot/types';
@@ -52,6 +62,10 @@ import {
   ZendeskNoteOutput,
 } from '@crm/note/services/zendesk/types';
 import { ZohoNoteInput, ZohoNoteOutput } from '@crm/note/services/zoho/types';
+import {
+  CloseNoteInput,
+  CloseNoteOutput,
+} from '@crm/note/services/close/types';
 import {
   HubspotStageInput,
   HubspotStageOutput,
@@ -69,6 +83,10 @@ import {
   ZohoStageOutput,
 } from '@crm/stage/services/zoho/types';
 import {
+  CloseStageInput,
+  CloseStageOutput,
+} from '@crm/stage/services/close/types';
+import {
   HubspotTaskInput,
   HubspotTaskOutput,
 } from '@crm/task/services/hubspot/types';
@@ -82,6 +100,10 @@ import {
 } from '@crm/task/services/zendesk/types';
 import { ZohoTaskInput, ZohoTaskOutput } from '@crm/task/services/zoho/types';
 import {
+  CloseTaskInput,
+  CloseTaskOutput,
+} from '@crm/task/services/close/types';
+import {
   HubspotUserInput,
   HubspotUserOutput,
 } from '@crm/user/services/hubspot/types';
@@ -90,6 +112,10 @@ import {
   PipedriveUserOutput,
 } from '@crm/user/services/pipedrive/types';
 import { ZohoUserInput, ZohoUserOutput } from '@crm/user/services/zoho/types';
+import {
+  CloseUserInput,
+  CloseUserOutput,
+} from '@crm/user/services/close/types';
 import {
   ZendeskContactInput,
   ZendeskContactOutput,
@@ -107,14 +133,16 @@ export type OriginalContactInput =
   | ZohoContactInput
   | ZendeskContactInput
   | PipedriveContactInput
-  | AttioContactInput;
+  | AttioContactInput
+  | CloseContactInput;
 
 /* deal */
 export type OriginalDealInput =
   | HubspotDealOutput
   | ZohoDealOutput
   | ZendeskDealOutput
-  | PipedriveDealOutput;
+  | PipedriveDealOutput
+  | CloseDealOutput;
 
 /* company */
 export type OriginalCompanyInput =
@@ -122,35 +150,40 @@ export type OriginalCompanyInput =
   | ZohoCompanyOutput
   | ZendeskCompanyOutput
   | PipedriveCompanyOutput
-  | AttioCompanyOutput;
+  | AttioCompanyOutput
+  | CloseCompanyOutput;
 
 /* engagement */
 export type OriginalEngagementInput =
   | HubspotEngagementInput
   | ZohoEngagementInput
   | ZendeskEngagementInput
-  | PipedriveEngagementInput;
+  | PipedriveEngagementInput
+  | CloseEngagementInput;
 
 /* note */
 export type OriginalNoteInput =
   | HubspotNoteInput
   | ZohoNoteInput
   | ZendeskNoteInput
-  | PipedriveNoteInput;
+  | PipedriveNoteInput
+  | CloseNoteInput;
 
 /* task */
 export type OriginalTaskInput =
   | HubspotTaskInput
   | ZohoTaskInput
   | ZendeskTaskInput
-  | PipedriveTaskInput;
+  | PipedriveTaskInput
+  | CloseTaskInput;
 
 /* stage */
 export type OriginalStageInput =
   | HubspotStageInput
   | ZohoStageInput
   | ZendeskStageInput
-  | PipedriveStageInput;
+  | PipedriveStageInput
+  | CloseStageInput;
 
 /* engagementType */
 
@@ -159,7 +192,8 @@ export type OriginalUserInput =
   | HubspotUserInput
   | ZohoUserInput
   | ZendeskUserInput
-  | PipedriveUserInput;
+  | PipedriveUserInput
+  | CloseUserOutput;
 
 export type CrmObjectInput =
   | OriginalContactInput
@@ -178,14 +212,16 @@ export type OriginalContactOutput =
   | ZohoContactOutput
   | ZendeskContactOutput
   | PipedriveContactOutput
-  | AttioContactOutput;
+  | AttioContactOutput
+  | CloseContactOutput;
 
 /* deal */
 export type OriginalDealOutput =
   | HubspotDealOutput
   | ZohoDealOutput
   | ZendeskDealOutput
-  | PipedriveDealOutput;
+  | PipedriveDealOutput
+  | CloseDealOutput;
 
 /* company */
 export type OriginalCompanyOutput =
@@ -193,35 +229,40 @@ export type OriginalCompanyOutput =
   | ZohoCompanyOutput
   | ZendeskCompanyOutput
   | PipedriveCompanyOutput
-  | AttioCompanyOutput;
+  | AttioCompanyOutput
+  | CloseCompanyOutput;
 
 /* engagement */
 export type OriginalEngagementOutput =
   | HubspotEngagementOutput
   | ZohoEngagementOutput
   | ZendeskEngagementOutput
-  | PipedriveEngagementOutput;
+  | PipedriveEngagementOutput
+  | CloseEngagementOutput;
 
 /* note */
 export type OriginalNoteOutput =
   | HubspotNoteOutput
   | ZohoNoteOutput
   | ZendeskNoteOutput
-  | PipedriveNoteOutput;
+  | PipedriveNoteOutput
+  | CloseNoteOutput;
 
 /* task */
 export type OriginalTaskOutput =
   | HubspotTaskOutput
   | ZohoTaskOutput
   | ZendeskTaskOutput
-  | PipedriveTaskOutput;
+  | PipedriveTaskOutput
+  | CloseTaskOutput;
 
 /* stage */
 export type OriginalStageOutput =
   | HubspotStageOutput
   | ZohoStageOutput
   | ZendeskStageOutput
-  | PipedriveStageOutput;
+  | PipedriveStageOutput
+  | CloseStageOutput;
 
 /* engagementType */
 
@@ -230,7 +271,8 @@ export type OriginalUserOutput =
   | HubspotUserOutput
   | ZohoUserOutput
   | ZendeskUserOutput
-  | PipedriveUserOutput;
+  | PipedriveUserOutput
+  | CloseUserInput;
 
 export type CrmObjectOutput =
   | OriginalContactOutput

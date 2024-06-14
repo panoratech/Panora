@@ -12,6 +12,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { slugFromCategory } from '@panora/shared';
 
 // Function to scan the directory for new service directories
 function scanDirectory(dir) {
@@ -31,35 +32,42 @@ function replaceRelativePaths(path) {
 }
 
 // Function to extract possible provider to generate import statements for new service types
-function getProvidersForImportStatements(file, allPossibleProviders, objectType) {
+function getProvidersForImportStatements(
+  file,
+  allPossibleProviders,
+  objectType,
+) {
   let fileContent = fs.readFileSync(file, 'utf8');
   const possibleImports = allPossibleProviders.filter((provider) => {
     const name =
       provider.substring(0, 1).toUpperCase() +
       provider.substring(1) +
-      objectType.substring(0, 1).toUpperCase() + objectType.substring(1);
+      objectType.substring(0, 1).toUpperCase() +
+      objectType.substring(1);
     const inputObjPattern = new RegExp(`(${name}Input)`);
     const outputObjPattern = new RegExp(`(${name}Output)`);
 
-    if (inputObjPattern.test(fileContent) || outputObjPattern.test(fileContent)) {
-      return false
+    if (
+      inputObjPattern.test(fileContent) ||
+      outputObjPattern.test(fileContent)
+    ) {
+      return false;
     }
     return true;
   });
 
   return possibleImports;
-
 }
 
 // Function to generate import statements for new service types
 function generateImportStatements(possibleProviders, basePath, objectType) {
-
   return possibleProviders.map((serviceName) => {
     const importPath = `${basePath}/${serviceName}/types`;
     const name =
       serviceName.substring(0, 1).toUpperCase() +
       serviceName.substring(1) +
-      objectType.substring(0, 1).toUpperCase() + objectType.substring(1);
+      objectType.substring(0, 1).toUpperCase() +
+      objectType.substring(1);
     return `import { ${name}Input, ${name}Output } from '${replaceRelativePaths(
       importPath,
     )}';`;
@@ -85,9 +93,14 @@ function updateTargetFile(file, importStatements, serviceNames, objectType) {
     // Update OriginalObjectTypeInput
 
     // checking whether OriginalObjectTypeInput assigns null
-    const inputNullRegex = new RegExp(`(export type Original${objectType}Input = null)`);
+    const inputNullRegex = new RegExp(
+      `(export type Original${objectType}Input = null)`,
+    );
     if (inputNullRegex.test(fileContent)) {
-      fileContent = fileContent.replace(inputNullRegex, `export type Original${objectType}Input =`)
+      fileContent = fileContent.replace(
+        inputNullRegex,
+        `export type Original${objectType}Input =`,
+      );
     }
     const inputRegex = new RegExp(`(export type Original${objectType}Input =)`);
     if (inputRegex.test(fileContent)) {
@@ -100,9 +113,14 @@ function updateTargetFile(file, importStatements, serviceNames, objectType) {
     // Update OriginalObjectTypeOutput
 
     // checking whether OriginalObjectTypeInput assigns null
-    const outputNullRegex = new RegExp(`(export type Original${objectType}Input = null)`);
+    const outputNullRegex = new RegExp(
+      `(export type Original${objectType}Input = null)`,
+    );
     if (outputNullRegex.test(fileContent)) {
-      fileContent = fileContent.replace(outputNullRegex, `export type Original${objectType}Output =`)
+      fileContent = fileContent.replace(
+        outputNullRegex,
+        `export type Original${objectType}Output =`,
+      );
     }
 
     const outputRegex = new RegExp(
@@ -315,6 +333,82 @@ function updateEnumFile(enumFilePath, newServiceDirs, vertical) {
     console.error(`Could not find enum ${enumName} in file.`);
   }
 }
+
+// New function to update init.sql
+function updateInitSQLFile(initSQLFile, newServiceDirs, vertical) {
+  let fileContent = fs.readFileSync(initSQLFile, 'utf8');
+  const insertPoint = fileContent.indexOf(
+    'CONSTRAINT PK_project_connector PRIMARY KEY',
+  );
+
+  if (insertPoint === -1) {
+    console.error(
+      `Could not find the PRIMARY KEY constraint in ${initSQLFile}`,
+    );
+    return;
+  }
+
+  let newLines = '';
+  newServiceDirs.forEach((serviceName) => {
+    const columnName = `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`;
+    newLines += ` ${columnName} boolean NOT NULL,\n`;
+  });
+
+  fileContent = [
+    fileContent.slice(0, insertPoint),
+    newLines,
+    fileContent.slice(insertPoint),
+  ].join('');
+
+  fs.writeFileSync(initSQLFile, fileContent);
+}
+
+// New function to update seed.sql
+function updateSeedSQLFile(seedSQLFile, newServiceDirs, vertical) {
+  let fileContent = fs.readFileSync(seedSQLFile, 'utf8');
+
+  const tableInsertPoint = fileContent.indexOf('INSERT INTO connector_sets');
+  if (tableInsertPoint === -1) {
+    console.error(
+      `Could not find the INSERT INTO connector_sets statement in ${seedSQLFile}`,
+    );
+    return;
+  }
+
+  const columnInsertPoint = fileContent.indexOf('(', tableInsertPoint);
+  const valuesInsertPoint = fileContent.indexOf('VALUES', columnInsertPoint);
+  const rowsInsertPoint = fileContent.indexOf('(', valuesInsertPoint);
+
+  if (
+    columnInsertPoint === -1 ||
+    valuesInsertPoint === -1 ||
+    rowsInsertPoint === -1
+  ) {
+    console.error(
+      `Could not find the column or values insert points in ${seedSQLFile}`,
+    );
+    return;
+  }
+
+  let newColumns = '';
+  let newValues = '';
+  newServiceDirs.forEach((serviceName) => {
+    const columnName = `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`;
+    newColumns += `${columnName}, `;
+    newValues += 'TRUE, ';
+  });
+
+  const updatedFileContent = [
+    fileContent.slice(0, columnInsertPoint + 1),
+    newColumns,
+    fileContent.slice(columnInsertPoint + 1, rowsInsertPoint + 1),
+    newValues,
+    fileContent.slice(rowsInsertPoint + 1),
+  ].join('');
+
+  fs.writeFileSync(seedSQLFile, updatedFileContent);
+}
+
 // Main script logic
 function updateObjectTypes(baseDir, objectType, vertical) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -330,13 +424,14 @@ function updateObjectTypes(baseDir, objectType, vertical) {
     __dirname,
     '../../shared/src/connectors/index.ts',
   );
-  const enumFilePath = path.join(__dirname, '../../shared/src/connectors/enum.ts');
+  const enumFilePath = path.join(
+    __dirname,
+    '../../shared/src/connectors/enum.ts',
+  );
   const currentProviders = extractArrayFromFile(
     providersFilePath,
     `${vertical.toUpperCase()}_PROVIDERS`,
   );
-
-
 
   // Compare the extracted arrays with the new service names
   const newProviders = newServiceDirs.filter(
@@ -369,7 +464,11 @@ function updateObjectTypes(baseDir, objectType, vertical) {
   // Call updateMappingsFile to update the mappings file with new services
   updateMappingsFile(mappingsFile, newServiceDirs, objectType, vertical);
 
-  const possibleProviderForImportStatements = getProvidersForImportStatements(targetFile, newServiceDirs, objectType);
+  const possibleProviderForImportStatements = getProvidersForImportStatements(
+    targetFile,
+    newServiceDirs,
+    objectType,
+  );
 
   // Continue with the rest of the updateObjectTypes function...
   const importStatements = generateImportStatements(
@@ -378,7 +477,19 @@ function updateObjectTypes(baseDir, objectType, vertical) {
     objectType,
   );
   // console.log(importStatements)
-  updateTargetFile(targetFile, importStatements, possibleProviderForImportStatements, objectType);
+  updateTargetFile(
+    targetFile,
+    importStatements,
+    possibleProviderForImportStatements,
+    objectType,
+  );
+
+  // Update SQL files
+  const initSQLFile = path.join(__dirname, './init.sql');
+  updateInitSQLFile(initSQLFile, newServiceDirs, slugFromCategory(vertical));
+
+  const seedSQLFile = path.join(__dirname, './seed.sql');
+  updateSeedSQLFile(seedSQLFile, newServiceDirs, slugFromCategory(vertical));
 }
 
 // Example usage for ticketing/team

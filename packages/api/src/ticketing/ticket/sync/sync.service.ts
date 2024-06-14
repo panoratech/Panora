@@ -1,6 +1,6 @@
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { SyncError, throwTypedError } from '@@core/utils/errors';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
@@ -35,7 +35,7 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -99,18 +99,25 @@ export class SyncService implements OnModuleInit {
                       id_project,
                     );
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'TICKETING_TICKET_SYNC_ERROR',
+          message: 'SyncService.syncTickets() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -142,7 +149,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping tickets syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -220,7 +226,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -237,7 +243,7 @@ export class SyncService implements OnModuleInit {
         const originId = ticket.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingTicket = await this.prisma.tcg_tickets.findFirst({
@@ -399,7 +405,7 @@ export class SyncService implements OnModuleInit {
       }
       return tickets_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
   async removeTicketInDb(

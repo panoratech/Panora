@@ -1,7 +1,6 @@
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { ApiResponse } from '@@core/utils/types';
 import { unify } from '@@core/utils/unification/unify';
 import { WebhookService } from '@@core/webhook/webhook.service';
@@ -18,6 +17,7 @@ import { CRM_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { Utils } from '@crm/@lib/@utils';
+import { throwTypedError, SyncError } from '@@core/utils/errors';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -39,7 +39,7 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -119,18 +119,25 @@ export class SyncService implements OnModuleInit {
                       id_project,
                     );
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'CRM_CONTACT_SYNC_ERROR',
+          message: 'SyncService.syncContacts() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -156,7 +163,7 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping contacts syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
+        
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -212,7 +219,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -229,7 +236,7 @@ export class SyncService implements OnModuleInit {
         const originId = contact.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingContact = await this.prisma.crm_contacts.findFirst({
@@ -494,7 +501,7 @@ export class SyncService implements OnModuleInit {
       }
       return contacts_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 }

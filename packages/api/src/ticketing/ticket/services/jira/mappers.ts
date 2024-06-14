@@ -21,7 +21,9 @@ export class JiraTicketMapper implements ITicketMapper {
     }[],
   ): Promise<JiraTicketInput> {
     if (!source.project_id) {
-      throw new Error('a project key/id is mandatory for Jira ticket creation');
+      throw new ReferenceError(
+        'a project key/id is mandatory for Jira ticket creation',
+      );
     }
     const result: JiraTicketInput = {
       fields: {

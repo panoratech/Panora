@@ -121,7 +121,7 @@ export function MapForm({ onClose, fieldToMap }: {onClose: () => void; fieldToMa
         )
         ;
       },
-      error: 'Error',
+      error: (err: any) => err.message || 'Error'
     });
     posthog?.capture("field_mapped", {
       id_project: idProject,

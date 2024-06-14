@@ -7,7 +7,13 @@ import {
   RefreshParams,
 } from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
-import { Action, NotFoundError, handleServiceError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
@@ -80,7 +86,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
     try {
       const { linkedUserId, projectId, code, location } = opts;
       if (!location) {
-        throw new NotFoundError(`no zoho location, found ${location}`);
+        throw new ReferenceError(`no zoho location, found ${location}`);
       }
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
@@ -176,7 +182,18 @@ export class ZohoConnectionService implements ICrmConnectionService {
 
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'zoho', Action.oauthCallback);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_CRM',
+          message: `ZohoConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'zoho',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -218,7 +235,18 @@ export class ZohoConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : zoho ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'zoho', Action.oauthRefresh);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_CRM',
+          message: `ZohoConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            'zoho',
+            Action.oauthRefresh,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

@@ -5,7 +5,7 @@ import { PipedriveTaskInput, PipedriveTaskOutput } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
@@ -54,7 +54,7 @@ export class PipedriveService implements ITaskService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
         'Pipedrive',
@@ -62,7 +62,6 @@ export class PipedriveService implements ITaskService {
         ActionType.POST,
       );
     }
-    return;
   }
 
   async syncTasks(
@@ -94,7 +93,7 @@ export class PipedriveService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
         'Pipedrive',

@@ -131,7 +131,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEH77yPBUkStmoc1ZtgJS4XeBmQiaq_Q1vgF5oerOGbg&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
         authStrategy: AuthStrategy.oauth2
       },
       'copper': {
@@ -335,7 +334,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.oauth2
       },
       'jira': {
-        scopes: 'read:jira-work manage:jira-project manage:jira-data-provider manage:jira-webhook write:jira-work manage:jira-configuration read:jira-user offline_access',
+        scopes: 'read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider offline_access',
         urls: {
           docsUrl: '',
           apiUrl: '/rest/api/3',

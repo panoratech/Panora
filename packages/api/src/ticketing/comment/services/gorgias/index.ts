@@ -4,12 +4,12 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { GorgiasCommentInput, GorgiasCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
 import * as fs from 'fs';
 
 @Injectable()
@@ -53,7 +53,9 @@ export class GorgiasService implements ICommentService {
             },
           });
           if (!res) {
-            throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+            throw new ReferenceError(
+              `tcg_attachment not found for uuid ${uuid}`,
+            );
           }
           // Assuming you want to construct the right binary attachment here
           // For now, we'll just return the URL
@@ -94,10 +96,10 @@ export class GorgiasService implements ICommentService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Gorgias',
+        'gorgias',
         TicketingObject.comment,
         ActionType.POST,
       );
@@ -144,10 +146,10 @@ export class GorgiasService implements ICommentService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Gorgias',
+        'gorgias',
         TicketingObject.comment,
         ActionType.GET,
       );

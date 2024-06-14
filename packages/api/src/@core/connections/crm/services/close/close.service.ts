@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -85,10 +85,7 @@ export class CloseConnectionService implements ICrmConnectionService {
         },
       );
       const data: CloseOAuthResponse = res.data;
-      this.logger.log(
-        'OAuth credentials : close ticketing ' + JSON.stringify(data),
-      );
-
+      this.logger.log('OAuth credentials : close CRM ' + JSON.stringify(data));
       let db_res;
       const connection_token = uuidv4();
 
@@ -100,7 +97,7 @@ export class CloseConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['crm']['close'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['close']?.urls?.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -116,7 +113,7 @@ export class CloseConnectionService implements ICrmConnectionService {
             provider_slug: 'close',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['close'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']?.close?.urls?.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -140,7 +137,17 @@ export class CloseConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'close', Action.oauthCallback);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_CALLBACK_CRM",
+          message: `CloseConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            "close",
+            Action.oauthCallback,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)    
     }
   }
 
@@ -153,10 +160,10 @@ export class CloseConnectionService implements ICrmConnectionService {
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
+        grant_type: 'refresh_token',
       });
       const res = await axios.post(
         'https://api.close.com/oauth2/token',
@@ -168,21 +175,34 @@ export class CloseConnectionService implements ICrmConnectionService {
         },
       );
       const data: CloseOAuthResponse = res.data;
-      await this.prisma.connections.update({
-        where: {
-          id_connection: connectionId,
-        },
-        data: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_in) * 1000,
-          ),
-        },
-      });
+      if (res?.data?.access_token) {
+        //only update when it is successful
+        await this.prisma.connections.update({
+          where: {
+            id_connection: connectionId,
+          },
+          data: {
+            access_token: this.cryptoService.encrypt(data?.access_token),
+            refresh_token: this.cryptoService.encrypt(data?.refresh_token),
+            expiration_timestamp: new Date(
+              new Date().getTime() + Number(data?.expires_in) * 1000,
+            ),
+          },
+        });
+      }
       this.logger.log('OAuth credentials updated : close ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'close', Action.oauthRefresh);
+      throwTypedError(new ConnectionsError(
+        {
+          name: "HANDLE_OAUTH_REFRESH_CRM",
+          message: `CloseConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            "close",
+            Action.oauthRefresh,
+            ActionType.POST
+          )}`,
+          cause: error
+        }
+      ), this.logger)     
     }
   }
 }

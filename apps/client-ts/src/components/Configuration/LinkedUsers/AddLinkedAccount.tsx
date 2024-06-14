@@ -112,7 +112,7 @@ const [successImporting, setSuccessImporting]=useState(false)
         )
         ;
       },
-      error: 'Error',
+      error: (err: any) => err.message || 'Error'
     });
     setShowNewLinkedUserDialog({open: false})  
     posthog?.capture("linked_account_created", {
@@ -155,7 +155,7 @@ const [successImporting, setSuccessImporting]=useState(false)
             )
             ;
           },
-          error: 'Error',
+          error: (err: any) => err.message || 'Error'
         });
         posthog?.capture("batch_linked_account_created", {
           id_project: idProject,

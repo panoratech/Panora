@@ -21,7 +21,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   // console.log('encodedRedirect URL : ', encodedRedirectUrl);
   // const vertical = findConnectorCategory(providerName);
   if (vertical == null) {
-    throw new Error('vertical is null');
+    throw new ReferenceError('vertical is null');
   }
 
   const config = CONNECTORS_METADATA[vertical.toLowerCase()][providerName];
@@ -85,17 +85,17 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // console.log("Fetched Data ", JSON.stringify(data))
 
   const clientId = data.CLIENT_ID;
-  if (!clientId) throw new Error(`No client id for type ${type}`)
+  if (!clientId) throw new ReferenceError(`No client id for type ${type}`)
   const scopes = data.SCOPE
 
   const { urls: urls } = config;
   const { authBaseUrl: baseUrl } = urls;
 
-  if (!baseUrl) throw new Error(`No authBaseUrl found for type ${type}`)
+  if (!baseUrl) throw new ReferenceError(`No authBaseUrl found for type ${type}`)
 
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
   const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}` :
-    data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl;
+    data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl; 
 
   // console.log('BASE URL IS '+ BASE_URL)
   if (!baseUrl || !BASE_URL) {
@@ -106,7 +106,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
   // Adding scope for providers that require it, except for 'pipedrive'
-  if (scopes) {
+  const ignoreScopes = ['close']
+  if (scopes && !ignoreScopes.includes(providerName)) {
     params += `&scope=${encodeURIComponent(scopes)}`;
   }
 
@@ -116,8 +117,10 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       params += '&response_type=code&access_type=offline';
       break;
     case 'jira':
+      params = `audience=api.atlassian.com&${params}&prompt=consent&response_type=code`;
+      break;
     case 'jira_service_mgmt':
-      params = `audience=api.atlassian.com&${params}&prompt=consent`;
+      params = `audience=api.atlassian.com&${params}&prompt=consen&response_type=codet`;
       break;
     case 'gitlab':
       params += '&response_type=code&code_challenge=&code_challenge_method=';

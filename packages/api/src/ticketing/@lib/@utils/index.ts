@@ -6,9 +6,6 @@ export class Utils {
 
   constructor() {
     this.prisma = new PrismaClient();
-    /*this.cryptoService = new EncryptionService(
-      new EnvironmentService(new ConfigService()),
-    );*/
   }
 
   async fetchFileStreamFromURL(file_url: string) {
@@ -23,10 +20,10 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res) return;
+      if (!res) throw ReferenceError('Tcg_User Undefined');
       return res.id_tcg_user;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -37,11 +34,10 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-      // if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res) throw new ReferenceError(`tcg_user not found for uuid ${uuid}`);
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -53,10 +49,13 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res) return;
+      if (!res)
+        throw new ReferenceError(
+          `tcg_account not found for remote_id ${remote_id}`,
+        );
       return res.id_tcg_contact;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -67,11 +66,11 @@ export class Utils {
           id_tcg_contact: uuid,
         },
       });
-      // if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res)
+        throw new ReferenceError(`tcg_contact not found for uuid ${uuid}`);
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -82,13 +81,10 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-      if (!res) return;
-      /*throw new Error(
-          `tcg_user not found for uuid ${uuid} and integration ${remote_platform}`,
-        );*/
+      if (!res) throw new ReferenceError(`tcg_user not found for uuid ${uuid}`);
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -99,11 +95,10 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-      // if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res) throw new ReferenceError(`tcg_user not found for uuid ${uuid}`);
       return res.email_address;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -118,10 +113,13 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res) return;
+      if (!res)
+        throw new ReferenceError(
+          `tcg_collection not found for remote_id ${remote_id}`,
+        );
       return res.id_tcg_collection;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -132,10 +130,11 @@ export class Utils {
           id_tcg_collection: uuid,
         },
       });
-      if (!res) return;
+      if (!res)
+        throw new ReferenceError(`tcg_collection not found for uuid ${uuid}`);
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -147,10 +146,13 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res) return;
+      if (!res)
+        throw new ReferenceError(
+          `tcg_ticket not found for remote_id ${remote_id}`,
+        );
       return res.id_tcg_ticket;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -161,11 +163,11 @@ export class Utils {
           id_tcg_ticket: uuid,
         },
       });
-      // if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res)
+        throw new ReferenceError(`tcg_contact not found for uuid ${uuid}`);
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 }

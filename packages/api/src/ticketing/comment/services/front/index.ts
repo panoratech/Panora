@@ -4,12 +4,12 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ICommentService } from '@ticketing/comment/types';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { FrontCommentInput, FrontCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class FrontService implements ICommentService {
@@ -62,7 +62,9 @@ export class FrontService implements ICommentService {
               },
             });
             if (!attachment) {
-              throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+              throw new ReferenceError(
+                `tcg_attachment not found for uuid ${uuid}`,
+              );
             }
             // TODO: Construct the right binary attachment
             // Get the AWS S3 right file
@@ -120,10 +122,10 @@ export class FrontService implements ICommentService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Front',
+        'front',
         TicketingObject.comment,
         ActionType.POST,
       );
@@ -170,10 +172,10 @@ export class FrontService implements ICommentService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Front',
+        'front',
         TicketingObject.comment,
         ActionType.GET,
       );

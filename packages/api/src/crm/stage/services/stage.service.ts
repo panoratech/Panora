@@ -2,11 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedStageOutput } from '../types/model.unified';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from './registry.service';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class StageService {
@@ -75,7 +72,13 @@ export class StageService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_STAGE_ERROR',
+          message: 'StageService.getStage() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -84,8 +87,12 @@ export class StageService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedStageOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedStageOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       let prev_cursor = null;
       let next_cursor = null;
@@ -95,21 +102,23 @@ export class StageService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_crm_deals_stage: cursor
-          }
+            id_crm_deals_stage: cursor,
+          },
         });
         if (!isCursorPresent) {
-          throw new NotFoundError(`The provided cursor does not exist!`);
+          throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
 
-      let stages = await this.prisma.crm_deals_stages.findMany({
+      const stages = await this.prisma.crm_deals_stages.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_crm_deals_stage: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_crm_deals_stage: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -117,8 +126,10 @@ export class StageService {
         },
       });
 
-      if (stages.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(stages[stages.length - 1].id_crm_deals_stage).toString('base64');
+      if (stages.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          stages[stages.length - 1].id_crm_deals_stage,
+        ).toString('base64');
         stages.pop();
       }
 
@@ -195,10 +206,16 @@ export class StageService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_STAGES_ERROR',
+          message: 'StageService.getStages() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

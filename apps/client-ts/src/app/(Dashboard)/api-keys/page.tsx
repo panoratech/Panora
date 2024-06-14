@@ -119,7 +119,7 @@ export default function Page() {
         )
         ;
       },
-      error: 'Error',
+      error: (err: any) => err.message || 'Error'
     });
 
     posthog?.capture('api_key_created', {

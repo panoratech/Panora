@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { UnifiedAccountOutput } from '../types/model.unified';
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 
 @Injectable()
 export class AccountService {
@@ -72,7 +72,13 @@ export class AccountService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ACCOUNT_ERROR',
+          message: 'AccountService.getAccount() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -81,8 +87,12 @@ export class AccountService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedAccountOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedAccountOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -94,21 +104,23 @@ export class AccountService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_account: cursor
-          }
+            id_tcg_account: cursor,
+          },
         });
         if (!isCursorPresent) {
-          throw new NotFoundError(`The provided cursor does not exist!`);
+          throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
 
-      let accounts = await this.prisma.tcg_accounts.findMany({
+      const accounts = await this.prisma.tcg_accounts.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_account: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_account: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -116,8 +128,10 @@ export class AccountService {
         },
       });
 
-      if (accounts.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(accounts[accounts.length - 1].id_tcg_account).toString('base64');
+      if (accounts.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          accounts[accounts.length - 1].id_tcg_account,
+        ).toString('base64');
         accounts.pop();
       }
 
@@ -194,10 +208,16 @@ export class AccountService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ACCOUNTS_ERROR',
+          message: 'AccountService.getAccounts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }
