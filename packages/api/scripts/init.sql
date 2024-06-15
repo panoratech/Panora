@@ -423,10 +423,10 @@ CREATE TABLE connector_sets
  tcg_gorgias      boolean NOT NULL,
  tcg_gitlab       boolean NOT NULL,
  tcg_front        boolean NOT NULL,
- CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
+CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
-
+ 
 
 
 

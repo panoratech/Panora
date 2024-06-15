@@ -10,11 +10,9 @@ export enum CrmConnectors {
 export enum TicketingConnectors {
     ZENDESK = 'zendesk',
     FRONT = 'front',
-    GITHUB = 'github',
     JIRA = 'jira',
     GORGIAS = 'gorgias',
-    GITLAB = 'gitlab',
-    HUBSPOT = 'hubspot',
+    GITLAB = 'gitlab'
 }
 
 export enum AccountingConnectors {

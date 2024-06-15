@@ -3,8 +3,11 @@
 
 THIS SCRIPT UPDATES ALL DEPENDENCIES WHEN A NEW SERVICE 3RD PARTY IS ADDED TO THE CODEBASE 
 AFTER ADDING THE NEW CONNECTOR, CONTRIBUTOR JUST HAS TO RUN (EXAMPLE FOR CRM VERTICAL AND CONTACT COMMON OBJECT)
-  pnpm run validate-connectors --vertical="crm" --objectType="contact"
 
+  1. Build:
+    docker build -t validate_connectors -f ./packages/api/Dockerfile.validate-connectors .
+  2. Run:
+    docker run -v $(pwd):/app/ -e VERTICAL=crm -e OBJECT_TYPE=contact validate_connectors
 */
 
 import * as fs from 'fs';
@@ -79,62 +82,34 @@ function updateTargetFile(file, importStatements, serviceNames, objectType) {
   objectType = objectType.charAt(0).toUpperCase() + objectType.slice(1);
 
   if (importStatements.length > 0) {
-    // Append the import statements
     fileContent = importStatements.join('\n') + '\n\n' + fileContent;
   }
 
-  // Create updates for OriginalObjectTypeInput and OriginalObjectTypeOutput
   serviceNames.forEach((serviceName) => {
     const typeName =
-      serviceName.charAt(0).toUpperCase() + serviceName.slice(1) + objectType; // Assuming naming convention
+      serviceName.charAt(0).toUpperCase() + serviceName.slice(1) + objectType;
     const inputTypeName = `${typeName}Input`;
     const outputTypeName = `${typeName}Output`;
 
-    // Update OriginalObjectTypeInput
-
-    // checking whether OriginalObjectTypeInput assigns null
-    const inputNullRegex = new RegExp(
-      `(export type Original${objectType}Input = null)`,
-    );
-    if (inputNullRegex.test(fileContent)) {
-      fileContent = fileContent.replace(
-        inputNullRegex,
-        `export type Original${objectType}Input =`,
-      );
-    }
-    const inputRegex = new RegExp(`(export type Original${objectType}Input =)`);
-    if (inputRegex.test(fileContent)) {
-      fileContent = fileContent.replace(inputRegex, `$1\n  | ${inputTypeName}`);
-    } else {
-      // If the type doesn't exist, add it
-      fileContent += `\nexport type Original${objectType}Input =\n  | ${inputTypeName};\n`;
+    // Function to append type with correct pipe placement
+    function appendType(baseType, newType) {
+      const regex = new RegExp(`(export type ${baseType} =)([^;]*)`);
+      if (regex.test(fileContent)) {
+        fileContent = fileContent.replace(regex, (match, p1, p2) => {
+          if (p2.trim().endsWith('|')) {
+            return `${p1}${p2} ${newType}`;
+          } else {
+            return `${p1}${p2} | ${newType}`;
+          }
+        });
+      } else {
+        fileContent += `\nexport type ${baseType} = ${newType};\n`;
+      }
     }
 
-    // Update OriginalObjectTypeOutput
-
-    // checking whether OriginalObjectTypeInput assigns null
-    const outputNullRegex = new RegExp(
-      `(export type Original${objectType}Input = null)`,
-    );
-    if (outputNullRegex.test(fileContent)) {
-      fileContent = fileContent.replace(
-        outputNullRegex,
-        `export type Original${objectType}Output =`,
-      );
-    }
-
-    const outputRegex = new RegExp(
-      `(export type Original${objectType}Output =)`,
-    );
-    if (outputRegex.test(fileContent)) {
-      fileContent = fileContent.replace(
-        outputRegex,
-        `$1\n  | ${outputTypeName}`,
-      );
-    } else {
-      // If the type doesn't exist, add it
-      fileContent += `\nexport type Original${objectType}Output =\n  | ${outputTypeName};\n`;
-    }
+    // Update inputs and outputs
+    appendType(`Original${objectType}Input`, inputTypeName);
+    appendType(`Original${objectType}Output`, outputTypeName);
   });
 
   fs.writeFileSync(file, fileContent);
@@ -369,7 +344,8 @@ function updateInitSQLFile(initSQLFile, newServiceDirs, vertical) {
 // New function to update seed.sql
 function updateSeedSQLFile(seedSQLFile, newServiceDirs, vertical) {
   let fileContent = fs.readFileSync(seedSQLFile, 'utf8');
-
+  console.log('new providers are ' + newServiceDirs);
+  console.log('new vertical is ' + vertical);
   // Regex to find the INSERT statement for connector_sets
   const regex = /INSERT INTO connector_sets \(([^)]+)\) VALUES/g;
   let match;
@@ -387,6 +363,7 @@ function updateSeedSQLFile(seedSQLFile, newServiceDirs, vertical) {
   let newColumns = newServiceDirs.map(
     (serviceName) => `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`,
   );
+  console.log(newColumns);
 
   // Filter out existing new columns to avoid duplication
   newColumns = newColumns.filter((nc) => !columns.includes(nc));
@@ -409,6 +386,8 @@ function updateSeedSQLFile(seedSQLFile, newServiceDirs, vertical) {
     });
   }
   // Write the modified content back to the file
+  console.log(fileContent);
+
   fs.writeFileSync(seedSQLFile, fileContent);
   console.log('Seed SQL file has been updated successfully.');
 }

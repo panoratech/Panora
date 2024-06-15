@@ -3,7 +3,6 @@ import { ZendeskAccountMapper } from '../services/zendesk/mappers';
 
 const zendeskAccountMapper = new ZendeskAccountMapper();
 const frontAccountMapper = new FrontAccountMapper();
-
 export const accountUnificationMapping = {
   zendesk: {
     unify: zendeskAccountMapper.unify.bind(zendeskAccountMapper),
