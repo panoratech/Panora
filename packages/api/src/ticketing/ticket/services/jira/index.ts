@@ -75,7 +75,8 @@ export class JiraService implements ITicketService {
   }
   async syncTickets(
     linkedUserId: string,
-  ): Promise<ApiResponse<JiraTicketOutput[]>> {
+    remote_ticket_id?: string,
+    ): Promise<ApiResponse<JiraTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {

@@ -6,8 +6,8 @@ import { OriginalContactOutput } from '@@core/utils/types/original/original.tick
 export interface IContactService {
   syncContacts(
     linkedUserId: string,
-    custom_properties?: string[],
     remote_account_id?: string,
+    custom_properties?: string[],
   ): Promise<ApiResponse<OriginalContactOutput[]>>;
 }
 

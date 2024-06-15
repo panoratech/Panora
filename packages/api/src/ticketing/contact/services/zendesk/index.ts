@@ -28,7 +28,7 @@ export class ZendeskService implements IContactService {
 
   async syncContacts(
     linkedUserId: string,
-    custom_properties?: string[],
+    remote_account_id?: string,
   ): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -38,8 +38,9 @@ export class ZendeskService implements IContactService {
           vertical: 'ticketing',
         },
       });
+      const request_url = remote_account_id ? `${connection.account_url}/users/${remote_account_id}.json` : `${connection.account_url}/users.json`;
 
-      const resp = await axios.get(`${connection.account_url}/users`, {
+      const resp = await axios.get(request_url, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -47,7 +48,8 @@ export class ZendeskService implements IContactService {
           )}`,
         },
       });
-      const contacts: ZendeskContactOutput[] = resp.data.users;
+
+      const contacts: ZendeskContactOutput[] = remote_account_id ? [resp.data.user] : resp.data.users;
       const filteredContacts = contacts.filter(
         (contact) => contact.role === 'end-user',
       );

@@ -130,6 +130,12 @@ export class SyncService implements OnModuleInit {
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    wh_real_time_trigger?: {
+      action: 'UPDATE' | 'DELETE';
+      data: {
+        remote_id: string;
+      };
+    },
   ) {
     try {
       this.logger.log(
@@ -161,10 +167,28 @@ export class SyncService implements OnModuleInit {
 
       const service: IUserService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalUserOutput[]> = await service.syncUsers(
-        linkedUserId,
-        remoteProperties,
-      );
+
+      let resp: ApiResponse<OriginalUserOutput[]>;
+      if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
+        //meaning the call has been from a real time webhook that received data from a 3rd party
+        switch (wh_real_time_trigger.action) {
+          case 'DELETE':
+            return await this.removeUserInDb(
+              linkedUserId,
+              integrationId,
+              wh_real_time_trigger.data.remote_id,
+            );
+          default:
+            resp = await service.syncUsers(
+              linkedUserId,
+              wh_real_time_trigger.data.remote_id,
+              remoteProperties,
+            );
+            break;
+        }
+      } else {
+        resp = await service.syncUsers(linkedUserId, undefined, remoteProperties);
+      }
 
       const sourceObject: OriginalUserOutput[] = resp.data;
       // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
@@ -336,5 +360,24 @@ export class SyncService implements OnModuleInit {
     } catch (error) {
       throw error;
     }
+  }
+
+  async removeUserInDb(
+    linkedUserId: string,
+    originSource: string,
+    remote_id: string,
+  ) {
+    const existingUser = await this.prisma.tcg_users.findFirst({
+      where: {
+        remote_id: remote_id,
+        remote_platform: originSource,
+        id_linked_user: linkedUserId,
+      },
+    });
+    await this.prisma.tcg_users.delete({
+      where: {
+        id_tcg_user: existingUser.id_tcg_user,
+      },
+    });
   }
 }

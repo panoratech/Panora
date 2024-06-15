@@ -28,7 +28,7 @@ export class ZendeskService implements IAccountService {
 
   async syncAccounts(
     linkedUserId: string,
-    custom_properties?: string[],
+    remote_account_id?: string,
   ): Promise<ApiResponse<ZendeskAccountOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -38,9 +38,9 @@ export class ZendeskService implements IAccountService {
           vertical: 'ticketing',
         },
       });
-
+      const request_url = remote_account_id ? `${connection.account_url}/organizations/${remote_account_id}.json` : `${connection.account_url}/organizations.json`;
       const resp = await axios.get(
-        `${connection.account_url}/organizations.json`,
+        request_url,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -52,8 +52,10 @@ export class ZendeskService implements IAccountService {
       );
       this.logger.log(`Synced zendesk accounts !`);
 
+      const result =  remote_account_id ? [resp.data.organization] : resp.data.organizations;
+
       return {
-        data: resp.data.organizations,
+        data: result,
         message: 'Zendesk accounts retrieved',
         statusCode: 200,
       };

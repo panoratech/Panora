@@ -26,6 +26,7 @@ export class FrontService implements IAccountService {
 
   async syncAccounts(
     linkedUserId: string,
+    remote_account_id?: string,
   ): Promise<ApiResponse<FrontAccountOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({

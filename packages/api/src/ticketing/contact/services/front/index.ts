@@ -26,7 +26,6 @@ export class FrontService implements IContactService {
 
   async syncContacts(
     linkedUserId: string,
-    unused_,
     remote_account_id: string,
   ): Promise<ApiResponse<FrontContactOutput[]>> {
     try {

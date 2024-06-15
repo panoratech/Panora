@@ -4,9 +4,13 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { Payload } from './types';
 import { mapToRemoteEvent } from './utils';
 import * as crypto from 'crypto';
+import { NonTicketPayload, Payload } from './types';
+import { SyncService as TicketSyncService } from '@ticketing/ticket/sync/sync.service';
+import { SyncService as UserSyncService } from '@ticketing/user/sync/sync.service';
+import { SyncService as ContactSyncService } from '@ticketing/contact/sync/sync.service';
+import { SyncService as AccountSyncService } from '@ticketing/account/sync/sync.service';
 import {
   Action,
   ActionType,
@@ -22,6 +26,10 @@ export class ZendeskHandlerService {
     private prisma: PrismaService,
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
+    private syncTicketsService: TicketSyncService,
+    private syncUsersService: UserSyncService,
+    private syncContactsService: ContactSyncService,
+    private syncAccountsService: AccountSyncService,
   ) {
     this.logger.setContext(ZendeskHandlerService.name);
   }
@@ -55,15 +63,18 @@ export class ZendeskHandlerService {
       if (!conn) throw ReferenceError('Connection undefined');
       const unified_events = mw.active_events;
 
-      const events_ = unified_events
-        .flatMap((event) => mapToRemoteEvent(event))
-        .filter((item) => item !== null && item !== undefined);
-
+      const events_ = Array.from(
+        new Set(
+          unified_events
+            .flatMap((event) => mapToRemoteEvent(event))
+            .filter((item) => item !== null && item !== undefined),
+        ),
+      ); // Converts the Set back into an array
       const body_data = {
         webhook: {
           name: webhook_name,
           status: 'active',
-          endpoint: `${this.env.getPanoraBaseUrl()}/mw/${mw.endpoint}`,
+          endpoint: `${this.env.getWebhookIngress()}/mw/${mw.endpoint}`,
           http_method: 'POST',
           request_format: 'json',
           subscriptions: events_,
@@ -142,7 +153,7 @@ export class ZendeskHandlerService {
         webhook: {
           name: webhook_name,
           status: 'active',
-          endpoint: `${this.env.getPanoraBaseUrl()}/mw/${mw.endpoint}`,
+          endpoint: `${this.env.getWebhookIngress()}/mw/${mw.endpoint}`,
           http_method: 'POST',
           request_format: 'json',
           subscriptions: ['conditional_ticket_events'],
@@ -201,10 +212,6 @@ export class ZendeskHandlerService {
               {
                 field: 'priority',
                 operator: 'changed',
-              },
-              {
-                field: 'status',
-                value: 'changed',
               },
               {
                 field: 'update_type',
@@ -281,11 +288,84 @@ export class ZendeskHandlerService {
         payload,
         id_managed_webhook,
       );
+      const mw = await this.prisma.managed_webhooks.findUnique({
+        where: {
+          id_managed_webhook: id_managed_webhook,
+        },
+      });
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: mw.id_connection,
+        },
+      });
       if ('ticketId' in payload) {
         // ticket payload
         // TODO:update the tickzt inside our db
+        await this.syncTicketsService.syncTicketsForLinkedUser(
+          connection.provider_slug.toLowerCase(),
+          connection.id_linked_user,
+          connection.id_project,
+          {
+            action: 'UPDATE',
+            data: { remote_id: payload.ticketId as string },
+          },
+        );
       } else {
         //non-ticket payload
+        const payload_ = payload as NonTicketPayload;
+        const [event_type, event_action] = this.extractValue(payload_.type);
+        switch (event_type) {
+          case 'user':
+            if (payload_.detail.role) {
+              if (payload_.detail.role == 'end-user') {
+                await this.syncContactsService.syncContactsForLinkedUser(
+                  connection.provider_slug.toLowerCase(),
+                  connection.id_linked_user,
+                  connection.id_project,
+                  payload_.detail.id,
+                  {
+                    action:
+                      event_action.toLowerCase() == 'deleted'
+                        ? 'DELETE'
+                        : 'UPDATE',
+                    data: { remote_id: payload_.detail.id as string },
+                  },
+                );
+              } else if (
+                payload_.detail.role == 'admin' ||
+                payload_.detail.role == 'agent'
+              ) {
+                await this.syncUsersService.syncUsersForLinkedUser(
+                  connection.provider_slug.toLowerCase(),
+                  connection.id_linked_user,
+                  connection.id_project,
+                  {
+                    action:
+                      event_action.toLowerCase() == 'deleted'
+                        ? 'DELETE'
+                        : 'UPDATE',
+                    data: { remote_id: payload_.detail.id as string },
+                  },
+                );
+              } else {
+                break;
+              }
+            }
+            break;
+          case 'organization':
+            await this.syncAccountsService.syncAccountsForLinkedUser(
+              connection.provider_slug.toLowerCase(),
+              connection.id_linked_user,
+              connection.id_project,
+              {
+                action:
+                  event_action.toLowerCase() == 'deleted' ? 'DELETE' : 'UPDATE',
+                data: { remote_id: payload_.detail.id as string },
+              },
+            );
+          default:
+            break;
+        }
       }
     } catch (error) {
       throwTypedError(
@@ -297,6 +377,19 @@ export class ZendeskHandlerService {
         this.logger,
       );
     }
+  }
+
+  extractValue(typeString: string): string[] {
+    const prefix = 'zen:event-type:';
+    const startIndex = typeString.indexOf(prefix);
+
+    if (startIndex === -1) {
+      throw new Error('Prefix not found in the string.');
+    }
+
+    const afterPrefix = typeString.substring(startIndex + prefix.length);
+    const values = afterPrefix.split(':');
+    return [values[0], values[1]];
   }
 
   async verifyWebhookAuthenticity(

@@ -139,6 +139,12 @@ export class SyncService implements OnModuleInit {
     linkedUserId: string,
     id_project: string,
     remote_account_id?: string,
+    wh_real_time_trigger?: {
+      action: 'UPDATE' | 'DELETE';
+      data: {
+        remote_id: string;
+      };
+    },
   ) {
     try {
       this.logger.log(
@@ -170,13 +176,27 @@ export class SyncService implements OnModuleInit {
 
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalContactOutput[]> =
-        await service.syncContacts(
-          linkedUserId,
-          remoteProperties,
-          remote_account_id,
-        );
-
+      let resp: ApiResponse<OriginalContactOutput[]>;
+      if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
+        //meaning the call has been from a real time webhook that received data from a 3rd party
+        switch (wh_real_time_trigger.action) {
+          case 'DELETE':
+            return await this.removeContactInDb(
+              linkedUserId,
+              integrationId,
+              wh_real_time_trigger.data.remote_id,
+            );
+            default:
+              resp = await service.syncContacts(
+                linkedUserId,
+                wh_real_time_trigger.data.remote_id,
+                remoteProperties,
+              );
+              break;
+          }
+        } else {
+          resp = await service.syncContacts(linkedUserId, remote_account_id, remoteProperties);
+        }
       const sourceObject: OriginalContactOutput[] = resp.data;
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalContactOutput[]>({
@@ -367,5 +387,23 @@ export class SyncService implements OnModuleInit {
     } catch (error) {
       throw error;
     }
+  }
+  async removeContactInDb(
+    linkedUserId: string,
+    originSource: string,
+    remote_id: string,
+  ) {
+    const existingContact = await this.prisma.tcg_contacts.findFirst({
+      where: {
+        remote_id: remote_id,
+        remote_platform: originSource,
+        id_linked_user: linkedUserId,
+      },
+    });
+    await this.prisma.tcg_contacts.delete({
+      where: {
+        id_tcg_contact: existingContact.id_tcg_contact,
+      },
+    });
   }
 }

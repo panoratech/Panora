@@ -12,4 +12,3 @@ redis_data
 .pnpm-store/
 .npmrc
 .vscode
-ngrok.yml

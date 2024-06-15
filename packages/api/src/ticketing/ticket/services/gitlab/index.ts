@@ -37,45 +37,46 @@ export class GitlabService implements ITicketService {
       });
       const dataBody = ticketData;
 
-      const resp = await axios.post(
-        `${connection.account_url}/projects/${ticketData.project_id}/issues`,
-        JSON.stringify(dataBody),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      return {
-        data: resp.data,
-        message: 'Gitlab ticket created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );
+            const resp = await axios.post(
+                `${connection.account_url}/projects/${ticketData.project_id}/issues`,
+                JSON.stringify(dataBody),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${this.cryptoService.decrypt(
+                            connection.access_token,
+                        )}`,
+                    },
+                },
+            );
+            return {
+                data: resp.data,
+                message: 'Gitlab ticket created',
+                statusCode: 201,
+            };
+        } catch (error) {
+          handle3rdPartyServiceError(
+            error,
+            this.logger,
+            'gitlab',
+            TicketingObject.ticket,
+            ActionType.POST,
+          );
+        }
     }
-  }
-  async syncTickets(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<GitlabTicketOutput[]>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'gitlab',
-          vertical: 'ticketing',
-        },
-      });
+    async syncTickets(
+        linkedUserId: string,
+        remote_ticket_id?: string,
+        custom_properties?: string[],
+    ): Promise<ApiResponse<GitlabTicketOutput[]>> {
+        try {
+            const connection = await this.prisma.connections.findFirst({
+                where: {
+                    id_linked_user: linkedUserId,
+                    provider_slug: 'gitlab',
+                    vertical: 'ticketing',
+                },
+            });
 
       const resp = await axios.get(
         `${connection.account_url}/issues?scope=created_by_me&scope=assigned_to_me`,

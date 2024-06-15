@@ -69,6 +69,7 @@ export class HubspotService implements ITicketService {
   }
   async syncTickets(
     linkedUserId: string,
+    remote_ticket_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<HubspotTicketOutput[]>> {
     try {

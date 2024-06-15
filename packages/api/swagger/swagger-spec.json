@@ -599,6 +599,735 @@
         ]
       }
     },
+    "/ticketing/tickets": {
+      "get": {
+        "operationId": "getTickets",
+        "summary": "List a batch of Tickets",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original software.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTicketOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "addTicket",
+        "summary": "Create a Ticket",
+        "description": "Create a ticket in any supported Ticketing software",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnifiedTicketInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTicketOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnifiedTicketOutput"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "updateTicket",
+        "summary": "Update a Ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnifiedTicketOutput"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/ticketing/tickets/{id}": {
+      "get": {
+        "operationId": "getTicket",
+        "summary": "Retrieve a Ticket",
+        "description": "Retrieve a ticket from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the `ticket` you want to retrive.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTicketOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/ticketing/tickets/batch": {
+      "post": {
+        "operationId": "addTickets",
+        "summary": "Add a batch of Tickets",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UnifiedTicketInput"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedTicketOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UnifiedTicketOutput"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/tickets"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/ticketing/users": {
+      "get": {
+        "operationId": "getUsers",
+        "summary": "List a batch of Users",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original software.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedUserOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/users"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/ticketing/users/{id}": {
+      "get": {
+        "operationId": "getUser",
+        "summary": "Retrieve a User",
+        "description": "Retrieve a user from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the user you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedUserOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/users"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/ticketing/accounts": {
+      "get": {
+        "operationId": "getAccounts",
+        "summary": "List a batch of Accounts",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original software.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedAccountOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/accounts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/ticketing/accounts/{id}": {
+      "get": {
+        "operationId": "getAccount",
+        "summary": "Retrieve an Account",
+        "description": "Retrieve an account from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the account you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedAccountOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/accounts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/ticketing/contacts": {
+      "get": {
+        "operationId": "getContacts",
+        "summary": "List a batch of Contacts",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original software.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedContactOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/contacts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/ticketing/contacts/{id}": {
+      "get": {
+        "operationId": "getContact",
+        "summary": "Retrieve a Contact",
+        "description": "Retrieve a contact from any connected Ticketing software",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the contact you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ticketing software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedContactOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ticketing/contacts"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/crm/companies": {
       "get": {
         "operationId": "getCompanies",
@@ -2839,140 +3568,6 @@
         ]
       }
     },
-    "/ticketing/accounts": {
-      "get": {
-        "operationId": "getAccounts",
-        "summary": "List a batch of Accounts",
-        "parameters": [
-          {
-            "name": "x-connection-token",
-            "required": true,
-            "in": "header",
-            "description": "The connection token",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original software.",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records.",
-            "schema": {
-              "default": 50,
-              "type": "number"
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records after this cursor.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedAccountOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/accounts"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/ticketing/accounts/{id}": {
-      "get": {
-        "operationId": "getAccount",
-        "summary": "Retrieve an Account",
-        "description": "Retrieve an account from any connected Ticketing software",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "id of the account you want to retrieve.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedAccountOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/accounts"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/ticketing/collections": {
       "get": {
         "operationId": "getCollections",
@@ -3400,140 +3995,6 @@
         ]
       }
     },
-    "/ticketing/contacts": {
-      "get": {
-        "operationId": "getContacts",
-        "summary": "List a batch of Contacts",
-        "parameters": [
-          {
-            "name": "x-connection-token",
-            "required": true,
-            "in": "header",
-            "description": "The connection token",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original software.",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records.",
-            "schema": {
-              "default": 50,
-              "type": "number"
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records after this cursor.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedContactOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/contacts"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/ticketing/contacts/{id}": {
-      "get": {
-        "operationId": "getContact",
-        "summary": "Retrieve a Contact",
-        "description": "Retrieve a contact from any connected Ticketing software",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "id of the contact you want to retrieve.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedContactOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/contacts"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/ticketing/tags": {
       "get": {
         "operationId": "getTags",
@@ -3794,467 +4255,6 @@
         },
         "tags": [
           "ticketing/teams"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/ticketing/tickets": {
-      "get": {
-        "operationId": "getTickets",
-        "summary": "List a batch of Tickets",
-        "parameters": [
-          {
-            "name": "x-connection-token",
-            "required": true,
-            "in": "header",
-            "description": "The connection token",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original software.",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records.",
-            "schema": {
-              "default": 50,
-              "type": "number"
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records after this cursor.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedTicketOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/tickets"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "post": {
-        "operationId": "addTicket",
-        "summary": "Create a Ticket",
-        "description": "Create a ticket in any supported Ticketing software",
-        "parameters": [
-          {
-            "name": "x-connection-token",
-            "required": true,
-            "in": "header",
-            "description": "The connection token",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UnifiedTicketInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedTicketOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnifiedTicketOutput"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/tickets"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "patch": {
-        "operationId": "updateTicket",
-        "summary": "Update a Ticket",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnifiedTicketOutput"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/tickets"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/ticketing/tickets/{id}": {
-      "get": {
-        "operationId": "getTicket",
-        "summary": "Retrieve a Ticket",
-        "description": "Retrieve a ticket from any connected Ticketing software",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "id of the `ticket` you want to retrive.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedTicketOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/tickets"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/ticketing/tickets/batch": {
-      "post": {
-        "operationId": "addTickets",
-        "summary": "Add a batch of Tickets",
-        "parameters": [
-          {
-            "name": "x-connection-token",
-            "required": true,
-            "in": "header",
-            "description": "The connection token",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/UnifiedTicketInput"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedTicketOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UnifiedTicketOutput"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/tickets"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/ticketing/users": {
-      "get": {
-        "operationId": "getUsers",
-        "summary": "List a batch of Users",
-        "parameters": [
-          {
-            "name": "x-connection-token",
-            "required": true,
-            "in": "header",
-            "description": "The connection token",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original software.",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records.",
-            "schema": {
-              "default": 50,
-              "type": "number"
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records after this cursor.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedUserOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/users"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/ticketing/users/{id}": {
-      "get": {
-        "operationId": "getUser",
-        "summary": "Retrieve a User",
-        "description": "Retrieve a user from any connected Ticketing software",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "id of the user you want to retrieve.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original Ticketing software.",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedUserOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ticketing/users"
         ],
         "security": [
           {
@@ -5642,6 +5642,358 @@
           "statusCode"
         ]
       },
+      "UnifiedCommentInput": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "The body of the comment"
+          },
+          "html_body": {
+            "type": "string",
+            "description": "The html body of the comment"
+          },
+          "is_private": {
+            "type": "boolean",
+            "description": "The public status of the comment"
+          },
+          "creator_type": {
+            "type": "string",
+            "description": "The creator type of the comment. Authorized values are either USER or CONTACT"
+          },
+          "ticket_id": {
+            "type": "string",
+            "description": "The uuid of the ticket the comment is tied to"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid of the contact which the comment belongs to (if no user_id specified)"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user which the comment belongs to (if no contact_id specified)"
+          },
+          "attachments": {
+            "description": "The attachements uuids tied to the comment",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
+      "UnifiedTicketOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the ticket"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the ticket. Authorized values are OPEN or CLOSED."
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the ticket"
+          },
+          "due_date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date the ticket is due"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the ticket. Authorized values are PROBLEM, QUESTION, or TASK"
+          },
+          "parent_ticket": {
+            "type": "string",
+            "description": "The uuid of the parent ticket"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "The uuid of the collection (project) the ticket belongs to"
+          },
+          "tags": {
+            "description": "The tags names of the ticket",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "completed_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date the ticket has been completed"
+          },
+          "priority": {
+            "type": "string",
+            "description": "The priority of the ticket. Authorized values are HIGH, MEDIUM or LOW."
+          },
+          "assigned_to": {
+            "description": "The users uuids the ticket is assigned to",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "comment": {
+            "description": "The comment of the ticket",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnifiedCommentInput"
+              }
+            ]
+          },
+          "account_id": {
+            "type": "string",
+            "description": "The uuid of the account which the ticket belongs to"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid of the contact which the ticket belongs to"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the ticket"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the ticket in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedTicketInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the ticket"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the ticket. Authorized values are OPEN or CLOSED."
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the ticket"
+          },
+          "due_date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date the ticket is due"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the ticket. Authorized values are PROBLEM, QUESTION, or TASK"
+          },
+          "parent_ticket": {
+            "type": "string",
+            "description": "The uuid of the parent ticket"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "The uuid of the collection (project) the ticket belongs to"
+          },
+          "tags": {
+            "description": "The tags names of the ticket",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "completed_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date the ticket has been completed"
+          },
+          "priority": {
+            "type": "string",
+            "description": "The priority of the ticket. Authorized values are HIGH, MEDIUM or LOW."
+          },
+          "assigned_to": {
+            "description": "The users uuids the ticket is assigned to",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "comment": {
+            "description": "The comment of the ticket",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnifiedCommentInput"
+              }
+            ]
+          },
+          "account_id": {
+            "type": "string",
+            "description": "The uuid of the account which the ticket belongs to"
+          },
+          "contact_id": {
+            "type": "string",
+            "description": "The uuid of the contact which the ticket belongs to"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "field_mappings"
+        ]
+      },
+      "UnifiedUserOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the user"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email of the user"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the user"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the user in the context of the Crm 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedAccountOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the account"
+          },
+          "domains": {
+            "description": "The domains of the account",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the account"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the account in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "name",
+          "field_mappings",
+          "remote_data"
+        ]
+      },
+      "UnifiedContactOutput": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "description": "The first name of the contact"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "The last name of the contact"
+          },
+          "email_addresses": {
+            "description": "The email addresses of the contact",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Email"
+            }
+          },
+          "phone_numbers": {
+            "description": "The phone numbers of the contact",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Phone"
+            }
+          },
+          "addresses": {
+            "description": "The addresses of the contact",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The uuid of the user who owns the contact"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The uuid of the contact"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The id of the contact in the context of the Crm 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "field_mappings",
+          "remote_data"
+        ]
+      },
       "Email": {
         "type": "object",
         "properties": {
@@ -5842,49 +6194,6 @@
         "required": [
           "name",
           "field_mappings"
-        ]
-      },
-      "UnifiedContactOutput": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the contact"
-          },
-          "email_address": {
-            "type": "string",
-            "description": "The email address of the contact"
-          },
-          "phone_number": {
-            "type": "string",
-            "description": "The phone number of the contact"
-          },
-          "details": {
-            "type": "string",
-            "description": "The details of the contact"
-          },
-          "field_mappings": {
-            "type": "object",
-            "properties": {}
-          },
-          "id": {
-            "type": "string",
-            "description": "The uuid of the contact"
-          },
-          "remote_id": {
-            "type": "string",
-            "description": "The id of the contact in the context of the 3rd Party"
-          },
-          "remote_data": {
-            "type": "object",
-            "properties": {}
-          }
-        },
-        "required": [
-          "name",
-          "email_address",
-          "field_mappings",
-          "remote_data"
         ]
       },
       "UnifiedContactInput": {
@@ -6366,89 +6675,6 @@
           "field_mappings"
         ]
       },
-      "UnifiedUserOutput": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the user"
-          },
-          "email_address": {
-            "type": "string",
-            "description": "The email address of the user"
-          },
-          "teams": {
-            "description": "The teams whose the user is part of",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "account_id": {
-            "type": "string",
-            "description": "The account or organization the user is part of"
-          },
-          "field_mappings": {
-            "type": "object",
-            "properties": {}
-          },
-          "id": {
-            "type": "string",
-            "description": "The uuid of the user"
-          },
-          "remote_id": {
-            "type": "string",
-            "description": "The id of the user in the context of the 3rd Party"
-          },
-          "remote_data": {
-            "type": "object",
-            "properties": {}
-          }
-        },
-        "required": [
-          "name",
-          "email_address",
-          "field_mappings",
-          "remote_data"
-        ]
-      },
-      "UnifiedAccountOutput": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the account"
-          },
-          "domains": {
-            "description": "The domains of the account",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "field_mappings": {
-            "type": "object",
-            "properties": {}
-          },
-          "id": {
-            "type": "string",
-            "description": "The uuid of the account"
-          },
-          "remote_id": {
-            "type": "string",
-            "description": "The id of the account in the context of the 3rd Party"
-          },
-          "remote_data": {
-            "type": "object",
-            "properties": {}
-          }
-        },
-        "required": [
-          "name",
-          "field_mappings",
-          "remote_data"
-        ]
-      },
       "UnifiedCollectionOutput": {
         "type": "object",
         "properties": {
@@ -6578,49 +6804,6 @@
           "remote_data"
         ]
       },
-      "UnifiedCommentInput": {
-        "type": "object",
-        "properties": {
-          "body": {
-            "type": "string",
-            "description": "The body of the comment"
-          },
-          "html_body": {
-            "type": "string",
-            "description": "The html body of the comment"
-          },
-          "is_private": {
-            "type": "boolean",
-            "description": "The public status of the comment"
-          },
-          "creator_type": {
-            "type": "string",
-            "description": "The creator type of the comment. Authorized values are either USER or CONTACT"
-          },
-          "ticket_id": {
-            "type": "string",
-            "description": "The uuid of the ticket the comment is tied to"
-          },
-          "contact_id": {
-            "type": "string",
-            "description": "The uuid of the contact which the comment belongs to (if no user_id specified)"
-          },
-          "user_id": {
-            "type": "string",
-            "description": "The uuid of the user which the comment belongs to (if no contact_id specified)"
-          },
-          "attachments": {
-            "description": "The attachements uuids tied to the comment",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "body"
-        ]
-      },
       "UnifiedTagOutput": {
         "type": "object",
         "properties": {
@@ -6683,183 +6866,6 @@
           "name",
           "field_mappings",
           "remote_data"
-        ]
-      },
-      "UnifiedTicketOutput": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the ticket"
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the ticket. Authorized values are OPEN or CLOSED."
-          },
-          "description": {
-            "type": "string",
-            "description": "The description of the ticket"
-          },
-          "due_date": {
-            "format": "date-time",
-            "type": "string",
-            "description": "The date the ticket is due"
-          },
-          "type": {
-            "type": "string",
-            "description": "The type of the ticket. Authorized values are PROBLEM, QUESTION, or TASK"
-          },
-          "parent_ticket": {
-            "type": "string",
-            "description": "The uuid of the parent ticket"
-          },
-          "project_id": {
-            "type": "string",
-            "description": "The uuid of the collection (project) the ticket belongs to"
-          },
-          "tags": {
-            "description": "The tags names of the ticket",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "completed_at": {
-            "format": "date-time",
-            "type": "string",
-            "description": "The date the ticket has been completed"
-          },
-          "priority": {
-            "type": "string",
-            "description": "The priority of the ticket. Authorized values are HIGH, MEDIUM or LOW."
-          },
-          "assigned_to": {
-            "description": "The users uuids the ticket is assigned to",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "comment": {
-            "description": "The comment of the ticket",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UnifiedCommentInput"
-              }
-            ]
-          },
-          "account_id": {
-            "type": "string",
-            "description": "The uuid of the account which the ticket belongs to"
-          },
-          "contact_id": {
-            "type": "string",
-            "description": "The uuid of the contact which the ticket belongs to"
-          },
-          "field_mappings": {
-            "type": "object",
-            "properties": {}
-          },
-          "id": {
-            "type": "string",
-            "description": "The uuid of the ticket"
-          },
-          "remote_id": {
-            "type": "string",
-            "description": "The id of the ticket in the context of the 3rd Party"
-          },
-          "remote_data": {
-            "type": "object",
-            "properties": {}
-          }
-        },
-        "required": [
-          "name",
-          "description",
-          "field_mappings",
-          "remote_data"
-        ]
-      },
-      "UnifiedTicketInput": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the ticket"
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the ticket. Authorized values are OPEN or CLOSED."
-          },
-          "description": {
-            "type": "string",
-            "description": "The description of the ticket"
-          },
-          "due_date": {
-            "format": "date-time",
-            "type": "string",
-            "description": "The date the ticket is due"
-          },
-          "type": {
-            "type": "string",
-            "description": "The type of the ticket. Authorized values are PROBLEM, QUESTION, or TASK"
-          },
-          "parent_ticket": {
-            "type": "string",
-            "description": "The uuid of the parent ticket"
-          },
-          "project_id": {
-            "type": "string",
-            "description": "The uuid of the collection (project) the ticket belongs to"
-          },
-          "tags": {
-            "description": "The tags names of the ticket",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "completed_at": {
-            "format": "date-time",
-            "type": "string",
-            "description": "The date the ticket has been completed"
-          },
-          "priority": {
-            "type": "string",
-            "description": "The priority of the ticket. Authorized values are HIGH, MEDIUM or LOW."
-          },
-          "assigned_to": {
-            "description": "The users uuids the ticket is assigned to",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "comment": {
-            "description": "The comment of the ticket",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UnifiedCommentInput"
-              }
-            ]
-          },
-          "account_id": {
-            "type": "string",
-            "description": "The uuid of the account which the ticket belongs to"
-          },
-          "contact_id": {
-            "type": "string",
-            "description": "The uuid of the contact which the ticket belongs to"
-          },
-          "field_mappings": {
-            "type": "object",
-            "properties": {}
-          }
-        },
-        "required": [
-          "name",
-          "description",
-          "field_mappings"
         ]
       },
       "CreateLinkedUserDto": {

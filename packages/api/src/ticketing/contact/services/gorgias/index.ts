@@ -26,7 +26,6 @@ export class GorgiasService implements IContactService {
 
   async syncContacts(
     linkedUserId: string,
-    unused_,
     remote_account_id: string,
   ): Promise<ApiResponse<GorgiasContactOutput[]>> {
     try {
