@@ -63,15 +63,18 @@ export class ZendeskHandlerService {
       if (!conn) throw ReferenceError('Connection undefined');
       const unified_events = mw.active_events;
 
-      const events_ = unified_events
-        .flatMap((event) => mapToRemoteEvent(event))
-        .filter((item) => item !== null && item !== undefined);
-
+      const events_ = Array.from(
+        new Set(
+          unified_events
+            .flatMap((event) => mapToRemoteEvent(event))
+            .filter((item) => item !== null && item !== undefined),
+        ),
+      ); // Converts the Set back into an array
       const body_data = {
         webhook: {
           name: webhook_name,
           status: 'active',
-          endpoint: `${this.env.getPanoraBaseUrl()}/mw/${mw.endpoint}`,
+          endpoint: `${this.env.getWebhookIngress()}/mw/${mw.endpoint}`,
           http_method: 'POST',
           request_format: 'json',
           subscriptions: events_,
@@ -150,7 +153,7 @@ export class ZendeskHandlerService {
         webhook: {
           name: webhook_name,
           status: 'active',
-          endpoint: `${this.env.getPanoraBaseUrl()}/mw/${mw.endpoint}`,
+          endpoint: `${this.env.getWebhookIngress()}/mw/${mw.endpoint}`,
           http_method: 'POST',
           request_format: 'json',
           subscriptions: ['conditional_ticket_events'],
@@ -209,10 +212,6 @@ export class ZendeskHandlerService {
               {
                 field: 'priority',
                 operator: 'changed',
-              },
-              {
-                field: 'status',
-                value: 'changed',
               },
               {
                 field: 'update_type',
@@ -310,7 +309,7 @@ export class ZendeskHandlerService {
             action: 'UPDATE',
             data: { remote_id: payload.ticketId as string },
           },
-        ); 
+        );
       } else {
         //non-ticket payload
         const payload_ = payload as NonTicketPayload;
@@ -392,7 +391,6 @@ export class ZendeskHandlerService {
     const values = afterPrefix.split(':');
     return [values[0], values[1]];
   }
-
 
   async verifyWebhookAuthenticity(
     signature: string,

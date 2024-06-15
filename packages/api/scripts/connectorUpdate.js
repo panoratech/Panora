@@ -177,14 +177,10 @@ function updateMappingsFile(
   let newImports = '';
   let newInstances = '';
   let newMappings = '';
-  newServiceDirs
-    .filter(
-      (newServiceName) =>
-        !(
-          vertical === 'ticketing' && newServiceName.toLowerCase() === 'zendesk'
-        ),
-    )
-    .forEach((newServiceName) => {
+  newServiceDirs.forEach((newServiceName) => {
+    if (
+      !(vertical === 'ticketing' && newServiceName.toLowerCase() === 'zendesk')
+    ) {
       const serviceNameCapitalized =
         newServiceName.charAt(0).toUpperCase() + newServiceName.slice(1);
       const objectCapitalized =
@@ -212,28 +208,26 @@ function updateMappingsFile(
       if (!mappingObjectContent.includes(`  ${newServiceName}: {`)) {
         newMappings += mappingEntry;
       }
-    });
+    }
+  });
 
   // Combine updates with the original sections of the file content
   const updatedContentBeforeMapping =
-    beforeFirstImport +
-    newImports +
-    beforeMappingObject.trim() +
-    '\n\n' +
-    newInstances;
+    beforeFirstImport + newImports + beforeMappingObject.trim();
 
   // Update the mapping object content with new mappings
-  const insertionPoint = mappingObjectContent.lastIndexOf('};');
   const updatedMappingObjectContent = [
-    mappingObjectContent.slice(0, insertionPoint),
+    mappingObjectContent.slice(0, mappingObjectContent.lastIndexOf('};')),
     newMappings,
-    mappingObjectContent.slice(insertionPoint),
+    mappingObjectContent.slice(mappingObjectContent.lastIndexOf('};')),
   ].join('');
 
   // Reassemble the complete updated file content
   const updatedFileContent =
-    updatedContentBeforeMapping + updatedMappingObjectContent;
-
+    updatedContentBeforeMapping +
+    '\n' +
+    newInstances +
+    updatedMappingObjectContent;
   // Write the updated content back to the file
   fs.writeFileSync(mappingsFile, updatedFileContent);
 }
@@ -303,8 +297,10 @@ function updateEnumFile(enumFilePath, newServiceDirs, vertical) {
     let enumEntries = match[1]
       .trim()
       .split(/\n/)
-      .map((e) => e.trim())
-      .filter((e) => e);
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.endsWith(',')) // Ensure all entries end with a comma
+      .map((entry) => entry.replace(/,$/, '')); // Remove commas for a clean slate
+
     const existingEntries = enumEntries.map((entry) =>
       entry.split('=')[0].trim(),
     );
@@ -314,9 +310,14 @@ function updateEnumFile(enumFilePath, newServiceDirs, vertical) {
       const enumEntryName = serviceName.toUpperCase(); // Assuming the enum entry name is the uppercase service name
       if (!existingEntries.includes(enumEntryName)) {
         // Format the new enum entry, assuming you want the name and value to be the same
-        enumEntries.push(`${enumEntryName} = '${serviceName}',`);
+        enumEntries.push(`${enumEntryName} = '${serviceName}'`);
       }
     });
+
+    // Add commas back to all entries except the last one
+    enumEntries = enumEntries.map((entry, index, array) =>
+      index === array.length - 1 ? entry : `${entry},`,
+    );
 
     // Rebuild the enum content
     const updatedEnumContent = `export enum ${enumName} {\n    ${enumEntries.join(
@@ -348,17 +349,19 @@ function updateInitSQLFile(initSQLFile, newServiceDirs, vertical) {
     return;
   }
 
-  let newLines = '';
-  newServiceDirs.forEach((serviceName) => {
-    const columnName = `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`;
-    newLines += ` ${columnName} boolean NOT NULL,\n`;
-  });
+  // Prepare new column lines to be inserted
+  let newLines = newServiceDirs
+    .map((serviceName) => {
+      const columnName = `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`;
+      return ` ${columnName} boolean NOT NULL,\n`;
+    })
+    .join('');
 
-  fileContent = [
-    fileContent.slice(0, insertPoint),
-    newLines,
-    fileContent.slice(insertPoint),
-  ].join('');
+  // Insert the new column definitions just before the PRIMARY KEY constraint
+  fileContent =
+    fileContent.slice(0, insertPoint) +
+    newLines +
+    fileContent.slice(insertPoint);
 
   fs.writeFileSync(initSQLFile, fileContent);
 }
@@ -367,46 +370,47 @@ function updateInitSQLFile(initSQLFile, newServiceDirs, vertical) {
 function updateSeedSQLFile(seedSQLFile, newServiceDirs, vertical) {
   let fileContent = fs.readFileSync(seedSQLFile, 'utf8');
 
-  const tableInsertPoint = fileContent.indexOf('INSERT INTO connector_sets');
-  if (tableInsertPoint === -1) {
-    console.error(
-      `Could not find the INSERT INTO connector_sets statement in ${seedSQLFile}`,
-    );
+  // Regex to find the INSERT statement for connector_sets
+  const regex = /INSERT INTO connector_sets \(([^)]+)\) VALUES/g;
+  let match;
+  let lastMatch;
+  while ((match = regex.exec(fileContent)) !== null) {
+    lastMatch = match; // Store the last match
+  }
+  if (!lastMatch) {
+    console.error('Could not find the INSERT INTO connector_sets statement.');
     return;
   }
 
-  const columnInsertPoint = fileContent.indexOf('(', tableInsertPoint);
-  const valuesInsertPoint = fileContent.indexOf('VALUES', columnInsertPoint);
-  const rowsInsertPoint = fileContent.indexOf('(', valuesInsertPoint);
+  // Extracting columns and preparing to insert new ones
+  let columns = lastMatch[1].split(',').map((col) => col.trim());
+  let newColumns = newServiceDirs.map(
+    (serviceName) => `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`,
+  );
 
-  if (
-    columnInsertPoint === -1 ||
-    valuesInsertPoint === -1 ||
-    rowsInsertPoint === -1
-  ) {
-    console.error(
-      `Could not find the column or values insert points in ${seedSQLFile}`,
-    );
-    return;
+  // Filter out existing new columns to avoid duplication
+  newColumns = newColumns.filter((nc) => !columns.includes(nc));
+  if (newColumns.length > 0) {
+    // Insert new columns before the closing parenthesis in the columns list
+    columns = [...columns, ...newColumns];
+    let newColumnsSection = columns.join(', ');
+
+    // Replace the old columns section with the new one
+    fileContent = fileContent.replace(lastMatch[1], newColumnsSection);
+
+    // Update each VALUES section
+    fileContent = fileContent.replace(/VALUES(.*?);/gs, (match) => {
+      return match
+        .replace(/\),\s*\(/g, '),\n    (') // Fix line formatting
+        .replace(/\([^\)]+\)/g, (values) => {
+          let newValues = newColumns.map(() => 'TRUE').join(', ');
+          return values.slice(0, -1) + ', ' + newValues + ')';
+        });
+    });
   }
-
-  let newColumns = '';
-  let newValues = '';
-  newServiceDirs.forEach((serviceName) => {
-    const columnName = `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`;
-    newColumns += `${columnName}, `;
-    newValues += 'TRUE, ';
-  });
-
-  const updatedFileContent = [
-    fileContent.slice(0, columnInsertPoint + 1),
-    newColumns,
-    fileContent.slice(columnInsertPoint + 1, rowsInsertPoint + 1),
-    newValues,
-    fileContent.slice(rowsInsertPoint + 1),
-  ].join('');
-
-  fs.writeFileSync(seedSQLFile, updatedFileContent);
+  // Write the modified content back to the file
+  fs.writeFileSync(seedSQLFile, fileContent);
+  console.log('Seed SQL file has been updated successfully.');
 }
 
 // Main script logic
@@ -486,10 +490,10 @@ function updateObjectTypes(baseDir, objectType, vertical) {
 
   // Update SQL files
   const initSQLFile = path.join(__dirname, './init.sql');
-  updateInitSQLFile(initSQLFile, newServiceDirs, slugFromCategory(vertical));
+  updateInitSQLFile(initSQLFile, newProviders, slugFromCategory(vertical));
 
   const seedSQLFile = path.join(__dirname, './seed.sql');
-  updateSeedSQLFile(seedSQLFile, newServiceDirs, slugFromCategory(vertical));
+  updateSeedSQLFile(seedSQLFile, newProviders, slugFromCategory(vertical));
 }
 
 // Example usage for ticketing/team
