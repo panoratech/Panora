@@ -187,17 +187,5 @@ export class TagController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateTag',
-    summary: 'Update a Tag',
-  })
-  @ApiCustomResponse(UnifiedTagOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateTag(
-    @Query('id') id: string,
-    @Body() updateTagData: Partial<UnifiedTagInput>,
-  ) {
-    return this.tagService.updateTag(id, updateTagData);
-  }
+  
 }

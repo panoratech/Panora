@@ -187,17 +187,4 @@ export class ScoreCardController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateScoreCard',
-    summary: 'Update a ScoreCard',
-  })
-  @ApiCustomResponse(UnifiedScoreCardOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateScoreCard(
-    @Query('id') id: string,
-    @Body() updateScoreCardData: Partial<UnifiedScoreCardInput>,
-  ) {
-    return this.scorecardService.updateScoreCard(id, updateScoreCardData);
-  }
 }

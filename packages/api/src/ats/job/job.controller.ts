@@ -187,17 +187,4 @@ export class JobController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateJob',
-    summary: 'Update a Job',
-  })
-  @ApiCustomResponse(UnifiedJobOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateJob(
-    @Query('id') id: string,
-    @Body() updateJobData: Partial<UnifiedJobInput>,
-  ) {
-    return this.jobService.updateJob(id, updateJobData);
-  }
 }

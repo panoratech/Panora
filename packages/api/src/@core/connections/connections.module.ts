@@ -5,7 +5,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
 import { AccountingConnectionModule } from './accounting/accounting.connection.module';
-import { MarketingautomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
+import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
 import { ValidateUserService } from '@@core/utils/services/validateUser.service';
 import { CoreSyncService } from '@@core/sync/sync.service';
 import { CompanyModule } from '@crm/company/company.module';
@@ -33,7 +33,7 @@ import { HrisConnectionModule } from './hris/hris.connection.module';
     CrmConnectionModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
-    MarketingautomationConnectionsModule,
+    MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
     HrisConnectionModule,
     CompanyModule,
@@ -63,7 +63,7 @@ import { HrisConnectionModule } from './hris/hris.connection.module';
     CrmConnectionModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
-    MarketingautomationConnectionsModule,
+    MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
     HrisConnectionModule,
   ],

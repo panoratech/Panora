@@ -9,14 +9,14 @@ import { CallbackParams, RefreshParams } from '../types';
 import { ServiceRegistry } from './registry.service';
 
 @Injectable()
-export class MarketingautomationConnectionsService {
+export class MarketingAutomationConnectionsService {
   constructor(
     private serviceRegistry: ServiceRegistry,
     private webhook: WebhookService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
-    this.logger.setContext(MarketingautomationConnectionsService.name);
+    this.logger.setContext(MarketingAutomationConnectionsService.name);
   }
   //STEP 1:[FRONTEND STEP]
   //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click

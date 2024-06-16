@@ -6,13 +6,13 @@ import { WebhookModule } from '@@core/webhook/webhook.module';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
-import { MarketingautomationConnectionsService } from './services/marketingautomation.connection.service';
+import { MarketingAutomationConnectionsService } from './services/marketingautomation.connection.service';
 import { ServiceRegistry } from './services/registry.service';
 
 @Module({
   imports: [WebhookModule],
   providers: [
-    MarketingautomationConnectionsService,
+    MarketingAutomationConnectionsService,
     PrismaService,
     LoggerService,
     WebhookService,
@@ -22,6 +22,6 @@ import { ServiceRegistry } from './services/registry.service';
     ConnectionsStrategiesService,
     //PROVIDERS SERVICES
   ],
-  exports: [MarketingautomationConnectionsService],
+  exports: [MarketingAutomationConnectionsService],
 })
-export class MarketingautomationConnectionsModule {}
+export class MarketingAutomationConnectionsModule {}

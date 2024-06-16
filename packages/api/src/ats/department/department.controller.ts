@@ -187,17 +187,4 @@ export class DepartmentController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateDepartment',
-    summary: 'Update a Department',
-  })
-  @ApiCustomResponse(UnifiedDepartmentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateDepartment(
-    @Query('id') id: string,
-    @Body() updateDepartmentData: Partial<UnifiedDepartmentInput>,
-  ) {
-    return this.departmentService.updateDepartment(id, updateDepartmentData);
-  }
 }

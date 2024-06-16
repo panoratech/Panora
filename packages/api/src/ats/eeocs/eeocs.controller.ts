@@ -18,9 +18,9 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { EeocsService } from './services/eeocs.service';
 import { UnifiedEeocsInput, UnifiedEeocsOutput  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { EeocsService } from './services/eeocs.service';
 
 @ApiTags('ats/eeocs')
 @Controller('ats/eeocs')
@@ -187,17 +187,4 @@ export class EeocsController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateEeocs',
-    summary: 'Update a Eeocs',
-  })
-  @ApiCustomResponse(UnifiedEeocsOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateEeocs(
-    @Query('id') id: string,
-    @Body() updateEeocsData: Partial<UnifiedEeocsInput>,
-  ) {
-    return this.eeocsService.updateEeocs(id, updateEeocsData);
-  }
 }

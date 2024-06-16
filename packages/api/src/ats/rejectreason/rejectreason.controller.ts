@@ -187,17 +187,4 @@ export class RejectReasonController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateRejectReason',
-    summary: 'Update a RejectReason',
-  })
-  @ApiCustomResponse(UnifiedRejectReasonOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateRejectReason(
-    @Query('id') id: string,
-    @Body() updateRejectReasonData: Partial<UnifiedRejectReasonInput>,
-  ) {
-    return this.rejectreasonService.updateRejectReason(id, updateRejectReasonData);
-  }
 }

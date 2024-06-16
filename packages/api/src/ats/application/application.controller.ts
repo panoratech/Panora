@@ -18,9 +18,9 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { ApplicationService } from './services/application.service';
 import { UnifiedApplicationInput, UnifiedApplicationOutput  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApplicationService } from './services/application.service';
 
 @ApiTags('ats/application')
 @Controller('ats/application')
@@ -187,17 +187,5 @@ export class ApplicationController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateApplication',
-    summary: 'Update a Application',
-  })
-  @ApiCustomResponse(UnifiedApplicationOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateApplication(
-    @Query('id') id: string,
-    @Body() updateApplicationData: Partial<UnifiedApplicationInput>,
-  ) {
-    return this.applicationService.updateApplication(id, updateApplicationData);
-  }
+
 }

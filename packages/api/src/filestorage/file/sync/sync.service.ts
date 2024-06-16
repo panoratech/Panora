@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 import { unify } from '@@core/utils/unification/unify';
-import { FilestorageObject } from '@filestorage/@utils/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedFileOutput } from '../types/model.unified';
 import { IFileService } from '../types';

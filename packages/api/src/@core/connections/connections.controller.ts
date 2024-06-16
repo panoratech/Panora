@@ -19,7 +19,7 @@ import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
 import { ConnectorCategory, CONNECTORS_METADATA } from '@panora/shared';
 import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
-import { MarketingautomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
+import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { CoreSyncService } from '@@core/sync/sync.service';
 import { HrisConnectionsService } from './hris/services/hris.connection.service';
@@ -40,7 +40,7 @@ export class ConnectionsController {
     private readonly crmConnectionsService: CrmConnectionsService,
     private readonly ticketingConnectionsService: TicketingConnectionsService,
     private readonly accountingConnectionsService: AccountingConnectionsService,
-    private readonly marketingautomationConnectionsService: MarketingautomationConnectionsService,
+    private readonly marketingautomationConnectionsService: MarketingAutomationConnectionsService,
     private readonly filestorageConnectionsService: FilestorageConnectionsService,
     private readonly hrisConnectionsService: HrisConnectionsService,
     private logger: LoggerService,

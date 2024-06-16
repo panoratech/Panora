@@ -187,17 +187,4 @@ export class ScreeningQuestionController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateScreeningQuestion',
-    summary: 'Update a ScreeningQuestion',
-  })
-  @ApiCustomResponse(UnifiedScreeningQuestionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateScreeningQuestion(
-    @Query('id') id: string,
-    @Body() updateScreeningQuestionData: Partial<UnifiedScreeningQuestionInput>,
-  ) {
-    return this.screeningquestionService.updateScreeningQuestion(id, updateScreeningQuestionData);
-  }
 }

@@ -1,6 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedCampaignInput, UnifiedCampaignOutput } from './model.unified';
-import { OriginalCampaignOutput } from '@@core/utils/types/original/original.marketingautomation';
+import { OriginalCampaignOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface ICampaignService {

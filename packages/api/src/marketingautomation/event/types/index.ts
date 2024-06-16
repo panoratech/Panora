@@ -1,6 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedEventInput, UnifiedEventOutput } from './model.unified';
-import { OriginalEventOutput } from '@@core/utils/types/original/original.marketingautomation';
+import { OriginalEventOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IEventService {

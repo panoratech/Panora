@@ -18,9 +18,9 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { ActivityService } from './services/activity.service';
 import { UnifiedActivityInput, UnifiedActivityOutput  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ActivityService } from './services/activity.service';
 
 @ApiTags('ats/activity')
 @Controller('ats/activity')
@@ -187,17 +187,5 @@ export class ActivityController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateActivity',
-    summary: 'Update a Activity',
-  })
-  @ApiCustomResponse(UnifiedActivityOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateActivity(
-    @Query('id') id: string,
-    @Body() updateActivityData: Partial<UnifiedActivityInput>,
-  ) {
-    return this.activityService.updateActivity(id, updateActivityData);
-  }
+
 }

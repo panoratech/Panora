@@ -187,17 +187,4 @@ export class UserController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateUser',
-    summary: 'Update a User',
-  })
-  @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateUser(
-    @Query('id') id: string,
-    @Body() updateUserData: Partial<UnifiedUserInput>,
-  ) {
-    return this.userService.updateUser(id, updateUserData);
-  }
 }

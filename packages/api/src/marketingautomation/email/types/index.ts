@@ -1,6 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedEmailInput, UnifiedEmailOutput } from './model.unified';
-import { OriginalEmailOutput } from '@@core/utils/types/original/original.marketingautomation';
+import { OriginalEmailOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IEmailService {

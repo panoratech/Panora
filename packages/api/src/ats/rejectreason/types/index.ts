@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedRejectReasonInput, UnifiedRejectReasonOutput } from './model.unified';
+import {
+  UnifiedRejectReasonInput,
+  UnifiedRejectReasonOutput,
+} from './model.unified';
 import { OriginalRejectReasonOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -30,5 +33,5 @@ export interface IRejectReasonMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedRejectreasonOutput | UnifiedRejectreasonOutput[];
+  ): UnifiedRejectReasonOutput | UnifiedRejectReasonOutput[];
 }

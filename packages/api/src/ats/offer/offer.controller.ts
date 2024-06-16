@@ -187,17 +187,4 @@ export class OfferController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateOffer',
-    summary: 'Update a Offer',
-  })
-  @ApiCustomResponse(UnifiedOfferOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateOffer(
-    @Query('id') id: string,
-    @Body() updateOfferData: Partial<UnifiedOfferInput>,
-  ) {
-    return this.offerService.updateOffer(id, updateOfferData);
-  }
 }

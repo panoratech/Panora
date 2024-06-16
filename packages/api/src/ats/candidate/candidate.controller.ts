@@ -18,9 +18,9 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { CandidateService } from './services/candidate.service';
 import { UnifiedCandidateInput, UnifiedCandidateOutput  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { CandidateService } from './services/candidate.service';
 
 @ApiTags('ats/candidate')
 @Controller('ats/candidate')
@@ -187,17 +187,5 @@ export class CandidateController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateCandidate',
-    summary: 'Update a Candidate',
-  })
-  @ApiCustomResponse(UnifiedCandidateOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateCandidate(
-    @Query('id') id: string,
-    @Body() updateCandidateData: Partial<UnifiedCandidateInput>,
-  ) {
-    return this.candidateService.updateCandidate(id, updateCandidateData);
-  }
+  
 }

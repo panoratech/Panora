@@ -13,7 +13,7 @@ export type RefreshParams = {
   projectId: string;
 };
 
-export interface IMarketingautomationConnectionService {
+export interface IMarketingAutomationConnectionService {
   handleCallback(opts: CallbackParams): Promise<Connection>;
   handleTokenRefresh(opts: RefreshParams): Promise<any>;
 }

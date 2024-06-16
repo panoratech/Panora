@@ -18,9 +18,9 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { AttachmentService } from './services/attachment.service';
 import { UnifiedAttachmentInput, UnifiedAttachmentOutput  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { AttachmentService } from './services/attachment.service';
 
 @ApiTags('ats/attachment')
 @Controller('ats/attachment')
@@ -187,17 +187,4 @@ export class AttachmentController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateAttachment',
-    summary: 'Update a Attachment',
-  })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateAttachment(
-    @Query('id') id: string,
-    @Body() updateAttachmentData: Partial<UnifiedAttachmentInput>,
-  ) {
-    return this.attachmentService.updateAttachment(id, updateAttachmentData);
-  }
 }

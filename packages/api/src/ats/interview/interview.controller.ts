@@ -187,17 +187,4 @@ export class InterviewController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateInterview',
-    summary: 'Update a Interview',
-  })
-  @ApiCustomResponse(UnifiedInterviewOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateInterview(
-    @Query('id') id: string,
-    @Body() updateInterviewData: Partial<UnifiedInterviewInput>,
-  ) {
-    return this.interviewService.updateInterview(id, updateInterviewData);
-  }
 }

@@ -1,5 +1,14 @@
 /* INPUT */
 
+/* attachment */
+export type OriginalAttachmentInput = '';
+
+/* address */
+export type OriginalAddressInput = '';
+
+/* account */
+export type OriginalAccountInput = '';
+
 /* balancesheet */
 export type OriginalBalanceSheetInput = '';
 
@@ -52,6 +61,7 @@ export type OriginalTransactionInput = '';
 export type OriginalVendorCreditInput = '';
 
 export type AccountingObjectInput =
+  | OriginalAttachmentInput
   | OriginalBalanceSheetInput
   | OriginalCashflowStatementInput
   | OriginalCompanyInfoInput
@@ -68,9 +78,20 @@ export type AccountingObjectInput =
   | OriginalTaxRateInput
   | OriginalTrackingCategoryInput
   | OriginalTransactionInput
-  | OriginalVendorCreditInput;
+  | OriginalVendorCreditInput
+  | OriginalAddressInput
+  | OriginalAccountInput;
 
 /* OUTPUT */
+
+/* attachment */
+export type OriginalAttachmentOutput = '';
+
+/* address */
+export type OriginalAddressOutput = '';
+
+/* account */
+export type OriginalAccountOutput = '';
 
 /* balancesheet */
 export type OriginalBalanceSheetOutput = '';
@@ -124,6 +145,7 @@ export type OriginalTransactionOutput = '';
 export type OriginalVendorCreditOutput = '';
 
 export type AccountingObjectOutput =
+  | OriginalAttachmentOutput
   | OriginalBalanceSheetOutput
   | OriginalCashflowStatementOutput
   | OriginalCompanyInfoOutput
@@ -140,4 +162,6 @@ export type AccountingObjectOutput =
   | OriginalTaxRateOutput
   | OriginalTrackingCategoryOutput
   | OriginalTransactionOutput
-  | OriginalVendorCreditOutput;
+  | OriginalVendorCreditOutput
+  | OriginalAddressOutput
+  | OriginalAccountOutput;

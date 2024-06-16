@@ -1,6 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedUserInput, UnifiedUserOutput } from './model.unified';
-import { OriginalUserOutput } from '@@core/utils/types/original/original.marketingautomation';
+import { OriginalUserOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IUserService {

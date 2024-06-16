@@ -187,17 +187,4 @@ export class OfficeController {
     
   }
 
-  @ApiOperation({
-    operationId: 'updateOffice',
-    summary: 'Update a Office',
-  })
-  @ApiCustomResponse(UnifiedOfficeOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateOffice(
-    @Query('id') id: string,
-    @Body() updateOfficeData: Partial<UnifiedOfficeInput>,
-  ) {
-    return this.officeService.updateOffice(id, updateOfficeData);
-  }
 }
