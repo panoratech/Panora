@@ -21,6 +21,9 @@ export type ProviderConfig = {
         authBaseUrl?: string; // url used to authorize an application on behalf of the user (only when authStrategy is oauth2)
         customPropertiesUrl?: string;
     };
+    options?: {
+        local_redirect_uri_in_https?: boolean; // true if an https url is needed when creating oauth2 app in local for testing
+    };
     realTimeWebhookMetadata?: {
         method?: 'API' | 'MANUAL';
         events?: string[];

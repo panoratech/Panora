@@ -15,6 +15,7 @@ import { MoneybirdConnectionService } from './services/moneybird/moneybird.servi
 import { QuickbooksConnectionService } from './services/quickbooks/quickbooks.service';
 import { SageConnectionService } from './services/sage/sage.service';
 import { WaveFinancialConnectionService } from './services/wave_financial/wave_financial.service';
+import { XeroConnectionService } from './services/xero/xero.service';
 
 @Module({
   imports: [WebhookModule],
@@ -35,6 +36,7 @@ import { WaveFinancialConnectionService } from './services/wave_financial/wave_f
     QuickbooksConnectionService,
     SageConnectionService,
     WaveFinancialConnectionService,
+    XeroConnectionService,
   ],
   exports: [AccountingConnectionsService],
 })

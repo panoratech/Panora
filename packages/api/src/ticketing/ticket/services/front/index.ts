@@ -154,13 +154,14 @@ export class FrontService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
+      throw error;
+      /*handle3rdPartyServiceError(
         error,
         this.logger,
         'front',
         TicketingObject.ticket,
         ActionType.POST,
-      );
+      );*/
     }
   }
   async syncTickets(
@@ -178,7 +179,6 @@ export class FrontService implements ITicketService {
 
       const resp = await axios.get(`${connection.account_url}/conversations`, {
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
             connection.access_token,
           )}`,
@@ -192,13 +192,14 @@ export class FrontService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
+      throw error;
+      /*handle3rdPartyServiceError(
         error,
         this.logger,
         'front',
         TicketingObject.ticket,
         ActionType.GET,
-      );
+      );*/
     }
   }
 }

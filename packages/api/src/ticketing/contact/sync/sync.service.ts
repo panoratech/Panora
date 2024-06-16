@@ -186,17 +186,21 @@ export class SyncService implements OnModuleInit {
               integrationId,
               wh_real_time_trigger.data.remote_id,
             );
-            default:
-              resp = await service.syncContacts(
-                linkedUserId,
-                wh_real_time_trigger.data.remote_id,
-                remoteProperties,
-              );
-              break;
-          }
-        } else {
-          resp = await service.syncContacts(linkedUserId, remote_account_id, remoteProperties);
+          default:
+            resp = await service.syncContacts(
+              linkedUserId,
+              wh_real_time_trigger.data.remote_id,
+              remoteProperties,
+            );
+            break;
         }
+      } else {
+        resp = await service.syncContacts(
+          linkedUserId,
+          remote_account_id,
+          remoteProperties,
+        );
+      }
       const sourceObject: OriginalContactOutput[] = resp.data;
       //unify the data according to the target obj wanted
       const unifiedObject = (await unify<OriginalContactOutput[]>({
@@ -304,7 +308,7 @@ export class SyncService implements OnModuleInit {
             email_address: contact.email_address,
             phone_number: contact.phone_number,
             details: contact.details,
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

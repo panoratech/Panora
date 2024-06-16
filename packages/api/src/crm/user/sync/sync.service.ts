@@ -145,7 +145,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping users syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -259,7 +258,7 @@ export class SyncService implements OnModuleInit {
           this.logger.log('user not exists');
           let data: any = {
             id_crm_user: uuidv4(),
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

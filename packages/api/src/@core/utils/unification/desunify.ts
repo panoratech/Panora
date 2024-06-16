@@ -5,6 +5,16 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { desunifyTicketing } from '@ticketing/@lib/@unification';
 import { DesunifyReturnType } from '../types/desunify.input';
 import { ConnectorCategory } from '@panora/shared';
+import { desunifyFileStorage } from '@filestorage/@lib/@unification';
+import { FileStorageObject } from '@filestorage/@lib/@types';
+import { MarketingAutomationObject } from '@marketingautomation/@lib/@types';
+import { desunifyMarketingAutomation } from '@marketingautomation/@lib/@unification';
+import { desunifyHris } from '@hris/@lib/@unification';
+import { HrisObject } from '@hris/@lib/@types';
+import { AccountingObject } from '@accounting/@lib/@types';
+import { desunifyAccounting } from '@accounting/@lib/@unification';
+import { AtsObject } from '@ats/@lib/@types';
+import { desunifyAts } from '@ats/@lib/@unification';
 
 /* to insert data
 
@@ -39,15 +49,45 @@ export async function desunify<T extends Unified>({
         customFieldMappings,
       });
     case ConnectorCategory.Ats:
-      break;
+      targetType_ = targetType as AtsObject;
+      return desunifyAts({
+        sourceObject,
+        targetType_,
+        providerName,
+        customFieldMappings,
+      });
     case ConnectorCategory.Accounting:
-      break;
+      targetType_ = targetType as AccountingObject;
+      return desunifyAccounting({
+        sourceObject,
+        targetType_,
+        providerName,
+        customFieldMappings,
+      });
     case ConnectorCategory.FileStorage:
-      break;
+      targetType_ = targetType as FileStorageObject;
+      return desunifyFileStorage({
+        sourceObject,
+        targetType_,
+        providerName,
+        customFieldMappings,
+      });
     case ConnectorCategory.Hris:
-      break;
+      targetType_ = targetType as HrisObject;
+      return desunifyHris({
+        sourceObject,
+        targetType_,
+        providerName,
+        customFieldMappings,
+      });
     case ConnectorCategory.MarketingAutomation:
-      break;
+      targetType_ = targetType as MarketingAutomationObject;
+      return desunifyMarketingAutomation({
+        sourceObject,
+        targetType_,
+        providerName,
+        customFieldMappings,
+      });
     case ConnectorCategory.Ticketing:
       targetType_ = targetType as TicketingObject;
       return desunifyTicketing({

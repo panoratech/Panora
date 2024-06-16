@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import useOAuth from '@/hooks/useOAuth';
-import { findProviderByName, providersArray, categoryFromSlug, Provider,CONNECTORS_METADATA } from '@panora/shared/src';
+import { providersArray, categoryFromSlug, Provider,CONNECTORS_METADATA } from '@panora/shared/src';
 import { categoriesVerticals } from '@panora/shared/src/categories';
-import useLinkedUser from '@/hooks/queries/useLinkedUser';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -13,26 +12,6 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import useProjectConnectors from '@/hooks/queries/useProjectConnectors';
 import {ArrowLeftRight} from 'lucide-react'
 import Modal from '@/components/Modal';
-import logo from '../../public/assets/logo.png'
-
-// const LoadingOverlay = ({ providerName }: { providerName: string }) => {
-//     const provider = findProviderByName(providerName);
-//     return (
-//       <div className="fixed inset-0 flex justify-center items-center">
-//         <div className="text-center p-6 bg-[#1d1d1d] rounded-lg">
-//           <div className='icon-wrapper'>
-//             <img src={provider!.logoPath} alt={provider!.name} className="mx-auto mb-4 w-14 h-14 rounded-xl" />
-//           </div>
-          
-//           <h4 className="text-lg font-bold mb-2">Continue in {provider!.name}</h4>
-//           <p className="text-gray-400 mb-4">Accepting oAuth access to Panora</p>
-//           <div className='flex justify-center items-center'>
-            
-//            </div>
-//         </div>
-//       </div>
-//     );
-// };
 
 const ProviderModal = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -94,16 +73,14 @@ const ProviderModal = () => {
       setData(getConnectorsToDisplay())
     }
   }, [connectorsForProject, selectedCategory])
-
   
   const { open, isReady } = useOAuth({
     providerName: selectedProvider?.provider!,
     vertical: selectedProvider?.category!,
-    // Providing current URL to avoid cross origin error
     returnUrl: window.location.href,
-    // returnUrl: window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : ''),
     projectId: projectId,
     linkedUserId: magicLink?.id_linked_user as string,
+    optionalApiUrl: CONNECTORS_METADATA[selectedProvider?.category!][selectedProvider?.provider!].options?.local_redirect_uri_in_https == true ? "NGROK_DOMAIN": undefined,
     onSuccess: () => {
       console.log('OAuth successful');
       setOpenSuccessDialog(true);

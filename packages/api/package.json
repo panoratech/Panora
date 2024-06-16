@@ -53,6 +53,7 @@
     "dotenv": "^16.3.1",
     "install": "^0.13.0",
     "js-yaml": "^4.1.0",
+    "jwt-decode": "^4.0.0",
     "nestjs-pino": "^3.5.0",
     "openai": "^4.38.5",
     "passport": "^0.6.0",

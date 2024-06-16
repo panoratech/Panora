@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -112,7 +118,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
             provider_slug: 'teamleader',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: '',
+            account_url: CONNECTORS_METADATA['crm']['teamleader'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -136,17 +142,18 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_CRM",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_CRM',
           message: `TeamleaderConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            "teamleader",
+            'teamleader',
             Action.oauthCallback,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)    
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -188,17 +195,18 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : teamleader ');
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_REFRESH_CRM",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_CRM',
           message: `TeamleaderConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            "teamleader",
+            'teamleader',
             Action.oauthRefresh,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)     
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

@@ -160,7 +160,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping stages syncing... No ${integrationId} connection was found for linked stage ${linkedUserId} `,
         );
-        
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -297,7 +296,7 @@ export class SyncService implements OnModuleInit {
             this.logger.log('stage not exists');
             let data: any = {
               id_crm_deals_stage: uuidv4(),
-              // created_at: new Date(),
+              created_at: new Date(),
               modified_at: new Date(),
               id_linked_user: linkedUserId,
               remote_id: originId || '',

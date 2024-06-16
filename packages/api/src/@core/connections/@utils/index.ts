@@ -23,19 +23,21 @@ export class ConnectionUtils {
           connection_token: token,
         },
       });
-      if (!res) throw new ReferenceError(`Connection undefined for token ${token}`);
+      if (!res)
+        throw new ReferenceError(`Connection undefined for token ${token}`);
       return {
         linkedUserId: res.id_linked_user,
         remoteSource: res.provider_slug,
       };
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "GET_CONNECTION_FROM_CONNECTION_TOKEN_ERROR",
-          message: "ConnectionUtils.getConnectionMetadataFromConnectionToken() call failed",
-          cause: error
-        }
-      ))
+      throwTypedError(
+        new ConnectionsError({
+          name: 'GET_CONNECTION_FROM_CONNECTION_TOKEN_ERROR',
+          message:
+            'ConnectionUtils.getConnectionMetadataFromConnectionToken() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

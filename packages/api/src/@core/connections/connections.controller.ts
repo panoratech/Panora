@@ -9,15 +9,21 @@ import {
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
+import {
+  ConnectionsError,
+  CoreSyncError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
 import { ConnectorCategory, CONNECTORS_METADATA } from '@panora/shared';
 import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
-import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
+import { MarketingautomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { CoreSyncService } from '@@core/sync/sync.service';
+import { HrisConnectionsService } from './hris/services/hris.connection.service';
+import { FilestorageConnectionsService } from './filestorage/services/filestorage.connection.service';
 
 export type StateDataType = {
   projectId: string;
@@ -34,7 +40,9 @@ export class ConnectionsController {
     private readonly crmConnectionsService: CrmConnectionsService,
     private readonly ticketingConnectionsService: TicketingConnectionsService,
     private readonly accountingConnectionsService: AccountingConnectionsService,
-    private readonly marketingAutomationConnectionsService: MarketingAutomationConnectionsService,
+    private readonly marketingautomationConnectionsService: MarketingautomationConnectionsService,
+    private readonly filestorageConnectionsService: FilestorageConnectionsService,
+    private readonly hrisConnectionsService: HrisConnectionsService,
     private logger: LoggerService,
     private prisma: PrismaService,
     private coreSync: CoreSyncService,
@@ -48,39 +56,38 @@ export class ConnectionsController {
   })
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiQuery({ name: 'code', required: true, type: String })
-  @ApiQuery({ name: 'location', required: true, type: String })
   @ApiResponse({ status: 200 })
   @Get('oauth/callback')
-  async handleCallback(
-    @Res() res: Response,
-    @Query('state') state: string,
-    @Query('code') code: string,
-    @Query('location') zohoLocation?: string,
-  ) {
+  async handleCallback(@Res() res: Response, @Query() query: any) {
     try {
-      if (!state)
-        new ConnectionsError({
-          name: 'OAUTH_CALLBACK_STATE_NOT_FOUND_ERROR',
-          message: `No Callback Params found for state, found ${state}`,
-        });
-      if (!code)
-        new ConnectionsError({
+      const { state, code } = query;
+      if (!code) {
+        throw new ConnectionsError({
           name: 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR',
           message: `No Callback Params found for code, found ${code}`,
         });
+      }
+
+      if (!state) {
+        throw new ConnectionsError({
+          name: 'OAUTH_CALLBACK_STATE_NOT_FOUND_ERROR',
+          message: `No Callback Params found for state, found ${state}`,
+        });
+      }
 
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
       const { projectId, vertical, linkedUserId, providerName, returnUrl } =
         stateData;
+
       switch (vertical.toLowerCase()) {
         case ConnectorCategory.Crm:
-          const zohoLocation_ = zohoLocation ? zohoLocation : '';
+          const { location } = query;
           await this.crmConnectionsService.handleCRMCallBack(
             projectId,
             linkedUserId,
             providerName,
             code,
-            zohoLocation_,
+            location,
           );
           break;
         case ConnectorCategory.Ats:
@@ -94,11 +101,23 @@ export class ConnectionsController {
           );
           break;
         case ConnectorCategory.FileStorage:
+          await this.filestorageConnectionsService.handleFilestorageCallBack(
+            projectId,
+            linkedUserId,
+            providerName,
+            code,
+          );
           break;
         case ConnectorCategory.Hris:
+          await this.hrisConnectionsService.handleHrisCallBack(
+            projectId,
+            linkedUserId,
+            providerName,
+            code,
+          );
           break;
         case ConnectorCategory.MarketingAutomation:
-          await this.marketingAutomationConnectionsService.handleMarketingAutomationCallBack(
+          await this.marketingautomationConnectionsService.handleMarketingAutomationCallBack(
             projectId,
             linkedUserId,
             providerName,
@@ -114,11 +133,14 @@ export class ConnectionsController {
           );
           break;
       }
+
       res.redirect(returnUrl);
-      if (
+
+      /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
       ) {
+        this.logger.log('triggering initial core sync for all objects...;');
         // Performing Core Sync Service for active connectors
         await this.coreSync.initialSync(
           vertical.toLowerCase(),
@@ -126,16 +148,17 @@ export class ConnectionsController {
           linkedUserId,
           projectId,
         );
-      }
+      }*/
     } catch (error) {
-      throwTypedError(
+      /*throwTypedError(
         new ConnectionsError({
           name: 'OAUTH_CALLBACK_ERROR',
           message: 'ConnectionsController.handleCallback() call failed',
           cause: error,
         }),
         this.logger,
-      );
+      );*/
+      throw error;
     }
   }
 

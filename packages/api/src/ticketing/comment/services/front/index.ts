@@ -154,10 +154,9 @@ export class FrontService implements ICommentService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}conversations/${ticket.remote_id}/comments`,
+        `${connection.account_url}/conversations/${ticket.remote_id}/comments`,
         {
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${this.cryptoService.decrypt(
               connection.access_token,
             )}`,

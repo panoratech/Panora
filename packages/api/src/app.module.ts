@@ -19,7 +19,6 @@ import { BullModule } from '@nestjs/bull';
 import { TicketingModule } from '@ticketing/ticketing.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
-
 @Module({
   imports: [
     CoreModule,
@@ -71,7 +70,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         db: Number(process.env.REDIS_DB) || 0,
         //enableReadyCheck: false,
         //maxRetriesPerRequest: null,
-        tls: process.env.REDIS_TLS ? { rejectUnauthorized: false } : undefined
+        tls: process.env.REDIS_TLS ? { rejectUnauthorized: false } : undefined,
       },
     }),
   ],

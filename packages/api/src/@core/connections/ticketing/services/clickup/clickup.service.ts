@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -12,7 +18,11 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
+import {
+  CONNECTORS_METADATA,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
@@ -86,8 +96,8 @@ export class ClickupConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: '',
-            expiration_timestamp: '',
+            account_url:
+              CONNECTORS_METADATA['ticketing']['clickup'].urls.apiUrl,
             status: 'valid',
             created_at: new Date(),
           },
@@ -100,9 +110,9 @@ export class ClickupConnectionService implements ITicketingConnectionService {
             provider_slug: 'clickup',
             vertical: 'ticketing',
             token_type: 'oauth',
+            account_url:
+              CONNECTORS_METADATA['ticketing']['clickup'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: '',
-            expiration_timestamp: '',
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -121,17 +131,18 @@ export class ClickupConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_TICKETING",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
           message: `ClickupConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            "clickup",
+            'clickup',
             Action.oauthCallback,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)     
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 

@@ -14,6 +14,8 @@ import { PipedriveConnectionService } from './services/pipedrive/pipedrive.servi
 import { AttioConnectionService } from './services/attio/attio.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { CloseConnectionService } from './services/close/close.service';
+import { CapsuleConnectionService } from './services/capsule/capsule.service';
+import { TeamleaderConnectionService } from './services/teamleader/teamleader.service';
 
 @Module({
   imports: [WebhookModule],
@@ -33,6 +35,8 @@ import { CloseConnectionService } from './services/close/close.service';
     ZendeskConnectionService,
     PipedriveConnectionService,
     CloseConnectionService,
+    CapsuleConnectionService,
+    TeamleaderConnectionService,
   ],
   exports: [CrmConnectionsService],
 })

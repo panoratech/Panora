@@ -47,7 +47,8 @@ export class EventsController {
   })
   @Get('count')
   @UseGuards(JwtAuthGuard)
-  async getEventsCount() {
-    return await this.eventsService.getEventsCount();
+  async getEventsCount(@Request() req: any) {
+    const { id_project } = req.user;
+    return await this.eventsService.getEventsCount(id_project);
   }
 }

@@ -73,7 +73,7 @@ export class AccountingConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
+      /*throwTypedError(
         new ConnectionsError({
           name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
           message:
@@ -81,7 +81,8 @@ export class AccountingConnectionsService {
           cause: error,
         }),
         this.logger,
-      );
+      );*/
+      throw error;
     }
   }
 

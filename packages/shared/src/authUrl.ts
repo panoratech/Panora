@@ -10,12 +10,13 @@ interface AuthParams {
   returnUrl: string;
   apiUrl: string;
   vertical: string;
+  redirectUrlIngressWhenLocalDev?: string;
 }
 
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
-export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
-  const encodedRedirectUrl = encodeURIComponent(`${apiUrl}/connections/oauth/callback`);
+export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, redirectUrlIngressWhenLocalDev }: AuthParams) => {
+  const encodedRedirectUrl = encodeURIComponent(`${redirectUrlIngressWhenLocalDev ? redirectUrlIngressWhenLocalDev : apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl);
@@ -30,7 +31,6 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   }
   const authStrategy = config.authStrategy!;
 
-  // console.log(authStrategy)
 
   switch (authStrategy) {
     case AuthStrategy.oauth2:
@@ -75,14 +75,14 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   } = input;
 
   const type = providerToType(providerName, vertical, authStrategy);
-
+  
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
   const DATA = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
   const data = await DATA.json() as OAuth2AuthData;
 
-  // console.log("Fetched Data ", JSON.stringify(data))
+  console.log("Fetched Data ", JSON.stringify(data))
 
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new ReferenceError(`No client id for type ${type}`)
@@ -97,7 +97,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}` :
     data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl; 
 
-  // console.log('BASE URL IS '+ BASE_URL)
+  console.log('BASE URL IS '+ BASE_URL)
   if (!baseUrl || !BASE_URL) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
@@ -128,13 +128,19 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     case 'gorgias':
       params = `&response_type=code&nonce=${randomString()}`;
       break;
+    case 'google_drive':
+      params = `${params}&access_type=offline`;
+      break;
+    case 'dropbox':
+      params = `${params}&token_access_type=offline`
+      break;
     default:
       // For most providers, response_type=code is common
       params += '&response_type=code';
   }
 
   const finalAuthUrl = `${BASE_URL}?${params}`;
-  // console.log('Final Authentication : ', finalAuthUrl);
+  console.log('Final Authentication : ', finalAuthUrl); 
   return finalAuthUrl;
 }
 

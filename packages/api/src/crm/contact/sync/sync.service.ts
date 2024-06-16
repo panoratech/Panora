@@ -85,12 +85,12 @@ export class SyncService implements OnModuleInit {
 
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -163,7 +163,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping contacts syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -376,7 +375,7 @@ export class SyncService implements OnModuleInit {
             id_crm_contact: uuid,
             first_name: '',
             last_name: '',
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

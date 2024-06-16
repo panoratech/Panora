@@ -126,7 +126,9 @@ export class WebhookService {
     eventId: string,
   ) {
     try {
-      this.logger.log('handling webhook....');
+      this.logger.log(
+        `Handling Panora Webhook for event: ${eventType} and projectId: ${projectId}`,
+      );
       //just create an entry in webhook
       //search if an endpoint webhook exists for such a projectId and such a scope
       const webhooks = await this.prisma.webhook_endpoints.findMany({

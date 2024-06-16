@@ -5,7 +5,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
 import { AccountingConnectionModule } from './accounting/accounting.connection.module';
-import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
+import { MarketingautomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
 import { ValidateUserService } from '@@core/utils/services/validateUser.service';
 import { CoreSyncService } from '@@core/sync/sync.service';
 import { CompanyModule } from '@crm/company/company.module';
@@ -24,6 +24,8 @@ import { TagModule } from '@ticketing/tag/tag.module';
 import { TeamModule } from '@ticketing/team/team.module';
 import { TicketModule } from '@ticketing/ticket/ticket.module';
 import { UserModule as TUserModule } from '@ticketing/user/user.module';
+import { FilestorageConnectionModule } from './filestorage/filestorage.connection.module';
+import { HrisConnectionModule } from './hris/hris.connection.module';
 
 @Module({
   controllers: [ConnectionsController],
@@ -31,7 +33,9 @@ import { UserModule as TUserModule } from '@ticketing/user/user.module';
     CrmConnectionModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
-    MarketingAutomationConnectionsModule,
+    MarketingautomationConnectionsModule,
+    FilestorageConnectionModule,
+    HrisConnectionModule,
     CompanyModule,
     ContactModule,
     DealModule,
@@ -47,14 +51,21 @@ import { UserModule as TUserModule } from '@ticketing/user/user.module';
     TagModule,
     TeamModule,
     TicketModule,
-    TUserModule
+    TUserModule,
   ],
-  providers: [LoggerService, PrismaService, ValidateUserService, CoreSyncService],
+  providers: [
+    LoggerService,
+    PrismaService,
+    ValidateUserService,
+    CoreSyncService,
+  ],
   exports: [
     CrmConnectionModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
-    MarketingAutomationConnectionsModule,
+    MarketingautomationConnectionsModule,
+    FilestorageConnectionModule,
+    HrisConnectionModule,
   ],
 })
-export class ConnectionsModule { }
+export class ConnectionsModule {}

@@ -116,7 +116,6 @@ export class ZendeskTicketMapper implements ITicketMapper {
 
     //TODO: contact or user ?
     if (ticket.assignee_id) {
-      //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee_id),
         'zendesk',
@@ -124,6 +123,12 @@ export class ZendeskTicketMapper implements ITicketMapper {
       if (user_id) {
         opts = { assigned_to: [user_id] };
       }
+    }
+    if (ticket.type) {
+      opts = {
+        type:
+          ticket.type === 'incident' ? 'PROBLEM' : ticket.type.toUpperCase(),
+      };
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
@@ -133,7 +138,6 @@ export class ZendeskTicketMapper implements ITicketMapper {
         ticket.status === 'new' || ticket.status === 'open' ? 'OPEN' : 'CLOSED', // todo: handle pending status ?
       description: ticket.description,
       due_date: ticket.due_at ? new Date(ticket.due_at) : undefined,
-      type: ticket.type === 'incident' ? 'PROBLEM' : ticket.type.toUpperCase(),
       parent_ticket: undefined, // If available, add logic to map parent ticket
       tags: ticket.tags,
       completed_at: new Date(ticket.updated_at),

@@ -341,13 +341,14 @@ export class TicketService {
       );
       return result_ticket;
     } catch (error) {
-      throwTypedError(
+      throw error;
+      /*throwTypedError(
         new UnifiedTicketingError({
           name: 'CREATE_TICKET_ERROR',
           message: 'TicketService.addTicket() call failed',
           cause: error,
         }),
-      );
+      );*/
     }
   }
 

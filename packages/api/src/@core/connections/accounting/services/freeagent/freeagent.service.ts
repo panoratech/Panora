@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -82,7 +88,7 @@ export class FreeagentConnectionService
       );
       const data: FreeagentOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : freeagent ticketing ' + JSON.stringify(data),
+        'OAuth credentials : freeagent accounting ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -97,7 +103,7 @@ export class FreeagentConnectionService
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url:
-              CONNECTORS_METADATA['accounting']['freshagent'].urls.apiUrl,
+              CONNECTORS_METADATA['accounting']['freeagent'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -114,7 +120,7 @@ export class FreeagentConnectionService
             vertical: 'accounting',
             token_type: 'oauth',
             account_url:
-              CONNECTORS_METADATA['accounting']['freshagent'].urls.apiUrl,
+              CONNECTORS_METADATA['accounting']['freeagent'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -138,17 +144,18 @@ export class FreeagentConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_ACCOUNTING",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
           message: `FreeagentConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            "freeagent",
+            'freeagent',
             Action.oauthCallback,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)    
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -191,17 +198,18 @@ export class FreeagentConnectionService
       });
       this.logger.log('OAuth credentials updated : freeagent ');
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_REFRESH_ACCOUNTING",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
           message: `FreeagentConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            "freeagent",
+            'freeagent',
             Action.oauthRefresh,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)     
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }
