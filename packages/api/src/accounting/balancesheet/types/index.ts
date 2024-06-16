@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedBalancesheetInput, UnifiedBalancesheetOutput } from './model.unified';
-import { OriginalBalancesheetOutput } from '@@core/utils/types/original/original.accounting';
+import { UnifiedBalanceSheetInput, UnifiedBalanceSheetOutput } from './model.unified';
+import { OriginalBalanceSheetOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface IBalancesheetService {
-  addBalancesheet(
+export interface IBalanceSheetService {
+  addBalanceSheet(
     balancesheetData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalBalancesheetOutput>>;
+  ): Promise<ApiResponse<OriginalBalanceSheetOutput>>;
 
-  syncBalancesheets(
+  syncBalanceSheets(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalBalancesheetOutput[]>>;
+  ): Promise<ApiResponse<OriginalBalanceSheetOutput[]>>;
 }
 
-export interface IBalancesheetMapper {
+export interface IBalanceSheetMapper {
   desunify(
-    source: UnifiedBalancesheetInput,
+    source: UnifiedBalanceSheetInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface IBalancesheetMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalBalancesheetOutput | OriginalBalancesheetOutput[],
+    source: OriginalBalanceSheetOutput | OriginalBalanceSheetOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedBalancesheetOutput | UnifiedBalancesheetOutput[];
+  ): UnifiedBalanceSheetOutput | UnifiedBalanceSheetOutput[];
 }

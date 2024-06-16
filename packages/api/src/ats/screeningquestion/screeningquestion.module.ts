@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ScreeningquestionController } from './screeningquestion.controller';
+import { ScreeningQuestionController } from './screeningquestion.controller';
 import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ScreeningquestionService } from './services/screeningquestion.service';
+import { ScreeningQuestionService } from './services/screeningquestion.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -16,9 +16,9 @@ import { BullModule } from '@nestjs/bull';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [ScreeningquestionController],
+  controllers: [ScreeningQuestionController],
   providers: [
-    ScreeningquestionService,
+    ScreeningQuestionService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -31,5 +31,5 @@ import { BullModule } from '@nestjs/bull';
   ],
   exports: [SyncService],
 })
-export class ScreeningquestionModule {}
+export class ScreeningQuestionModule {}
 

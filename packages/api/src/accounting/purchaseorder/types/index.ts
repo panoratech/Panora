@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedPurchaseorderInput, UnifiedPurchaseorderOutput } from './model.unified';
-import { OriginalPurchaseorderOutput } from '@@core/utils/types/original/original.accounting';
+import { UnifiedPurchaseOrderInput, UnifiedPurchaseOrderOutput } from './model.unified';
+import { OriginalPurchaseOrderOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface IPurchaseorderService {
-  addPurchaseorder(
+export interface IPurchaseOrderService {
+  addPurchaseOrder(
     purchaseorderData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalPurchaseorderOutput>>;
+  ): Promise<ApiResponse<OriginalPurchaseOrderOutput>>;
 
-  syncPurchaseorders(
+  syncPurchaseOrders(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalPurchaseorderOutput[]>>;
+  ): Promise<ApiResponse<OriginalPurchaseOrderOutput[]>>;
 }
 
-export interface IPurchaseorderMapper {
+export interface IPurchaseOrderMapper {
   desunify(
-    source: UnifiedPurchaseorderInput,
+    source: UnifiedPurchaseOrderInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface IPurchaseorderMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalPurchaseorderOutput | OriginalPurchaseorderOutput[],
+    source: OriginalPurchaseOrderOutput | OriginalPurchaseOrderOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedPurchaseorderOutput | UnifiedPurchaseorderOutput[];
+  ): UnifiedPurchaseOrderOutput | UnifiedPurchaseOrderOutput[];
 }

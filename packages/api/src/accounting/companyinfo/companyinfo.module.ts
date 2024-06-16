@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { CompanyinfoController } from './companyinfo.controller';
+import { CompanyInfoController } from './companyinfo.controller';
 import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { CompanyinfoService } from './services/companyinfo.service';
+import { CompanyInfoService } from './services/companyinfo.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -16,9 +16,9 @@ import { BullModule } from '@nestjs/bull';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [CompanyinfoController],
+  controllers: [CompanyInfoController],
   providers: [
-    CompanyinfoService,
+    CompanyInfoService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -31,5 +31,5 @@ import { BullModule } from '@nestjs/bull';
   ],
   exports: [SyncService],
 })
-export class CompanyinfoModule {}
+export class CompanyInfoModule {}
 

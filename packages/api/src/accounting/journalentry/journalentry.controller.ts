@@ -18,27 +18,30 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { JournalentryService } from './services/journalentry.service';
-import { UnifiedJournalentryInput, UnifiedJournalentryOutput  } from './types/model.unified';
+import { JournalEntryService } from './services/journalentry.service';
+import {
+  UnifiedJournalEntryInput,
+  UnifiedJournalEntryOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/journalentry')
 @Controller('accounting/journalentry')
-export class JournalentryController {
+export class JournalEntryController {
   private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
-    private readonly journalentryService: JournalentryService,
+    private readonly journalentryService: JournalEntryService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(JournalentryController.name);
+    this.logger.setContext(JournalEntryController.name);
   }
 
   @ApiOperation({
-    operationId: 'getJournalentrys',
-    summary: 'List a batch of Journalentrys',
+    operationId: 'getJournalEntrys',
+    summary: 'List a batch of JournalEntrys',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -51,32 +54,33 @@ export class JournalentryController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedJournalentryOutput)
+  @ApiCustomResponse(UnifiedJournalEntryOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getJournalentrys(
+  async getJournalEntrys(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.journalentryService.getJournalentrys(
+        );
+      return this.journalentryService.getJournalEntrys(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'getJournalentry',
-    summary: 'Retrieve a Journalentry',
-    description: 'Retrieve a journalentry from any connected Accounting software',
+    operationId: 'getJournalEntry',
+    summary: 'Retrieve a JournalEntry',
+    description:
+      'Retrieve a journalentry from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -91,22 +95,22 @@ export class JournalentryController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedJournalentryOutput)
+  @ApiCustomResponse(UnifiedJournalEntryOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getJournalentry(
+  getJournalEntry(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.journalentryService.getJournalentry(id, remote_data);
+    return this.journalentryService.getJournalEntry(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addJournalentry',
-    summary: 'Create a Journalentry',
+    operationId: 'addJournalEntry',
+    summary: 'Create a JournalEntry',
     description: 'Create a journalentry in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -119,36 +123,36 @@ export class JournalentryController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedJournalentryInput })
-  @ApiCustomResponse(UnifiedJournalentryOutput)
+  @ApiBody({ type: UnifiedJournalEntryInput })
+  @ApiCustomResponse(UnifiedJournalEntryOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addJournalentry(
-    @Body() unifiedJournalentryData: UnifiedJournalentryInput,
+  async addJournalEntry(
+    @Body() unifiedJournalEntryData: UnifiedJournalEntryInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.journalentryService.addJournalentry(
-        unifiedJournalentryData,
+        );
+      return this.journalentryService.addJournalEntry(
+        unifiedJournalEntryData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'addJournalentrys',
-    summary: 'Add a batch of Journalentrys',
+    operationId: 'addJournalEntrys',
+    summary: 'Add a batch of JournalEntrys',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -161,43 +165,28 @@ export class JournalentryController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedJournalentryInput, isArray: true })
-  @ApiCustomResponse(UnifiedJournalentryOutput)
+  @ApiBody({ type: UnifiedJournalEntryInput, isArray: true })
+  @ApiCustomResponse(UnifiedJournalEntryOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  async addJournalentrys(
-    @Body() unfiedJournalentryData: UnifiedJournalentryInput[],
+  async addJournalEntrys(
+    @Body() unfiedJournalEntryData: UnifiedJournalEntryInput[],
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.journalentryService.batchAddJournalentrys(
-        unfiedJournalentryData,
+        );
+      return this.journalentryService.batchAddJournalEntrys(
+        unfiedJournalEntryData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateJournalentry',
-    summary: 'Update a Journalentry',
-  })
-  @ApiCustomResponse(UnifiedJournalentryOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateJournalentry(
-    @Query('id') id: string,
-    @Body() updateJournalentryData: Partial<UnifiedJournalentryInput>,
-  ) {
-    return this.journalentryService.updateJournalentry(id, updateJournalentryData);
   }
 }

@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedJournalentryInput, UnifiedJournalentryOutput } from './model.unified';
-import { OriginalJournalentryOutput } from '@@core/utils/types/original/original.accounting';
+import { UnifiedJournalEntryInput, UnifiedJournalEntryOutput } from './model.unified';
+import { OriginalJournalEntryOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface IJournalentryService {
-  addJournalentry(
+export interface IJournalEntryService {
+  addJournalEntry(
     journalentryData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalJournalentryOutput>>;
+  ): Promise<ApiResponse<OriginalJournalEntryOutput>>;
 
-  syncJournalentrys(
+  syncJournalEntrys(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalJournalentryOutput[]>>;
+  ): Promise<ApiResponse<OriginalJournalEntryOutput[]>>;
 }
 
-export interface IJournalentryMapper {
+export interface IJournalEntryMapper {
   desunify(
-    source: UnifiedJournalentryInput,
+    source: UnifiedJournalEntryInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface IJournalentryMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalJournalentryOutput | OriginalJournalentryOutput[],
+    source: OriginalJournalEntryOutput | OriginalJournalEntryOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedJournalentryOutput | UnifiedJournalentryOutput[];
+  ): UnifiedJournalEntryOutput | UnifiedJournalEntryOutput[];
 }

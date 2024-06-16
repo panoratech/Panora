@@ -1,3 +1,3 @@
-export class UnifiedCompanyinfoInput {}
+export class UnifiedCompanyInfoInput {}
 
-export class UnifiedCompanyinfoOutput extends UnifiedCompanyinfoInput {}
+export class UnifiedCompanyInfoOutput extends UnifiedCompanyInfoInput {}

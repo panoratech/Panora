@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { PurchaseorderController } from './purchaseorder.controller';
+import { PurchaseOrderController } from './purchaseorder.controller';
 import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { PurchaseorderService } from './services/purchaseorder.service';
+import { PurchaseOrderService } from './services/purchaseorder.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -16,9 +16,9 @@ import { BullModule } from '@nestjs/bull';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [PurchaseorderController],
+  controllers: [PurchaseOrderController],
   providers: [
-    PurchaseorderService,
+    PurchaseOrderService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -31,5 +31,5 @@ import { BullModule } from '@nestjs/bull';
   ],
   exports: [SyncService],
 })
-export class PurchaseorderModule {}
+export class PurchaseOrderModule {}
 

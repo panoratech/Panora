@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedIncomestatementInput, UnifiedIncomestatementOutput } from './model.unified';
-import { OriginalIncomestatementOutput } from '@@core/utils/types/original/original.accounting';
+import { UnifiedIncomeStatementInput, UnifiedIncomeStatementOutput } from './model.unified';
+import { OriginalIncomeStatementOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface IIncomestatementService {
-  addIncomestatement(
+export interface IIncomeStatementService {
+  addIncomeStatement(
     incomestatementData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalIncomestatementOutput>>;
+  ): Promise<ApiResponse<OriginalIncomeStatementOutput>>;
 
-  syncIncomestatements(
+  syncIncomeStatements(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalIncomestatementOutput[]>>;
+  ): Promise<ApiResponse<OriginalIncomeStatementOutput[]>>;
 }
 
-export interface IIncomestatementMapper {
+export interface IIncomeStatementMapper {
   desunify(
-    source: UnifiedIncomestatementInput,
+    source: UnifiedIncomeStatementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface IIncomestatementMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalIncomestatementOutput | OriginalIncomestatementOutput[],
+    source: OriginalIncomeStatementOutput | OriginalIncomeStatementOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedIncomestatementOutput | UnifiedIncomestatementOutput[];
+  ): UnifiedIncomeStatementOutput | UnifiedIncomeStatementOutput[];
 }

@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { AddressService } from './services/address.service';
-import { UnifiedAddressInput, UnifiedAddressOutput  } from './types/model.unified';
+import {
+  UnifiedAddressInput,
+  UnifiedAddressOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/address')
@@ -38,7 +41,7 @@ export class AddressController {
     operationId: 'getAddresss',
     summary: 'List a batch of Addresss',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class AddressController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.addressService.getAddresss(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -106,7 +109,7 @@ export class AddressController {
     summary: 'Create a Address',
     description: 'Create a address in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +131,18 @@ export class AddressController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.addressService.addAddress(
         unifiedAddressData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +151,7 @@ export class AddressController {
     operationId: 'addAddresss',
     summary: 'Add a batch of Addresss',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +173,19 @@ export class AddressController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.addressService.batchAddAddresss(
         unfiedAddressData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateAddress',
-    summary: 'Update a Address',
-  })
-  @ApiCustomResponse(UnifiedAddressOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateAddress(
-    @Query('id') id: string,
-    @Body() updateAddressData: Partial<UnifiedAddressInput>,
-  ) {
-    return this.addressService.updateAddress(id, updateAddressData);
   }
 }

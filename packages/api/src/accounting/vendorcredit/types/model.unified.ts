@@ -1,3 +1,3 @@
-export class UnifiedVendorcreditInput {}
+export class UnifiedVendorCreditInput {}
 
-export class UnifiedVendorcreditOutput extends UnifiedVendorcreditInput {}
+export class UnifiedVendorCreditOutput extends UnifiedVendorCreditInput {}

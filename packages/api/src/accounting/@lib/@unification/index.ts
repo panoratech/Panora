@@ -1,6 +1,6 @@
 import { AccountingObject, unificationMapping } from '@accounting/@lib/@types';
 import { Unified, UnifyReturnType } from '@@core/utils/types';
-import { UnifySourceType } from '@@core/utils/types/unify.output';
+import { UnifySourceType } from '@@core/utils/types/unify.ookl;:utput';
 import { AccountingObjectInput } from '@@core/utils/types/original/original.accounting';
 
 export async function desunifyAccounting<T extends Unified>({

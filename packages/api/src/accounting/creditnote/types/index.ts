@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedCreditnoteInput, UnifiedCreditnoteOutput } from './model.unified';
-import { OriginalCreditnoteOutput } from '@@core/utils/types/original/original.accounting';
+import { UnifiedCreditNoteInput, UnifiedCreditNoteOutput } from './model.unified';
+import { OriginalCreditNoteOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface ICreditnoteService {
-  addCreditnote(
+export interface ICreditNoteService {
+  addCreditNote(
     creditnoteData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalCreditnoteOutput>>;
+  ): Promise<ApiResponse<OriginalCreditNoteOutput>>;
 
-  syncCreditnotes(
+  syncCreditNotes(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalCreditnoteOutput[]>>;
+  ): Promise<ApiResponse<OriginalCreditNoteOutput[]>>;
 }
 
-export interface ICreditnoteMapper {
+export interface ICreditNoteMapper {
   desunify(
-    source: UnifiedCreditnoteInput,
+    source: UnifiedCreditNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface ICreditnoteMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalCreditnoteOutput | OriginalCreditnoteOutput[],
+    source: OriginalCreditNoteOutput | OriginalCreditNoteOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCreditnoteOutput | UnifiedCreditnoteOutput[];
+  ): UnifiedCreditNoteOutput | UnifiedCreditNoteOutput[];
 }

@@ -1,3 +1,3 @@
-export class UnifiedTaxrateInput {}
+export class UnifiedTaxRateInput {}
 
-export class UnifiedTaxrateOutput extends UnifiedTaxrateInput {}
+export class UnifiedTaxRateOutput extends UnifiedTaxRateInput {}

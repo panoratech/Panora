@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedJobinterviewstageInput, UnifiedJobinterviewstageOutput } from './model.unified';
-import { OriginalJobinterviewstageOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedJobInterviewStageInput, UnifiedJobInterviewStageOutput } from './model.unified';
+import { OriginalJobInterviewStageOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface IJobinterviewstageService {
-  addJobinterviewstage(
+export interface IJobInterviewStageService {
+  addJobInterviewStage(
     jobinterviewstageData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalJobinterviewstageOutput>>;
+  ): Promise<ApiResponse<OriginalJobInterviewStageOutput>>;
 
-  syncJobinterviewstages(
+  syncJobInterviewStages(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalJobinterviewstageOutput[]>>;
+  ): Promise<ApiResponse<OriginalJobInterviewStageOutput[]>>;
 }
 
-export interface IJobinterviewstageMapper {
+export interface IJobInterviewStageMapper {
   desunify(
-    source: UnifiedJobinterviewstageInput,
+    source: UnifiedJobInterviewStageInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface IJobinterviewstageMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalJobinterviewstageOutput | OriginalJobinterviewstageOutput[],
+    source: OriginalJobInterviewStageOutput | OriginalJobInterviewStageOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedJobinterviewstageOutput | UnifiedJobinterviewstageOutput[];
+  ): UnifiedJobInterviewStageOutput | UnifiedJobInterviewStageOutput[];
 }

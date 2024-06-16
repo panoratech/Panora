@@ -74,6 +74,26 @@ import {
 import { jobinterviewstageUnificationMapping } from '@ats/jobinterviewstage/types/mappingsTypes';
 import { rejectreasonUnificationMapping } from '@ats/rejectreason/types/mappingsTypes';
 import { screeningquestionUnificationMapping } from '@ats/screeningquestion/types/mappingsTypes';
+import { IJobInterviewStageService } from '@ats/jobinterviewstage/types';
+import {
+  UnifiedJobInterviewStageInput,
+  UnifiedJobInterviewStageOutput,
+} from '@ats/jobinterviewstage/types/model.unified';
+import { IRejectReasonService } from '@ats/rejectreason/types';
+import {
+  UnifiedRejectReasonInput,
+  UnifiedRejectReasonOutput,
+} from '@ats/rejectreason/types/model.unified';
+import { IScoreCardService } from '@ats/scorecard/types';
+import {
+  UnifiedScoreCardInput,
+  UnifiedScoreCardOutput,
+} from '@ats/scorecard/types/model.unified';
+import { IScreeningQuestionService } from '@ats/screeningquestion/types';
+import {
+  UnifiedScreeningQuestionInput,
+  UnifiedScreeningQuestionOutput,
+} from '@ats/screeningquestion/types/model.unified';
 
 export enum AtsObject {
   activity = 'activity',

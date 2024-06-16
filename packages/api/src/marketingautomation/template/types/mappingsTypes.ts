@@ -1,3 +1,1 @@
-
-export const templateUnificationMapping = {
-}; */
+export const templateUnificationMapping = {};

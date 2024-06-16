@@ -1,3 +1,3 @@
-export class UnifiedScreeningquestionInput {}
+export class UnifiedScreeningQuestionInput {}
 
-export class UnifiedScreeningquestionOutput extends UnifiedScreeningquestionInput {}
+export class UnifiedScreeningQuestionOutput extends UnifiedScreeningQuestionInput {}

@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TransactionService } from './services/transaction.service';
-import { UnifiedTransactionInput, UnifiedTransactionOutput  } from './types/model.unified';
+import {
+  UnifiedTransactionInput,
+  UnifiedTransactionOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/transaction')
@@ -38,7 +41,7 @@ export class TransactionController {
     operationId: 'getTransactions',
     summary: 'List a batch of Transactions',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class TransactionController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.transactionService.getTransactions(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -76,7 +79,8 @@ export class TransactionController {
   @ApiOperation({
     operationId: 'getTransaction',
     summary: 'Retrieve a Transaction',
-    description: 'Retrieve a transaction from any connected Accounting software',
+    description:
+      'Retrieve a transaction from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -106,7 +110,7 @@ export class TransactionController {
     summary: 'Create a Transaction',
     description: 'Create a transaction in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +132,18 @@ export class TransactionController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.transactionService.addTransaction(
         unifiedTransactionData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +152,7 @@ export class TransactionController {
     operationId: 'addTransactions',
     summary: 'Add a batch of Transactions',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +174,19 @@ export class TransactionController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.transactionService.batchAddTransactions(
         unfiedTransactionData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateTransaction',
-    summary: 'Update a Transaction',
-  })
-  @ApiCustomResponse(UnifiedTransactionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateTransaction(
-    @Query('id') id: string,
-    @Body() updateTransactionData: Partial<UnifiedTransactionInput>,
-  ) {
-    return this.transactionService.updateTransaction(id, updateTransactionData);
   }
 }

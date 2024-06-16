@@ -38,11 +38,11 @@ import { phonenumberUnificationMapping } from '@accounting/phonenumber/types/map
 
 import { purchaseorderUnificationMapping } from '@accounting/purchaseorder/types/mappingsTypes';
 
-import { ITaxrateService } from '@accounting/taxrate/types';
+import { ITaxRateService } from '@accounting/taxrate/types';
 import { taxrateUnificationMapping } from '@accounting/taxrate/types/mappingsTypes';
 import {
-  UnifiedTaxrateInput,
-  UnifiedTaxrateOutput,
+  UnifiedTaxRateInput,
+  UnifiedTaxRateOutput,
 } from '@accounting/taxrate/types/model.unified';
 import { trackingcategoryUnificationMapping } from '@accounting/trackingcategory/types/mappingsTypes';
 
@@ -60,6 +60,56 @@ import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@accounting/contact/types/model.unified';
+import {
+  UnifiedBalanceSheetInput,
+  UnifiedBalanceSheetOutput,
+} from '@accounting/balancesheet/types/model.unified';
+import {
+  UnifiedCashflowStatementInput,
+  UnifiedCashflowStatementOutput,
+} from '@accounting/cashflowstatement/types/model.unified';
+import {
+  UnifiedCompanyInfoInput,
+  UnifiedCompanyInfoOutput,
+} from '@accounting/companyinfo/types/model.unified';
+import {
+  UnifiedCreditNoteInput,
+  UnifiedCreditNoteOutput,
+} from '@accounting/creditnote/types/model.unified';
+import {
+  UnifiedIncomeStatementInput,
+  UnifiedIncomeStatementOutput,
+} from '@accounting/incomestatement/types/model.unified';
+import {
+  UnifiedJournalEntryInput,
+  UnifiedJournalEntryOutput,
+} from '@accounting/journalentry/types/model.unified';
+import {
+  UnifiedPhoneNumberInput,
+  UnifiedPhoneNumberOutput,
+} from '@accounting/phonenumber/types/model.unified';
+import {
+  UnifiedPurchaseOrderInput,
+  UnifiedPurchaseOrderOutput,
+} from '@accounting/purchaseorder/types/model.unified';
+import {
+  UnifiedTrackingCategoryInput,
+  UnifiedTrackingCategoryOutput,
+} from '@accounting/trackingcategory/types/model.unified';
+import {
+  UnifiedVendorCreditInput,
+  UnifiedVendorCreditOutput,
+} from '@accounting/vendorcredit/types/model.unified';
+import { IBalanceSheetService } from '@accounting/balancesheet/types';
+import { ICashflowStatementService } from '@accounting/cashflowstatement/types';
+import { ICreditNoteService } from '@accounting/creditnote/types';
+import { IJournalEntryService } from '@accounting/journalentry/types';
+import { IIncomeStatementService } from '@accounting/incomestatement/types';
+import { IPurchaseOrderService } from '@accounting/purchaseorder/types';
+import { ITrackingCategoryService } from '@accounting/trackingcategory/types';
+import { IVendorCreditService } from '@accounting/vendorcredit/types';
+import { ICompanyInfoService } from '@accounting/companyinfo/types';
+import { IPhoneNumberService } from '@accounting/phonenumber/types';
 
 export enum AccountingObject {
   balancesheet = 'balancesheet',
@@ -108,8 +158,8 @@ export type UnifiedAccounting =
   | UnifiedPhoneNumberOutput
   | UnifiedPurchaseOrderInput
   | UnifiedPurchaseOrderOutput
-  | UnifiedTaxrateInput
-  | UnifiedTaxrateOutput
+  | UnifiedTaxRateInput
+  | UnifiedTaxRateOutput
   | UnifiedTrackingCategoryInput
   | UnifiedTrackingCategoryOutput
   | UnifiedTransactionInput
@@ -151,7 +201,7 @@ export type IAccountingService =
   | IPaymentService
   | IPhoneNumberService
   | IPurchaseOrderService
-  | ITaxrateService
+  | ITaxRateService
   | ITrackingCategoryService
   | ITransactionService
   | IVendorCreditService;

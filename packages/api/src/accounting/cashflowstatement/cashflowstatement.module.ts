@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { CashflowstatementController } from './cashflowstatement.controller';
+import { CashflowStatementController } from './cashflowstatement.controller';
 import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { CashflowstatementService } from './services/cashflowstatement.service';
+import { CashflowStatementService } from './services/cashflowstatement.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -16,9 +16,9 @@ import { BullModule } from '@nestjs/bull';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [CashflowstatementController],
+  controllers: [CashflowStatementController],
   providers: [
-    CashflowstatementService,
+    CashflowStatementService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -31,5 +31,5 @@ import { BullModule } from '@nestjs/bull';
   ],
   exports: [SyncService],
 })
-export class CashflowstatementModule {}
+export class CashflowStatementModule {}
 

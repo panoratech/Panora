@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedScorecardInput, UnifiedScorecardOutput } from './model.unified';
-import { OriginalScorecardOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedScoreCardInput, UnifiedScoreCardOutput } from './model.unified';
+import { OriginalScoreCardOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface IScorecardService {
-  addScorecard(
+export interface IScoreCardService {
+  addScoreCard(
     scorecardData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalScorecardOutput>>;
+  ): Promise<ApiResponse<OriginalScoreCardOutput>>;
 
-  syncScorecards(
+  syncScoreCards(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalScorecardOutput[]>>;
+  ): Promise<ApiResponse<OriginalScoreCardOutput[]>>;
 }
 
-export interface IScorecardMapper {
+export interface IScoreCardMapper {
   desunify(
-    source: UnifiedScorecardInput,
+    source: UnifiedScoreCardInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface IScorecardMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalScorecardOutput | OriginalScorecardOutput[],
+    source: OriginalScoreCardOutput | OriginalScoreCardOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedScorecardOutput | UnifiedScorecardOutput[];
+  ): UnifiedScoreCardOutput | UnifiedScoreCardOutput[];
 }

@@ -18,25 +18,25 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { RejectreasonService } from './services/rejectreason.service';
-import { UnifiedRejectreasonInput, UnifiedRejectreasonOutput  } from './types/model.unified';
+import { RejectReasonService } from './services/rejectreason.service';
+import { UnifiedRejectReasonInput, UnifiedRejectReasonOutput  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('ats/rejectreason')
 @Controller('ats/rejectreason')
-export class RejectreasonController {
+export class RejectReasonController {
   private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
-    private readonly rejectreasonService: RejectreasonService,
+    private readonly rejectreasonService: RejectReasonService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(RejectreasonController.name);
+    this.logger.setContext(RejectReasonController.name);
   }
 
   @ApiOperation({
-    operationId: 'getRejectreasons',
-    summary: 'List a batch of Rejectreasons',
+    operationId: 'getRejectReasons',
+    summary: 'List a batch of RejectReasons',
   })
    @ApiHeader({
     name: 'x-connection-token',
@@ -51,10 +51,10 @@ export class RejectreasonController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiCustomResponse(UnifiedRejectreasonOutput)
+  @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getRejectreasons(
+  async getRejectReasons(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -63,7 +63,7 @@ export class RejectreasonController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
-      return this.rejectreasonService.getRejectreasons(
+      return this.rejectreasonService.getRejectReasons(
         remoteSource,
         linkedUserId,
         remote_data,
@@ -74,8 +74,8 @@ export class RejectreasonController {
   }
 
   @ApiOperation({
-    operationId: 'getRejectreason',
-    summary: 'Retrieve a Rejectreason',
+    operationId: 'getRejectReason',
+    summary: 'Retrieve a RejectReason',
     description: 'Retrieve a rejectreason from any connected Ats software',
   })
   @ApiParam({
@@ -91,19 +91,19 @@ export class RejectreasonController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiCustomResponse(UnifiedRejectreasonOutput)
+  @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getRejectreason(
+  getRejectReason(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.rejectreasonService.getRejectreason(id, remote_data);
+    return this.rejectreasonService.getRejectReason(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addRejectreason',
-    summary: 'Create a Rejectreason',
+    operationId: 'addRejectReason',
+    summary: 'Create a RejectReason',
     description: 'Create a rejectreason in any supported Ats software',
   })
    @ApiHeader({
@@ -119,12 +119,12 @@ export class RejectreasonController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedRejectreasonInput })
-  @ApiCustomResponse(UnifiedRejectreasonOutput)
+  @ApiBody({ type: UnifiedRejectReasonInput })
+  @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addRejectreason(
-    @Body() unifiedRejectreasonData: UnifiedRejectreasonInput,
+  async addRejectReason(
+    @Body() unifiedRejectReasonData: UnifiedRejectReasonInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -133,8 +133,8 @@ export class RejectreasonController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
-      return this.rejectreasonService.addRejectreason(
-        unifiedRejectreasonData,
+      return this.rejectreasonService.addRejectReason(
+        unifiedRejectReasonData,
         remoteSource,
         linkedUserId,
         remote_data,
@@ -145,8 +145,8 @@ export class RejectreasonController {
   }
 
   @ApiOperation({
-    operationId: 'addRejectreasons',
-    summary: 'Add a batch of Rejectreasons',
+    operationId: 'addRejectReasons',
+    summary: 'Add a batch of RejectReasons',
   })
    @ApiHeader({
     name: 'x-connection-token',
@@ -161,12 +161,12 @@ export class RejectreasonController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedRejectreasonInput, isArray: true })
-  @ApiCustomResponse(UnifiedRejectreasonOutput)
+  @ApiBody({ type: UnifiedRejectReasonInput, isArray: true })
+  @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  async addRejectreasons(
-    @Body() unfiedRejectreasonData: UnifiedRejectreasonInput[],
+  async addRejectReasons(
+    @Body() unfiedRejectReasonData: UnifiedRejectReasonInput[],
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -175,8 +175,8 @@ export class RejectreasonController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
-      return this.rejectreasonService.batchAddRejectreasons(
-        unfiedRejectreasonData,
+      return this.rejectreasonService.batchAddRejectReasons(
+        unfiedRejectReasonData,
         remoteSource,
         linkedUserId,
         remote_data,
@@ -188,16 +188,16 @@ export class RejectreasonController {
   }
 
   @ApiOperation({
-    operationId: 'updateRejectreason',
-    summary: 'Update a Rejectreason',
+    operationId: 'updateRejectReason',
+    summary: 'Update a RejectReason',
   })
-  @ApiCustomResponse(UnifiedRejectreasonOutput)
+  @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Patch()
-  updateRejectreason(
+  updateRejectReason(
     @Query('id') id: string,
-    @Body() updateRejectreasonData: Partial<UnifiedRejectreasonInput>,
+    @Body() updateRejectReasonData: Partial<UnifiedRejectReasonInput>,
   ) {
-    return this.rejectreasonService.updateRejectreason(id, updateRejectreasonData);
+    return this.rejectreasonService.updateRejectReason(id, updateRejectReasonData);
   }
 }

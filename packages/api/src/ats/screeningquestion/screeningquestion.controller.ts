@@ -18,25 +18,25 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { ScreeningquestionService } from './services/screeningquestion.service';
-import { UnifiedScreeningquestionInput, UnifiedScreeningquestionOutput  } from './types/model.unified';
+import { ScreeningQuestionService } from './services/screeningquestion.service';
+import { UnifiedScreeningQuestionInput, UnifiedScreeningQuestionOutput  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('ats/screeningquestion')
 @Controller('ats/screeningquestion')
-export class ScreeningquestionController {
+export class ScreeningQuestionController {
   private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
-    private readonly screeningquestionService: ScreeningquestionService,
+    private readonly screeningquestionService: ScreeningQuestionService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(ScreeningquestionController.name);
+    this.logger.setContext(ScreeningQuestionController.name);
   }
 
   @ApiOperation({
-    operationId: 'getScreeningquestions',
-    summary: 'List a batch of Screeningquestions',
+    operationId: 'getScreeningQuestions',
+    summary: 'List a batch of ScreeningQuestions',
   })
    @ApiHeader({
     name: 'x-connection-token',
@@ -51,10 +51,10 @@ export class ScreeningquestionController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiCustomResponse(UnifiedScreeningquestionOutput)
+  @ApiCustomResponse(UnifiedScreeningQuestionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getScreeningquestions(
+  async getScreeningQuestions(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -63,7 +63,7 @@ export class ScreeningquestionController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
-      return this.screeningquestionService.getScreeningquestions(
+      return this.screeningquestionService.getScreeningQuestions(
         remoteSource,
         linkedUserId,
         remote_data,
@@ -74,8 +74,8 @@ export class ScreeningquestionController {
   }
 
   @ApiOperation({
-    operationId: 'getScreeningquestion',
-    summary: 'Retrieve a Screeningquestion',
+    operationId: 'getScreeningQuestion',
+    summary: 'Retrieve a ScreeningQuestion',
     description: 'Retrieve a screeningquestion from any connected Ats software',
   })
   @ApiParam({
@@ -91,19 +91,19 @@ export class ScreeningquestionController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiCustomResponse(UnifiedScreeningquestionOutput)
+  @ApiCustomResponse(UnifiedScreeningQuestionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getScreeningquestion(
+  getScreeningQuestion(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.screeningquestionService.getScreeningquestion(id, remote_data);
+    return this.screeningquestionService.getScreeningQuestion(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addScreeningquestion',
-    summary: 'Create a Screeningquestion',
+    operationId: 'addScreeningQuestion',
+    summary: 'Create a ScreeningQuestion',
     description: 'Create a screeningquestion in any supported Ats software',
   })
    @ApiHeader({
@@ -119,12 +119,12 @@ export class ScreeningquestionController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedScreeningquestionInput })
-  @ApiCustomResponse(UnifiedScreeningquestionOutput)
+  @ApiBody({ type: UnifiedScreeningQuestionInput })
+  @ApiCustomResponse(UnifiedScreeningQuestionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addScreeningquestion(
-    @Body() unifiedScreeningquestionData: UnifiedScreeningquestionInput,
+  async addScreeningQuestion(
+    @Body() unifiedScreeningQuestionData: UnifiedScreeningQuestionInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -133,8 +133,8 @@ export class ScreeningquestionController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
-      return this.screeningquestionService.addScreeningquestion(
-        unifiedScreeningquestionData,
+      return this.screeningquestionService.addScreeningQuestion(
+        unifiedScreeningQuestionData,
         remoteSource,
         linkedUserId,
         remote_data,
@@ -145,8 +145,8 @@ export class ScreeningquestionController {
   }
 
   @ApiOperation({
-    operationId: 'addScreeningquestions',
-    summary: 'Add a batch of Screeningquestions',
+    operationId: 'addScreeningQuestions',
+    summary: 'Add a batch of ScreeningQuestions',
   })
    @ApiHeader({
     name: 'x-connection-token',
@@ -161,12 +161,12 @@ export class ScreeningquestionController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedScreeningquestionInput, isArray: true })
-  @ApiCustomResponse(UnifiedScreeningquestionOutput)
+  @ApiBody({ type: UnifiedScreeningQuestionInput, isArray: true })
+  @ApiCustomResponse(UnifiedScreeningQuestionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  async addScreeningquestions(
-    @Body() unfiedScreeningquestionData: UnifiedScreeningquestionInput[],
+  async addScreeningQuestions(
+    @Body() unfiedScreeningQuestionData: UnifiedScreeningQuestionInput[],
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -175,8 +175,8 @@ export class ScreeningquestionController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
-      return this.screeningquestionService.batchAddScreeningquestions(
-        unfiedScreeningquestionData,
+      return this.screeningquestionService.batchAddScreeningQuestions(
+        unfiedScreeningQuestionData,
         remoteSource,
         linkedUserId,
         remote_data,
@@ -188,16 +188,16 @@ export class ScreeningquestionController {
   }
 
   @ApiOperation({
-    operationId: 'updateScreeningquestion',
-    summary: 'Update a Screeningquestion',
+    operationId: 'updateScreeningQuestion',
+    summary: 'Update a ScreeningQuestion',
   })
-  @ApiCustomResponse(UnifiedScreeningquestionOutput)
+  @ApiCustomResponse(UnifiedScreeningQuestionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Patch()
-  updateScreeningquestion(
+  updateScreeningQuestion(
     @Query('id') id: string,
-    @Body() updateScreeningquestionData: Partial<UnifiedScreeningquestionInput>,
+    @Body() updateScreeningQuestionData: Partial<UnifiedScreeningQuestionInput>,
   ) {
-    return this.screeningquestionService.updateScreeningquestion(id, updateScreeningquestionData);
+    return this.screeningquestionService.updateScreeningQuestion(id, updateScreeningQuestionData);
   }
 }

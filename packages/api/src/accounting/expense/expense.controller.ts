@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ExpenseService } from './services/expense.service';
-import { UnifiedExpenseInput, UnifiedExpenseOutput  } from './types/model.unified';
+import {
+  UnifiedExpenseInput,
+  UnifiedExpenseOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/expense')
@@ -38,7 +41,7 @@ export class ExpenseController {
     operationId: 'getExpenses',
     summary: 'List a batch of Expenses',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class ExpenseController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.expenseService.getExpenses(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -106,7 +109,7 @@ export class ExpenseController {
     summary: 'Create a Expense',
     description: 'Create a expense in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +131,18 @@ export class ExpenseController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.expenseService.addExpense(
         unifiedExpenseData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +151,7 @@ export class ExpenseController {
     operationId: 'addExpenses',
     summary: 'Add a batch of Expenses',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +173,19 @@ export class ExpenseController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.expenseService.batchAddExpenses(
         unfiedExpenseData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateExpense',
-    summary: 'Update a Expense',
-  })
-  @ApiCustomResponse(UnifiedExpenseOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateExpense(
-    @Query('id') id: string,
-    @Body() updateExpenseData: Partial<UnifiedExpenseInput>,
-  ) {
-    return this.expenseService.updateExpense(id, updateExpenseData);
   }
 }

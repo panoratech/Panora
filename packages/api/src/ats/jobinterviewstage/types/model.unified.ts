@@ -1,3 +1,3 @@
-export class UnifiedJobinterviewstageInput {}
+export class UnifiedJobInterviewStageInput {}
 
-export class UnifiedJobinterviewstageOutput extends UnifiedJobinterviewstageInput {}
+export class UnifiedJobInterviewStageOutput extends UnifiedJobInterviewStageInput {}

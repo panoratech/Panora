@@ -1,23 +1,26 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedCompanyinfoInput, UnifiedCompanyinfoOutput } from './model.unified';
-import { OriginalCompanyinfoOutput } from '@@core/utils/types/original/original.accounting';
+import {
+  UnifiedCompanyInfoInput,
+  UnifiedCompanyInfoOutput,
+} from './model.unified';
+import { OriginalCompanyInfoOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface ICompanyinfoService {
-  addCompanyinfo(
+export interface ICompanyInfoService {
+  addCompanyInfo(
     companyinfoData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalCompanyinfoOutput>>;
+  ): Promise<ApiResponse<OriginalCompanyInfoOutput>>;
 
-  syncCompanyinfos(
+  syncCompanyInfos(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalCompanyinfoOutput[]>>;
+  ): Promise<ApiResponse<OriginalCompanyInfoOutput[]>>;
 }
 
-export interface ICompanyinfoMapper {
+export interface ICompanyInfoMapper {
   desunify(
-    source: UnifiedCompanyinfoInput,
+    source: UnifiedCompanyInfoInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +28,10 @@ export interface ICompanyinfoMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalCompanyinfoOutput | OriginalCompanyinfoOutput[],
+    source: OriginalCompanyInfoOutput | OriginalCompanyInfoOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCompanyinfoOutput | UnifiedCompanyinfoOutput[];
+  ): UnifiedCompanyInfoOutput | UnifiedCompanyInfoOutput[];
 }

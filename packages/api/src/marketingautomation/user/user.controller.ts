@@ -19,7 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { UserService } from './services/user.service';
-import { UnifiedUserInput, UnifiedUserOutput  } from './types/model.unified';
+import { UnifiedUserInput, UnifiedUserOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('marketingautomation/user')
@@ -38,7 +38,7 @@ export class UserController {
     operationId: 'getUsers',
     summary: 'List a batch of Users',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +58,13 @@ export class UserController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.userService.getUsers(
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    }catch(error){
+        );
+      return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -76,7 +72,8 @@ export class UserController {
   @ApiOperation({
     operationId: 'getUser',
     summary: 'Retrieve a User',
-    description: 'Retrieve a user from any connected Marketingautomation software',
+    description:
+      'Retrieve a user from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -106,7 +103,7 @@ export class UserController {
     summary: 'Create a User',
     description: 'Create a user in any supported Marketingautomation software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +125,18 @@ export class UserController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.userService.addUser(
         unifiedUserData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +145,7 @@ export class UserController {
     operationId: 'addUsers',
     summary: 'Add a batch of Users',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +167,19 @@ export class UserController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.userService.batchAddUsers(
         unfiedUserData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateUser',
-    summary: 'Update a User',
-  })
-  @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateUser(
-    @Query('id') id: string,
-    @Body() updateUserData: Partial<UnifiedUserInput>,
-  ) {
-    return this.userService.updateUser(id, updateUserData);
   }
 }

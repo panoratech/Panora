@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { RejectreasonController } from './rejectreason.controller';
+import { RejectReasonController } from './rejectreason.controller';
 import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { RejectreasonService } from './services/rejectreason.service';
+import { RejectReasonService } from './services/rejectreason.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -16,9 +16,9 @@ import { BullModule } from '@nestjs/bull';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [RejectreasonController],
+  controllers: [RejectReasonController],
   providers: [
-    RejectreasonService,
+    RejectReasonService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -31,5 +31,5 @@ import { BullModule } from '@nestjs/bull';
   ],
   exports: [SyncService],
 })
-export class RejectreasonModule {}
+export class RejectReasonModule {}
 

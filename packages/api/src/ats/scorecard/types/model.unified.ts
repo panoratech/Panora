@@ -1,3 +1,3 @@
-export class UnifiedScorecardInput {}
+export class UnifiedScoreCardInput {}
 
-export class UnifiedScorecardOutput extends UnifiedScorecardInput {}
+export class UnifiedScoreCardOutput extends UnifiedScoreCardInput {}

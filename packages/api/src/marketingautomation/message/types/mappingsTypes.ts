@@ -1,3 +1,1 @@
-
-export const messageUnificationMapping = {
-}; */
+export const messageUnificationMapping = {};

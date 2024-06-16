@@ -19,7 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ItemService } from './services/item.service';
-import { UnifiedItemInput, UnifiedItemOutput  } from './types/model.unified';
+import { UnifiedItemInput, UnifiedItemOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/item')
@@ -38,7 +38,7 @@ export class ItemController {
     operationId: 'getItems',
     summary: 'List a batch of Items',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +58,13 @@ export class ItemController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.itemService.getItems(
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    }catch(error){
+        );
+      return this.itemService.getItems(remoteSource, linkedUserId, remote_data);
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -106,7 +102,7 @@ export class ItemController {
     summary: 'Create a Item',
     description: 'Create a item in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +124,18 @@ export class ItemController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.itemService.addItem(
         unifiedItemData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +144,7 @@ export class ItemController {
     operationId: 'addItems',
     summary: 'Add a batch of Items',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +166,19 @@ export class ItemController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.itemService.batchAddItems(
         unfiedItemData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateItem',
-    summary: 'Update a Item',
-  })
-  @ApiCustomResponse(UnifiedItemOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateItem(
-    @Query('id') id: string,
-    @Body() updateItemData: Partial<UnifiedItemInput>,
-  ) {
-    return this.itemService.updateItem(id, updateItemData);
   }
 }

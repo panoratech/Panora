@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedScreeningquestionInput, UnifiedScreeningquestionOutput } from './model.unified';
-import { OriginalScreeningquestionOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedScreeningQuestionInput, UnifiedScreeningQuestionOutput } from './model.unified';
+import { OriginalScreeningQuestionOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface IScreeningquestionService {
-  addScreeningquestion(
+export interface IScreeningQuestionService {
+  addScreeningQuestion(
     screeningquestionData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalScreeningquestionOutput>>;
+  ): Promise<ApiResponse<OriginalScreeningQuestionOutput>>;
 
-  syncScreeningquestions(
+  syncScreeningQuestions(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalScreeningquestionOutput[]>>;
+  ): Promise<ApiResponse<OriginalScreeningQuestionOutput[]>>;
 }
 
-export interface IScreeningquestionMapper {
+export interface IScreeningQuestionMapper {
   desunify(
-    source: UnifiedScreeningquestionInput,
+    source: UnifiedScreeningQuestionInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface IScreeningquestionMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalScreeningquestionOutput | OriginalScreeningquestionOutput[],
+    source: OriginalScreeningQuestionOutput | OriginalScreeningQuestionOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedScreeningquestionOutput | UnifiedScreeningquestionOutput[];
+  ): UnifiedScreeningQuestionOutput | UnifiedScreeningQuestionOutput[];
 }

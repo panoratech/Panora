@@ -1,3 +1,3 @@
-export class UnifiedCreditnoteInput {}
+export class UnifiedCreditNoteInput {}
 
-export class UnifiedCreditnoteOutput extends UnifiedCreditnoteInput {}
+export class UnifiedCreditNoteOutput extends UnifiedCreditNoteInput {}

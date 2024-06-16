@@ -18,27 +18,30 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { IncomestatementService } from './services/incomestatement.service';
-import { UnifiedIncomestatementInput, UnifiedIncomestatementOutput  } from './types/model.unified';
+import { IncomeStatementService } from './services/incomestatement.service';
+import {
+  UnifiedIncomeStatementInput,
+  UnifiedIncomeStatementOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/incomestatement')
 @Controller('accounting/incomestatement')
-export class IncomestatementController {
+export class IncomeStatementController {
   private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
-    private readonly incomestatementService: IncomestatementService,
+    private readonly incomestatementService: IncomeStatementService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(IncomestatementController.name);
+    this.logger.setContext(IncomeStatementController.name);
   }
 
   @ApiOperation({
-    operationId: 'getIncomestatements',
-    summary: 'List a batch of Incomestatements',
+    operationId: 'getIncomeStatements',
+    summary: 'List a batch of IncomeStatements',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -51,32 +54,33 @@ export class IncomestatementController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedIncomestatementOutput)
+  @ApiCustomResponse(UnifiedIncomeStatementOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getIncomestatements(
+  async getIncomeStatements(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.incomestatementService.getIncomestatements(
+        );
+      return this.incomestatementService.getIncomeStatements(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'getIncomestatement',
-    summary: 'Retrieve a Incomestatement',
-    description: 'Retrieve a incomestatement from any connected Accounting software',
+    operationId: 'getIncomeStatement',
+    summary: 'Retrieve a IncomeStatement',
+    description:
+      'Retrieve a incomestatement from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -91,22 +95,23 @@ export class IncomestatementController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedIncomestatementOutput)
+  @ApiCustomResponse(UnifiedIncomeStatementOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getIncomestatement(
+  getIncomeStatement(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.incomestatementService.getIncomestatement(id, remote_data);
+    return this.incomestatementService.getIncomeStatement(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addIncomestatement',
-    summary: 'Create a Incomestatement',
-    description: 'Create a incomestatement in any supported Accounting software',
+    operationId: 'addIncomeStatement',
+    summary: 'Create a IncomeStatement',
+    description:
+      'Create a incomestatement in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -119,36 +124,36 @@ export class IncomestatementController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedIncomestatementInput })
-  @ApiCustomResponse(UnifiedIncomestatementOutput)
+  @ApiBody({ type: UnifiedIncomeStatementInput })
+  @ApiCustomResponse(UnifiedIncomeStatementOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addIncomestatement(
-    @Body() unifiedIncomestatementData: UnifiedIncomestatementInput,
+  async addIncomeStatement(
+    @Body() unifiedIncomeStatementData: UnifiedIncomeStatementInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.incomestatementService.addIncomestatement(
-        unifiedIncomestatementData,
+        );
+      return this.incomestatementService.addIncomeStatement(
+        unifiedIncomeStatementData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'addIncomestatements',
-    summary: 'Add a batch of Incomestatements',
+    operationId: 'addIncomeStatements',
+    summary: 'Add a batch of IncomeStatements',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -161,43 +166,28 @@ export class IncomestatementController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedIncomestatementInput, isArray: true })
-  @ApiCustomResponse(UnifiedIncomestatementOutput)
+  @ApiBody({ type: UnifiedIncomeStatementInput, isArray: true })
+  @ApiCustomResponse(UnifiedIncomeStatementOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  async addIncomestatements(
-    @Body() unfiedIncomestatementData: UnifiedIncomestatementInput[],
+  async addIncomeStatements(
+    @Body() unfiedIncomeStatementData: UnifiedIncomeStatementInput[],
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.incomestatementService.batchAddIncomestatements(
-        unfiedIncomestatementData,
+        );
+      return this.incomestatementService.batchAddIncomeStatements(
+        unfiedIncomeStatementData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateIncomestatement',
-    summary: 'Update a Incomestatement',
-  })
-  @ApiCustomResponse(UnifiedIncomestatementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateIncomestatement(
-    @Query('id') id: string,
-    @Body() updateIncomestatementData: Partial<UnifiedIncomestatementInput>,
-  ) {
-    return this.incomestatementService.updateIncomestatement(id, updateIncomestatementData);
   }
 }

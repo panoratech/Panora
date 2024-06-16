@@ -18,25 +18,25 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { ScorecardService } from './services/scorecard.service';
-import { UnifiedScorecardInput, UnifiedScorecardOutput  } from './types/model.unified';
+import { ScoreCardService } from './services/scorecard.service';
+import { UnifiedScoreCardInput, UnifiedScoreCardOutput  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('ats/scorecard')
 @Controller('ats/scorecard')
-export class ScorecardController {
+export class ScoreCardController {
   private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
-    private readonly scorecardService: ScorecardService,
+    private readonly scorecardService: ScoreCardService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(ScorecardController.name);
+    this.logger.setContext(ScoreCardController.name);
   }
 
   @ApiOperation({
-    operationId: 'getScorecards',
-    summary: 'List a batch of Scorecards',
+    operationId: 'getScoreCards',
+    summary: 'List a batch of ScoreCards',
   })
    @ApiHeader({
     name: 'x-connection-token',
@@ -51,10 +51,10 @@ export class ScorecardController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiCustomResponse(UnifiedScorecardOutput)
+  @ApiCustomResponse(UnifiedScoreCardOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getScorecards(
+  async getScoreCards(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -63,7 +63,7 @@ export class ScorecardController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
-      return this.scorecardService.getScorecards(
+      return this.scorecardService.getScoreCards(
         remoteSource,
         linkedUserId,
         remote_data,
@@ -74,8 +74,8 @@ export class ScorecardController {
   }
 
   @ApiOperation({
-    operationId: 'getScorecard',
-    summary: 'Retrieve a Scorecard',
+    operationId: 'getScoreCard',
+    summary: 'Retrieve a ScoreCard',
     description: 'Retrieve a scorecard from any connected Ats software',
   })
   @ApiParam({
@@ -91,19 +91,19 @@ export class ScorecardController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiCustomResponse(UnifiedScorecardOutput)
+  @ApiCustomResponse(UnifiedScoreCardOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getScorecard(
+  getScoreCard(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.scorecardService.getScorecard(id, remote_data);
+    return this.scorecardService.getScoreCard(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addScorecard',
-    summary: 'Create a Scorecard',
+    operationId: 'addScoreCard',
+    summary: 'Create a ScoreCard',
     description: 'Create a scorecard in any supported Ats software',
   })
    @ApiHeader({
@@ -119,12 +119,12 @@ export class ScorecardController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedScorecardInput })
-  @ApiCustomResponse(UnifiedScorecardOutput)
+  @ApiBody({ type: UnifiedScoreCardInput })
+  @ApiCustomResponse(UnifiedScoreCardOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addScorecard(
-    @Body() unifiedScorecardData: UnifiedScorecardInput,
+  async addScoreCard(
+    @Body() unifiedScoreCardData: UnifiedScoreCardInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -133,8 +133,8 @@ export class ScorecardController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
-      return this.scorecardService.addScorecard(
-        unifiedScorecardData,
+      return this.scorecardService.addScoreCard(
+        unifiedScoreCardData,
         remoteSource,
         linkedUserId,
         remote_data,
@@ -145,8 +145,8 @@ export class ScorecardController {
   }
 
   @ApiOperation({
-    operationId: 'addScorecards',
-    summary: 'Add a batch of Scorecards',
+    operationId: 'addScoreCards',
+    summary: 'Add a batch of ScoreCards',
   })
    @ApiHeader({
     name: 'x-connection-token',
@@ -161,12 +161,12 @@ export class ScorecardController {
     description:
       'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedScorecardInput, isArray: true })
-  @ApiCustomResponse(UnifiedScorecardOutput)
+  @ApiBody({ type: UnifiedScoreCardInput, isArray: true })
+  @ApiCustomResponse(UnifiedScoreCardOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  async addScorecards(
-    @Body() unfiedScorecardData: UnifiedScorecardInput[],
+  async addScoreCards(
+    @Body() unfiedScoreCardData: UnifiedScoreCardInput[],
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -175,8 +175,8 @@ export class ScorecardController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
-      return this.scorecardService.batchAddScorecards(
-        unfiedScorecardData,
+      return this.scorecardService.batchAddScoreCards(
+        unfiedScoreCardData,
         remoteSource,
         linkedUserId,
         remote_data,
@@ -188,16 +188,16 @@ export class ScorecardController {
   }
 
   @ApiOperation({
-    operationId: 'updateScorecard',
-    summary: 'Update a Scorecard',
+    operationId: 'updateScoreCard',
+    summary: 'Update a ScoreCard',
   })
-  @ApiCustomResponse(UnifiedScorecardOutput)
+  @ApiCustomResponse(UnifiedScoreCardOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Patch()
-  updateScorecard(
+  updateScoreCard(
     @Query('id') id: string,
-    @Body() updateScorecardData: Partial<UnifiedScorecardInput>,
+    @Body() updateScoreCardData: Partial<UnifiedScoreCardInput>,
   ) {
-    return this.scorecardService.updateScorecard(id, updateScorecardData);
+    return this.scorecardService.updateScoreCard(id, updateScoreCardData);
   }
 }

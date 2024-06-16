@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTrackingcategoryInput, UnifiedTrackingcategoryOutput } from './model.unified';
-import { OriginalTrackingcategoryOutput } from '@@core/utils/types/original/original.accounting';
+import { UnifiedTrackingCategoryInput, UnifiedTrackingCategoryOutput } from './model.unified';
+import { OriginalTrackingCategoryOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface ITrackingcategoryService {
-  addTrackingcategory(
+export interface ITrackingCategoryService {
+  addTrackingCategory(
     trackingcategoryData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalTrackingcategoryOutput>>;
+  ): Promise<ApiResponse<OriginalTrackingCategoryOutput>>;
 
-  syncTrackingcategorys(
+  syncTrackingCategorys(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTrackingcategoryOutput[]>>;
+  ): Promise<ApiResponse<OriginalTrackingCategoryOutput[]>>;
 }
 
-export interface ITrackingcategoryMapper {
+export interface ITrackingCategoryMapper {
   desunify(
-    source: UnifiedTrackingcategoryInput,
+    source: UnifiedTrackingCategoryInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface ITrackingcategoryMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalTrackingcategoryOutput | OriginalTrackingcategoryOutput[],
+    source: OriginalTrackingCategoryOutput | OriginalTrackingCategoryOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTrackingcategoryOutput | UnifiedTrackingcategoryOutput[];
+  ): UnifiedTrackingCategoryOutput | UnifiedTrackingCategoryOutput[];
 }

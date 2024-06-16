@@ -1,3 +1,1 @@
-
-export const attachmentUnificationMapping = {
-}; */
+export const attachmentUnificationMapping = {};

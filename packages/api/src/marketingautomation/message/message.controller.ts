@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { MessageService } from './services/message.service';
-import { UnifiedMessageInput, UnifiedMessageOutput  } from './types/model.unified';
+import {
+  UnifiedMessageInput,
+  UnifiedMessageOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('marketingautomation/message')
@@ -38,7 +41,7 @@ export class MessageController {
     operationId: 'getMessages',
     summary: 'List a batch of Messages',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class MessageController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.messageService.getMessages(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -76,7 +79,8 @@ export class MessageController {
   @ApiOperation({
     operationId: 'getMessage',
     summary: 'Retrieve a Message',
-    description: 'Retrieve a message from any connected Marketingautomation software',
+    description:
+      'Retrieve a message from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -104,9 +108,10 @@ export class MessageController {
   @ApiOperation({
     operationId: 'addMessage',
     summary: 'Create a Message',
-    description: 'Create a message in any supported Marketingautomation software',
+    description:
+      'Create a message in any supported Marketingautomation software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +133,18 @@ export class MessageController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.messageService.addMessage(
         unifiedMessageData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +153,7 @@ export class MessageController {
     operationId: 'addMessages',
     summary: 'Add a batch of Messages',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +175,19 @@ export class MessageController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.messageService.batchAddMessages(
         unfiedMessageData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateMessage',
-    summary: 'Update a Message',
-  })
-  @ApiCustomResponse(UnifiedMessageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateMessage(
-    @Query('id') id: string,
-    @Body() updateMessageData: Partial<UnifiedMessageInput>,
-  ) {
-    return this.messageService.updateMessage(id, updateMessageData);
   }
 }

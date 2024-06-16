@@ -18,27 +18,30 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { VendorcreditService } from './services/vendorcredit.service';
-import { UnifiedVendorcreditInput, UnifiedVendorcreditOutput  } from './types/model.unified';
+import { VendorCreditService } from './services/vendorcredit.service';
+import {
+  UnifiedVendorCreditInput,
+  UnifiedVendorCreditOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/vendorcredit')
 @Controller('accounting/vendorcredit')
-export class VendorcreditController {
+export class VendorCreditController {
   private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
-    private readonly vendorcreditService: VendorcreditService,
+    private readonly vendorcreditService: VendorCreditService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(VendorcreditController.name);
+    this.logger.setContext(VendorCreditController.name);
   }
 
   @ApiOperation({
-    operationId: 'getVendorcredits',
-    summary: 'List a batch of Vendorcredits',
+    operationId: 'getVendorCredits',
+    summary: 'List a batch of VendorCredits',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -51,32 +54,33 @@ export class VendorcreditController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedVendorcreditOutput)
+  @ApiCustomResponse(UnifiedVendorCreditOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getVendorcredits(
+  async getVendorCredits(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.vendorcreditService.getVendorcredits(
+        );
+      return this.vendorcreditService.getVendorCredits(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'getVendorcredit',
-    summary: 'Retrieve a Vendorcredit',
-    description: 'Retrieve a vendorcredit from any connected Accounting software',
+    operationId: 'getVendorCredit',
+    summary: 'Retrieve a VendorCredit',
+    description:
+      'Retrieve a vendorcredit from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -91,22 +95,22 @@ export class VendorcreditController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedVendorcreditOutput)
+  @ApiCustomResponse(UnifiedVendorCreditOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getVendorcredit(
+  getVendorCredit(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.vendorcreditService.getVendorcredit(id, remote_data);
+    return this.vendorcreditService.getVendorCredit(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addVendorcredit',
-    summary: 'Create a Vendorcredit',
+    operationId: 'addVendorCredit',
+    summary: 'Create a VendorCredit',
     description: 'Create a vendorcredit in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -119,36 +123,36 @@ export class VendorcreditController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedVendorcreditInput })
-  @ApiCustomResponse(UnifiedVendorcreditOutput)
+  @ApiBody({ type: UnifiedVendorCreditInput })
+  @ApiCustomResponse(UnifiedVendorCreditOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addVendorcredit(
-    @Body() unifiedVendorcreditData: UnifiedVendorcreditInput,
+  async addVendorCredit(
+    @Body() unifiedVendorCreditData: UnifiedVendorCreditInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.vendorcreditService.addVendorcredit(
-        unifiedVendorcreditData,
+        );
+      return this.vendorcreditService.addVendorCredit(
+        unifiedVendorCreditData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'addVendorcredits',
-    summary: 'Add a batch of Vendorcredits',
+    operationId: 'addVendorCredits',
+    summary: 'Add a batch of VendorCredits',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -161,43 +165,28 @@ export class VendorcreditController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedVendorcreditInput, isArray: true })
-  @ApiCustomResponse(UnifiedVendorcreditOutput)
+  @ApiBody({ type: UnifiedVendorCreditInput, isArray: true })
+  @ApiCustomResponse(UnifiedVendorCreditOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  async addVendorcredits(
-    @Body() unfiedVendorcreditData: UnifiedVendorcreditInput[],
+  async addVendorCredits(
+    @Body() unfiedVendorCreditData: UnifiedVendorCreditInput[],
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.vendorcreditService.batchAddVendorcredits(
-        unfiedVendorcreditData,
+        );
+      return this.vendorcreditService.batchAddVendorCredits(
+        unfiedVendorCreditData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateVendorcredit',
-    summary: 'Update a Vendorcredit',
-  })
-  @ApiCustomResponse(UnifiedVendorcreditOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateVendorcredit(
-    @Query('id') id: string,
-    @Body() updateVendorcreditData: Partial<UnifiedVendorcreditInput>,
-  ) {
-    return this.vendorcreditService.updateVendorcredit(id, updateVendorcreditData);
   }
 }

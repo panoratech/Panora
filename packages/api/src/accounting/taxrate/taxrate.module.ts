@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TaxrateController } from './taxrate.controller';
+import { TaxRateController } from './taxrate.controller';
 import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { TaxrateService } from './services/taxrate.service';
+import { TaxRateService } from './services/taxrate.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -16,9 +16,9 @@ import { BullModule } from '@nestjs/bull';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [TaxrateController],
+  controllers: [TaxRateController],
   providers: [
-    TaxrateService,
+    TaxRateService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -27,9 +27,7 @@ import { BullModule } from '@nestjs/bull';
     FieldMappingService,
     ServiceRegistry,
     /* PROVIDERS SERVICES */
-
   ],
   exports: [SyncService],
 })
-export class TaxrateModule {}
-
+export class TaxRateModule {}

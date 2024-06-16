@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { JobinterviewstageController } from './jobinterviewstage.controller';
+import { JobInterviewStageController } from './jobinterviewstage.controller';
 import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { JobinterviewstageService } from './services/jobinterviewstage.service';
+import { JobInterviewStageService } from './services/jobinterviewstage.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -16,9 +16,9 @@ import { BullModule } from '@nestjs/bull';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [JobinterviewstageController],
+  controllers: [JobInterviewStageController],
   providers: [
-    JobinterviewstageService,
+    JobInterviewStageService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -31,5 +31,5 @@ import { BullModule } from '@nestjs/bull';
   ],
   exports: [SyncService],
 })
-export class JobinterviewstageModule {}
+export class JobInterviewStageModule {}
 

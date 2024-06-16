@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { InvoiceService } from './services/invoice.service';
-import { UnifiedInvoiceInput, UnifiedInvoiceOutput  } from './types/model.unified';
+import {
+  UnifiedInvoiceInput,
+  UnifiedInvoiceOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/invoice')
@@ -38,7 +41,7 @@ export class InvoiceController {
     operationId: 'getInvoices',
     summary: 'List a batch of Invoices',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class InvoiceController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.invoiceService.getInvoices(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -106,7 +109,7 @@ export class InvoiceController {
     summary: 'Create a Invoice',
     description: 'Create a invoice in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +131,18 @@ export class InvoiceController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.invoiceService.addInvoice(
         unifiedInvoiceData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +151,7 @@ export class InvoiceController {
     operationId: 'addInvoices',
     summary: 'Add a batch of Invoices',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +173,19 @@ export class InvoiceController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.invoiceService.batchAddInvoices(
         unfiedInvoiceData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateInvoice',
-    summary: 'Update a Invoice',
-  })
-  @ApiCustomResponse(UnifiedInvoiceOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateInvoice(
-    @Query('id') id: string,
-    @Body() updateInvoiceData: Partial<UnifiedInvoiceInput>,
-  ) {
-    return this.invoiceService.updateInvoice(id, updateInvoiceData);
   }
 }

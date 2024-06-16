@@ -131,7 +131,7 @@ EOF
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ReferenceError } from '@@core/utils/errors';
+
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -203,7 +203,7 @@ EOF
     cat > "types/mappingsTypes.ts" <<EOF
 
 export const ${objectType}UnificationMapping = {
-}; */
+};
 EOF
 
     cat > "types/model.unified.ts" <<EOF

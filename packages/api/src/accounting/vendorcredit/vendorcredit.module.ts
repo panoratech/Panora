@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { VendorcreditController } from './vendorcredit.controller';
+import { VendorCreditController } from './vendorcredit.controller';
 import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { VendorcreditService } from './services/vendorcredit.service';
+import { VendorCreditService } from './services/vendorcredit.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -16,9 +16,9 @@ import { BullModule } from '@nestjs/bull';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [VendorcreditController],
+  controllers: [VendorCreditController],
   providers: [
-    VendorcreditService,
+    VendorCreditService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -31,5 +31,5 @@ import { BullModule } from '@nestjs/bull';
   ],
   exports: [SyncService],
 })
-export class VendorcreditModule {}
+export class VendorCreditModule {}
 

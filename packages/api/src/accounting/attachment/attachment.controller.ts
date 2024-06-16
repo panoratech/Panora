@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { AttachmentService } from './services/attachment.service';
-import { UnifiedAttachmentInput, UnifiedAttachmentOutput  } from './types/model.unified';
+import {
+  UnifiedAttachmentInput,
+  UnifiedAttachmentOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/attachment')
@@ -38,7 +41,7 @@ export class AttachmentController {
     operationId: 'getAttachments',
     summary: 'List a batch of Attachments',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class AttachmentController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.attachmentService.getAttachments(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -106,7 +109,7 @@ export class AttachmentController {
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +131,18 @@ export class AttachmentController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.attachmentService.addAttachment(
         unifiedAttachmentData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +151,7 @@ export class AttachmentController {
     operationId: 'addAttachments',
     summary: 'Add a batch of Attachments',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +173,19 @@ export class AttachmentController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.attachmentService.batchAddAttachments(
         unfiedAttachmentData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateAttachment',
-    summary: 'Update a Attachment',
-  })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateAttachment(
-    @Query('id') id: string,
-    @Body() updateAttachmentData: Partial<UnifiedAttachmentInput>,
-  ) {
-    return this.attachmentService.updateAttachment(id, updateAttachmentData);
   }
 }

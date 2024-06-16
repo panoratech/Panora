@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TemplateService } from './services/template.service';
-import { UnifiedTemplateInput, UnifiedTemplateOutput  } from './types/model.unified';
+import {
+  UnifiedTemplateInput,
+  UnifiedTemplateOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('marketingautomation/template')
@@ -38,7 +41,7 @@ export class TemplateController {
     operationId: 'getTemplates',
     summary: 'List a batch of Templates',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class TemplateController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.templateService.getTemplates(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -76,7 +79,8 @@ export class TemplateController {
   @ApiOperation({
     operationId: 'getTemplate',
     summary: 'Retrieve a Template',
-    description: 'Retrieve a template from any connected Marketingautomation software',
+    description:
+      'Retrieve a template from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -104,9 +108,10 @@ export class TemplateController {
   @ApiOperation({
     operationId: 'addTemplate',
     summary: 'Create a Template',
-    description: 'Create a template in any supported Marketingautomation software',
+    description:
+      'Create a template in any supported Marketingautomation software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +133,18 @@ export class TemplateController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.templateService.addTemplate(
         unifiedTemplateData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +153,7 @@ export class TemplateController {
     operationId: 'addTemplates',
     summary: 'Add a batch of Templates',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +175,19 @@ export class TemplateController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.templateService.batchAddTemplates(
         unfiedTemplateData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateTemplate',
-    summary: 'Update a Template',
-  })
-  @ApiCustomResponse(UnifiedTemplateOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateTemplate(
-    @Query('id') id: string,
-    @Body() updateTemplateData: Partial<UnifiedTemplateInput>,
-  ) {
-    return this.templateService.updateTemplate(id, updateTemplateData);
   }
 }

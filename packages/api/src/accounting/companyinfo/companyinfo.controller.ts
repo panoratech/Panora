@@ -18,27 +18,30 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { CompanyinfoService } from './services/companyinfo.service';
-import { UnifiedCompanyinfoInput, UnifiedCompanyinfoOutput  } from './types/model.unified';
+import { CompanyInfoService } from './services/companyinfo.service';
+import {
+  UnifiedCompanyInfoInput,
+  UnifiedCompanyInfoOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/companyinfo')
 @Controller('accounting/companyinfo')
-export class CompanyinfoController {
+export class CompanyInfoController {
   private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
-    private readonly companyinfoService: CompanyinfoService,
+    private readonly companyinfoService: CompanyInfoService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(CompanyinfoController.name);
+    this.logger.setContext(CompanyInfoController.name);
   }
 
   @ApiOperation({
-    operationId: 'getCompanyinfos',
-    summary: 'List a batch of Companyinfos',
+    operationId: 'getCompanyInfos',
+    summary: 'List a batch of CompanyInfos',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -51,32 +54,33 @@ export class CompanyinfoController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedCompanyinfoOutput)
+  @ApiCustomResponse(UnifiedCompanyInfoOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getCompanyinfos(
+  async getCompanyInfos(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.companyinfoService.getCompanyinfos(
+        );
+      return this.companyinfoService.getCompanyInfos(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'getCompanyinfo',
-    summary: 'Retrieve a Companyinfo',
-    description: 'Retrieve a companyinfo from any connected Accounting software',
+    operationId: 'getCompanyInfo',
+    summary: 'Retrieve a CompanyInfo',
+    description:
+      'Retrieve a companyinfo from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -91,22 +95,22 @@ export class CompanyinfoController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedCompanyinfoOutput)
+  @ApiCustomResponse(UnifiedCompanyInfoOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getCompanyinfo(
+  getCompanyInfo(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.companyinfoService.getCompanyinfo(id, remote_data);
+    return this.companyinfoService.getCompanyInfo(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addCompanyinfo',
-    summary: 'Create a Companyinfo',
+    operationId: 'addCompanyInfo',
+    summary: 'Create a CompanyInfo',
     description: 'Create a companyinfo in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -119,36 +123,36 @@ export class CompanyinfoController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedCompanyinfoInput })
-  @ApiCustomResponse(UnifiedCompanyinfoOutput)
+  @ApiBody({ type: UnifiedCompanyInfoInput })
+  @ApiCustomResponse(UnifiedCompanyInfoOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addCompanyinfo(
-    @Body() unifiedCompanyinfoData: UnifiedCompanyinfoInput,
+  async addCompanyInfo(
+    @Body() unifiedCompanyInfoData: UnifiedCompanyInfoInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.companyinfoService.addCompanyinfo(
-        unifiedCompanyinfoData,
+        );
+      return this.companyinfoService.addCompanyInfo(
+        unifiedCompanyInfoData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'addCompanyinfos',
-    summary: 'Add a batch of Companyinfos',
+    operationId: 'addCompanyInfos',
+    summary: 'Add a batch of CompanyInfos',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -161,43 +165,28 @@ export class CompanyinfoController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedCompanyinfoInput, isArray: true })
-  @ApiCustomResponse(UnifiedCompanyinfoOutput)
+  @ApiBody({ type: UnifiedCompanyInfoInput, isArray: true })
+  @ApiCustomResponse(UnifiedCompanyInfoOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  async addCompanyinfos(
-    @Body() unfiedCompanyinfoData: UnifiedCompanyinfoInput[],
+  async addCompanyInfos(
+    @Body() unfiedCompanyInfoData: UnifiedCompanyInfoInput[],
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.companyinfoService.batchAddCompanyinfos(
-        unfiedCompanyinfoData,
+        );
+      return this.companyinfoService.batchAddCompanyInfos(
+        unfiedCompanyInfoData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateCompanyinfo',
-    summary: 'Update a Companyinfo',
-  })
-  @ApiCustomResponse(UnifiedCompanyinfoOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateCompanyinfo(
-    @Query('id') id: string,
-    @Body() updateCompanyinfoData: Partial<UnifiedCompanyinfoInput>,
-  ) {
-    return this.companyinfoService.updateCompanyinfo(id, updateCompanyinfoData);
   }
 }

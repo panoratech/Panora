@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ContactService } from './services/contact.service';
-import { UnifiedContactInput, UnifiedContactOutput  } from './types/model.unified';
+import {
+  UnifiedContactInput,
+  UnifiedContactOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('marketingautomation/contact')
@@ -38,7 +41,7 @@ export class ContactController {
     operationId: 'getContacts',
     summary: 'List a batch of Contacts',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class ContactController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.contactService.getContacts(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -76,7 +79,8 @@ export class ContactController {
   @ApiOperation({
     operationId: 'getContact',
     summary: 'Retrieve a Contact',
-    description: 'Retrieve a contact from any connected Marketingautomation software',
+    description:
+      'Retrieve a contact from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -104,9 +108,10 @@ export class ContactController {
   @ApiOperation({
     operationId: 'addContact',
     summary: 'Create a Contact',
-    description: 'Create a contact in any supported Marketingautomation software',
+    description:
+      'Create a contact in any supported Marketingautomation software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +133,18 @@ export class ContactController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.contactService.addContact(
         unifiedContactData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +153,7 @@ export class ContactController {
     operationId: 'addContacts',
     summary: 'Add a batch of Contacts',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +175,19 @@ export class ContactController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.contactService.batchAddContacts(
         unfiedContactData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateContact',
-    summary: 'Update a Contact',
-  })
-  @ApiCustomResponse(UnifiedContactOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateContact(
-    @Query('id') id: string,
-    @Body() updateContactData: Partial<UnifiedContactInput>,
-  ) {
-    return this.contactService.updateContact(id, updateContactData);
   }
 }

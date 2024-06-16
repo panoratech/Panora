@@ -18,9 +18,12 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { AccountService } from './services/account.service';
-import { UnifiedAccountInput, UnifiedAccountOutput  } from './types/model.unified';
+import {
+  UnifiedAccountInput,
+  UnifiedAccountOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { AccountService } from './services/account.service';
 
 @ApiTags('accounting/account')
 @Controller('accounting/account')
@@ -38,7 +41,7 @@ export class AccountController {
     operationId: 'getAccounts',
     summary: 'List a batch of Accounts',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class AccountController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.accountService.getAccounts(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -106,7 +109,7 @@ export class AccountController {
     summary: 'Create a Account',
     description: 'Create a account in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +131,18 @@ export class AccountController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.accountService.addAccount(
         unifiedAccountData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +151,7 @@ export class AccountController {
     operationId: 'addAccounts',
     summary: 'Add a batch of Accounts',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +173,19 @@ export class AccountController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.accountService.batchAddAccounts(
         unfiedAccountData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateAccount',
-    summary: 'Update a Account',
-  })
-  @ApiCustomResponse(UnifiedAccountOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateAccount(
-    @Query('id') id: string,
-    @Body() updateAccountData: Partial<UnifiedAccountInput>,
-  ) {
-    return this.accountService.updateAccount(id, updateAccountData);
   }
 }

@@ -19,7 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ListService } from './services/list.service';
-import { UnifiedListInput, UnifiedListOutput  } from './types/model.unified';
+import { UnifiedListInput, UnifiedListOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('marketingautomation/list')
@@ -38,7 +38,7 @@ export class ListController {
     operationId: 'getLists',
     summary: 'List a batch of Lists',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +58,13 @@ export class ListController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.listService.getLists(
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    }catch(error){
+        );
+      return this.listService.getLists(remoteSource, linkedUserId, remote_data);
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -76,7 +72,8 @@ export class ListController {
   @ApiOperation({
     operationId: 'getList',
     summary: 'Retrieve a List',
-    description: 'Retrieve a list from any connected Marketingautomation software',
+    description:
+      'Retrieve a list from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -106,7 +103,7 @@ export class ListController {
     summary: 'Create a List',
     description: 'Create a list in any supported Marketingautomation software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +125,18 @@ export class ListController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.listService.addList(
         unifiedListData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +145,7 @@ export class ListController {
     operationId: 'addLists',
     summary: 'Add a batch of Lists',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +167,19 @@ export class ListController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.listService.batchAddLists(
         unfiedListData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateList',
-    summary: 'Update a List',
-  })
-  @ApiCustomResponse(UnifiedListOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateList(
-    @Query('id') id: string,
-    @Body() updateListData: Partial<UnifiedListInput>,
-  ) {
-    return this.listService.updateList(id, updateListData);
   }
 }

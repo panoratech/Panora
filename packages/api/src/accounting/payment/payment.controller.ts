@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { PaymentService } from './services/payment.service';
-import { UnifiedPaymentInput, UnifiedPaymentOutput  } from './types/model.unified';
+import {
+  UnifiedPaymentInput,
+  UnifiedPaymentOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/payment')
@@ -38,7 +41,7 @@ export class PaymentController {
     operationId: 'getPayments',
     summary: 'List a batch of Payments',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +61,17 @@ export class PaymentController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.paymentService.getPayments(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -106,7 +109,7 @@ export class PaymentController {
     summary: 'Create a Payment',
     description: 'Create a payment in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +131,18 @@ export class PaymentController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.paymentService.addPayment(
         unifiedPaymentData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +151,7 @@ export class PaymentController {
     operationId: 'addPayments',
     summary: 'Add a batch of Payments',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +173,19 @@ export class PaymentController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.paymentService.batchAddPayments(
         unfiedPaymentData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updatePayment',
-    summary: 'Update a Payment',
-  })
-  @ApiCustomResponse(UnifiedPaymentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updatePayment(
-    @Query('id') id: string,
-    @Body() updatePaymentData: Partial<UnifiedPaymentInput>,
-  ) {
-    return this.paymentService.updatePayment(id, updatePaymentData);
   }
 }

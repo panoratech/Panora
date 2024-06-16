@@ -1,3 +1,3 @@
-export class UnifiedPhonenumberInput {}
+export class UnifiedPhoneNumberInput {}
 
-export class UnifiedPhonenumberOutput extends UnifiedPhonenumberInput {}
+export class UnifiedPhoneNumberOutput extends UnifiedPhoneNumberInput {}

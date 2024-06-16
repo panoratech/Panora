@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { IJobinterviewstageService } from '../types';
+import { IJobInterviewStageService } from '../types';
 
 @Injectable()
 export class ServiceRegistry {
-  private serviceMap: Map<string, IJobinterviewstageService>;
+  private serviceMap: Map<string, IJobInterviewStageService>;
 
   constructor() {
-    this.serviceMap = new Map<string, IJobinterviewstageService>();
+    this.serviceMap = new Map<string, IJobInterviewStageService>();
   }
 
-  registerService(serviceKey: string, service: IJobinterviewstageService) {
+  registerService(serviceKey: string, service: IJobInterviewStageService) {
     this.serviceMap.set(serviceKey, service);
   }
 
-  getService(integrationId: string): IJobinterviewstageService {
+  getService(integrationId: string): IJobInterviewStageService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
       throw new ReferenceError(`Service not found for integration ID: ${integrationId}`);
@@ -31,16 +31,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError, UnifiedAtsError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedJobinterviewstageInput, UnifiedJobinterviewstageOutput } from '../types/model.unified';
+import { UnifiedJobInterviewStageInput, UnifiedJobInterviewStageOutput } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
-import { OriginalJobinterviewstageOutput } from '@@core/utils/types/original/original.ats';
+import { OriginalJobInterviewStageOutput } from '@@core/utils/types/original/original.ats';
 import { unify } from '@@core/utils/unification/unify';
-import { IJobinterviewstageService } from '../types';
+import { IJobInterviewStageService } from '../types';
 
 @Injectable()
-export class JobinterviewstageService {
+export class JobInterviewStageService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -48,41 +48,41 @@ export class JobinterviewstageService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
   ) {
-    this.logger.setContext(JobinterviewstageService.name);
+    this.logger.setContext(JobInterviewStageService.name);
   }
 
-  async batchAddJobinterviewstages(
-    unifiedJobinterviewstageData: UnifiedJobinterviewstageInput[],
+  async batchAddJobInterviewStages(
+    unifiedJobInterviewStageData: UnifiedJobInterviewStageInput[],
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedJobinterviewstageOutput[]> {
+  ): Promise<UnifiedJobInterviewStageOutput[]> {
     return;
   }
 
-  async addJobinterviewstage(
-    unifiedJobinterviewstageData: UnifiedJobinterviewstageInput,
+  async addJobInterviewStage(
+    unifiedJobInterviewStageData: UnifiedJobInterviewStageInput,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedJobinterviewstageOutput> {
+  ): Promise<UnifiedJobInterviewStageOutput> {
         return;
   }
 
-  async getJobinterviewstage(
+  async getJobInterviewStage(
     id_jobinterviewstageing_jobinterviewstage: string,
     remote_data?: boolean,
-  ): Promise<UnifiedJobinterviewstageOutput> {
+  ): Promise<UnifiedJobInterviewStageOutput> {
        return;
 
   }
 
 
-  async getJobinterviewstages(
+  async getJobInterviewStages(
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedJobinterviewstageOutput[]> {
+  ): Promise<UnifiedJobInterviewStageOutput[]> {
        return;
 
   }

@@ -19,7 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { EventService } from './services/event.service';
-import { UnifiedEventInput, UnifiedEventOutput  } from './types/model.unified';
+import { UnifiedEventInput, UnifiedEventOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('marketingautomation/event')
@@ -38,7 +38,7 @@ export class EventController {
     operationId: 'getEvents',
     summary: 'List a batch of Events',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -58,17 +58,17 @@ export class EventController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.eventService.getEvents(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -76,7 +76,8 @@ export class EventController {
   @ApiOperation({
     operationId: 'getEvent',
     summary: 'Retrieve a Event',
-    description: 'Retrieve a event from any connected Marketingautomation software',
+    description:
+      'Retrieve a event from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -106,7 +107,7 @@ export class EventController {
     summary: 'Create a Event',
     description: 'Create a event in any supported Marketingautomation software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -128,18 +129,18 @@ export class EventController {
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.eventService.addEvent(
         unifiedEventData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -148,7 +149,7 @@ export class EventController {
     operationId: 'addEvents',
     summary: 'Add a batch of Events',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -170,34 +171,19 @@ export class EventController {
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.eventService.batchAddEvents(
         unfiedEventData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateEvent',
-    summary: 'Update a Event',
-  })
-  @ApiCustomResponse(UnifiedEventOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateEvent(
-    @Query('id') id: string,
-    @Body() updateEventData: Partial<UnifiedEventInput>,
-  ) {
-    return this.eventService.updateEvent(id, updateEventData);
   }
 }

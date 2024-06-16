@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTaxrateInput, UnifiedTaxrateOutput } from './model.unified';
-import { OriginalTaxrateOutput } from '@@core/utils/types/original/original.accounting';
+import { UnifiedTaxRateInput, UnifiedTaxRateOutput } from './model.unified';
+import { OriginalTaxRateOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface ITaxrateService {
-  addTaxrate(
+export interface ITaxRateService {
+  addTaxRate(
     taxrateData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalTaxrateOutput>>;
+  ): Promise<ApiResponse<OriginalTaxRateOutput>>;
 
-  syncTaxrates(
+  syncTaxRates(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTaxrateOutput[]>>;
+  ): Promise<ApiResponse<OriginalTaxRateOutput[]>>;
 }
 
-export interface ITaxrateMapper {
+export interface ITaxRateMapper {
   desunify(
-    source: UnifiedTaxrateInput,
+    source: UnifiedTaxRateInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface ITaxrateMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalTaxrateOutput | OriginalTaxrateOutput[],
+    source: OriginalTaxRateOutput | OriginalTaxRateOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTaxrateOutput | UnifiedTaxrateOutput[];
+  ): UnifiedTaxRateOutput | UnifiedTaxRateOutput[];
 }

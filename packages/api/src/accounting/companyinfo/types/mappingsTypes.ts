@@ -1,3 +1,1 @@
-
-export const companyinfoUnificationMapping = {
-}; */
+export const companyinfoUnificationMapping = {};

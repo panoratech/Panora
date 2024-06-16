@@ -1,3 +1,3 @@
-export class UnifiedRejectreasonInput {}
+export class UnifiedRejectReasonInput {}
 
-export class UnifiedRejectreasonOutput extends UnifiedRejectreasonInput {}
+export class UnifiedRejectReasonOutput extends UnifiedRejectReasonInput {}

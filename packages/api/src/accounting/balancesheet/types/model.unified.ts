@@ -1,3 +1,3 @@
-export class UnifiedBalancesheetInput {}
+export class UnifiedBalanceSheetInput {}
 
-export class UnifiedBalancesheetOutput extends UnifiedBalancesheetInput {}
+export class UnifiedBalanceSheetOutput extends UnifiedBalanceSheetInput {}

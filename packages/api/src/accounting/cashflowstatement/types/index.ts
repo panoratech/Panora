@@ -1,23 +1,23 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedCashflowstatementInput, UnifiedCashflowstatementOutput } from './model.unified';
-import { OriginalCashflowstatementOutput } from '@@core/utils/types/original/original.accounting';
+import { UnifiedCashflowStatementInput, UnifiedCashflowStatementOutput } from './model.unified';
+import { OriginalCashflowStatementOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
-export interface ICashflowstatementService {
-  addCashflowstatement(
+export interface ICashflowStatementService {
+  addCashflowStatement(
     cashflowstatementData: DesunifyReturnType,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalCashflowstatementOutput>>;
+  ): Promise<ApiResponse<OriginalCashflowStatementOutput>>;
 
-  syncCashflowstatements(
+  syncCashflowStatements(
     linkedUserId: string,
     custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalCashflowstatementOutput[]>>;
+  ): Promise<ApiResponse<OriginalCashflowStatementOutput[]>>;
 }
 
-export interface ICashflowstatementMapper {
+export interface ICashflowStatementMapper {
   desunify(
-    source: UnifiedCashflowstatementInput,
+    source: UnifiedCashflowStatementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,10 +25,10 @@ export interface ICashflowstatementMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalCashflowstatementOutput | OriginalCashflowstatementOutput[],
+    source: OriginalCashflowStatementOutput | OriginalCashflowStatementOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCashflowstatementOutput | UnifiedCashflowstatementOutput[];
+  ): UnifiedCashflowStatementOutput | UnifiedCashflowStatementOutput[];
 }

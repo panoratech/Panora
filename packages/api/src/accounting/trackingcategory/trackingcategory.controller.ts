@@ -18,27 +18,30 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { TrackingcategoryService } from './services/trackingcategory.service';
-import { UnifiedTrackingcategoryInput, UnifiedTrackingcategoryOutput  } from './types/model.unified';
+import { TrackingCategoryService } from './services/trackingcategory.service';
+import {
+  UnifiedTrackingCategoryInput,
+  UnifiedTrackingCategoryOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/trackingcategory')
 @Controller('accounting/trackingcategory')
-export class TrackingcategoryController {
+export class TrackingCategoryController {
   private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
-    private readonly trackingcategoryService: TrackingcategoryService,
+    private readonly trackingcategoryService: TrackingCategoryService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(TrackingcategoryController.name);
+    this.logger.setContext(TrackingCategoryController.name);
   }
 
   @ApiOperation({
-    operationId: 'getTrackingcategorys',
-    summary: 'List a batch of Trackingcategorys',
+    operationId: 'getTrackingCategorys',
+    summary: 'List a batch of TrackingCategorys',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -51,32 +54,33 @@ export class TrackingcategoryController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedTrackingcategoryOutput)
+  @ApiCustomResponse(UnifiedTrackingCategoryOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getTrackingcategorys(
+  async getTrackingCategorys(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.trackingcategoryService.getTrackingcategorys(
+        );
+      return this.trackingcategoryService.getTrackingCategorys(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'getTrackingcategory',
-    summary: 'Retrieve a Trackingcategory',
-    description: 'Retrieve a trackingcategory from any connected Accounting software',
+    operationId: 'getTrackingCategory',
+    summary: 'Retrieve a TrackingCategory',
+    description:
+      'Retrieve a trackingcategory from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -91,22 +95,23 @@ export class TrackingcategoryController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedTrackingcategoryOutput)
+  @ApiCustomResponse(UnifiedTrackingCategoryOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getTrackingcategory(
+  getTrackingCategory(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.trackingcategoryService.getTrackingcategory(id, remote_data);
+    return this.trackingcategoryService.getTrackingCategory(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addTrackingcategory',
-    summary: 'Create a Trackingcategory',
-    description: 'Create a trackingcategory in any supported Accounting software',
+    operationId: 'addTrackingCategory',
+    summary: 'Create a TrackingCategory',
+    description:
+      'Create a trackingcategory in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -119,36 +124,36 @@ export class TrackingcategoryController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedTrackingcategoryInput })
-  @ApiCustomResponse(UnifiedTrackingcategoryOutput)
+  @ApiBody({ type: UnifiedTrackingCategoryInput })
+  @ApiCustomResponse(UnifiedTrackingCategoryOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addTrackingcategory(
-    @Body() unifiedTrackingcategoryData: UnifiedTrackingcategoryInput,
+  async addTrackingCategory(
+    @Body() unifiedTrackingCategoryData: UnifiedTrackingCategoryInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.trackingcategoryService.addTrackingcategory(
-        unifiedTrackingcategoryData,
+        );
+      return this.trackingcategoryService.addTrackingCategory(
+        unifiedTrackingCategoryData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'addTrackingcategorys',
-    summary: 'Add a batch of Trackingcategorys',
+    operationId: 'addTrackingCategorys',
+    summary: 'Add a batch of TrackingCategorys',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -161,43 +166,28 @@ export class TrackingcategoryController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedTrackingcategoryInput, isArray: true })
-  @ApiCustomResponse(UnifiedTrackingcategoryOutput)
+  @ApiBody({ type: UnifiedTrackingCategoryInput, isArray: true })
+  @ApiCustomResponse(UnifiedTrackingCategoryOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  async addTrackingcategorys(
-    @Body() unfiedTrackingcategoryData: UnifiedTrackingcategoryInput[],
+  async addTrackingCategorys(
+    @Body() unfiedTrackingCategoryData: UnifiedTrackingCategoryInput[],
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.trackingcategoryService.batchAddTrackingcategorys(
-        unfiedTrackingcategoryData,
+        );
+      return this.trackingcategoryService.batchAddTrackingCategorys(
+        unfiedTrackingCategoryData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateTrackingcategory',
-    summary: 'Update a Trackingcategory',
-  })
-  @ApiCustomResponse(UnifiedTrackingcategoryOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateTrackingcategory(
-    @Query('id') id: string,
-    @Body() updateTrackingcategoryData: Partial<UnifiedTrackingcategoryInput>,
-  ) {
-    return this.trackingcategoryService.updateTrackingcategory(id, updateTrackingcategoryData);
   }
 }

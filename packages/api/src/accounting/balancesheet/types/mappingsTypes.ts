@@ -1,3 +1,1 @@
-
-export const balancesheetUnificationMapping = {
-}; */
+export const balancesheetUnificationMapping = {};

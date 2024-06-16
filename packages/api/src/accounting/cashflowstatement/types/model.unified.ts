@@ -1,3 +1,3 @@
-export class UnifiedCashflowstatementInput {}
+export class UnifiedCashflowStatementInput {}
 
-export class UnifiedCashflowstatementOutput extends UnifiedCashflowstatementInput {}
+export class UnifiedCashflowStatementOutput extends UnifiedCashflowStatementInput {}

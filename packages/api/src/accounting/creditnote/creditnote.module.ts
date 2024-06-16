@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { CreditnoteController } from './creditnote.controller';
+import { CreditNoteController } from './creditnote.controller';
 import { SyncService } from './sync/sync.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { CreditnoteService } from './services/creditnote.service';
+import { CreditNoteService } from './services/creditnote.service';
 import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -16,9 +16,9 @@ import { BullModule } from '@nestjs/bull';
       name: 'webhookDelivery',
     }),
   ],
-  controllers: [CreditnoteController],
+  controllers: [CreditNoteController],
   providers: [
-    CreditnoteService,
+    CreditNoteService,
     PrismaService,
     LoggerService,
     SyncService,
@@ -31,5 +31,5 @@ import { BullModule } from '@nestjs/bull';
   ],
   exports: [SyncService],
 })
-export class CreditnoteModule {}
+export class CreditNoteModule {}
 

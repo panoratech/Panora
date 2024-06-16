@@ -18,27 +18,30 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { CashflowstatementService } from './services/cashflowstatement.service';
-import { UnifiedCashflowstatementInput, UnifiedCashflowstatementOutput  } from './types/model.unified';
+import { CashflowStatementService } from './services/cashflowstatement.service';
+import {
+  UnifiedCashflowStatementInput,
+  UnifiedCashflowStatementOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('accounting/cashflowstatement')
 @Controller('accounting/cashflowstatement')
-export class CashflowstatementController {
+export class CashflowStatementController {
   private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
-    private readonly cashflowstatementService: CashflowstatementService,
+    private readonly cashflowstatementService: CashflowStatementService,
     private logger: LoggerService,
   ) {
-    this.logger.setContext(CashflowstatementController.name);
+    this.logger.setContext(CashflowStatementController.name);
   }
 
   @ApiOperation({
-    operationId: 'getCashflowstatements',
-    summary: 'List a batch of Cashflowstatements',
+    operationId: 'getCashflowStatements',
+    summary: 'List a batch of CashflowStatements',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -51,32 +54,33 @@ export class CashflowstatementController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedCashflowstatementOutput)
+  @ApiCustomResponse(UnifiedCashflowStatementOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getCashflowstatements(
+  async getCashflowStatements(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.cashflowstatementService.getCashflowstatements(
+        );
+      return this.cashflowstatementService.getCashflowStatements(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'getCashflowstatement',
-    summary: 'Retrieve a Cashflowstatement',
-    description: 'Retrieve a cashflowstatement from any connected Accounting software',
+    operationId: 'getCashflowStatement',
+    summary: 'Retrieve a CashflowStatement',
+    description:
+      'Retrieve a cashflowstatement from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -91,22 +95,23 @@ export class CashflowstatementController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedCashflowstatementOutput)
+  @ApiCustomResponse(UnifiedCashflowStatementOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getCashflowstatement(
+  getCashflowStatement(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.cashflowstatementService.getCashflowstatement(id, remote_data);
+    return this.cashflowstatementService.getCashflowStatement(id, remote_data);
   }
 
   @ApiOperation({
-    operationId: 'addCashflowstatement',
-    summary: 'Create a Cashflowstatement',
-    description: 'Create a cashflowstatement in any supported Accounting software',
+    operationId: 'addCashflowStatement',
+    summary: 'Create a CashflowStatement',
+    description:
+      'Create a cashflowstatement in any supported Accounting software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -119,36 +124,36 @@ export class CashflowstatementController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedCashflowstatementInput })
-  @ApiCustomResponse(UnifiedCashflowstatementOutput)
+  @ApiBody({ type: UnifiedCashflowStatementInput })
+  @ApiCustomResponse(UnifiedCashflowStatementOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addCashflowstatement(
-    @Body() unifiedCashflowstatementData: UnifiedCashflowstatementInput,
+  async addCashflowStatement(
+    @Body() unifiedCashflowStatementData: UnifiedCashflowStatementInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.cashflowstatementService.addCashflowstatement(
-        unifiedCashflowstatementData,
+        );
+      return this.cashflowstatementService.addCashflowStatement(
+        unifiedCashflowStatementData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'addCashflowstatements',
-    summary: 'Add a batch of Cashflowstatements',
+    operationId: 'addCashflowStatements',
+    summary: 'Add a batch of CashflowStatements',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -161,43 +166,28 @@ export class CashflowstatementController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedCashflowstatementInput, isArray: true })
-  @ApiCustomResponse(UnifiedCashflowstatementOutput)
+  @ApiBody({ type: UnifiedCashflowStatementInput, isArray: true })
+  @ApiCustomResponse(UnifiedCashflowStatementOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post('batch')
-  async addCashflowstatements(
-    @Body() unfiedCashflowstatementData: UnifiedCashflowstatementInput[],
+  async addCashflowStatements(
+    @Body() unfiedCashflowStatementData: UnifiedCashflowStatementInput[],
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.cashflowstatementService.batchAddCashflowstatements(
-        unfiedCashflowstatementData,
+        );
+      return this.cashflowstatementService.batchAddCashflowStatements(
+        unfiedCashflowStatementData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'updateCashflowstatement',
-    summary: 'Update a Cashflowstatement',
-  })
-  @ApiCustomResponse(UnifiedCashflowstatementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateCashflowstatement(
-    @Query('id') id: string,
-    @Body() updateCashflowstatementData: Partial<UnifiedCashflowstatementInput>,
-  ) {
-    return this.cashflowstatementService.updateCashflowstatement(id, updateCashflowstatementData);
   }
 }

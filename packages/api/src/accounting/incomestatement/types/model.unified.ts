@@ -1,3 +1,3 @@
-export class UnifiedIncomestatementInput {}
+export class UnifiedIncomeStatementInput {}
 
-export class UnifiedIncomestatementOutput extends UnifiedIncomestatementInput {}
+export class UnifiedIncomeStatementOutput extends UnifiedIncomeStatementInput {}

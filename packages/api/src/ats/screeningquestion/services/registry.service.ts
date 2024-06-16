@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { IScreeningquestionService } from '../types';
+import { IScreeningQuestionService } from '../types';
 
 @Injectable()
 export class ServiceRegistry {
-  private serviceMap: Map<string, IScreeningquestionService>;
+  private serviceMap: Map<string, IScreeningQuestionService>;
 
   constructor() {
-    this.serviceMap = new Map<string, IScreeningquestionService>();
+    this.serviceMap = new Map<string, IScreeningQuestionService>();
   }
 
-  registerService(serviceKey: string, service: IScreeningquestionService) {
+  registerService(serviceKey: string, service: IScreeningQuestionService) {
     this.serviceMap.set(serviceKey, service);
   }
 
-  getService(integrationId: string): IScreeningquestionService {
+  getService(integrationId: string): IScreeningQuestionService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
       throw new ReferenceError(`Service not found for integration ID: ${integrationId}`);
@@ -31,16 +31,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError, UnifiedAtsError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedScreeningquestionInput, UnifiedScreeningquestionOutput } from '../types/model.unified';
+import { UnifiedScreeningQuestionInput, UnifiedScreeningQuestionOutput } from '../types/model.unified';
 import { desunify } from '@@core/utils/unification/desunify';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
-import { OriginalScreeningquestionOutput } from '@@core/utils/types/original/original.ats';
+import { OriginalScreeningQuestionOutput } from '@@core/utils/types/original/original.ats';
 import { unify } from '@@core/utils/unification/unify';
-import { IScreeningquestionService } from '../types';
+import { IScreeningQuestionService } from '../types';
 
 @Injectable()
-export class ScreeningquestionService {
+export class ScreeningQuestionService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -48,41 +48,41 @@ export class ScreeningquestionService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
   ) {
-    this.logger.setContext(ScreeningquestionService.name);
+    this.logger.setContext(ScreeningQuestionService.name);
   }
 
-  async batchAddScreeningquestions(
-    unifiedScreeningquestionData: UnifiedScreeningquestionInput[],
+  async batchAddScreeningQuestions(
+    unifiedScreeningQuestionData: UnifiedScreeningQuestionInput[],
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedScreeningquestionOutput[]> {
+  ): Promise<UnifiedScreeningQuestionOutput[]> {
     return;
   }
 
-  async addScreeningquestion(
-    unifiedScreeningquestionData: UnifiedScreeningquestionInput,
+  async addScreeningQuestion(
+    unifiedScreeningQuestionData: UnifiedScreeningQuestionInput,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedScreeningquestionOutput> {
+  ): Promise<UnifiedScreeningQuestionOutput> {
         return;
   }
 
-  async getScreeningquestion(
+  async getScreeningQuestion(
     id_screeningquestioning_screeningquestion: string,
     remote_data?: boolean,
-  ): Promise<UnifiedScreeningquestionOutput> {
+  ): Promise<UnifiedScreeningQuestionOutput> {
        return;
 
   }
 
 
-  async getScreeningquestions(
+  async getScreeningQuestions(
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedScreeningquestionOutput[]> {
+  ): Promise<UnifiedScreeningQuestionOutput[]> {
        return;
 
   }
