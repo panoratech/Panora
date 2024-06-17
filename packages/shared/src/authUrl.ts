@@ -96,7 +96,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}` :
     data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl; 
 
-  //console.log('BASE URL IS '+ BASE_URL)
+  // console.log('BASE URL IS '+ BASE_URL)
   if (!baseUrl || !BASE_URL) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
@@ -139,7 +139,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   }
 
   const finalAuthUrl = `${BASE_URL}?${params}`;
-  //console.log('Final Authentication : ', finalAuthUrl); 
+  // console.log('Final Authentication : ', finalAuthUrl); 
   return finalAuthUrl;
 }
 
