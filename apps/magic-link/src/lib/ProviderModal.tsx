@@ -73,14 +73,14 @@ const ProviderModal = () => {
       setData(getConnectorsToDisplay())
     }
   }, [connectorsForProject, selectedCategory])
-  
+
   const { open, isReady } = useOAuth({
     providerName: selectedProvider?.provider!,
     vertical: selectedProvider?.category!,
     returnUrl: window.location.href,
     projectId: projectId,
     linkedUserId: magicLink?.id_linked_user as string,
-    optionalApiUrl: CONNECTORS_METADATA[selectedProvider?.category!][selectedProvider?.provider!].options?.local_redirect_uri_in_https == true ? "NGROK_DOMAIN": undefined,
+    //optionalApiUrl: "https://prepared-wildcat-infinitely.ngrok-free.app", //CONNECTORS_METADATA[selectedProvider?.category!][selectedProvider?.provider!].options?.local_redirect_uri_in_https == true ? "https://prepared-wildcat-infinitely.ngrok-free.app": undefined,
     onSuccess: () => {
       console.log('OAuth successful');
       setOpenSuccessDialog(true);

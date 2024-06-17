@@ -19,7 +19,7 @@ import { BullModule } from '@nestjs/bull';
 import { TicketingModule } from '@ticketing/ticketing.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { PrismaModule } from '@@core/prisma/prisma.module';
-
+ 
 @Module({
   imports: [
     PrismaModule,
@@ -55,12 +55,21 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
         customProps: (req, res) => ({
           context: 'HTTP',
         }),
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            singleLine: true,
-          },
-        },
+        transport:
+          process.env.ENV === 'prod'
+            ? {
+                target: '@axiomhq/pino',
+                options: {
+                  dataset: process.env.AXIOM_DATASET,
+                  token: process.env.AXIOM_TOKEN,
+                },
+              }
+            : {
+                target: 'pino-pretty',
+                options: {
+                  singleLine: true,
+                },
+              },
       },
     }),
     BullModule.forRoot({

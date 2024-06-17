@@ -51,9 +51,9 @@ export class GoogleDriveConnectionService
     private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(GoogleDriveConnectionService.name);
-    this.registry.registerService('google_drive', this);
+    this.registry.registerService('googledrive', this);
     this.type = providerToType(
-      'google_drive',
+      'googledrive',
       'filestorage',
       AuthStrategy.oauth2,
     );
@@ -65,7 +65,7 @@ export class GoogleDriveConnectionService
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'google_drive',
+          provider_slug: 'googledrive',
           vertical: 'filestorage',
         },
       });
@@ -110,7 +110,7 @@ export class GoogleDriveConnectionService
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url:
-              CONNECTORS_METADATA['filestorage']['google_drive'].urls.apiUrl,
+              CONNECTORS_METADATA['filestorage']['googledrive'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -127,7 +127,7 @@ export class GoogleDriveConnectionService
             vertical: 'filestorage',
             token_type: 'oauth',
             account_url:
-              CONNECTORS_METADATA['filestorage']['google_drive'].urls.apiUrl,
+              CONNECTORS_METADATA['filestorage']['googledrive'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -151,7 +151,7 @@ export class GoogleDriveConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
+      /*throwTypedError(
         new ConnectionsError({
           name: 'HANDLE_OAUTH_CALLBACK_FILESTORAGE',
           message: `GoogleDriveConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
@@ -162,7 +162,8 @@ export class GoogleDriveConnectionService
           cause: error,
         }),
         this.logger,
-      );
+      );*/
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {

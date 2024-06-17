@@ -95,16 +95,16 @@ export class XeroConnectionService implements IAccountingConnectionService {
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        redirect_uri: REDIRECT_URI,
-        code: code,
         grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: REDIRECT_URI,
       });
       const res = await axios.post(
         'https://identity.xero.com/connect/token',
         formData.toString(),
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            'Content-Type': 'application/x-www-form-urlencoded',
             Authorization: `Basic ${Buffer.from(
               `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
             ).toString('base64')}`,
@@ -183,7 +183,7 @@ export class XeroConnectionService implements IAccountingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
+      /*throwTypedError(
         new ConnectionsError({
           name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
           message: `XeroConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
@@ -194,7 +194,8 @@ export class XeroConnectionService implements IAccountingConnectionService {
           cause: error,
         }),
         this.logger,
-      );
+      );*/
+      throw error;
     }
   }
 

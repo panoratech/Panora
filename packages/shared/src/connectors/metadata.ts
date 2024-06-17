@@ -853,6 +853,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.oauth2
       },
       'xero': {
+        //scopes: 'openid profile email accounting.transactions accounting.reports.read accounting.contacts accounting.attachments accounting.budgets.read',
         urls: {
           docsUrl: 'https://developer.xero.com/documentation/getting-started-guide/',
           apiUrl: 'https://api.xero.com/api.xro/2.0',
@@ -860,7 +861,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://i.ibb.co/qpc2RQZ/xeroappicon.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false, 
         authStrategy: AuthStrategy.oauth2
       },
     },
@@ -1604,7 +1605,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://asset.brandfetch.io/id4NSNrRnG/idXzwlo3iL.jpeg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: AuthStrategy.oauth2,
         options: {
           local_redirect_uri_in_https: true
@@ -1619,7 +1620,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://avatars.githubusercontent.com/u/19614805?s=280&v=4',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: AuthStrategy.oauth2,
         options: {
           local_redirect_uri_in_https: true
@@ -2127,7 +2128,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       },
     },
     'filestorage': {
-      'google_drive': {
+      'googledrive': {
         scopes: 'https://www.googleapis.com/auth/drive',
         urls: {
           docsUrl: '',
@@ -2136,7 +2137,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://static-00.iconduck.com/assets.00/google-drive-icon-2048x2048-j5sa1hcp.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: AuthStrategy.oauth2,
       },
       'onedrive': {
@@ -2148,7 +2149,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://logowik.com/content/uploads/images/4964-microsoft-onedrive-new.jpg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: AuthStrategy.oauth2,
       },
       'dropbox': {
@@ -2159,7 +2160,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://cdn2.iconfinder.com/data/icons/metro-ui-dock/512/Dropbox.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: AuthStrategy.oauth2,
       },
       'sharepoint': {
@@ -2171,7 +2172,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: AuthStrategy.oauth2,
       },
       'box': {
@@ -2183,7 +2184,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/95b201e8-845a-4064-a9b2-a8eb49d19ca3.png?w=128&h=128&fit=max&dpr=3&auto=format&q=50',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: AuthStrategy.oauth2,
       },
     }

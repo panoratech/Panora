@@ -387,6 +387,9 @@ importers:
 
   packages/api:
     dependencies:
+      '@axiomhq/pino':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@nestjs/bull':
         specifier: ^10.0.1
         version: 10.1.1(@nestjs/common@10.3.7)(@nestjs/core@10.3.7)(bull@4.12.2)
@@ -757,6 +760,22 @@ packages:
       react: 18.2.0
       resize-observer-polyfill: 1.5.1
       throttle-debounce: 5.0.0
+    dev: false
+
+  /@axiomhq/js@1.0.0:
+    resolution: {integrity: sha512-4xf0b/KFVFmNvjxK4lHHuwioQ6TPr+PZLqEdMl/vcot1RqFwDnjaOEOp0/VPhyTgdE0di8bl/hOsu33bHMM27w==}
+    engines: {node: '>=16'}
+    dependencies:
+      fetch-retry: 6.0.0
+      uuid: 8.3.2
+    dev: false
+
+  /@axiomhq/pino@1.0.0:
+    resolution: {integrity: sha512-MbPqBw7bdDK7L+YKvNhlP0xby3Qvoe/9Aef7uodtkAGQV1e/XwEmYxV6LSEDOxd9X3XkYvusiTRl4fwFOGfkAw==}
+    engines: {node: '>=16'}
+    dependencies:
+      '@axiomhq/js': 1.0.0
+      pino-abstract-transport: 1.2.0
     dev: false
 
   /@babel/code-frame@7.24.2:
@@ -7849,6 +7868,10 @@ packages:
       web-streams-polyfill: 3.3.3
     dev: false
 
+  /fetch-retry@6.0.0:
+    resolution: {integrity: sha512-BUFj1aMubgib37I3v4q78fYo63Po7t4HUPTpQ6/QE6yK6cIQrP+W43FYToeTEyg5m2Y7eFUtijUuAv/PDlWuag==}
+    dev: false
+
   /fflate@0.4.8:
     resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
     dev: false
@@ -10805,6 +10828,13 @@ packages:
 
   /pino-abstract-transport@1.1.0:
     resolution: {integrity: sha512-lsleG3/2a/JIWUtf9Q5gUNErBqwIu1tUKTT3dUzaf5DySw9ra1wcqKjJjLX1VTY64Wk1eEOYsVGSaGfCK85ekA==}
+    dependencies:
+      readable-stream: 4.5.2
+      split2: 4.2.0
+    dev: false
+
+  /pino-abstract-transport@1.2.0:
+    resolution: {integrity: sha512-Guhh8EZfPCfH+PMXAb6rKOjGQEoy0xlAIn+irODG5kgfYV+BQ0rGYYWTIel3P5mmyXqkYkPmdIkywsn6QKUR1Q==}
     dependencies:
       readable-stream: 4.5.2
       split2: 4.2.0

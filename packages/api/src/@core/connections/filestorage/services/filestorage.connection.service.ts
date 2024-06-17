@@ -74,7 +74,7 @@ export class FilestorageConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
+      /*throwTypedError(
         new ConnectionsError({
           name: 'HANDLE_OAUTH_CALLBACK_FILESTORAGE',
           message:
@@ -82,7 +82,8 @@ export class FilestorageConnectionsService {
           cause: error,
         }),
         this.logger,
-      );
+      );*/
+      throw error;
     }
   }
 

@@ -26,6 +26,7 @@
     "prebuild-oauth-connector": "node --experimental-detect-module ./scripts/oauthConnector.js"
   },
   "dependencies": {
+    "@axiomhq/pino": "^1.0.0",
     "@nestjs/bull": "^10.0.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",

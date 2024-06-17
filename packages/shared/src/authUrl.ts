@@ -81,7 +81,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const DATA = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
   const data = await DATA.json() as OAuth2AuthData;
 
-  //console.log("Fetched Data ", JSON.stringify(data))
+  // console.log("Fetched Data ", JSON.stringify(data))
 
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new ReferenceError(`No client id for type ${type}`)
@@ -112,6 +112,9 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   // Special cases for certain providers
   switch (providerName) {
+    case 'xero':
+      params += '&response_type=code&scope=offline_access openid profile email accounting.transactions'
+      break;
     case 'zoho':
       params += '&response_type=code&access_type=offline';
       break;
@@ -127,11 +130,11 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     case 'gorgias':
       params = `&response_type=code&nonce=${randomString()}`;
       break;
-    case 'google_drive':
-      params = `${params}&access_type=offline`;
+    case 'googledrive':
+      params = `${params}&response_type=code&access_type=offline`;
       break;
     case 'dropbox':
-      params = `${params}&token_access_type=offline`
+      params = `${params}&response_type=code&token_access_type=offline`
       break;
     default:
       // For most providers, response_type=code is common
