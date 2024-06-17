@@ -9,13 +9,12 @@ import {
   UnifiedEngagementInput,
   UnifiedEngagementOutput,
 } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
 import { CrmObject, ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalEngagementOutput } from '@@core/utils/types/original/original.crm';
-import { unify } from '@@core/utils/unification/unify';
 import { IEngagementService } from '../types';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class EngagementService {
@@ -25,6 +24,7 @@ export class EngagementService {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(EngagementService.name);
   }
@@ -114,13 +114,14 @@ export class EngagementService {
       }
 
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedEngagementInput>({
-        sourceObject: unifiedEngagementData,
-        targetType: CrmObject.engagement,
-        providerName: integrationId,
-        vertical: 'crm',
-        customFieldMappings: [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedEngagementInput>({
+          sourceObject: unifiedEngagementData,
+          targetType: CrmObject.engagement,
+          providerName: integrationId,
+          vertical: 'crm',
+          customFieldMappings: [],
+        });
 
       const service: IEngagementService =
         this.serviceRegistry.getService(integrationId);
@@ -136,7 +137,9 @@ export class EngagementService {
           : CrmObject.engagement_email;
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalEngagementOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalEngagementOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: targetType,
         providerName: integrationId,

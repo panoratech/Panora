@@ -38,7 +38,7 @@ export type DeelOAuthResponse = {
 @Injectable()
 export class DeelConnectionService implements IHrisConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private prisma: PrismaService,
@@ -46,8 +46,8 @@ export class DeelConnectionService implements IHrisConnectionService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-    private cService: ConnectionsStrategiesService,
-  ) {
+private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,  ) {
     this.logger.setContext(DeelConnectionService.name);
     this.registry.registerService('deel', this);
     this.type = providerToType('deel', 'hris', AuthStrategy.oauth2);

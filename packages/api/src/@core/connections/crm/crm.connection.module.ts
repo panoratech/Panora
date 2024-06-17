@@ -16,6 +16,7 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
 import { CloseConnectionService } from './services/close/close.service';
 import { CapsuleConnectionService } from './services/capsule/capsule.service';
 import { TeamleaderConnectionService } from './services/teamleader/teamleader.service';
+import { ConnectionUtils } from '../@utils';
 
 @Module({
   imports: [WebhookModule],
@@ -28,6 +29,7 @@ import { TeamleaderConnectionService } from './services/teamleader/teamleader.se
     EnvironmentService,
     EncryptionService,
     ConnectionsStrategiesService,
+    ConnectionUtils,
     // PROVIDERS SERVICES
     HubspotConnectionService,
     AttioConnectionService,

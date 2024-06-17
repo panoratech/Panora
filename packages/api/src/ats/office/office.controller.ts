@@ -25,11 +25,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('ats/office')
 @Controller('ats/office')
 export class OfficeController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly officeService: OfficeService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(OfficeController.name);
   }

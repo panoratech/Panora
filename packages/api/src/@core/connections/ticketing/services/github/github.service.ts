@@ -32,7 +32,7 @@ export type GithubOAuthResponse = string;
 @Injectable()
 export class GithubConnectionService implements ITicketingConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private prisma: PrismaService,
@@ -40,8 +40,8 @@ export class GithubConnectionService implements ITicketingConnectionService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-    private cService: ConnectionsStrategiesService,
-  ) {
+private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,  ) {
     this.logger.setContext(GithubConnectionService.name);
     this.registry.registerService('github', this);
     this.type = providerToType('github', 'ticketing', AuthStrategy.oauth2);

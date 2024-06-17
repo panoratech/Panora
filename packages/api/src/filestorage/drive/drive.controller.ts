@@ -25,11 +25,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('filestorage/drive')
 @Controller('filestorage/drive')
 export class DriveController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly driveService: DriveService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(DriveController.name);
   }

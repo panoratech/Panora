@@ -37,7 +37,6 @@ export type TeamleaderOAuthResponse = {
 @Injectable()
 export class TeamleaderConnectionService implements ICrmConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -46,6 +45,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(TeamleaderConnectionService.name);
     this.registry.registerService('teamleader', this);

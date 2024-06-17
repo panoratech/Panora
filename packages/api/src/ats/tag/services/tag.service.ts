@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -7,11 +6,11 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedTagInput, UnifiedTagOutput } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
+
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
-import { unify } from '@@core/utils/unification/unify';
+
 import { ITagService } from '../types';
 
 @Injectable()
@@ -41,24 +40,21 @@ export class TagService {
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTagOutput> {
-        return;
+    return;
   }
 
   async getTag(
     id_taging_tag: string,
     remote_data?: boolean,
   ): Promise<UnifiedTagOutput> {
-       return;
-
+    return;
   }
-
 
   async getTags(
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTagOutput[]> {
-       return;
-
+    return;
   }
 }

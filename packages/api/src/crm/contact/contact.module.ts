@@ -15,6 +15,11 @@ import { BullModule } from '@nestjs/bull';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from './services/registry.service';
 import { CloseService } from './services/close';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
+import { CoreUnification } from '@@core/utils/services/core.service';
+import { Utils } from '@crm/@lib/@utils';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 @Module({
   imports: [
@@ -35,6 +40,11 @@ import { CloseService } from './services/close';
     WebhookService,
     EncryptionService,
     ServiceRegistry,
+    CoreUnification,
+    UnificationRegistry,
+    MappersRegistry,
+    Utils,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
     AttioService,
     ZendeskService,

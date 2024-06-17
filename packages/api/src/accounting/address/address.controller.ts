@@ -28,11 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('accounting/address')
 @Controller('accounting/address')
 export class AddressController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly addressService: AddressService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AddressController.name);
   }

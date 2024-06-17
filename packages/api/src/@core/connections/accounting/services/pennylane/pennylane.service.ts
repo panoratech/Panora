@@ -35,7 +35,6 @@ export class PennylaneConnectionService
   implements IAccountingConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -44,6 +43,7 @@ export class PennylaneConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(PennylaneConnectionService.name);
     this.registry.registerService('pennylane', this);

@@ -6,11 +6,11 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedOfferInput, UnifiedOfferOutput } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
+
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalOfferOutput } from '@@core/utils/types/original/original.ats';
-import { unify } from '@@core/utils/unification/unify';
+
 import { IOfferService } from '../types';
 
 @Injectable()
@@ -40,24 +40,21 @@ export class OfferService {
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedOfferOutput> {
-        return;
+    return;
   }
 
   async getOffer(
     id_offering_offer: string,
     remote_data?: boolean,
   ): Promise<UnifiedOfferOutput> {
-       return;
-
+    return;
   }
-
 
   async getOffers(
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedOfferOutput[]> {
-       return;
-
+    return;
   }
 }

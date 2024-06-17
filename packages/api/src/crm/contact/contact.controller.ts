@@ -35,11 +35,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/contacts')
 @Controller('crm/contacts')
 export class ContactController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly contactService: ContactService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(ContactController.name);
   }

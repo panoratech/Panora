@@ -28,11 +28,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('hris/employerbenefit')
 @Controller('hris/employerbenefit')
 export class EmployerBenefitController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly employerbenefitService: EmployerBenefitService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(EmployerBenefitController.name);
   }

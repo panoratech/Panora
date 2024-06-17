@@ -14,19 +14,17 @@ import * as fs from 'fs';
 
 @Injectable()
 export class GitlabService implements ICommentService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.comment.toUpperCase() + ':' + GitlabService.name,
     );
     this.registry.registerService('gitlab', this);
-    this.utils = new Utils();
   }
 
   async addComment(

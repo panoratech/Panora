@@ -25,11 +25,12 @@ import { ActivityService } from './services/activity.service';
 @ApiTags('ats/activity')
 @Controller('ats/activity')
 export class ActivityController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly activityService: ActivityService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(ActivityController.name);
   }

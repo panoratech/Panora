@@ -25,11 +25,12 @@ import { AttachmentService } from './services/attachment.service';
 @ApiTags('ats/attachment')
 @Controller('ats/attachment')
 export class AttachmentController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly attachmentService: AttachmentService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(AttachmentController.name);
   }

@@ -6,11 +6,11 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedGroupInput, UnifiedGroupOutput } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
+
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalGroupOutput } from '@@core/utils/types/original/original.hris';
-import { unify } from '@@core/utils/unification/unify';
+
 import { IGroupService } from '../types';
 
 @Injectable()

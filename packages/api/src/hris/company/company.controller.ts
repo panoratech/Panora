@@ -28,11 +28,12 @@ import { CompanyService } from './services/company.service';
 @ApiTags('hris/company')
 @Controller('hris/company')
 export class CompanyController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly companyService: CompanyService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(CompanyController.name);
   }

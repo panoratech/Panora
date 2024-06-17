@@ -6,15 +6,26 @@ import {
 import { GorgiasCommentInput, GorgiasCommentOutput } from './types';
 import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { TicketingObject } from '@ticketing/@lib/@types';
-import { unify } from '@@core/utils/unification/unify';
+
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
+@Injectable()
 export class GorgiasCommentMapper implements ICommentMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private coreUnification: CoreUnification,
+  ) {
+    this.mappersRegistry.registerService(
+      'ticketing',
+      'comment',
+      'gorgias',
+      this,
+    );
   }
 
   async desunify(
@@ -71,7 +82,9 @@ export class GorgiasCommentMapper implements ICommentMapper {
     let opts;
 
     if (comment.attachments && comment.attachments.length > 0) {
-      const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalAttachmentOutput[]
+      >({
         sourceObject: comment.attachments,
         targetType: TicketingObject.attachment,
         providerName: 'gorgias',
@@ -109,7 +122,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
 
     return {
       remote_id: String(comment.id),
-      ...res
+      ...res,
     };
   }
 }

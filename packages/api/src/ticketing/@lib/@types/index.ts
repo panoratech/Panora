@@ -1,6 +1,4 @@
-import { contactUnificationMapping as contactTicketingUnificationMapping } from '@ticketing/contact/types/mappingsTypes';
 import { IAccountService } from '@ticketing/account/types';
-import { accountUnificationMapping } from '@ticketing/account/types/mappingsTypes';
 import {
   UnifiedAccountInput,
   UnifiedAccountOutput,
@@ -11,7 +9,6 @@ import {
   UnifiedAttachmentOutput,
 } from '@ticketing/attachment/types/model.unified';
 import { ICommentService } from '@ticketing/comment/types';
-import { commentUnificationMapping } from '@ticketing/comment/types/mappingsTypes';
 import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
@@ -22,25 +19,21 @@ import {
   UnifiedContactOutput,
 } from '@ticketing/contact/types/model.unified';
 import { ITagService } from '@ticketing/tag/types';
-import { tagUnificationMapping } from '@ticketing/tag/types/mappingsTypes';
 import {
   UnifiedTagInput,
   UnifiedTagOutput,
 } from '@ticketing/tag/types/model.unified';
 import { ITeamService } from '@ticketing/team/types';
-import { teamUnificationMapping } from '@ticketing/team/types/mappingsTypes';
 import {
   UnifiedTeamInput,
   UnifiedTeamOutput,
 } from '@ticketing/team/types/model.unified';
 import { ITicketService } from '@ticketing/ticket/types';
-import { ticketUnificationMapping } from '@ticketing/ticket/types/mappingsTypes';
 import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { IUserService } from '@ticketing/user/types';
-import { userUnificationMapping } from '@ticketing/user/types/mappingsTypes';
 import {
   UnifiedUserInput,
   UnifiedUserOutput,
@@ -50,7 +43,6 @@ import {
   UnifiedCollectionInput,
   UnifiedCollectionOutput,
 } from '@ticketing/collection/types/model.unified';
-import { collectionUnificationMapping } from '@ticketing/collection/types/mappingsTypes';
 
 export enum TicketingObject {
   ticket = 'ticket',
@@ -84,7 +76,7 @@ export type UnifiedTicketing =
   | UnifiedCollectionInput
   | UnifiedCollectionOutput;
 
-export const unificationMapping = {
+/*export const unificationMapping = {
   [TicketingObject.ticket]: ticketUnificationMapping,
   [TicketingObject.comment]: commentUnificationMapping,
   [TicketingObject.user]: userUnificationMapping,
@@ -93,7 +85,7 @@ export const unificationMapping = {
   [TicketingObject.team]: teamUnificationMapping,
   [TicketingObject.tag]: tagUnificationMapping,
   [TicketingObject.collection]: collectionUnificationMapping,
-};
+};*/
 
 export type ITicketingService =
   | ITicketService

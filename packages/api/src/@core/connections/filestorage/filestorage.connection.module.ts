@@ -13,6 +13,7 @@ import { DropboxConnectionService } from './services/dropbox/dropbox.service';
 import { SharepointConnectionService } from './services/sharepoint/sharepoint.service';
 import { OneDriveConnectionService } from './services/onedrive/onedrive.service';
 import { BoxConnectionService } from './services/box/box.service';
+import { ConnectionUtils } from '../@utils';
 @Module({
   imports: [WebhookModule],
   providers: [
@@ -24,6 +25,7 @@ import { BoxConnectionService } from './services/box/box.service';
     EnvironmentService,
     EncryptionService,
     ConnectionsStrategiesService,
+    ConnectionUtils,
     // PROVIDERS SERVICES
     GoogleDriveConnectionService,
     DropboxConnectionService,

@@ -25,11 +25,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('hris/group')
 @Controller('hris/group')
 export class GroupController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly groupService: GroupService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(GroupController.name);
   }

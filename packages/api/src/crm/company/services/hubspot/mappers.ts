@@ -5,12 +5,13 @@ import {
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/@lib/@utils';
+import { Injectable } from '@nestjs/common';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 
+@Injectable()
 export class HubspotCompanyMapper implements ICompanyMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'company', 'hubspot', this);
   }
   async desunify(
     source: UnifiedCompanyInput,

@@ -725,7 +725,7 @@ model fs_permissions {
   type             String[]
   roles            String[]
 }
- 
+
 model fs_shared_links {
   id_fs_shared_link String   @id(map: "pk_fs_shared_links") @db.Uuid
   created_at        DateTime @db.Timestamp(6)

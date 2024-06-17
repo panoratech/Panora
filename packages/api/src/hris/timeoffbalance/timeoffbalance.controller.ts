@@ -28,11 +28,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('hris/timeoffbalance')
 @Controller('hris/timeoffbalance')
 export class TimeoffBalanceController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly timeoffbalanceService: TimeoffBalanceService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(TimeoffBalanceController.name);
   }

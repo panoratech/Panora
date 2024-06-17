@@ -1,12 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 
+@Injectable()
 export class Utils {
-  private readonly prisma: PrismaClient;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async fetchFileStreamFromURL(file_url: string) {
     return fs.createReadStream(file_url);

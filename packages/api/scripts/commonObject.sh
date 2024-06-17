@@ -70,11 +70,11 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError, Unified${VerticalCap}Error } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
+
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { Original${ObjectCap}Output } from '@@core/utils/types/original/original.${VerticalLow}';
-import { unify } from '@@core/utils/unification/unify';
+
 import { I${ObjectCap}Service } from '../types';
 
 @Injectable()
@@ -137,7 +137,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { unify } from '@@core/utils/unification/unify';
+
 import { ${VerticalCap}Object } from '@${VerticalLow}/@utils/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { Unified${ObjectCap}Output } from '../types/model.unified';
@@ -238,6 +238,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 @Module({
   imports: [
@@ -255,6 +256,7 @@ import { BullModule } from '@nestjs/bull';
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
+ConnectionUtils,
     /* PROVIDERS SERVICES */
 
   ],
@@ -293,11 +295,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('${VerticalLow}/${objectType}')
 @Controller('${VerticalLow}/${objectType}')
 export class ${ObjectCap}Controller {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly ${objectType}Service: ${ObjectCap}Service,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(${ObjectCap}Controller.name);
   }

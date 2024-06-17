@@ -31,7 +31,6 @@ export type AhaOAuthResponse = {
 @Injectable()
 export class AhaConnectionService implements ITicketingConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -40,6 +39,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AhaConnectionService.name);
     this.registry.registerService('aha', this);

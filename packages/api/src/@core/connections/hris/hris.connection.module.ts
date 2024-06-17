@@ -10,6 +10,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { DeelConnectionService } from './services/deel/deel.service';
 import { RipplingConnectionService } from './services/rippling/rippling.service';
+import { ConnectionUtils } from '../@utils';
 
 @Module({
   imports: [WebhookModule],
@@ -22,6 +23,7 @@ import { RipplingConnectionService } from './services/rippling/rippling.service'
     EnvironmentService,
     EncryptionService,
     ConnectionsStrategiesService,
+    ConnectionUtils,
     // PROVIDERS SERVICES
     RipplingConnectionService,
     DeelConnectionService,

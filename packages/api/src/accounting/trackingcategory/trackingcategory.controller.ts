@@ -28,11 +28,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('accounting/trackingcategory')
 @Controller('accounting/trackingcategory')
 export class TrackingCategoryController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly trackingcategoryService: TrackingCategoryService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(TrackingCategoryController.name);
   }

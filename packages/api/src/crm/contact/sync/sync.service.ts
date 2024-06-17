@@ -2,7 +2,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import { unify } from '@@core/utils/unification/unify';
+
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '@crm/contact/types/model.unified';
 import { CrmObject } from '@crm/@lib/@types';
@@ -18,26 +18,26 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { Utils } from '@crm/@lib/@utils';
 import { throwTypedError, SyncError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
+    private utils: Utils,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
-    this.utils = new Utils();
   }
 
   async onModuleInit() {
     try {
-      await this.scheduleSyncJob();
+      //   await this.scheduleSyncJob();
     } catch (error) {
       throw error;
     }
@@ -183,7 +183,9 @@ export class SyncService implements OnModuleInit {
       const sourceObject: OriginalContactOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalContactOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalContactOutput[]
+      >({
         sourceObject,
         targetType: CrmObject.contact,
         providerName: integrationId,

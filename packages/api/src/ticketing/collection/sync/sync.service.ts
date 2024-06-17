@@ -6,7 +6,7 @@ import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
-import { unify } from '@@core/utils/unification/unify';
+
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedCollectionOutput } from '../types/model.unified';
@@ -16,6 +16,7 @@ import { tcg_collections as TicketingCollection } from '@prisma/client';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -24,6 +25,7 @@ export class SyncService implements OnModuleInit {
     private logger: LoggerService,
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -31,7 +33,7 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.scheduleSyncJob();
+//   await this.scheduleSyncJob();
     } catch (error) {
       throw error;
     }
@@ -151,7 +153,9 @@ export class SyncService implements OnModuleInit {
       const sourceObject: OriginalCollectionOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalCollectionOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalCollectionOutput[]
+      >({
         sourceObject,
         targetType: TicketingObject.collection,
         providerName: integrationId,

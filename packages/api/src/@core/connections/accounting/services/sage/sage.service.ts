@@ -36,7 +36,6 @@ export type SageOAuthResponse = {
 @Injectable()
 export class SageConnectionService implements IAccountingConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -45,6 +44,7 @@ export class SageConnectionService implements IAccountingConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(SageConnectionService.name);
     this.registry.registerService('sage', this);

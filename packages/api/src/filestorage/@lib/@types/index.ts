@@ -49,13 +49,13 @@ export type UnifiedFileStorage =
   | UnifiedSharedLinkInput
   | UnifiedSharedLinkOutput;
 
-export const unificationMapping = {
+/*export const unificationMapping = {
   [FileStorageObject.drive]: driveUnificationMapping,
   [FileStorageObject.file]: fileUnificationMapping,
   [FileStorageObject.folder]: folderUnificationMapping,
   [FileStorageObject.permission]: permissionUnificationMapping,
   [FileStorageObject.sharedlink]: sharedlinkUnificationMapping,
-};
+};*/
 
 export type IFileStorageService =
   | IFileService

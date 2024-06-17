@@ -40,7 +40,6 @@ export class OneDriveConnectionService
   implements IFilestorageConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -49,6 +48,7 @@ export class OneDriveConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(OneDriveConnectionService.name);
     this.registry.registerService('onedrive', this);

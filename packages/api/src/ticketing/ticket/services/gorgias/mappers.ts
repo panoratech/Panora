@@ -5,12 +5,18 @@ import {
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { Utils } from '@ticketing/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class GorgiasTicketMapper implements ITicketMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService(
+      'ticketing',
+      'ticket',
+      'gorgias',
+      this,
+    );
   }
 
   async desunify(
@@ -34,18 +40,18 @@ export class GorgiasTicketMapper implements ITicketMapper {
           body_text: source.comment.body || '',
           attachments: source.comment.attachments
             ? source.comment.attachments.map((att) => ({
-              extra: att,
-            }))
+                extra: att,
+              }))
             : [],
           sender:
             source.comment.creator_type === 'user'
               ? {
-                id: Number(
-                  await this.utils.getAsigneeRemoteIdFromUserUuid(
-                    source.comment.user_id,
+                  id: Number(
+                    await this.utils.getAsigneeRemoteIdFromUserUuid(
+                      source.comment.user_id,
+                    ),
                   ),
-                ),
-              }
+                }
               : null,
         },
       ],

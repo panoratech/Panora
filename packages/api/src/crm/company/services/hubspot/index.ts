@@ -102,7 +102,6 @@ export class HubspotService implements ICompanyService {
       });
       this.logger.log(`Synced hubspot companies !`);
 
-
       return {
         data: resp.data.results,
         message: 'Hubspot companies retrieved',

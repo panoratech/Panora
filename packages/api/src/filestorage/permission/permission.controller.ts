@@ -28,11 +28,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('filestorage/permission')
 @Controller('filestorage/permission')
 export class PermissionController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly permissionService: PermissionService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(PermissionController.name);
   }

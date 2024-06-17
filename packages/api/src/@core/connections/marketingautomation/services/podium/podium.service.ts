@@ -27,7 +27,7 @@ export class PodiumConnectionService
   implements IMarketingAutomationConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private prisma: PrismaService,
@@ -35,8 +35,8 @@ export class PodiumConnectionService
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-    private cService: ConnectionsStrategiesService,
-  ) {
+private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,  ) {
     this.logger.setContext(PodiumConnectionService.name);
     this.registry.registerService('podium', this);
     this.type = providerToType(

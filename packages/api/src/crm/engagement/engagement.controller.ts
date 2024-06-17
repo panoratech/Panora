@@ -35,11 +35,12 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/engagements')
 @Controller('crm/engagements')
 export class EngagementController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly engagementService: EngagementService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(EngagementController.name);
   }

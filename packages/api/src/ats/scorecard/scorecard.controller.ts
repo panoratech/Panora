@@ -25,11 +25,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('ats/scorecard')
 @Controller('ats/scorecard')
 export class ScoreCardController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly scorecardService: ScoreCardService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(ScoreCardController.name);
   }

@@ -34,11 +34,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/attachments')
 @Controller('ticketing/attachments')
 export class AttachmentController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly attachmentService: AttachmentService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AttachmentController.name);
   }
@@ -73,7 +72,7 @@ export class AttachmentController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

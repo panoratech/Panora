@@ -25,11 +25,12 @@ import { EeocsService } from './services/eeocs.service';
 @ApiTags('ats/eeocs')
 @Controller('ats/eeocs')
 export class EeocsController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly eeocsService: EeocsService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(EeocsController.name);
   }

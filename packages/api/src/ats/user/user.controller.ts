@@ -25,11 +25,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('ats/user')
 @Controller('ats/user')
 export class UserController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly userService: UserService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(UserController.name);
   }

@@ -1,5 +1,4 @@
 import { ICompanyService } from '@crm/company/types';
-import { companyUnificationMapping } from '@crm/company/types/mappingsTypes';
 import {
   UnifiedCompanyInput,
   UnifiedCompanyOutput,
@@ -129,7 +128,7 @@ export type UnifiedHris =
   | UnifiedPayGroupInput
   | UnifiedPayGroupOutput;
 
-export const unificationMapping = {
+/*export const unificationMapping = {
   [HrisObject.bankinfo]: bankinfoUnificationMapping,
   [HrisObject.benefit]: benefitUnificationMapping,
   [HrisObject.company]: companyUnificationMapping,
@@ -144,7 +143,7 @@ export const unificationMapping = {
   [HrisObject.payrollrun]: payrollrunUnificationMapping,
   [HrisObject.timeoff]: timeoffUnificationMapping,
   [HrisObject.timeoffbalance]: timeoffbalanceUnificationMapping,
-};
+};*/
 
 export type IHrisService =
   | IBankInfoService

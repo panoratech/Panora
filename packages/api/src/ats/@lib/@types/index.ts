@@ -148,7 +148,7 @@ export type UnifiedAts =
   | UnifiedEeocsInput
   | UnifiedEeocsOutput;
 
-export const unificationMapping = {
+/*export const unificationMapping = {
   [AtsObject.activity]: activityUnificationMapping,
   [AtsObject.application]: applicationUnificationMapping,
   [AtsObject.attachment]: attachmentUnificationMapping,
@@ -165,7 +165,7 @@ export const unificationMapping = {
   [AtsObject.tag]: tagUnificationMapping,
   [AtsObject.user]: userUnificationMapping,
   [AtsObject.eeocs]: eeocsUnificationMapping,
-};
+};*/
 
 export type IAtsService =
   | IActivityService

@@ -30,7 +30,7 @@ export class GetresponseConnectionService
   implements IMarketingAutomationConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private prisma: PrismaService,
@@ -38,8 +38,8 @@ export class GetresponseConnectionService
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-    private cService: ConnectionsStrategiesService,
-  ) {
+private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,  ) {
     this.logger.setContext(GetresponseConnectionService.name);
     this.registry.registerService('getresponse', this);
     this.type = providerToType(

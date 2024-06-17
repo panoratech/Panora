@@ -5,12 +5,13 @@ import {
 import { IContactMapper } from '@crm/contact/types';
 import { HubspotContactInput, HubspotContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class HubspotContactMapper implements IContactMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'contact', 'hubspot', this);
   }
 
   async desunify(

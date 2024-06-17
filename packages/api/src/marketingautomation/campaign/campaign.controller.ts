@@ -28,11 +28,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('marketingautomation/campaign')
 @Controller('marketingautomation/campaign')
 export class CampaignController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly campaignService: CampaignService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(CampaignController.name);
   }

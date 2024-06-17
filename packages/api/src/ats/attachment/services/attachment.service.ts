@@ -5,12 +5,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedAttachmentInput, UnifiedAttachmentOutput } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
+import {
+  UnifiedAttachmentInput,
+  UnifiedAttachmentOutput,
+} from '../types/model.unified';
+
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ats';
-import { unify } from '@@core/utils/unification/unify';
+
 import { IAttachmentService } from '../types';
 
 @Injectable()
@@ -40,24 +43,21 @@ export class AttachmentService {
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAttachmentOutput> {
-        return;
+    return;
   }
 
   async getAttachment(
     id_attachmenting_attachment: string,
     remote_data?: boolean,
   ): Promise<UnifiedAttachmentOutput> {
-       return;
-
+    return;
   }
-
 
   async getAttachments(
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAttachmentOutput[]> {
-       return;
-
+    return;
   }
 }

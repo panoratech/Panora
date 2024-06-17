@@ -9,12 +9,15 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { CoreModule } from '@@core/core.module';
 
 @Module({
   imports: [
     BullModule.registerQueue({
       name: 'webhookDelivery',
     }),
+    CoreModule,
   ],
   controllers: [TemplateController],
   providers: [
@@ -26,10 +29,9 @@ import { BullModule } from '@nestjs/bull';
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
+ConnectionUtils,
     /* PROVIDERS SERVICES */
-
   ],
-  exports: [SyncService],
+  exports: [SyncService, CoreModule],
 })
 export class TemplateModule {}
-

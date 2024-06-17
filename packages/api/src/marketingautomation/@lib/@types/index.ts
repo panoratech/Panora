@@ -47,13 +47,11 @@ import {
   UnifiedTemplateOutput,
 } from '@marketingautomation/template/types/model.unified';
 import { IContactService } from '@ticketing/contact/types';
-import { contactUnificationMapping } from '@ticketing/contact/types/mappingsTypes';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@ticketing/contact/types/model.unified';
 import { IUserService } from '@ticketing/user/types';
-import { userUnificationMapping } from '@ticketing/user/types/mappingsTypes';
 import {
   UnifiedUserInput,
   UnifiedUserOutput,
@@ -94,7 +92,7 @@ export type UnifiedMarketingAutomation =
   | UnifiedUserInput
   | UnifiedUserOutput;
 
-export const unificationMapping = {
+/*export const unificationMapping = {
   [MarketingAutomationObject.action]: actionUnificationMapping,
   [MarketingAutomationObject.automation]: automationUnificationMapping,
   [MarketingAutomationObject.campaign]: campaignUnificationMapping,
@@ -105,7 +103,7 @@ export const unificationMapping = {
   [MarketingAutomationObject.message]: messageUnificationMapping,
   [MarketingAutomationObject.template]: templateUnificationMapping,
   [MarketingAutomationObject.user]: userUnificationMapping,
-};
+};*/
 
 export type IMarketingAutomationService =
   | IActionService

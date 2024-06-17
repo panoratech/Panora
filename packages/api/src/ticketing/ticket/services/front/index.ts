@@ -13,19 +13,17 @@ import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class FrontService implements ITicketService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + FrontService.name,
     );
     this.registry.registerService('front', this);
-    this.utils = new Utils();
   }
 
   async addTicket(

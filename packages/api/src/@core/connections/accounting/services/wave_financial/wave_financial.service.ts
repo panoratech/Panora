@@ -38,7 +38,6 @@ export class WaveFinancialConnectionService
   implements IAccountingConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -47,6 +46,7 @@ export class WaveFinancialConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(WaveFinancialConnectionService.name);
     this.registry.registerService('wave_financial', this);

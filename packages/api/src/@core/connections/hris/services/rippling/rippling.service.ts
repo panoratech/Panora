@@ -38,7 +38,7 @@ export type RipplingOAuthResponse = {
 @Injectable()
 export class RipplingConnectionService implements IHrisConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private prisma: PrismaService,
@@ -46,8 +46,8 @@ export class RipplingConnectionService implements IHrisConnectionService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-    private cService: ConnectionsStrategiesService,
-  ) {
+private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,  ) {
     this.logger.setContext(RipplingConnectionService.name);
     this.registry.registerService('rippling', this);
     this.type = providerToType('rippling', 'hris', AuthStrategy.oauth2);

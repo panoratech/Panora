@@ -167,7 +167,7 @@ export type UnifiedAccounting =
   | UnifiedVendorCreditInput
   | UnifiedVendorCreditOutput;
 
-export const unificationMapping = {
+/*export const unificationMapping = {
   [AccountingObject.balancesheet]: balancesheetUnificationMapping,
   [AccountingObject.cashflowstatement]: cashflowstatementUnificationMapping,
   [AccountingObject.companyinfo]: companyinfoUnificationMapping,
@@ -185,7 +185,7 @@ export const unificationMapping = {
   [AccountingObject.trackingcategory]: trackingcategoryUnificationMapping,
   [AccountingObject.transaction]: transactionUnificationMapping,
   [AccountingObject.vendorcredit]: vendorcreditUnificationMapping,
-};
+};*/
 
 export type IAccountingService =
   | IBalanceSheetService

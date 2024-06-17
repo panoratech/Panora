@@ -25,11 +25,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('ats/rejectreason')
 @Controller('ats/rejectreason')
 export class RejectReasonController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly rejectreasonService: RejectReasonService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(RejectReasonController.name);
   }

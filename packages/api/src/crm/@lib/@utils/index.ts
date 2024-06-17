@@ -1,13 +1,11 @@
 import { Address, countryPhoneFormats, Email, Phone } from '@crm/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
-import { PrismaClient } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@@core/prisma/prisma.service';
 
+@Injectable()
 export class Utils {
-  private readonly prisma: PrismaClient;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   normalizeEmailsAndNumbers(email_addresses: Email[], phone_numbers: Phone[]) {
     let normalizedEmails = [];

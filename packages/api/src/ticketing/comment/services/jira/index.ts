@@ -10,23 +10,20 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { JiraCommentInput, JiraCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
 import { Utils } from '@ticketing/@lib/@utils';
-import * as fs from 'fs';
 
 @Injectable()
 export class JiraService implements ICommentService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.comment.toUpperCase() + ':' + JiraService.name,
     );
     this.registry.registerService('jira', this);
-    this.utils = new Utils();
   }
 
   async addComment(

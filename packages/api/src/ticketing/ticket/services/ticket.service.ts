@@ -9,13 +9,12 @@ import {
   UnifiedTicketOutput,
 } from '../types/model.unified';
 import { ITicketService } from '../types';
-import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { unify } from '@@core/utils/unification/unify';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from './registry.service';
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class TicketService {
@@ -25,6 +24,7 @@ export class TicketService {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(TicketService.name);
   }
@@ -123,15 +123,16 @@ export class TicketService {
           'ticketing.ticket',
         );
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedTicketInput>({
-        sourceObject: unifiedTicketData,
-        targetType: TicketingObject.ticket,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        customFieldMappings: unifiedTicketData.field_mappings
-          ? customFieldMappings
-          : [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedTicketInput>({
+          sourceObject: unifiedTicketData,
+          targetType: TicketingObject.ticket,
+          providerName: integrationId,
+          vertical: 'ticketing',
+          customFieldMappings: unifiedTicketData.field_mappings
+            ? customFieldMappings
+            : [],
+        });
 
       this.logger.log(
         'ticket desunified is ' + JSON.stringify(desunifiedObject),
@@ -145,7 +146,9 @@ export class TicketService {
       );
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalTicketOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalTicketOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: TicketingObject.ticket,
         providerName: integrationId,

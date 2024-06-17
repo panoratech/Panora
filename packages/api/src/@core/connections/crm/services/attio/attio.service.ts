@@ -7,7 +7,13 @@ import {
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
@@ -29,8 +35,6 @@ export interface AttioOAuthResponse {
 @Injectable()
 export class AttioConnectionService implements ICrmConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -38,6 +42,7 @@ export class AttioConnectionService implements ICrmConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AttioConnectionService.name);
     this.registry.registerService('attio', this);
@@ -131,17 +136,18 @@ export class AttioConnectionService implements ICrmConnectionService {
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_CRM",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_CRM',
           message: `AttioConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            "attio",
+            'attio',
             Action.oauthCallback,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)    
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 

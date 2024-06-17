@@ -33,7 +33,7 @@ export type FrontOAuthResponse = {
 @Injectable()
 export class FrontConnectionService implements ITicketingConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private prisma: PrismaService,
@@ -41,8 +41,8 @@ export class FrontConnectionService implements ITicketingConnectionService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-    private cService: ConnectionsStrategiesService,
-  ) {
+private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,  ) {
     this.logger.setContext(FrontConnectionService.name);
     this.registry.registerService('front', this);
     this.type = providerToType('front', 'ticketing', AuthStrategy.oauth2);

@@ -25,11 +25,12 @@ import { CandidateService } from './services/candidate.service';
 @ApiTags('ats/candidate')
 @Controller('ats/candidate')
 export class CandidateController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly candidateService: CandidateService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(CandidateController.name);
   }

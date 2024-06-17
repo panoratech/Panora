@@ -5,12 +5,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedApplicationInput, UnifiedApplicationOutput } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
+import {
+  UnifiedApplicationInput,
+  UnifiedApplicationOutput,
+} from '../types/model.unified';
+
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalApplicationOutput } from '@@core/utils/types/original/original.ats';
-import { unify } from '@@core/utils/unification/unify';
+
 import { IApplicationService } from '../types';
 
 @Injectable()
@@ -40,24 +43,21 @@ export class ApplicationService {
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedApplicationOutput> {
-        return;
+    return;
   }
 
   async getApplication(
     id_applicationing_application: string,
     remote_data?: boolean,
   ): Promise<UnifiedApplicationOutput> {
-       return;
-
+    return;
   }
-
 
   async getApplications(
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedApplicationOutput[]> {
-       return;
-
+    return;
   }
 }

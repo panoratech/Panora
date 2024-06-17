@@ -39,8 +39,6 @@ type AcceloOAuthResponse = {
 @Injectable()
 export class AcceloConnectionService implements ICrmConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -48,6 +46,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AcceloConnectionService.name);
     this.registry.registerService('accelo', this);

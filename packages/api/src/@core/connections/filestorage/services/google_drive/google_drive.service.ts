@@ -40,7 +40,6 @@ export class GoogleDriveConnectionService
   implements IFilestorageConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -49,6 +48,7 @@ export class GoogleDriveConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(GoogleDriveConnectionService.name);
     this.registry.registerService('google_drive', this);

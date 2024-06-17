@@ -24,11 +24,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('filestorage/file')
 @Controller('filestorage/file')
 export class FileController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly fileService: FileService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(FileController.name);
   }

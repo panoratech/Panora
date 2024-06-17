@@ -4,8 +4,20 @@ import {
   UnifiedAttachmentOutput,
 } from '@ticketing/attachment/types/model.unified';
 import { ZendeskAttachmentOutput } from './types';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 
+@Injectable()
 export class ZendeskAttachmentMapper implements IAttachmentMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService(
+      'ticketing',
+      'attachment',
+      'zendesk',
+      this,
+    );
+  }
   async desunify(
     source: UnifiedAttachmentInput,
     customFieldMappings?: {

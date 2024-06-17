@@ -5,14 +5,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedTaskInput, UnifiedTaskOutput } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
 import { CrmObject } from '@crm/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalTaskOutput } from '@@core/utils/types/original/original.crm';
-import { unify } from '@@core/utils/unification/unify';
 import { ITaskService } from '../types';
 import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class TaskService {
@@ -22,6 +21,7 @@ export class TaskService {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(TaskService.name);
   }
@@ -114,13 +114,14 @@ export class TaskService {
       }
 
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedTaskInput>({
-        sourceObject: unifiedTaskData,
-        targetType: CrmObject.task,
-        providerName: integrationId,
-        vertical: 'crm',
-        customFieldMappings: [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedTaskInput>({
+          sourceObject: unifiedTaskData,
+          targetType: CrmObject.task,
+          providerName: integrationId,
+          vertical: 'crm',
+          customFieldMappings: [],
+        });
 
       const service: ITaskService =
         this.serviceRegistry.getService(integrationId);
@@ -131,7 +132,9 @@ export class TaskService {
       );
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalTaskOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalTaskOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: CrmObject.task,
         providerName: integrationId,

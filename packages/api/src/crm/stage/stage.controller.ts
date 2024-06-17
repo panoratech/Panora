@@ -28,11 +28,12 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/stages')
 @Controller('crm/stages')
 export class StageController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly stageService: StageService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(StageController.name);
   }

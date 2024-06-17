@@ -8,6 +8,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
+import { ConnectionUtils } from '@@core/connections/@utils';
 import { AccountService } from './services/account.service';
 
 @Module({
@@ -26,6 +27,7 @@ import { AccountService } from './services/account.service';
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

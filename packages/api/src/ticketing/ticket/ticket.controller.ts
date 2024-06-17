@@ -32,11 +32,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/tickets')
 @Controller('ticketing/tickets')
 export class TicketController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly ticketService: TicketService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(TicketController.name);
   }

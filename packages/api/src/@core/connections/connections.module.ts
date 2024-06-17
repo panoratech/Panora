@@ -26,6 +26,7 @@ import { TicketModule } from '@ticketing/ticket/ticket.module';
 import { UserModule as TUserModule } from '@ticketing/user/user.module';
 import { FilestorageConnectionModule } from './filestorage/filestorage.connection.module';
 import { HrisConnectionModule } from './hris/hris.connection.module';
+import { ConnectionUtils } from './@utils';
 
 @Module({
   controllers: [ConnectionsController],
@@ -58,6 +59,7 @@ import { HrisConnectionModule } from './hris/hris.connection.module';
     PrismaService,
     ValidateUserService,
     CoreSyncService,
+    ConnectionUtils,
   ],
   exports: [
     CrmConnectionModule,

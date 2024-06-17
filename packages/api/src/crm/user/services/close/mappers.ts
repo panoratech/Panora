@@ -4,8 +4,15 @@ import {
   UnifiedUserOutput,
 } from '@crm/user/types/model.unified';
 import { IUserMapper } from '@crm/user/types';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@crm/@lib/@utils';
 
+@Injectable()
 export class CloseUserMapper implements IUserMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'user', 'close', this);
+  }
   desunify(
     source: UnifiedUserInput,
     customFieldMappings?: {

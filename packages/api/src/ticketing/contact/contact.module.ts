@@ -12,6 +12,11 @@ import { ContactService } from './services/contact.service';
 import { ContactController } from './contact.controller';
 import { FrontService } from './services/front';
 import { GorgiasService } from './services/gorgias';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
+import { CoreUnification } from '@@core/utils/services/core.service';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 @Module({
   imports: [
@@ -32,6 +37,11 @@ import { GorgiasService } from './services/gorgias';
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
+    ConnectionUtils,
+    CoreUnification,
+    UnificationRegistry,
+    MappersRegistry,
+    Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,

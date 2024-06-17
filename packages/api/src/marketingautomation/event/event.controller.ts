@@ -25,11 +25,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('marketingautomation/event')
 @Controller('marketingautomation/event')
 export class EventController {
-  private readonly connectionUtils = new ConnectionUtils();
+
 
   constructor(
     private readonly eventService: EventService,
     private logger: LoggerService,
+private connectionUtils: ConnectionUtils
   ) {
     this.logger.setContext(EventController.name);
   }

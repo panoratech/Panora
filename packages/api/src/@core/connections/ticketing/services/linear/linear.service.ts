@@ -33,7 +33,6 @@ export type LinearOAuthResponse = {
 @Injectable()
 export class LinearConnectionService implements ITicketingConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -42,6 +41,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(LinearConnectionService.name);
     this.registry.registerService('linear', this);

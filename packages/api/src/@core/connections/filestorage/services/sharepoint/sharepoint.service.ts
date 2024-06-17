@@ -41,7 +41,6 @@ export class SharepointConnectionService
   implements IFilestorageConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -50,6 +49,7 @@ export class SharepointConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(SharepointConnectionService.name);
     this.registry.registerService('sharepoint', this);

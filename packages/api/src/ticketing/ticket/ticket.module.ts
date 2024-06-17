@@ -16,6 +16,11 @@ import { FrontService } from './services/front';
 import { GithubService } from './services/github';
 import { JiraService } from './services/jira';
 import { GorgiasService } from './services/gorgias';
+import { CoreUnification } from '@@core/utils/services/core.service';
+import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ConnectionUtils } from '@@core/connections/@utils';
 
 @Module({
   imports: [
@@ -36,6 +41,11 @@ import { GorgiasService } from './services/gorgias';
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
+    ConnectionUtils,
+    CoreUnification,
+    UnificationRegistry,
+    MappersRegistry,
+    Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
     HubspotService,

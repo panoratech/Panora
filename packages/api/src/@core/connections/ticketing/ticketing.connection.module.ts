@@ -18,6 +18,7 @@ import { GorgiasConnectionService } from './services/gorgias/gorgias.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ManagedWebhooksModule } from '@@core/managed-webhooks/managed-webhooks.module';
 import { AhaConnectionService } from './services/aha/aha.service';
+import { ConnectionUtils } from '../@utils';
 
 @Module({
   imports: [WebhookModule, ManagedWebhooksModule],
@@ -30,6 +31,7 @@ import { AhaConnectionService } from './services/aha/aha.service';
     EncryptionService,
     ServiceRegistry,
     ConnectionsStrategiesService,
+    ConnectionUtils,
     //PROVIDERS SERVICES
     ZendeskConnectionService,
     FrontConnectionService,
