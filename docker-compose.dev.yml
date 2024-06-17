@@ -30,7 +30,7 @@ services:
       context: ./
       dockerfile: ./packages/api/Dockerfile.dev
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false&connection_limit=1
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       WEBHOOK_INGRESS: ${WEBHOOK_INGRESS}
       JWT_SECRET: ${JWT_SECRET}
