@@ -25,13 +25,14 @@ export class EncryptionService {
       const encryptedWithIv = this.iv.toString('hex') + ':' + encrypted;
       return encryptedWithIv;
     } catch (error) {
-      throwTypedError(new EncryptionError(
-        {
-          name: "ENCRYPT_ERROR",
-          message: "EncryptionService.encrypt() call failed",
-          cause: error
-        }
-      ), this.logger)
+      throwTypedError(
+        new EncryptionError({
+          name: 'ENCRYPT_ERROR',
+          message: 'EncryptionService.encrypt() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -49,13 +50,14 @@ export class EncryptionService {
       decrypted += decipher.final('utf8');
       return decrypted;
     } catch (error) {
-      throwTypedError(new EncryptionError(
-        {
-          name: "DECRYPT_ERROR",
-          message: "EncryptionService.decrypt() call failed",
-          cause: error
-        }
-      ), this.logger)
+      throwTypedError(
+        new EncryptionError({
+          name: 'DECRYPT_ERROR',
+          message: 'EncryptionService.decrypt() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

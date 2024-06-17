@@ -38,21 +38,22 @@ export class ZendeskService implements IAccountService {
           vertical: 'ticketing',
         },
       });
-      const request_url = remote_account_id ? `${connection.account_url}/organizations/${remote_account_id}.json` : `${connection.account_url}/organizations.json`;
-      const resp = await axios.get(
-        request_url,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const request_url = remote_account_id
+        ? `${connection.account_url}/organizations/${remote_account_id}.json`
+        : `${connection.account_url}/organizations.json`;
+      const resp = await axios.get(request_url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
       this.logger.log(`Synced zendesk accounts !`);
 
-      const result =  remote_account_id ? [resp.data.organization] : resp.data.organizations;
+      const result = remote_account_id
+        ? [resp.data.organization]
+        : resp.data.organizations;
 
       return {
         data: result,

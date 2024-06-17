@@ -28,11 +28,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/tags')
 @Controller('ticketing/tags')
 export class TagController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly tagService: TagService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(TagController.name);
   }

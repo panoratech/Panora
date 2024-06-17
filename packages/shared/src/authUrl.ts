@@ -10,12 +10,13 @@ interface AuthParams {
   returnUrl: string;
   apiUrl: string;
   vertical: string;
+  redirectUrlIngressWhenLocalDev?: string;
 }
 
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
-export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
-  const encodedRedirectUrl = encodeURIComponent(`${apiUrl}/connections/oauth/callback`);
+export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, redirectUrlIngressWhenLocalDev }: AuthParams) => {
+  const encodedRedirectUrl = encodeURIComponent(`${redirectUrlIngressWhenLocalDev ? redirectUrlIngressWhenLocalDev : apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl);
@@ -29,8 +30,6 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
     throw new Error(`Unsupported provider: ${providerName}`);
   }
   const authStrategy = config.authStrategy!;
-
-  // console.log(authStrategy)
 
   switch (authStrategy) {
     case AuthStrategy.oauth2:
@@ -75,7 +74,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   } = input;
 
   const type = providerToType(providerName, vertical, authStrategy);
-
+  
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
@@ -113,6 +112,9 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   // Special cases for certain providers
   switch (providerName) {
+    case 'xero':
+      params += '&response_type=code&scope=offline_access openid profile email accounting.transactions'
+      break;
     case 'zoho':
       params += '&response_type=code&access_type=offline';
       break;
@@ -128,13 +130,19 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     case 'gorgias':
       params = `&response_type=code&nonce=${randomString()}`;
       break;
+    case 'googledrive':
+      params = `${params}&response_type=code&access_type=offline`;
+      break;
+    case 'dropbox':
+      params = `${params}&response_type=code&token_access_type=offline`
+      break;
     default:
       // For most providers, response_type=code is common
       params += '&response_type=code';
   }
 
   const finalAuthUrl = `${BASE_URL}?${params}`;
-  // console.log('Final Authentication : ', finalAuthUrl);
+  // console.log('Final Authentication : ', finalAuthUrl); 
   return finalAuthUrl;
 }
 

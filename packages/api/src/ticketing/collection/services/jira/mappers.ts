@@ -4,8 +4,20 @@ import {
   UnifiedCollectionInput,
   UnifiedCollectionOutput,
 } from '@ticketing/collection/types/model.unified';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 
+@Injectable()
 export class JiraCollectionMapper implements ICollectionMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService(
+      'ticketing',
+      'collection',
+      'jira',
+      this,
+    );
+  }
   desunify(
     source: UnifiedCollectionInput,
     customFieldMappings?: {

@@ -13,19 +13,17 @@ import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class FrontService implements ICommentService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.comment.toUpperCase() + ':' + FrontService.name,
     );
     this.registry.registerService('front', this);
-    this.utils = new Utils();
   }
 
   async addComment(
@@ -154,10 +152,9 @@ export class FrontService implements ICommentService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}conversations/${ticket.remote_id}/comments`,
+        `${connection.account_url}/conversations/${ticket.remote_id}/comments`,
         {
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${this.cryptoService.decrypt(
               connection.access_token,
             )}`,

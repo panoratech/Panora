@@ -129,7 +129,9 @@ export class ZendeskService implements ITicketService {
         },
       });
 
-      const request_url = remote_ticket_id ? `${connection.account_url}/tickets/${remote_ticket_id}.json` : `${connection.account_url}/tickets.json`;
+      const request_url = remote_ticket_id
+        ? `${connection.account_url}/tickets/${remote_ticket_id}.json`
+        : `${connection.account_url}/tickets.json`;
 
       const resp = await axios.get(request_url, {
         headers: {
@@ -158,5 +160,4 @@ export class ZendeskService implements ITicketService {
       );
     }
   }
-
 }

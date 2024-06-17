@@ -6,7 +6,13 @@ import {
   ICrmConnectionService,
   RefreshParams,
 } from '../../types';
-import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -32,7 +38,6 @@ export interface PipedriveOAuthResponse {
 @Injectable()
 export class PipedriveConnectionService implements ICrmConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -41,6 +46,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(PipedriveConnectionService.name);
     this.registry.registerService('pipedrive', this);
@@ -134,17 +140,18 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_CRM",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_CRM',
           message: `PipedriveConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            "pipedrive",
+            'pipedrive',
             Action.oauthCallback,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)    
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -189,17 +196,18 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : pipedrive ');
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_REFRESH_CRM",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_CRM',
           message: `PipedriveConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            "pipedrive",
+            'pipedrive',
             Action.oauthRefresh,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)     
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

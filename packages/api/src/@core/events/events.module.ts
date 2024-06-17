@@ -6,7 +6,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { ValidateUserService } from '@@core/utils/services/validateUser.service';
 
 @Module({
-  providers: [EventsService, LoggerService, PrismaService, ValidateUserService],
+  providers: [EventsService, LoggerService, ValidateUserService],
   controllers: [EventsController],
 })
 export class EventsModule {}

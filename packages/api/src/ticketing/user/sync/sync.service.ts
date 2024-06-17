@@ -6,7 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { unify } from '@@core/utils/unification/unify';
+
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { IUserService } from '../types';
@@ -17,6 +17,7 @@ import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { SyncError, throwTypedError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,6 +27,7 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -187,14 +189,20 @@ export class SyncService implements OnModuleInit {
             break;
         }
       } else {
-        resp = await service.syncUsers(linkedUserId, undefined, remoteProperties);
+        resp = await service.syncUsers(
+          linkedUserId,
+          undefined,
+          remoteProperties,
+        );
       }
 
       const sourceObject: OriginalUserOutput[] = resp.data;
       // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       // console.log("Source Data ", sourceObject)
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalUserOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalUserOutput[]
+      >({
         sourceObject,
         targetType: TicketingObject.user,
         providerName: integrationId,
@@ -283,7 +291,7 @@ export class SyncService implements OnModuleInit {
             name: user.name,
             email_address: user.email_address,
             teams: user.teams || [],
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             // id_tcg_account: user.account_id || '',

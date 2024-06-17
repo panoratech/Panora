@@ -31,11 +31,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/notes')
 @Controller('crm/notes')
 export class NoteController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly noteService: NoteService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(NoteController.name);
   }
@@ -69,7 +68,7 @@ export class NoteController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

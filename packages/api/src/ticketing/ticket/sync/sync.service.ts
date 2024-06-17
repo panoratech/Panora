@@ -6,7 +6,7 @@ import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { unify } from '@@core/utils/unification/unify';
+
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { UnifiedTicketOutput } from '../types/model.unified';
 import { WebhookService } from '@@core/webhook/webhook.service';
@@ -17,6 +17,7 @@ import { ServiceRegistry } from '../services/registry.service';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,6 +27,7 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -163,7 +165,7 @@ export class SyncService implements OnModuleInit {
 
       const service: ITicketService =
         this.serviceRegistry.getService(integrationId);
-      
+
       let resp: ApiResponse<OriginalTicketOutput[]>;
       if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
         //meaning the call has been from a real time webhook that received data from a 3rd party
@@ -183,13 +185,19 @@ export class SyncService implements OnModuleInit {
             break;
         }
       } else {
-        resp = await service.syncTickets(linkedUserId, undefined, remoteProperties);
+        resp = await service.syncTickets(
+          linkedUserId,
+          undefined,
+          remoteProperties,
+        );
       }
 
       const sourceObject: OriginalTicketOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalTicketOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalTicketOutput[]
+      >({
         sourceObject,
         targetType: TicketingObject.ticket,
         providerName: integrationId,
@@ -298,11 +306,11 @@ export class SyncService implements OnModuleInit {
           tickets_results = [...tickets_results, res];
         } else {
           // Create a new ticket
-          // this.logger.log('not existing ticket ' + ticket.name);
+          this.logger.log('not existing ticket ' + ticket.name);
 
           let data: any = {
             id_tcg_ticket: uuidv4(),
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

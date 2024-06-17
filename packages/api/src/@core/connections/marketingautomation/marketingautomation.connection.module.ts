@@ -8,18 +8,20 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { MarketingAutomationConnectionsService } from './services/marketingautomation.connection.service';
 import { ServiceRegistry } from './services/registry.service';
+import { ConnectionUtils } from '../@utils';
 
 @Module({
   imports: [WebhookModule],
   providers: [
     MarketingAutomationConnectionsService,
-    PrismaService,
+
     LoggerService,
     WebhookService,
     EnvironmentService,
     EncryptionService,
     ServiceRegistry,
     ConnectionsStrategiesService,
+    ConnectionUtils,
     //PROVIDERS SERVICES
   ],
   exports: [MarketingAutomationConnectionsService],

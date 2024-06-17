@@ -28,11 +28,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/accounts')
 @Controller('ticketing/accounts')
 export class AccountController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly accountService: AccountService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AccountController.name);
   }
@@ -66,7 +65,7 @@ export class AccountController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

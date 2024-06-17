@@ -42,10 +42,12 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
   };
 
   const openModal = async (onWindowClose: () => void) => {
-    const apiUrl = optionalApiUrl ? optionalApiUrl : config.API_URL!;
+    const apiUrl = config.API_URL!;
+    const redirectUrlIngressWhenLocalDev = optionalApiUrl;
     const authUrl = await constructAuthUrl({
-      projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical
+      projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, redirectUrlIngressWhenLocalDev
     });
+    console.log('auth url is '+ authUrl)
 
     if (!authUrl) {
       throw new Error("Auth Url is Invalid " + authUrl);

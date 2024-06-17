@@ -41,7 +41,6 @@ export type JiraOAuthResponse = {
 @Injectable()
 export class JiraConnectionService implements ITicketingConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -50,6 +49,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(JiraConnectionService.name);
     this.registry.registerService('jira', this);

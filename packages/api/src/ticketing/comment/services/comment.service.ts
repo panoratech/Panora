@@ -10,11 +10,10 @@ import {
   UnifiedCommentOutput,
 } from '../types/model.unified';
 import { ICommentService } from '../types';
-import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@lib/@types';
-import { unify } from '@@core/utils/unification/unify';
 import { ServiceRegistry } from './registry.service';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class CommentService {
@@ -23,6 +22,7 @@ export class CommentService {
     private logger: LoggerService,
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(CommentService.name);
   }
@@ -134,13 +134,14 @@ export class CommentService {
       }
 
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedCommentInput>({
-        sourceObject: unifiedCommentData,
-        targetType: TicketingObject.comment,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        customFieldMappings: [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedCommentInput>({
+          sourceObject: unifiedCommentData,
+          targetType: TicketingObject.comment,
+          providerName: integrationId,
+          vertical: 'ticketing',
+          customFieldMappings: [],
+        });
 
       const service: ICommentService =
         this.serviceRegistry.getService(integrationId);
@@ -164,7 +165,9 @@ export class CommentService {
       );
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalCommentOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalCommentOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: TicketingObject.comment,
         providerName: integrationId,

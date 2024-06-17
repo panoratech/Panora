@@ -4,8 +4,15 @@ import {
   UnifiedStageOutput,
 } from '@crm/stage/types/model.unified';
 import { IStageMapper } from '@crm/stage/types';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@crm/@lib/@utils';
 
+@Injectable()
 export class CloseStageMapper implements IStageMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'stage', 'close', this);
+  }
   desunify(
     source: UnifiedStageInput,
     customFieldMappings?: {

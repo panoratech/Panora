@@ -18,10 +18,11 @@ import { CoreModule } from '@@core/core.module';
 import { BullModule } from '@nestjs/bull';
 import { TicketingModule } from '@ticketing/ticketing.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-
+import { PrismaModule } from '@@core/prisma/prisma.module';
 
 @Module({
   imports: [
+    PrismaModule,
     CoreModule,
     HrisModule,
     MarketingAutomationModule,
@@ -54,12 +55,21 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         customProps: (req, res) => ({
           context: 'HTTP',
         }),
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            singleLine: true,
-          },
-        },
+        transport:
+          process.env.ENV === 'prod'
+            ? {
+                target: '@axiomhq/pino',
+                options: {
+                  dataset: process.env.AXIOM_DATASET,
+                  token: process.env.AXIOM_TOKEN,
+                },
+              }
+            : {
+                target: 'pino-pretty',
+                options: {
+                  singleLine: true,
+                },
+              },
       },
     }),
     BullModule.forRoot({
@@ -71,7 +81,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         db: Number(process.env.REDIS_DB) || 0,
         //enableReadyCheck: false,
         //maxRetriesPerRequest: null,
-        tls: process.env.REDIS_TLS ? { rejectUnauthorized: false } : undefined
+        tls: process.env.REDIS_TLS ? { rejectUnauthorized: false } : undefined,
       },
     }),
   ],

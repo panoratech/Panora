@@ -13,19 +13,17 @@ import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class JiraService implements ITicketService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + JiraService.name,
     );
     this.registry.registerService('jira', this);
-    this.utils = new Utils();
   }
 
   async addTicket(
@@ -76,7 +74,7 @@ export class JiraService implements ITicketService {
   async syncTickets(
     linkedUserId: string,
     remote_ticket_id?: string,
-    ): Promise<ApiResponse<JiraTicketOutput[]>> {
+  ): Promise<ApiResponse<JiraTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {

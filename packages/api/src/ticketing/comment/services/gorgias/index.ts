@@ -14,19 +14,17 @@ import * as fs from 'fs';
 
 @Injectable()
 export class GorgiasService implements ICommentService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.comment.toUpperCase() + ':' + GorgiasService.name,
     );
     this.registry.registerService('gorgias', this);
-    this.utils = new Utils();
   }
 
   async addComment(

@@ -5,7 +5,7 @@ import { LoggerService } from '../logger/logger.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
-  providers: [ProjectConnectorsService, LoggerService, PrismaService],
+  providers: [ProjectConnectorsService, LoggerService],
   controllers: [ProjectConnectorsController],
 })
 export class ProjectConnectorsModule {}

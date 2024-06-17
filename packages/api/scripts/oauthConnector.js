@@ -76,8 +76,8 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-    private cService: ConnectionsStrategiesService,
-  ) {
+private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,  ) {
     this.logger.setContext(${providerUpper}ConnectionService.name);
     this.registry.registerService('${provider.toLowerCase()}', this);
     this.type = providerToType('${provider.toLowerCase()}', '${vertical.toLowerCase()}', AuthStrategy.oauth2);

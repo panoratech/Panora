@@ -2,7 +2,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import { unify } from '@@core/utils/unification/unify';
+
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '@crm/contact/types/model.unified';
 import { CrmObject } from '@crm/@lib/@types';
@@ -18,21 +18,21 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { Utils } from '@crm/@lib/@utils';
 import { throwTypedError, SyncError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
+    private utils: Utils,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
-    this.utils = new Utils();
   }
 
   async onModuleInit() {
@@ -85,12 +85,12 @@ export class SyncService implements OnModuleInit {
 
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -163,7 +163,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping contacts syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -184,7 +183,9 @@ export class SyncService implements OnModuleInit {
       const sourceObject: OriginalContactOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalContactOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalContactOutput[]
+      >({
         sourceObject,
         targetType: CrmObject.contact,
         providerName: integrationId,
@@ -376,7 +377,7 @@ export class SyncService implements OnModuleInit {
             id_crm_contact: uuid,
             first_name: '',
             last_name: '',
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

@@ -35,7 +35,6 @@ export class PennylaneConnectionService
   implements IAccountingConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -44,6 +43,7 @@ export class PennylaneConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(PennylaneConnectionService.name);
     this.registry.registerService('pennylane', this);
@@ -61,8 +61,11 @@ export class PennylaneConnectionService
         },
       });
 
-      //reconstruct the redirect URI that was passed in the githubend it must be the same
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getWebhookIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -86,7 +89,7 @@ export class PennylaneConnectionService
       );
       const data: PennylaneOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : pennylane ticketing ' + JSON.stringify(data),
+        'OAuth credentials : pennylane accounting ' + JSON.stringify(data),
       );
 
       let db_res;

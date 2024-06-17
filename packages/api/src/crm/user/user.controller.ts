@@ -28,11 +28,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/users')
 @Controller('crm/users')
 export class UserController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly userService: UserService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(UserController.name);
   }
@@ -66,7 +65,7 @@ export class UserController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

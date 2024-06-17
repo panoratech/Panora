@@ -1,7 +1,5 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
 import { LoggerService } from '../logger/logger.service';
-import axios, { AxiosError } from 'axios';
-import { Prisma } from '@prisma/client';
+import { AxiosError } from 'axios';
 import { TargetObject } from './types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 

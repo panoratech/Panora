@@ -75,7 +75,8 @@ export class TicketingConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
+      throw error;
+      /*throwTypedError(
         new ConnectionsError({
           name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
           message:
@@ -83,7 +84,7 @@ export class TicketingConnectionsService {
           cause: error,
         }),
         this.logger,
-      );
+      );*/
     }
   }
 

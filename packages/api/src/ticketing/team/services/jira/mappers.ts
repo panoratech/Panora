@@ -4,8 +4,15 @@ import {
   UnifiedTeamInput,
   UnifiedTeamOutput,
 } from '@ticketing/team/types/model.unified';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 
+@Injectable()
 export class JiraTeamMapper implements ITeamMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('ticketing', 'team', 'jira', this);
+  }
   desunify(
     source: UnifiedTeamInput,
     customFieldMappings?: {

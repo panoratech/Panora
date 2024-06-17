@@ -21,7 +21,7 @@ import { ValidateUserService } from '@@core/utils/services/validateUser.service'
   ],
   providers: [
     WebhookService,
-    PrismaService,
+
     LoggerService,
     WebhookProcessor,
     ValidateUserService,

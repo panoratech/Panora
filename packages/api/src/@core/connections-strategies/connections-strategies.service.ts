@@ -334,6 +334,7 @@ export class ConnectionsStrategiesService {
   async getCredentials(projectId: string, type: string) {
     try {
       const isCustomCred = await this.isCustomCredentials(projectId, type);
+      console.log('inside get credentials...');
       const provider = extractProvider(type);
       const vertical = extractVertical(type);
       //TODO: extract sofwtaremode
@@ -357,12 +358,14 @@ export class ConnectionsStrategiesService {
         );
       } else {
         // type is of form = HUBSPOT_CRM_CLOUD_OAUTH so we must extract the parts
-        return this.getEnvData(
+        const res = this.getEnvData(
           provider,
           vertical,
           authStrategy,
           SoftwareMode.cloud,
         );
+        console.log('CONNECTION STRATEGY result is' + JSON.stringify(res));
+        return res;
       }
     } catch (error) {
       throwTypedError(

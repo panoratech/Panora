@@ -6,7 +6,7 @@ import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { unify } from '@@core/utils/unification/unify';
+
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '../types/model.unified';
@@ -17,6 +17,7 @@ import { OriginalContactOutput } from '@@core/utils/types/original/original.tick
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,6 +27,7 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -186,20 +188,26 @@ export class SyncService implements OnModuleInit {
               integrationId,
               wh_real_time_trigger.data.remote_id,
             );
-            default:
-              resp = await service.syncContacts(
-                linkedUserId,
-                wh_real_time_trigger.data.remote_id,
-                remoteProperties,
-              );
-              break;
-          }
-        } else {
-          resp = await service.syncContacts(linkedUserId, remote_account_id, remoteProperties);
+          default:
+            resp = await service.syncContacts(
+              linkedUserId,
+              wh_real_time_trigger.data.remote_id,
+              remoteProperties,
+            );
+            break;
         }
+      } else {
+        resp = await service.syncContacts(
+          linkedUserId,
+          remote_account_id,
+          remoteProperties,
+        );
+      }
       const sourceObject: OriginalContactOutput[] = resp.data;
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalContactOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalContactOutput[]
+      >({
         sourceObject,
         targetType: TicketingObject.contact,
         providerName: integrationId,
@@ -304,7 +312,7 @@ export class SyncService implements OnModuleInit {
             email_address: contact.email_address,
             phone_number: contact.phone_number,
             details: contact.details,
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,

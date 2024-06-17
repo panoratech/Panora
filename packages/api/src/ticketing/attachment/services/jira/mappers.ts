@@ -4,9 +4,21 @@ import {
   UnifiedAttachmentOutput,
 } from '@ticketing/attachment/types/model.unified';
 import { JiraAttachmentOutput } from './types';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 
 //TODO:
+@Injectable()
 export class JiraAttachmentMapper implements IAttachmentMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService(
+      'ticketing',
+      'attachment',
+      'jira',
+      this,
+    );
+  }
   async desunify(
     source: UnifiedAttachmentInput,
     customFieldMappings?: {

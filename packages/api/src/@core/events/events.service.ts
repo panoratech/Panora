@@ -47,9 +47,27 @@ export class EventsService {
     }
   }
 
-  async getEventsCount() {
+  async getEventsCount(id_project: string) {
     try {
-      return await this.prisma.events.count();
+      const linkedUsers = await this.prisma.linked_users.findMany({
+        where: {
+          id_project,
+        },
+        select: {
+          id_linked_user: true,
+        },
+      });
+
+      // Extract the ids of the linked_users
+      const linkedUserIds = linkedUsers.map((user) => user.id_linked_user);
+
+      return await this.prisma.events.count({
+        where: {
+          id_linked_user: {
+            in: linkedUserIds,
+          },
+        },
+      });
     } catch (error) {
       throwTypedError(
         new EventsError({

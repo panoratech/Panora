@@ -1,48 +1,40 @@
 import { ICompanyService } from '@crm/company/types';
-import { companyUnificationMapping } from '@crm/company/types/mappingsTypes';
 import {
   UnifiedCompanyInput,
   UnifiedCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { IContactService } from '@crm/contact/types';
-import { contactUnificationMapping } from '@crm/contact/types/mappingsTypes';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IDealService } from '@crm/deal/types';
-import { dealUnificationMapping } from '@crm/deal/types/mappingsTypes';
 import {
   UnifiedDealInput,
   UnifiedDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IEngagementService } from '@crm/engagement/types';
-import { engagementUnificationMapping } from '@crm/engagement/types/mappingsTypes';
 import {
   UnifiedEngagementInput,
   UnifiedEngagementOutput,
 } from '@crm/engagement/types/model.unified';
 
 import { INoteService } from '@crm/note/types';
-import { noteUnificationMapping } from '@crm/note/types/mappingsTypes';
 import {
   UnifiedNoteInput,
   UnifiedNoteOutput,
 } from '@crm/note/types/model.unified';
 import { IStageService } from '@crm/stage/types';
-import { stageUnificationMapping } from '@crm/stage/types/mappingsTypes';
 import {
   UnifiedStageInput,
   UnifiedStageOutput,
 } from '@crm/stage/types/model.unified';
 import { ITaskService } from '@crm/task/types';
-import { taskUnificationMapping } from '@crm/task/types/mappingsTypes';
 import {
   UnifiedTaskInput,
   UnifiedTaskOutput,
 } from '@crm/task/types/model.unified';
 import { IUserService } from '@crm/user/types/';
-import { userUnificationMapping } from '@crm/user/types/mappingsTypes';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   UnifiedUserInput,
@@ -83,7 +75,7 @@ export type UnifiedCrm =
   | UnifiedUserInput
   | UnifiedUserOutput;
 
-export const unificationMapping = {
+/*export const unificationMapping = {
   [CrmObject.contact]: contactUnificationMapping,
   [CrmObject.deal]: dealUnificationMapping,
   [CrmObject.company]: companyUnificationMapping,
@@ -92,7 +84,7 @@ export const unificationMapping = {
   [CrmObject.stage]: stageUnificationMapping,
   [CrmObject.task]: taskUnificationMapping,
   [CrmObject.user]: userUnificationMapping,
-};
+};*/
 
 export type ICrmService =
   | IContactService

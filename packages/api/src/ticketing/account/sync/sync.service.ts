@@ -7,7 +7,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { unify } from '@@core/utils/unification/unify';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedAccountOutput } from '../types/model.unified';
@@ -17,6 +16,7 @@ import { tcg_accounts as TicketingAccount } from '@prisma/client';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,6 +26,7 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -164,7 +165,7 @@ export class SyncService implements OnModuleInit {
 
       const service: IAccountService =
         this.serviceRegistry.getService(integrationId);
-     
+
       let resp: ApiResponse<OriginalAccountOutput[]>;
       if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
         //meaning the call has been from a real time webhook that received data from a 3rd party
@@ -184,14 +185,20 @@ export class SyncService implements OnModuleInit {
             break;
         }
       } else {
-        resp = await service.syncAccounts(linkedUserId, undefined, remoteProperties);
+        resp = await service.syncAccounts(
+          linkedUserId,
+          undefined,
+          remoteProperties,
+        );
       }
 
       const sourceObject: OriginalAccountOutput[] = resp.data;
       // this.logger.log('resp is ' + sourceObject);
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalAccountOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalAccountOutput[]
+      >({
         sourceObject,
         targetType: TicketingObject.account,
         providerName: integrationId,

@@ -24,6 +24,9 @@ import { TagModule } from '@ticketing/tag/tag.module';
 import { TeamModule } from '@ticketing/team/team.module';
 import { TicketModule } from '@ticketing/ticket/ticket.module';
 import { UserModule as TUserModule } from '@ticketing/user/user.module';
+import { FilestorageConnectionModule } from './filestorage/filestorage.connection.module';
+import { HrisConnectionModule } from './hris/hris.connection.module';
+import { ConnectionUtils } from './@utils';
 
 @Module({
   controllers: [ConnectionsController],
@@ -32,6 +35,8 @@ import { UserModule as TUserModule } from '@ticketing/user/user.module';
     TicketingConnectionModule,
     AccountingConnectionModule,
     MarketingAutomationConnectionsModule,
+    FilestorageConnectionModule,
+    HrisConnectionModule,
     CompanyModule,
     ContactModule,
     DealModule,
@@ -47,14 +52,21 @@ import { UserModule as TUserModule } from '@ticketing/user/user.module';
     TagModule,
     TeamModule,
     TicketModule,
-    TUserModule
+    TUserModule,
   ],
-  providers: [LoggerService, PrismaService, ValidateUserService, CoreSyncService],
+  providers: [
+    LoggerService,
+    ValidateUserService,
+    CoreSyncService,
+    ConnectionUtils,
+  ],
   exports: [
     CrmConnectionModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
     MarketingAutomationConnectionsModule,
+    FilestorageConnectionModule,
+    HrisConnectionModule,
   ],
 })
-export class ConnectionsModule { }
+export class ConnectionsModule {}

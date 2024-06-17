@@ -54,213 +54,16 @@ export class CoreSyncService {
     id_project: string,
   ) {
     try {
-      const tasks = [];
-
       switch (vertical) {
         case ConnectorCategory.Crm:
-          tasks.push(() =>
-            this.CrmUserSyncService.syncUsersForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-          tasks.push(() =>
-            this.CrmCompanySyncService.syncCompaniesForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-          tasks.push(() =>
-            this.CrmContactSyncService.syncContactsForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-          tasks.push(() =>
-            this.CrmDealSyncService.syncDealsForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-
-          for (const type of ENGAGEMENTS_TYPE) {
-            tasks.push(() =>
-              this.CrmEngagementSyncService.syncEngagementsForLinkedUser(
-                provider,
-                linkedUserId,
-                id_project,
-                type,
-              ),
-            );
-          }
-
-          tasks.push(() =>
-            this.CrmNoteSyncService.syncNotesForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-          tasks.push(() =>
-            this.CrmTaskSyncService.syncTasksForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-
-          for (const task of tasks) {
-            try {
-              await task();
-            } catch (error) {
-              throwTypedError(
-                new CoreSyncError({
-                  name: 'CRM_INITIAL_SYNC_ERROR',
-                  message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-                    {
-                      vertical,
-                      provider,
-                      linkedUserId,
-                      id_project,
-                    },
-                  )}`,
-                  cause: error,
-                }),
-                this.logger,
-              );
-            }
-          }
-
-          const deals = await this.prisma.crm_deals.findMany({
-            where: {
-              remote_platform: provider,
-              id_linked_user: linkedUserId,
-            },
-          });
-          for (const deal of deals) {
-            await this.CrmStageSyncService.syncStagesForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-              deal.id_crm_deal,
-            );
-          }
+          await this.handleCrmSync(provider, linkedUserId, id_project);
           break;
-
         case ConnectorCategory.Ticketing:
-          tasks.push(() =>
-            this.TicketingUserSyncService.syncUsersForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-          tasks.push(() =>
-            this.TicketingAccountSyncService.syncAccountsForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-          tasks.push(() =>
-            this.TicketingCollectionSyncService.syncCollectionsForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-          tasks.push(() =>
-            this.TicketingTicketSyncService.syncTicketsForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-          tasks.push(() =>
-            this.TicketingTeamSyncService.syncTeamsForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-          tasks.push(() =>
-            this.TicketingContactSyncService.syncContactsForLinkedUser(
-              provider,
-              linkedUserId,
-              id_project,
-            ),
-          );
-
-          for (const task of tasks) {
-            try {
-              await task();
-            } catch (error) {
-              throwTypedError(
-                new CoreSyncError({
-                  name: 'TICKETING_INITIAL_SYNC_ERROR',
-                  message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-                    {
-                      vertical,
-                      provider,
-                      linkedUserId,
-                      id_project,
-                    },
-                  )}`,
-                  cause: error,
-                }),
-                this.logger,
-              );
-            }
-          }
-
-          const tickets = await this.prisma.tcg_tickets.findMany({
-            where: {
-              remote_platform: provider,
-              id_linked_user: linkedUserId,
-            },
-          });
-
-          for (const ticket of tickets) {
-            try {
-              await this.TicketingCommentSyncService.syncCommentsForLinkedUser(
-                provider,
-                linkedUserId,
-                id_project,
-                ticket.id_tcg_ticket,
-              );
-              await this.TicketingTagSyncService.syncTagsForLinkedUser(
-                provider,
-                linkedUserId,
-                id_project,
-                ticket.id_tcg_ticket,
-              );
-            } catch (error) {
-              throwTypedError(
-                new CoreSyncError({
-                  name: 'TICKETING_INITIAL_SYNC_ERROR',
-                  message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-                    {
-                      vertical,
-                      provider,
-                      linkedUserId,
-                      id_project,
-                    },
-                  )}`,
-                  cause: error,
-                }),
-                this.logger,
-              );
-            }
-          }
-
+          await this.handleTicketingSync(provider, linkedUserId, id_project);
           break;
       }
     } catch (error) {
-      throwTypedError(
+      /*throwTypedError(
         new CoreSyncError({
           name: 'INITIAL_SYNC_ERROR',
           message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
@@ -274,8 +77,325 @@ export class CoreSyncService {
           cause: error,
         }),
         this.logger,
+      );*/
+      throw error;
+    }
+  }
+
+  async handleCrmSync(
+    provider: string,
+    linkedUserId: string,
+    id_project: string,
+  ) {
+    const tasks = [
+      () =>
+        this.CrmUserSyncService.syncUsersForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+      () =>
+        this.CrmCompanySyncService.syncCompaniesForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+      () =>
+        this.CrmCompanySyncService.syncCompaniesForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+      () =>
+        this.CrmContactSyncService.syncContactsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+      () =>
+        this.CrmDealSyncService.syncDealsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+    ];
+
+    for (const type of ENGAGEMENTS_TYPE) {
+      tasks.push(() =>
+        this.CrmEngagementSyncService.syncEngagementsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+          type,
+        ),
       );
     }
+
+    tasks.push(() =>
+      this.CrmNoteSyncService.syncNotesForLinkedUser(
+        provider,
+        linkedUserId,
+        id_project,
+      ),
+    );
+    tasks.push(() =>
+      this.CrmTaskSyncService.syncTasksForLinkedUser(
+        provider,
+        linkedUserId,
+        id_project,
+      ),
+    );
+
+    // Execute all tasks and handle results
+    const results = await Promise.allSettled(tasks.map((task) => task()));
+
+    const deals = await this.prisma.crm_deals.findMany({
+      where: {
+        remote_platform: provider,
+        id_linked_user: linkedUserId,
+      },
+    });
+
+    const stageTasks = deals.map((deal) =>
+      this.CrmStageSyncService.syncStagesForLinkedUser(
+        provider,
+        linkedUserId,
+        id_project,
+        deal.id_crm_deal,
+      ),
+    );
+
+    const stageResults = await Promise.allSettled(stageTasks);
+
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        this.logger.error(`Task ${index} failed:`, result.reason);
+        throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'crm',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );
+      }
+    });
+
+    stageResults.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        this.logger.error(`Stage task ${index} failed:`, result.reason);
+        throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'crm',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );
+      }
+    });
+  }
+
+  async handleTicketingSync(
+    provider: string,
+    linkedUserId: string,
+    id_project: string,
+  ) {
+    const tasks = [
+      () =>
+        this.TicketingTicketSyncService.syncTicketsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+      () =>
+        this.TicketingUserSyncService.syncUsersForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+      () =>
+        this.TicketingAccountSyncService.syncAccountsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+      () =>
+        this.TicketingCollectionSyncService.syncCollectionsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+      () =>
+        this.TicketingTeamSyncService.syncTeamsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+        ),
+    ];
+
+    const results = await Promise.allSettled(tasks.map((task) => task()));
+
+    const accounts = await this.prisma.tcg_accounts.findMany({
+      where: {
+        remote_platform: provider,
+        id_linked_user: linkedUserId,
+      },
+    });
+    let contactTasks = [];
+    if (accounts) {
+      contactTasks = accounts.map((acc) =>
+        this.TicketingContactSyncService.syncContactsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+          acc.id_tcg_account,
+        ),
+      );
+    } else {
+      contactTasks = [
+        () =>
+          this.TicketingContactSyncService.syncContactsForLinkedUser(
+            provider,
+            linkedUserId,
+            id_project,
+          ),
+      ];
+    }
+    const contactTasksResults = await Promise.allSettled(contactTasks);
+
+    const tickets = await this.prisma.tcg_tickets.findMany({
+      where: {
+        remote_platform: provider,
+        id_linked_user: linkedUserId,
+      },
+    });
+
+    const ticketCommentTasks = tickets.map((ticket) =>
+      this.TicketingCommentSyncService.syncCommentsForLinkedUser(
+        provider,
+        linkedUserId,
+        id_project,
+        ticket.id_tcg_ticket,
+      ),
+    );
+
+    const ticketTagsTasks = tickets.map((ticket) =>
+      this.TicketingTagSyncService.syncTagsForLinkedUser(
+        provider,
+        linkedUserId,
+        id_project,
+        ticket.id_tcg_ticket,
+      ),
+    );
+
+    const ticketCommentResults = await Promise.allSettled(ticketCommentTasks);
+    const ticketTagsResults = await Promise.allSettled(ticketTagsTasks);
+
+    contactTasksResults.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        this.logger.error(
+          `contactTasksResults ${index} failed:`,
+          result.reason,
+        );
+        /*throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'ticketing',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );*/
+        throw result.reason;
+      }
+    });
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        this.logger.error(`Task ${index} failed:`, result.reason);
+        /*throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'ticketing',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );*/
+        throw result.reason;
+      }
+    });
+
+    ticketCommentResults.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        this.logger.error(
+          `Ticket Comment task ${index} failed:`,
+          result.reason,
+        );
+        throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'ticketing',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );
+      }
+    });
+
+    ticketTagsResults.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        this.logger.error(`Ticket Tags task ${index} failed:`, result.reason);
+        throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'ticketing',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );
+      }
+    });
   }
 
   // we must have a sync_jobs table with 7 (verticals) rows, one of each is syncing details

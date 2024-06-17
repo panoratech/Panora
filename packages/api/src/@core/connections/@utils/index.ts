@@ -1,5 +1,6 @@
+import { PrismaService } from '@@core/prisma/prisma.service';
 import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
-import { PrismaClient } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
 export type ConnectionMetadata = {
@@ -7,12 +8,9 @@ export type ConnectionMetadata = {
   remoteSource: string;
 };
 
+@Injectable()
 export class ConnectionUtils {
-  private readonly prisma: PrismaClient;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async getConnectionMetadataFromConnectionToken(
     token: string,
@@ -23,19 +21,21 @@ export class ConnectionUtils {
           connection_token: token,
         },
       });
-      if (!res) throw new ReferenceError(`Connection undefined for token ${token}`);
+      if (!res)
+        throw new ReferenceError(`Connection undefined for token ${token}`);
       return {
         linkedUserId: res.id_linked_user,
         remoteSource: res.provider_slug,
       };
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "GET_CONNECTION_FROM_CONNECTION_TOKEN_ERROR",
-          message: "ConnectionUtils.getConnectionMetadataFromConnectionToken() call failed",
-          cause: error
-        }
-      ))
+      throwTypedError(
+        new ConnectionsError({
+          name: 'GET_CONNECTION_FROM_CONNECTION_TOKEN_ERROR',
+          message:
+            'ConnectionUtils.getConnectionMetadataFromConnectionToken() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

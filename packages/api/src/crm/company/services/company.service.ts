@@ -8,28 +8,27 @@ import {
   UnifiedCompanyInput,
   UnifiedCompanyOutput,
 } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
 import { CrmObject } from '@crm/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
-import { unify } from '@@core/utils/unification/unify';
 import { ICompanyService } from '../types';
 import { Utils } from '@crm/@lib/@utils';
 import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class CompanyService {
-  private readonly utils: Utils;
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private utils: Utils,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(CompanyService.name);
-    this.utils = new Utils();
   }
 
   async batchAddCompanies(
@@ -93,13 +92,14 @@ export class CompanyService {
       }
 
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedCompanyInput>({
-        sourceObject: unifiedCompanyData,
-        targetType: CrmObject.company,
-        providerName: integrationId,
-        vertical: 'crm',
-        customFieldMappings: [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedCompanyInput>({
+          sourceObject: unifiedCompanyData,
+          targetType: CrmObject.company,
+          providerName: integrationId,
+          vertical: 'crm',
+          customFieldMappings: [],
+        });
 
       const service: ICompanyService =
         this.serviceRegistry.getService(integrationId);
@@ -110,7 +110,9 @@ export class CompanyService {
       );
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalCompanyOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalCompanyOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: CrmObject.company,
         providerName: integrationId,

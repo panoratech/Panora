@@ -15,18 +15,20 @@ import { MoneybirdConnectionService } from './services/moneybird/moneybird.servi
 import { QuickbooksConnectionService } from './services/quickbooks/quickbooks.service';
 import { SageConnectionService } from './services/sage/sage.service';
 import { WaveFinancialConnectionService } from './services/wave_financial/wave_financial.service';
+import { XeroConnectionService } from './services/xero/xero.service';
+import { ConnectionUtils } from '../@utils';
 
 @Module({
   imports: [WebhookModule],
   providers: [
     AccountingConnectionsService,
-    PrismaService,
     LoggerService,
     WebhookService,
     EnvironmentService,
     EncryptionService,
     ServiceRegistry,
     ConnectionsStrategiesService,
+    ConnectionUtils,
     //PROVIDERS SERVICES,
     PennylaneConnectionService,
     FreeagentConnectionService,
@@ -35,6 +37,7 @@ import { WaveFinancialConnectionService } from './services/wave_financial/wave_f
     QuickbooksConnectionService,
     SageConnectionService,
     WaveFinancialConnectionService,
+    XeroConnectionService,
   ],
   exports: [AccountingConnectionsService],
 })

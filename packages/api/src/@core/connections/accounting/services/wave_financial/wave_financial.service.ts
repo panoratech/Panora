@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -32,7 +38,6 @@ export class WaveFinancialConnectionService
   implements IAccountingConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -41,6 +46,7 @@ export class WaveFinancialConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(WaveFinancialConnectionService.name);
     this.registry.registerService('wave_financial', this);
@@ -87,7 +93,7 @@ export class WaveFinancialConnectionService
       );
       const data: WaveFinancialOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : wave_financial ticketing ' + JSON.stringify(data),
+        'OAuth credentials : wave_financial accounting ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -143,17 +149,18 @@ export class WaveFinancialConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_ACCOUNTING",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
           message: `WaveFinancialConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            "wave_financial",
+            'wave_financial',
             Action.oauthCallback,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)    
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -199,17 +206,18 @@ export class WaveFinancialConnectionService
       });
       this.logger.log('OAuth credentials updated : wave_financial ');
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_REFRESH_ACCOUNTING",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
           message: `WaveFinancialConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            "wave_financial",
+            'wave_financial',
             Action.oauthRefresh,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)     
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

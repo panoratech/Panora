@@ -6,7 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { unify } from '@@core/utils/unification/unify';
+
 import { CrmObject } from '@crm/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedDealOutput } from '../types/model.unified';
@@ -17,6 +17,7 @@ import { CRM_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { throwTypedError, SyncError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,6 +27,7 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -152,7 +154,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping deals syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -175,7 +176,9 @@ export class SyncService implements OnModuleInit {
       const sourceObject: OriginalDealOutput[] = resp.data;
       // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalDealOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalDealOutput[]
+      >({
         sourceObject,
         targetType: CrmObject.deal,
         providerName: integrationId,
@@ -279,7 +282,7 @@ export class SyncService implements OnModuleInit {
           this.logger.log('deal not exists');
           let data: any = {
             id_crm_deal: uuidv4(),
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             description: '',

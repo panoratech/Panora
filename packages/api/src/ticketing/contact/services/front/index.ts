@@ -44,7 +44,6 @@ export class FrontService implements IContactService {
         `${connection.account_url}/accounts/${remote_account_id}/contacts`,
         {
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${this.cryptoService.decrypt(
               connection.access_token,
             )}`,
@@ -59,13 +58,14 @@ export class FrontService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
+      throw error;
+      /*handle3rdPartyServiceError(
         error,
         this.logger,
         'front',
         TicketingObject.contact,
         ActionType.GET,
-      );
+      );*/
     }
   }
 }

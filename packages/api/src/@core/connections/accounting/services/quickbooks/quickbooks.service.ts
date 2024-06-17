@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -30,7 +36,6 @@ export class QuickbooksConnectionService
   implements IAccountingConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -39,6 +44,7 @@ export class QuickbooksConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(QuickbooksConnectionService.name);
     this.registry.registerService('quickbooks', this);
@@ -82,7 +88,7 @@ export class QuickbooksConnectionService
       );
       const data: QuickbooksOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : quickbooks ticketing ' + JSON.stringify(data),
+        'OAuth credentials : quickbooks accounting ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -138,17 +144,18 @@ export class QuickbooksConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_ACCOUNTING",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
           message: `QuickbooksConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            "quickbooks",
+            'quickbooks',
             Action.oauthCallback,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)    
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -164,14 +171,18 @@ export class QuickbooksConnectionService
         this.type,
       )) as OAuth2AuthData;
 
-      const res = await axios.post('', formData.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          Authorization: `Basic ${Buffer.from(
-            `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-          ).toString('base64')}`,
+      const res = await axios.post(
+        'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic ${Buffer.from(
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+            ).toString('base64')}`,
+          },
         },
-      });
+      );
       const data: QuickbooksOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
@@ -187,17 +198,18 @@ export class QuickbooksConnectionService
       });
       this.logger.log('OAuth credentials updated : quickbooks ');
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_REFRESH_ACCOUNTING",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
           message: `QuickbooksConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            "quickbooks",
+            'quickbooks',
             Action.oauthRefresh,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)     
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

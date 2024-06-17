@@ -15,6 +15,9 @@ import { ConnectionsStrategiesModule } from './connections-strategies/connection
 import { SyncModule } from './sync/sync.module';
 import { ProjectConnectorsModule } from './project-connectors/project-connectors.module';
 import { LoggerService } from './logger/logger.service';
+import { MappersRegistry } from './utils/registry/mappings.registry';
+import { UnificationRegistry } from './utils/registry/unification.registry';
+import { CoreUnification } from './utils/services/core.service';
 
 @Module({
   imports: [
@@ -48,7 +51,16 @@ import { LoggerService } from './logger/logger.service';
     ConnectionsStrategiesModule,
     SyncModule,
     ProjectConnectorsModule,
+    MappersRegistry,
+    UnificationRegistry,
+    CoreUnification,
   ],
-  providers: [EncryptionService, LoggerService],
+  providers: [
+    EncryptionService,
+    LoggerService,
+    MappersRegistry,
+    UnificationRegistry,
+    CoreUnification,
+  ],
 })
 export class CoreModule {}

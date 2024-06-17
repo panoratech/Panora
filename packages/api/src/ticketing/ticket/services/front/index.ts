@@ -13,19 +13,17 @@ import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class FrontService implements ITicketService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + FrontService.name,
     );
     this.registry.registerService('front', this);
-    this.utils = new Utils();
   }
 
   async addTicket(
@@ -154,13 +152,14 @@ export class FrontService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
+      throw error;
+      /*handle3rdPartyServiceError(
         error,
         this.logger,
         'front',
         TicketingObject.ticket,
         ActionType.POST,
-      );
+      );*/
     }
   }
   async syncTickets(
@@ -178,7 +177,6 @@ export class FrontService implements ITicketService {
 
       const resp = await axios.get(`${connection.account_url}/conversations`, {
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
             connection.access_token,
           )}`,
@@ -192,13 +190,14 @@ export class FrontService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
+      throw error;
+      /*handle3rdPartyServiceError(
         error,
         this.logger,
         'front',
         TicketingObject.ticket,
         ActionType.GET,
-      );
+      );*/
     }
   }
 }

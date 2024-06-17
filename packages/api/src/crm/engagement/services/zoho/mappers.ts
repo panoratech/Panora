@@ -4,8 +4,16 @@ import {
   UnifiedEngagementOutput,
 } from '@crm/engagement/types/model.unified';
 import { IEngagementMapper } from '@crm/engagement/types';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 
+@Injectable()
 export class ZohoEngagementMapper implements IEngagementMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'engagement', 'zoho', this);
+  }
+
   desunify(
     source: UnifiedEngagementInput,
     customFieldMappings?: {

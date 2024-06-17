@@ -5,16 +5,26 @@ import {
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-import { unify } from '@@core/utils/unification/unify';
+
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
-import { Utils } from '@ticketing/@lib/@utils';;
-
+import { Utils } from '@ticketing/@lib/@utils';
+import { CoreUnification } from '@@core/utils/services/core.service';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+@Injectable()
 export class ZendeskCommentMapper implements ICommentMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private coreUnification: CoreUnification,
+  ) {
+    this.mappersRegistry.registerService(
+      'ticketing',
+      'comment',
+      'zendesk',
+      this,
+    );
   }
 
   async desunify(
@@ -79,7 +89,9 @@ export class ZendeskCommentMapper implements ICommentMapper {
     let opts;
 
     if (comment.attachments && comment.attachments.length > 0) {
-      const unifiedObject = (await unify<OriginalAttachmentOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalAttachmentOutput[]
+      >({
         sourceObject: comment.attachments,
         targetType: TicketingObject.attachment,
         providerName: 'zendesk',
@@ -118,7 +130,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
 
     return {
       remote_id: String(comment.id),
-      ...res
+      ...res,
     };
   }
 }

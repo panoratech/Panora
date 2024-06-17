@@ -7,6 +7,6 @@ import { JwtService } from '@nestjs/jwt';
 
 @Module({
   controllers: [MagicLinkController],
-  providers: [MagicLinkService, PrismaService, LoggerService, JwtService],
+  providers: [MagicLinkService, LoggerService, JwtService],
 })
 export class MagicLinkModule {}

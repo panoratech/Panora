@@ -5,12 +5,13 @@ import {
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ZohoNoteMapper implements INoteMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'note', 'zoho', this);
   }
   async desunify(
     source: UnifiedNoteInput,
@@ -21,20 +22,20 @@ export class ZohoNoteMapper implements INoteMapper {
   ): Promise<ZohoNoteInput> {
     const module = source.deal_id
       ? {
-        api_name: 'Deals',
-        id: await this.utils.getRemoteIdFromDealUuid(source.deal_id),
-      }
+          api_name: 'Deals',
+          id: await this.utils.getRemoteIdFromDealUuid(source.deal_id),
+        }
       : source.company_id
-        ? {
+      ? {
           api_name: 'Accounts',
           id: await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
         }
-        : source.contact_id
-          ? {
-            api_name: 'Contacts',
-            id: await this.utils.getRemoteIdFromContactUuid(source.contact_id),
-          }
-          : { api_name: '', id: '' };
+      : source.contact_id
+      ? {
+          api_name: 'Contacts',
+          id: await this.utils.getRemoteIdFromContactUuid(source.contact_id),
+        }
+      : { api_name: '', id: '' };
 
     const result: ZohoNoteInput = {
       Note_Content: source.content,

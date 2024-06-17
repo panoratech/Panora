@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { IContactService } from '../types';
-import { desunify } from '@@core/utils/unification/desunify';
 import { CrmObject } from '@crm/@lib/@types';
 import { LoggerService } from '@@core/logger/logger.service';
-import { unify } from '@@core/utils/unification/unify';
 import { v4 as uuidv4 } from 'uuid';
 import {
   UnifiedContactInput,
@@ -17,20 +15,20 @@ import { OriginalContactOutput } from '@@core/utils/types/original/original.crm'
 import { ServiceRegistry } from './registry.service';
 import { Utils } from '@crm/@lib/@utils';
 import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class ContactService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
+    private utils: Utils,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(ContactService.name);
-    this.utils = new Utils();
   }
 
   async batchAddContacts(
@@ -85,15 +83,16 @@ export class ContactService {
           'crm.contact',
         );
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedContactInput>({
-        sourceObject: unifiedContactData,
-        targetType: CrmObject.contact,
-        providerName: integrationId,
-        vertical: 'crm',
-        customFieldMappings: unifiedContactData.field_mappings
-          ? customFieldMappings
-          : [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedContactInput>({
+          sourceObject: unifiedContactData,
+          targetType: CrmObject.contact,
+          providerName: integrationId,
+          vertical: 'crm',
+          customFieldMappings: unifiedContactData.field_mappings
+            ? customFieldMappings
+            : [],
+        });
 
       this.logger.log(
         'desunified obect is ' + JSON.stringify(desunifiedObject),
@@ -107,7 +106,9 @@ export class ContactService {
       );
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalContactOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalContactOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: CrmObject.contact,
         providerName: integrationId,
