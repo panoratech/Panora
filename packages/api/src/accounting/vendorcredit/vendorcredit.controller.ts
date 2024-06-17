@@ -28,12 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('accounting/vendorcredit')
 @Controller('accounting/vendorcredit')
 export class VendorCreditController {
-
-
   constructor(
     private readonly vendorcreditService: VendorCreditService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(VendorCreditController.name);
   }

@@ -20,14 +20,14 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [SharedlinkController],
   providers: [
     SharedLinkService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

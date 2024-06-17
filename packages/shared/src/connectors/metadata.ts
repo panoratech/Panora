@@ -853,7 +853,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.oauth2
       },
       'xero': {
-        //scopes: 'openid profile email accounting.transactions accounting.reports.read accounting.contacts accounting.attachments accounting.budgets.read',
+        // scopes: 'openid profile email accounting.transactions accounting.reports.read accounting.contacts accounting.attachments accounting.budgets.read',
         urls: {
           docsUrl: 'https://developer.xero.com/documentation/getting-started-guide/',
           apiUrl: 'https://api.xero.com/api.xro/2.0',

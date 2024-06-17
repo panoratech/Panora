@@ -11,7 +11,7 @@ import { ServiceRegistry } from '../services/registry.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedOfficeOutput } from '../types/model.unified';
 import { IOfficeService } from '../types';
- 
+
 @Injectable()
 export class SyncService implements OnModuleInit {
   constructor(

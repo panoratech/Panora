@@ -1,3 +1,1 @@
-
-export const officeUnificationMapping = {
-};
+export const officeUnificationMapping = {};

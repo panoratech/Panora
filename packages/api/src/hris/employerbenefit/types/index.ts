@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedEmployerBenefitInput, UnifiedEmployerBenefitOutput } from './model.unified';
+import {
+  UnifiedEmployerBenefitInput,
+  UnifiedEmployerBenefitOutput,
+} from './model.unified';
 import { OriginalEmployerBenefitOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
 

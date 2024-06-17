@@ -1,3 +1,1 @@
-
-export const departmentUnificationMapping = {
-};
+export const departmentUnificationMapping = {};

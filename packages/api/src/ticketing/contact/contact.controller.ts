@@ -28,12 +28,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/contacts')
 @Controller('ticketing/contacts')
 export class ContactController {
-
-
   constructor(
     private readonly contactService: ContactService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(ContactController.name);
   }
@@ -67,7 +65,7 @@ private connectionUtils: ConnectionUtils
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

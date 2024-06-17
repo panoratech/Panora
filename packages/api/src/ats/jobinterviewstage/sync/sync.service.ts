@@ -11,7 +11,7 @@ import { ServiceRegistry } from '../services/registry.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedJobInterviewStageOutput } from '../types/model.unified';
 import { IJobInterviewStageService } from '../types';
- 
+
 @Injectable()
 export class SyncService implements OnModuleInit {
   constructor(

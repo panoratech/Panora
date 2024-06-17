@@ -11,7 +11,7 @@ import { ServiceRegistry } from '../services/registry.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedAttachmentOutput } from '../types/model.unified';
 import { IAttachmentService } from '../types';
- 
+
 @Injectable()
 export class SyncService implements OnModuleInit {
   constructor(

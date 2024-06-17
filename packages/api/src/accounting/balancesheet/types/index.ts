@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedBalanceSheetInput, UnifiedBalanceSheetOutput } from './model.unified';
+import {
+  UnifiedBalanceSheetInput,
+  UnifiedBalanceSheetOutput,
+} from './model.unified';
 import { OriginalBalanceSheetOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 

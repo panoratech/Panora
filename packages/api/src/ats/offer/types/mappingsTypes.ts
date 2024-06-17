@@ -1,3 +1,1 @@
-
-export const offerUnificationMapping = {
-};
+export const offerUnificationMapping = {};

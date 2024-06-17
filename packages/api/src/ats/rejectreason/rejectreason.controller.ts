@@ -19,18 +19,19 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { RejectReasonService } from './services/rejectreason.service';
-import { UnifiedRejectReasonInput, UnifiedRejectReasonOutput  } from './types/model.unified';
+import {
+  UnifiedRejectReasonInput,
+  UnifiedRejectReasonOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('ats/rejectreason')
 @Controller('ats/rejectreason')
 export class RejectReasonController {
-
-
   constructor(
     private readonly rejectreasonService: RejectReasonService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(RejectReasonController.name);
   }
@@ -39,7 +40,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'getRejectReasons',
     summary: 'List a batch of RejectReasons',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -49,8 +50,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -59,17 +59,17 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.rejectreasonService.getRejectReasons(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -89,8 +89,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -107,7 +106,7 @@ private connectionUtils: ConnectionUtils
     summary: 'Create a RejectReason',
     description: 'Create a rejectreason in any supported Ats software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -117,8 +116,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedRejectReasonInput })
   @ApiCustomResponse(UnifiedRejectReasonOutput)
@@ -129,18 +127,18 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.rejectreasonService.addRejectReason(
         unifiedRejectReasonData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -149,7 +147,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'addRejectReasons',
     summary: 'Add a batch of RejectReasons',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -159,8 +157,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedRejectReasonInput, isArray: true })
   @ApiCustomResponse(UnifiedRejectReasonOutput)
@@ -171,21 +168,19 @@ private connectionUtils: ConnectionUtils
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.rejectreasonService.batchAddRejectReasons(
         unfiedRejectReasonData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
   }
-
 }

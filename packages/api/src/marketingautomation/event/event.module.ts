@@ -22,14 +22,14 @@ import { CoreModule } from '@@core/core.module';
   controllers: [EventController],
   providers: [
     EventService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService, CoreModule],

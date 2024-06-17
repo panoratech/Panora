@@ -11,7 +11,7 @@ import { ServiceRegistry } from '../services/registry.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedEeocsOutput } from '../types/model.unified';
 import { IEeocsService } from '../types';
- 
+
 @Injectable()
 export class SyncService implements OnModuleInit {
   constructor(

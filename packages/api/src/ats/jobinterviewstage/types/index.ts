@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedJobInterviewStageInput, UnifiedJobInterviewStageOutput } from './model.unified';
+import {
+  UnifiedJobInterviewStageInput,
+  UnifiedJobInterviewStageOutput,
+} from './model.unified';
 import { OriginalJobInterviewStageOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 

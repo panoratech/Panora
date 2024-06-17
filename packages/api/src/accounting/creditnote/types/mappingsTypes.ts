@@ -1,3 +1,1 @@
-
-export const creditnoteUnificationMapping = {
-};
+export const creditnoteUnificationMapping = {};

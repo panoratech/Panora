@@ -22,14 +22,14 @@ import { CoreModule } from '@@core/core.module';
   controllers: [CampaignController],
   providers: [
     CampaignService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService, CoreModule],

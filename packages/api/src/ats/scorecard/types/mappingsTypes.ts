@@ -1,3 +1,1 @@
-
-export const scorecardUnificationMapping = {
-};
+export const scorecardUnificationMapping = {};

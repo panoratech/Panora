@@ -33,15 +33,15 @@ export type GithubOAuthResponse = string;
 export class GithubConnectionService implements ITicketingConnectionService {
   private readonly type: string;
 
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-private cService: ConnectionsStrategiesService,
-    private connectionUtils: ConnectionUtils,  ) {
+    private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
+  ) {
     this.logger.setContext(GithubConnectionService.name);
     this.registry.registerService('github', this);
     this.type = providerToType('github', 'ticketing', AuthStrategy.oauth2);

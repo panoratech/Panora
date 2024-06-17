@@ -20,14 +20,14 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [FileController],
   providers: [
     FileService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

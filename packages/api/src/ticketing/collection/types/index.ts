@@ -3,7 +3,10 @@ import {
   UnifiedCollectionInput,
   UnifiedCollectionOutput,
 } from './model.unified';
-import { OriginalCollectionOutput, OriginalCollectionInput } from '@@core/utils/types/original/original.ticketing';
+import {
+  OriginalCollectionOutput,
+  OriginalCollectionInput,
+} from '@@core/utils/types/original/original.ticketing';
 import { ApiResponse } from '@@core/utils/types';
 
 export interface ICollectionService {
@@ -11,7 +14,6 @@ export interface ICollectionService {
     linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalCollectionOutput[]>>;
-
 }
 
 export interface ICollectionMapper {

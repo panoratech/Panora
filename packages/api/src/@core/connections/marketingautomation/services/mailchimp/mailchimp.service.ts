@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, ActionType, ConnectionsError, format3rdPartyError, throwTypedError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -30,15 +36,15 @@ export class MailchimpConnectionService
 {
   private readonly type: string;
 
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-private cService: ConnectionsStrategiesService,
-    private connectionUtils: ConnectionUtils,  ) {
+    private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
+  ) {
     this.logger.setContext(MailchimpConnectionService.name);
     this.registry.registerService('mailchimp', this);
     this.type = providerToType(
@@ -149,17 +155,18 @@ private cService: ConnectionsStrategiesService,
       }
       return db_res;
     } catch (error) {
-      throwTypedError(new ConnectionsError(
-        {
-          name: "HANDLE_OAUTH_CALLBACK_MARKETINGAUTOMATION",
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_MARKETINGAUTOMATION',
           message: `MailchimpConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            "mailchimp",
+            'mailchimp',
             Action.oauthCallback,
-            ActionType.POST
+            ActionType.POST,
           )}`,
-          cause: error
-        }
-      ), this.logger)    
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 

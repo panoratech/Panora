@@ -1,3 +1,1 @@
-
-export const journalentryUnificationMapping = {
-};
+export const journalentryUnificationMapping = {};

@@ -30,7 +30,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [ContactController],
   providers: [
     ContactService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
@@ -53,7 +53,6 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     WebhookService,
     FieldMappingService,
     LoggerService,
-    
   ],
 })
 export class ContactModule {}

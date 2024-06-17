@@ -38,7 +38,9 @@ export class ZendeskService implements IUserService {
           vertical: 'ticketing',
         },
       });
-      const request_url = remote_user_id ? `${connection.account_url}/users/${remote_user_id}.json` : `${connection.account_url}/users.json`;
+      const request_url = remote_user_id
+        ? `${connection.account_url}/users/${remote_user_id}.json`
+        : `${connection.account_url}/users.json`;
 
       const resp = await axios.get(request_url, {
         headers: {
@@ -49,7 +51,9 @@ export class ZendeskService implements IUserService {
         },
       });
       this.logger.log(`Synced zendesk users !`);
-      const users: ZendeskUserOutput[] =  remote_user_id ? [resp.data.user] : resp.data.users;
+      const users: ZendeskUserOutput[] = remote_user_id
+        ? [resp.data.user]
+        : resp.data.users;
       const filteredUsers = users.filter((user) => user.role === 'agent');
 
       return {

@@ -34,15 +34,15 @@ export type FrontOAuthResponse = {
 export class FrontConnectionService implements ITicketingConnectionService {
   private readonly type: string;
 
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-private cService: ConnectionsStrategiesService,
-    private connectionUtils: ConnectionUtils,  ) {
+    private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
+  ) {
     this.logger.setContext(FrontConnectionService.name);
     this.registry.registerService('front', this);
     this.type = providerToType('front', 'ticketing', AuthStrategy.oauth2);

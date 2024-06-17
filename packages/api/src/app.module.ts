@@ -19,7 +19,7 @@ import { BullModule } from '@nestjs/bull';
 import { TicketingModule } from '@ticketing/ticketing.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { PrismaModule } from '@@core/prisma/prisma.module';
- 
+
 @Module({
   imports: [
     PrismaModule,

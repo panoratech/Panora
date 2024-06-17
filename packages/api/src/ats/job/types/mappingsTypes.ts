@@ -1,3 +1,1 @@
-
-export const jobUnificationMapping = {
-};
+export const jobUnificationMapping = {};

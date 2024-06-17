@@ -31,14 +31,14 @@ import { Utils } from '@ticketing/@lib/@utils';
   controllers: [TeamController],
   providers: [
     TeamService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     CoreUnification,
     UnificationRegistry,
     MappersRegistry,
@@ -55,7 +55,6 @@ ConnectionUtils,
     WebhookService,
     FieldMappingService,
     LoggerService,
-    
   ],
 })
 export class TeamModule {}

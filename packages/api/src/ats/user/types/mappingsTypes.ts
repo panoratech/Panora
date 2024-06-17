@@ -1,3 +1,1 @@
-
-export const userUnificationMapping = {
-};
+export const userUnificationMapping = {};

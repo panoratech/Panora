@@ -25,12 +25,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('accounting/item')
 @Controller('accounting/item')
 export class ItemController {
-
-
   constructor(
     private readonly itemService: ItemService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(ItemController.name);
   }

@@ -39,15 +39,15 @@ export type DeelOAuthResponse = {
 export class DeelConnectionService implements IHrisConnectionService {
   private readonly type: string;
 
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-private cService: ConnectionsStrategiesService,
-    private connectionUtils: ConnectionUtils,  ) {
+    private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
+  ) {
     this.logger.setContext(DeelConnectionService.name);
     this.registry.registerService('deel', this);
     this.type = providerToType('deel', 'hris', AuthStrategy.oauth2);

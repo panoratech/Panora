@@ -19,18 +19,16 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { OfficeService } from './services/office.service';
-import { UnifiedOfficeInput, UnifiedOfficeOutput  } from './types/model.unified';
+import { UnifiedOfficeInput, UnifiedOfficeOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('ats/office')
 @Controller('ats/office')
 export class OfficeController {
-
-
   constructor(
     private readonly officeService: OfficeService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(OfficeController.name);
   }
@@ -39,7 +37,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'getOffices',
     summary: 'List a batch of Offices',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -49,8 +47,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedOfficeOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -59,17 +56,17 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.officeService.getOffices(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -89,8 +86,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedOfficeOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -107,7 +103,7 @@ private connectionUtils: ConnectionUtils
     summary: 'Create a Office',
     description: 'Create a office in any supported Ats software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -117,8 +113,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedOfficeInput })
   @ApiCustomResponse(UnifiedOfficeOutput)
@@ -129,18 +124,18 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.officeService.addOffice(
         unifiedOfficeData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -149,7 +144,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'addOffices',
     summary: 'Add a batch of Offices',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -159,8 +154,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedOfficeInput, isArray: true })
   @ApiCustomResponse(UnifiedOfficeOutput)
@@ -171,21 +165,19 @@ private connectionUtils: ConnectionUtils
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.officeService.batchAddOffices(
         unfiedOfficeData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
   }
-
 }

@@ -1,3 +1,1 @@
-
-export const phonenumberUnificationMapping = {
-};
+export const phonenumberUnificationMapping = {};

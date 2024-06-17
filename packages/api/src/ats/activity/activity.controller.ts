@@ -18,19 +18,20 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { UnifiedActivityInput, UnifiedActivityOutput  } from './types/model.unified';
+import {
+  UnifiedActivityInput,
+  UnifiedActivityOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ActivityService } from './services/activity.service';
 
 @ApiTags('ats/activity')
 @Controller('ats/activity')
 export class ActivityController {
-
-
   constructor(
     private readonly activityService: ActivityService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(ActivityController.name);
   }
@@ -39,7 +40,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'getActivitys',
     summary: 'List a batch of Activitys',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -49,8 +50,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedActivityOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -59,17 +59,17 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.activityService.getActivitys(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -89,8 +89,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedActivityOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -107,7 +106,7 @@ private connectionUtils: ConnectionUtils
     summary: 'Create a Activity',
     description: 'Create a activity in any supported Ats software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -117,8 +116,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedActivityInput })
   @ApiCustomResponse(UnifiedActivityOutput)
@@ -129,18 +127,18 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.activityService.addActivity(
         unifiedActivityData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -149,7 +147,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'addActivitys',
     summary: 'Add a batch of Activitys',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -159,8 +157,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedActivityInput, isArray: true })
   @ApiCustomResponse(UnifiedActivityOutput)
@@ -171,22 +168,19 @@ private connectionUtils: ConnectionUtils
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.activityService.batchAddActivitys(
         unfiedActivityData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
   }
-
-
 }

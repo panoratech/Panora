@@ -31,7 +31,7 @@ import { Utils } from '@crm/@lib/@utils';
   controllers: [CompanyController],
   providers: [
     CompanyService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
@@ -57,7 +57,6 @@ import { Utils } from '@crm/@lib/@utils';
     WebhookService,
     FieldMappingService,
     LoggerService,
-    
   ],
 })
 export class CompanyModule {}

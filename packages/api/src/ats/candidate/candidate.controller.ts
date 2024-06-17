@@ -18,19 +18,20 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { UnifiedCandidateInput, UnifiedCandidateOutput  } from './types/model.unified';
+import {
+  UnifiedCandidateInput,
+  UnifiedCandidateOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { CandidateService } from './services/candidate.service';
 
 @ApiTags('ats/candidate')
 @Controller('ats/candidate')
 export class CandidateController {
-
-
   constructor(
     private readonly candidateService: CandidateService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(CandidateController.name);
   }
@@ -39,7 +40,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'getCandidates',
     summary: 'List a batch of Candidates',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -49,8 +50,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedCandidateOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -59,17 +59,17 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.candidateService.getCandidates(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -89,8 +89,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedCandidateOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -107,7 +106,7 @@ private connectionUtils: ConnectionUtils
     summary: 'Create a Candidate',
     description: 'Create a candidate in any supported Ats software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -117,8 +116,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedCandidateInput })
   @ApiCustomResponse(UnifiedCandidateOutput)
@@ -129,18 +127,18 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.candidateService.addCandidate(
         unifiedCandidateData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -149,7 +147,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'addCandidates',
     summary: 'Add a batch of Candidates',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -159,8 +157,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedCandidateInput, isArray: true })
   @ApiCustomResponse(UnifiedCandidateOutput)
@@ -171,22 +168,19 @@ private connectionUtils: ConnectionUtils
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.candidateService.batchAddCandidates(
         unfiedCandidateData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
   }
-
-  
 }

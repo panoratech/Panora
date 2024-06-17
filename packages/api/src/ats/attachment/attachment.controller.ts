@@ -18,19 +18,20 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
-import { UnifiedAttachmentInput, UnifiedAttachmentOutput  } from './types/model.unified';
+import {
+  UnifiedAttachmentInput,
+  UnifiedAttachmentOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { AttachmentService } from './services/attachment.service';
 
 @ApiTags('ats/attachment')
 @Controller('ats/attachment')
 export class AttachmentController {
-
-
   constructor(
     private readonly attachmentService: AttachmentService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AttachmentController.name);
   }
@@ -39,7 +40,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'getAttachments',
     summary: 'List a batch of Attachments',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -49,8 +50,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedAttachmentOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -59,17 +59,17 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.attachmentService.getAttachments(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -89,8 +89,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedAttachmentOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -107,7 +106,7 @@ private connectionUtils: ConnectionUtils
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Ats software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -117,8 +116,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedAttachmentInput })
   @ApiCustomResponse(UnifiedAttachmentOutput)
@@ -129,18 +127,18 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.attachmentService.addAttachment(
         unifiedAttachmentData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -149,7 +147,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'addAttachments',
     summary: 'Add a batch of Attachments',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -159,8 +157,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedAttachmentInput, isArray: true })
   @ApiCustomResponse(UnifiedAttachmentOutput)
@@ -171,21 +168,19 @@ private connectionUtils: ConnectionUtils
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.attachmentService.batchAddAttachments(
         unfiedAttachmentData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
   }
-
 }

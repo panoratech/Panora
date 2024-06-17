@@ -32,12 +32,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/tasks')
 @Controller('crm/tasks')
 export class TaskController {
-
-
   constructor(
     private readonly taskService: TaskService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(TaskController.name);
   }
@@ -72,7 +70,7 @@ private connectionUtils: ConnectionUtils
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

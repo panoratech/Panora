@@ -38,7 +38,9 @@ export class ZendeskService implements IContactService {
           vertical: 'ticketing',
         },
       });
-      const request_url = remote_account_id ? `${connection.account_url}/users/${remote_account_id}.json` : `${connection.account_url}/users.json`;
+      const request_url = remote_account_id
+        ? `${connection.account_url}/users/${remote_account_id}.json`
+        : `${connection.account_url}/users.json`;
 
       const resp = await axios.get(request_url, {
         headers: {
@@ -49,7 +51,9 @@ export class ZendeskService implements IContactService {
         },
       });
 
-      const contacts: ZendeskContactOutput[] = remote_account_id ? [resp.data.user] : resp.data.users;
+      const contacts: ZendeskContactOutput[] = remote_account_id
+        ? [resp.data.user]
+        : resp.data.users;
       const filteredContacts = contacts.filter(
         (contact) => contact.role === 'end-user',
       );

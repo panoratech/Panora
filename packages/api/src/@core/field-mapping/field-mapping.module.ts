@@ -6,12 +6,7 @@ import { LoggerService } from '../logger/logger.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Module({
-  providers: [
-    FieldMappingService,
-    
-    LoggerService,
-    EncryptionService,
-  ],
+  providers: [FieldMappingService, LoggerService, EncryptionService],
   controllers: [FieldMappingController],
 })
 export class FieldMappingModule {}

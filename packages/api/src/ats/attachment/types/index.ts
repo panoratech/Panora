@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedAttachmentInput, UnifiedAttachmentOutput } from './model.unified';
+import {
+  UnifiedAttachmentInput,
+  UnifiedAttachmentOutput,
+} from './model.unified';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 

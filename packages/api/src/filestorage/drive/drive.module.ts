@@ -20,14 +20,14 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [DriveController],
   providers: [
     DriveService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

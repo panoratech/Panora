@@ -28,12 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('accounting/attachment')
 @Controller('accounting/attachment')
 export class AttachmentController {
-
-
   constructor(
     private readonly attachmentService: AttachmentService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AttachmentController.name);
   }

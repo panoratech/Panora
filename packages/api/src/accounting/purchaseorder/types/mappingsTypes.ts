@@ -1,3 +1,1 @@
-
-export const purchaseorderUnificationMapping = {
-};
+export const purchaseorderUnificationMapping = {};

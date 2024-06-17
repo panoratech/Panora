@@ -28,14 +28,14 @@ import { CoreUnification } from '@@core/utils/services/core.service';
   controllers: [CollectionController],
   providers: [
     CollectionService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     CoreUnification,
     UnificationRegistry,
     MappersRegistry,
@@ -49,7 +49,6 @@ ConnectionUtils,
     WebhookService,
     FieldMappingService,
     LoggerService,
-    
   ],
 })
 export class CollectionModule {}

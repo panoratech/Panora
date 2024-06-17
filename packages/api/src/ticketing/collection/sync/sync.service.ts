@@ -33,7 +33,7 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-await this.scheduleSyncJob();
+      await this.scheduleSyncJob();
     } catch (error) {
       throw error;
     }

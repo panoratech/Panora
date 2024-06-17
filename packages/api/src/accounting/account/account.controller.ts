@@ -28,12 +28,10 @@ import { AccountService } from './services/account.service';
 @ApiTags('accounting/account')
 @Controller('accounting/account')
 export class AccountController {
-
-
   constructor(
     private readonly accountService: AccountService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AccountController.name);
   }

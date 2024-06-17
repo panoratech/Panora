@@ -20,18 +20,16 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [GroupController],
   providers: [
     GroupService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
-
   ],
   exports: [SyncService],
 })
 export class GroupModule {}
-

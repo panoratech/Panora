@@ -1,3 +1,1 @@
-
-export const invoiceUnificationMapping = {
-};
+export const invoiceUnificationMapping = {};

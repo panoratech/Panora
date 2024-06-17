@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedAutomationInput, UnifiedAutomationOutput } from './model.unified';
+import {
+  UnifiedAutomationInput,
+  UnifiedAutomationOutput,
+} from './model.unified';
 import { OriginalAutomationOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 

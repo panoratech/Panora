@@ -28,12 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('hris/location')
 @Controller('hris/location')
 export class LocationController {
-
-
   constructor(
     private readonly locationService: LocationService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(LocationController.name);
   }

@@ -28,12 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('accounting/taxrate')
 @Controller('accounting/taxrate')
 export class TaxRateController {
-
-
   constructor(
     private readonly taxrateService: TaxRateService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(TaxRateController.name);
   }

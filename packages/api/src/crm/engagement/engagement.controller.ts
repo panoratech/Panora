@@ -35,12 +35,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/engagements')
 @Controller('crm/engagements')
 export class EngagementController {
-
-
   constructor(
     private readonly engagementService: EngagementService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(EngagementController.name);
   }
@@ -75,7 +73,7 @@ private connectionUtils: ConnectionUtils
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

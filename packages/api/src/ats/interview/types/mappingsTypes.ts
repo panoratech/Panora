@@ -1,3 +1,1 @@
-
-export const interviewUnificationMapping = {
-};
+export const interviewUnificationMapping = {};

@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedCreditNoteInput, UnifiedCreditNoteOutput } from './model.unified';
+import {
+  UnifiedCreditNoteInput,
+  UnifiedCreditNoteOutput,
+} from './model.unified';
 import { OriginalCreditNoteOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 

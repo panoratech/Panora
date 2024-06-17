@@ -20,18 +20,16 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [ItemController],
   providers: [
     ItemService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
-
   ],
   exports: [SyncService],
 })
 export class ItemModule {}
-

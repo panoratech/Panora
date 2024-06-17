@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedCashflowStatementInput, UnifiedCashflowStatementOutput } from './model.unified';
+import {
+  UnifiedCashflowStatementInput,
+  UnifiedCashflowStatementOutput,
+} from './model.unified';
 import { OriginalCashflowStatementOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 

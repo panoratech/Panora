@@ -28,12 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('marketingautomation/automation')
 @Controller('marketingautomation/automation')
 export class AutomationController {
-
-
   constructor(
     private readonly automationService: AutomationService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AutomationController.name);
   }

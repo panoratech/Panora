@@ -28,12 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('hris/paygroup')
 @Controller('hris/paygroup')
 export class PayGroupController {
-
-
   constructor(
     private readonly paygroupService: PayGroupService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(PayGroupController.name);
   }

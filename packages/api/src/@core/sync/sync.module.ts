@@ -44,11 +44,7 @@ import { UserModule as TUserModule } from '@ticketing/user/user.module';
     TicketModule,
     TUserModule,
   ],
-  providers: [
-    CoreSyncService,
-    LoggerService,
-    
-  ],
+  providers: [CoreSyncService, LoggerService],
   controllers: [SyncController],
 })
-export class SyncModule { }
+export class SyncModule {}

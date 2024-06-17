@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 
-
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '../types/model.unified';
 import { IContactService } from '../types';

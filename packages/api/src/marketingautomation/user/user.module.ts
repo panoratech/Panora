@@ -22,14 +22,14 @@ import { CoreModule } from '@@core/core.module';
   controllers: [UserController],
   providers: [
     UserService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService, CoreModule],

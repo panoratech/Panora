@@ -1,3 +1,1 @@
-
-export const tagUnificationMapping = {
-};
+export const tagUnificationMapping = {};

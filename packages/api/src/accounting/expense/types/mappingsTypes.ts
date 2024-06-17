@@ -1,3 +1,1 @@
-
-export const expenseUnificationMapping = {
-};
+export const expenseUnificationMapping = {};

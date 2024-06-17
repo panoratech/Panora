@@ -1,3 +1,1 @@
-
-export const incomestatementUnificationMapping = {
-};
+export const incomestatementUnificationMapping = {};

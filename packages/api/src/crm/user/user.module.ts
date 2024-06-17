@@ -32,14 +32,14 @@ import { Utils } from '@crm/@lib/@utils';
   controllers: [UserController],
   providers: [
     UserService,
-    
+
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     CoreUnification,
     UnificationRegistry,
     MappersRegistry,
@@ -57,7 +57,6 @@ ConnectionUtils,
     WebhookService,
     FieldMappingService,
     LoggerService,
-    
   ],
 })
 export class UserModule {}

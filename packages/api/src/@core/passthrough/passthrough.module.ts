@@ -6,12 +6,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 
 @Module({
-  providers: [
-    PassthroughService,
-    LoggerService,
-    
-    EncryptionService,
-  ],
+  providers: [PassthroughService, LoggerService, EncryptionService],
   controllers: [PassthroughController],
 })
 export class PassthroughModule {}

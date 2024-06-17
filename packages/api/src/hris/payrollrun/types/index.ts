@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedPayrollRunInput, UnifiedPayrollRunOutput } from './model.unified';
+import {
+  UnifiedPayrollRunInput,
+  UnifiedPayrollRunOutput,
+} from './model.unified';
 import { OriginalPayrollRunOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
 

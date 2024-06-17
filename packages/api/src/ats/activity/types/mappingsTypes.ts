@@ -1,3 +1,1 @@
-
-export const activityUnificationMapping = {
-};
+export const activityUnificationMapping = {};

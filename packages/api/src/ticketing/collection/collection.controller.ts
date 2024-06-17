@@ -35,12 +35,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/collections')
 @Controller('ticketing/collections')
 export class CollectionController {
-
-
   constructor(
     private readonly collectionService: CollectionService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(CollectionController.name);
   }
@@ -74,7 +72,7 @@ private connectionUtils: ConnectionUtils
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

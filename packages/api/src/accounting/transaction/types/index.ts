@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTransactionInput, UnifiedTransactionOutput } from './model.unified';
+import {
+  UnifiedTransactionInput,
+  UnifiedTransactionOutput,
+} from './model.unified';
 import { OriginalTransactionOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 

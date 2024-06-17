@@ -35,15 +35,15 @@ export type ClickupOAuthResponse = {
 export class ClickupConnectionService implements ITicketingConnectionService {
   private readonly type: string;
 
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-private cService: ConnectionsStrategiesService,
-    private connectionUtils: ConnectionUtils,  ) {
+    private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
+  ) {
     this.logger.setContext(ClickupConnectionService.name);
     this.registry.registerService('clickup', this);
     this.type = providerToType('clickup', 'ticketing', AuthStrategy.oauth2);

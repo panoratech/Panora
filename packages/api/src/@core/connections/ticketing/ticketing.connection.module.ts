@@ -24,7 +24,7 @@ import { ConnectionUtils } from '../@utils';
   imports: [WebhookModule, ManagedWebhooksModule],
   providers: [
     TicketingConnectionsService,
-    
+
     LoggerService,
     WebhookService,
     EnvironmentService,

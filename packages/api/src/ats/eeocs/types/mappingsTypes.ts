@@ -1,3 +1,1 @@
-
-export const eeocsUnificationMapping = {
-};
+export const eeocsUnificationMapping = {};

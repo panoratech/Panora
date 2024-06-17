@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedApplicationInput, UnifiedApplicationOutput } from './model.unified';
+import {
+  UnifiedApplicationInput,
+  UnifiedApplicationOutput,
+} from './model.unified';
 import { OriginalApplicationOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 

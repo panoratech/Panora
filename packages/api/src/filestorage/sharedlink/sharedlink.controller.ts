@@ -29,12 +29,10 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 @ApiTags('filestorage/sharedlink')
 @Controller('filestorage/sharedlink')
 export class SharedlinkController {
-
-
   constructor(
     private readonly sharedlinkService: SharedLinkService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(SharedlinkController.name);
   }

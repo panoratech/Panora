@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedDepartmentInput, UnifiedDepartmentOutput } from './model.unified';
+import {
+  UnifiedDepartmentInput,
+  UnifiedDepartmentOutput,
+} from './model.unified';
 import { OriginalDepartmentOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 

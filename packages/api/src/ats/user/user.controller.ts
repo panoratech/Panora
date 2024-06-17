@@ -19,18 +19,16 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { UserService } from './services/user.service';
-import { UnifiedUserInput, UnifiedUserOutput  } from './types/model.unified';
+import { UnifiedUserInput, UnifiedUserOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('ats/user')
 @Controller('ats/user')
 export class UserController {
-
-
   constructor(
     private readonly userService: UserService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(UserController.name);
   }
@@ -39,7 +37,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'getUsers',
     summary: 'List a batch of Users',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -49,8 +47,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedUserOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -59,17 +56,13 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.userService.getUsers(
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    }catch(error){
+        );
+      return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -89,8 +82,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedUserOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -107,7 +99,7 @@ private connectionUtils: ConnectionUtils
     summary: 'Create a User',
     description: 'Create a user in any supported Ats software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -117,8 +109,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedUserInput })
   @ApiCustomResponse(UnifiedUserOutput)
@@ -129,18 +120,18 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.userService.addUser(
         unifiedUserData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -149,7 +140,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'addUsers',
     summary: 'Add a batch of Users',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -159,8 +150,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedUserInput, isArray: true })
   @ApiCustomResponse(UnifiedUserOutput)
@@ -171,21 +161,19 @@ private connectionUtils: ConnectionUtils
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.userService.batchAddUsers(
         unfiedUserData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
   }
-
 }

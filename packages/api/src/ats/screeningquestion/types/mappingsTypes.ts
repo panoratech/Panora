@@ -1,3 +1,1 @@
-
-export const screeningquestionUnificationMapping = {
-};
+export const screeningquestionUnificationMapping = {};

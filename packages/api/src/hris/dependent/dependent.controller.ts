@@ -28,12 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('hris/dependent')
 @Controller('hris/dependent')
 export class DependentController {
-
-
   constructor(
     private readonly dependentService: DependentService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(DependentController.name);
   }

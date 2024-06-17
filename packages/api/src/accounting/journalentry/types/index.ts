@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedJournalEntryInput, UnifiedJournalEntryOutput } from './model.unified';
+import {
+  UnifiedJournalEntryInput,
+  UnifiedJournalEntryOutput,
+} from './model.unified';
 import { OriginalJournalEntryOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 

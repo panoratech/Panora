@@ -19,18 +19,16 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { JobService } from './services/job.service';
-import { UnifiedJobInput, UnifiedJobOutput  } from './types/model.unified';
+import { UnifiedJobInput, UnifiedJobOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('ats/job')
 @Controller('ats/job')
 export class JobController {
-
-
   constructor(
     private readonly jobService: JobService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(JobController.name);
   }
@@ -39,7 +37,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'getJobs',
     summary: 'List a batch of Jobs',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -49,8 +47,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedJobOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -59,17 +56,13 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
-      return this.jobService.getJobs(
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    }catch(error){
+        );
+      return this.jobService.getJobs(remoteSource, linkedUserId, remote_data);
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -89,16 +82,12 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedJobOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getJob(
-    @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
+  getJob(@Param('id') id: string, @Query('remote_data') remote_data?: boolean) {
     return this.jobService.getJob(id, remote_data);
   }
 
@@ -107,7 +96,7 @@ private connectionUtils: ConnectionUtils
     summary: 'Create a Job',
     description: 'Create a job in any supported Ats software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -117,8 +106,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedJobInput })
   @ApiCustomResponse(UnifiedJobOutput)
@@ -129,18 +117,18 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.jobService.addJob(
         unifiedJobData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -149,7 +137,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'addJobs',
     summary: 'Add a batch of Jobs',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -159,8 +147,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedJobInput, isArray: true })
   @ApiCustomResponse(UnifiedJobOutput)
@@ -171,21 +158,19 @@ private connectionUtils: ConnectionUtils
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.jobService.batchAddJobs(
         unfiedJobData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
   }
-
 }

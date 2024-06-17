@@ -28,12 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('accounting/cashflowstatement')
 @Controller('accounting/cashflowstatement')
 export class CashflowStatementController {
-
-
   constructor(
     private readonly cashflowstatementService: CashflowStatementService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(CashflowStatementController.name);
   }

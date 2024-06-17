@@ -19,18 +19,19 @@ import {
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ScreeningQuestionService } from './services/screeningquestion.service';
-import { UnifiedScreeningQuestionInput, UnifiedScreeningQuestionOutput  } from './types/model.unified';
+import {
+  UnifiedScreeningQuestionInput,
+  UnifiedScreeningQuestionOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
 @ApiTags('ats/screeningquestion')
 @Controller('ats/screeningquestion')
 export class ScreeningQuestionController {
-
-
   constructor(
     private readonly screeningquestionService: ScreeningQuestionService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(ScreeningQuestionController.name);
   }
@@ -39,7 +40,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'getScreeningQuestions',
     summary: 'List a batch of ScreeningQuestions',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -49,8 +50,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedScreeningQuestionOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -59,17 +59,17 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.screeningquestionService.getScreeningQuestions(
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -89,8 +89,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedScreeningQuestionOutput)
   //@UseGuards(ApiKeyAuthGuard)
@@ -107,7 +106,7 @@ private connectionUtils: ConnectionUtils
     summary: 'Create a ScreeningQuestion',
     description: 'Create a screeningquestion in any supported Ats software',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -117,8 +116,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedScreeningQuestionInput })
   @ApiCustomResponse(UnifiedScreeningQuestionOutput)
@@ -129,18 +127,18 @@ private connectionUtils: ConnectionUtils
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.screeningquestionService.addScreeningQuestion(
         unifiedScreeningQuestionData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -149,7 +147,7 @@ private connectionUtils: ConnectionUtils
     operationId: 'addScreeningQuestions',
     summary: 'Add a batch of ScreeningQuestions',
   })
-   @ApiHeader({
+  @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
@@ -159,8 +157,7 @@ private connectionUtils: ConnectionUtils
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description:
-      'Set to true to include data from the original Ats software.',
+    description: 'Set to true to include data from the original Ats software.',
   })
   @ApiBody({ type: UnifiedScreeningQuestionInput, isArray: true })
   @ApiCustomResponse(UnifiedScreeningQuestionOutput)
@@ -171,21 +168,19 @@ private connectionUtils: ConnectionUtils
     @Headers('connection_token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try{
+    try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
-      );
+        );
       return this.screeningquestionService.batchAddScreeningQuestions(
         unfiedScreeningQuestionData,
         remoteSource,
         linkedUserId,
         remote_data,
       );
-    }catch(error){
+    } catch (error) {
       throw new Error(error);
     }
-    
   }
-
 }

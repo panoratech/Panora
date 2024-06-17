@@ -25,13 +25,13 @@ import { CoreUnification } from '@@core/utils/services/core.service';
   controllers: [AttachmentController],
   providers: [
     AttachmentService,
-    
+
     LoggerService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     CoreUnification,
     UnificationRegistry,
     MappersRegistry,

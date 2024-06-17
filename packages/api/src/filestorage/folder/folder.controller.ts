@@ -25,12 +25,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('filestorage/folder')
 @Controller('filestorage/folder')
 export class FolderController {
-
-
   constructor(
     private readonly folderService: FolderService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(FolderController.name);
   }

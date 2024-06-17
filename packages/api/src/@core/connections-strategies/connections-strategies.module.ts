@@ -12,10 +12,10 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
   providers: [
     LoggerService,
     EncryptionService,
-    
+
     ConnectionsStrategiesService,
     ConfigService,
     ValidateUserService,
   ],
 })
-export class ConnectionsStrategiesModule { }
+export class ConnectionsStrategiesModule {}

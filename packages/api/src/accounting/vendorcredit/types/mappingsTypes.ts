@@ -1,3 +1,1 @@
-
-export const vendorcreditUnificationMapping = {
-};
+export const vendorcreditUnificationMapping = {};

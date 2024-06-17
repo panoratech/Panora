@@ -28,12 +28,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 @ApiTags('hris/bankinfo')
 @Controller('hris/bankinfo')
 export class BankinfoController {
-
-
   constructor(
     private readonly bankinfoService: BankInfoService,
     private logger: LoggerService,
-private connectionUtils: ConnectionUtils
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(BankinfoController.name);
   }

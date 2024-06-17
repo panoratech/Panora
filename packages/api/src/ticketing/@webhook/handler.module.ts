@@ -13,7 +13,6 @@ import { ContactModule } from '@ticketing/contact/contact.module';
 @Module({
   imports: [TicketModule, UserModule, AccountModule, ContactModule],
   providers: [
-    
     LoggerService,
     EncryptionService,
     EnvironmentService,
@@ -23,7 +22,7 @@ import { ContactModule } from '@ticketing/contact/contact.module';
   ],
   exports: [
     LoggerService,
-    
+
     ZendeskHandlerService,
     TicketingWebhookHandlerService,
   ],

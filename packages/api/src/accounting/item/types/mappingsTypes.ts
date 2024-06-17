@@ -1,3 +1,1 @@
-
-export const itemUnificationMapping = {
-};
+export const itemUnificationMapping = {};

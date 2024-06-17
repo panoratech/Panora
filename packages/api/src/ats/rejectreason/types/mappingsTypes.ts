@@ -1,3 +1,1 @@
-
-export const rejectreasonUnificationMapping = {
-};
+export const rejectreasonUnificationMapping = {};

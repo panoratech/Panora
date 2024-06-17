@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedScreeningQuestionInput, UnifiedScreeningQuestionOutput } from './model.unified';
+import {
+  UnifiedScreeningQuestionInput,
+  UnifiedScreeningQuestionOutput,
+} from './model.unified';
 import { OriginalScreeningQuestionOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 

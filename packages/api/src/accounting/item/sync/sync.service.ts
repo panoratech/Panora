@@ -8,11 +8,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 
-
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedItemOutput } from '../types/model.unified';
 import { IItemService } from '../types';
- 
+
 @Injectable()
 export class SyncService implements OnModuleInit {
   constructor(
