@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [PayGroupController],
   providers: [
     PayGroupService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

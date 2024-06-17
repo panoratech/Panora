@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [TagController],
   providers: [
     TagService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

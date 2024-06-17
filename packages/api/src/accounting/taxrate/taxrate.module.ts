@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [TaxRateController],
   providers: [
     TaxRateService,
-    PrismaService,
+
     LoggerService,
     SyncService,
     WebhookService,

@@ -5,7 +5,9 @@ import { MarketingAutomationObjectInput } from '@@core/utils/types/original/orig
 import { IUnification } from '@@core/utils/types/interface';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class MarketingAutomationUnificationService implements IUnification {
   constructor(
     private registry: UnificationRegistry<MarketingAutomationUnificationService>,

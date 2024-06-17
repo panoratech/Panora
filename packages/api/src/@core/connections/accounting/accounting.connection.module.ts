@@ -22,7 +22,6 @@ import { ConnectionUtils } from '../@utils';
   imports: [WebhookModule],
   providers: [
     AccountingConnectionsService,
-    PrismaService,
     LoggerService,
     WebhookService,
     EnvironmentService,

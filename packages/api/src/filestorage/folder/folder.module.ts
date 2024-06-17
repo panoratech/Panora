@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [FolderController],
   providers: [
     FolderService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

@@ -9,7 +9,7 @@ import { ValidateUserService } from '@@core/utils/services/validateUser.service'
   providers: [
     LinkedUsersService,
     LoggerService,
-    PrismaService,
+    
     ValidateUserService,
   ],
   controllers: [LinkedUsersController],

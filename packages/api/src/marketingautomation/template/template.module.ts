@@ -22,7 +22,7 @@ import { CoreModule } from '@@core/core.module';
   controllers: [TemplateController],
   providers: [
     TemplateService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

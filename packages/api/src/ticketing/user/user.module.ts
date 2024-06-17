@@ -32,14 +32,13 @@ import { Utils } from '@ticketing/@lib/@utils';
   controllers: [UserController],
   providers: [
     UserService,
-    PrismaService,
     LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,
     FieldMappingService,
     ServiceRegistry,
-ConnectionUtils,
+    ConnectionUtils,
     CoreUnification,
     UnificationRegistry,
     MappersRegistry,
@@ -57,7 +56,6 @@ ConnectionUtils,
     WebhookService,
     FieldMappingService,
     LoggerService,
-    PrismaService,
   ],
 })
 export class UserModule {}

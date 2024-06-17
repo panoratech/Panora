@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [BalanceSheetController],
   providers: [
     BalanceSheetService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

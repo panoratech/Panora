@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [DriveController],
   providers: [
     DriveService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

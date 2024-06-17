@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [AttachmentController],
   providers: [
     AttachmentService,
-    PrismaService,
+
     LoggerService,
     SyncService,
     WebhookService,

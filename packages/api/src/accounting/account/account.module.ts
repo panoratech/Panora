@@ -20,7 +20,7 @@ import { AccountService } from './services/account.service';
   controllers: [AccountController],
   providers: [
     AccountService,
-    PrismaService,
+
     LoggerService,
     SyncService,
     WebhookService,

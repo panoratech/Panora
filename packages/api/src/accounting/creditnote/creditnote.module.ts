@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [CreditNoteController],
   providers: [
     CreditNoteService,
-    PrismaService,
+
     LoggerService,
     SyncService,
     WebhookService,

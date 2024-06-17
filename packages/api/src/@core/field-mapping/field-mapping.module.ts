@@ -8,7 +8,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 @Module({
   providers: [
     FieldMappingService,
-    PrismaService,
+    
     LoggerService,
     EncryptionService,
   ],

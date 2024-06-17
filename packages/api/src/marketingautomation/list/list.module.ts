@@ -22,7 +22,7 @@ import { CoreModule } from '@@core/core.module';
   controllers: [ListController],
   providers: [
     ListService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

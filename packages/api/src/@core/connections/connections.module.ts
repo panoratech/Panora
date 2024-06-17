@@ -56,7 +56,6 @@ import { ConnectionUtils } from './@utils';
   ],
   providers: [
     LoggerService,
-    PrismaService,
     ValidateUserService,
     CoreSyncService,
     ConnectionUtils,

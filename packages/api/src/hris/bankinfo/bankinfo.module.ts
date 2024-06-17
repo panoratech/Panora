@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [BankinfoController],
   providers: [
     BankInfoService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

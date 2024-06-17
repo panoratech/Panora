@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [CashflowStatementController],
   providers: [
     CashflowStatementService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

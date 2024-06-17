@@ -5,7 +5,9 @@ import { CrmObjectInput } from '@@core/utils/types/original/original.crm';
 import { IUnification } from '@@core/utils/types/interface';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class CrmUnificationService implements IUnification {
   constructor(
     private registry: UnificationRegistry<CrmUnificationService>,

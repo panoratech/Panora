@@ -5,7 +5,9 @@ import { UnifySourceType } from '@@core/utils/types/unify.output';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { IUnification } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class AccountingUnificationService implements IUnification {
   constructor(
     private registry: UnificationRegistry<AccountingUnificationService>,

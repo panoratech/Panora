@@ -22,7 +22,7 @@ import { CoreModule } from '@@core/core.module';
   controllers: [UserController],
   providers: [
     UserService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

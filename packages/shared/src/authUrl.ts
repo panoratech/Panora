@@ -31,7 +31,6 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   }
   const authStrategy = config.authStrategy!;
 
-
   switch (authStrategy) {
     case AuthStrategy.oauth2:
       return handleOAuth2Url({
@@ -82,7 +81,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const DATA = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
   const data = await DATA.json() as OAuth2AuthData;
 
-  console.log("Fetched Data ", JSON.stringify(data))
+  //console.log("Fetched Data ", JSON.stringify(data))
 
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new ReferenceError(`No client id for type ${type}`)
@@ -97,7 +96,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}` :
     data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl; 
 
-  console.log('BASE URL IS '+ BASE_URL)
+  //console.log('BASE URL IS '+ BASE_URL)
   if (!baseUrl || !BASE_URL) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
@@ -140,7 +139,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   }
 
   const finalAuthUrl = `${BASE_URL}?${params}`;
-  console.log('Final Authentication : ', finalAuthUrl); 
+  //console.log('Final Authentication : ', finalAuthUrl); 
   return finalAuthUrl;
 }
 

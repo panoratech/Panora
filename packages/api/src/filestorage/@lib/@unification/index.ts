@@ -5,7 +5,8 @@ import { FileStorageObjectInput } from '@@core/utils/types/original/original.fil
 import { IUnification } from '@@core/utils/types/interface';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-
+import { Injectable } from '@nestjs/common';
+@Injectable()
 export class FileStorageUnificationService implements IUnification {
   constructor(
     private registry: UnificationRegistry<FileStorageUnificationService>,

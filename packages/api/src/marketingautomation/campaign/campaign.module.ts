@@ -22,7 +22,7 @@ import { CoreModule } from '@@core/core.module';
   controllers: [CampaignController],
   providers: [
     CampaignService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

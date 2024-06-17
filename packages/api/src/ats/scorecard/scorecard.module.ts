@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [ScoreCardController],
   providers: [
     ScoreCardService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

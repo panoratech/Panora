@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [ScreeningQuestionController],
   providers: [
     ScreeningQuestionService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

@@ -12,7 +12,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
   providers: [
     LoggerService,
     EncryptionService,
-    PrismaService,
+    
     ConnectionsStrategiesService,
     ConfigService,
     ValidateUserService,

@@ -4,8 +4,10 @@ import { Unified, UnifyReturnType } from '@@core/utils/types';
 import { IUnification } from '@@core/utils/types/interface';
 import { TicketingObjectInput } from '@@core/utils/types/original/original.ticketing';
 import { UnifySourceType } from '@@core/utils/types/unify.output';
+import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 
+@Injectable()
 export class TicketingUnificationService implements IUnification {
   constructor(
     private registry: UnificationRegistry<TicketingUnificationService>,

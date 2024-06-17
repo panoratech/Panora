@@ -18,7 +18,6 @@ import { ProjectsService } from '@@core/projects/projects.service';
     JwtStrategy,
     JwtService,
     ApiKeyStrategy,
-    PrismaService,
     ConfigService,
     ProjectsService,
     LoggerService,
@@ -30,6 +29,6 @@ import { ProjectsService } from '@@core/projects/projects.service';
       secret: process.env.JWT_SECRET,
     }),
   ],
-  exports: [PrismaService, JwtService],
+  exports: [JwtService],
 })
 export class AuthModule {}

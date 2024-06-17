@@ -16,7 +16,6 @@ import { ConnectionUtils } from '../@utils';
   imports: [WebhookModule],
   providers: [
     HrisConnectionsService,
-    PrismaService,
     ServiceRegistry,
     LoggerService,
     WebhookService,

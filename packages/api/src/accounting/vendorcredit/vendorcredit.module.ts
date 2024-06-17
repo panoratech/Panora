@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [VendorCreditController],
   providers: [
     VendorCreditService,
-    PrismaService,
+
     LoggerService,
     SyncService,
     WebhookService,

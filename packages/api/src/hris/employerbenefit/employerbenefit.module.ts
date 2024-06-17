@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [EmployerBenefitController],
   providers: [
     EmployerBenefitService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

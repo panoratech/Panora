@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [OfficeController],
   providers: [
     OfficeService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

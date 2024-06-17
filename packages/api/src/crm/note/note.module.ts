@@ -32,7 +32,7 @@ import { Utils } from '@crm/@lib/@utils';
   controllers: [NoteController],
   providers: [
     NoteService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,
@@ -57,7 +57,7 @@ ConnectionUtils,
     WebhookService,
     FieldMappingService,
     LoggerService,
-    PrismaService,
+    
   ],
 })
 export class NoteModule {}

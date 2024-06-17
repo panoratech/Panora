@@ -9,7 +9,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
   providers: [
     PassthroughService,
     LoggerService,
-    PrismaService,
+    
     EncryptionService,
   ],
   controllers: [PassthroughController],

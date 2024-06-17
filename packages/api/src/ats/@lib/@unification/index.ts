@@ -6,7 +6,9 @@ import { IUnification } from '@@core/utils/types/interface';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { fileUnificationMapping } from '@filestorage/file/types/mappingsTypes';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class AtsUnificationService implements IUnification {
   constructor(
     private registry: UnificationRegistry<AtsUnificationService>,

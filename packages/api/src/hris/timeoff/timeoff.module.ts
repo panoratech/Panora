@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [TimeoffController],
   providers: [
     TimeoffService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

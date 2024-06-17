@@ -25,7 +25,7 @@ import { CoreUnification } from '@@core/utils/services/core.service';
   controllers: [AttachmentController],
   providers: [
     AttachmentService,
-    PrismaService,
+    
     LoggerService,
     WebhookService,
     EncryptionService,

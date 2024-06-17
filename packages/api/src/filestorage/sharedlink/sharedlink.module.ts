@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [SharedlinkController],
   providers: [
     SharedLinkService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

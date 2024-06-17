@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [RejectReasonController],
   providers: [
     RejectReasonService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

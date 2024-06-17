@@ -28,7 +28,7 @@ import { CoreUnification } from '@@core/utils/services/core.service';
   controllers: [AccountController],
   providers: [
     AccountService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,
@@ -49,7 +49,7 @@ ConnectionUtils,
     WebhookService,
     FieldMappingService,
     LoggerService,
-    PrismaService,
+    
   ],
 })
 export class AccountModule {}

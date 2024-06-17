@@ -5,7 +5,9 @@ import { HrisObjectInput } from '@@core/utils/types/original/original.hris';
 import { IUnification } from '@@core/utils/types/interface';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class HrisUnificationService implements IUnification {
   constructor(
     private registry: UnificationRegistry<HrisUnificationService>,

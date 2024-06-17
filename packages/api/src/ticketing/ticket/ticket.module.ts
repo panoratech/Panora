@@ -34,7 +34,6 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [TicketController],
   providers: [
     TicketService,
-    PrismaService,
     LoggerService,
     SyncService,
     WebhookService,
@@ -61,7 +60,6 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     WebhookService,
     FieldMappingService,
     LoggerService,
-    PrismaService,
   ],
 })
 export class TicketModule {}

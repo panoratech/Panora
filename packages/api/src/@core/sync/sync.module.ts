@@ -47,7 +47,7 @@ import { UserModule as TUserModule } from '@ticketing/user/user.module';
   providers: [
     CoreSyncService,
     LoggerService,
-    PrismaService,
+    
   ],
   controllers: [SyncController],
 })

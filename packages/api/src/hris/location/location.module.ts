@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [LocationController],
   providers: [
     LocationService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

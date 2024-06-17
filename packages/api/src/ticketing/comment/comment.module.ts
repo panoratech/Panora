@@ -32,7 +32,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [CommentController],
   providers: [
     CommentService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,
@@ -57,7 +57,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     WebhookService,
     FieldMappingService,
     LoggerService,
-    PrismaService,
+    
   ],
 })
 export class CommentModule {}

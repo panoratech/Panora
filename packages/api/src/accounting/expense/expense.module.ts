@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [ExpenseController],
   providers: [
     ExpenseService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

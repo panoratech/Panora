@@ -20,7 +20,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
   controllers: [EeocsController],
   providers: [
     EeocsService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

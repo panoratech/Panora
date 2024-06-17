@@ -31,7 +31,7 @@ import { Utils } from '@ticketing/@lib/@utils';
   controllers: [TeamController],
   providers: [
     TeamService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,
@@ -55,7 +55,7 @@ ConnectionUtils,
     WebhookService,
     FieldMappingService,
     LoggerService,
-    PrismaService,
+    
   ],
 })
 export class TeamModule {}

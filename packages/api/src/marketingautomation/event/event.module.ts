@@ -22,7 +22,7 @@ import { CoreModule } from '@@core/core.module';
   controllers: [EventController],
   providers: [
     EventService,
-    PrismaService,
+    
     LoggerService,
     SyncService,
     WebhookService,

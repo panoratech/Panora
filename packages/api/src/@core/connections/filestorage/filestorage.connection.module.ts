@@ -18,7 +18,6 @@ import { ConnectionUtils } from '../@utils';
   imports: [WebhookModule],
   providers: [
     FilestorageConnectionsService,
-    PrismaService,
     ServiceRegistry,
     LoggerService,
     WebhookService,
