@@ -56,7 +56,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
           context: 'HTTP',
         }),
         transport:
-          process.env.ENV === 'prod'
+          process.env.AXIOM_AGENT_STATUS === 'ENABLED'
             ? {
                 target: '@axiomhq/pino',
                 options: {
