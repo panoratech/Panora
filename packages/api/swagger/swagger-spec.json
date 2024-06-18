@@ -342,6 +342,40 @@
         ]
       }
     },
+    "/connections/apikey/callback": {
+      "post": {
+        "operationId": "handleApiKeyCallback",
+        "summary": "Capture api key callback",
+        "parameters": [
+          {
+            "name": "state",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BodyDataType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "connections"
+        ]
+      }
+    },
     "/connections": {
       "get": {
         "operationId": "getConnections",
@@ -22604,6 +22638,10 @@
         "required": [
           "projectId"
         ]
+      },
+      "BodyDataType": {
+        "type": "object",
+        "properties": {}
       },
       "WebhookDto": {
         "type": "object",

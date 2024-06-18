@@ -9,12 +9,15 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
 import { MarketingAutomationConnectionsService } from './services/marketingautomation.connection.service';
 import { ServiceRegistry } from './services/registry.service';
 import { ConnectionUtils } from '../@utils';
+import { BrevoConnectionService } from './services/brevo/brevo.service';
+import { PodiumConnectionService } from './services/podium/podium.service';
+import { MailchimpConnectionService } from './services/mailchimp/mailchimp.service';
+import { GetresponseConnectionService } from './services/getresponse/getresponse.service';
 
 @Module({
   imports: [WebhookModule],
   providers: [
     MarketingAutomationConnectionsService,
-
     LoggerService,
     WebhookService,
     EnvironmentService,
@@ -23,6 +26,10 @@ import { ConnectionUtils } from '../@utils';
     ConnectionsStrategiesService,
     ConnectionUtils,
     //PROVIDERS SERVICES
+    BrevoConnectionService,
+    PodiumConnectionService,
+    MailchimpConnectionService,
+    GetresponseConnectionService,
   ],
   exports: [MarketingAutomationConnectionsService],
 })

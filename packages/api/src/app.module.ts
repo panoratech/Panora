@@ -38,7 +38,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
       },
     ]),
     ConfigModule.forRoot({ isGlobal: true }),
-    ...(process.env.DISTRIBUTION === 'managed'
+    /*...(process.env.DISTRIBUTION === 'managed'
       ? [
           SentryModule.forRoot({
             dsn: process.env.SENTRY_DSN,
@@ -48,7 +48,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
             logLevels: ['debug'],
           }),
         ]
-      : []),
+      : []),*/
     ScheduleModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
@@ -94,7 +94,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    {
+    /*{
       provide: APP_INTERCEPTOR,
       useFactory: () =>
         new SentryInterceptor({
@@ -105,7 +105,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
             },
           ],
         }),
-    },
+    },*/
   ],
 })
 export class AppModule {}
