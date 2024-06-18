@@ -83,7 +83,8 @@ private cService: ConnectionsStrategiesService,
     this.type = providerToType('${provider.toLowerCase()}', '${vertical.toLowerCase()}', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
+
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({

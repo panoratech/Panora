@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,6 +22,10 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 type AcceloOAuthResponse = {
   access_token: string;
@@ -53,7 +53,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
     this.type = providerToType('accelo', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       // this.logger.log('linkeduserid is ' + linkedUserId + ' inside callback accelo',);

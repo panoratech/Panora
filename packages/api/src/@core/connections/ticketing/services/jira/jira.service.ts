@@ -12,16 +12,16 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  ITicketingConnectionService,
-} from '../../types';
+import { ITicketingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export type JiraCloudIdInformation = {
   id: string;
@@ -56,7 +56,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
     this.type = providerToType('jira', 'ticketing', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({

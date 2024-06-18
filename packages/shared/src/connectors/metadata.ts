@@ -52,7 +52,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         authStrategy: AuthStrategy.oauth2
       },
-      // todo
       'freshsales': {
         scopes: '',
         urls: {
@@ -171,7 +170,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: AuthStrategy.oauth2
       },
-      // todo
       'microsoft_dynamics_sales': {
         scopes: '',
         urls: {
@@ -183,7 +181,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
       },
-      // todo
       'nutshell': {
         scopes: '',
         urls: {
@@ -195,7 +192,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: AuthStrategy.basic
       },
-      // todo
       'pipeliner': {
         scopes: '',
         urls: {
@@ -218,7 +214,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: AuthStrategy.api_key
       },
-      // todo
       'salesforce': {
         scopes: '',
         urls: {
@@ -231,7 +226,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: AuthStrategy.oauth2
       },
-      // todo
       'sugarcrm': {
         scopes: '',
         urls: {
@@ -412,18 +406,16 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'asana': {
-        scopes: '',
         urls: {
           docsUrl: 'https://developers.asana.com/docs/overview',
           apiUrl: 'https://app.asana.com/api/1.0',
           authBaseUrl: 'https://app.asana.com/-/oauth_authorize',
         },
-        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+        logoPath: 'https://cdn.dribbble.com/users/2043665/screenshots/12080585/sunset_asana_logo_screenprint.png',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
         authStrategy: AuthStrategy.oauth2
       },
-      // todo
       'azure': {
         scopes: '',
         urls: {
@@ -435,18 +427,18 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
       },
-      // todo
       'basecamp': {
         scopes: '',
         urls: {
-          docsUrl: '',
+          docsUrl: 'https://github.com/basecamp/api/blob/master/sections/authentication.md',
           apiUrl: '',
-          authBaseUrl: '',
-        }, logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+          authBaseUrl: 'https://launchpad.37signals.com/authorization/new',
+        }, 
+        logoPath: 'https://asset.brandfetch.io/id7Kew_cLD/idx-Jcj2Qo.jpeg',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
+        authStrategy: AuthStrategy.oauth2
       },
-      // todo
       'bitbucket': {
         scopes: '',
         urls: {
@@ -458,17 +450,15 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'dixa': {
-        scopes: '',
         urls: {
           docsUrl: 'https://docs.dixa.io/docs/',
-          apiUrl: 'https://dev.dixa.io',
+          apiUrl: 'https://dev.dixa.io/v1',
         },
-        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOxBDw6TkTaxR4EUGI_lNBLl4BCpd3AzXnr30cU_VEaB0jHFh__fFZJHXPB1t-451Eno8&usqp=CAU',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
         authStrategy: AuthStrategy.api_key
       },
-      // todo
       'freshdesk': {
         scopes: '',
         urls: {
@@ -480,7 +470,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
       },
-      // todo
       'freshservice': {
         scopes: '',
         urls: {
@@ -515,13 +504,12 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
       },
-      'help_scout': {
-        scopes: '',
+      'helpscout': {
         urls: {
           docsUrl: 'https://developer.helpscout.com/docs-api/',
           apiUrl: 'https://docsapi.helpscout.net/v1',
         },
-        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+        logoPath: 'https://play-lh.googleusercontent.com/ejDdUZ3Ssup5cVeOdCknoc1BpQtU07f8gYy4VYRudfBatFsOvFuwYybhB_lpSi2rmr2j',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
         authStrategy: AuthStrategy.api_key
@@ -705,7 +693,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
     },
     'accounting': {
       'pennylane': {
-        scopes: '',
+        scopes: 'accounting+customer_invoices+supplier_invoices',
         urls: {
           docsUrl: 'https://pennylane.readme.io/docs/getting-started',
           apiUrl: 'https://app.pennylane.com/api/external/v1',
@@ -713,7 +701,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://c.clc2l.com/t/P/e/Pennylane-U9Wdby.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: AuthStrategy.oauth2,
         options: {
           local_redirect_uri_in_https: true
@@ -910,7 +898,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
       },
-      // todo
       'keap': {
         scopes: '',
         urls: {
@@ -981,12 +968,11 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.api_key
       },
       'brevo': {
-        scopes: '',
-        urls: {
+        urls: { 
           docsUrl: 'https://developers.brevo.com/docs/getting-started',
           apiUrl: 'https://api.brevo.com/v3'
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://sbp-plugin-images.s3.eu-west-1.amazonaws.com/technologies526_65670ec92e038_brevo300.jpg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: AuthStrategy.api_key
@@ -1133,6 +1119,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.api_key
       },
       'freshteam': {
         scopes: '',
@@ -1145,14 +1132,16 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'greenhouse': {
-        scopes: '',
+        scopes: 'candidates.create candidates.view jobs.view',
         urls: {
           docsUrl: '',
-          apiUrl: ''
+          apiUrl: 'https://api.greenhouse.io/v1/partner',
+          authBaseUrl: 'https://api.greenhouse.io/oauth/authorize'
         },
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.oauth2
       },
       'greenhouse_job_boards': {
         scopes: '',
@@ -1163,6 +1152,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.basic
       },
       'harbour_ats': {
         scopes: '',
@@ -1183,6 +1173,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.api_key
       },
       'hrcloud': {
         scopes: '',
@@ -1203,6 +1194,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.oauth2
       },
       'infinite_brassring': {
         scopes: '',
@@ -1225,14 +1217,16 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'jobadder': {
-        scopes: '',
+        scopes: 'offline_access read write',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://api.jobadder.com/v2/docs#section/Getting-Started/Authentication',
+          apiUrl: '',
+          authBaseUrl: 'https://id.jobadder.com/connect/authorize'
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://images.saasworthy.com/jobadder_5399_logo_1586769331_xj0dn.jpg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.oauth2
       },
       'jobscore': {
         scopes: '',
@@ -1253,6 +1247,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.oauth2
       },
       'lano': {
         scopes: '',
@@ -1265,14 +1260,16 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'lever': {
-        scopes: '',
+        scopes: 'offline_access applications:read:admin opportunities:read:admin opportunities:write:admin',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://hire.lever.co/developer/documentation#introduction',
+          apiUrl: 'https://api.lever.co/v1',
+          authBaseUrl: 'https://auth.lever.co/authorize'
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbR9XSB1lbZnYlLWyqMe5Px80ghtEOUqHeqw&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.oauth2
       },
       'occupop': {
         scopes: '',
@@ -1545,6 +1542,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.api_key
       },
       'ceridian_dayforce': {
         scopes: '',
@@ -1565,6 +1563,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.basic
+
       },
       'charthop': {
         scopes: '',
@@ -1637,14 +1637,15 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'factorial': {
-        scopes: '',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://apidoc.factorialhr.com/docs/authentication-1',
+          apiUrl: 'https://api.factorialhr.com/api/v1',
+          authBaseUrl: 'https://api.factorialhr.com/oauth/authorize'
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://pbs.twimg.com/profile_images/1449821710853808130/N2nL_8z3_400x400.jpg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.oauth2
       },
       'freshteam': {
         scopes: '',
@@ -1667,14 +1668,15 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'gusto': {
-        scopes: '',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://docs.gusto.com/app-integrations/docs/introduction',
+          apiUrl: 'https://api.gusto.com/v1',
+          authBaseUrl: 'https://api.gusto-demo.com/oauth/authorize'
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://cdn.runalloy.com/landing/uploads-new/Gusto_Logo_67ca008403.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
+        authStrategy: AuthStrategy.oauth2
       },
       'hibob': {
         scopes: '',
@@ -1715,6 +1717,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.api_key
       },
       'humi': {
         scopes: '',
@@ -1755,6 +1758,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.api_key
       },
       'iris_cascade': {
         scopes: '',
@@ -1799,12 +1803,13 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'keka': {
         scopes: '',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://developers.keka.com/reference/getting-started-for-customers',
+          apiUrl: '' // todo https://{company}.{environment}.com/api/v1
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://play-lh.googleusercontent.com/OiG-QsKPm--v-16z225UtUND2IIbinlLrnBhSRch9kL_ruBCIh4GDA0sD_BnUPF93Ew',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.oauth2
       },
       'kenjo': {
         scopes: '',
@@ -1815,6 +1820,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.api_key
       },
       'lano': {
         scopes: '',
@@ -1875,6 +1881,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.oauth2
       },
       'okta': {
         scopes: '',
@@ -1949,18 +1956,21 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'payfit': {
         scopes: '',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://developers.payfit.io/docs/cbb',
+          apiUrl: 'https://partner-api.payfit.com',
+          authBaseUrl: 'https://oauth.payfit.com/authorize'
         },
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: false, 
+        authStrategy: AuthStrategy.oauth2
       },
       'paylocity': {
         scopes: '',
         urls: {
           docsUrl: '',
-          apiUrl: ''
+          apiUrl: '',
+          authBaseUrl: ''
         },
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',

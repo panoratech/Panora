@@ -136,6 +136,12 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     case 'dropbox':
       params = `${params}&response_type=code&token_access_type=offline`
       break;
+    case 'basecamp':
+      params += `type=web_server&response_type=code`
+      break;
+    case 'lever':
+      params += `audience=https://api.lever.co/v1/&response_type=code`
+      break;
     default:
       // For most providers, response_type=code is common
       params += '&response_type=code';

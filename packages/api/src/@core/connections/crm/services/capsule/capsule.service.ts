@@ -12,11 +12,11 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { ICrmConnectionService } from '../../types';
 import {
-  CallbackParams,
+  OAuthCallbackParams,
   RefreshParams,
-  ICrmConnectionService,
-} from '../../types';
+} from '@@core/connections/@utils/types';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
@@ -53,7 +53,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
     this.type = providerToType('capsule', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({

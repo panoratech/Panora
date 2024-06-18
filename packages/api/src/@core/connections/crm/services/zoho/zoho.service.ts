@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   Action,
@@ -26,6 +22,10 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 type ZohoUrlType = {
   [key: string]: {
@@ -82,7 +82,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
     this.registry.registerService('zoho', this);
     this.type = providerToType('zoho', 'crm', AuthStrategy.oauth2);
   }
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code, location } = opts;
       if (!location) {

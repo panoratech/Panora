@@ -1,4 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import * as Sentry from '@sentry/node';
+import '@@core/sentry/instrument';
+import {
+  BaseExceptionFilter,
+  HttpAdapterHost,
+  NestFactory,
+} from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
@@ -35,6 +41,10 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
   app.use(cookieParser());
 
+  if (process.env.SENTRY_ENABLED == 'TRUE') {
+    const { httpAdapter } = app.get(HttpAdapterHost);
+    Sentry.setupNestErrorHandler(app, new BaseExceptionFilter(httpAdapter));
+  }
   await app.listen(3000);
 }
 bootstrap();

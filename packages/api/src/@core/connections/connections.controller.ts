@@ -5,33 +5,43 @@ import {
   Res,
   UseGuards,
   Request,
+  Post,
+  Body,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import {
-  ConnectionsError,
-  CoreSyncError,
-  throwTypedError,
-} from '@@core/utils/errors';
+import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
-import { ConnectorCategory, CONNECTORS_METADATA } from '@panora/shared';
+import { ConnectorCategory } from '@panora/shared';
 import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
 import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { CoreSyncService } from '@@core/sync/sync.service';
 import { HrisConnectionsService } from './hris/services/hris.connection.service';
 import { FilestorageConnectionsService } from './filestorage/services/filestorage.connection.service';
+import { AtsConnectionsService } from './ats/services/ats.connection.service';
 
 export type StateDataType = {
   projectId: string;
   vertical: string;
   linkedUserId: string;
   providerName: string;
-  returnUrl: string;
+  returnUrl?: string;
 };
+
+export class BodyDataType {
+  apikey: string;
+  [key: string]: any;
+}
 
 @ApiTags('connections')
 @Controller('connections')
@@ -43,6 +53,7 @@ export class ConnectionsController {
     private readonly marketingautomationConnectionsService: MarketingAutomationConnectionsService,
     private readonly filestorageConnectionsService: FilestorageConnectionsService,
     private readonly hrisConnectionsService: HrisConnectionsService,
+    private readonly atsConnectionsService: AtsConnectionsService,
     private logger: LoggerService,
     private prisma: PrismaService,
     private coreSync: CoreSyncService,
@@ -58,7 +69,7 @@ export class ConnectionsController {
   @ApiQuery({ name: 'code', required: true, type: String })
   @ApiResponse({ status: 200 })
   @Get('oauth/callback')
-  async handleCallback(@Res() res: Response, @Query() query: any) {
+  async handleOAuthCallback(@Res() res: Response, @Query() query: any) {
     try {
       const { state, code } = query;
       if (!code) {
@@ -82,54 +93,52 @@ export class ConnectionsController {
       switch (vertical.toLowerCase()) {
         case ConnectorCategory.Crm:
           const { location } = query;
-          await this.crmConnectionsService.handleCRMCallBack(
-            projectId,
-            linkedUserId,
+          await this.crmConnectionsService.handleCrmCallBack(
             providerName,
-            code,
-            location,
+            { linkedUserId, projectId, code, location },
+            'oauth',
           );
           break;
         case ConnectorCategory.Ats:
+          await this.atsConnectionsService.handleAtsCallBack(
+            providerName,
+            { linkedUserId, projectId, code },
+            'oauth',
+          );
           break;
         case ConnectorCategory.Accounting:
           await this.accountingConnectionsService.handleAccountingCallBack(
-            projectId,
-            linkedUserId,
             providerName,
-            code,
+            { linkedUserId, projectId, code },
+            'oauth',
           );
           break;
         case ConnectorCategory.FileStorage:
           await this.filestorageConnectionsService.handleFilestorageCallBack(
-            projectId,
-            linkedUserId,
             providerName,
-            code,
+            { linkedUserId, projectId, code },
+            'oauth',
           );
           break;
         case ConnectorCategory.Hris:
           await this.hrisConnectionsService.handleHrisCallBack(
-            projectId,
-            linkedUserId,
             providerName,
-            code,
+            { linkedUserId, projectId, code },
+            'oauth',
           );
           break;
         case ConnectorCategory.MarketingAutomation:
           await this.marketingautomationConnectionsService.handleMarketingAutomationCallBack(
-            projectId,
-            linkedUserId,
             providerName,
-            code,
+            { linkedUserId, projectId, code },
+            'oauth',
           );
           break;
         case ConnectorCategory.Ticketing:
           await this.ticketingConnectionsService.handleTicketingCallBack(
-            projectId,
-            linkedUserId,
             providerName,
-            code,
+            { linkedUserId, projectId, code },
+            'oauth',
           );
           break;
       }
@@ -186,6 +195,147 @@ export class ConnectionsController {
         }),
         this.logger,
       );
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'handleApiKeyCallback',
+    summary: 'Capture api key callback',
+  })
+  @ApiQuery({ name: 'state', required: true, type: String })
+  @ApiBody({ type: BodyDataType })
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({ status: 201 })
+  @Post('apikey/callback')
+  async handleApiKeyCallback(
+    @Res() res: Response,
+    @Query() query: any,
+    @Body() body: BodyDataType,
+  ) {
+    try {
+      const { state } = query;
+      if (!state) {
+        throw new ConnectionsError({
+          name: 'API_CALLBACK_STATE_NOT_FOUND_ERROR',
+          message: `No Callback Params found for state, found ${state}`,
+        });
+      }
+      const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
+      const { projectId, vertical, linkedUserId, providerName, returnUrl } =
+        stateData;
+      const { apikey, ...body_data } = body;
+      switch (vertical.toLowerCase()) {
+        case ConnectorCategory.Crm:
+          await this.crmConnectionsService.handleCrmCallBack(
+            providerName,
+            {
+              projectId,
+              linkedUserId,
+              apikey,
+              body_data,
+            },
+            'apikey',
+          );
+          break;
+        case ConnectorCategory.Ats:
+          await this.atsConnectionsService.handleAtsCallBack(
+            providerName,
+            {
+              projectId,
+              linkedUserId,
+              apikey,
+              body_data,
+            },
+            'apikey',
+          );
+          break;
+        case ConnectorCategory.Accounting:
+          await this.accountingConnectionsService.handleAccountingCallBack(
+            providerName,
+            {
+              projectId,
+              linkedUserId,
+              apikey,
+              body_data,
+            },
+            'apikey',
+          );
+          break;
+        case ConnectorCategory.FileStorage:
+          await this.filestorageConnectionsService.handleFilestorageCallBack(
+            providerName,
+            {
+              projectId,
+              linkedUserId,
+              apikey,
+              body_data,
+            },
+            'apikey',
+          );
+          break;
+        case ConnectorCategory.Hris:
+          await this.hrisConnectionsService.handleHrisCallBack(
+            providerName,
+            {
+              projectId,
+              linkedUserId,
+              apikey,
+              body_data,
+            },
+            'apikey',
+          );
+          break;
+        case ConnectorCategory.MarketingAutomation:
+          await this.marketingautomationConnectionsService.handleMarketingAutomationCallBack(
+            providerName,
+            {
+              projectId,
+              linkedUserId,
+              apikey,
+              body_data,
+            },
+            'apikey',
+          );
+          break;
+        case ConnectorCategory.Ticketing:
+          await this.ticketingConnectionsService.handleTicketingCallBack(
+            providerName,
+            {
+              projectId,
+              linkedUserId,
+              apikey,
+              body_data,
+            },
+            'apikey',
+          );
+          break;
+      }
+
+      res.redirect(returnUrl);
+
+      /*if (
+        CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
+          .active !== false
+      ) {
+        this.logger.log('triggering initial core sync for all objects...;');
+        // Performing Core Sync Service for active connectors
+        await this.coreSync.initialSync(
+          vertical.toLowerCase(),
+          providerName,
+          linkedUserId,
+          projectId,
+        );
+      }*/
+    } catch (error) {
+      /*throwTypedError(
+        new ConnectionsError({
+          name: 'APIKEY_CALLBACK_ERROR',
+          message: 'ConnectionsController.handleApiKeyCallback() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );*/
+      throw error;
     }
   }
 
