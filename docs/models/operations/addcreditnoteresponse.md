@@ -1,0 +1,10 @@
+# AddCreditNoteResponse
+
+
+## Fields
+
+| Field                                                                                        | Type                                                                                         | Required                                                                                     | Description                                                                                  |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                                   | [components.HTTPMetadata](../../models/components/httpmetadata.md)                           | :heavy_check_mark:                                                                           | N/A                                                                                          |
+| `object`                                                                                     | [operations.AddCreditNoteResponseBody](../../models/operations/addcreditnoteresponsebody.md) | :heavy_minus_sign:                                                                           | N/A                                                                                          |
+| `unifiedCreditNoteOutput`                                                                    | [components.UnifiedCreditNoteOutput](../../models/components/unifiedcreditnoteoutput.md)     | :heavy_minus_sign:                                                                           | N/A                                                                                          |

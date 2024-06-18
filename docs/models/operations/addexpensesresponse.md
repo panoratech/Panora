@@ -1,0 +1,10 @@
+# AddExpensesResponse
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                               | [components.HTTPMetadata](../../models/components/httpmetadata.md)                       | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `object`                                                                                 | [operations.AddExpensesResponseBody](../../models/operations/addexpensesresponsebody.md) | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `unifiedExpenseOutputs`                                                                  | [components.UnifiedExpenseOutput](../../models/components/unifiedexpenseoutput.md)[]     | :heavy_minus_sign:                                                                       | N/A                                                                                      |

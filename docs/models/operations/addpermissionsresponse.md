@@ -1,0 +1,10 @@
+# AddPermissionsResponse
+
+
+## Fields
+
+| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                                     | [components.HTTPMetadata](../../models/components/httpmetadata.md)                             | :heavy_check_mark:                                                                             | N/A                                                                                            |
+| `object`                                                                                       | [operations.AddPermissionsResponseBody](../../models/operations/addpermissionsresponsebody.md) | :heavy_minus_sign:                                                                             | N/A                                                                                            |
+| `unifiedPermissionOutputs`                                                                     | [components.UnifiedPermissionOutput](../../models/components/unifiedpermissionoutput.md)[]     | :heavy_minus_sign:                                                                             | N/A                                                                                            |

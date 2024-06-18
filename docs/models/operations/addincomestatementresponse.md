@@ -1,0 +1,10 @@
+# AddIncomeStatementResponse
+
+
+## Fields
+
+| Field                                                                                                  | Type                                                                                                   | Required                                                                                               | Description                                                                                            |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `httpMeta`                                                                                             | [components.HTTPMetadata](../../models/components/httpmetadata.md)                                     | :heavy_check_mark:                                                                                     | N/A                                                                                                    |
+| `object`                                                                                               | [operations.AddIncomeStatementResponseBody](../../models/operations/addincomestatementresponsebody.md) | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `unifiedIncomeStatementOutput`                                                                         | [components.UnifiedIncomeStatementOutput](../../models/components/unifiedincomestatementoutput.md)     | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |

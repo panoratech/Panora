@@ -1,0 +1,10 @@
+# AddTimeoffBalancesResponse
+
+
+## Fields
+
+| Field                                                                                                  | Type                                                                                                   | Required                                                                                               | Description                                                                                            |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `httpMeta`                                                                                             | [components.HTTPMetadata](../../models/components/httpmetadata.md)                                     | :heavy_check_mark:                                                                                     | N/A                                                                                                    |
+| `object`                                                                                               | [operations.AddTimeoffBalancesResponseBody](../../models/operations/addtimeoffbalancesresponsebody.md) | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `unifiedTimeoffBalanceOutputs`                                                                         | [components.UnifiedTimeoffBalanceOutput](../../models/components/unifiedtimeoffbalanceoutput.md)[]     | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |

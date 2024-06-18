@@ -1,0 +1,10 @@
+# AddAccountResponse
+
+
+## Fields
+
+| Field                                                                                  | Type                                                                                   | Required                                                                               | Description                                                                            |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                             | [components.HTTPMetadata](../../models/components/httpmetadata.md)                     | :heavy_check_mark:                                                                     | N/A                                                                                    |
+| `object`                                                                               | [operations.AddAccountResponseBody](../../models/operations/addaccountresponsebody.md) | :heavy_minus_sign:                                                                     | N/A                                                                                    |
+| `unifiedAccountOutput`                                                                 | [components.UnifiedAccountOutput](../../models/components/unifiedaccountoutput.md)     | :heavy_minus_sign:                                                                     | N/A                                                                                    |

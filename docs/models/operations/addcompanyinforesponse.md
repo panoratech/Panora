@@ -1,0 +1,10 @@
+# AddCompanyInfoResponse
+
+
+## Fields
+
+| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                                     | [components.HTTPMetadata](../../models/components/httpmetadata.md)                             | :heavy_check_mark:                                                                             | N/A                                                                                            |
+| `object`                                                                                       | [operations.AddCompanyInfoResponseBody](../../models/operations/addcompanyinforesponsebody.md) | :heavy_minus_sign:                                                                             | N/A                                                                                            |
+| `unifiedCompanyInfoOutput`                                                                     | [components.UnifiedCompanyInfoOutput](../../models/components/unifiedcompanyinfooutput.md)     | :heavy_minus_sign:                                                                             | N/A                                                                                            |

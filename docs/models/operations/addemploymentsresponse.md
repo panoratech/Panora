@@ -1,0 +1,10 @@
+# AddEmploymentsResponse
+
+
+## Fields
+
+| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                                     | [components.HTTPMetadata](../../models/components/httpmetadata.md)                             | :heavy_check_mark:                                                                             | N/A                                                                                            |
+| `object`                                                                                       | [operations.AddEmploymentsResponseBody](../../models/operations/addemploymentsresponsebody.md) | :heavy_minus_sign:                                                                             | N/A                                                                                            |
+| `unifiedEmploymentOutputs`                                                                     | [components.UnifiedEmploymentOutput](../../models/components/unifiedemploymentoutput.md)[]     | :heavy_minus_sign:                                                                             | N/A                                                                                            |

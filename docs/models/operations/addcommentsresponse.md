@@ -1,0 +1,10 @@
+# AddCommentsResponse
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                               | [components.HTTPMetadata](../../models/components/httpmetadata.md)                       | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `object`                                                                                 | [operations.AddCommentsResponseBody](../../models/operations/addcommentsresponsebody.md) | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `unifiedCommentOutputs`                                                                  | [components.UnifiedCommentOutput](../../models/components/unifiedcommentoutput.md)[]     | :heavy_minus_sign:                                                                       | N/A                                                                                      |

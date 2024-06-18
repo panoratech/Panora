@@ -1,0 +1,10 @@
+# AddTimeoffResponse
+
+
+## Fields
+
+| Field                                                                                  | Type                                                                                   | Required                                                                               | Description                                                                            |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                             | [components.HTTPMetadata](../../models/components/httpmetadata.md)                     | :heavy_check_mark:                                                                     | N/A                                                                                    |
+| `object`                                                                               | [operations.AddTimeoffResponseBody](../../models/operations/addtimeoffresponsebody.md) | :heavy_minus_sign:                                                                     | N/A                                                                                    |
+| `unifiedTimeoffOutput`                                                                 | [components.UnifiedTimeoffOutput](../../models/components/unifiedtimeoffoutput.md)     | :heavy_minus_sign:                                                                     | N/A                                                                                    |

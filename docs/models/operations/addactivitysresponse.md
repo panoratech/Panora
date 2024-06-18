@@ -1,0 +1,10 @@
+# AddActivitysResponse
+
+
+## Fields
+
+| Field                                                                                      | Type                                                                                       | Required                                                                                   | Description                                                                                |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `httpMeta`                                                                                 | [components.HTTPMetadata](../../models/components/httpmetadata.md)                         | :heavy_check_mark:                                                                         | N/A                                                                                        |
+| `object`                                                                                   | [operations.AddActivitysResponseBody](../../models/operations/addactivitysresponsebody.md) | :heavy_minus_sign:                                                                         | N/A                                                                                        |
+| `unifiedActivityOutputs`                                                                   | [components.UnifiedActivityOutput](../../models/components/unifiedactivityoutput.md)[]     | :heavy_minus_sign:                                                                         | N/A                                                                                        |
