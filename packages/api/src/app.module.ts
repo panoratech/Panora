@@ -56,7 +56,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
           context: 'HTTP',
           env: process.env.ENV,
           distribution: process.env.DISTRIBUTION,
-          commit_id: process.env.QOVERY_APPLICATION_Z6E264DA1_GIT_COMMIT_ID,	
+          commit_id: process.env.GIT_COMMIT_ID,	
         }),
         transport:
           process.env.AXIOM_AGENT_STATUS === 'ENABLED'
