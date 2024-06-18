@@ -2196,5 +2196,30 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: AuthStrategy.oauth2,
       },
+    },
+    'management': {
+      'notion': {
+        urls: {
+          docsUrl: 'https://developers.notion.com/docs/getting-started',
+          apiUrl: 'https://api.notion.com/v1',
+          authBaseUrl: 'https://api.notion.com/v1/oauth/authorize'
+        },
+        logoPath: 'https://www.jordanharbinger.com/wp-content/uploads/2021/08/notion.png',
+        description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
+        active: false,
+        authStrategy: AuthStrategy.oauth2,
+      },
+      'slack': {
+        scopes: '&user_scope=channels:history',
+        urls: {
+          docsUrl: 'https://api.slack.com/apis',
+          apiUrl: 'https://slack.com/api',
+          authBaseUrl: 'https://slack.com/oauth/v2/authorize'
+        },
+        logoPath: 'https://assets-global.website-files.com/621c8d7ad9e04933c4e51ffb/65eba5ffa14998827c92cc01_slack-octothorpe.png',
+        description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
+        active: false,
+        authStrategy: AuthStrategy.oauth2,
+      },
     }
 };

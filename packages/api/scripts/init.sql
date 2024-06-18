@@ -469,16 +469,16 @@ CREATE TABLE connector_sets
 (
  id_connector_set uuid NOT NULL,
  crm_hubspot      boolean,
- crm_zoho         boolean
- crm_attio        boolean
- crm_pipedrive    boolean
- tcg_zendesk      boolean
- tcg_jira         boolean
- tcg_gorgias      boolean
- tcg_gitlab       boolean
- tcg_front        boolean
- crm_zendesk      boolean
- crm_close        boolean
+ crm_zoho         boolean,
+ crm_attio        boolean,
+ crm_pipedrive    boolean,
+ tcg_zendesk      boolean,
+ tcg_jira         boolean,
+ tcg_gorgias      boolean,
+ tcg_gitlab       boolean,
+ tcg_front        boolean,
+ crm_zendesk      boolean,
+ crm_close        boolean,
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
