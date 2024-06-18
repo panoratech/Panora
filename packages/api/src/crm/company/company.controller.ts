@@ -80,7 +80,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCompany',
+    operationId: 'getCrmCompany',
     summary: 'Retrieve a Company',
     description: 'Retrieve a company from any connected Crm software',
   })
@@ -107,7 +107,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'addCompany',
+    operationId: 'addCrmCompany',
     summary: 'Create a Company',
     description: 'Create a company in any supported Crm software',
   })

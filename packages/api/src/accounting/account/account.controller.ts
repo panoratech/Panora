@@ -37,7 +37,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccounts',
+    operationId: 'getAccountingAccounts',
     summary: 'List a batch of Accounts',
   })
   @ApiHeader({
@@ -76,7 +76,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccount',
+    operationId: 'getAccountingAccount',
     summary: 'Retrieve a Account',
     description: 'Retrieve a account from any connected Accounting software',
   })

@@ -37,7 +37,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUsers',
+    operationId: 'getTicketingUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -70,7 +70,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUser',
+    operationId: 'getTicketingUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Ticketing software',
   })

@@ -37,8 +37,8 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContacts',
-    summary: 'List a batch of Contacts',
+    operationId: 'getTicketingContacts',
+    summary: 'List all Contacts',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -73,7 +73,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContact',
+    operationId: 'getTicketingContact',
     summary: 'Retrieve a Contact',
     description: 'Retrieve a contact from any connected Ticketing software',
   })

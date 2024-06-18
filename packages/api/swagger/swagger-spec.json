@@ -110,7 +110,7 @@
     },
     "/auth/users": {
       "get": {
-        "operationId": "getUsers",
+        "operationId": "getPanoraCoreUsers",
         "summary": "Get users",
         "parameters": [],
         "responses": {
@@ -491,15 +491,13 @@
         "tags": [
           "managed-webhooks"
         ]
-      }
-    },
-    "/managed-webhooks/{id}": {
+      },
       "put": {
         "operationId": "updateManagedWebhooksStatus",
         "summary": "Update managed webhook status",
         "parameters": [
           {
-            "name": "id",
+            "name": "id_connection",
             "required": true,
             "in": "path",
             "schema": {
@@ -573,7 +571,7 @@
         "summary": "Handle Third Party Webhook",
         "parameters": [
           {
-            "name": "uuid",
+            "name": "endpoint_uuid",
             "required": true,
             "in": "path",
             "schema": {
@@ -920,7 +918,7 @@
     },
     "/ticketing/users": {
       "get": {
-        "operationId": "getUsers",
+        "operationId": "getTicketingUsers",
         "summary": "List a batch of Users",
         "parameters": [
           {
@@ -996,7 +994,7 @@
     },
     "/ticketing/users/{id}": {
       "get": {
-        "operationId": "getUser",
+        "operationId": "getTicketingUser",
         "summary": "Retrieve a User",
         "description": "Retrieve a user from any connected Ticketing software",
         "parameters": [
@@ -1054,7 +1052,7 @@
     },
     "/ticketing/accounts": {
       "get": {
-        "operationId": "getAccounts",
+        "operationId": "getTicketingAccounts",
         "summary": "List a batch of Accounts",
         "parameters": [
           {
@@ -1130,7 +1128,7 @@
     },
     "/ticketing/accounts/{id}": {
       "get": {
-        "operationId": "getAccount",
+        "operationId": "getTicketingAccount",
         "summary": "Retrieve an Account",
         "description": "Retrieve an account from any connected Ticketing software",
         "parameters": [
@@ -1188,8 +1186,8 @@
     },
     "/ticketing/contacts": {
       "get": {
-        "operationId": "getContacts",
-        "summary": "List a batch of Contacts",
+        "operationId": "getTicketingContacts",
+        "summary": "List all Contacts",
         "parameters": [
           {
             "name": "x-connection-token",
@@ -1264,7 +1262,7 @@
     },
     "/ticketing/contacts/{id}": {
       "get": {
-        "operationId": "getContact",
+        "operationId": "getTicketingContact",
         "summary": "Retrieve a Contact",
         "description": "Retrieve a contact from any connected Ticketing software",
         "parameters": [
@@ -1396,7 +1394,7 @@
         ]
       },
       "post": {
-        "operationId": "addCompany",
+        "operationId": "addCrmCompany",
         "summary": "Create a Company",
         "description": "Create a company in any supported Crm software",
         "parameters": [
@@ -1519,7 +1517,7 @@
     },
     "/crm/companies/{id}": {
       "get": {
-        "operationId": "getCompany",
+        "operationId": "getCrmCompany",
         "summary": "Retrieve a Company",
         "description": "Retrieve a company from any connected Crm software",
         "parameters": [
@@ -1660,7 +1658,7 @@
     },
     "/crm/contacts": {
       "get": {
-        "operationId": "getContacts",
+        "operationId": "getCrmContacts",
         "summary": "List a batch of CRM Contacts",
         "parameters": [
           {
@@ -1734,7 +1732,7 @@
         ]
       },
       "post": {
-        "operationId": "addContact",
+        "operationId": "addCrmContact",
         "summary": "Create CRM Contact",
         "description": "Create a contact in any supported CRM",
         "parameters": [
@@ -1846,7 +1844,7 @@
     },
     "/crm/contacts/{id}": {
       "get": {
-        "operationId": "getContact",
+        "operationId": "getCrmContact",
         "summary": "Retrieve a CRM Contact",
         "description": "Retrieve a contact from any connected CRM",
         "parameters": [
@@ -1904,7 +1902,7 @@
     },
     "/crm/contacts/batch": {
       "post": {
-        "operationId": "addContacts",
+        "operationId": "addCrmContacts",
         "summary": "Add a batch of CRM Contacts",
         "parameters": [
           {
@@ -3428,7 +3426,7 @@
     },
     "/crm/users": {
       "get": {
-        "operationId": "getUsers",
+        "operationId": "getCrmUsers",
         "summary": "List a batch of Users",
         "parameters": [
           {
@@ -3504,7 +3502,7 @@
     },
     "/crm/users/{id}": {
       "get": {
-        "operationId": "getUser",
+        "operationId": "getCrmUser",
         "summary": "Retrieve a User",
         "description": "Retrieve a user from any connected Crm software",
         "parameters": [
@@ -3989,7 +3987,7 @@
     },
     "/ticketing/tags": {
       "get": {
-        "operationId": "getTags",
+        "operationId": "getTicketingTags",
         "summary": "List a batch of Tags",
         "parameters": [
           {
@@ -4065,7 +4063,7 @@
     },
     "/ticketing/tags/{id}": {
       "get": {
-        "operationId": "getTag",
+        "operationId": "getTicketingTag",
         "summary": "Retrieve a Tag",
         "description": "Retrieve a tag from any connected Ticketing software",
         "parameters": [
@@ -4606,7 +4604,7 @@
     },
     "/events": {
       "get": {
-        "operationId": "getEvents",
+        "operationId": "getPanoraCoreEvents",
         "summary": "Retrieve Events",
         "parameters": [
           {
@@ -5642,7 +5640,7 @@
         ]
       },
       "post": {
-        "operationId": "addCompany",
+        "operationId": "addHrisCompany",
         "summary": "Create a Company",
         "description": "Create a company in any supported Hris software",
         "parameters": [
@@ -5715,7 +5713,7 @@
     },
     "/hris/company/{id}": {
       "get": {
-        "operationId": "getCompany",
+        "operationId": "getHrisCompany",
         "summary": "Retrieve a Company",
         "description": "Retrieve a company from any connected Hris software",
         "parameters": [
@@ -9522,7 +9520,7 @@
     },
     "/marketingautomation/contact": {
       "get": {
-        "operationId": "getContacts",
+        "operationId": "getMarketingAutomationContacts",
         "summary": "List a batch of Contacts",
         "parameters": [
           {
@@ -9572,7 +9570,7 @@
         ]
       },
       "post": {
-        "operationId": "addContact",
+        "operationId": "addMarketingAutomationContact",
         "summary": "Create a Contact",
         "description": "Create a contact in any supported Marketingautomation software",
         "parameters": [
@@ -9645,7 +9643,7 @@
     },
     "/marketingautomation/contact/{id}": {
       "get": {
-        "operationId": "getContact",
+        "operationId": "getMarketingAutomationContact",
         "summary": "Retrieve a Contact",
         "description": "Retrieve a contact from any connected Marketingautomation software",
         "parameters": [
@@ -9698,7 +9696,7 @@
     },
     "/marketingautomation/contact/batch": {
       "post": {
-        "operationId": "addContacts",
+        "operationId": "addMarketingAutomationContacts",
         "summary": "Add a batch of Contacts",
         "parameters": [
           {
@@ -10046,7 +10044,7 @@
     },
     "/marketingautomation/event": {
       "get": {
-        "operationId": "getEvents",
+        "operationId": "getMarketingAutomationEvents",
         "summary": "List a batch of Events",
         "parameters": [
           {
@@ -11094,7 +11092,7 @@
     },
     "/marketingautomation/user": {
       "get": {
-        "operationId": "getUsers",
+        "operationId": "getMarketingAutomationUsers",
         "summary": "List a batch of Users",
         "parameters": [
           {
@@ -11144,7 +11142,7 @@
         ]
       },
       "post": {
-        "operationId": "addUser",
+        "operationId": "addMarketingAutomationUser",
         "summary": "Create a User",
         "description": "Create a user in any supported Marketingautomation software",
         "parameters": [
@@ -11217,7 +11215,7 @@
     },
     "/marketingautomation/user/{id}": {
       "get": {
-        "operationId": "getUser",
+        "operationId": "getMarketingAutomationUser",
         "summary": "Retrieve a User",
         "description": "Retrieve a user from any connected Marketingautomation software",
         "parameters": [
@@ -11270,7 +11268,7 @@
     },
     "/marketingautomation/user/batch": {
       "post": {
-        "operationId": "addUsers",
+        "operationId": "addMarketingAutomationUsers",
         "summary": "Add a batch of Users",
         "parameters": [
           {
@@ -11880,7 +11878,7 @@
     },
     "/ats/attachment": {
       "get": {
-        "operationId": "getAttachments",
+        "operationId": "getAtsAttachments",
         "summary": "List a batch of Attachments",
         "parameters": [
           {
@@ -11930,7 +11928,7 @@
         ]
       },
       "post": {
-        "operationId": "addAttachment",
+        "operationId": "addAtsAttachment",
         "summary": "Create a Attachment",
         "description": "Create a attachment in any supported Ats software",
         "parameters": [
@@ -12003,7 +12001,7 @@
     },
     "/ats/attachment/{id}": {
       "get": {
-        "operationId": "getAttachment",
+        "operationId": "getAtsAttachment",
         "summary": "Retrieve a Attachment",
         "description": "Retrieve a attachment from any connected Ats software",
         "parameters": [
@@ -12056,7 +12054,7 @@
     },
     "/ats/attachment/batch": {
       "post": {
-        "operationId": "addAttachments",
+        "operationId": "addAtsAttachments",
         "summary": "Add a batch of Attachments",
         "parameters": [
           {
@@ -14762,7 +14760,7 @@
     },
     "/ats/tag": {
       "get": {
-        "operationId": "getTags",
+        "operationId": "getAtsTags",
         "summary": "List a batch of Tags",
         "parameters": [
           {
@@ -14885,7 +14883,7 @@
     },
     "/ats/tag/{id}": {
       "get": {
-        "operationId": "getTag",
+        "operationId": "getAtsTag",
         "summary": "Retrieve a Tag",
         "description": "Retrieve a tag from any connected Ats software",
         "parameters": [
@@ -15024,7 +15022,7 @@
     },
     "/ats/user": {
       "get": {
-        "operationId": "getUsers",
+        "operationId": "getAtsUsers",
         "summary": "List a batch of Users",
         "parameters": [
           {
@@ -15074,7 +15072,7 @@
         ]
       },
       "post": {
-        "operationId": "addUser",
+        "operationId": "addAtsUser",
         "summary": "Create a User",
         "description": "Create a user in any supported Ats software",
         "parameters": [
@@ -15147,7 +15145,7 @@
     },
     "/ats/user/{id}": {
       "get": {
-        "operationId": "getUser",
+        "operationId": "getAtsUser",
         "summary": "Retrieve a User",
         "description": "Retrieve a user from any connected Ats software",
         "parameters": [
@@ -15200,7 +15198,7 @@
     },
     "/ats/user/batch": {
       "post": {
-        "operationId": "addUsers",
+        "operationId": "addAtsUsers",
         "summary": "Add a batch of Users",
         "parameters": [
           {
@@ -15548,7 +15546,7 @@
     },
     "/accounting/account": {
       "get": {
-        "operationId": "getAccounts",
+        "operationId": "getAccountingAccounts",
         "summary": "List a batch of Accounts",
         "parameters": [
           {
@@ -15671,7 +15669,7 @@
     },
     "/accounting/account/{id}": {
       "get": {
-        "operationId": "getAccount",
+        "operationId": "getAccountingAccount",
         "summary": "Retrieve a Account",
         "description": "Retrieve a account from any connected Accounting software",
         "parameters": [
@@ -16072,7 +16070,7 @@
     },
     "/accounting/attachment": {
       "get": {
-        "operationId": "getAttachments",
+        "operationId": "getAccountingAttachments",
         "summary": "List a batch of Attachments",
         "parameters": [
           {
@@ -16122,7 +16120,7 @@
         ]
       },
       "post": {
-        "operationId": "addAttachment",
+        "operationId": "addAccountingAttachment",
         "summary": "Create a Attachment",
         "description": "Create a attachment in any supported Accounting software",
         "parameters": [
@@ -16195,7 +16193,7 @@
     },
     "/accounting/attachment/{id}": {
       "get": {
-        "operationId": "getAttachment",
+        "operationId": "getAccountingAttachment",
         "summary": "Retrieve a Attachment",
         "description": "Retrieve a attachment from any connected Accounting software",
         "parameters": [
@@ -16248,7 +16246,7 @@
     },
     "/accounting/attachment/batch": {
       "post": {
-        "operationId": "addAttachments",
+        "operationId": "addAccountingAttachments",
         "summary": "Add a batch of Attachments",
         "parameters": [
           {
@@ -17120,7 +17118,7 @@
     },
     "/accounting/contact": {
       "get": {
-        "operationId": "getContacts",
+        "operationId": "getAccountingContacts",
         "summary": "List a batch of Contacts",
         "parameters": [
           {
@@ -17170,7 +17168,7 @@
         ]
       },
       "post": {
-        "operationId": "addContact",
+        "operationId": "addAccountingContact",
         "summary": "Create a Contact",
         "description": "Create a contact in any supported Accounting software",
         "parameters": [
@@ -17243,7 +17241,7 @@
     },
     "/accounting/contact/{id}": {
       "get": {
-        "operationId": "getContact",
+        "operationId": "getAccountingContact",
         "summary": "Retrieve a Contact",
         "description": "Retrieve a contact from any connected Accounting software",
         "parameters": [
@@ -17296,7 +17294,7 @@
     },
     "/accounting/contact/batch": {
       "post": {
-        "operationId": "addContacts",
+        "operationId": "addAccountingContacts",
         "summary": "Add a batch of Contacts",
         "parameters": [
           {
@@ -22138,7 +22136,7 @@
     },
     "/ticketing/attachments": {
       "get": {
-        "operationId": "getAttachments",
+        "operationId": "getTicketingAttachments",
         "summary": "List a batch of Attachments",
         "parameters": [
           {
@@ -22212,7 +22210,7 @@
         ]
       },
       "post": {
-        "operationId": "addAttachment",
+        "operationId": "addTicketingAttachment",
         "summary": "Create a Attachment",
         "description": "Create a attachment in any supported Ticketing software",
         "parameters": [
@@ -22290,7 +22288,7 @@
     },
     "/ticketing/attachments/{id}": {
       "get": {
-        "operationId": "getAttachment",
+        "operationId": "getTicketingAttachment",
         "summary": "Retrieve a Attachment",
         "description": "Retrieve a attachment from any connected Ticketing software",
         "parameters": [
@@ -22406,7 +22404,7 @@
     },
     "/ticketing/attachments/batch": {
       "post": {
-        "operationId": "addAttachments",
+        "operationId": "addTicketingAttachments",
         "summary": "Add a batch of Attachments",
         "parameters": [
           {
@@ -22495,7 +22493,16 @@
     "contact": {}
   },
   "tags": [],
-  "servers": [],
+  "servers": [
+    {
+      "url": "https://api.panora.dev",
+      "description": "Production server"
+    },
+    {
+      "url": "https://api-sandbox.panora.dev",
+      "description": "Sandbox server"
+    }
+  ],
   "components": {
     "securitySchemes": {
       "JWT": {

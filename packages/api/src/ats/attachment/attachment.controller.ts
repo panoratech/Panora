@@ -37,7 +37,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAttachments',
+    operationId: 'getAtsAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -75,7 +75,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAttachment',
+    operationId: 'getAtsAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Ats software',
   })
@@ -102,7 +102,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAttachment',
+    operationId: 'addAtsAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Ats software',
   })
@@ -144,7 +144,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAttachments',
+    operationId: 'addAtsAttachments',
     summary: 'Add a batch of Attachments',
   })
   @ApiHeader({

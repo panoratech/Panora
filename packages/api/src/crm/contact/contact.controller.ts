@@ -44,7 +44,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContacts',
+    operationId: 'getCrmContacts',
     summary: 'List a batch of CRM Contacts',
   })
   @ApiHeader({
@@ -80,7 +80,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContact',
+    operationId: 'getCrmContact',
     summary: 'Retrieve a CRM Contact',
     description: 'Retrieve a contact from any connected CRM',
   })
@@ -107,7 +107,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addContact',
+    operationId: 'addCrmContact',
     summary: 'Create CRM Contact',
     description: 'Create a contact in any supported CRM',
   })
@@ -150,7 +150,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addContacts',
+    operationId: 'addCrmContacts',
     summary: 'Add a batch of CRM Contacts',
   })
   @ApiHeader({

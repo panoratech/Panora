@@ -37,7 +37,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContacts',
+    operationId: 'getMarketingAutomationContacts',
     summary: 'List a batch of Contacts',
   })
   @ApiHeader({
@@ -76,7 +76,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContact',
+    operationId: 'getMarketingAutomationContact',
     summary: 'Retrieve a Contact',
     description:
       'Retrieve a contact from any connected Marketingautomation software',
@@ -105,7 +105,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addContact',
+    operationId: 'addMarketingAutomationContact',
     summary: 'Create a Contact',
     description:
       'Create a contact in any supported Marketingautomation software',
@@ -149,7 +149,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addContacts',
+    operationId: 'addMarketingAutomationContacts',
     summary: 'Add a batch of Contacts',
   })
   @ApiHeader({

@@ -43,7 +43,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAttachments',
+    operationId: 'getTicketingAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -80,7 +80,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAttachment',
+    operationId: 'getTicketingAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Ticketing software',
   })
@@ -136,7 +136,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAttachment',
+    operationId: 'addTicketingAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Ticketing software',
   })
@@ -179,7 +179,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAttachments',
+    operationId: 'addTicketingAttachments',
     summary: 'Add a batch of Attachments',
   })
   @ApiHeader({

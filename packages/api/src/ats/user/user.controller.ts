@@ -34,7 +34,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUsers',
+    operationId: 'getAtsUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -68,7 +68,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUser',
+    operationId: 'getAtsUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Ats software',
   })
@@ -95,7 +95,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'addUser',
+    operationId: 'addAtsUser',
     summary: 'Create a User',
     description: 'Create a user in any supported Ats software',
   })
@@ -137,7 +137,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'addUsers',
+    operationId: 'addAtsUsers',
     summary: 'Add a batch of Users',
   })
   @ApiHeader({

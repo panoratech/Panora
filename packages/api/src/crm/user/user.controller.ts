@@ -37,7 +37,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUsers',
+    operationId: 'getCrmUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -73,7 +73,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUser',
+    operationId: 'getCrmUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Crm software',
   })

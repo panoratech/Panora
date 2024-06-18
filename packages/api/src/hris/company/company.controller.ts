@@ -75,7 +75,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCompany',
+    operationId: 'getHrisCompany',
     summary: 'Retrieve a Company',
     description: 'Retrieve a company from any connected Hris software',
   })
@@ -102,7 +102,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'addCompany',
+    operationId: 'addHrisCompany',
     summary: 'Create a Company',
     description: 'Create a company in any supported Hris software',
   })

@@ -37,7 +37,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAttachments',
+    operationId: 'getAccountingAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -76,7 +76,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAttachment',
+    operationId: 'getAccountingAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Accounting software',
   })
@@ -104,7 +104,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAttachment',
+    operationId: 'addAccountingAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Accounting software',
   })
@@ -147,7 +147,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAttachments',
+    operationId: 'addAccountingAttachments',
     summary: 'Add a batch of Attachments',
   })
   @ApiHeader({
