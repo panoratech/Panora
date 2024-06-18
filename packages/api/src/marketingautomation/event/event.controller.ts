@@ -34,7 +34,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'getEvents',
+    operationId: 'getMarketingAutomationEvents',
     summary: 'List a batch of Events',
   })
   @ApiHeader({

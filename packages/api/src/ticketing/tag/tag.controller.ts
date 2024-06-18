@@ -37,7 +37,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getTags',
+    operationId: 'getTicketingTags',
     summary: 'List a batch of Tags',
   })
   @ApiHeader({
@@ -73,7 +73,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getTag',
+    operationId: 'getTicketingTag',
     summary: 'Retrieve a Tag',
     description: 'Retrieve a tag from any connected Ticketing software',
   })

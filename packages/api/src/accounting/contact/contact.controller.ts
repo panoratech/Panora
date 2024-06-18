@@ -37,7 +37,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContacts',
+    operationId: 'getAccountingContacts',
     summary: 'List a batch of Contacts',
   })
   @ApiHeader({
@@ -76,7 +76,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContact',
+    operationId: 'getAccountingContact',
     summary: 'Retrieve a Contact',
     description: 'Retrieve a contact from any connected Accounting software',
   })
@@ -104,7 +104,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addContact',
+    operationId: 'addAccountingContact',
     summary: 'Create a Contact',
     description: 'Create a contact in any supported Accounting software',
   })
@@ -147,7 +147,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addContacts',
+    operationId: 'addAccountingContacts',
     summary: 'Add a batch of Contacts',
   })
   @ApiHeader({

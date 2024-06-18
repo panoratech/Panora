@@ -37,7 +37,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccounts',
+    operationId: 'getTicketingAccounts',
     summary: 'List a batch of Accounts',
   })
   @ApiHeader({

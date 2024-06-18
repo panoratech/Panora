@@ -34,7 +34,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUsers',
+    operationId: 'getMarketingAutomationUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -69,7 +69,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUser',
+    operationId: 'getMarketingAutomationUser',
     summary: 'Retrieve a User',
     description:
       'Retrieve a user from any connected Marketingautomation software',
@@ -98,7 +98,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'addUser',
+    operationId: 'addMarketingAutomationUser',
     summary: 'Create a User',
     description: 'Create a user in any supported Marketingautomation software',
   })
@@ -141,7 +141,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'addUsers',
+    operationId: 'addMarketingAutomationUsers',
     summary: 'Add a batch of Users',
   })
   @ApiHeader({
