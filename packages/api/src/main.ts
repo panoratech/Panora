@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/node';
 import '@@core/sentry/instrument';
+import * as Sentry from '@sentry/node';
 import {
   BaseExceptionFilter,
   HttpAdapterHost,
