@@ -37,7 +37,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmUsers',
+    operationId: 'getTicketingUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({

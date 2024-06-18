@@ -491,15 +491,13 @@
         "tags": [
           "managed-webhooks"
         ]
-      }
-    },
-    "/managed-webhooks/{id}": {
+      },
       "put": {
         "operationId": "updateManagedWebhooksStatus",
         "summary": "Update managed webhook status",
         "parameters": [
           {
-            "name": "id",
+            "name": "id_connection",
             "required": true,
             "in": "path",
             "schema": {
@@ -573,7 +571,7 @@
         "summary": "Handle Third Party Webhook",
         "parameters": [
           {
-            "name": "uuid",
+            "name": "endpoint_uuid",
             "required": true,
             "in": "path",
             "schema": {
@@ -920,7 +918,7 @@
     },
     "/ticketing/users": {
       "get": {
-        "operationId": "getCrmUsers",
+        "operationId": "getTicketingUsers",
         "summary": "List a batch of Users",
         "parameters": [
           {
@@ -1130,7 +1128,7 @@
     },
     "/ticketing/accounts/{id}": {
       "get": {
-        "operationId": "getAccount",
+        "operationId": "getTicketingAccount",
         "summary": "Retrieve an Account",
         "description": "Retrieve an account from any connected Ticketing software",
         "parameters": [
@@ -15671,7 +15669,7 @@
     },
     "/accounting/account/{id}": {
       "get": {
-        "operationId": "getAccount",
+        "operationId": "getAccountingAccount",
         "summary": "Retrieve a Account",
         "description": "Retrieve a account from any connected Accounting software",
         "parameters": [

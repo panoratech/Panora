@@ -73,7 +73,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccount',
+    operationId: 'getTicketingAccount',
     summary: 'Retrieve an Account',
     description: 'Retrieve an account from any connected Ticketing software',
   })
