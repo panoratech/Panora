@@ -1,4 +1,6 @@
 import { EnvironmentService } from '@@core/environment/environment.service';
+import { LoggerService } from '@@core/logger/logger.service';
+import { EncryptionError, throwTypedError } from '@@core/utils/errors';
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 
@@ -7,7 +9,7 @@ export class EncryptionService {
   private secretKey: string;
   private iv = crypto.randomBytes(16);
 
-  constructor(private env: EnvironmentService) {
+  constructor(private env: EnvironmentService, private logger: LoggerService) {
     this.secretKey = this.env.getCryptoKey();
   }
 
@@ -23,7 +25,14 @@ export class EncryptionService {
       const encryptedWithIv = this.iv.toString('hex') + ':' + encrypted;
       return encryptedWithIv;
     } catch (error) {
-      throw new Error('Encrypting error... ' + error);
+      throwTypedError(
+        new EncryptionError({
+          name: 'ENCRYPT_ERROR',
+          message: 'EncryptionService.encrypt() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -41,7 +50,14 @@ export class EncryptionService {
       decrypted += decipher.final('utf8');
       return decrypted;
     } catch (error) {
-      throw new Error('Decrypting error... ' + error);
+      throwTypedError(
+        new EncryptionError({
+          name: 'DECRYPT_ERROR',
+          message: 'EncryptionService.decrypt() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

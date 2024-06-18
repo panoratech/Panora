@@ -4,8 +4,15 @@ import {
   UnifiedUserInput,
   UnifiedUserOutput,
 } from '@ticketing/user/types/model.unified';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 
+@Injectable()
 export class ZendeskUserMapper implements IUserMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('ticketing', 'user', 'zendesk', this);
+  }
   desunify(
     source: UnifiedUserInput,
     customFieldMappings?: {

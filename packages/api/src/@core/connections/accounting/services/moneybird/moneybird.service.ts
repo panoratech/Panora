@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -31,7 +37,6 @@ export class MoneybirdConnectionService
   implements IAccountingConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -40,6 +45,7 @@ export class MoneybirdConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(MoneybirdConnectionService.name);
     this.registry.registerService('moneybird', this);
@@ -72,7 +78,7 @@ export class MoneybirdConnectionService
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        '  https://moneybird.com/oauth/token',
+        'https://moneybird.com/oauth/token',
         formData.toString(),
         {
           headers: {
@@ -82,7 +88,7 @@ export class MoneybirdConnectionService
       );
       const data: MoneybirdOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : moneybird ticketing ' + JSON.stringify(data),
+        'OAuth credentials : moneybird accounting ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -98,9 +104,6 @@ export class MoneybirdConnectionService
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url:
               CONNECTORS_METADATA['accounting']['moneybird'].urls.apiUrl,
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
-            ),
             status: 'valid',
             created_at: new Date(),
           },
@@ -117,9 +120,6 @@ export class MoneybirdConnectionService
               CONNECTORS_METADATA['accounting']['moneybird'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
-            ),
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -138,7 +138,18 @@ export class MoneybirdConnectionService
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'moneybird', Action.oauthCallback);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
+          message: `MoneybirdConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'moneybird',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -179,7 +190,18 @@ export class MoneybirdConnectionService
       });
       this.logger.log('OAuth credentials updated : moneybird ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'moneybird', Action.oauthRefresh);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
+          message: `MoneybirdConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            'moneybird',
+            Action.oauthRefresh,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

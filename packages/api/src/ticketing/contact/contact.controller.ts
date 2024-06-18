@@ -28,18 +28,17 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/contacts')
 @Controller('ticketing/contacts')
 export class ContactController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly contactService: ContactService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(ContactController.name);
   }
 
   @ApiOperation({
-    operationId: 'getContacts',
-    summary: 'List a batch of Contacts',
+    operationId: 'getTicketingContacts',
+    summary: 'List all Contacts',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -66,7 +65,7 @@ export class ContactController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -74,7 +73,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContact',
+    operationId: 'getTicketingContact',
     summary: 'Retrieve a Contact',
     description: 'Retrieve a contact from any connected Ticketing software',
   })

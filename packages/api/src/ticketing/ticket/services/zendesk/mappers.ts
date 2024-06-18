@@ -5,12 +5,18 @@ import {
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { Utils } from '@ticketing/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ZendeskTicketMapper implements ITicketMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService(
+      'ticketing',
+      'ticket',
+      'zendesk',
+      this,
+    );
   }
 
   async desunify(
@@ -116,7 +122,6 @@ export class ZendeskTicketMapper implements ITicketMapper {
 
     //TODO: contact or user ?
     if (ticket.assignee_id) {
-      //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee_id),
         'zendesk',
@@ -124,6 +129,12 @@ export class ZendeskTicketMapper implements ITicketMapper {
       if (user_id) {
         opts = { assigned_to: [user_id] };
       }
+    }
+    if (ticket.type) {
+      opts = {
+        type:
+          ticket.type === 'incident' ? 'PROBLEM' : ticket.type.toUpperCase(),
+      };
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
@@ -133,7 +144,6 @@ export class ZendeskTicketMapper implements ITicketMapper {
         ticket.status === 'new' || ticket.status === 'open' ? 'OPEN' : 'CLOSED', // todo: handle pending status ?
       description: ticket.description,
       due_date: ticket.due_at ? new Date(ticket.due_at) : undefined,
-      type: ticket.type === 'incident' ? 'PROBLEM' : ticket.type.toUpperCase(),
       parent_ticket: undefined, // If available, add logic to map parent ticket
       tags: ticket.tags,
       completed_at: new Date(ticket.updated_at),

@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -29,7 +35,6 @@ export class PennylaneConnectionService
   implements IAccountingConnectionService
 {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -38,6 +43,7 @@ export class PennylaneConnectionService
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(PennylaneConnectionService.name);
     this.registry.registerService('pennylane', this);
@@ -55,8 +61,11 @@ export class PennylaneConnectionService
         },
       });
 
-      //reconstruct the redirect URI that was passed in the githubend it must be the same
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getWebhookIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -80,7 +89,7 @@ export class PennylaneConnectionService
       );
       const data: PennylaneOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : pennylane ticketing ' + JSON.stringify(data),
+        'OAuth credentials : pennylane accounting ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -136,7 +145,18 @@ export class PennylaneConnectionService
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'pennylane', Action.oauthCallback);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
+          message: `PennylaneConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'pennylane',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -179,7 +199,18 @@ export class PennylaneConnectionService
       });
       this.logger.log('OAuth credentials updated : pennylane ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'pennylane', Action.oauthRefresh);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
+          message: `PennylaneConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            'pennylane',
+            Action.oauthRefresh,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

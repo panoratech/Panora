@@ -5,11 +5,14 @@ import { TicketingWebhookHandlerService } from './handler.service';
 import { ZendeskHandlerService } from './zendesk/handler';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { TicketModule } from '@ticketing/ticket/ticket.module';
+import { UserModule } from '@ticketing/user/user.module';
+import { AccountModule } from '@ticketing/account/account.module';
+import { ContactModule } from '@ticketing/contact/contact.module';
 
 @Module({
-  imports: [],
+  imports: [TicketModule, UserModule, AccountModule, ContactModule],
   providers: [
-    PrismaService,
     LoggerService,
     EncryptionService,
     EnvironmentService,
@@ -19,7 +22,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
   ],
   exports: [
     LoggerService,
-    PrismaService,
+
     ZendeskHandlerService,
     TicketingWebhookHandlerService,
   ],

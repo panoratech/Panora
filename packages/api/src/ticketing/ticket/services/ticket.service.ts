@@ -3,19 +3,18 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '../types/model.unified';
 import { ITicketService } from '../types';
-import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { unify } from '@@core/utils/unification/unify';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from './registry.service';
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class TicketService {
@@ -25,6 +24,7 @@ export class TicketService {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(TicketService.name);
   }
@@ -48,7 +48,13 @@ export class TicketService {
       );
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_TICKETS_ERROR',
+          message: 'TicketService.batchAddTickets() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -65,7 +71,7 @@ export class TicketService {
         },
       });
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
       const acc = unifiedTicketData.account_id;
       //check if contact_id and account_id refer to real uuids
       if (acc) {
@@ -75,7 +81,9 @@ export class TicketService {
           },
         });
         if (!search)
-          throw new Error('You inserted an account_id which does not exist');
+          throw new ReferenceError(
+            'You inserted an account_id which does not exist',
+          );
       }
 
       const contact = unifiedTicketData.contact_id;
@@ -87,7 +95,9 @@ export class TicketService {
           },
         });
         if (!search)
-          throw new Error('You inserted a contact_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a contact_id which does not exist',
+          );
       }
       const assignees = unifiedTicketData.assigned_to;
       //CHEK IF assigned_to contains valid Users uuids
@@ -99,7 +109,9 @@ export class TicketService {
             },
           });
           if (!search)
-            throw new Error('You inserted an assignee which does not exist');
+            throw new ReferenceError(
+              'You inserted an assignee which does not exist',
+            );
         });
       }
       // Retrieve custom field mappings
@@ -111,15 +123,16 @@ export class TicketService {
           'ticketing.ticket',
         );
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedTicketInput>({
-        sourceObject: unifiedTicketData,
-        targetType: TicketingObject.ticket,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        customFieldMappings: unifiedTicketData.field_mappings
-          ? customFieldMappings
-          : [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedTicketInput>({
+          sourceObject: unifiedTicketData,
+          targetType: TicketingObject.ticket,
+          providerName: integrationId,
+          vertical: 'ticketing',
+          customFieldMappings: unifiedTicketData.field_mappings
+            ? customFieldMappings
+            : [],
+        });
 
       this.logger.log(
         'ticket desunified is ' + JSON.stringify(desunifiedObject),
@@ -133,7 +146,9 @@ export class TicketService {
       );
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalTicketOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalTicketOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: TicketingObject.ticket,
         providerName: integrationId,
@@ -329,7 +344,14 @@ export class TicketService {
       );
       return result_ticket;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
+      /*throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_TICKET_ERROR',
+          message: 'TicketService.addTicket() call failed',
+          cause: error,
+        }),
+      );*/
     }
   }
 
@@ -405,7 +427,13 @@ export class TicketService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TICKET_ERROR',
+          message: 'TicketService.getTicket() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -414,8 +442,12 @@ export class TicketService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedTicketOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedTicketOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -427,21 +459,23 @@ export class TicketService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_ticket: cursor
-          }
+            id_tcg_ticket: cursor,
+          },
         });
         if (!isCursorPresent) {
-          throw new NotFoundError(`The provided cursor does not exist!`);
+          throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
 
-      let tickets = await this.prisma.tcg_tickets.findMany({
+      const tickets = await this.prisma.tcg_tickets.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_ticket: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_ticket: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -453,8 +487,10 @@ export class TicketService {
         },*/
       });
 
-      if (tickets.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(tickets[tickets.length - 1].id_tcg_ticket).toString('base64');
+      if (tickets.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          tickets[tickets.length - 1].id_tcg_ticket,
+        ).toString('base64');
         tickets.pop();
       }
 
@@ -544,10 +580,16 @@ export class TicketService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TICKETS_ERROR',
+          message: 'TicketService.getTickets() call failed',
+          cause: error,
+        }),
+      );
     }
   }
   //TODO
@@ -556,9 +598,7 @@ export class TicketService {
     updateTicketData: Partial<UnifiedTicketInput>,
   ): Promise<UnifiedTicketOutput> {
     try {
-    } catch (error) {
-      handleServiceError(error, this.logger);
-    }
+    } catch (error) {}
     // TODO: fetch the ticket from the database using 'id'
     // TODO: update the ticket with 'updateTicketData'
     // TODO: save the updated ticket back to the database

@@ -19,6 +19,8 @@ COMMENT ON COLUMN webhooks_reponses.http_status_code IS 'anything that is not 2x
 
 
 
+
+
 -- ************************************** webhooks_payloads
 
 CREATE TABLE webhooks_payloads
@@ -104,10 +106,9 @@ CREATE TABLE tcg_users
  remote_id       text NULL,
  remote_platform text NULL,
  teams           text[] NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NULL,
  modified_at     timestamp NULL,
  id_linked_user  uuid NULL,
- CONSTRAINT force_createdAt_unique_tcg_users UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_users PRIMARY KEY ( id_tcg_user )
 );
 
@@ -128,10 +129,9 @@ CREATE TABLE tcg_teams
  remote_platform text NULL,
  name            text NULL,
  description     text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
- CONSTRAINT force_createdAt_unique_tcg_teams UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_teams PRIMARY KEY ( id_tcg_team )
 );
 
@@ -153,10 +153,9 @@ CREATE TABLE tcg_collections
  remote_platform   text NULL,
  collection_type   text NULL,
  parent_collection uuid NULL,
- created_at        timestamp NOT NULL DEFAULT NOW(),
+ created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
  id_linked_user    uuid NOT NULL,
- CONSTRAINT force_createdAt_unique_tcg_collections UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_collections PRIMARY KEY ( id_tcg_collection )
 );
 
@@ -176,10 +175,9 @@ CREATE TABLE tcg_accounts
  name            text NULL,
  domains         text[] NULL,
  remote_platform text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
- CONSTRAINT force_createdAt_unique_tcg_accounts UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_account PRIMARY KEY ( id_tcg_account )
 );
 
@@ -236,15 +234,56 @@ COMMENT ON COLUMN managed_webhooks.endpoint IS 'UUID that will be used in the fi
 
 
 
+
+
+-- ************************************** fs_users
+
+CREATE TABLE fs_users
+(
+ id_fs_user  uuid NOT NULL,
+ name        text NULL,
+ email       text NULL,
+ is_me       boolean NOT NULL,
+ remote_id   text NULL,
+ created_at  timestamp NOT NULL,
+ modified_at timestamp NOT NULL,
+ CONSTRAINT PK_fs_users PRIMARY KEY ( id_fs_user )
+);
+
+
+
+
+
+
+
+
 -- ************************************** fs_shared_links
 
 CREATE TABLE fs_shared_links
 (
- id_fs_shared_link uuid NOT NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ id_fs_shared_link  uuid NOT NULL,
+ url                text NULL,
+ download_url       text NULL,
+ id_fs_folder       uuid NULL,
+ id_fs_file         uuid NULL,
+ "scope"            text NULL,
+ password_protected boolean NOT NULL,
+ password           text NULL,
+ expires_at         timestamp with time zone NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  CONSTRAINT PK_fs_shared_links PRIMARY KEY ( id_fs_shared_link )
 );
+
+
+
+COMMENT ON COLUMN fs_shared_links.id_fs_folder IS 'if the downloadable ressource is a folder';
+COMMENT ON COLUMN fs_shared_links.id_fs_file IS 'if the downloadable ressource is a file';
+COMMENT ON COLUMN fs_shared_links."scope" IS 'can be public, or company depending on the link';
+COMMENT ON COLUMN fs_shared_links.password IS 'encrypted password';
+
+
+
 
 
 -- ************************************** fs_permissions
@@ -253,12 +292,12 @@ CREATE TABLE fs_permissions
 (
  id_fs_permission uuid NOT NULL,
  remote_id        text NULL,
+ "user"           uuid NULL,
+ "group"          uuid NULL,
+ type             text[] NULL,
+ roles            text[] NULL,
  created_at       timestamp NOT NULL,
  modified_at      timestamp NOT NULL,
- "user"           uuid NOT NULL,
- "group"          uuid NOT NULL,
- type             text[] NOT NULL,
- roles            text[] NOT NULL,
  CONSTRAINT PK_fs_permissions PRIMARY KEY ( id_fs_permission )
 );
 
@@ -270,18 +309,47 @@ COMMENT ON COLUMN fs_permissions.roles IS 'read, write, owner';
 
 
 
+-- ************************************** fs_groups
+
+CREATE TABLE fs_groups
+(
+ id_fs_group        uuid NOT NULL,
+ name               text NULL,
+ users              jsonb NULL,
+ remote_id          text NULL,
+ remote_was_deleted boolean NOT NULL,
+ created_at         timestamp NOT NULL,
+ modified_at        timestamp NOT NULL,
+ CONSTRAINT PK_fs_groups PRIMARY KEY ( id_fs_group )
+);
+
+
+
+COMMENT ON COLUMN fs_groups.remote_was_deleted IS 'set to true';
+
+
+
+
+
 -- ************************************** fs_drives
 
 CREATE TABLE fs_drives
 (
  id_fs_drive       uuid NOT NULL,
- remote_created_at timestamp NULL,
  drive_url         text NULL,
+ name              text NULL,
+ remote_created_at timestamp NULL,
+ remote_id         text NULL,
  created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
- remote_id         text NULL,
  CONSTRAINT PK_fs_drives PRIMARY KEY ( id_fs_drive )
 );
+
+
+
+
+
+
 
 
 -- ************************************** entity
@@ -359,14 +427,19 @@ CREATE TABLE crm_users
  id_crm_user     uuid NOT NULL,
  name            text NULL,
  email           text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
  remote_id       text NULL,
  remote_platform text NULL,
- CONSTRAINT force_createdAt_unique_crm_users UNIQUE ( created_at ),
  CONSTRAINT PK_crm_users PRIMARY KEY ( id_crm_user )
 );
+
+
+
+
+
+
 
 
 -- ************************************** crm_deals_stages
@@ -375,12 +448,11 @@ CREATE TABLE crm_deals_stages
 (
  id_crm_deals_stage uuid NOT NULL,
  stage_name         text NULL,
- created_at         timestamp NOT NULL DEFAULT NOW(),
+ created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
  id_linked_user     uuid NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
- CONSTRAINT force_createdAt_unique_crm_deals_stages UNIQUE ( created_at ),
  CONSTRAINT PK_crm_deal_stages PRIMARY KEY ( id_crm_deals_stage )
 );
 
@@ -399,16 +471,21 @@ CREATE TABLE connector_sets
  crm_hubspot      boolean NOT NULL,
  crm_zoho         boolean NOT NULL,
  crm_attio        boolean NOT NULL,
- crm_close        boolean NOT NULL,
- crm_zendesk      boolean NOT NULL,
  crm_pipedrive    boolean NOT NULL,
  tcg_zendesk      boolean NOT NULL,
  tcg_jira         boolean NOT NULL,
  tcg_gorgias      boolean NOT NULL,
  tcg_gitlab       boolean NOT NULL,
  tcg_front        boolean NOT NULL,
+ crm_zendesk      boolean NOT NULL,
+ crm_close        boolean NOT NULL,
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
+
+
+
+
+
 
 
 
@@ -425,8 +502,163 @@ CREATE TABLE connection_strategies
 
 
 
+COMMENT ON COLUMN connection_strategies.id_connection_strategy IS 'Connection strategies are meant to overwrite default env variables for oauth strategies';
 COMMENT ON COLUMN connection_strategies.status IS 'if the connection strategy should overwrite default strategy (from env)';
 COMMENT ON COLUMN connection_strategies.type IS 'OAUTH2, API_KEY, PIPEDRIVE_CLOUD_OAUTH, PIPEDRIVE_CLOUD_API, HUBSPOT_CLOUD';
+
+
+
+
+
+-- ************************************** ats_users
+
+CREATE TABLE ats_users
+(
+ id_ats_user        uuid NOT NULL,
+ remote_id          text NULL,
+ first_name         text NULL,
+ last_name          text NULL,
+ email              text NULL,
+ disabled           boolean NULL,
+ access_role        text NULL,
+ remote_created_at  timestamp NULL,
+ remote_modified_at timestamp NULL,
+ created_at         timestamp NOT NULL,
+ modified_at        timestamp NOT NULL,
+ CONSTRAINT PK_ats_users PRIMARY KEY ( id_ats_user )
+);
+
+
+
+COMMENT ON COLUMN ats_users.access_role IS 'The user''s role. Possible values include: SUPER_ADMIN, ADMIN, TEAM_MEMBER, LIMITED_TEAM_MEMBER, INTERVIEWER. In cases where there is no clear mapping, the original value passed through will be returned.';
+
+
+
+
+
+-- ************************************** ats_reject_reasons
+
+CREATE TABLE ats_reject_reasons
+(
+ id_ats_reject_reason uuid NOT NULL,
+ name                 text NULL,
+ remote_id            text NULL,
+ modified_at          timestamp NOT NULL,
+ created_at           timestamp NOT NULL,
+ CONSTRAINT PK_ats_reject_reasons PRIMARY KEY ( id_ats_reject_reason )
+);
+
+
+
+
+
+
+
+
+-- ************************************** ats_offices
+
+CREATE TABLE ats_offices
+(
+ id_ats_office uuid NOT NULL,
+ remote_id     text NULL,
+ created_at    timestamp NOT NULL,
+ modified_at   timestamp NOT NULL,
+ name          text NULL,
+ location      text NULL,
+ CONSTRAINT PK_ats_offices PRIMARY KEY ( id_ats_office )
+);
+
+COMMENT ON TABLE ats_offices IS 'The Office object is used to represent an office within a company. A given Job has the Office ID in its offices field.';
+
+
+
+
+
+
+-- ************************************** ats_jobs
+
+CREATE TABLE ats_jobs
+(
+ id_ats_job        uuid NOT NULL,
+ name              text NULL,
+ description       text NULL,
+ code              text NULL,
+ status            text NULL,
+ type              text NULL,
+ confidential      boolean NULL,
+ ats_departments   text[] NULL,
+ ats_offices       text[] NULL,
+ managers          text[] NULL,
+ recruiters        text[] NULL,
+ remote_id         text NULL,
+ remote_created_at timestamp NULL,
+ remote_updated_at timestamp NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ CONSTRAINT PK_ats_jobs PRIMARY KEY ( id_ats_job )
+);
+
+COMMENT ON TABLE ats_jobs IS 'The Job object can be used to track any jobs that are currently or will be open/closed for applications.';
+
+COMMENT ON COLUMN ats_jobs.description IS 'the jobs description';
+COMMENT ON COLUMN ats_jobs.status IS 'The job''s status. Possible values include: OPEN, CLOSED, DRAFT, ARCHIVED, PENDING. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN ats_jobs.type IS 'The job''s type. Possible values include: POSTING, REQUISITION, PROFILE. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN ats_jobs.ats_departments IS 'UUIDs of ats_department objects for this ats_Job';
+COMMENT ON COLUMN ats_jobs.ats_offices IS 'IDs of Office objects for this Job.';
+COMMENT ON COLUMN ats_jobs.managers IS 'IDs of RemoteUser objects that serve as hiring managers for this Job.';
+COMMENT ON COLUMN ats_jobs.recruiters IS 'IDs of RemoteUser objects that serve as recruiters for this Job.';
+
+
+
+
+
+-- ************************************** ats_departments
+
+CREATE TABLE ats_departments
+(
+ id_ats_department uuid NOT NULL,
+ name              text NULL,
+ remote_id         text NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ CONSTRAINT PK_ats_departments PRIMARY KEY ( id_ats_department )
+);
+
+
+
+
+
+
+
+
+-- ************************************** ats_candidates
+
+CREATE TABLE ats_candidates
+(
+ id_ats_candidate    uuid NOT NULL,
+ remote_id           text NULL,
+ created_at          timestamp NOT NULL,
+ modified_at         timestamp NOT NULL,
+ first_name          text NULL,
+ last_name           text NULL,
+ company             text NULL,
+ title               text NULL,
+ remote_created_at   timestamp NULL,
+ remote_modified_at  timestamp NULL,
+ last_interaction_at timestamp NULL,
+ is_private          boolean NULL,
+ email_reachable     boolean NULL,
+ locations           text NULL,
+ CONSTRAINT PK_ats_candidates PRIMARY KEY ( id_ats_candidate )
+);
+
+
+
+COMMENT ON COLUMN ats_candidates.first_name IS 'candidate''s first name.';
+COMMENT ON COLUMN ats_candidates.last_name IS 'candidate''s last name.';
+COMMENT ON COLUMN ats_candidates.company IS 'The candidate''s current company';
+COMMENT ON COLUMN ats_candidates.title IS 'The candidate''s current title';
+COMMENT ON COLUMN ats_candidates.email_reachable IS 'can the candidate be emailed';
 
 
 
@@ -447,7 +679,7 @@ CREATE TABLE tcg_tickets
  collections     text[] NULL,
  completed_at    timestamp NULL,
  priority        text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  assigned_to     text[] NULL,
  remote_id       text NULL,
@@ -455,7 +687,6 @@ CREATE TABLE tcg_tickets
  creator_type    text NULL,
  id_tcg_user     uuid NULL,
  id_linked_user  uuid NOT NULL,
- CONSTRAINT force_createdAt_unique_tcg_tickets UNIQUE ( created_at ),
  CONSTRAINT PK_tcg_tickets PRIMARY KEY ( id_tcg_ticket )
 );
 
@@ -489,12 +720,11 @@ CREATE TABLE tcg_contacts
  details         text NULL,
  remote_id       text NULL,
  remote_platform text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NULL,
  modified_at     timestamp NULL,
  id_tcg_account  uuid NULL,
  id_linked_user  uuid NULL,
  CONSTRAINT PK_tcg_contact PRIMARY KEY ( id_tcg_contact ),
- CONSTRAINT force_createdAt_unique_tcg_contacts UNIQUE ( created_at ),
  CONSTRAINT FK_49 FOREIGN KEY ( id_tcg_account ) REFERENCES tcg_accounts ( id_tcg_account )
 );
 
@@ -540,26 +770,41 @@ ex 3600 for one hour';
 
 
 
+
+
 -- ************************************** fs_folders
 
 CREATE TABLE fs_folders
 (
-    id_project_connector uuid NOT NULL,
-    id_project        uuid NOT NULL,
-    crm_hubspot boolean NOT NULL,
-    crm_zoho boolean NOT NULL,
-    crm_zendesk boolean NOT NULL,
-    crm_pipedrive boolean NOT NULL,
-    crm_attio boolean NOT NULL,
-    crm_close boolean NOT NULL,
-    tcg_zendesk boolean NOT NULL,
-    tcg_gorgias boolean NOT NULL,
-    tcg_front boolean NOT NULL,
-    tcg_jira boolean NOT NULL,
-    tcg_gitlab boolean NOT NULL,
-    CONSTRAINT PK_project_connectors PRIMARY KEY ( id_project_connector ),
-    CONSTRAINT FK_project_connectors FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
+ id_fs_folder     uuid NOT NULL,
+ folder_url       text NULL,
+ "size"           bigint NULL,
+ name             text NULL,
+ description      text NULL,
+ parent_folder    uuid NULL,
+ remote_id        text NULL,
+ created_at       timestamp NOT NULL,
+ modified_at      timestamp NOT NULL,
+ id_fs_drive      uuid NULL,
+ id_fs_permission uuid NULL,
+ CONSTRAINT PK_fs_folders PRIMARY KEY ( id_fs_folder )
 );
+
+CREATE INDEX FK_fs_folder_driveID ON fs_folders
+(
+ id_fs_drive
+);
+
+CREATE INDEX FK_fs_folder_permissionID ON fs_folders
+(
+ id_fs_permission
+);
+
+
+
+
+
+
 
 
 -- ************************************** crm_contacts
@@ -569,14 +814,13 @@ CREATE TABLE crm_contacts
  id_crm_contact  uuid NOT NULL,
  first_name      text NOT NULL,
  last_name       text NOT NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  remote_id       text NOT NULL,
  remote_platform text NOT NULL,
  id_crm_user     uuid NULL,
  id_linked_user  uuid NULL,
  CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
- CONSTRAINT force_createdAt_unique_crm_contacts UNIQUE ( created_at ),
  CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
 
@@ -601,14 +845,13 @@ CREATE TABLE crm_companies
  name                text NULL,
  industry            text NULL,
  number_of_employees bigint NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at          timestamp NOT NULL,
  modified_at         timestamp NOT NULL,
  remote_id           text NULL,
  remote_platform     text NULL,
  id_crm_user         uuid NULL,
  id_linked_user      uuid NULL,
  CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
- CONSTRAINT force_createdAt_unique_crm_companies UNIQUE ( created_at ),
  CONSTRAINT FK_24 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
 
@@ -671,6 +914,271 @@ id_linked_user';
 
 
 
+-- ************************************** ats_job_interview_stages
+
+CREATE TABLE ats_job_interview_stages
+(
+ id_ats_job_interview_stage uuid NOT NULL,
+ name                       text NULL,
+ stage_order                int NULL,
+ remote_id                  text NULL,
+ created_at                 timestamp NOT NULL,
+ modified_at                timestamp NOT NULL,
+ id_ats_job                 uuid NULL,
+ CONSTRAINT PK_ats_job_interview_stages PRIMARY KEY ( id_ats_job_interview_stage )
+);
+
+CREATE INDEX FK_ATS_Jobs_ATS_JobInterview_ID ON ats_job_interview_stages
+(
+ id_ats_job
+);
+
+COMMENT ON TABLE ats_job_interview_stages IS 'The JobInterviewStage object is used to represent a particular recruiting stage for an Application. A given Application typically has the JobInterviewStage object represented in the current_stage field.';
+
+COMMENT ON COLUMN ats_job_interview_stages.id_ats_job IS 'This field is populated only if the stage is specific to a particular job. If the stage is generic, this field will not be populated.';
+
+
+
+
+
+-- ************************************** ats_eeocs
+
+CREATE TABLE ats_eeocs
+(
+ id_ats_eeoc       uuid NOT NULL,
+ id_ats_candidate  uuid NULL,
+ submitted_at      timestamp NULL,
+ race              text NULL,
+ gender            text NULL,
+ veteran_status    text NULL,
+ disability_status text NULL,
+ remote_id         text NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ CONSTRAINT PK_ats_eeocs PRIMARY KEY ( id_ats_eeoc )
+);
+
+CREATE INDEX FK_candidate_eeocsid ON ats_eeocs
+(
+ id_ats_candidate
+);
+
+COMMENT ON TABLE ats_eeocs IS 'The EEOC object is used to represent the Equal Employment Opportunity Commission information for a candidate (race, gender, veteran status, disability status).';
+
+COMMENT ON COLUMN ats_eeocs.race IS 'The candidate''s race. Possible values include: AMERICAN_INDIAN_OR_ALASKAN_NATIVE, ASIAN, BLACK_OR_AFRICAN_AMERICAN, HISPANIC_OR_LATINO, WHITE, NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER, TWO_OR_MORE_RACES, DECLINE_TO_SELF_IDENTIFY. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN ats_eeocs.gender IS 'The candidate''s gender. Possible values include: MALE, FEMALE, NON-BINARY, OTHER, DECLINE_TO_SELF_IDENTIFY. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN ats_eeocs.veteran_status IS 'The candidate''s veteran status. Possible values include: I_AM_NOT_A_PROTECTED_VETERAN, I_IDENTIFY_AS_ONE_OR_MORE_OF_THE_CLASSIFICATIONS_OF_A_PROTECTED_VETERAN, I_DONT_WISH_TO_ANSWER. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN ats_eeocs.disability_status IS 'The candidate''s disability status. Possible values include: YES_I_HAVE_A_DISABILITY_OR_PREVIOUSLY_HAD_A_DISABILITY, NO_I_DONT_HAVE_A_DISABILITY, I_DONT_WISH_TO_ANSWER. In cases where there is no clear mapping, the original value passed through will be returned.';
+
+
+
+
+
+-- ************************************** ats_candidate_urls
+
+CREATE TABLE ats_candidate_urls
+(
+ id_ats_candidate_url uuid NOT NULL,
+ value                text NULL,
+ type                 text NULL,
+ created_at           timestamp NOT NULL,
+ modified_at          timestamp NOT NULL,
+ id_ats_candidate     uuid NOT NULL,
+ CONSTRAINT PK_ats_candidate_urls PRIMARY KEY ( id_ats_candidate_url )
+);
+
+CREATE INDEX FK_candidate_url_ID ON ats_candidate_urls
+(
+ id_ats_candidate
+);
+
+
+
+
+
+
+
+
+-- ************************************** ats_candidate_tags
+
+CREATE TABLE ats_candidate_tags
+(
+ id_ats_candidate_tag uuid NOT NULL,
+ name                 text NULL,
+ id_ats_candidate     uuid NULL,
+ remote_id            text NULL,
+ created_at           timestamp NOT NULL,
+ modified_at          timestamp NOT NULL,
+ CONSTRAINT PK_ats_candidate_tags PRIMARY KEY ( id_ats_candidate_tag )
+);
+
+CREATE INDEX FK_candidates_candidatestags ON ats_candidate_tags
+(
+ id_ats_candidate
+);
+
+
+
+
+
+
+
+
+-- ************************************** ats_candidate_phone_numbers
+
+CREATE TABLE ats_candidate_phone_numbers
+(
+ id_ats_candidate_phone_number uuid NOT NULL,
+ value                         text NULL,
+ type                          text NULL,
+ created_at                    timestamp NOT NULL,
+ modified_at                   timestamp NOT NULL,
+ id_ats_candidate              uuid NOT NULL,
+ CONSTRAINT PK_ats_candidate_phone_numbers PRIMARY KEY ( id_ats_candidate_phone_number )
+);
+
+CREATE INDEX FK_candidate_phone_id ON ats_candidate_phone_numbers
+(
+ id_ats_candidate
+);
+
+
+
+COMMENT ON COLUMN ats_candidate_phone_numbers.type IS 'can be PERSONAL, PRO...';
+
+
+
+
+
+-- ************************************** ats_candidate_email_addresses
+
+CREATE TABLE ats_candidate_email_addresses
+(
+ id_ats_candidate_email_address uuid NOT NULL,
+ value                          text NULL,
+ type                           text NULL,
+ created_at                     timestamp NOT NULL,
+ modified_at                    timestamp NOT NULL,
+ id_ats_candidate               uuid NOT NULL,
+ CONSTRAINT PK_ats_candidate_email_addresses PRIMARY KEY ( id_ats_candidate_email_address )
+);
+
+CREATE INDEX FK_candidate_email_ID ON ats_candidate_email_addresses
+(
+ id_ats_candidate
+);
+
+
+
+
+
+
+
+
+-- ************************************** ats_candidate_attachments
+
+CREATE TABLE ats_candidate_attachments
+(
+ id_ats_candidate_attachment uuid NOT NULL,
+ remote_id                   text NULL,
+ file_url                    text NULL,
+ file_name                   text NULL,
+ remote_created_at           timestamp NULL,
+ remote_modified_at          timestamp NULL,
+ file_type                   text NULL,
+ created_at                  timestamp NOT NULL,
+ modified_at                 timestamp NOT NULL,
+ id_ats_candidate            uuid NOT NULL,
+ CONSTRAINT PK_ats_candidate_attachments PRIMARY KEY ( id_ats_candidate_attachment )
+);
+
+CREATE INDEX FK_ats_candidate_attachment_candidateID_Index ON ats_candidate_attachments
+(
+ id_ats_candidate
+);
+
+
+
+COMMENT ON COLUMN ats_candidate_attachments.file_type IS 'Can be RESUME, COVER_LETTER, OFFER_LETTER, OTHER';
+
+
+
+
+
+-- ************************************** ats_applications
+
+CREATE TABLE ats_applications
+(
+ id_ats_application uuid NOT NULL,
+ remote_id          text NULL,
+ created_at         timestamp NOT NULL,
+ modified_at        timestamp NOT NULL,
+ id_ats_candidate   uuid NULL,
+ id_ats_job         uuid NULL,
+ applied_at         timestamp NULL,
+ rejected_at        timestamp NULL,
+ offers             text[] NOT NULL,
+ "source"           text NULL,
+ credited_to        uuid NULL,
+ current_stage      uuid NULL,
+ reject_reason      text NULL,
+ CONSTRAINT PK_ats_applications PRIMARY KEY ( id_ats_application )
+);
+
+CREATE INDEX FK_ats_application_ATS_JOB_ID ON ats_applications
+(
+ id_ats_job
+);
+
+CREATE INDEX FK_ats_application_atsCandidateId ON ats_applications
+(
+ id_ats_candidate
+);
+
+
+
+COMMENT ON COLUMN ats_applications."source" IS 'the applications source';
+COMMENT ON COLUMN ats_applications.credited_to IS 'The user credited for this application.';
+COMMENT ON COLUMN ats_applications.current_stage IS 'this is an id_ats_job_interview_stage';
+
+
+
+
+
+-- ************************************** ats_activities
+
+CREATE TABLE ats_activities
+(
+ id_ats_activity   uuid NOT NULL,
+ activity_type     text NULL,
+ subject           text NULL,
+ body              text NULL,
+ visibility        text NULL,
+ id_ats_candidate  uuid NULL,
+ remote_id         text NULL,
+ remote_created_at timestamp NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ CONSTRAINT PK_ats_activities PRIMARY KEY ( id_ats_activity )
+);
+
+CREATE INDEX FK_activity_candidate ON ats_activities
+(
+ id_ats_candidate
+);
+
+
+
+COMMENT ON COLUMN ats_activities.activity_type IS 'The activity''s type. Possible values include: NOTE, EMAIL, OTHER. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN ats_activities.subject IS 'The activity''s subject.';
+COMMENT ON COLUMN ats_activities.body IS 'The activity''s body.';
+COMMENT ON COLUMN ats_activities.visibility IS 'The activity''s visibility. Possible values include: ADMIN_ONLY, PUBLIC, PRIVATE. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN ats_activities.id_ats_candidate IS 'The activity’s candidate.';
+
+
+
+
+
 -- ************************************** value
 
 CREATE TABLE value
@@ -710,12 +1218,11 @@ CREATE TABLE tcg_tags
  name            text NULL,
  remote_id       text NULL,
  remote_platform text NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_tcg_ticket   uuid NULL,
  id_linked_user  uuid NULL,
  CONSTRAINT PK_tcg_tags PRIMARY KEY ( id_tcg_tag ),
- CONSTRAINT force_createdAt_unique_tcg_tags UNIQUE ( created_at ),
  CONSTRAINT FK_48 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
 );
 
@@ -741,7 +1248,7 @@ CREATE TABLE tcg_comments
  is_private        boolean NULL,
  remote_id         text NULL,
  remote_platform   text NULL,
- created_at        timestamp NOT NULL DEFAULT NOW(),
+ created_at        timestamp NULL,
  modified_at       timestamp NULL,
  creator_type      text NULL,
  id_tcg_attachment text[] NULL,
@@ -750,7 +1257,6 @@ CREATE TABLE tcg_comments
  id_tcg_user       uuid NULL,
  id_linked_user    uuid NULL,
  CONSTRAINT PK_tcg_comments PRIMARY KEY ( id_tcg_comment ),
- CONSTRAINT force_createdAt_unique_tcg_comments UNIQUE ( created_at ),
  CONSTRAINT FK_41 FOREIGN KEY ( id_tcg_contact ) REFERENCES tcg_contacts ( id_tcg_contact ),
  CONSTRAINT FK_40_1 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket ),
  CONSTRAINT FK_42 FOREIGN KEY ( id_tcg_user ) REFERENCES tcg_users ( id_tcg_user )
@@ -812,14 +1318,14 @@ CREATE TABLE fs_files
  id_fs_file       uuid NOT NULL,
  name             text NULL,
  type             text NULL,
- "path"           text NULL,
+ file_url         text NULL,
  mime_type        text NULL,
  "size"           bigint NULL,
  remote_id        text NULL,
  id_fs_folder     uuid NULL,
  created_at       timestamp NOT NULL,
  modified_at      timestamp NOT NULL,
- id_fs_permission uuid NOT NULL,
+ id_fs_permission uuid NULL,
  CONSTRAINT PK_fs_files PRIMARY KEY ( id_fs_file )
 );
 
@@ -886,7 +1392,7 @@ CREATE TABLE crm_engagements
  subject           text NULL,
  start_at          timestamp NULL,
  end_time          timestamp NULL,
- created_at        timestamp NOT NULL DEFAULT NOW(),
+ created_at        timestamp NULL,
  modified_at       timestamp NULL,
  remote_id         text NULL,
  id_linked_user    uuid NULL,
@@ -894,7 +1400,6 @@ CREATE TABLE crm_engagements
  id_crm_company    uuid NULL,
  id_crm_user       uuid NULL,
  CONSTRAINT PK_crm_engagement PRIMARY KEY ( id_crm_engagement ),
- CONSTRAINT force_createdAt_unique_crm_engagements UNIQUE ( created_at ),
  CONSTRAINT FK_crm_engagement_crm_user FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
 );
@@ -961,8 +1466,8 @@ CREATE TABLE crm_deals
  id_crm_deal        uuid NOT NULL,
  name               text NOT NULL,
  description        text NOT NULL,
- amount             bigint NULL,
- created_at         timestamp NOT NULL DEFAULT NOW(),
+ amount             bigint NOT NULL,
+ created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
@@ -971,7 +1476,6 @@ CREATE TABLE crm_deals
  id_linked_user     uuid NULL,
  id_crm_company     uuid NULL,
  CONSTRAINT PK_crm_deal PRIMARY KEY ( id_crm_deal ),
- CONSTRAINT force_createdAt_unique_crm_deals UNIQUE ( created_at ),
  CONSTRAINT FK_22 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_21 FOREIGN KEY ( id_crm_deals_stage ) REFERENCES crm_deals_stages ( id_crm_deals_stage ),
  CONSTRAINT FK_47_1 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1043,6 +1547,80 @@ COMMENT ON COLUMN crm_addresses.owner_type IS 'Can be a company or a contact''s 
 
 
 
+-- ************************************** ats_offers
+
+CREATE TABLE ats_offers
+(
+ id_ats_offer       uuid NOT NULL,
+ remote_id          text NULL,
+ created_by         uuid NULL,
+ remote_created_at  timestamp NULL,
+ closed_at          timestamp NULL,
+ sent_at            timestamp NULL,
+ start_date         timestamp NULL,
+ status             text NULL,
+ created_at         timestamp NOT NULL,
+ modified_at        timestamp NOT NULL,
+ id_ats_application uuid NOT NULL,
+ CONSTRAINT PK_ats_offers PRIMARY KEY ( id_ats_offer )
+);
+
+CREATE INDEX FK_ats_offers_applicationID ON ats_offers
+(
+ id_ats_application
+);
+
+
+
+COMMENT ON COLUMN ats_offers.created_by IS 'the ats_user who created this ID';
+COMMENT ON COLUMN ats_offers.status IS 'The offer''s status. Possible values include: DRAFT, APPROVAL-SENT, APPROVED, SENT, SENT-MANUALLY, OPENED, DENIED, SIGNED, DEPRECATED. In cases where there is no clear mapping, the original value passed through will be returned.';
+
+
+
+
+
+-- ************************************** ats_interviews
+
+CREATE TABLE ats_interviews
+(
+ id_ats_interview           uuid NOT NULL,
+ status                     text NULL,
+ id_ats_application         uuid NULL,
+ id_ats_job_interview_stage uuid NULL,
+ organized_by               uuid NULL,
+ interviewers               text[] NULL,
+ location                   text NULL,
+ start_at                   timestamp NULL,
+ end_at                     timestamp NULL,
+ remote_created_at          timestamp NULL,
+ remote_updated_at          timestamp NULL,
+ remote_id                  text NULL,
+ created_at                 timestamp NOT NULL,
+ modified_at                timestamp NOT NULL,
+ CONSTRAINT PK_ats_interviews PRIMARY KEY ( id_ats_interview )
+);
+
+CREATE INDEX FK_applications_interviews ON ats_interviews
+(
+ id_ats_application
+);
+
+CREATE INDEX FK_id_ats_job_interview_stageID ON ats_interviews
+(
+ id_ats_job_interview_stage
+);
+
+
+
+COMMENT ON COLUMN ats_interviews.status IS 'The interview''s status. Possible values include: SCHEDULED, AWAITING_FEEDBACK, COMPLETE. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN ats_interviews.id_ats_job_interview_stage IS 'The stage of the interview.';
+COMMENT ON COLUMN ats_interviews.organized_by IS 'The user organizing the interview. Data is a id_ats_user.';
+COMMENT ON COLUMN ats_interviews.interviewers IS 'Array of RemoteUser IDs.';
+
+
+
+
+
 -- ************************************** api_keys
 
 CREATE TABLE api_keys
@@ -1085,13 +1663,12 @@ CREATE TABLE tcg_attachments
  file_name         text NULL,
  file_url          text NULL,
  uploader          uuid NOT NULL,
- created_at        timestamp NOT NULL DEFAULT NOW(),
+ created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
  id_linked_user    uuid NULL,
  id_tcg_ticket     uuid NULL,
  id_tcg_comment    uuid NULL,
  CONSTRAINT PK_tcg_attachments PRIMARY KEY ( id_tcg_attachment ),
- CONSTRAINT force_createdAt_unique_tcg_attachments UNIQUE ( created_at ),
  CONSTRAINT FK_51 FOREIGN KEY ( id_tcg_comment ) REFERENCES tcg_comments ( id_tcg_comment ),
  CONSTRAINT FK_50 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
 );
@@ -1181,7 +1758,7 @@ CREATE TABLE crm_tasks
  status          text NULL,
  due_date        timestamp NULL,
  finished_date   timestamp NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_crm_user     uuid NULL,
  id_crm_company  uuid NULL,
@@ -1190,7 +1767,6 @@ CREATE TABLE crm_tasks
  remote_id       text NULL,
  remote_platform text NULL,
  CONSTRAINT PK_crm_task PRIMARY KEY ( id_crm_task ),
- CONSTRAINT force_createdAt_unique_crm_tasks UNIQUE ( created_at ),
  CONSTRAINT FK_26 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_25 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_27 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )
@@ -1224,7 +1800,7 @@ CREATE TABLE crm_notes
 (
  id_crm_note     uuid NOT NULL,
  content         text NOT NULL,
- created_at      timestamp NOT NULL DEFAULT NOW(),
+ created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_crm_company  uuid NULL,
  id_crm_contact  uuid NULL,
@@ -1234,7 +1810,6 @@ CREATE TABLE crm_notes
  remote_platform text NULL,
  id_crm_user     uuid NULL,
  CONSTRAINT PK_crm_notes PRIMARY KEY ( id_crm_note ),
- CONSTRAINT force_createdAt_unique_crm_notes UNIQUE ( created_at ),
  CONSTRAINT FK_19 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_18 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_20 FOREIGN KEY ( id_crm_deal ) REFERENCES crm_deals ( id_crm_deal )
@@ -1313,7 +1888,6 @@ CREATE TABLE connections
  id_project           uuid NOT NULL,
  id_linked_user       uuid NOT NULL,
  CONSTRAINT PK_connections PRIMARY KEY ( id_connection ),
- CONSTRAINT Index_3 UNIQUE ( access_token, refresh_token ),
  CONSTRAINT FK_9 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
  CONSTRAINT FK_11 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
 );
@@ -1333,6 +1907,42 @@ CREATE INDEX FK_connections_to_LinkedUsersID ON connections
 COMMENT ON COLUMN connections.status IS 'ONLY FOR INVITE LINK';
 COMMENT ON COLUMN connections.token_type IS 'The type of the token, such as "Bearer," "JWT," or any other supported type.';
 COMMENT ON COLUMN connections.connection_token IS 'Connection token users will put in their header to identify which service / linked_User they make request for';
+
+
+
+
+
+-- ************************************** ats_scorecards
+
+CREATE TABLE ats_scorecards
+(
+ id_ats_scorecard       uuid NOT NULL,
+ overall_recommendation text NULL,
+ id_ats_application     uuid NULL,
+ id_ats_interview       uuid NULL,
+ remote_id              text NULL,
+ remote_created_at      timestamp NULL,
+ submitted_at           timestamp NULL,
+ created_at             timestamp NOT NULL,
+ modified_at            timestamp NOT NULL,
+ CONSTRAINT PK_ats_scorecards PRIMARY KEY ( id_ats_scorecard )
+);
+
+CREATE INDEX FK_applications_scorecard ON ats_scorecards
+(
+ id_ats_application
+);
+
+CREATE INDEX FK_interviews_scorecards ON ats_scorecards
+(
+ id_ats_interview
+);
+
+
+
+COMMENT ON COLUMN ats_scorecards.overall_recommendation IS 'The inteviewer''s recommendation. Possible values include: DEFINITELY_NO, NO, YES, STRONG_YES, NO_DECISION. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN ats_scorecards.id_ats_application IS 'The application being scored.';
+COMMENT ON COLUMN ats_scorecards.id_ats_interview IS 'The interview being scored.';
 
 
 

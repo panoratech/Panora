@@ -6,26 +6,24 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
 import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class FrontService implements ITicketService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + FrontService.name,
     );
     this.registry.registerService('front', this);
-    this.utils = new Utils();
   }
 
   async addTicket(
@@ -54,7 +52,9 @@ export class FrontService implements ITicketService {
             },
           });
           if (!res)
-            throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+            throw new ReferenceError(
+              `tcg_attachment not found for uuid ${uuid}`,
+            );
           //TODO: construct the right binary attachment
           //get the AWS s3 right file
           //TODO: check how to send a stream of a url
@@ -152,17 +152,19 @@ export class FrontService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      throw error;
+      /*handle3rdPartyServiceError(
         error,
         this.logger,
-        'Front',
+        'front',
         TicketingObject.ticket,
         ActionType.POST,
-      );
+      );*/
     }
   }
   async syncTickets(
     linkedUserId: string,
+    remote_ticket_id?: string,
   ): Promise<ApiResponse<FrontTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -175,7 +177,6 @@ export class FrontService implements ITicketService {
 
       const resp = await axios.get(`${connection.account_url}/conversations`, {
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
             connection.access_token,
           )}`,
@@ -189,13 +190,14 @@ export class FrontService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      throw error;
+      /*handle3rdPartyServiceError(
         error,
         this.logger,
-        'Front',
+        'front',
         TicketingObject.ticket,
         ActionType.GET,
-      );
+      );*/
     }
   }
 }

@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { PasswordInput } from "@/components/ui/password-input"
 import { z } from "zod"
 import config from "@/lib/config"
-import { AuthStrategy, providerToType, Provider, extractProvider, extractVertical } from "@panora/shared"
+import { AuthStrategy, providerToType, Provider, extractProvider, extractVertical, needsSubdomain } from "@panora/shared"
 import { useEffect, useState } from "react"
 import useProjectStore from "@/state/projectStore"
 import { usePostHog } from 'posthog-js/react'
@@ -26,24 +26,27 @@ interface ItemDisplayProps {
 }
 
 const formSchema = z.object({
+  subdomain: z.string({
+    required_error: "Please Enter a Subdomain",
+  }).optional(),
   client_id : z.string({
     required_error: "Please Enter a Client ID",
-  }),
+  }).optional(),
   client_secret : z.string({
     required_error: "Please Enter a Client Secret",
-  }),
+  }).optional(),
   scope : z.string({
     required_error: "Please Enter a scope",
-  }),
+  }).optional(),
   api_key: z.string({
     required_error: "Please Enter a API Key",
-  }),
+  }).optional(),
   username: z.string({
     required_error: "Please Enter Username",
-  }),
+  }).optional(),
   secret: z.string({
     required_error: "Please Enter Secret",
-  }),
+  }).optional(),
 })
 
 export function ConnectorDisplay({ item }: ItemDisplayProps) {
@@ -62,6 +65,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      subdomain: "",
       client_id: "",
       client_secret: "",
       scope: "",
@@ -88,10 +92,11 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const { client_id, client_secret, scope, api_key, secret, username } = values;
+    const { client_id, client_secret, scope, api_key, secret, username, subdomain } = values;
     const performUpdate = mappingConnectionStrategies && mappingConnectionStrategies.length > 0;
     switch (item?.authStrategy) {
       case AuthStrategy.oauth2:
+        const needs_subdomain = needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase());
         if (client_id === "" || client_secret === "" || scope === "") {
           if (client_id === "") {
             form.setError("client_id", { "message": "Please Enter Client ID" });
@@ -104,6 +109,18 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
           }
           break;
         }
+        if(needs_subdomain && subdomain == ""){
+          form.setError("subdomain", { "message": "Please Enter Subdomain" });
+        }
+        let ATTRIBUTES = [];
+        let VALUES = [];
+        if(needs_subdomain){
+          ATTRIBUTES = ["subdomain", "client_id", "client_secret", "scope"],
+          VALUES = [subdomain!, client_id!, client_secret!, scope!]
+        }else{
+          ATTRIBUTES = ["client_id", "client_secret", "scope"],
+          VALUES = [client_id!, client_secret!, scope!]
+        }
         if (performUpdate) {
           const dataToUpdate = mappingConnectionStrategies[0];
           toast.promise(
@@ -111,8 +128,8 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
               id_cs: dataToUpdate.id_connection_strategy,
               updateToggle: false,
               status: dataToUpdate.status,
-              attributes: ["client_id", "client_secret", "scope"],
-              values: [client_id, client_secret, scope]
+              attributes: ATTRIBUTES,
+              values: VALUES
             }), 
               {
               loading: 'Loading...',
@@ -130,7 +147,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                 )
                 ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_OAuth2_updated", {
             id_project: idProject,
@@ -140,8 +157,8 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
           toast.promise(
             createCsPromise({
               type: providerToType(item?.name, item?.vertical!, AuthStrategy.oauth2),
-              attributes: ["client_id", "client_secret", "scope"],
-              values: [client_id, client_secret, scope]
+              attributes: ATTRIBUTES,
+              values: VALUES
             }), 
               {
               loading: 'Loading...',
@@ -159,7 +176,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                   )
                   ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_OAuth2_created", {
             id_project: idProject,
@@ -183,7 +200,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
               updateToggle: false,
               status: dataToUpdate.status,
               attributes: ["api_key"],
-              values: [api_key]
+              values: [api_key!]
             }), 
               {
               loading: 'Loading...',
@@ -201,7 +218,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                 )
                 ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_API_KEY_updated", {
             id_project: idProject,
@@ -212,7 +229,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
             createCsPromise({
               type: providerToType(item?.name, item?.vertical!, AuthStrategy.api_key),
               attributes: ["api_key"],
-              values: [api_key]
+              values: [api_key!]
             }), 
               {
               loading: 'Loading...',
@@ -230,7 +247,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                   )
                   ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_API_KEY_created", {
             id_project: idProject,
@@ -259,7 +276,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
               updateToggle: false,
               status: dataToUpdate.status,
               attributes: ["username", "secret"],
-              values: [username, secret]
+              values: [username!, secret!]
             }), 
               {
               loading: 'Loading...',
@@ -277,7 +294,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                 )
                 ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_BASIC_AUTH_updated", {
             id_project: idProject,
@@ -289,7 +306,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
             createCsPromise({
               type: providerToType(item?.name, item?.vertical!, AuthStrategy.basic),
               attributes: ["username", "secret"],
-              values: [username, secret]
+              values: [username!, secret!]
             }), 
               {
               loading: 'Loading...',
@@ -307,7 +324,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                   )
                   ;
               },
-              error: 'Error',
+              error: (err: any) => err.message || 'Error'
           });
           posthog?.capture("Connection_strategy_BASIC_AUTH_created", {
             id_project: idProject,
@@ -324,14 +341,19 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
     if (mappingConnectionStrategies && mappingConnectionStrategies.length > 0) {
       fetchCredentials({
         type: mappingConnectionStrategies[0].type,
-        attributes: item?.authStrategy === AuthStrategy.oauth2 ? ["client_id", "client_secret", "scope"]
+        attributes: item?.authStrategy === AuthStrategy.oauth2 ? needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["subdomain", "client_id", "client_secret", "scope"] : ["client_id", "client_secret", "scope"]
           : item?.authStrategy === AuthStrategy.api_key ? ["api_key"] : ["username", "secret"]
       }, {
         onSuccess(data) {
           if (item?.authStrategy === AuthStrategy.oauth2) {
-            form.setValue("client_id", data[0]);
-            form.setValue("client_secret", data[1]);
-            form.setValue("scope", data[2]);
+            let i = 0;
+            if(needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase())){
+              form.setValue("subdomain", data[i]);
+              i = 1;
+            }
+            form.setValue("client_id", data[i]);
+            form.setValue("client_secret", data[i + 1]);
+            form.setValue("scope", data[i + 2]);
           }
           if (item?.authStrategy === AuthStrategy.api_key) {
             form.setValue("api_key", data[0]);
@@ -373,10 +395,9 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
             )
             ;
           },
-          error: 'Error',
-      });
+          error: (err: any) => err.message || 'Error'
+        });
 
-      
       setSwitchEnabled(enabled);
     }
   };
@@ -416,6 +437,23 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 { item.authStrategy == AuthStrategy.oauth2 &&
                   <>
+                  { needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase()) &&
+                      <div className="flex flex-col">
+                        <FormField
+                        name="subdomain"
+                        control={form.control}
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="flex flex-col">Subdomain</FormLabel>
+                                <FormControl>
+                                <PasswordInput {...field} placeholder="Enter Subdomain (such as https://my-zendesk.com)" />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                        />
+                      </div>
+                    }
                     <div className="flex flex-col">
                       <FormField
                         name="client_id"

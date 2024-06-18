@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -12,24 +18,20 @@ import {
   ITicketingConnectionService,
 } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
+import {
+  CONNECTORS_METADATA,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 
-export type GithubOAuthResponse = {
-  access_token: string;
-  refresh_token: string;
-  expires_in: string;
-  refresh_token_expires_in: string;
-  token_type: string;
-  scope: string;
-};
+export type GithubOAuthResponse = string;
 
 @Injectable()
 export class GithubConnectionService implements ITicketingConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -38,6 +40,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(GithubConnectionService.name);
     this.registry.registerService('github', this);
@@ -67,7 +70,6 @@ export class GithubConnectionService implements ITicketingConnectionService {
         client_secret: CREDENTIALS.CLIENT_SECRET,
         redirect_uri: REDIRECT_URI,
         code: code,
-        //repository_id: todo
       });
       const res = await axios.post(
         `https://github.com/login/oauth/access_token`,
@@ -92,11 +94,10 @@ export class GithubConnectionService implements ITicketingConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
+            access_token: this.cryptoService.encrypt(
+              data.match(/access_token=([^&]*)/)[1],
             ),
+            account_url: CONNECTORS_METADATA['ticketing']['github'].urls.apiUrl,
             status: 'valid',
             created_at: new Date(),
           },
@@ -109,11 +110,10 @@ export class GithubConnectionService implements ITicketingConnectionService {
             provider_slug: 'github',
             vertical: 'ticketing',
             token_type: 'oauth',
-            access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
+            access_token: this.cryptoService.encrypt(
+              data.match(/access_token=([^&]*)/)[1],
             ),
+            account_url: CONNECTORS_METADATA['ticketing']['github'].urls.apiUrl,
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -132,50 +132,23 @@ export class GithubConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'github', Action.oauthCallback);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
+          message: `GithubConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'github',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
   //TODO
   async handleTokenRefresh(opts: RefreshParams) {
-    try {
-      const { connectionId, refreshToken, projectId } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
-      const CREDENTIALS = (await this.cService.getCredentials(
-        projectId,
-        this.type,
-      )) as OAuth2AuthData;
-      const res = await axios.post(
-        `https://app.githubapp.com/oauth/token`,
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
-          },
-        },
-      );
-      const data: GithubOAuthResponse = res.data;
-      await this.prisma.connections.update({
-        where: {
-          id_connection: connectionId,
-        },
-        data: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_in) * 1000,
-          ),
-        },
-      });
-      this.logger.log('OAuth credentials updated : github ');
-    } catch (error) {
-      handleServiceError(error, this.logger, 'github', Action.oauthRefresh);
-    }
+    return;
   }
 }

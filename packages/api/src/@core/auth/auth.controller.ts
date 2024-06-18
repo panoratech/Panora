@@ -44,7 +44,7 @@ export class AuthController {
   }
 
   // todo: admin only
-  @ApiOperation({ operationId: 'getUsers', summary: 'Get users' })
+  @ApiOperation({ operationId: 'getPanoraCoreUsers', summary: 'Get users' })
   @ApiResponse({ status: 200 })
   @Get('users')
   async users() {

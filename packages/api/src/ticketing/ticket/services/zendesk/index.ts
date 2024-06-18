@@ -6,7 +6,7 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskTicketInput, ZendeskTicketOutput } from './types';
@@ -52,7 +52,9 @@ export class ZendeskService implements ITicketService {
               },
             });
             if (!res)
-              throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+              throw new ReferenceError(
+                `tcg_attachment not found for uuid ${uuid}`,
+              );
 
             //TODO:; fetch the right file from AWS s3
             const s3File = '';
@@ -103,17 +105,19 @@ export class ZendeskService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Zendesk',
+        'zendesk',
         TicketingObject.ticket,
         ActionType.POST,
       );
     }
   }
+
   async syncTickets(
     linkedUserId: string,
+    remote_ticket_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<ZendeskTicketOutput[]>> {
     try {
@@ -125,7 +129,11 @@ export class ZendeskService implements ITicketService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/tickets/.json`, {
+      const request_url = remote_ticket_id
+        ? `${connection.account_url}/tickets/${remote_ticket_id}.json`
+        : `${connection.account_url}/tickets.json`;
+
+      const resp = await axios.get(request_url, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -135,21 +143,21 @@ export class ZendeskService implements ITicketService {
       });
       this.logger.log(`Synced zendesk tickets !`);
 
+      const result = remote_ticket_id ? [resp.data.ticket] : resp.data.tickets;
+
       return {
-        data: resp.data.tickets,
+        data: result,
         message: 'Zendesk tickets retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Zendesk',
+        'zendesk',
         TicketingObject.ticket,
         ActionType.GET,
       );
     }
   }
-
-  //todo: create a syncTicket(remote_ticket_id)
 }

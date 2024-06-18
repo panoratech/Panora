@@ -1,13 +1,12 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { unify } from '@@core/utils/unification/unify';
+
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { IUserService } from '../types';
@@ -17,6 +16,8 @@ import { UnifiedUserOutput } from '../types/model.unified';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { SyncError, throwTypedError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,6 +27,7 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -35,28 +37,32 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
   private async scheduleSyncJob() {
-    const jobName = 'ticketing-sync-users';
+    try {
+      const jobName = 'ticketing-sync-users';
 
-    // Remove existing jobs to avoid duplicates in case of application restart
-    const jobs = await this.syncQueue.getRepeatableJobs();
-    for (const job of jobs) {
-      if (job.name === jobName) {
-        await this.syncQueue.removeRepeatableByKey(job.key);
+      // Remove existing jobs to avoid duplicates in case of application restart
+      const jobs = await this.syncQueue.getRepeatableJobs();
+      for (const job of jobs) {
+        if (job.name === jobName) {
+          await this.syncQueue.removeRepeatableByKey(job.key);
+        }
       }
+      // Add new job to the queue with a CRON expression
+      await this.syncQueue.add(
+        jobName,
+        {},
+        {
+          repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
+        },
+      );
+    } catch (error) {
+      throw error;
     }
-    // Add new job to the queue with a CRON expression
-    await this.syncQueue.add(
-      jobName,
-      {},
-      {
-        repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
-      },
-    );
   }
   //function used by sync worker which populate our tcg_users table
   //its role is to fetch all users from providers 3rd parties and save the info inside our db
@@ -67,12 +73,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing users....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -99,18 +105,25 @@ export class SyncService implements OnModuleInit {
                       id_project,
                     );
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'TICKETING_USER_SYNC_ERROR',
+          message: 'SyncService.syncUsers() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -119,6 +132,12 @@ export class SyncService implements OnModuleInit {
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    wh_real_time_trigger?: {
+      action: 'UPDATE' | 'DELETE';
+      data: {
+        remote_id: string;
+      };
+    },
   ) {
     try {
       this.logger.log(
@@ -136,7 +155,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping users syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -151,24 +169,46 @@ export class SyncService implements OnModuleInit {
 
       const service: IUserService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalUserOutput[]> = await service.syncUsers(
-        linkedUserId,
-        remoteProperties,
-      );
+
+      let resp: ApiResponse<OriginalUserOutput[]>;
+      if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
+        //meaning the call has been from a real time webhook that received data from a 3rd party
+        switch (wh_real_time_trigger.action) {
+          case 'DELETE':
+            return await this.removeUserInDb(
+              linkedUserId,
+              integrationId,
+              wh_real_time_trigger.data.remote_id,
+            );
+          default:
+            resp = await service.syncUsers(
+              linkedUserId,
+              wh_real_time_trigger.data.remote_id,
+              remoteProperties,
+            );
+            break;
+        }
+      } else {
+        resp = await service.syncUsers(
+          linkedUserId,
+          undefined,
+          remoteProperties,
+        );
+      }
 
       const sourceObject: OriginalUserOutput[] = resp.data;
       // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       // console.log("Source Data ", sourceObject)
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalUserOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalUserOutput[]
+      >({
         sourceObject,
         targetType: TicketingObject.user,
         providerName: integrationId,
         vertical: 'ticketing',
         customFieldMappings,
       })) as UnifiedUserOutput[];
-
-
 
       //insert the data in the DB with the fieldMappings (value table)
       const user_data = await this.saveUsersInDb(
@@ -197,7 +237,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -214,7 +254,7 @@ export class SyncService implements OnModuleInit {
         const originId = user.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingUser = await this.prisma.tcg_users.findFirst({
@@ -251,7 +291,7 @@ export class SyncService implements OnModuleInit {
             name: user.name,
             email_address: user.email_address,
             teams: user.teams || [],
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             // id_tcg_account: user.account_id || '',
@@ -326,7 +366,26 @@ export class SyncService implements OnModuleInit {
       }
       return users_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
+  }
+
+  async removeUserInDb(
+    linkedUserId: string,
+    originSource: string,
+    remote_id: string,
+  ) {
+    const existingUser = await this.prisma.tcg_users.findFirst({
+      where: {
+        remote_id: remote_id,
+        remote_platform: originSource,
+        id_linked_user: linkedUserId,
+      },
+    });
+    await this.prisma.tcg_users.delete({
+      where: {
+        id_tcg_user: existingUser.id_tcg_user,
+      },
+    });
   }
 }

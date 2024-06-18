@@ -4,9 +4,20 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { Payload } from './types';
 import { mapToRemoteEvent } from './utils';
 import * as crypto from 'crypto';
+import { NonTicketPayload, Payload } from './types';
+import { SyncService as TicketSyncService } from '@ticketing/ticket/sync/sync.service';
+import { SyncService as UserSyncService } from '@ticketing/user/sync/sync.service';
+import { SyncService as ContactSyncService } from '@ticketing/contact/sync/sync.service';
+import { SyncService as AccountSyncService } from '@ticketing/account/sync/sync.service';
+import {
+  Action,
+  ActionType,
+  handle3rdPartyServiceError,
+  ManagedWebhooksError,
+  throwTypedError,
+} from '@@core/utils/errors';
 
 @Injectable()
 export class ZendeskHandlerService {
@@ -15,225 +26,258 @@ export class ZendeskHandlerService {
     private prisma: PrismaService,
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
+    private syncTicketsService: TicketSyncService,
+    private syncUsersService: UserSyncService,
+    private syncContactsService: ContactSyncService,
+    private syncAccountsService: AccountSyncService,
   ) {
     this.logger.setContext(ZendeskHandlerService.name);
   }
 
   async createWebhook(data: { [key: string]: any }, mw_ids: string[]) {
-    if (mw_ids[0]) {
-      await this.createBasicWebhook(data.name_basic, mw_ids[0]);
-    }
-    if (mw_ids[1]) {
-      await this.createTriggerWebhook(data.name_trigger, mw_ids[1]);
+    try {
+      if (mw_ids[0]) {
+        await this.createBasicWebhook(data.name_basic, mw_ids[0]);
+      }
+      if (mw_ids[1]) {
+        await this.createTriggerWebhook(data.name_trigger, mw_ids[1]);
+      }
+    } catch (error) {
+      throw error;
     }
   }
 
   async createBasicWebhook(webhook_name: string, mw_id: string) {
-    const mw = await this.prisma.managed_webhooks.findUnique({
-      where: {
-        id_managed_webhook: mw_id,
-      },
-    });
-    const conn = await this.prisma.connections.findUnique({
-      where: {
-        id_connection: mw.id_connection,
-      },
-    });
-    const unified_events = mw.active_events;
-
-    const events_ = unified_events
-      .flatMap((event) => mapToRemoteEvent(event))
-      .filter((item) => item !== null && item !== undefined);
-
-    const body_data = {
-      webhook: {
-        name: webhook_name,
-        status: 'active',
-        endpoint: `${this.env.getPanoraBaseUrl()}/mw/${mw.endpoint}`,
-        http_method: 'POST',
-        request_format: 'json',
-        subscriptions: events_,
-      },
-    };
-
-    this.logger.log('Creating basic webhook... ');
-
-    const resp = await axios.post(
-      `${conn.account_url}/webhooks`,
-      JSON.stringify(body_data),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            conn.access_token,
-          )}`,
+    try {
+      const mw = await this.prisma.managed_webhooks.findUnique({
+        where: {
+          id_managed_webhook: mw_id,
         },
-      },
-    );
-
-    this.logger.log(
-      'Zendesk basic webhook created ' + JSON.stringify(resp.data),
-    );
-
-    this.logger.log('Fetching basic webhook secret... ');
-
-    const webhook_result = await axios.get(
-      `${conn.account_url}/webhooks/${resp.data.webhook.id}/signing_secret`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            conn.access_token,
-          )}`,
+      });
+      if (!mw) throw ReferenceError('Managed Webhook undefined');
+      const conn = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: mw.id_connection,
         },
-      },
-    );
-    //update signing secret inside mw table
-    await this.prisma.managed_webhooks.update({
-      where: {
-        id_managed_webhook: mw.id_managed_webhook,
-      },
-      data: {
-        remote_signing_secret: webhook_result.data.signing_secret.secret,
-      },
-    });
+      });
+      if (!conn) throw ReferenceError('Connection undefined');
+      const unified_events = mw.active_events;
+
+      const events_ = Array.from(
+        new Set(
+          unified_events
+            .flatMap((event) => mapToRemoteEvent(event))
+            .filter((item) => item !== null && item !== undefined),
+        ),
+      ); // Converts the Set back into an array
+      const body_data = {
+        webhook: {
+          name: webhook_name,
+          status: 'active',
+          endpoint: `${this.env.getWebhookIngress()}/mw/${mw.endpoint}`,
+          http_method: 'POST',
+          request_format: 'json',
+          subscriptions: events_,
+        },
+      };
+
+      this.logger.log('Creating basic webhook... ');
+
+      const resp = await axios.post(
+        `${conn.account_url}/webhooks`,
+        JSON.stringify(body_data),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              conn.access_token,
+            )}`,
+          },
+        },
+      );
+
+      this.logger.log(
+        'Zendesk basic webhook created ' + JSON.stringify(resp.data),
+      );
+
+      this.logger.log('Fetching basic webhook secret... ');
+
+      const webhook_result = await axios.get(
+        `${conn.account_url}/webhooks/${resp.data.webhook.id}/signing_secret`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              conn.access_token,
+            )}`,
+          },
+        },
+      );
+      //update signing secret inside mw table
+      await this.prisma.managed_webhooks.update({
+        where: {
+          id_managed_webhook: mw.id_managed_webhook,
+        },
+        data: {
+          remote_signing_secret: webhook_result.data.signing_secret.secret,
+        },
+      });
+    } catch (error) {
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'zendesk',
+        Action.webhookCreation,
+        ActionType.POST,
+      );
+    }
   }
 
   async createTriggerWebhook(webhook_name: string, mw_id: string) {
-    const mw = await this.prisma.managed_webhooks.findUnique({
-      where: {
-        id_managed_webhook: mw_id,
-      },
-    });
-    const conn = await this.prisma.connections.findUnique({
-      where: {
-        id_connection: mw.id_connection,
-      },
-    });
-    const body_data = {
-      webhook: {
-        name: webhook_name,
-        status: 'active',
-        endpoint: `${this.env.getPanoraBaseUrl()}/mw/${mw.endpoint}`,
-        http_method: 'POST',
-        request_format: 'json',
-        subscriptions: ['conditional_ticket_events'],
-      },
-    };
-
-    this.logger.log('Creating trigger webhook... ');
-    const resp = await axios.post(
-      `${conn.account_url}/webhooks`,
-      JSON.stringify(body_data),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            conn.access_token,
-          )}`,
+    try {
+      const mw = await this.prisma.managed_webhooks.findUnique({
+        where: {
+          id_managed_webhook: mw_id,
         },
-      },
-    );
+      });
+      if (!mw) throw ReferenceError('Managed Webhook undefined');
 
-    this.logger.log(
-      'Zendesk trigger webhook created ' + JSON.stringify(resp.data),
-    );
+      const conn = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: mw.id_connection,
+        },
+      });
+      if (!conn) throw ReferenceError('Connection undefined');
 
-    // create trigger webhook
-    const b_ = {
-      trigger: {
-        actions: [
-          {
-            field: 'notification_webhook',
-            value: [
-              resp.data.webhook.id,
-              `
-              {
-              "id_ticket": "{{ticket.id}}"
-              }
-            `,
-            ],
+      const body_data = {
+        webhook: {
+          name: webhook_name,
+          status: 'active',
+          endpoint: `${this.env.getWebhookIngress()}/mw/${mw.endpoint}`,
+          http_method: 'POST',
+          request_format: 'json',
+          subscriptions: ['conditional_ticket_events'],
+        },
+      };
+
+      this.logger.log('Creating trigger webhook... ');
+      const resp = await axios.post(
+        `${conn.account_url}/webhooks`,
+        JSON.stringify(body_data),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              conn.access_token,
+            )}`,
           },
-        ],
-        conditions: {
-          any: [
+        },
+      );
+
+      this.logger.log(
+        'Zendesk trigger webhook created ' + JSON.stringify(resp.data),
+      );
+
+      // create trigger webhook
+      const b_ = {
+        trigger: {
+          actions: [
             {
-              field: 'assignee_id',
-              operator: 'changed',
-            },
-            {
-              field: 'attachment',
-              operator: 'is',
-              value: 'present',
-            },
-            {
-              field: 'comment_is_public',
-              value: 'true',
-            },
-            {
-              field: 'priority',
-              operator: 'changed',
-            },
-            {
-              field: 'status',
-              value: 'changed',
-            },
-            {
-              field: 'update_type',
-              value: 'Create',
-            },
-            {
-              field: 'update_type',
-              value: 'Change',
-            },
-            {
-              field: 'cc',
-              operator: 'is',
-              value: 'present',
-            },
-            {
-              field: 'type',
-              operator: 'changed',
+              field: 'notification_webhook',
+              value: [
+                resp.data.webhook.id,
+                `
+                {
+                "id_ticket": "{{ticket.id}}"
+                }
+              `,
+              ],
             },
           ],
+          conditions: {
+            any: [
+              {
+                field: 'assignee_id',
+                operator: 'changed',
+              },
+              {
+                field: 'attachment',
+                operator: 'is',
+                value: 'present',
+              },
+              {
+                field: 'comment_is_public',
+                value: 'true',
+              },
+              {
+                field: 'priority',
+                operator: 'changed',
+              },
+              {
+                field: 'update_type',
+                value: 'Create',
+              },
+              {
+                field: 'update_type',
+                value: 'Change',
+              },
+              {
+                field: 'cc',
+                operator: 'is',
+                value: 'present',
+              },
+              {
+                field: 'type',
+                operator: 'changed',
+              },
+            ],
+          },
+          title: 'Trigger Webhooks',
         },
-        title: 'Trigger Webhooks',
-      },
-    };
-    const trigger_result = await axios.post(
-      `${conn.account_url}/triggers.json`,
-      JSON.stringify(b_),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            conn.access_token,
-          )}`,
+      };
+      const trigger_result = await axios.post(
+        `${conn.account_url}/triggers.json`,
+        JSON.stringify(b_),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              conn.access_token,
+            )}`,
+          },
         },
-      },
-    );
+      );
 
-    this.logger.log('Fetching trigger webhook secret... ');
-    const webhook_result = await axios.get(
-      `${conn.account_url}/webhooks/${resp.data.webhook.id}/signing_secret`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            conn.access_token,
-          )}`,
+      this.logger.log('Fetching trigger webhook secret... ');
+      const webhook_result = await axios.get(
+        `${conn.account_url}/webhooks/${resp.data.webhook.id}/signing_secret`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              conn.access_token,
+            )}`,
+          },
         },
-      },
-    );
-    //update signing secret inside mw table
-    await this.prisma.managed_webhooks.update({
-      where: {
-        id_managed_webhook: mw.id_managed_webhook,
-      },
-      data: {
-        remote_signing_secret: webhook_result.data.signing_secret.secret,
-      },
-    });
+      );
+      //update signing secret inside mw table
+      await this.prisma.managed_webhooks.update({
+        where: {
+          id_managed_webhook: mw.id_managed_webhook,
+        },
+        data: {
+          remote_signing_secret: webhook_result.data.signing_secret.secret,
+        },
+      });
+    } catch (error) {
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'zendesk',
+        Action.webhookCreation,
+        ActionType.POST,
+      );
+    }
   }
 
   async handler(payload: Payload, headers: any, id_managed_webhook: string) {
@@ -244,15 +288,108 @@ export class ZendeskHandlerService {
         payload,
         id_managed_webhook,
       );
+      const mw = await this.prisma.managed_webhooks.findUnique({
+        where: {
+          id_managed_webhook: id_managed_webhook,
+        },
+      });
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: mw.id_connection,
+        },
+      });
       if ('ticketId' in payload) {
         // ticket payload
         // TODO:update the tickzt inside our db
+        await this.syncTicketsService.syncTicketsForLinkedUser(
+          connection.provider_slug.toLowerCase(),
+          connection.id_linked_user,
+          connection.id_project,
+          {
+            action: 'UPDATE',
+            data: { remote_id: payload.ticketId as string },
+          },
+        );
       } else {
         //non-ticket payload
+        const payload_ = payload as NonTicketPayload;
+        const [event_type, event_action] = this.extractValue(payload_.type);
+        switch (event_type) {
+          case 'user':
+            if (payload_.detail.role) {
+              if (payload_.detail.role == 'end-user') {
+                await this.syncContactsService.syncContactsForLinkedUser(
+                  connection.provider_slug.toLowerCase(),
+                  connection.id_linked_user,
+                  connection.id_project,
+                  payload_.detail.id,
+                  {
+                    action:
+                      event_action.toLowerCase() == 'deleted'
+                        ? 'DELETE'
+                        : 'UPDATE',
+                    data: { remote_id: payload_.detail.id as string },
+                  },
+                );
+              } else if (
+                payload_.detail.role == 'admin' ||
+                payload_.detail.role == 'agent'
+              ) {
+                await this.syncUsersService.syncUsersForLinkedUser(
+                  connection.provider_slug.toLowerCase(),
+                  connection.id_linked_user,
+                  connection.id_project,
+                  {
+                    action:
+                      event_action.toLowerCase() == 'deleted'
+                        ? 'DELETE'
+                        : 'UPDATE',
+                    data: { remote_id: payload_.detail.id as string },
+                  },
+                );
+              } else {
+                break;
+              }
+            }
+            break;
+          case 'organization':
+            await this.syncAccountsService.syncAccountsForLinkedUser(
+              connection.provider_slug.toLowerCase(),
+              connection.id_linked_user,
+              connection.id_project,
+              {
+                action:
+                  event_action.toLowerCase() == 'deleted' ? 'DELETE' : 'UPDATE',
+                data: { remote_id: payload_.detail.id as string },
+              },
+            );
+          default:
+            break;
+        }
       }
     } catch (error) {
-      throw new Error(error);
+      throwTypedError(
+        new ManagedWebhooksError({
+          name: 'RECEIVING_WEBHOOK_PAYLOAD_ERROR',
+          message: 'ZendeskHandlerService.handler() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
+  }
+
+  extractValue(typeString: string): string[] {
+    const prefix = 'zen:event-type:';
+    const startIndex = typeString.indexOf(prefix);
+
+    if (startIndex === -1) {
+      throw new Error('Prefix not found in the string.');
+    }
+
+    const afterPrefix = typeString.substring(startIndex + prefix.length);
+    const values = afterPrefix.split(':');
+    return [values[0], values[1]];
   }
 
   async verifyWebhookAuthenticity(
@@ -275,7 +412,15 @@ export class ZendeskHandlerService {
       const sig = hmac.update(timestamp + body).digest('base64');
       return Buffer.compare(Buffer.from(signature), Buffer.from(sig)) === 0;
     } catch (error) {
-      throw new Error(error);
+      throwTypedError(
+        new ManagedWebhooksError({
+          name: 'SIGNATURE_VERIFICATION_AUTHENTICITY_ERROR',
+          message:
+            'ZendeskHandlerService.verifyWebhookAuthenticity() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

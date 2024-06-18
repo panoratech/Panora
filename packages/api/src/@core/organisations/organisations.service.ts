@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { handleServiceError } from '@@core/utils/errors';
 
 @Injectable()
 export class OrganisationsService {
@@ -15,7 +14,6 @@ export class OrganisationsService {
     try {
       return await this.prisma.organizations.findMany();
     } catch (error) {
-      handleServiceError(error, this.logger);
     }
   }
   async createOrganization(data: CreateOrganizationDto) {
@@ -28,7 +26,6 @@ export class OrganisationsService {
       });
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
     }
   }*/
 }

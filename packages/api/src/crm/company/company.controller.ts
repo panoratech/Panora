@@ -35,11 +35,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/companies')
 @Controller('crm/companies')
 export class CompanyController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly companyService: CompanyService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(CompanyController.name);
   }
@@ -73,7 +72,7 @@ export class CompanyController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -81,7 +80,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCompany',
+    operationId: 'getCrmCompany',
     summary: 'Retrieve a Company',
     description: 'Retrieve a company from any connected Crm software',
   })
@@ -108,7 +107,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'addCompany',
+    operationId: 'addCrmCompany',
     summary: 'Create a Company',
     description: 'Create a company in any supported Crm software',
   })

@@ -1,36 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { IContactService } from '../types';
-import { desunify } from '@@core/utils/unification/desunify';
 import { CrmObject } from '@crm/@lib/@types';
 import { LoggerService } from '@@core/logger/logger.service';
-import { unify } from '@@core/utils/unification/unify';
 import { v4 as uuidv4 } from 'uuid';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
 import { ApiResponse } from '@@core/utils/types';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from './registry.service';
 import { Utils } from '@crm/@lib/@utils';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class ContactService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
+    private utils: Utils,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(ContactService.name);
-    this.utils = new Utils();
   }
 
   async batchAddContacts(
@@ -53,7 +51,13 @@ export class ContactService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_CONTACTS_ERROR',
+          message: 'ContactService.batchAddContacts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -79,15 +83,16 @@ export class ContactService {
           'crm.contact',
         );
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedContactInput>({
-        sourceObject: unifiedContactData,
-        targetType: CrmObject.contact,
-        providerName: integrationId,
-        vertical: 'crm',
-        customFieldMappings: unifiedContactData.field_mappings
-          ? customFieldMappings
-          : [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedContactInput>({
+          sourceObject: unifiedContactData,
+          targetType: CrmObject.contact,
+          providerName: integrationId,
+          vertical: 'crm',
+          customFieldMappings: unifiedContactData.field_mappings
+            ? customFieldMappings
+            : [],
+        });
 
       this.logger.log(
         'desunified obect is ' + JSON.stringify(desunifiedObject),
@@ -101,7 +106,9 @@ export class ContactService {
       );
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalContactOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalContactOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: CrmObject.contact,
         providerName: integrationId,
@@ -398,7 +405,13 @@ export class ContactService {
       );
       return result_contact;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_CONTACT_ERROR',
+          message: 'ContactService.addContact() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -479,7 +492,13 @@ export class ContactService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_CONTACT_ERROR',
+          message: 'ContactService.getContact() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -488,8 +507,12 @@ export class ContactService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedContactOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedContactOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
 
@@ -501,21 +524,23 @@ export class ContactService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_crm_contact: cursor
-          }
+            id_crm_contact: cursor,
+          },
         });
         if (!isCursorPresent) {
-          throw new NotFoundError(`The provided cursor does not exist!`);
+          throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
 
-      let contacts = await this.prisma.crm_contacts.findMany({
+      const contacts = await this.prisma.crm_contacts.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_crm_contact: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_crm_contact: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -528,8 +553,10 @@ export class ContactService {
         },
       });
 
-      if (contacts.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(contacts[contacts.length - 1].id_crm_contact).toString('base64');
+      if (contacts.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          contacts[contacts.length - 1].id_crm_contact,
+        ).toString('base64');
         contacts.pop();
       }
 
@@ -618,10 +645,16 @@ export class ContactService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_CONTACTS_ERROR',
+          message: 'ContactService.getContacts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
   //TODO
@@ -630,9 +663,7 @@ export class ContactService {
     updateContactData: Partial<UnifiedContactInput>,
   ): Promise<UnifiedContactOutput> {
     try {
-    } catch (error) {
-      handleServiceError(error, this.logger);
-    }
+    } catch (error) {}
     // TODO: fetch the contact from the database using 'id'
     // TODO: update the contact with 'updateContactData'
     // TODO: save the updated contact back to the database

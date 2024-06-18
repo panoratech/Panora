@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
@@ -42,7 +42,9 @@ export class CrmConnectionsService {
   ) {
     try {
       if (!code) {
-        throw new NotFoundError(`no ${providerName} code found, found ${code}`);
+        throw new ReferenceError(
+          `no ${providerName} code found, found ${code}`,
+        );
       }
 
       const serviceName = providerName.toLowerCase();
@@ -50,7 +52,7 @@ export class CrmConnectionsService {
       const service = this.serviceRegistry.getService(serviceName);
 
       if (!service) {
-        throw new NotFoundError(`Unknown provider, found ${providerName}`);
+        throw new ReferenceError(`Unknown provider, found ${providerName}`);
       }
       const callbackOpts: CallbackParams = {
         linkedUserId: linkedUserId,
@@ -81,7 +83,14 @@ export class CrmConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_CRM',
+          message: 'CrmConnectionsService.handleCRMCallBack() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -96,7 +105,7 @@ export class CrmConnectionsService {
       const serviceName = providerName.toLowerCase();
       const service = this.serviceRegistry.getService(serviceName);
       if (!service) {
-        throw new NotFoundError(`Unknown provider, found ${providerName}`);
+        throw new ReferenceError(`Unknown provider, found ${providerName}`);
       }
       const refreshOpts: RefreshParams = {
         connectionId: connectionId,
@@ -106,7 +115,14 @@ export class CrmConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_CRM',
+          message: 'CrmConnectionsService.handleCRMTokensRefresh() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

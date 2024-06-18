@@ -5,7 +5,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IContactService } from '@ticketing/contact/types';
 import { FrontContactOutput } from './types';
@@ -26,11 +26,11 @@ export class FrontService implements IContactService {
 
   async syncContacts(
     linkedUserId: string,
-    unused_,
     remote_account_id: string,
   ): Promise<ApiResponse<FrontContactOutput[]>> {
     try {
-      if (!remote_account_id) throw new Error('remote account id not found');
+      if (!remote_account_id)
+        throw new ReferenceError('remote account id not found');
 
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -44,7 +44,6 @@ export class FrontService implements IContactService {
         `${connection.account_url}/accounts/${remote_account_id}/contacts`,
         {
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${this.cryptoService.decrypt(
               connection.access_token,
             )}`,
@@ -59,13 +58,14 @@ export class FrontService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      throw error;
+      /*handle3rdPartyServiceError(
         error,
         this.logger,
-        'Front',
+        'front',
         TicketingObject.contact,
         ActionType.GET,
-      );
+      );*/
     }
   }
 }

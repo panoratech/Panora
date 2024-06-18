@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -25,7 +31,6 @@ export type AhaOAuthResponse = {
 @Injectable()
 export class AhaConnectionService implements ITicketingConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -34,6 +39,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AhaConnectionService.name);
     this.registry.registerService('aha', this);
@@ -46,13 +52,17 @@ export class AhaConnectionService implements ITicketingConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: `aha`,
+          provider_slug: 'aha',
           vertical: 'ticketing',
         },
       });
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getWebhookIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
@@ -127,7 +137,18 @@ export class AhaConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'aha', Action.oauthCallback);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
+          message: `AhaConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'aha',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 

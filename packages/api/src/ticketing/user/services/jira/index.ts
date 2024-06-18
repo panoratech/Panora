@@ -5,7 +5,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IUserService } from '@ticketing/user/types';
 import { JiraUserOutput } from './types';
@@ -26,6 +26,7 @@ export class JiraService implements IUserService {
 
   async syncUsers(
     linkedUserId: string,
+    remote_user_id?: string,
   ): Promise<ApiResponse<JiraUserOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -51,10 +52,10 @@ export class JiraService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Jira',
+        'jira',
         TicketingObject.user,
         ActionType.GET,
       );

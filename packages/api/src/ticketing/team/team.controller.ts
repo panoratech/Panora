@@ -28,11 +28,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/teams')
 @Controller('ticketing/teams')
 export class TeamController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly teamService: TeamService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(TeamController.name);
   }
@@ -66,7 +65,7 @@ export class TeamController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

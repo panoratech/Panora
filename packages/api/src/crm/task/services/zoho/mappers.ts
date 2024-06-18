@@ -5,10 +5,14 @@ import {
   UnifiedTaskOutput,
 } from '@crm/task/types/model.unified';
 import { Utils } from '@crm/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ZohoTaskMapper implements ITaskMapper {
-  private utils = new Utils();
-
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'task', 'zoho', this);
+  }
   async desunify(
     source: UnifiedTaskInput,
     customFieldMappings?: {

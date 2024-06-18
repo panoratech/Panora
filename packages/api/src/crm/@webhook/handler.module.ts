@@ -8,13 +8,12 @@ import { CrmWebhookHandlerService } from './handler.service';
 @Module({
   imports: [],
   providers: [
-    PrismaService,
     LoggerService,
     EncryptionService,
     EnvironmentService,
     CrmWebhookHandlerService,
     /* PROVIDERS SERVICES */
   ],
-  exports: [LoggerService, PrismaService, CrmWebhookHandlerService],
+  exports: [LoggerService, CrmWebhookHandlerService],
 })
 export class CrmWebhookHandlerModule {}

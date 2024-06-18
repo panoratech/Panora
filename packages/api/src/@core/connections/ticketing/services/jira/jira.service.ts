@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -35,7 +41,6 @@ export type JiraOAuthResponse = {
 @Injectable()
 export class JiraConnectionService implements ITicketingConnectionService {
   private readonly type: string;
-  private readonly connectionUtils = new ConnectionUtils();
 
   constructor(
     private prisma: PrismaService,
@@ -44,6 +49,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(JiraConnectionService.name);
     this.registry.registerService('jira', this);
@@ -91,26 +97,23 @@ export class JiraConnectionService implements ITicketingConnectionService {
 
       // get the cloud id from atlassian jira, it is used across requests to the api
       //TODO: add a field inside our connections db to handle it
-      const res_ = await axios.post(
+      const res_ = await axios.get(
         `https://api.atlassian.com/oauth/token/accessible-resources`,
-        formData.toString(),
         {
           headers: {
             Authorization: `Bearer ${data.access_token}`,
-            'Content-Type': 'application/json',
+            Accept: 'application/json',
           },
         },
       );
       const sites_scopes: JiraCloudIdInformation[] = res_.data;
-      let cloud_id: string;
-      for (const site of sites_scopes) {
-        if (site.url == 'https://panora.atlassian.net') {
-          cloud_id = site.id;
-          break;
-        }
-      }
+
+      const cloud_id: string = sites_scopes[0].id; //todo
       let db_res;
       const connection_token = uuidv4();
+
+      const access_token = this.cryptoService.encrypt(data.access_token);
+      const refresh_token = this.cryptoService.encrypt(data.refresh_token);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -118,8 +121,8 @@ export class JiraConnectionService implements ITicketingConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            access_token: access_token,
+            refresh_token: refresh_token,
             account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
@@ -137,8 +140,8 @@ export class JiraConnectionService implements ITicketingConnectionService {
             vertical: 'ticketing',
             token_type: 'oauth',
             account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
-            access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            access_token: access_token,
+            refresh_token: refresh_token,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -160,30 +163,43 @@ export class JiraConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, 'jira', Action.oauthCallback);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
+          message: `JiraConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'jira',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
+
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
+
+      const formData = {
+        grant_type: 'refresh_token',
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+      };
+
       const res = await axios.post(
         `https://auth.atlassian.com/oauth/token`,
-        formData.toString(),
+        formData,
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
+            'Content-Type': 'application/json',
           },
         },
       );
@@ -202,7 +218,18 @@ export class JiraConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : jira ');
     } catch (error) {
-      handleServiceError(error, this.logger, 'jira', Action.oauthRefresh);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
+          message: `JiraConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            'jira',
+            Action.oauthRefresh,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

@@ -126,7 +126,7 @@ const AddConnectionButton = ({
         )
         ;
       },
-      error: 'Error',
+      error: (err: any) => err.message || 'Error'
     });
 
     posthog?.capture("magic_link_created", {

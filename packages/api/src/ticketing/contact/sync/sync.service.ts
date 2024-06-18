@@ -1,12 +1,12 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { SyncError, throwTypedError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { unify } from '@@core/utils/unification/unify';
+
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedContactOutput } from '../types/model.unified';
@@ -17,6 +17,7 @@ import { OriginalContactOutput } from '@@core/utils/types/original/original.tick
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,6 +27,7 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -35,7 +37,7 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -67,12 +69,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing contacts....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -111,18 +113,25 @@ export class SyncService implements OnModuleInit {
                       );
                     }
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'TICKETING_CONTACT_SYNC_ERROR',
+          message: 'SyncService.syncContacts() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -132,6 +141,12 @@ export class SyncService implements OnModuleInit {
     linkedUserId: string,
     id_project: string,
     remote_account_id?: string,
+    wh_real_time_trigger?: {
+      action: 'UPDATE' | 'DELETE';
+      data: {
+        remote_id: string;
+      };
+    },
   ) {
     try {
       this.logger.log(
@@ -149,7 +164,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping contacts syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -164,16 +178,36 @@ export class SyncService implements OnModuleInit {
 
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalContactOutput[]> =
-        await service.syncContacts(
+      let resp: ApiResponse<OriginalContactOutput[]>;
+      if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
+        //meaning the call has been from a real time webhook that received data from a 3rd party
+        switch (wh_real_time_trigger.action) {
+          case 'DELETE':
+            return await this.removeContactInDb(
+              linkedUserId,
+              integrationId,
+              wh_real_time_trigger.data.remote_id,
+            );
+          default:
+            resp = await service.syncContacts(
+              linkedUserId,
+              wh_real_time_trigger.data.remote_id,
+              remoteProperties,
+            );
+            break;
+        }
+      } else {
+        resp = await service.syncContacts(
           linkedUserId,
-          remoteProperties,
           remote_account_id,
+          remoteProperties,
         );
-
+      }
       const sourceObject: OriginalContactOutput[] = resp.data;
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalContactOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalContactOutput[]
+      >({
         sourceObject,
         targetType: TicketingObject.contact,
         providerName: integrationId,
@@ -209,7 +243,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -227,7 +261,7 @@ export class SyncService implements OnModuleInit {
         const originId = contact.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingContact = await this.prisma.tcg_contacts.findFirst({
@@ -278,7 +312,7 @@ export class SyncService implements OnModuleInit {
             email_address: contact.email_address,
             phone_number: contact.phone_number,
             details: contact.details,
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,
@@ -359,7 +393,25 @@ export class SyncService implements OnModuleInit {
       }
       return contacts_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
+  }
+  async removeContactInDb(
+    linkedUserId: string,
+    originSource: string,
+    remote_id: string,
+  ) {
+    const existingContact = await this.prisma.tcg_contacts.findFirst({
+      where: {
+        remote_id: remote_id,
+        remote_platform: originSource,
+        id_linked_user: linkedUserId,
+      },
+    });
+    await this.prisma.tcg_contacts.delete({
+      where: {
+        id_tcg_contact: existingContact.id_tcg_contact,
+      },
+    });
   }
 }

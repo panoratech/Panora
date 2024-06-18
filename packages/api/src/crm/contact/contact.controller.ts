@@ -35,17 +35,16 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/contacts')
 @Controller('crm/contacts')
 export class ContactController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly contactService: ContactService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(ContactController.name);
   }
 
   @ApiOperation({
-    operationId: 'getContacts',
+    operationId: 'getCrmContacts',
     summary: 'List a batch of CRM Contacts',
   })
   @ApiHeader({
@@ -81,7 +80,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getContact',
+    operationId: 'getCrmContact',
     summary: 'Retrieve a CRM Contact',
     description: 'Retrieve a contact from any connected CRM',
   })
@@ -108,7 +107,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addContact',
+    operationId: 'addCrmContact',
     summary: 'Create CRM Contact',
     description: 'Create a contact in any supported CRM',
   })
@@ -151,7 +150,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addContacts',
+    operationId: 'addCrmContacts',
     summary: 'Add a batch of CRM Contacts',
   })
   @ApiHeader({

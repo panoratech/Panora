@@ -19,7 +19,8 @@ const useProjectConnectors = (id: string) => {
         },
       }); 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Unknown error occurred");
       }
       return response.json();
     }

@@ -3,19 +3,18 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedEngagementInput,
   UnifiedEngagementOutput,
 } from '../types/model.unified';
-import { desunify } from '@@core/utils/unification/desunify';
 import { CrmObject, ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { OriginalEngagementOutput } from '@@core/utils/types/original/original.crm';
-import { unify } from '@@core/utils/unification/unify';
 import { IEngagementService } from '../types';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class EngagementService {
@@ -25,6 +24,7 @@ export class EngagementService {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(EngagementService.name);
   }
@@ -49,7 +49,13 @@ export class EngagementService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_ENGAGEMENTS_ERROR',
+          message: 'EngagmentService.batchAddEngagements() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -67,7 +73,7 @@ export class EngagementService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
 
       const company = unifiedEngagementData.company_id;
       //check if contact_id and account_id refer to real uuids
@@ -78,16 +84,18 @@ export class EngagementService {
           },
         });
         if (!search)
-          throw new Error('You inserted a contact_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a contact_id which does not exist',
+          );
       }
       const type = unifiedEngagementData.type.toUpperCase();
       if (type) {
         if (!ENGAGEMENTS_TYPE.includes(type))
-          throw new Error(
+          throw new ReferenceError(
             'You inserted a engagement type which does not exist',
           );
       } else {
-        throw new Error('You didnt insert a type for your engagement');
+        throw new ReferenceError('You didnt insert a type for your engagement');
       }
 
       const engagement_contacts = unifiedEngagementData.contacts;
@@ -99,20 +107,21 @@ export class EngagementService {
             },
           });
           if (!search)
-            throw new Error(
+            throw new ReferenceError(
               'You inserted an id_crm_engagement_contact which does not exist',
             );
         });
       }
 
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedEngagementInput>({
-        sourceObject: unifiedEngagementData,
-        targetType: CrmObject.engagement,
-        providerName: integrationId,
-        vertical: 'crm',
-        customFieldMappings: [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedEngagementInput>({
+          sourceObject: unifiedEngagementData,
+          targetType: CrmObject.engagement,
+          providerName: integrationId,
+          vertical: 'crm',
+          customFieldMappings: [],
+        });
 
       const service: IEngagementService =
         this.serviceRegistry.getService(integrationId);
@@ -124,11 +133,13 @@ export class EngagementService {
         type === 'CALL'
           ? CrmObject.engagement_call
           : type === 'MEETING'
-            ? CrmObject.engagement_meeting
-            : CrmObject.engagement_email;
+          ? CrmObject.engagement_meeting
+          : CrmObject.engagement_email;
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalEngagementOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalEngagementOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: targetType,
         providerName: integrationId,
@@ -286,7 +297,13 @@ export class EngagementService {
       );
       return result_engagement;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_ENGAGEMENT_ERROR',
+          message: 'EngagmentService.addEngagement() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -363,7 +380,13 @@ export class EngagementService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_ENGAGEMENT_ERROR',
+          message: 'EngagmentService.getEngagement() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -372,8 +395,12 @@ export class EngagementService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedEngagementOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedEngagementOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       let prev_cursor = null;
       let next_cursor = null;
@@ -383,21 +410,23 @@ export class EngagementService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_crm_engagement: cursor
-          }
+            id_crm_engagement: cursor,
+          },
         });
         if (!isCursorPresent) {
-          throw new NotFoundError(`The provided cursor does not exist!`);
+          throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
 
-      let engagements = await this.prisma.crm_engagements.findMany({
+      const engagements = await this.prisma.crm_engagements.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_crm_engagement: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_crm_engagement: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -405,8 +434,10 @@ export class EngagementService {
         },
       });
 
-      if (engagements.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(engagements[engagements.length - 1].id_crm_engagement).toString('base64');
+      if (engagements.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          engagements[engagements.length - 1].id_crm_engagement,
+        ).toString('base64');
         engagements.pop();
       }
 
@@ -495,10 +526,16 @@ export class EngagementService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_ENGAGEMENTS_ERROR',
+          message: 'EngagmentService.getEngagements() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

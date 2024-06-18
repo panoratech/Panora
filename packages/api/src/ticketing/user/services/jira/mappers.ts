@@ -4,8 +4,15 @@ import {
   UnifiedUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { JiraUserInput, JiraUserOutput } from './types';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 
+@Injectable()
 export class JiraUserMapper implements IUserMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('ticketing', 'user', 'jira', this);
+  }
   desunify(
     source: UnifiedUserInput,
     customFieldMappings?: {

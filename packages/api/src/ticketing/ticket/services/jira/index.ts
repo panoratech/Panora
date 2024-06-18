@@ -6,26 +6,24 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { JiraTicketInput, JiraTicketOutput } from './types';
-import { Utils } from '@ticketing/@lib/@utils';;
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class JiraService implements ITicketService {
-  private readonly utils: Utils;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + JiraService.name,
     );
     this.registry.registerService('jira', this);
-    this.utils = new Utils();
   }
 
   async addTicket(
@@ -64,10 +62,10 @@ export class JiraService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Jira',
+        'jira',
         TicketingObject.ticket,
         ActionType.POST,
       );
@@ -75,6 +73,7 @@ export class JiraService implements ITicketService {
   }
   async syncTickets(
     linkedUserId: string,
+    remote_ticket_id?: string,
   ): Promise<ApiResponse<JiraTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -100,10 +99,10 @@ export class JiraService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Jira',
+        'jira',
         TicketingObject.ticket,
         ActionType.GET,
       );

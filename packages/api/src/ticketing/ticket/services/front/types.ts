@@ -8,7 +8,7 @@ export type FrontTicketInput = {
   tags?: string[];
 };
 
-type Comment = {
+export type Comment = {
   author_id?: string;
   body: string;
   attachments?: string[]; //TODO: maybe wrong type

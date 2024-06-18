@@ -1,14 +1,11 @@
 import { Address, countryPhoneFormats, Email, Phone } from '@crm/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@@core/prisma/prisma.service';
 
-import { PrismaClient } from '@prisma/client';
-
+@Injectable()
 export class Utils {
-  private readonly prisma: PrismaClient;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   normalizeEmailsAndNumbers(email_addresses: Email[], phone_numbers: Phone[]) {
     let normalizedEmails = [];
@@ -88,7 +85,7 @@ export class Utils {
       if (!res) return;
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -103,7 +100,7 @@ export class Utils {
       if (!res) return;
       return res;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -116,14 +113,11 @@ export class Utils {
         },
       });
       if (!res) {
-        // throw new Error(
-        //   `crm_user not found for remote_id ${remote_id} and integration ${remote_platform}`,
-        // );
-        return;
+        return undefined;
       }
       return res.id_crm_user;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -136,11 +130,12 @@ export class Utils {
         },
       });
 
-      if (!res) return;
-
+      if (!res) {
+        return undefined;
+      }
       return res.name;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -152,12 +147,11 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-
-      if (!res) return;
+      if (!res) return undefined;
 
       return res.stage_name;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -169,12 +163,11 @@ export class Utils {
         },
       });
       if (!res) {
-        // throw new Error(`crm_companies not found for uuid ${uuid}`);
-        return;
+        return undefined;
       }
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -187,14 +180,11 @@ export class Utils {
         },
       });
       if (!res) {
-        return;
-        // throw new Error(
-        //   `crm_companies not found for remote_id ${remote_id} and integration ${remote_platform}`,
-        // );
+        return undefined;
       }
       return res.id_crm_company;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -205,11 +195,10 @@ export class Utils {
           id_crm_deals_stage: uuid,
         },
       });
-      // if (!res) throw new Error(`crm_deals_stages not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res) return undefined;
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -222,10 +211,7 @@ export class Utils {
         },
       });
       if (!res) {
-        return;
-        // throw new Error(
-        //   `crm_deals_stages not found for remote_id ${remote_id} and integration ${remote_platform}`,
-        // );
+        return undefined;
       }
       return res.id_crm_deals_stage;
     } catch (error) {
@@ -240,11 +226,10 @@ export class Utils {
           id_crm_contact: uuid,
         },
       });
-      // if (!res) throw new Error(`crm_contacts not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res) return undefined;
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -256,14 +241,10 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      // if (!res)
-      //   throw new Error(
-      //     `crm_contacts not found for remote_id ${remote_id} and integration ${remote_platform}`,
-      //   );
-      if (!res) return;
+      if (!res) return undefined;
       return res.id_crm_contact;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -274,11 +255,10 @@ export class Utils {
           id_crm_deal: uuid,
         },
       });
-      // if (!res) throw new Error(`crm_deals not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res) return undefined;
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -290,14 +270,10 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      // if (!res)
-      //   throw new Error(
-      //     `crm_deals not found for remote_id ${remote_id} and integration ${remote_platform}`,
-      //   );
-      if (!res) return;
+      if (!res) return undefined;
       return res.id_crm_deal;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -305,12 +281,12 @@ export class Utils {
     try {
       switch (provider_name.toLowerCase()) {
         default:
-          throw new Error(
+          throw new ReferenceError(
             'Provider not supported for status custom task mapping',
           );
       }
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -319,7 +295,7 @@ export class Utils {
     return priority === 'High'
       ? 'HIGH'
       : priority === 'Medium'
-        ? 'MEDIUM'
-        : 'LOW';
+      ? 'MEDIUM'
+      : 'LOW';
   }
 }

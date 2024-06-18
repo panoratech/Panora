@@ -1,15 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '@@core/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 
+@Injectable()
 export class Utils {
-  private readonly prisma: PrismaClient;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-    /*this.cryptoService = new EncryptionService(
-      new EnvironmentService(new ConfigService()),
-    );*/
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async fetchFileStreamFromURL(file_url: string) {
     return fs.createReadStream(file_url);
@@ -23,10 +18,11 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res) return;
+      if (!res) return undefined;
+
       return res.id_tcg_user;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -37,11 +33,10 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-      // if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res) return undefined;
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -53,10 +48,11 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res) return;
+      if (!res) return undefined;
+
       return res.id_tcg_contact;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -67,11 +63,11 @@ export class Utils {
           id_tcg_contact: uuid,
         },
       });
-      // if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res) return undefined;
+
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -82,13 +78,10 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-      if (!res) return;
-      /*throw new Error(
-          `tcg_user not found for uuid ${uuid} and integration ${remote_platform}`,
-        );*/
+      if (!res) return undefined;
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -99,11 +92,10 @@ export class Utils {
           id_tcg_user: uuid,
         },
       });
-      // if (!res) throw new Error(`tcg_user not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res) return undefined;
       return res.email_address;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -118,10 +110,11 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res) return;
+      if (!res) return undefined;
+
       return res.id_tcg_collection;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -132,10 +125,11 @@ export class Utils {
           id_tcg_collection: uuid,
         },
       });
-      if (!res) return;
+      if (!res) return undefined;
+
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -147,10 +141,11 @@ export class Utils {
           remote_platform: remote_platform,
         },
       });
-      if (!res) return;
+      if (!res) return undefined;
+
       return res.id_tcg_ticket;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -161,11 +156,11 @@ export class Utils {
           id_tcg_ticket: uuid,
         },
       });
-      // if (!res) throw new Error(`tcg_contact not found for uuid ${uuid}`);
-      if (!res) return;
+      if (!res) return undefined;
+
       return res.remote_id;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 }

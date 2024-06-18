@@ -28,17 +28,16 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/users')
 @Controller('crm/users')
 export class UserController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly userService: UserService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(UserController.name);
   }
 
   @ApiOperation({
-    operationId: 'getUsers',
+    operationId: 'getCrmUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -66,7 +65,7 @@ export class UserController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -74,7 +73,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUser',
+    operationId: 'getCrmUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Crm software',
   })

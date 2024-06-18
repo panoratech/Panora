@@ -34,17 +34,16 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/attachments')
 @Controller('ticketing/attachments')
 export class AttachmentController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly attachmentService: AttachmentService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(AttachmentController.name);
   }
 
   @ApiOperation({
-    operationId: 'getAttachments',
+    operationId: 'getTicketingAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -73,7 +72,7 @@ export class AttachmentController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -81,7 +80,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAttachment',
+    operationId: 'getTicketingAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Ticketing software',
   })
@@ -137,7 +136,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAttachment',
+    operationId: 'addTicketingAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Ticketing software',
   })
@@ -180,7 +179,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAttachments',
+    operationId: 'addTicketingAttachments',
     summary: 'Add a batch of Attachments',
   })
   @ApiHeader({

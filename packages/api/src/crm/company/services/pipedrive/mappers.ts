@@ -5,12 +5,13 @@ import {
 import { ICompanyMapper } from '@crm/company/types';
 import { PipedriveCompanyInput, PipedriveCompanyOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
+import { Injectable } from '@nestjs/common';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 
+@Injectable()
 export class PipedriveCompanyMapper implements ICompanyMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'company', 'pipedrive', this);
   }
 
   async desunify(
@@ -91,7 +92,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       }
     }
 
-    let res = {
+    const res = {
       name: company.name,
       industry: '', // Pipedrive may not directly provide this, need custom mapping
       number_of_employees: 0, // Placeholder, as there's no direct mapping provided

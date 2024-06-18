@@ -1,13 +1,12 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { unify } from '@@core/utils/unification/unify';
+
 import { CrmObject } from '@crm/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedUserOutput } from '../types/model.unified';
@@ -17,6 +16,8 @@ import { OriginalUserOutput } from '@@core/utils/types/original/original.crm';
 import { CRM_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { throwTypedError, SyncError } from '@@core/utils/errors';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,6 +27,7 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -35,7 +37,7 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -67,12 +69,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing users....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -101,18 +103,25 @@ export class SyncService implements OnModuleInit {
                       id_project,
                     );
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'CRM_USER_SYNC_ERROR',
+          message: 'SyncService.syncUsers() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -138,7 +147,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping users syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -161,7 +169,9 @@ export class SyncService implements OnModuleInit {
       const sourceObject: OriginalUserOutput[] = resp.data;
       //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalUserOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalUserOutput[]
+      >({
         sourceObject,
         targetType: CrmObject.user,
         providerName: integrationId,
@@ -196,7 +206,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -213,7 +223,7 @@ export class SyncService implements OnModuleInit {
         const originId = user.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingUser = await this.prisma.crm_users.findFirst({
@@ -252,7 +262,7 @@ export class SyncService implements OnModuleInit {
           this.logger.log('user not exists');
           let data: any = {
             id_crm_user: uuidv4(),
-            // created_at: new Date(),
+            created_at: new Date(),
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,
@@ -331,7 +341,7 @@ export class SyncService implements OnModuleInit {
       }
       return users_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 }

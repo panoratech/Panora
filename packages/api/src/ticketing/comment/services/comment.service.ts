@@ -3,18 +3,17 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '../types/model.unified';
 import { ICommentService } from '../types';
-import { desunify } from '@@core/utils/unification/desunify';
 import { TicketingObject } from '@ticketing/@lib/@types';
-import { unify } from '@@core/utils/unification/unify';
 import { ServiceRegistry } from './registry.service';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class CommentService {
@@ -23,6 +22,7 @@ export class CommentService {
     private logger: LoggerService,
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(CommentService.name);
   }
@@ -47,7 +47,13 @@ export class CommentService {
 
       return responses;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_COMMENTS_ERROR',
+          message: 'CommentService.addComments() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -65,7 +71,7 @@ export class CommentService {
       });
 
       //CHECKS
-      if (!linkedUser) throw new Error('Linked User Not Found');
+      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
       const tick = unifiedCommentData.ticket_id;
       //check if contact_id and account_id refer to real uuids
       if (tick) {
@@ -75,9 +81,11 @@ export class CommentService {
           },
         });
         if (!search)
-          throw new Error('You inserted a ticket_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a ticket_id which does not exist',
+          );
       } else {
-        throw new Error(
+        throw new ReferenceError(
           'You must attach your comment to a ticket, specify a ticket_id',
         );
       }
@@ -91,7 +99,9 @@ export class CommentService {
           },
         });
         if (!search)
-          throw new Error('You inserted a contact_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a contact_id which does not exist',
+          );
       }
       const user = unifiedCommentData.user_id;
       //check if contact_id and account_id refer to real uuids
@@ -102,7 +112,9 @@ export class CommentService {
           },
         });
         if (!search)
-          throw new Error('You inserted a user_id which does not exist');
+          throw new ReferenceError(
+            'You inserted a user_id which does not exist',
+          );
       }
 
       const attachmts = unifiedCommentData.attachments;
@@ -115,20 +127,21 @@ export class CommentService {
             },
           });
           if (!search)
-            throw new Error(
+            throw new ReferenceError(
               'You inserted an attachment_id which does not exist',
             );
         });
       }
 
       //desunify the data according to the target obj wanted
-      const desunifiedObject = await desunify<UnifiedCommentInput>({
-        sourceObject: unifiedCommentData,
-        targetType: TicketingObject.comment,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        customFieldMappings: [],
-      });
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedCommentInput>({
+          sourceObject: unifiedCommentData,
+          targetType: TicketingObject.comment,
+          providerName: integrationId,
+          vertical: 'ticketing',
+          customFieldMappings: [],
+        });
 
       const service: ICommentService =
         this.serviceRegistry.getService(integrationId);
@@ -142,7 +155,7 @@ export class CommentService {
         },
       });
       if (!ticket)
-        throw new Error(
+        throw new ReferenceError(
           'ticket does not exist for the comment you try to create',
         );
       const resp: ApiResponse<OriginalCommentOutput> = await service.addComment(
@@ -152,7 +165,9 @@ export class CommentService {
       );
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalCommentOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalCommentOutput[]
+      >({
         sourceObject: [resp.data],
         targetType: TicketingObject.comment,
         providerName: integrationId,
@@ -176,13 +191,13 @@ export class CommentService {
       const opts =
         target_comment.creator_type === 'contact'
           ? {
-            id_tcg_contact: unifiedCommentData.contact_id,
-          }
+              id_tcg_contact: unifiedCommentData.contact_id,
+            }
           : target_comment.creator_type === 'user'
-            ? {
+          ? {
               id_tcg_user: unifiedCommentData.user_id,
             }
-            : {}; //case where nothing is passed for creator or a not authorized value;
+          : {}; //case where nothing is passed for creator or a not authorized value;
 
       if (existingComment) {
         // Update the existing comment
@@ -290,7 +305,13 @@ export class CommentService {
       );
       return result_comment;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_COMMENT_ERROR',
+          message: 'CommentService.addComment() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -364,7 +385,13 @@ export class CommentService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_COMMENT_ERROR',
+          message: 'CommentService.getComment() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -375,8 +402,12 @@ export class CommentService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedCommentOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedCommentOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       let prev_cursor = null;
       let next_cursor = null;
@@ -386,21 +417,23 @@ export class CommentService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_comment: cursor
-          }
+            id_tcg_comment: cursor,
+          },
         });
         if (!isCursorPresent) {
-          throw new NotFoundError(`The provided cursor does not exist!`);
+          throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
 
-      let comments = await this.prisma.tcg_comments.findMany({
+      const comments = await this.prisma.tcg_comments.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_comment: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_comment: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -408,8 +441,10 @@ export class CommentService {
         },
       });
 
-      if (comments.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(comments[comments.length - 1].id_tcg_comment).toString('base64');
+      if (comments.length === pageSize + 1) {
+        next_cursor = Buffer.from(
+          comments[comments.length - 1].id_tcg_comment,
+        ).toString('base64');
         comments.pop();
       }
 
@@ -492,10 +527,16 @@ export class CommentService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_COMMENTS_ERROR',
+          message: 'CommentService.getComments() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

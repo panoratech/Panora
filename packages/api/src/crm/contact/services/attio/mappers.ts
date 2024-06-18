@@ -6,12 +6,13 @@ import {
 import { IContactMapper } from '@crm/contact/types';
 import { AttioContactInput, AttioContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
+import { Injectable } from '@nestjs/common';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 
+@Injectable()
 export class AttioContactMapper implements IContactMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'contact', 'attio', this);
   }
 
   async desunify(

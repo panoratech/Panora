@@ -17,7 +17,7 @@ interface CustomFields {
   [key: string]: string; // Allows dynamic keys for custom fields
 }
 
-interface ContactInput {
+interface LeadInput {
   lead_id: string;
   name: string;
   title: string;
@@ -54,7 +54,7 @@ interface Contact {
   updated_by: string;
 }
 
-export type CloseContactInput = Partial<ContactInput>;
+export type CloseContactInput = Partial<LeadInput>;
 
 export type CloseContactOutput = Partial<Contact>;
 

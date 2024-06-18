@@ -34,11 +34,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/comments')
 @Controller('ticketing/comments')
 export class CommentController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly commentService: CommentService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(CommentController.name);
   }
@@ -72,7 +71,7 @@ export class CommentController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);

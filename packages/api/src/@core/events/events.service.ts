@@ -1,7 +1,7 @@
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { PaginationDto } from '@@core/utils/dtos/pagination.dto';
-import { handleServiceError } from '@@core/utils/errors';
+import { EventsError, throwTypedError } from '@@core/utils/errors';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -36,15 +36,47 @@ export class EventsService {
         },
       });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new EventsError({
+          name: 'GET_EVENTS_ERROR',
+          message: 'EventsService.findEvents() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
-  async getEventsCount() {
+  async getEventsCount(id_project: string) {
     try {
-      return await this.prisma.events.count();
+      const linkedUsers = await this.prisma.linked_users.findMany({
+        where: {
+          id_project,
+        },
+        select: {
+          id_linked_user: true,
+        },
+      });
+
+      // Extract the ids of the linked_users
+      const linkedUserIds = linkedUsers.map((user) => user.id_linked_user);
+
+      return await this.prisma.events.count({
+        where: {
+          id_linked_user: {
+            in: linkedUserIds,
+          },
+        },
+      });
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new EventsError({
+          name: 'GET_EVENTS_COUNT_ERROR',
+          message: 'EventsService.getEventsCount() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

@@ -20,6 +20,9 @@ export class EnvironmentService {
   getEnvMode(): string {
     return this.configService.get<string>('ENV');
   }
+  getWebhookIngress(): string {
+    return this.configService.get<string>('WEBHOOK_INGRESS');
+  }
   getSentryDsn(): string {
     return this.configService.get<string>('SENTRY_DSN');
   }

@@ -5,12 +5,13 @@ import {
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { Utils } from '@ticketing/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class JiraTicketMapper implements ITicketMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('ticketing', 'ticket', 'jira', this);
   }
 
   async desunify(
@@ -21,7 +22,9 @@ export class JiraTicketMapper implements ITicketMapper {
     }[],
   ): Promise<JiraTicketInput> {
     if (!source.project_id) {
-      throw new Error('a project key/id is mandatory for Jira ticket creation');
+      throw new ReferenceError(
+        'a project key/id is mandatory for Jira ticket creation',
+      );
     }
     const result: JiraTicketInput = {
       fields: {

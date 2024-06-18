@@ -5,7 +5,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { IContactService } from '@ticketing/contact/types';
@@ -28,7 +28,7 @@ export class ZendeskService implements IContactService {
 
   async syncContacts(
     linkedUserId: string,
-    custom_properties?: string[],
+    remote_account_id?: string,
   ): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -38,8 +38,11 @@ export class ZendeskService implements IContactService {
           vertical: 'ticketing',
         },
       });
+      const request_url = remote_account_id
+        ? `${connection.account_url}/users/${remote_account_id}.json`
+        : `${connection.account_url}/users.json`;
 
-      const resp = await axios.get(`${connection.account_url}/users`, {
+      const resp = await axios.get(request_url, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -47,7 +50,10 @@ export class ZendeskService implements IContactService {
           )}`,
         },
       });
-      const contacts: ZendeskContactOutput[] = resp.data.users;
+
+      const contacts: ZendeskContactOutput[] = remote_account_id
+        ? [resp.data.user]
+        : resp.data.users;
       const filteredContacts = contacts.filter(
         (contact) => contact.role === 'end-user',
       );
@@ -59,10 +65,10 @@ export class ZendeskService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Zendesk',
+        'zendesk',
         TicketingObject.contact,
         ActionType.GET,
       );

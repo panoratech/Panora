@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { UnifiedUserOutput } from '../types/model.unified';
 
 @Injectable()
@@ -21,6 +21,8 @@ export class UserService {
           id_tcg_user: id_ticketing_user,
         },
       });
+
+      if (!user) throw new ReferenceError('User undefined');
 
       // Fetch field mappings for the ticket
       const values = await this.prisma.value.findMany({
@@ -73,7 +75,13 @@ export class UserService {
 
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_USER_ERROR',
+          message: 'UserService.getUser() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -82,11 +90,14 @@ export class UserService {
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
-    cursor?: string
-  ): Promise<{ data: UnifiedUserOutput[], prev_cursor: null | string, next_cursor: null | string }> {
+    cursor?: string,
+  ): Promise<{
+    data: UnifiedUserOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
       //TODO: handle case where data is not there (not synced) or old synced
-
       let prev_cursor = null;
       let next_cursor = null;
 
@@ -95,21 +106,23 @@ export class UserService {
           where: {
             remote_platform: integrationId.toLowerCase(),
             id_linked_user: linkedUserId,
-            id_tcg_user: cursor
-          }
+            id_tcg_user: cursor,
+          },
         });
         if (!isCursorPresent) {
-          throw new NotFoundError(`The provided cursor does not exist!`);
+          throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
 
-      let users = await this.prisma.tcg_users.findMany({
+      const users = await this.prisma.tcg_users.findMany({
         take: pageSize + 1,
-        cursor: cursor ? {
-          id_tcg_user: cursor
-        } : undefined,
+        cursor: cursor
+          ? {
+              id_tcg_user: cursor,
+            }
+          : undefined,
         orderBy: {
-          created_at: 'asc'
+          created_at: 'asc',
         },
         where: {
           remote_platform: integrationId.toLowerCase(),
@@ -117,8 +130,10 @@ export class UserService {
         },
       });
 
-      if (users.length === (pageSize + 1)) {
-        next_cursor = Buffer.from(users[users.length - 1].id_tcg_user).toString('base64');
+      if (users.length === pageSize + 1) {
+        next_cursor = Buffer.from(users[users.length - 1].id_tcg_user).toString(
+          'base64',
+        );
         users.pop();
       }
 
@@ -198,10 +213,16 @@ export class UserService {
       return {
         data: res,
         prev_cursor,
-        next_cursor
+        next_cursor,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_USERS_ERROR',
+          message: 'UserService.getUsers() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

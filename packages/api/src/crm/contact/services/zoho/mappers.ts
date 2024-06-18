@@ -6,10 +6,14 @@ import {
 import { IContactMapper } from '@crm/contact/types';
 import { ZohoContactInput, ZohoContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ZohoContactMapper implements IContactMapper {
-  private utils = new Utils();
-
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'contact', 'zoho', this);
+  }
   desunify(
     source: UnifiedContactInput,
     customFieldMappings?: {

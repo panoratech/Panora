@@ -5,7 +5,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IContactService } from '@ticketing/contact/types';
 import { GorgiasContactOutput } from './types';
@@ -26,11 +26,11 @@ export class GorgiasService implements IContactService {
 
   async syncContacts(
     linkedUserId: string,
-    unused_,
     remote_account_id: string,
   ): Promise<ApiResponse<GorgiasContactOutput[]>> {
     try {
-      if (!remote_account_id) throw new Error('remote account id not found');
+      if (!remote_account_id)
+        throw new ReferenceError('remote account id not found');
 
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -56,10 +56,10 @@ export class GorgiasService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Gorgias',
+        'gorgias',
         TicketingObject.contact,
         ActionType.GET,
       );

@@ -23,7 +23,7 @@ export class EventsController {
     this.logger.setContext(EventsController.name);
   }
 
-  @ApiOperation({ operationId: 'getEvents', summary: 'Retrieve Events' })
+  @ApiOperation({ operationId: 'getPanoraCoreEvents', summary: 'Retrieve Events' })
   @ApiResponse({ status: 200 })
   @UsePipes(
     new ValidationPipe({
@@ -47,7 +47,8 @@ export class EventsController {
   })
   @Get('count')
   @UseGuards(JwtAuthGuard)
-  async getEventsCount() {
-    return await this.eventsService.getEventsCount();
+  async getEventsCount(@Request() req: any) {
+    const { id_project } = req.user;
+    return await this.eventsService.getEventsCount(id_project);
   }
 }

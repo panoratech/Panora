@@ -5,7 +5,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IUserService } from '@ticketing/user/types';
 import { FrontUserOutput } from './types';
@@ -26,6 +26,7 @@ export class FrontService implements IUserService {
 
   async syncUsers(
     linkedUserId: string,
+    remote_user_id?: string,
   ): Promise<ApiResponse<FrontUserOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -52,10 +53,10 @@ export class FrontService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Front',
+        'front',
         TicketingObject.user,
         ActionType.GET,
       );

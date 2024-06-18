@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';
-import { handleServiceError } from '@@core/utils/errors';
+import { MagicLinksError, throwTypedError } from '@@core/utils/errors';
 
 @Injectable()
 export class MagicLinkService {
@@ -15,7 +15,14 @@ export class MagicLinkService {
     try {
       return await this.prisma.invite_links.findMany();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new MagicLinksError({
+          name: 'GET_MAGIC_LINKS_ERROR',
+          message: 'MagicLinkService.getMagicLinks() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -26,17 +33,26 @@ export class MagicLinkService {
           id_invite_link: id,
         },
       });
+      if (!inviteLink) throw new ReferenceError('Magic link undefined');
       const linkedUser = await this.prisma.linked_users.findFirst({
         where: {
           id_linked_user: inviteLink.id_linked_user,
         },
       });
+      if (!linkedUser) throw new ReferenceError('Linked User undefined');
       return {
         ...inviteLink,
         id_project: linkedUser.id_project,
       };
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new MagicLinksError({
+          name: 'GET_MAGIC_LINK_ERROR',
+          message: 'MagicLinkService.getMagicLink() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -71,7 +87,14 @@ export class MagicLinkService {
       });
       return res;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new MagicLinksError({
+          name: 'CREATE_MAGIC_LINK_ERROR',
+          message: 'MagicLinkService.createUniqueLink() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

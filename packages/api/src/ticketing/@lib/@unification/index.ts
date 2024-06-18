@@ -1,56 +1,75 @@
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { Unified, UnifyReturnType } from '@@core/utils/types';
+import { IUnification } from '@@core/utils/types/interface';
 import { TicketingObjectInput } from '@@core/utils/types/original/original.ticketing';
 import { UnifySourceType } from '@@core/utils/types/unify.output';
-import { TicketingObject, unificationMapping } from '@ticketing/@lib/@types';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
 
-export async function desunifyTicketing<T extends Unified>({
-  sourceObject,
-  targetType_,
-  providerName,
-  customFieldMappings,
-}: {
-  sourceObject: T;
-  targetType_: TicketingObject;
-  providerName: string;
-  customFieldMappings?: {
-    slug: string;
-    remote_id: string;
-  }[];
-}): Promise<TicketingObjectInput> {
-  const mapping = unificationMapping[targetType_];
+@Injectable()
+export class TicketingUnificationService implements IUnification {
+  constructor(
+    private registry: UnificationRegistry<TicketingUnificationService>,
+    private mappersRegistry: MappersRegistry,
+  ) {
+    this.registry.registerService('ticketing', this);
+  }
+  async desunify<T extends Unified>({
+    sourceObject,
+    targetType_,
+    providerName,
+    customFieldMappings,
+  }: {
+    sourceObject: T;
+    targetType_: TicketingObject;
+    providerName: string;
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[];
+  }): Promise<TicketingObjectInput> {
+    const mapping = this.mappersRegistry.getService(
+      'ticketing',
+      targetType_,
+      providerName,
+    );
 
-  if (mapping && mapping[providerName]) {
-    return mapping[providerName]['desunify'](sourceObject, customFieldMappings);
+    if (mapping) {
+      return mapping.desunify(sourceObject, customFieldMappings);
+    }
+
+    throw new Error(
+      `Unsupported target type for ${providerName}: ${targetType_}`,
+    );
   }
 
-  throw new Error(
-    `Unsupported target type for ${providerName}: ${targetType_}`,
-  );
-}
+  async unify<T extends UnifySourceType | UnifySourceType[]>({
+    sourceObject,
+    targetType_,
+    providerName,
+    customFieldMappings,
+  }: {
+    sourceObject: T;
+    targetType_: TicketingObject;
+    providerName: string;
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[];
+  }): Promise<UnifyReturnType> {
+    const mapping = this.mappersRegistry.getService(
+      'ticketing',
+      targetType_,
+      providerName,
+    );
 
-export async function unifyTicketing<
-  T extends UnifySourceType | UnifySourceType[],
->({
-  sourceObject,
-  targetType_,
-  providerName,
-  customFieldMappings,
-}: {
-  sourceObject: T;
-  targetType_: TicketingObject;
-  providerName: string;
-  customFieldMappings?: {
-    slug: string;
-    remote_id: string;
-  }[];
-}): Promise<UnifyReturnType> {
-  const mapping = unificationMapping[targetType_];
+    if (mapping) {
+      return mapping.unify(sourceObject, customFieldMappings);
+    }
 
-  if (mapping && mapping[providerName]) {
-    return mapping[providerName]['unify'](sourceObject, customFieldMappings);
+    throw new Error(
+      `Unsupported target type for ${providerName}: ${targetType_}`,
+    );
   }
-
-  throw new Error(
-    `Unsupported target type for ${providerName}: ${targetType_}`,
-  );
 }

@@ -6,7 +6,7 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handleServiceError } from '@@core/utils/errors';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
 import * as fs from 'fs';
@@ -51,7 +51,9 @@ export class GorgiasService implements ITicketService {
                 },
               });
               if (!res) {
-                throw new Error(`tcg_attachment not found for uuid ${uuid}`);
+                throw new ReferenceError(
+                  `tcg_attachment not found for uuid ${uuid}`,
+                );
               }
               // Assuming you want to construct the right binary attachment here
               // For now, we'll just return the URL
@@ -94,10 +96,10 @@ export class GorgiasService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Gorgias',
+        'gorgias',
         TicketingObject.ticket,
         ActionType.POST,
       );
@@ -106,6 +108,7 @@ export class GorgiasService implements ITicketService {
 
   async syncTickets(
     linkedUserId: string,
+    remote_ticket_id?: string,
   ): Promise<ApiResponse<GorgiasTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -132,10 +135,10 @@ export class GorgiasService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handleServiceError(
+      handle3rdPartyServiceError(
         error,
         this.logger,
-        'Gorgias',
+        'gorgias',
         TicketingObject.ticket,
         ActionType.GET,
       );

@@ -4,8 +4,20 @@ import {
   UnifiedAccountInput,
   UnifiedAccountOutput,
 } from '@ticketing/account/types/model.unified';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 
+@Injectable()
 export class ZendeskAccountMapper implements IAccountMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService(
+      'ticketing',
+      'account',
+      'zendesk',
+      this,
+    );
+  }
   desunify(
     source: UnifiedAccountInput,
     customFieldMappings?: {

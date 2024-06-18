@@ -24,11 +24,6 @@ import { CrmWebhookHandlerModule } from '@crm/@webhook/handler.module';
     }),
     ManagedWebhooksService,
   ],
-  providers: [
-    ManagedWebhooksService,
-    PrismaService,
-    LoggerService,
-    ValidateUserService,
-  ],
+  providers: [ManagedWebhooksService, LoggerService, ValidateUserService],
 })
 export class ManagedWebhooksModule {}

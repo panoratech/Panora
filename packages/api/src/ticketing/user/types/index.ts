@@ -6,6 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 export interface IUserService {
   syncUsers(
     linkedUserId: string,
+    remote_user_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalUserOutput[]>>;
 }

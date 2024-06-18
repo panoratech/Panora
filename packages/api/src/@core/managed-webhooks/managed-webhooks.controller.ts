@@ -41,13 +41,13 @@ export class ManagedWebhooksController {
     summary: 'Update managed webhook status',
   })
   @UseGuards(JwtAuthGuard)
-  @Put(':id')
+  @Put(':id_connection')
   async updateManagedWebhooksStatus(
-    @Param('id') id: string,
+    @Param('id_connection') id_connection: string,
     @Body('active') active: boolean,
   ) {
     return this.managedWebhookService.updateStatusManagedWebhookEndpoint(
-      id,
+      id_connection,
       active,
     );
   }

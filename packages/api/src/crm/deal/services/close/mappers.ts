@@ -5,12 +5,13 @@ import {
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class CloseDealMapper implements IDealMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'deal', 'close', this);
   }
 
   async desunify(
@@ -20,32 +21,31 @@ export class CloseDealMapper implements IDealMapper {
       remote_id: string;
     }[],
   ): Promise<CloseDealInput> {
-    const emptyPromise = new Promise<string>((resolve) => {
-      return resolve('');
-    });
-    const promises = [];
-
-    promises.push(
-      source.company_id
-        ? await this.utils.getRemoteIdFromCompanyUuid(source.company_id)
-        : emptyPromise,
-    );
-
-    // promises.push(
-    //   source.stage_id
-    //     ? await this.utils.getStageIdFromStageUuid(source.stage_id)
-    //     : emptyPromise,
-    // );
-    const [lead_id] = await Promise.all(promises);
     const result: CloseDealInput = {
       note: source.description,
       confidence: 0,
       value: source.amount || 0,
-      value_period: 'monthly',
+      value_period: 'one_time',
       custom: {},
-      lead_id,
-      status_id: source.stage_id,
+      lead_id: '',
     };
+
+    if (source.company_id) {
+      const lead_id = await this.utils.getRemoteIdFromCompanyUuid(
+        source.company_id,
+      );
+      if (lead_id) {
+        result.lead_id = lead_id;
+      }
+    }
+    if (source.stage_id) {
+      const stage_id = await this.utils.getStageIdFromStageUuid(
+        source.company_id,
+      );
+      if (stage_id) {
+        result.status_id = stage_id;
+      }
+    }
 
     if (customFieldMappings && source.field_mappings) {
       for (const [k, v] of Object.entries(source.field_mappings)) {
@@ -92,37 +92,51 @@ export class CloseDealMapper implements IDealMapper {
       }
     }
 
-    const emptyPromise = new Promise<string>((resolve) => {
-      return resolve('');
-    });
-    const promises = [];
-
-    promises.push(
-      deal.user_id
-        ? await this.utils.getUserUuidFromRemoteId(deal.user_id, 'close')
-        : emptyPromise,
-    );
-    promises.push(
-      deal.lead_id
-        ? await this.utils.getCompanyUuidFromRemoteId(deal.lead_id, 'close')
-        : emptyPromise,
-    );
-    // promises.push(
-    //   deal.status_id
-    //     ? await this.utils.getStageUuidFromRemoteId(deal.status_id, 'close')
-    //     : emptyPromise,
-    // );
-
-    const [user_id, company_id] = await Promise.all(promises);
-
+    let opts: any = {};
+    if (deal.user_id) {
+      const owner_id = await this.utils.getUserUuidFromRemoteId(
+        deal.user_id,
+        'close',
+      );
+      if (owner_id) {
+        opts = {
+          ...opts,
+          user_id: owner_id,
+        };
+      }
+    }
+    if (deal.lead_id) {
+      const lead_id = await this.utils.getCompanyUuidFromRemoteId(
+        deal.lead_id,
+        'close',
+      );
+      if (lead_id) {
+        opts = {
+          ...opts,
+          company_id: lead_id,
+        };
+      }
+    }
+    if (deal.contact_id) {
+      const contact_id = await this.utils.getContactUuidFromRemoteId(
+        deal.contact_id,
+        'close',
+      );
+      if (contact_id) {
+        opts = {
+          ...opts,
+          contact_id: contact_id,
+        };
+      }
+    }
     return {
       remote_id: deal.id,
       name: deal.note,
       description: deal.note, // Placeholder if there's no direct mapping
       amount: parseFloat(`${deal.value || 0}`),
+      //TODO; stage_id: deal.properties.dealstage,
       field_mappings,
-      user_id,
-      company_id,
+      ...opts,
     };
   }
 }

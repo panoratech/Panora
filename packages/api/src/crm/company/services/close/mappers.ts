@@ -5,12 +5,13 @@ import {
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/@lib/@utils';
+import { Injectable } from '@nestjs/common';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 
+@Injectable()
 export class CloseCompanyMapper implements ICompanyMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'company', 'close', this);
   }
 
   async desunify(
@@ -77,9 +78,9 @@ export class CloseCompanyMapper implements ICompanyMapper {
       }
     }
     let opts: any = {};
-    if (company?.created_by) {
+    if (company?.created_by || company?.custom?.close_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
-        company?.created_by as string,
+        (company?.created_by || company?.custom?.close_owner_id) as string,
         'close',
       );
       if (owner_id) {

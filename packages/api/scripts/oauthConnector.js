@@ -35,10 +35,16 @@ function createServiceFile(vertical, provider) {
 
   // Define the content of the service file
   const serviceFileContent = `
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common'; 
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { Action, handleServiceError } from '@@core/utils/errors';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
@@ -70,8 +76,8 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-    private cService: ConnectionsStrategiesService,
-  ) {
+private cService: ConnectionsStrategiesService,
+    private connectionUtils: ConnectionUtils,  ) {
     this.logger.setContext(${providerUpper}ConnectionService.name);
     this.registry.registerService('${provider.toLowerCase()}', this);
     this.type = providerToType('${provider.toLowerCase()}', '${vertical.toLowerCase()}', AuthStrategy.oauth2);
@@ -160,7 +166,18 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
       }
       return db_res;
     } catch (error) {
-      handleServiceError(error, this.logger, '${provider}', Action.oauthCallback);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_${verticalUpper}',
+          message: \`${providerUpper}ConnectionService.handleCallback() call failed ---> \${format3rdPartyError(
+            '${provider}',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}\`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
     
@@ -181,10 +198,8 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: \`Basic ${Buffer.from(
-              `CREDENTIALS.CLIENT_ID}:\${
-                  CREDENTIALS.CLIENT_SECRET
-              }`,
+            Authorization: \`Basic \${Buffer.from(
+              \`\${CREDENTIALS.CLIENT_ID}:\${CREDENTIALS.CLIENT_SECRET}\`,
             ).toString('base64')}\`,
           },
         },
@@ -204,7 +219,18 @@ export class ${providerUpper}ConnectionService implements I${verticalUpper}Conne
       });
       this.logger.log('OAuth credentials updated : ${provider} ');
     } catch (error) {
-      handleServiceError(error, this.logger, '${provider}', Action.oauthRefresh);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_${verticalUpper}',
+          message: \`${providerUpper}ConnectionService.handleTokenRefresh() call failed ---> \${format3rdPartyError(
+            '${provider}',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}\`,
+          cause: error,
+        }),
+        this.logger,
+      );    
     }
   }
 } 

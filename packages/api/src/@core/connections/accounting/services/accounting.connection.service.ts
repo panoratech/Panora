@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
@@ -43,7 +43,7 @@ export class AccountingConnectionsService {
       const service = this.serviceRegistry.getService(serviceName);
 
       if (!service) {
-        throw new NotFoundError(`Unknown provider, found ${providerName}`);
+        throw new ReferenceError(`Unknown provider, found ${providerName}`);
       }
       const callbackOpts: CallbackParams = {
         linkedUserId: linkedUserId,
@@ -73,7 +73,16 @@ export class AccountingConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      /*throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
+          message:
+            'AccountingConnectionsService.handleAccountngCallback() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );*/
+      throw error;
     }
   }
 
@@ -88,7 +97,7 @@ export class AccountingConnectionsService {
       const serviceName = providerName.toLowerCase();
       const service = this.serviceRegistry.getService(serviceName);
       if (!service) {
-        throw new NotFoundError(`Unknown provider, found ${providerName}`);
+        throw new ReferenceError(`Unknown provider, found ${providerName}`);
       }
       const refreshOpts: RefreshParams = {
         connectionId: connectionId,
@@ -98,7 +107,15 @@ export class AccountingConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
+          message:
+            'AccountingConnectionsService.handleAccountingTokensRefresh() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

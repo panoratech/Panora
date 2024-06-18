@@ -1,12 +1,11 @@
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { NotFoundError, handleServiceError } from '@@core/utils/errors';
+import { SyncError, throwTypedError } from '@@core/utils/errors';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { unify } from '@@core/utils/unification/unify';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { tcg_comments as TicketingComment } from '@prisma/client';
@@ -17,6 +16,7 @@ import { ServiceRegistry } from '../services/registry.service';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,6 +26,7 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
@@ -35,7 +36,7 @@ export class SyncService implements OnModuleInit {
     try {
       await this.scheduleSyncJob();
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -67,12 +68,12 @@ export class SyncService implements OnModuleInit {
       this.logger.log(`Syncing comments....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -109,18 +110,25 @@ export class SyncService implements OnModuleInit {
                       );
                     }
                   } catch (error) {
-                    handleServiceError(error, this.logger);
+                    throw error;
                   }
                 }
               } catch (error) {
-                handleServiceError(error, this.logger);
+                throw error;
               }
             });
           }
         }
       }
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throwTypedError(
+        new SyncError({
+          name: 'TICKETING_COMMENT_SYNC_ERROR',
+          message: 'SyncService.syncComments() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -147,7 +155,6 @@ export class SyncService implements OnModuleInit {
         this.logger.warn(
           `Skipping comments syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
         );
-        return;
       }
       // get potential fieldMappings and extract the original properties name
       const customFieldMappings =
@@ -168,7 +175,9 @@ export class SyncService implements OnModuleInit {
       const sourceObject: OriginalCommentOutput[] = resp.data;
 
       //unify the data according to the target obj wanted
-      const unifiedObject = (await unify<OriginalCommentOutput[]>({
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalCommentOutput[]
+      >({
         sourceObject,
         targetType: TicketingObject.comment,
         providerName: integrationId,
@@ -205,7 +214,7 @@ export class SyncService implements OnModuleInit {
         event.id_event,
       );
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 
@@ -223,7 +232,7 @@ export class SyncService implements OnModuleInit {
         const originId = comment.remote_id;
 
         if (!originId || originId == '') {
-          throw new NotFoundError(`Origin id not there, found ${originId}`);
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
         const existingComment = await this.prisma.tcg_comments.findFirst({
@@ -236,15 +245,15 @@ export class SyncService implements OnModuleInit {
 
         let unique_ticketing_comment_id: string;
         const opts =
-          (comment.creator_type === 'CONTACT' && comment.contact_id)
+          comment.creator_type === 'CONTACT' && comment.contact_id
             ? {
-              id_tcg_contact: comment.contact_id,
-            }
-            : (comment.creator_type === 'USER' && comment.user_id)
-              ? {
+                id_tcg_contact: comment.contact_id,
+              }
+            : comment.creator_type === 'USER' && comment.user_id
+            ? {
                 id_tcg_user: comment.user_id,
               }
-              : {};
+            : {};
         //case where nothing is passed for creator or a not authorized value;
 
         if (existingComment) {
@@ -350,7 +359,7 @@ export class SyncService implements OnModuleInit {
                 file_name: attchmt.file_name,
                 file_url: attchmt.file_url,
                 id_tcg_comment: unique_ticketing_comment_id,
-                // created_at: new Date(),
+                created_at: new Date(),
                 modified_at: new Date(),
                 uploader: linkedUserId, //TODO
                 id_tcg_ticket: id_ticket,
@@ -403,7 +412,7 @@ export class SyncService implements OnModuleInit {
       }
       return comments_results;
     } catch (error) {
-      handleServiceError(error, this.logger);
+      throw error;
     }
   }
 }

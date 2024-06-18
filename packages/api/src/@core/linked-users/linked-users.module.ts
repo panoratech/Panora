@@ -6,12 +6,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ValidateUserService } from '@@core/utils/services/validateUser.service';
 
 @Module({
-  providers: [
-    LinkedUsersService,
-    LoggerService,
-    PrismaService,
-    ValidateUserService,
-  ],
+  providers: [LinkedUsersService, LoggerService, ValidateUserService],
   controllers: [LinkedUsersController],
 })
 export class LinkedUsersModule {}

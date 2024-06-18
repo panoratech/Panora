@@ -28,17 +28,16 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/tags')
 @Controller('ticketing/tags')
 export class TagController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly tagService: TagService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(TagController.name);
   }
 
   @ApiOperation({
-    operationId: 'getTags',
+    operationId: 'getTicketingTags',
     summary: 'List a batch of Tags',
   })
   @ApiHeader({
@@ -66,7 +65,7 @@ export class TagController {
         linkedUserId,
         pageSize,
         remote_data,
-        cursor
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -74,7 +73,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getTag',
+    operationId: 'getTicketingTag',
     summary: 'Retrieve a Tag',
     description: 'Retrieve a tag from any connected Ticketing software',
   })

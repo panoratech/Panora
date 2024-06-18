@@ -96,7 +96,7 @@ interface Opportunity {
   lead_id: string;
 }
 
-interface Company {
+interface Lead {
   status_id: string;
   status_label: string;
   tasks: any[];
@@ -119,7 +119,7 @@ interface Company {
   description: string;
 }
 
-export type CloseCompanyOutput = Partial<Company>;
+export type CloseCompanyOutput = Partial<Lead>;
 
 export const commonCompanyCloseProperties = {
   city: '',

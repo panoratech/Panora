@@ -28,17 +28,16 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('ticketing/users')
 @Controller('ticketing/users')
 export class UserController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly userService: UserService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(UserController.name);
   }
 
   @ApiOperation({
-    operationId: 'getUsers',
+    operationId: 'getTicketingUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -55,26 +54,23 @@ export class UserController {
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      const { remote_data, pageSize, cursor } = query;
-      return this.userService.getUsers(
-        remoteSource,
-        linkedUserId,
-        pageSize,
-        remote_data,
-        cursor
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
+    const { remote_data, pageSize, cursor } = query;
+
+    return this.userService.getUsers(
+      remoteSource,
+      linkedUserId,
+      pageSize,
+      remote_data,
+      cursor,
+    );
   }
 
   @ApiOperation({
-    operationId: 'getUser',
+    operationId: 'getTicketingUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Ticketing software',
   })

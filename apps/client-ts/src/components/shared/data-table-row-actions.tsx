@@ -56,7 +56,7 @@ export function DataTableRowActions<TData>({
             )
             ;
           },
-          error: 'Error',
+          error: (err: any) => err.message || 'Error'
         });
         break;
       case 'api-key':
@@ -82,7 +82,7 @@ export function DataTableRowActions<TData>({
             )
             ;
           },
-          error: 'Error',
+          error: (err: any) => err.message || 'Error'
         });
         break;
       default:

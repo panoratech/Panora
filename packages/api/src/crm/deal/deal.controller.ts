@@ -32,11 +32,10 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 @ApiTags('crm/deals')
 @Controller('crm/deals')
 export class DealController {
-  private readonly connectionUtils = new ConnectionUtils();
-
   constructor(
     private readonly dealService: DealService,
     private logger: LoggerService,
+    private connectionUtils: ConnectionUtils,
   ) {
     this.logger.setContext(DealController.name);
   }
@@ -65,7 +64,13 @@ export class DealController {
           connection_token,
         );
       const { remote_data, pageSize, cursor } = query;
-      return this.dealService.getDeals(remoteSource, linkedUserId, pageSize, remote_data, cursor);
+      return this.dealService.getDeals(
+        remoteSource,
+        linkedUserId,
+        pageSize,
+        remote_data,
+        cursor,
+      );
     } catch (error) {
       throw new Error(error);
     }

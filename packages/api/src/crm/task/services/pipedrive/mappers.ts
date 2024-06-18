@@ -5,12 +5,13 @@ import {
 } from '@crm/task/types/model.unified';
 import { ITaskMapper } from '@crm/task/types';
 import { Utils } from '@crm/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class PipedriveTaskMapper implements ITaskMapper {
-  private readonly utils: Utils;
-
-  constructor() {
-    this.utils = new Utils();
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('crm', 'task', 'pipedrive', this);
   }
 
   async desunify(

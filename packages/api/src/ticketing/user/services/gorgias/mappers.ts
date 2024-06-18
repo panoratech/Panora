@@ -4,8 +4,15 @@ import {
   UnifiedUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { GorgiasUserInput, GorgiasUserOutput } from './types';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 
+@Injectable()
 export class GorgiasUserMapper implements IUserMapper {
+  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+    this.mappersRegistry.registerService('ticketing', 'user', 'gorgias', this);
+  }
   desunify(
     source: UnifiedUserInput,
     customFieldMappings?: {
@@ -39,11 +46,11 @@ export class GorgiasUserMapper implements IUserMapper {
     // Initialize field_mappings array from customFields, if provided
     const field_mappings = customFieldMappings
       ? customFieldMappings
-        .map((mapping) => ({
-          key: mapping.slug,
-          value: user.meta ? user.meta[mapping.remote_id] : undefined,
-        }))
-        .filter((mapping) => mapping.value !== undefined)
+          .map((mapping) => ({
+            key: mapping.slug,
+            value: user.meta ? user.meta[mapping.remote_id] : undefined,
+          }))
+          .filter((mapping) => mapping.value !== undefined)
       : [];
 
     const unifiedUser: UnifiedUserOutput = {
