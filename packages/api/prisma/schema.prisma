@@ -649,13 +649,13 @@ model connector_sets {
   crm_zoho         Boolean
   crm_attio        Boolean
   crm_pipedrive    Boolean
-  crm_zendesk      Boolean
-  crm_close        Boolean
   tcg_zendesk      Boolean
   tcg_jira         Boolean
   tcg_gorgias      Boolean
   tcg_gitlab       Boolean
   tcg_front        Boolean
+  crm_zendesk      Boolean
+  crm_close        Boolean
   projects         projects[]
 }
 
@@ -674,25 +674,26 @@ model managed_webhooks {
 
 model fs_drives {
   id_fs_drive       String    @id(map: "pk_fs_drives") @db.Uuid
-  remote_created_at DateTime? @db.Timestamp(6)
   drive_url         String?
+  name              String?
+  remote_created_at DateTime? @db.Timestamp(6)
+  remote_id         String?
   created_at        DateTime  @db.Timestamp(6)
   modified_at       DateTime  @db.Timestamp(6)
-  remote_id         String?
 }
 
 model fs_files {
   id_fs_file       String   @id(map: "pk_fs_files") @db.Uuid
   name             String?
   type             String?
-  path             String?
+  file_url         String?
   mime_type        String?
   size             BigInt?
   remote_id        String?
   id_fs_folder     String?  @db.Uuid
   created_at       DateTime @db.Timestamp(6)
   modified_at      DateTime @db.Timestamp(6)
-  id_fs_permission String   @db.Uuid
+  id_fs_permission String?  @db.Uuid
 
   @@index([id_fs_folder], map: "fk_fs_file_folderid")
   @@index([id_fs_permission], map: "fk_fs_file_permissionid")
@@ -702,13 +703,14 @@ model fs_folders {
   id_fs_folder     String   @id(map: "pk_fs_folders") @db.Uuid
   folder_url       String?
   size             BigInt?
+  name             String?
   description      String?
   parent_folder    String?  @db.Uuid
   remote_id        String?
   created_at       DateTime @db.Timestamp(6)
   modified_at      DateTime @db.Timestamp(6)
   id_fs_drive      String?  @db.Uuid
-  id_fs_permission String   @db.Uuid
+  id_fs_permission String?  @db.Uuid
 
   @@index([id_fs_drive], map: "fk_fs_folder_driveid")
   @@index([id_fs_permission], map: "fk_fs_folder_permissionid")
@@ -718,16 +720,304 @@ model fs_folders {
 model fs_permissions {
   id_fs_permission String   @id(map: "pk_fs_permissions") @db.Uuid
   remote_id        String?
-  created_at       DateTime @db.Timestamp(6)
-  modified_at      DateTime @db.Timestamp(6)
-  user             String   @db.Uuid
-  group            String   @db.Uuid
+  user             String?  @db.Uuid
+  group            String?  @db.Uuid
   type             String[]
   roles            String[]
+  created_at       DateTime @db.Timestamp(6)
+  modified_at      DateTime @db.Timestamp(6)
 }
 
 model fs_shared_links {
-  id_fs_shared_link String   @id(map: "pk_fs_shared_links") @db.Uuid
+  id_fs_shared_link  String    @id(map: "pk_fs_shared_links") @db.Uuid
+  url                String?
+  download_url       String?
+  id_fs_folder       String?   @db.Uuid
+  id_fs_file         String?   @db.Uuid
+  scope              String?
+  password_protected Boolean
+  password           String?
+  expires_at         DateTime? @db.Timestamptz(6)
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_activities {
+  id_ats_activity   String    @id(map: "pk_ats_activities") @db.Uuid
+  activity_type     String?
+  subject           String?
+  body              String?
+  visibility        String?
+  id_ats_candidate  String?   @db.Uuid
+  remote_id         String?
+  remote_created_at DateTime? @db.Timestamp(6)
+  created_at        DateTime  @db.Timestamp(6)
+  modified_at       DateTime  @db.Timestamp(6)
+
+  @@index([id_ats_candidate], map: "fk_activity_candidate")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_applications {
+  id_ats_application String    @id(map: "pk_ats_applications") @db.Uuid
+  remote_id          String?
+  created_at         DateTime  @db.Timestamp(6)
+  modified_at        DateTime  @db.Timestamp(6)
+  id_ats_candidate   String?   @db.Uuid
+  id_ats_job         String?   @db.Uuid
+  applied_at         DateTime? @db.Timestamp(6)
+  rejected_at        DateTime? @db.Timestamp(6)
+  offers             String[]
+  source             String?
+  credited_to        String?   @db.Uuid
+  current_stage      String?   @db.Uuid
+  reject_reason      String?
+
+  @@index([id_ats_job], map: "fk_ats_application_ats_job_id")
+  @@index([id_ats_candidate], map: "fk_ats_application_atscandidateid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_candidate_attachments {
+  id_ats_candidate_attachment String    @id(map: "pk_ats_candidate_attachments") @db.Uuid
+  remote_id                   String?
+  file_url                    String?
+  file_name                   String?
+  remote_created_at           DateTime? @db.Timestamp(6)
+  remote_modified_at          DateTime? @db.Timestamp(6)
+  file_type                   String?
+  created_at                  DateTime  @db.Timestamp(6)
+  modified_at                 DateTime  @db.Timestamp(6)
+  id_ats_candidate            String    @db.Uuid
+
+  @@index([id_ats_candidate], map: "fk_ats_candidate_attachment_candidateid_index")
+}
+
+model ats_candidate_email_addresses {
+  id_ats_candidate_email_address String   @id(map: "pk_ats_candidate_email_addresses") @db.Uuid
+  value                          String?
+  type                           String?
+  created_at                     DateTime @db.Timestamp(6)
+  modified_at                    DateTime @db.Timestamp(6)
+  id_ats_candidate               String   @db.Uuid
+
+  @@index([id_ats_candidate], map: "fk_candidate_email_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_candidate_phone_numbers {
+  id_ats_candidate_phone_number String   @id(map: "pk_ats_candidate_phone_numbers") @db.Uuid
+  value                         String?
+  type                          String?
+  created_at                    DateTime @db.Timestamp(6)
+  modified_at                   DateTime @db.Timestamp(6)
+  id_ats_candidate              String   @db.Uuid
+
+  @@index([id_ats_candidate], map: "fk_candidate_phone_id")
+}
+
+model ats_candidate_tags {
+  id_ats_candidate_tag String   @id(map: "pk_ats_candidate_tags") @db.Uuid
+  name                 String?
+  id_ats_candidate     String?  @db.Uuid
+  remote_id            String?
+  created_at           DateTime @db.Timestamp(6)
+  modified_at          DateTime @db.Timestamp(6)
+
+  @@index([id_ats_candidate], map: "fk_candidates_candidatestags")
+}
+
+model ats_candidate_urls {
+  id_ats_candidate_url String   @id(map: "pk_ats_candidate_urls") @db.Uuid
+  value                String?
+  type                 String?
+  created_at           DateTime @db.Timestamp(6)
+  modified_at          DateTime @db.Timestamp(6)
+  id_ats_candidate     String   @db.Uuid
+
+  @@index([id_ats_candidate], map: "fk_candidate_url_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_candidates {
+  id_ats_candidate    String    @id(map: "pk_ats_candidates") @db.Uuid
+  remote_id           String?
+  created_at          DateTime  @db.Timestamp(6)
+  modified_at         DateTime  @db.Timestamp(6)
+  first_name          String?
+  last_name           String?
+  company             String?
+  title               String?
+  remote_created_at   DateTime? @db.Timestamp(6)
+  remote_modified_at  DateTime? @db.Timestamp(6)
+  last_interaction_at DateTime? @db.Timestamp(6)
+  is_private          Boolean?
+  email_reachable     Boolean?
+  locations           String?
+}
+
+model ats_departments {
+  id_ats_department String   @id(map: "pk_ats_departments") @db.Uuid
+  name              String?
+  remote_id         String?
   created_at        DateTime @db.Timestamp(6)
   modified_at       DateTime @db.Timestamp(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_eeocs {
+  id_ats_eeoc       String    @id(map: "pk_ats_eeocs") @db.Uuid
+  id_ats_candidate  String?   @db.Uuid
+  submitted_at      DateTime? @db.Timestamp(6)
+  race              String?
+  gender            String?
+  veteran_status    String?
+  disability_status String?
+  remote_id         String?
+  created_at        DateTime  @db.Timestamp(6)
+  modified_at       DateTime  @db.Timestamp(6)
+
+  @@index([id_ats_candidate], map: "fk_candidate_eeocsid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_interviews {
+  id_ats_interview           String    @id(map: "pk_ats_interviews") @db.Uuid
+  status                     String?
+  id_ats_application         String?   @db.Uuid
+  id_ats_job_interview_stage String?   @db.Uuid
+  organized_by               String?   @db.Uuid
+  interviewers               String[]
+  location                   String?
+  start_at                   DateTime? @db.Timestamp(6)
+  end_at                     DateTime? @db.Timestamp(6)
+  remote_created_at          DateTime? @db.Timestamp(6)
+  remote_updated_at          DateTime? @db.Timestamp(6)
+  remote_id                  String?
+  created_at                 DateTime  @db.Timestamp(6)
+  modified_at                DateTime  @db.Timestamp(6)
+
+  @@index([id_ats_application], map: "fk_applications_interviews")
+  @@index([id_ats_job_interview_stage], map: "fk_id_ats_job_interview_stageid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_job_interview_stages {
+  id_ats_job_interview_stage String   @id(map: "pk_ats_job_interview_stages") @db.Uuid
+  name                       String?
+  stage_order                Int?
+  remote_id                  String?
+  created_at                 DateTime @db.Timestamp(6)
+  modified_at                DateTime @db.Timestamp(6)
+  id_ats_job                 String?  @db.Uuid
+
+  @@index([id_ats_job], map: "fk_ats_jobs_ats_jobinterview_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_jobs {
+  id_ats_job        String    @id(map: "pk_ats_jobs") @db.Uuid
+  name              String?
+  description       String?
+  code              String?
+  status            String?
+  type              String?
+  confidential      Boolean?
+  ats_departments   String[]
+  ats_offices       String[]
+  managers          String[]
+  recruiters        String[]
+  remote_id         String?
+  remote_created_at DateTime? @db.Timestamp(6)
+  remote_updated_at DateTime? @db.Timestamp(6)
+  created_at        DateTime  @db.Timestamp(6)
+  modified_at       DateTime  @db.Timestamp(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_offers {
+  id_ats_offer       String    @id(map: "pk_ats_offers") @db.Uuid
+  remote_id          String?
+  created_by         String?   @db.Uuid
+  remote_created_at  DateTime? @db.Timestamp(6)
+  closed_at          DateTime? @db.Timestamp(6)
+  sent_at            DateTime? @db.Timestamp(6)
+  start_date         DateTime? @db.Timestamp(6)
+  status             String?
+  created_at         DateTime  @db.Timestamp(6)
+  modified_at        DateTime  @db.Timestamp(6)
+  id_ats_application String    @db.Uuid
+
+  @@index([id_ats_application], map: "fk_ats_offers_applicationid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_offices {
+  id_ats_office String   @id(map: "pk_ats_offices") @db.Uuid
+  remote_id     String?
+  created_at    DateTime @db.Timestamp(6)
+  modified_at   DateTime @db.Timestamp(6)
+  name          String?
+  location      String?
+}
+
+model ats_reject_reasons {
+  id_ats_reject_reason String   @id(map: "pk_ats_reject_reasons") @db.Uuid
+  name                 String?
+  remote_id            String?
+  modified_at          DateTime @db.Timestamp(6)
+  created_at           DateTime @db.Timestamp(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_scorecards {
+  id_ats_scorecard       String    @id(map: "pk_ats_scorecards") @db.Uuid
+  overall_recommendation String?
+  id_ats_application     String?   @db.Uuid
+  id_ats_interview       String?   @db.Uuid
+  remote_id              String?
+  remote_created_at      DateTime? @db.Timestamp(6)
+  submitted_at           DateTime? @db.Timestamp(6)
+  created_at             DateTime  @db.Timestamp(6)
+  modified_at            DateTime  @db.Timestamp(6)
+
+  @@index([id_ats_application], map: "fk_applications_scorecard")
+  @@index([id_ats_interview], map: "fk_interviews_scorecards")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ats_users {
+  id_ats_user        String    @id(map: "pk_ats_users") @db.Uuid
+  remote_id          String?
+  first_name         String?
+  last_name          String?
+  email              String?
+  disabled           Boolean?
+  access_role        String?
+  remote_created_at  DateTime? @db.Timestamp(6)
+  remote_modified_at DateTime? @db.Timestamp(6)
+  created_at         DateTime  @db.Timestamp(6)
+  modified_at        DateTime  @db.Timestamp(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model fs_groups {
+  id_fs_group        String   @id(map: "pk_fs_groups") @db.Uuid
+  name               String?
+  users              Json?
+  remote_id          String?
+  remote_was_deleted Boolean
+  created_at         DateTime @db.Timestamp(6)
+  modified_at        DateTime @db.Timestamp(6)
+}
+
+model fs_users {
+  id_fs_user  String   @id(map: "pk_fs_users") @db.Uuid
+  name        String?
+  email       String?
+  is_me       Boolean
+  remote_id   String?
+  created_at  DateTime @db.Timestamp(6)
+  modified_at DateTime @db.Timestamp(6)
 }

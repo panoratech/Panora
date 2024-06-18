@@ -5,12 +5,13 @@ import {
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/@lib/@utils';
+import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class AffinityNoteMapper implements INoteMapper {
-    private readonly utils: Utils;
-
-    constructor() {
-        this.utils = new Utils();
+    constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+        this.mappersRegistry.registerService('crm', 'note', 'affinity', this);
     }
 
     async desunify(
