@@ -11,7 +11,6 @@ import { MarketingAutomationModule } from './marketingautomation/marketingautoma
 import { AtsModule } from './ats/ats.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { FileStorageModule } from './filestorage/filestorage.module';
-import { SentryInterceptor, SentryModule } from '@ntegral/nestjs-sentry';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerService } from '@@core/logger/logger.service';
 import { CoreModule } from '@@core/core.module';

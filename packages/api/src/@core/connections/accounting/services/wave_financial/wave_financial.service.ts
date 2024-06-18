@@ -58,7 +58,6 @@ export class WaveFinancialConnectionService
   }
 
   async handleCallback(opts: OAuthCallbackParams) {
-
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({

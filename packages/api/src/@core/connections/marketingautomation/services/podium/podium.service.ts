@@ -12,9 +12,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-IMarketingAutomationConnectionService,
-} from '../../types';
+import { IMarketingAutomationConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';

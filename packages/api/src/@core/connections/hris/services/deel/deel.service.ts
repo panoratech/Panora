@@ -12,9 +12,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  IHrisConnectionService,
-} from '../../types';
+import { IHrisConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   AuthStrategy,
@@ -56,7 +54,6 @@ export class DeelConnectionService implements IHrisConnectionService {
   }
 
   async handleCallback(opts: OAuthCallbackParams) {
-
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({

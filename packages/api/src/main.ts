@@ -39,7 +39,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
   app.use(cookieParser());
 
-  if(process.env.SENTRY_ENABLED == 'TRUE'){
+  if (process.env.SENTRY_ENABLED == 'TRUE') {
     const { httpAdapter } = app.get(HttpAdapterHost);
     Sentry.setupNestErrorHandler(app, new BaseExceptionFilter(httpAdapter));
   }

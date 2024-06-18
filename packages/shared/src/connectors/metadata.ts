@@ -1804,7 +1804,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: '',
         urls: {
           docsUrl: 'https://developers.keka.com/reference/getting-started-for-customers',
-          apiUrl: '' //todo https://{company}.{environment}.com/api/v1
+          apiUrl: '' // todo https://{company}.{environment}.com/api/v1
         },
         logoPath: 'https://play-lh.googleusercontent.com/OiG-QsKPm--v-16z225UtUND2IIbinlLrnBhSRch9kL_ruBCIh4GDA0sD_BnUPF93Ew',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',

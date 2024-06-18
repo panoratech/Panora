@@ -51,7 +51,6 @@ export class PennylaneConnectionService
   }
 
   async handleCallback(opts: OAuthCallbackParams) {
-
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
