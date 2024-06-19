@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -10,6 +10,7 @@ import { AuthError, throwTypedError } from '@@core/utils/errors';
 import { LoginDto } from './dto/login.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { ProjectsService } from '@@core/projects/projects.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -235,6 +236,83 @@ export class AuthService {
       );
     }
   }
+
+  async changePassword(newPasswordRequest: ChangePasswordDto) {
+    try {
+      const foundUser = await this.prisma.users.findFirst({
+        where: {
+          email: newPasswordRequest.email,
+        },
+      });
+
+      if (!foundUser) {
+        throw new ReferenceError('User undefined!');
+      }
+
+      const project = await this.prisma.projects.findFirst({
+        where: {
+          id_user: foundUser.id_user,
+        },
+      });
+
+      if (!project) {
+        throw new ReferenceError('Project undefined!');
+      }
+
+      const isEq = await bcrypt.compare(
+        newPasswordRequest.old_password_hash,
+        foundUser.password_hash,
+      );
+
+      if (!isEq) {
+        throw new ReferenceError(
+          'Bcrypt Invalid credentials, mismatch in password.',
+        );
+      }
+
+      const hashedNewPassword = await bcrypt.hash(newPasswordRequest.new_password_hash, 10);
+      await this.prisma.users.update({
+        where: {
+          id_user: foundUser.id_user
+        },
+        data: {
+          password_hash: hashedNewPassword,
+        },
+      });
+
+      const { ...userData } = foundUser;
+
+      const payload = {
+        email: userData.email,
+        sub: userData.id_user,
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        id_project: project.id_project,
+      };
+
+      return {
+        user: {
+          id_user: foundUser.id_user,
+          email: foundUser.email,
+          first_name: foundUser.first_name,
+          last_name: foundUser.last_name,
+        },
+        access_token: this.jwtService.sign(payload, {
+          secret: process.env.JWT_SECRET,
+        }), // token used to generate api keys
+      };
+    } catch (error) {
+      throwTypedError(
+        new AuthError({
+          name: 'CHANGE_USER_PASSWORD_ERROR',
+          message: 'failed to updated password',
+          cause: error,
+        }),
+        this.logger,
+      );
+    }
+  }
+
 
   hashApiKey(apiKey: string): string {
     try {

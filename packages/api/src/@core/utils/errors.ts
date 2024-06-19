@@ -140,6 +140,7 @@ export class AuthError extends ErrorBase<
   | 'GENERATE_API_KEY_ERROR'
   | 'VALIDATE_API_KEY_ERROR'
   | 'EMAIL_ALREADY_EXISTS_ERROR'
+  | 'CHANGE_USER_PASSWORD_ERROR'
 > {}
 
 export class PassthroughRequestError extends ErrorBase<'PASSTHROUGH_REMOTE_API_CALL_ERROR'> {}
