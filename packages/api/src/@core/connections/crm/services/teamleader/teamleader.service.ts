@@ -102,7 +102,8 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['crm']['teamleader'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['teamleader'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -118,7 +119,8 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
             provider_slug: 'teamleader',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['teamleader'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['teamleader'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

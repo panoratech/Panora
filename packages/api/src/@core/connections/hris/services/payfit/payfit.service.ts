@@ -107,7 +107,8 @@ export class PayfitConnectionService implements IHrisConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: CONNECTORS_METADATA['hris']['payfit'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['hris']['payfit'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -120,7 +121,8 @@ export class PayfitConnectionService implements IHrisConnectionService {
             provider_slug: 'payfit',
             vertical: 'hris',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['hris']['payfit'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['hris']['payfit'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

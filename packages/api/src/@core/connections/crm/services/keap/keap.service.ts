@@ -116,7 +116,8 @@ export class KeapConnectionService implements ICrmConnectionService {
             provider_slug: 'keap',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['keap'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['keap'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

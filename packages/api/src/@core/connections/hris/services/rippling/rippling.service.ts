@@ -109,7 +109,8 @@ export class RipplingConnectionService implements IHrisConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['hris']['rippling'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['hris']['rippling'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -125,7 +126,8 @@ export class RipplingConnectionService implements IHrisConnectionService {
             provider_slug: 'rippling',
             vertical: 'hris',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['hris']['rippling'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['hris']['rippling'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

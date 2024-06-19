@@ -25,14 +25,16 @@ export class PassthroughService {
     linkedUserId: string,
     vertical: string,
   ): Promise<PassThroughResponse> {
-    try {
+    // TODO
+    return;
+    /*try {
       const { method, path, data, headers } = requestParams;
 
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
-          type: 'pull',
+          type: 'pull', 
           method: method,
           url: '/pasthrough',
           provider: integrationId,
@@ -101,6 +103,6 @@ export class PassthroughService {
         }),
         this.logger,
       );
-    }
+    }*/
   }
 }

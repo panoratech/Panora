@@ -103,7 +103,8 @@ export class FrontConnectionService implements ITicketingConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['ticketing']['front'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['front'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_at) * 1000,
             ),
@@ -119,7 +120,8 @@ export class FrontConnectionService implements ITicketingConnectionService {
             provider_slug: 'front',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['ticketing']['front'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['front'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

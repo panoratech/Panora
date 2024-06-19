@@ -99,6 +99,11 @@ export class XeroConnectionService implements IAccountingConnectionService {
         code: code,
         redirect_uri: REDIRECT_URI,
       });
+      this.logger.log(
+        `data 64 is ${Buffer.from(
+          `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+        ).toString('base64')}`,
+      );
       const res = await axios.post(
         'https://identity.xero.com/connect/token',
         formData.toString(),
@@ -130,7 +135,9 @@ export class XeroConnectionService implements IAccountingConnectionService {
       );
 
       //Important Note: Xero asks for a tenantId for which the token is valid for so we append it as a param and it MUST be extracted when making the calls in unified requests
-      const CUSTOM_ACCOUNT_URL = `${CONNECTORS_METADATA['accounting']['xero'].urls.apiUrl}?xeroTenantId=${res_.data[0].tenantId}`;
+      const CUSTOM_ACCOUNT_URL = `${
+        CONNECTORS_METADATA['accounting']['xero'].urls.apiUrl as string
+      }?xeroTenantId=${res_.data[0].tenantId}`;
 
       let db_res;
       const connection_token = uuidv4();
@@ -183,18 +190,6 @@ export class XeroConnectionService implements IAccountingConnectionService {
       }
       return db_res;
     } catch (error) {
-      /*throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
-          message: `XeroConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'xero',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );*/
       throw error;
     }
   }

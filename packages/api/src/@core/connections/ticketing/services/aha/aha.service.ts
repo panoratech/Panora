@@ -14,14 +14,15 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ITicketingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  DynamicApiUrl,
+} from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import {
-  OAuthCallbackParams,
-  RefreshParams,
-} from '@@core/connections/@utils/types';
+import { OAuthCallbackParams } from '@@core/connections/@utils/types';
 
 export type AhaOAuthResponse = {
   access_token: string;
@@ -77,7 +78,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN}/oauth/token`,
+        `https://${CREDENTIALS.SUBDOMAIN}.aha.io/oauth/token`,
         formData.toString(),
         {
           headers: {
@@ -92,10 +93,10 @@ export class AhaConnectionService implements ITicketingConnectionService {
 
       let db_res;
       const connection_token = uuidv4();
-      //get the right BASE URL API
-      const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN +
-        CONNECTORS_METADATA['ticketing']['aha'].urls.apiUrl;
+
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['ticketing']['aha'].urls.apiUrl as DynamicApiUrl
+      )(CREDENTIALS.SUBDOMAIN);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -150,9 +151,5 @@ export class AhaConnectionService implements ITicketingConnectionService {
         this.logger,
       );
     }
-  }
-
-  async handleTokenRefresh(opts: RefreshParams) {
-    return;
   }
 }

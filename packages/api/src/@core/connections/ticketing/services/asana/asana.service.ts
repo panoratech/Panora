@@ -104,7 +104,8 @@ export class AsanaConnectionService implements ITicketingConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['ticketing']['asana'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['asana'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -117,7 +118,8 @@ export class AsanaConnectionService implements ITicketingConnectionService {
             provider_slug: 'asana',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['ticketing']['asana'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['asana'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

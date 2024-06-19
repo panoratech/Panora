@@ -26,28 +26,29 @@ import {
   OAuthCallbackParams,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { URLSearchParams } from 'url';
 
 export type SlackOAuthResponse = {
-    ok: boolean;
+  ok: boolean;
+  access_token: string;
+  token_type: string;
+  scope: string;
+  bot_user_id: string;
+  app_id: string;
+  team: {
+    name: string;
+    id: string;
+  };
+  enterprise?: {
+    name: string;
+    id: string;
+  };
+  authed_user: {
+    id: string;
+    scope: string;
     access_token: string;
     token_type: string;
-    scope: string;
-    bot_user_id: string;
-    app_id: string;
-    team: {
-      name: string;
-      id: string;
-    };
-    enterprise?: {
-      name: string;
-      id: string;
-    };
-    authed_user: {
-      id: string;
-      scope: string;
-      access_token: string;
-      token_type: string;
-    };
+  };
 };
 
 @Injectable()
@@ -79,30 +80,30 @@ export class SlackConnectionService implements IManagementConnectionService {
         },
       });
 
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
-
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
-      const formData = {
+      const formData = new URLSearchParams({
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
         code: code,
         grant_type: 'authorization_code',
-      };
+      });
       const res = await axios.post(
         `https://slack.com/api/oauth.v2.access`,
-        JSON.stringify(formData),
+        formData.toString(),
         {
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
         },
       );
       const data: SlackOAuthResponse = res.data;
-      this.logger.log('OAuth credentials : slack management ' + JSON.stringify(data));
+      this.logger.log(
+        'OAuth credentials : slack management ' + JSON.stringify(data),
+      );
 
       let db_res;
       const connection_token = uuidv4();
@@ -113,8 +114,11 @@ export class SlackConnectionService implements IManagementConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: CONNECTORS_METADATA['management']['slack'].urls.apiUrl,
+            access_token: this.cryptoService.encrypt(
+              data.authed_user.access_token,
+            ),
+            account_url: CONNECTORS_METADATA['management']['slack'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -127,8 +131,11 @@ export class SlackConnectionService implements IManagementConnectionService {
             provider_slug: 'slack',
             vertical: 'management',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['management']['slack'].urls.apiUrl,
-            access_token: this.cryptoService.encrypt(data.access_token),
+            account_url: CONNECTORS_METADATA['management']['slack'].urls
+              .apiUrl as string,
+            access_token: this.cryptoService.encrypt(
+              data.authed_user.access_token,
+            ),
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -147,18 +154,7 @@ export class SlackConnectionService implements IManagementConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
-          message: `SlackConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'slack',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

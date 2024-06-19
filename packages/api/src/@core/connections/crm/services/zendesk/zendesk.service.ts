@@ -63,10 +63,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
         },
       });
 
-      //reconstruct the redirect URI that was passed in the frontend it must be the same
-      //const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
-      //TODO
-      const REDIRECT_URI = `http://localhost:3000/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -120,7 +117,8 @@ export class ZendeskConnectionService implements ICrmConnectionService {
             provider_slug: 'zendesk',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['zendesk'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['zendesk'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token
               ? this.cryptoService.encrypt(data.refresh_token)

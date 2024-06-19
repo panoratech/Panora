@@ -43,7 +43,8 @@ export class DixaConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(opts.apikey),
-            account_url: CONNECTORS_METADATA['ticketing']['dixa'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['dixa'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -56,7 +57,8 @@ export class DixaConnectionService implements ITicketingConnectionService {
             provider_slug: 'dixa',
             vertical: 'ticketing',
             token_type: 'api_key',
-            account_url: CONNECTORS_METADATA['ticketing']['dixa'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['dixa'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(opts.apikey),
             status: 'valid',
             created_at: new Date(),

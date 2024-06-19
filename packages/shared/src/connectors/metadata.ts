@@ -1,4 +1,4 @@
-// If authBaseUrl or apiUrl both start with / it means a subdomain is likely needed
+// If authBaseUrl or apiUrl both start with / it means a company_subdomain is likely needed
 // If authBaseUrl is blank then it must be manually built in the client given the provider (meaning its not deterministic)
 
 import { AuthStrategy, ProvidersConfig } from '../types';
@@ -33,8 +33,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'ZohoCRM.modules.ALL',
         urls: {
           docsUrl: 'https://www.zoho.com/crm/developer/docs/api/v5/',
-          authBaseUrl: '/oauth/v2/auth',
-          apiUrl: '/crm/v3',
+          authBaseUrl: ' https://accounts.zoho.com/oauth/v2/auth',
+          apiUrl: (domain) => `${domain}/crm/v3`, // it is contained in the connection service
           customPropertiesUrl: '/settings/fields?module=Contact',
         },
         logoPath: 'https://assets-global.website-files.com/64f68d43d25e5962af5f82dd/64f68d43d25e5962af5f9812_64ad8bbe47c78358489b29fc_645e3ccf636a8d659f320e25_Group%25252012.png',
@@ -77,15 +77,17 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.oauth2,
       },
       'accelo': {
-        scopes: '',
         urls: {
           docsUrl: 'https://api.accelo.com/docs/#introduction',
-          authBaseUrl: '/oauth2/v0/authorize',
-          apiUrl: '/api/v0',
+          authBaseUrl: (domain) => `https://${domain}.api.accelo.com/oauth2/v0/authorize`,
+          apiUrl: (domain) => `https://${domain}.api.accelo.com/api/v0`,
         },
         logoPath: 'https://play-lh.googleusercontent.com/j63K2u8ZXukgPs8QPgyXfyoxuNBl_ST7gLx5DEFeczCTtM9e5JNpDjjBy32qLxFS7p0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        options: {
+          company_subdomain: true
+        },
         authStrategy: AuthStrategy.oauth2
       },
       'active_campaign': {
@@ -158,7 +160,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.api_key,
       },
       'keap': {
-        scopes: '',
         urls: {
           docsUrl: 'https://developer.infusionsoft.com/docs/restv2/',
           authBaseUrl: 'https://accounts.infusionsoft.com/app/oauth/authorize',
@@ -252,7 +253,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: {
           docsUrl: 'https://apidocs.teamwork.com/guides/teamwork/getting-started-with-the-teamwork-com-api',
           authBaseUrl: 'https://www.teamwork.com/launchpad/login',
-          apiUrl: '', // on purpose blank => everything is contained inside the accountUrl(subdomain)
+          apiUrl: '', // on purpose blank => everything is contained inside the apiEndPoint that teamwork returns
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr6gYDMNagMEicBb4dhKz4BC1fQs72In45QF7Ls6-moA&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
@@ -302,12 +303,15 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'read write',
         urls: {
           docsUrl: 'https://developer.zendesk.com/api-reference/sales-crm/introduction/',
-          authBaseUrl: '/oauth/authorizations/new',
-          apiUrl: '/api/v2',
-        },
+          apiUrl: (myDomain) => `https://${myDomain}.zendesk.com/api/v2`,
+          authBaseUrl: (myDomain) => `https://${myDomain}.zendesk.com/oauth/authorizations/new`
+        }, 
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         authStrategy: AuthStrategy.oauth2,
+        options: {
+          company_subdomain: true
+        },
         realTimeWebhookMetadata: {
           method: 'API',
           events: [
@@ -321,12 +325,17 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           ]
         },
       },
+      // TODO
       'gorgias': {
         scopes: 'write:all openid email profile offline',
         urls: {
           docsUrl: 'https://developers.gorgias.com/reference/introduction',
-          apiUrl: '/api',
-          authBaseUrl: `/connections/gorgias/oauth/install`,
+          apiUrl: (domain) => `https://${domain}.gorgias.com/api`,
+          authBaseUrl: (domain) => `https://${domain}.com/connections/gorgias/oauth/install`,
+        },
+        active: false,
+        options: {
+          company_subdomain: true,
         },
         logoPath: 'https://x5h8w2v3.rocketcdn.me/wp-content/uploads/2020/09/FS-AFFI-00660Gorgias.png',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
@@ -393,14 +402,15 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'aha': {
         urls: {
           docsUrl: 'https://www.aha.io/api',
-          apiUrl: '/api/v1',
-          authBaseUrl: '/oauth/authorize',
+          apiUrl: (domain) => `https://${domain}.aha.io/api/v1`,
+          authBaseUrl: (domain) => `https://${domain}.aha.io/oauth/authorize`,
         },
         logoPath: 'https://www.aha.io/aha-logo-2x.png',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
         authStrategy: AuthStrategy.oauth2,
         options: {
+          company_subdomain: true,
           local_redirect_uri_in_https: true
         }
       },
@@ -635,7 +645,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
       },
-      // todo
       'teamwork': {
         scopes: '',
         urls: {
@@ -646,7 +655,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
       },
-      // todo
       'trello': {
         scopes: '',
         urls: {
@@ -658,15 +666,18 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'wrike': {
-        scopes: '',
         urls: {
           docsUrl: 'https://developers.wrike.com/overview/',
-          apiUrl: '/api/v4',
+          apiUrl: (domain) => `https://${domain}/api/v4`,
           authBaseUrl: 'https://login.wrike.com/oauth2/authorize/v4',
         },
-        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
+        logoPath: 'https://play-lh.googleusercontent.com/uh-GbLWEKoIefta2iNX0L0zUWA66YTjfJ4cBarNZWbc7mEzbKUWbWg8NjjrojgkFH5ni',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
+        options: {
+          company_subdomain: true,
+          local_redirect_uri_in_https: true
+        },
         authStrategy: AuthStrategy.oauth2
       },
       'zoho_bugtracker': {
@@ -700,7 +711,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://c.clc2l.com/t/P/e/Pennylane-U9Wdby.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: AuthStrategy.oauth2,
         options: {
           local_redirect_uri_in_https: true
@@ -840,7 +851,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.oauth2
       },
       'xero': {
-        // scopes: 'openid profile email accounting.transactions accounting.reports.read accounting.contacts accounting.attachments accounting.budgets.read',
+        scopes: 'offline_access openid profile email accounting.transactions',       
         urls: {
           docsUrl: 'https://developer.xero.com/documentation/getting-started-guide/',
           apiUrl: 'https://api.xero.com/api.xro/2.0',
@@ -864,7 +875,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: AuthStrategy.api_key
       },
-      // todo
       'customerio': {
         scopes: '',
         urls: {
@@ -886,7 +896,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: AuthStrategy.oauth2
       },
-      // todo
       'hubspot_marketing_hub': {
         scopes: '',
         urls: {
@@ -898,13 +907,12 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'keap': {
-        scopes: '',
         urls: {
           authBaseUrl: 'https://accounts.infusionsoft.com/app/oauth/authorize',
           docsUrl: 'https://developer.infusionsoft.com/docs/rest/',
           apiUrl: 'https://api.infusionsoft.com/crm/rest/v1/account/profile'
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPYsWSMe9KVWgCIQ8fw-vBOnfTlZaSS6p_43ZhEIx51A&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: AuthStrategy.oauth2
@@ -978,7 +986,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       },
     },
     'ats': {
-      // todo
       'applicantstack': {
         scopes: '',
         urls: {
@@ -990,24 +997,26 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'ashby': {
-        scopes: '',
         urls: {
           docsUrl: 'https://developers.ashbyhq.com',
           apiUrl: 'https://api.ashbyhq.com'
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://images.ctfassets.net/p03bi75xct27/2tVvkghDdMJxzkMca2QLnr/31b520c5e07db0103948af171fb54e99/ashby_logo_square.jpeg?q=80&fm=webp&w=2048',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: AuthStrategy.api_key
       },
-      // todo
       'bamboohr': {
-        scopes: '',
+        scopes: 'openid+email',
         urls: {
           docsUrl: 'https://documentation.bamboohr.com/docs/getting-started',
-          apiUrl: ''
+          apiUrl: '',
+          authBaseUrl: (END_USER_DOMAIN) => `https://${END_USER_DOMAIN}.bamboohr.com/authorize.php?request=authorize`
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        options: {
+          end_user_domain: true
+        },
+        logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: AuthStrategy.api_key
@@ -1190,7 +1199,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           docsUrl: '',
           apiUrl: ''
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://advancedcommunities.com/wp-content/uploads/2023/03/group-1928.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: AuthStrategy.oauth2
@@ -1263,7 +1272,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: {
           docsUrl: 'https://hire.lever.co/developer/documentation#introduction',
           apiUrl: 'https://api.lever.co/v1',
-          authBaseUrl: 'https://auth.lever.co/authorize'
+          authBaseUrl: 'https://auth.lever.co/authorize' // or https://sandbox-lever.auth0.com/authorize
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbR9XSB1lbZnYlLWyqMe5Px80ghtEOUqHeqw&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
@@ -1451,14 +1460,14 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'workday': {
-        scopes: '',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://apidocs.workdayspend.com/services/legacy/v3.html#tag/support',
+          apiUrl: "https://api.us.workdayspend.com/services" // todo other locations
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZTX2h9yFQ0u4ziDqvfQ224wW4N1s5JvJ5nA&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        authStrategy: AuthStrategy.api_key
       },
       'zoho_recruit': {
         scopes: '',
@@ -1523,12 +1532,16 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'bamboohr': {
-        scopes: '',
+        scopes: 'openid+email',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://documentation.bamboohr.com/docs/getting-started',
+          apiUrl: '',
+          authBaseUrl: (END_USER_DOMAIN) => `https://${END_USER_DOMAIN}.bamboohr.com/authorize.php`
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        options: {
+          end_user_domain: true
+        },
+        logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
       },
@@ -1611,17 +1624,17 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'rippling': {
-        scopes: '',
         urls: {
           docsUrl: 'https://developer.rippling.com/docs/rippling-api/9rw6guf819r5f-introduction-for-customers',
           apiUrl: 'https://api.rippling.com/platform/api',
-          authBaseUrl: 'https://app.rippling.com/apps/PLATFORM/{APPNAME}/authorize'
+          authBaseUrl: (APPNAME) => `https://app.rippling.com/apps/PLATFORM/${APPNAME}/authorize`
         },
         logoPath: 'https://avatars.githubusercontent.com/u/19614805?s=280&v=4',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: AuthStrategy.oauth2,
         options: {
+          company_subdomain: true,
           local_redirect_uri_in_https: true
         }
       },
@@ -1674,7 +1687,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://cdn.runalloy.com/landing/uploads-new/Gusto_Logo_67ca008403.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: AuthStrategy.oauth2
       },
       'hibob': {
@@ -1852,14 +1865,18 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
       },
       'namely': {
-        scopes: '',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://developers.namely.com/docs/namely-api/ZG9jOjE1NTkwMDU5-authentication',
+          apiUrl: 'https://stoplight.io/mocks/namely/namely-api/182542', // TODO
+          authBaseUrl: (myDomain) => `https://${myDomain}.namely.com/api/v1/oauth2/authorize`
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZzUUYuH2sjtkUfh6BpOHoREyCe_ZV7DWIuQ&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        options: {
+          company_subdomain: true
+        },
+        authStrategy: AuthStrategy.oauth2
       },
       'nmbrs': {
         scopes: '',
@@ -2150,7 +2167,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.oauth2,
       },
       'onedrive': {
-        scopes: 'wl.basic onedrive.readwrite wl.offline_access',
+        scopes: 'Files.Read.All offline_access openid User.Read',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
           apiUrl: 'https://graph.microsoft.com/v1.0',
@@ -2173,11 +2190,14 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.oauth2,
       },
       'sharepoint': {
-        scopes: '',
+        scopes: 'Files.Read.All offline_access openid User.Read',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
           apiUrl: 'https://graph.microsoft.com/v1.0',
-          authBaseUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
+          authBaseUrl: (END_USER_TENANT_NAME) => `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?resource=https://${END_USER_TENANT_NAME}.sharepoint.com`
+        },
+        options: {
+          end_user_domain: true
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
@@ -2210,7 +2230,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: AuthStrategy.oauth2,
       },
       'slack': {
-        scopes: '&user_scope=channels:history',
+        scopes: 'channels:history',
         urls: {
           docsUrl: 'https://api.slack.com/apis',
           apiUrl: 'https://slack.com/api',
@@ -2219,6 +2239,9 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://assets-global.website-files.com/621c8d7ad9e04933c4e51ffb/65eba5ffa14998827c92cc01_slack-octothorpe.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        options: {
+          local_redirect_uri_in_https: true
+        },
         authStrategy: AuthStrategy.oauth2,
       },
     }

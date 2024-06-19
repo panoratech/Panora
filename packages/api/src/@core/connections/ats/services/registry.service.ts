@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IAtsConnectionService } from './types';
+import { IAtsConnectionService } from '../types';
 
 @Injectable()
 export class ServiceRegistry {

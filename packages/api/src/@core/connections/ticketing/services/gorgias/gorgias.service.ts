@@ -18,6 +18,7 @@ import {
   OAuth2AuthData,
   CONNECTORS_METADATA,
   providerToType,
+  DynamicApiUrl,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
@@ -81,7 +82,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN!}/oauth/token`,
+        `https://${CREDENTIALS.SUBDOMAIN!}.gorgias.com/oauth/token`,
         formData.toString(),
         {
           headers: {
@@ -96,9 +97,10 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
 
       let db_res;
       const connection_token = uuidv4();
-      const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN +
-        CONNECTORS_METADATA['ticketing']['gorgias'].urls.apiUrl;
+
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['ticketing']['gorgias'].urls.apiUrl as DynamicApiUrl
+      )(CREDENTIALS.SUBDOMAIN);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -176,7 +178,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
       )) as OAuth2AuthData;
 
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN!}/oauth/token`,
+        `https://${CREDENTIALS.SUBDOMAIN!}.gorgias.com/oauth/token`,
         formData.toString(),
         {
           headers: {

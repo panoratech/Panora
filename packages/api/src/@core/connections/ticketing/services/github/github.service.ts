@@ -97,7 +97,8 @@ export class GithubConnectionService implements ITicketingConnectionService {
             access_token: this.cryptoService.encrypt(
               data.match(/access_token=([^&]*)/)[1],
             ),
-            account_url: CONNECTORS_METADATA['ticketing']['github'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['github'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -113,7 +114,8 @@ export class GithubConnectionService implements ITicketingConnectionService {
             access_token: this.cryptoService.encrypt(
               data.match(/access_token=([^&]*)/)[1],
             ),
-            account_url: CONNECTORS_METADATA['ticketing']['github'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['github'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
             projects: {

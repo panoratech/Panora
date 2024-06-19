@@ -102,8 +102,8 @@ export class MoneybirdConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url:
-              CONNECTORS_METADATA['accounting']['moneybird'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['accounting']['moneybird'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -116,8 +116,8 @@ export class MoneybirdConnectionService
             provider_slug: 'moneybird',
             vertical: 'accounting',
             token_type: 'oauth',
-            account_url:
-              CONNECTORS_METADATA['accounting']['moneybird'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['accounting']['moneybird'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             status: 'valid',

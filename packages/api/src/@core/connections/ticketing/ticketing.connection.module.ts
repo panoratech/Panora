@@ -22,6 +22,7 @@ import { ConnectionUtils } from '../@utils';
 import { DixaConnectionService } from './services/dixa/dixa.service';
 import { HelpscoutConnectionService } from './services/helpscout/helpscout.service';
 import { AsanaConnectionService } from './services/asana/asana.service';
+import { WrikeConnectionService } from './services/wrike/wrike.service';
 
 @Module({
   imports: [WebhookModule, ManagedWebhooksModule],
@@ -47,6 +48,7 @@ import { AsanaConnectionService } from './services/asana/asana.service';
     DixaConnectionService,
     HelpscoutConnectionService,
     AsanaConnectionService,
+    WrikeConnectionService,
   ],
   exports: [TicketingConnectionsService],
 })

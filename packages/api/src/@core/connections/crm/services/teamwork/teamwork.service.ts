@@ -14,11 +14,7 @@ import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { ICrmConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import {
-  OAuth2AuthData,
-  CONNECTORS_METADATA,
-  providerToType,
-} from '@panora/shared';
+import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
@@ -29,6 +25,20 @@ import {
 
 export type TeamworkOAuthResponse = {
   access_token: string;
+  installation: {
+    apiEndPoint: string;
+    company: {
+      id: number;
+      logo: string;
+      name: string;
+    };
+    id: number;
+    logo: string;
+    name: string;
+    region: string;
+    url: string;
+  };
+  status: string;
 };
 
 @Injectable()
@@ -90,9 +100,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
       let db_res;
       const connection_token = uuidv4();
       //get the right BASE URL API
-      const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN +
-        CONNECTORS_METADATA['crm']['teamwork'].urls.apiUrl;
+      const BASE_API_URL = data.installation.apiEndPoint;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({

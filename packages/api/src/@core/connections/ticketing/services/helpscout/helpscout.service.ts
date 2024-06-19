@@ -43,8 +43,8 @@ export class HelpscoutConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(opts.apikey),
-            account_url:
-              CONNECTORS_METADATA['ticketing']['helpscout'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['helpscout'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -57,8 +57,8 @@ export class HelpscoutConnectionService implements ITicketingConnectionService {
             provider_slug: 'helpscout',
             vertical: 'ticketing',
             token_type: 'api_key',
-            account_url:
-              CONNECTORS_METADATA['ticketing']['helpscout'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['helpscout'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(opts.apikey),
             status: 'valid',
             created_at: new Date(),

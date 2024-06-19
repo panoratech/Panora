@@ -1,5 +1,5 @@
 version: 2
-authtoken: NGROK_TOKEN
+authtoken: NGROK_AUTH_TOKEN
 log_level: debug
 log: stdout
 
