@@ -62,6 +62,16 @@ export class AuthService {
     }
   }
 
+  async validateUser(user_id: string) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id_user: user_id,
+      },
+    });
+
+    return user;
+  }
+
   async getApiKeys(project_id: string) {
     try {
       return await this.prisma.api_keys.findMany({
