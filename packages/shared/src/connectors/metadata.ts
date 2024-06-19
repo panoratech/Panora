@@ -1462,7 +1462,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'workday': {
         urls: {
           docsUrl: 'https://apidocs.workdayspend.com/services/legacy/v3.html#tag/support',
-          apiUrl: "https://api.us.workdayspend.com/services" // todo other locations
+          apiUrl: 'https://api.us.workdayspend.com/services' // todo other locations
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZTX2h9yFQ0u4ziDqvfQ224wW4N1s5JvJ5nA&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
