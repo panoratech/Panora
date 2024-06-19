@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { WebhookModule } from '@@core/webhook/webhook.module';
@@ -13,6 +12,7 @@ import { BrevoConnectionService } from './services/brevo/brevo.service';
 import { PodiumConnectionService } from './services/podium/podium.service';
 import { MailchimpConnectionService } from './services/mailchimp/mailchimp.service';
 import { GetresponseConnectionService } from './services/getresponse/getresponse.service';
+import { KeapConnectionService } from './services/keap/keap.service';
 
 @Module({
   imports: [WebhookModule],
@@ -30,6 +30,7 @@ import { GetresponseConnectionService } from './services/getresponse/getresponse
     PodiumConnectionService,
     MailchimpConnectionService,
     GetresponseConnectionService,
+    KeapConnectionService,
   ],
   exports: [MarketingAutomationConnectionsService],
 })

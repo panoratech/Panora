@@ -89,7 +89,9 @@ export class NotionConnectionService implements IManagementConnectionService {
         },
       );
       const data: NotionOAuthResponse = res.data;
-      this.logger.log('OAuth credentials : notion management ' + JSON.stringify(data));
+      this.logger.log(
+        'OAuth credentials : notion management ' + JSON.stringify(data),
+      );
 
       let db_res;
       const connection_token = uuidv4();
@@ -101,7 +103,8 @@ export class NotionConnectionService implements IManagementConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: CONNECTORS_METADATA['management']['notion'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['management']['notion'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -114,7 +117,8 @@ export class NotionConnectionService implements IManagementConnectionService {
             provider_slug: 'notion',
             vertical: 'management',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['management']['notion'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['management']['notion'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

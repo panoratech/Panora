@@ -13,6 +13,8 @@ import { ConnectionUtils } from '../@utils';
 import { GustoConnectionService } from './services/gusto/gusto.service';
 import { PayfitConnectionService } from './services/payfit/payfit.service';
 import { FactorialConnectionService } from './services/factorial/factorial.service';
+import { NamelyConnectionService } from './services/namely/namely.service';
+import { BamboohrConnectionService } from './services/bamboohr/bamboohr.service';
 
 @Module({
   imports: [WebhookModule],
@@ -31,6 +33,8 @@ import { FactorialConnectionService } from './services/factorial/factorial.servi
     GustoConnectionService,
     PayfitConnectionService,
     FactorialConnectionService,
+    NamelyConnectionService,
+    BamboohrConnectionService,
   ],
   exports: [HrisConnectionsService],
 })

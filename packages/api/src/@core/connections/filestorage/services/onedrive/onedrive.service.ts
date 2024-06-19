@@ -66,11 +66,7 @@ export class OneDriveConnectionService
         },
       });
 
-      const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
-          : this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
@@ -109,8 +105,8 @@ export class OneDriveConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url:
-              CONNECTORS_METADATA['filestorage']['onedrive'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['filestorage']['onedrive'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -126,8 +122,8 @@ export class OneDriveConnectionService
             provider_slug: 'onedrive',
             vertical: 'filestorage',
             token_type: 'oauth',
-            account_url:
-              CONNECTORS_METADATA['filestorage']['onedrive'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['filestorage']['onedrive'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -168,11 +164,7 @@ export class OneDriveConnectionService
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
-          : this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,

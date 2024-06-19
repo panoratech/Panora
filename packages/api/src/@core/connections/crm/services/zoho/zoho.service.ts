@@ -18,6 +18,7 @@ import {
   OAuth2AuthData,
   CONNECTORS_METADATA,
   providerToType,
+  DynamicApiUrl,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
@@ -126,6 +127,9 @@ export class ZohoConnectionService implements ICrmConnectionService {
       let db_res;
       const connection_token = uuidv4();
       const apiDomain = ZOHOLocations[location].apiBase;
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl as DynamicApiUrl
+      )(apiDomain);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -142,8 +146,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
             ),
             status: 'valid',
             created_at: new Date(),
-            account_url:
-              apiDomain + CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl,
+            account_url: BASE_API_URL,
           },
         });
       } else {

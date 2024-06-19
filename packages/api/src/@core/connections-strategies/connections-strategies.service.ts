@@ -368,14 +368,7 @@ export class ConnectionsStrategiesService {
         return res;
       }
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'GET_CREDENTIALS_ERROR',
-          message: 'ConnectionsStrategiesService.getCredentials() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 

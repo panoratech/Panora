@@ -8,9 +8,12 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
 import { ConnectionUtils } from '../@utils';
 import { GreenhouseConnectionService } from './services/greenhouse/greenhouse.service';
 import { AtsConnectionsService } from './services/ats.connection.service';
-import { ServiceRegistry } from './registry.service';
 import { LeverConnectionService } from './services/lever/lever.service';
 import { JobadderConnectionService } from './services/jobadder/jobadder.service';
+import { WorkdayConnectionService } from './services/workday/workday.service';
+import { AshbyConnectionService } from './services/ashby/ashby.service';
+import { ServiceRegistry } from './services/registry.service';
+import { BamboohrConnectionService } from './services/bamboohr/bamboohr.service';
 
 @Module({
   imports: [WebhookModule],
@@ -27,6 +30,9 @@ import { JobadderConnectionService } from './services/jobadder/jobadder.service'
     GreenhouseConnectionService,
     LeverConnectionService,
     JobadderConnectionService,
+    WorkdayConnectionService,
+    AshbyConnectionService,
+    BamboohrConnectionService,
   ],
   exports: [AtsConnectionsService],
 })

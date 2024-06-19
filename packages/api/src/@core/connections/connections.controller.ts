@@ -29,6 +29,7 @@ import { CoreSyncService } from '@@core/sync/sync.service';
 import { HrisConnectionsService } from './hris/services/hris.connection.service';
 import { FilestorageConnectionsService } from './filestorage/services/filestorage.connection.service';
 import { AtsConnectionsService } from './ats/services/ats.connection.service';
+import { ManagementConnectionsService } from './management/services/management.connection.service';
 
 export type StateDataType = {
   projectId: string;
@@ -54,6 +55,7 @@ export class ConnectionsController {
     private readonly filestorageConnectionsService: FilestorageConnectionsService,
     private readonly hrisConnectionsService: HrisConnectionsService,
     private readonly atsConnectionsService: AtsConnectionsService,
+    private readonly managementConnectionsService: ManagementConnectionsService,
     private logger: LoggerService,
     private prisma: PrismaService,
     private coreSync: CoreSyncService,
@@ -141,6 +143,13 @@ export class ConnectionsController {
             'oauth',
           );
           break;
+        case ConnectorCategory.Management:
+          await this.managementConnectionsService.handleManagementCallBack(
+            providerName,
+            { linkedUserId, projectId, code },
+            'oauth',
+          );
+          break;
       }
 
       res.redirect(returnUrl);
@@ -159,19 +168,11 @@ export class ConnectionsController {
         );
       }*/
     } catch (error) {
-      /*throwTypedError(
-        new ConnectionsError({
-          name: 'OAUTH_CALLBACK_ERROR',
-          message: 'ConnectionsController.handleCallback() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );*/
       throw error;
     }
   }
 
-  @Get('/gorgias/oauth/install')
+  /*@Get('/gorgias/oauth/install')
   handleGorgiasAuthUrl(
     @Res() res: Response,
     @Query('account') account: string,
@@ -183,6 +184,7 @@ export class ConnectionsController {
     @Query('state') state: string,
   ) {
     try {
+      console.log(client_id)
       if (!account) throw new ReferenceError('account prop not found');
       const params = `?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}&state=${state}&nonce=${nonce}&scope=${scope}`;
       res.redirect(`https://${account}.gorgias.com/oauth/authorize${params}`);
@@ -196,7 +198,7 @@ export class ConnectionsController {
         this.logger,
       );
     }
-  }
+  }*/
 
   @ApiOperation({
     operationId: 'handleApiKeyCallback',
@@ -327,14 +329,6 @@ export class ConnectionsController {
         );
       }*/
     } catch (error) {
-      /*throwTypedError(
-        new ConnectionsError({
-          name: 'APIKEY_CALLBACK_ERROR',
-          message: 'ConnectionsController.handleApiKeyCallback() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );*/
       throw error;
     }
   }

@@ -150,6 +150,9 @@ services:
       NOTION_MANAGEMENT_CLOUD_CLIENT_SECRET: ${NOTION_MANAGEMENT_CLOUD_CLIENT_SECRET}
       SLACK_MANAGEMENT_CLOUD_CLIENT_ID: ${SLACK_MANAGEMENT_CLOUD_CLIENT_ID}
       SLACK_MANAGEMENT_CLOUD_CLIENT_SECRET: ${SLACK_MANAGEMENT_CLOUD_CLIENT_SECRET}
+      NAMELY_HRIS_CLOUD_CLIENT_ID: ${NAMELY_HRIS_CLOUD_CLIENT_ID}
+      NAMELY_HRIS_CLOUD_CLIENT_SECRET: ${NAMELY_HRIS_CLOUD_CLIENT_SECRET}
+      NAMELY_HRIS_CLOUD_SUBDOMAIN: ${NAMELY_HRIS_CLOUD_SUBDOMAIN}
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -225,22 +228,22 @@ services:
     volumes:
       - .:/app
 
-  # ngrok:
-  #   image: ngrok/ngrok:latest
-  #   restart: always
-  #   command:
-  #     - "start"
-  #     - "--all"
-  #     - "--config"
-  #     - "/etc/ngrok.yml"
-  #   volumes:
-  #     - ./ngrok.yml:/etc/ngrok.yml
-  #   ports:
-  #     - 4040:4040
-  #   depends_on:
-  #     api:
-  #       condition: service_healthy
-  #   network_mode: "host"
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: always
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    ports:
+    - 4040:4040
+    depends_on:
+      api:
+        condition: service_healthy
+    network_mode: "host"
 
   docs:
     build:

@@ -101,8 +101,8 @@ export class PodiumConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url:
-              CONNECTORS_METADATA['marketingautomation']['podium'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['marketingautomation']['podium']
+              .urls.apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + 10 * 60 * 60 * 1000,
             ),
@@ -118,8 +118,8 @@ export class PodiumConnectionService
             provider_slug: 'podium',
             vertical: 'marketingautomation',
             token_type: 'oauth',
-            account_url:
-              CONNECTORS_METADATA['marketingautomation']['pdoum'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['marketingautomation']['pdoum']
+              .urls.apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

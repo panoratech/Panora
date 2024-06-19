@@ -43,7 +43,8 @@ export class AffinityConnectionService implements ICrmConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(opts.apikey),
-            account_url: CONNECTORS_METADATA['crm']['affinity'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['affinity'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -56,7 +57,8 @@ export class AffinityConnectionService implements ICrmConnectionService {
             provider_slug: 'affinity',
             vertical: 'crm',
             token_type: 'api_key',
-            account_url: CONNECTORS_METADATA['crm']['affinity'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['affinity'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(opts.apikey),
             status: 'valid',
             created_at: new Date(),

@@ -96,8 +96,8 @@ export class ClickupConnectionService implements ITicketingConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url:
-              CONNECTORS_METADATA['ticketing']['clickup'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['clickup'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -110,8 +110,8 @@ export class ClickupConnectionService implements ITicketingConnectionService {
             provider_slug: 'clickup',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url:
-              CONNECTORS_METADATA['ticketing']['clickup'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['clickup'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),

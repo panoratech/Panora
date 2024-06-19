@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { IAtsConnectionService } from '../../types';
-import { ServiceRegistry } from '../../registry.service';
+import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
@@ -30,11 +30,9 @@ export type LeverOAuthResponse = {
   token_type: string;
 };
 
-//TODO
 @Injectable()
 export class LeverConnectionService implements IAtsConnectionService {
   private readonly type: string;
-
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -78,7 +76,7 @@ export class LeverConnectionService implements IAtsConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        'https://auth.lever.co/oauth/token',
+        'https://sandbox-lever.auth0.com/oauth/token',
         formData.toString(),
         {
           headers: {
@@ -100,7 +98,8 @@ export class LeverConnectionService implements IAtsConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['ats']['lever'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ats']['lever'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -116,7 +115,8 @@ export class LeverConnectionService implements IAtsConnectionService {
             provider_slug: 'lever',
             vertical: 'ats',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['ats']['lever'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ats']['lever'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -160,7 +160,7 @@ export class LeverConnectionService implements IAtsConnectionService {
         refresh_token: this.cryptoService.decrypt(refreshToken),
       });
       const res = await axios.post(
-        'https://auth.lever.co/oauth/token',
+        'https://sandbox-lever.auth0.com/oauth/token',
         formData.toString(),
         {
           headers: {

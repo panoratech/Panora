@@ -115,7 +115,8 @@ export class GitlabConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'gitlab',
             vertical: 'ticketing',
-            account_url: CONNECTORS_METADATA['ticketing']['gitlab'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['gitlab'].urls
+              .apiUrl as string,
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

@@ -28,11 +28,13 @@ import { FilestorageConnectionModule } from './filestorage/filestorage.connectio
 import { HrisConnectionModule } from './hris/hris.connection.module';
 import { ConnectionUtils } from './@utils';
 import { AtsConnectionModule } from './ats/ats.connection.module';
+import { ManagementConnectionsModule } from './management/management.connection.module';
 
 @Module({
   controllers: [ConnectionsController],
   imports: [
     CrmConnectionModule,
+    ManagementConnectionsModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
     AtsConnectionModule,
@@ -70,6 +72,7 @@ import { AtsConnectionModule } from './ats/ats.connection.module';
     MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
     HrisConnectionModule,
+    ManagementConnectionsModule,
   ],
 })
 export class ConnectionsModule {}

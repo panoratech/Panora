@@ -5,7 +5,7 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { ServiceRegistry } from '../registry.service';
+import { ServiceRegistry } from './registry.service';
 import { CallbackParams, RefreshParams } from '@@core/connections/@utils/types';
 
 @Injectable()

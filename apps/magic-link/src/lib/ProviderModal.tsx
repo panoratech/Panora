@@ -19,6 +19,7 @@ const ProviderModal = () => {
     provider: string;
     category: string;
   }>();
+  const [optionalApiUrlForLocal, setOptionalApiUrlForLocal] = useState<string>();
   const [startFlow, setStartFlow] = useState(false);
   const [preStartFlow, setPreStartFlow] = useState(false);
   const [projectId, setProjectId] = useState("");
@@ -79,8 +80,8 @@ const ProviderModal = () => {
     vertical: selectedProvider?.category!,
     returnUrl: window.location.href,
     projectId: projectId,
+    optionalApiUrl: optionalApiUrlForLocal,
     linkedUserId: magicLink?.id_linked_user as string,
-    //optionalApiUrl: "https://prepared-wildcat-infinitely.ngrok-free.app", //CONNECTORS_METADATA[selectedProvider?.category!][selectedProvider?.provider!].options?.local_redirect_uri_in_https == true ? "https://prepared-wildcat-infinitely.ngrok-free.app": undefined,
     onSuccess: () => {
       console.log('OAuth successful');
       setOpenSuccessDialog(true);
@@ -130,10 +131,15 @@ const ProviderModal = () => {
   
   const handleWalletClick = (walletName: string, category: string) => {
     setSelectedProvider({provider: walletName.toLowerCase(), category: category.toLowerCase()});
+    const options = CONNECTORS_METADATA[selectedProvider?.category!][selectedProvider?.provider!].options;
+    if(options && options.local_redirect_uri_in_https) {
+      setOptionalApiUrlForLocal('https://prepared-wildcat-infinitely.ngrok-free.app')
+    }
     const logoPath = CONNECTORS_METADATA[category.toLowerCase()][walletName.toLowerCase()].logoPath;
     setCurrentProviderLogoURL(logoPath);
     setCurrentProvider(walletName.toLowerCase())
     setPreStartFlow(true);
+    setOptionalApiUrlForLocal('')
   };
 
   const handleStartFlow = () => {

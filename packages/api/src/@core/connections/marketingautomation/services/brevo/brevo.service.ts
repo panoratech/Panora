@@ -45,8 +45,8 @@ export class BrevoConnectionService
           },
           data: {
             access_token: this.cryptoService.encrypt(opts.apikey),
-            account_url:
-              CONNECTORS_METADATA['marketingautomation']['brevo'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['marketingautomation']['brevo']
+              .urls.apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -59,8 +59,8 @@ export class BrevoConnectionService
             provider_slug: 'brevo',
             vertical: 'marketingautomation',
             token_type: 'api_key',
-            account_url:
-              CONNECTORS_METADATA['marketingautomation']['brevo'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['marketingautomation']['brevo']
+              .urls.apiUrl as string,
             access_token: this.cryptoService.encrypt(opts.apikey),
             status: 'valid',
             created_at: new Date(),

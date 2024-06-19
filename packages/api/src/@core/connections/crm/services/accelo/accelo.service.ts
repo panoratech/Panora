@@ -18,6 +18,7 @@ import {
   OAuth2AuthData,
   CONNECTORS_METADATA,
   providerToType,
+  DynamicApiUrl,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
@@ -77,7 +78,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
         code: code,
       });
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN}/oauth2/v0/token`,
+        `https://${CREDENTIALS.SUBDOMAIN}.api.accelo.com/oauth2/v0/token`,
         formData.toString(),
         {
           headers: {
@@ -95,9 +96,9 @@ export class AcceloConnectionService implements ICrmConnectionService {
       let db_res;
       const connection_token = uuidv4();
       //get the right BASE URL API
-      const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN +
-        CONNECTORS_METADATA['crm']['accelo'].urls.apiUrl;
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['crm']['accelo'].urls.apiUrl as DynamicApiUrl
+      )(CREDENTIALS.SUBDOMAIN);
 
       if (isNotUnique) {
         // Update existing connection
@@ -178,7 +179,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
       )) as OAuth2AuthData;
 
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN}/oauth2/v0/token`,
+        `https://${CREDENTIALS.SUBDOMAIN}.api.accelo.com/oauth2/v0/token`,
         formData.toString(),
         {
           headers: {
