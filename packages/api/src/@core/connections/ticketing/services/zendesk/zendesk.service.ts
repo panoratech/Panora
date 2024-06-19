@@ -12,16 +12,17 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  ITicketingConnectionService,
-} from '../../types';
+import { ITicketingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  DynamicApiUrl,
+} from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { OAuthCallbackParams } from '@@core/connections/@utils/types';
 import { ManagedWebhooksService } from '@@core/managed-webhooks/managed-webhooks.service';
 
 export interface ZendeskOAuthResponse {
@@ -48,7 +49,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
     this.type = providerToType('zendesk', 'ticketing', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -78,7 +79,7 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       this.logger.log('Data Form is ' + JSON.stringify(formData));
 
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN}/oauth/tokens`,
+        `https://${CREDENTIALS.SUBDOMAIN}.zendesk.com/oauth/tokens`,
         formData.toString(),
         {
           headers: {
@@ -93,9 +94,9 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
 
       let db_res;
       const connection_token = uuidv4();
-      const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN +
-        CONNECTORS_METADATA['ticketing']['zendesk'].urls.apiUrl;
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['ticketing']['zendesk'].urls.apiUrl as DynamicApiUrl
+      )(CREDENTIALS.SUBDOMAIN);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -191,11 +192,5 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
         this.logger,
       );
     }
-  }
-
-  //todo: revoke ?
-  //ZENDESK TICKETING OAUTH TOKENS DONT EXPIRE BUT THEY MAY BE REVOKED
-  async handleTokenRefresh(opts: RefreshParams): Promise<any> {
-    throw new Error('Method not implemented.');
   }
 }

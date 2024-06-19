@@ -271,58 +271,11 @@
         ]
       }
     },
-    "/connections/gorgias/oauth/install": {
-      "get": {
-        "operationId": "ConnectionsController_handleGorgiasAuthUrl",
+    "/connections/apikey/callback": {
+      "post": {
+        "operationId": "handleApiKeyCallback",
+        "summary": "Capture api key callback",
         "parameters": [
-          {
-            "name": "account",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "response_type",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "nonce",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "scope",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "client_id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "redirect_uri",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "state",
             "required": true,
@@ -332,8 +285,18 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BodyDataType"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
+          "201": {
             "description": ""
           }
         },
@@ -22611,6 +22574,10 @@
         "required": [
           "projectId"
         ]
+      },
+      "BodyDataType": {
+        "type": "object",
+        "properties": {}
       },
       "WebhookDto": {
         "type": "object",

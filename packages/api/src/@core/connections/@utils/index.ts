@@ -65,4 +65,8 @@ export class ConnectionUtils {
     }
     return id_linked_user;
   }
+
+  applyPanoraDelimiter(values: string[]): string {
+    return values.join('panoradelimiter');
+  }
 }

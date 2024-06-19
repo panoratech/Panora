@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CrmConnectionsService } from './services/crm.connection.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { WebhookModule } from '@@core/webhook/webhook.module';
@@ -17,6 +16,10 @@ import { CloseConnectionService } from './services/close/close.service';
 import { CapsuleConnectionService } from './services/capsule/capsule.service';
 import { TeamleaderConnectionService } from './services/teamleader/teamleader.service';
 import { ConnectionUtils } from '../@utils';
+import { AffinityConnectionService } from './services/affinity/affinity.service';
+import { KeapConnectionService } from './services/keap/keap.service';
+import { CopperConnectionService } from './services/copper/copper.service';
+import { TeamworkConnectionService } from './services/teamwork/teamwork.service';
 
 @Module({
   imports: [WebhookModule],
@@ -38,6 +41,10 @@ import { ConnectionUtils } from '../@utils';
     CloseConnectionService,
     CapsuleConnectionService,
     TeamleaderConnectionService,
+    AffinityConnectionService,
+    KeapConnectionService,
+    CopperConnectionService,
+    TeamworkConnectionService,
   ],
   exports: [CrmConnectionsService],
 })
