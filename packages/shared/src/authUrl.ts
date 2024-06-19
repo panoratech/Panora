@@ -98,7 +98,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     if(typeof baseUrl == "string"){
       BASE_URL = baseUrl;
     }else{
-      BASE_URL = (baseUrl as DynamicAuthorization)(data.SUBDOMAIN);
+      BASE_URL = (baseUrl as DynamicAuthorization)(data.SUBDOMAIN as string);
     }
   }else if (needsEndUserSubdomain(providerName, vertical)){
     if(typeof baseUrl == "string"){
