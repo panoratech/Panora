@@ -9,10 +9,7 @@ export class ServiceRegistry {
     this.serviceMap = new Map<string, IManagementConnectionService>();
   }
 
-  registerService(
-    serviceKey: string,
-    service: IManagementConnectionService,
-  ) {
+  registerService(serviceKey: string, service: IManagementConnectionService) {
     this.serviceMap.set(serviceKey, service);
   }
 

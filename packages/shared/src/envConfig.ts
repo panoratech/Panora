@@ -91,7 +91,7 @@ export function needsSubdomain(provider: string, vertical: string): boolean {
 
     // Extract the provider's config
     const providerConfig = CONNECTORS_METADATA[vertical][provider];
-    if(providerConfig.options && providerConfig.options.company_subdomain){
+    if(providerConfig.options && providerConfig.options.company_subdomain) {
         return providerConfig.options.company_subdomain;
     }
     return false;
@@ -112,7 +112,7 @@ export function needsEndUserSubdomain(provider: string, vertical: string): boole
 
     // Extract the provider's config
     const providerConfig = CONNECTORS_METADATA[vertical][provider];
-    if(providerConfig.options && providerConfig.options.end_user_domain){
+    if(providerConfig.options && providerConfig.options.end_user_domain) {
         return providerConfig.options.end_user_domain;
     }
     return false;

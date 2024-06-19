@@ -94,20 +94,21 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   let BASE_URL: string;
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
-  if(needsSubdomain(providerName, vertical)){
-    if(typeof baseUrl == "string"){
+
+  if( needsSubdomain(providerName, vertical) ) {
+    if(typeof baseUrl === 'string') {
       BASE_URL = baseUrl;
-    }else{
+    } else {
       BASE_URL = (baseUrl as DynamicAuthorization)(data.SUBDOMAIN as string);
     }
-  }else if (needsEndUserSubdomain(providerName, vertical)){
-    if(typeof baseUrl == "string"){
+  } else if (needsEndUserSubdomain(providerName, vertical)) {
+    if(typeof baseUrl === 'string') {
       BASE_URL = baseUrl;
-    }else{
-      BASE_URL = (baseUrl as DynamicAuthorization)("END_USER_SUBDOMAIN"); // TODO: get the END-USER domain from the hook (data coming from webapp client)
+    } else {
+      BASE_URL = (baseUrl as DynamicAuthorization)('END_USER_SUBDOMAIN'); // TODO: get the END-USER domain from the hook (data coming from webapp client)
       // TODO: add the end user subdomain as query param on the redirect uri ?
     }
-  }else{
+  } else {
     BASE_URL = baseUrl as StringAuthorization;
   }
 
@@ -120,9 +121,9 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   let params = `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
   if (scopes) {
-    if(providerName == "slack"){
+    if(providerName === 'slack') {
       params += `&scope=&user_scope=${encodeURIComponent(scopes)}`;
-    }else{
+    } else {
       params += `&scope=${encodeURIComponent(scopes)}`;
     }
   }
@@ -164,7 +165,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   }
 
   const finalAuthUrl = `${BASE_URL}?${params}`;
-  console.log('Final Authentication : ', finalAuthUrl); 
+  // console.log('Final Authentication : ', finalAuthUrl); 
   return finalAuthUrl;
 }
 
