@@ -120,7 +120,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // Default URL structure
   let params = `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
-  if(providerName == "helpscout"){
+  if(providerName === 'helpscout') {
     params = `client_id=${encodeURIComponent(clientId)}&state=${state}`;
   }
 

@@ -606,7 +606,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: {
           strategy: AuthStrategy.api_key,
-          properties: ["user_id"]
+          properties: ['user_id']
         }
       },
       'intercom': {
@@ -679,7 +679,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: {
           strategy: AuthStrategy.api_key,
-          properties: ["login_email"]
+          properties: ['login_email']
         }
       },
       // todo
@@ -1193,7 +1193,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: {
           strategy: AuthStrategy.api_key,
-          properties: ["user_id"]
+          properties: ['user_id']
         }
       },
       // todo
