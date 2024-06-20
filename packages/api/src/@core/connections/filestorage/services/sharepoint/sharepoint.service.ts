@@ -157,18 +157,7 @@ export class SharepointConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
-          message: `SharepointConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'sharepoint',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -217,18 +206,7 @@ export class SharepointConnectionService
       });
       this.logger.log('OAuth credentials updated : sharepoint ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_HRIS',
-          message: `SharepointConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'sharepoint',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

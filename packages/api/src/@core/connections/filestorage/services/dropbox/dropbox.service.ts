@@ -145,18 +145,7 @@ export class DropboxConnectionService implements IFilestorageConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_FILESTORAGE',
-          message: `DropboxConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'dropbox',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -205,18 +194,7 @@ export class DropboxConnectionService implements IFilestorageConnectionService {
       });
       this.logger.log('OAuth credentials updated : dropbox ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_FILESTORAGE',
-          message: `DropboxConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'dropbox',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

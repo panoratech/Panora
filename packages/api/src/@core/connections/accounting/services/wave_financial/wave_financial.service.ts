@@ -149,18 +149,7 @@ export class WaveFinancialConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
-          message: `WaveFinancialConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'wave_financial',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -206,18 +195,7 @@ export class WaveFinancialConnectionService
       });
       this.logger.log('OAuth credentials updated : wave_financial ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: `WaveFinancialConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'wave_financial',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

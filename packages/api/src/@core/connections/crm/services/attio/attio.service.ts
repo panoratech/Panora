@@ -137,23 +137,7 @@ export class AttioConnectionService implements ICrmConnectionService {
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `AttioConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'attio',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
-  }
-
-  // It is not required for Attio as it does not provide refresh_token
-  async handleTokenRefresh(opts: RefreshParams) {
-    return;
   }
 }

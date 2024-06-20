@@ -142,18 +142,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `HubspotConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'hubspot',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -198,18 +187,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : hubspot ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `HubspotConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'hubspot',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

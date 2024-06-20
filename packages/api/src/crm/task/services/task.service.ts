@@ -46,13 +46,7 @@ export class TaskService {
 
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_TASKS_ERROR',
-          message: 'TaskService.batchAddTasks() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -278,13 +272,7 @@ export class TaskService {
       );
       return result_task;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_TASK_ERROR',
-          message: 'TaskService.addTask() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -355,13 +343,7 @@ export class TaskService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_TASK_ERROR',
-          message: 'TaskService.getTask() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -498,13 +480,7 @@ export class TaskService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_TASKS_ERROR',
-          message: 'TaskService.getTasks() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 

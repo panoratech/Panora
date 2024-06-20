@@ -149,18 +149,7 @@ export class DeelConnectionService implements IHrisConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
-          message: `DeelConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'deel',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -209,18 +198,7 @@ export class DeelConnectionService implements IHrisConnectionService {
       });
       this.logger.log('OAuth credentials updated : deel ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_HRIS',
-          message: `DeelConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'deel',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

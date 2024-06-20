@@ -67,15 +67,7 @@ export class ManagementConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message:
-            'ManagementConnectionsService.handleManagementOAuthCallBack() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -100,15 +92,7 @@ export class ManagementConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_MARKETINGAUTOMATION',
-          message:
-            'ManagementConnectionsService.handleManagementTokensRefresh() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

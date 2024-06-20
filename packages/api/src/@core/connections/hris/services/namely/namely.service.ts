@@ -145,18 +145,7 @@ export class NamelyConnectionService implements IHrisConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
-          message: `NamelyConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'namely',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -201,18 +190,7 @@ export class NamelyConnectionService implements IHrisConnectionService {
       });
       this.logger.log('OAuth credentials updated : namely ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_HRIS',
-          message: `NamelyConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'namely',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

@@ -59,14 +59,7 @@ export class CrmConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: 'CrmConnectionsService.handleCrmOAuthCallBack() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -91,14 +84,7 @@ export class CrmConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: 'CrmConnectionsService.handleCrmTokensRefresh() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

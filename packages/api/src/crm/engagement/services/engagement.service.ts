@@ -49,13 +49,7 @@ export class EngagementService {
 
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_ENGAGEMENTS_ERROR',
-          message: 'EngagmentService.batchAddEngagements() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -297,13 +291,7 @@ export class EngagementService {
       );
       return result_engagement;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_ENGAGEMENT_ERROR',
-          message: 'EngagmentService.addEngagement() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -380,13 +368,7 @@ export class EngagementService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_ENGAGEMENT_ERROR',
-          message: 'EngagmentService.getEngagement() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -529,13 +511,7 @@ export class EngagementService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_ENGAGEMENTS_ERROR',
-          message: 'EngagmentService.getEngagements() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 

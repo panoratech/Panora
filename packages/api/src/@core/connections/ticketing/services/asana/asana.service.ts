@@ -139,18 +139,7 @@ export class AsanaConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `AsanaConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'asana',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -191,18 +180,7 @@ export class AsanaConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : asana ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
-          message: `AsanaConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'asana',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

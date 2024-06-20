@@ -51,13 +51,7 @@ export class ContactService {
 
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_CONTACTS_ERROR',
-          message: 'ContactService.batchAddContacts() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -405,13 +399,7 @@ export class ContactService {
       );
       return result_contact;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_CONTACT_ERROR',
-          message: 'ContactService.addContact() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -492,13 +480,7 @@ export class ContactService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_CONTACT_ERROR',
-          message: 'ContactService.getContact() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -648,13 +630,7 @@ export class ContactService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_CONTACTS_ERROR',
-          message: 'ContactService.getContacts() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
   //TODO

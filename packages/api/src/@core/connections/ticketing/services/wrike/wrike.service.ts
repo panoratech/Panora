@@ -150,18 +150,7 @@ export class WrikeConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `WrikeConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'wrike',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -203,18 +192,7 @@ export class WrikeConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : wrike ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
-          message: `WrikeConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'wrike',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

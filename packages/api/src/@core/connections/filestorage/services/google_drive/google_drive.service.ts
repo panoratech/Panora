@@ -151,18 +151,6 @@ export class GoogleDriveConnectionService
       }
       return db_res;
     } catch (error) {
-      /*throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_FILESTORAGE',
-          message: `GoogleDriveConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'google_drive',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );*/
       throw error;
     }
   }
@@ -209,18 +197,7 @@ export class GoogleDriveConnectionService
       });
       this.logger.log('OAuth credentials updated : google_drive ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_FILESTORAGE',
-          message: `GoogleDriveConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'google_drive',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

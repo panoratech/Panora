@@ -163,18 +163,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `JiraConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'jira',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -218,18 +207,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : jira ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
-          message: `JiraConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'jira',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

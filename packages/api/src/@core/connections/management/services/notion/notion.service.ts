@@ -138,18 +138,7 @@ export class NotionConnectionService implements IManagementConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
-          message: `NotionConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'notion',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

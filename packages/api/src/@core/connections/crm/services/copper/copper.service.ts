@@ -132,22 +132,7 @@ export class CopperConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `CopperConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'copper',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
-  }
-
-  async handleTokenRefresh(opts: RefreshParams) {
-    return;
   }
 }

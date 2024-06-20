@@ -67,15 +67,7 @@ export class MarketingAutomationConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message:
-            'MarketingAutomationConnectionsService.handleMarketingAutomationOAuthCallBack() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -100,15 +92,7 @@ export class MarketingAutomationConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_MARKETINGAUTOMATION',
-          message:
-            'MarketingAutomationConnectionsService.handleMarketingAutomationTokensRefresh() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

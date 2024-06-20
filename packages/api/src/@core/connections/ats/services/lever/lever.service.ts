@@ -183,18 +183,7 @@ export class LeverConnectionService implements IAtsConnectionService {
       });
       this.logger.log('OAuth credentials updated : lever ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ATS',
-          message: `LeverConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'lever',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

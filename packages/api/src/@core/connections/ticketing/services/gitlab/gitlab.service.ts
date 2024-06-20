@@ -141,18 +141,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `GitlabConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'gitlab',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -195,18 +184,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : gitlab ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
-          message: `GitlabConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'gitlab',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

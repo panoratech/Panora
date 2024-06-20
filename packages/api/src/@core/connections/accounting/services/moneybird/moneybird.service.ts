@@ -138,18 +138,7 @@ export class MoneybirdConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
-          message: `MoneybirdConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'moneybird',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -190,18 +179,7 @@ export class MoneybirdConnectionService
       });
       this.logger.log('OAuth credentials updated : moneybird ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: `MoneybirdConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'moneybird',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

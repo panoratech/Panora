@@ -143,18 +143,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `CapsuleConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'capsule',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -196,18 +185,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : capsule ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `CapsuleConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'capsule',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

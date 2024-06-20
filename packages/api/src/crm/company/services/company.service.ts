@@ -51,13 +51,7 @@ export class CompanyService {
 
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_COMPANIES_ERROR',
-          message: 'CompanyService.batchAddCompanies() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -373,13 +367,7 @@ export class CompanyService {
       );
       return result_company;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_COMPANY_ERROR',
-          message: 'CompanyService.addCompany() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -463,13 +451,7 @@ export class CompanyService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_COMPANY_ERROR',
-          message: 'CompanyService.getCompany() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -618,13 +600,7 @@ export class CompanyService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_COMPANIES_ERROR',
-          message: 'CompanyService.getCompanies() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 

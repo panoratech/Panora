@@ -149,18 +149,7 @@ export class GetresponseConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_MARKETINGAUTOMATION',
-          message: `GetresponseConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'getresponse',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -202,18 +191,7 @@ export class GetresponseConnectionService
       });
       this.logger.log('OAuth credentials updated : getresponse ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_MARKETINGAUTOMATION',
-          message: `GetresponseConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'getresponse',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

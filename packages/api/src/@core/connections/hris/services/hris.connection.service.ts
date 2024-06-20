@@ -68,15 +68,7 @@ export class HrisConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message:
-            'HrisConnectionsService.handleHrisOAuthCallBack() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -101,15 +93,7 @@ export class HrisConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_HRIS',
-          message:
-            'HrisConnectionsService.handleHrisTokensRefresh() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

@@ -233,18 +233,7 @@ export class XeroConnectionService implements IAccountingConnectionService {
       });
       this.logger.log('OAuth credentials updated : xero ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: `XeroConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'xero',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

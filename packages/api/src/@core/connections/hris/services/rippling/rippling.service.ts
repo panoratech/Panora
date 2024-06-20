@@ -151,18 +151,7 @@ export class RipplingConnectionService implements IHrisConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
-          message: `RipplingConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'rippling',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -205,18 +194,7 @@ export class RipplingConnectionService implements IHrisConnectionService {
       });
       this.logger.log('OAuth credentials updated : rippling ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_HRIS',
-          message: `RipplingConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'rippling',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

@@ -140,18 +140,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `LinearConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'linear',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 

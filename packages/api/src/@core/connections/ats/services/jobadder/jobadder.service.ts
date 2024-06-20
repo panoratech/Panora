@@ -185,18 +185,7 @@ export class JobadderConnectionService implements IAtsConnectionService {
       });
       this.logger.log('OAuth credentials updated : jobadder ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ATS',
-          message: `JobadderConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'jobadder',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

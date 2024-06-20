@@ -155,18 +155,7 @@ export class MailchimpConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_MARKETINGAUTOMATION',
-          message: `MailchimpConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'mailchimp',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 

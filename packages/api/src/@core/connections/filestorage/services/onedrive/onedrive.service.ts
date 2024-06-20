@@ -147,18 +147,7 @@ export class OneDriveConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_FILESTORAGE',
-          message: `OneDriveConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'onedrive',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -203,18 +192,7 @@ export class OneDriveConnectionService
       });
       this.logger.log('OAuth credentials updated : onedrive ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_FILESTORAGE',
-          message: `OneDriveConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'onedrive',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

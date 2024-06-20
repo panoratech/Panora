@@ -116,14 +116,7 @@ export class SyncService implements OnModuleInit {
         }
       }
     } catch (error) {
-      throwTypedError(
-        new SyncError({
-          name: 'CRM_COMPANY_SYNC_ERROR',
-          message: 'SyncService.syncCompanies() call failed with args',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 

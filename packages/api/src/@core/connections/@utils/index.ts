@@ -28,14 +28,7 @@ export class ConnectionUtils {
         remoteSource: res.provider_slug,
       };
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'GET_CONNECTION_FROM_CONNECTION_TOKEN_ERROR',
-          message:
-            'ConnectionUtils.getConnectionMetadataFromConnectionToken() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 

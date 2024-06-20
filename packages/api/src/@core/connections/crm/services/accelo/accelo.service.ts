@@ -149,18 +149,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `AcceloConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'accelo',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -205,18 +194,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : accelo ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `AcceloConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'accelo',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

@@ -92,15 +92,7 @@ export class AccountingConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message:
-            'AccountingConnectionsService.handleAccountingTokensRefresh() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

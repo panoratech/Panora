@@ -143,18 +143,7 @@ export class SageConnectionService implements IAccountingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
-          message: `SageConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'sage',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -197,18 +186,7 @@ export class SageConnectionService implements IAccountingConnectionService {
       });
       this.logger.log('OAuth credentials updated : sage ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: `SageConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'sage',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

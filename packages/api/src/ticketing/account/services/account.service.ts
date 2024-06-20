@@ -72,13 +72,7 @@ export class AccountService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_ACCOUNT_ERROR',
-          message: 'AccountService.getAccount() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -211,13 +205,7 @@ export class AccountService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_ACCOUNTS_ERROR',
-          message: 'AccountService.getAccounts() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

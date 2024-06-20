@@ -150,18 +150,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `GorgiasConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'gorgias',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -204,18 +193,7 @@ export class GorgiasConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : gorgias ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
-          message: `GorgiasConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'gorgias',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

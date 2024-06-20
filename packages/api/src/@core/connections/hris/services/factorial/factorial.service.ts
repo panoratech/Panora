@@ -150,18 +150,7 @@ export class FactorialConnectionService implements IHrisConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
-          message: `FactorialConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'factorial',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -207,18 +196,7 @@ export class FactorialConnectionService implements IHrisConnectionService {
       });
       this.logger.log('OAuth credentials updated : factorial ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_HRIS',
-          message: `FactorialConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'factorial',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

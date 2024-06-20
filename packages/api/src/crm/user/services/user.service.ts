@@ -82,13 +82,7 @@ export class UserService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_USER_ERROR',
-          message: 'UserService.getUser() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -220,13 +214,7 @@ export class UserService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_USERS_ERROR',
-          message: 'UserService.getUsers() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

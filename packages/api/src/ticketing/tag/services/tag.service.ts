@@ -71,13 +71,7 @@ export class TagService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_TAG_ERROR',
-          message: 'TagService.getTag() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -210,13 +204,7 @@ export class TagService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_TAGS_ERROR',
-          message: 'TagService.getTags() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

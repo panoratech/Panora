@@ -189,14 +189,7 @@ export class ConnectionsController {
       const params = `?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}&state=${state}&nonce=${nonce}&scope=${scope}`;
       res.redirect(`https://${account}.gorgias.com/oauth/authorize${params}`);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'OAUTH_CALLBACK_ERROR',
-          message: 'ConnectionsController.handleGorgiasAuthUrl() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }*/
 
@@ -350,14 +343,7 @@ export class ConnectionsController {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'GET_CONNECTIONS_ERROR',
-          message: 'ConnectionsController.getConnections() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

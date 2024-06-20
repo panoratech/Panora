@@ -146,18 +146,6 @@ export class FrontConnectionService implements ITicketingConnectionService {
       return db_res;
     } catch (error) {
       throw error;
-      /*throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `FrontConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'front',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );*/
     }
   }
 
@@ -199,18 +187,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : front ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
-          message: `FrontConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'front',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

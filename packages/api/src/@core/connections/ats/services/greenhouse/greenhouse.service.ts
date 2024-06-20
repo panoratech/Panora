@@ -187,18 +187,7 @@ export class GreenhouseConnectionService implements IAtsConnectionService {
       });
       this.logger.log('OAuth credentials updated : greenhouse ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ATS',
-          message: `GreenhouseConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'greenhouse',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

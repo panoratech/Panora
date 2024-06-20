@@ -68,15 +68,7 @@ export class FilestorageConnectionsService {
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message:
-            'FilestorageConnectionsService.handleFilestorageOAuthCallBack() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -101,15 +93,7 @@ export class FilestorageConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_FILESTORAGE',
-          message:
-            'FilestorageConnectionsService.handleFilestorageTokensRefresh() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

@@ -144,18 +144,7 @@ export class FreeagentConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
-          message: `FreeagentConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'freeagent',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -198,18 +187,7 @@ export class FreeagentConnectionService
       });
       this.logger.log('OAuth credentials updated : freeagent ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: `FreeagentConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'freeagent',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

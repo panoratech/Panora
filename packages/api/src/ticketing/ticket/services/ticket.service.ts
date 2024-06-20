@@ -48,13 +48,7 @@ export class TicketService {
       );
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_TICKETS_ERROR',
-          message: 'TicketService.batchAddTickets() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -345,13 +339,6 @@ export class TicketService {
       return result_ticket;
     } catch (error) {
       throw error;
-      /*throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_TICKET_ERROR',
-          message: 'TicketService.addTicket() call failed',
-          cause: error,
-        }),
-      );*/
     }
   }
 
@@ -427,13 +414,7 @@ export class TicketService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_TICKET_ERROR',
-          message: 'TicketService.getTicket() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -583,13 +564,7 @@ export class TicketService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_TICKETS_ERROR',
-          message: 'TicketService.getTickets() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
   //TODO

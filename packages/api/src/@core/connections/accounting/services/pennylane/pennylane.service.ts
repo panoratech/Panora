@@ -188,18 +188,7 @@ export class PennylaneConnectionService
       });
       this.logger.log('OAuth credentials updated : pennylane ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: `PennylaneConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'pennylane',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

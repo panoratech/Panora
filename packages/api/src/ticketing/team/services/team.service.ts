@@ -72,13 +72,7 @@ export class TeamService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_TEAM_ERROR',
-          message: 'TeamService.getTeam() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -212,13 +206,7 @@ export class TeamService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_TEAMS_ERROR',
-          message: 'TeamService.getTeams() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

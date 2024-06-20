@@ -144,18 +144,7 @@ export class QuickbooksConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
-          message: `QuickbooksConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'quickbooks',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -198,18 +187,7 @@ export class QuickbooksConnectionService
       });
       this.logger.log('OAuth credentials updated : quickbooks ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: `QuickbooksConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'quickbooks',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

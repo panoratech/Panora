@@ -192,18 +192,7 @@ export class GustoConnectionService implements IHrisConnectionService {
       });
       this.logger.log('OAuth credentials updated : gusto ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_HRIS',
-          message: `GustoConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'gusto',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

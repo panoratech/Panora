@@ -46,13 +46,7 @@ export class NoteService {
 
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_NOTES_ERROR',
-          message: 'NoteService.batchAddNotes() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -274,13 +268,7 @@ export class NoteService {
       );
       return result_note;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_NOTE_ERROR',
-          message: 'NoteService.addNote()) call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -349,13 +337,7 @@ export class NoteService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_NOTE_ERROR',
-          message: 'NoteService.getNote() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -490,13 +472,7 @@ export class NoteService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_NOTES_ERROR',
-          message: 'NoteService.getNotes() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

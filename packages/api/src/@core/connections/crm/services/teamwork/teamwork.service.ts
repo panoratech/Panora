@@ -141,18 +141,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `TeamworkConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'teamwork',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 

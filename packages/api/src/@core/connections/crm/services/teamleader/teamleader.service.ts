@@ -144,18 +144,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `TeamleaderConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'teamleader',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -197,18 +186,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : teamleader ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `TeamleaderConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'teamleader',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }
