@@ -1,0 +1,10 @@
+# AddScoreCardsResponse
+
+
+## Fields
+
+| Field                                                                                        | Type                                                                                         | Required                                                                                     | Description                                                                                  |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                                   | [components.HTTPMetadata](../../models/components/httpmetadata.md)                           | :heavy_check_mark:                                                                           | N/A                                                                                          |
+| `object`                                                                                     | [operations.AddScoreCardsResponseBody](../../models/operations/addscorecardsresponsebody.md) | :heavy_minus_sign:                                                                           | N/A                                                                                          |
+| `unifiedScoreCardOutputs`                                                                    | [components.UnifiedScoreCardOutput](../../models/components/unifiedscorecardoutput.md)[]     | :heavy_minus_sign:                                                                           | N/A                                                                                          |

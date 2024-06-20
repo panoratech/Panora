@@ -1,0 +1,11 @@
+# GetOfficesResponseBody
+
+
+## Fields
+
+| Field                                                                            | Type                                                                             | Required                                                                         | Description                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `message`                                                                        | *string*                                                                         | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `error`                                                                          | *string*                                                                         | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `statusCode`                                                                     | *number*                                                                         | :heavy_check_mark:                                                               | N/A                                                                              |
+| `data`                                                                           | [components.UnifiedOfficeOutput](../../models/components/unifiedofficeoutput.md) | :heavy_minus_sign:                                                               | N/A                                                                              |

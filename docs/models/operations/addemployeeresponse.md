@@ -1,0 +1,10 @@
+# AddEmployeeResponse
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                               | [components.HTTPMetadata](../../models/components/httpmetadata.md)                       | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `object`                                                                                 | [operations.AddEmployeeResponseBody](../../models/operations/addemployeeresponsebody.md) | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `unifiedEmployeeOutput`                                                                  | [components.UnifiedEmployeeOutput](../../models/components/unifiedemployeeoutput.md)     | :heavy_minus_sign:                                                                       | N/A                                                                                      |

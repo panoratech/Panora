@@ -1,0 +1,10 @@
+# AddJournalEntrysResponse
+
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                                         | [components.HTTPMetadata](../../models/components/httpmetadata.md)                                 | :heavy_check_mark:                                                                                 | N/A                                                                                                |
+| `object`                                                                                           | [operations.AddJournalEntrysResponseBody](../../models/operations/addjournalentrysresponsebody.md) | :heavy_minus_sign:                                                                                 | N/A                                                                                                |
+| `unifiedJournalEntryOutputs`                                                                       | [components.UnifiedJournalEntryOutput](../../models/components/unifiedjournalentryoutput.md)[]     | :heavy_minus_sign:                                                                                 | N/A                                                                                                |

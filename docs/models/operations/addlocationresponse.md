@@ -1,0 +1,10 @@
+# AddLocationResponse
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                               | [components.HTTPMetadata](../../models/components/httpmetadata.md)                       | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `object`                                                                                 | [operations.AddLocationResponseBody](../../models/operations/addlocationresponsebody.md) | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `unifiedLocationOutput`                                                                  | [components.UnifiedLocationOutput](../../models/components/unifiedlocationoutput.md)     | :heavy_minus_sign:                                                                       | N/A                                                                                      |

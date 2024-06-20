@@ -1,0 +1,10 @@
+# AddBenefitsResponse
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                               | [components.HTTPMetadata](../../models/components/httpmetadata.md)                       | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `object`                                                                                 | [operations.AddBenefitsResponseBody](../../models/operations/addbenefitsresponsebody.md) | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `unifiedBenefitOutputs`                                                                  | [components.UnifiedBenefitOutput](../../models/components/unifiedbenefitoutput.md)[]     | :heavy_minus_sign:                                                                       | N/A                                                                                      |

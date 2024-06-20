@@ -1,0 +1,10 @@
+# AddPayGroupResponse
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                               | [components.HTTPMetadata](../../models/components/httpmetadata.md)                       | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `object`                                                                                 | [operations.AddPayGroupResponseBody](../../models/operations/addpaygroupresponsebody.md) | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `unifiedPayGroupOutput`                                                                  | [components.UnifiedPayGroupOutput](../../models/components/unifiedpaygroupoutput.md)     | :heavy_minus_sign:                                                                       | N/A                                                                                      |

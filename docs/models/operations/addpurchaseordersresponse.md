@@ -1,0 +1,10 @@
+# AddPurchaseOrdersResponse
+
+
+## Fields
+
+| Field                                                                                                | Type                                                                                                 | Required                                                                                             | Description                                                                                          |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                                           | [components.HTTPMetadata](../../models/components/httpmetadata.md)                                   | :heavy_check_mark:                                                                                   | N/A                                                                                                  |
+| `object`                                                                                             | [operations.AddPurchaseOrdersResponseBody](../../models/operations/addpurchaseordersresponsebody.md) | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |
+| `unifiedPurchaseOrderOutputs`                                                                        | [components.UnifiedPurchaseOrderOutput](../../models/components/unifiedpurchaseorderoutput.md)[]     | :heavy_minus_sign:                                                                                   | N/A                                                                                                  |

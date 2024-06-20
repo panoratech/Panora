@@ -1,0 +1,10 @@
+# AddTicketsResponse
+
+
+## Fields
+
+| Field                                                                                  | Type                                                                                   | Required                                                                               | Description                                                                            |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                             | [components.HTTPMetadata](../../models/components/httpmetadata.md)                     | :heavy_check_mark:                                                                     | N/A                                                                                    |
+| `object`                                                                               | [operations.AddTicketsResponseBody](../../models/operations/addticketsresponsebody.md) | :heavy_minus_sign:                                                                     | N/A                                                                                    |
+| `unifiedTicketOutputs`                                                                 | [components.UnifiedTicketOutput](../../models/components/unifiedticketoutput.md)[]     | :heavy_minus_sign:                                                                     | N/A                                                                                    |

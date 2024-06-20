@@ -1,0 +1,10 @@
+# AddPhoneNumbersResponse
+
+
+## Fields
+
+| Field                                                                                            | Type                                                                                             | Required                                                                                         | Description                                                                                      |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `httpMeta`                                                                                       | [components.HTTPMetadata](../../models/components/httpmetadata.md)                               | :heavy_check_mark:                                                                               | N/A                                                                                              |
+| `object`                                                                                         | [operations.AddPhoneNumbersResponseBody](../../models/operations/addphonenumbersresponsebody.md) | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `unifiedPhoneNumberOutputs`                                                                      | [components.UnifiedPhoneNumberOutput](../../models/components/unifiedphonenumberoutput.md)[]     | :heavy_minus_sign:                                                                               | N/A                                                                                              |

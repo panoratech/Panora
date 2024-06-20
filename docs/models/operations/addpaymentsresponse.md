@@ -1,0 +1,10 @@
+# AddPaymentsResponse
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                               | [components.HTTPMetadata](../../models/components/httpmetadata.md)                       | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `object`                                                                                 | [operations.AddPaymentsResponseBody](../../models/operations/addpaymentsresponsebody.md) | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `unifiedPaymentOutputs`                                                                  | [components.UnifiedPaymentOutput](../../models/components/unifiedpaymentoutput.md)[]     | :heavy_minus_sign:                                                                       | N/A                                                                                      |

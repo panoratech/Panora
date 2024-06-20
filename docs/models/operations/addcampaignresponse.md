@@ -1,0 +1,10 @@
+# AddCampaignResponse
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                               | [components.HTTPMetadata](../../models/components/httpmetadata.md)                       | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `object`                                                                                 | [operations.AddCampaignResponseBody](../../models/operations/addcampaignresponsebody.md) | :heavy_minus_sign:                                                                       | N/A                                                                                      |
+| `unifiedCampaignOutput`                                                                  | [components.UnifiedCampaignOutput](../../models/components/unifiedcampaignoutput.md)     | :heavy_minus_sign:                                                                       | N/A                                                                                      |

@@ -1,0 +1,10 @@
+# AddApplicationsResponse
+
+
+## Fields
+
+| Field                                                                                            | Type                                                                                             | Required                                                                                         | Description                                                                                      |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `httpMeta`                                                                                       | [components.HTTPMetadata](../../models/components/httpmetadata.md)                               | :heavy_check_mark:                                                                               | N/A                                                                                              |
+| `object`                                                                                         | [operations.AddApplicationsResponseBody](../../models/operations/addapplicationsresponsebody.md) | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `unifiedApplicationOutputs`                                                                      | [components.UnifiedApplicationOutput](../../models/components/unifiedapplicationoutput.md)[]     | :heavy_minus_sign:                                                                               | N/A                                                                                              |

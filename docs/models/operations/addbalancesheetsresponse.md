@@ -1,0 +1,10 @@
+# AddBalanceSheetsResponse
+
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                                         | [components.HTTPMetadata](../../models/components/httpmetadata.md)                                 | :heavy_check_mark:                                                                                 | N/A                                                                                                |
+| `object`                                                                                           | [operations.AddBalanceSheetsResponseBody](../../models/operations/addbalancesheetsresponsebody.md) | :heavy_minus_sign:                                                                                 | N/A                                                                                                |
+| `unifiedBalanceSheetOutputs`                                                                       | [components.UnifiedBalanceSheetOutput](../../models/components/unifiedbalancesheetoutput.md)[]     | :heavy_minus_sign:                                                                                 | N/A                                                                                                |

@@ -1,0 +1,10 @@
+# AddBankinfosResponse
+
+
+## Fields
+
+| Field                                                                                      | Type                                                                                       | Required                                                                                   | Description                                                                                |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `httpMeta`                                                                                 | [components.HTTPMetadata](../../models/components/httpmetadata.md)                         | :heavy_check_mark:                                                                         | N/A                                                                                        |
+| `object`                                                                                   | [operations.AddBankinfosResponseBody](../../models/operations/addbankinfosresponsebody.md) | :heavy_minus_sign:                                                                         | N/A                                                                                        |
+| `unifiedBankInfoOutputs`                                                                   | [components.UnifiedBankInfoOutput](../../models/components/unifiedbankinfooutput.md)[]     | :heavy_minus_sign:                                                                         | N/A                                                                                        |

@@ -1,0 +1,10 @@
+# AddDependentsResponse
+
+
+## Fields
+
+| Field                                                                                        | Type                                                                                         | Required                                                                                     | Description                                                                                  |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `httpMeta`                                                                                   | [components.HTTPMetadata](../../models/components/httpmetadata.md)                           | :heavy_check_mark:                                                                           | N/A                                                                                          |
+| `object`                                                                                     | [operations.AddDependentsResponseBody](../../models/operations/adddependentsresponsebody.md) | :heavy_minus_sign:                                                                           | N/A                                                                                          |
+| `unifiedDependentOutputs`                                                                    | [components.UnifiedDependentOutput](../../models/components/unifieddependentoutput.md)[]     | :heavy_minus_sign:                                                                           | N/A                                                                                          |
