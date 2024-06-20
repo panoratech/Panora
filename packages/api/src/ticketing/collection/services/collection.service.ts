@@ -65,7 +65,7 @@ export class CollectionService {
   async getCollections(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -91,7 +91,7 @@ export class CollectionService {
       }
 
       const collections = await this.prisma.tcg_collections.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_collection: cursor,
@@ -106,7 +106,7 @@ export class CollectionService {
         },
       });
 
-      if (collections.length === pageSize + 1) {
+      if (collections.length === limit + 1) {
         next_cursor = Buffer.from(
           collections[collections.length - 1].id_tcg_collection,
         ).toString('base64');

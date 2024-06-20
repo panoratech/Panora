@@ -350,7 +350,7 @@ export class TaskService {
   async getTasks(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -376,7 +376,7 @@ export class TaskService {
       }
 
       const tasks = await this.prisma.crm_tasks.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_task: cursor,
@@ -391,7 +391,7 @@ export class TaskService {
         },
       });
 
-      if (tasks.length === pageSize + 1) {
+      if (tasks.length === limit + 1) {
         next_cursor = Buffer.from(tasks[tasks.length - 1].id_crm_task).toString(
           'base64',
         );

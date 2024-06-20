@@ -27,8 +27,8 @@ export class EventsService {
       // Then, use those ids to filter the events
       return await this.prisma.events.findMany({
         orderBy: { timestamp: 'desc' },
-        skip: (dto.page - 1) * dto.pageSize,
-        take: dto.pageSize,
+        skip: (dto.page - 1) * dto.limit,
+        take: dto.limit,
         where: {
           id_linked_user: {
             in: linkedUserIds,

@@ -20,18 +20,18 @@ export function ApiDataTablePagination(props: DataTablePaginationProps) {
           <p className='text-sm font-medium'>Rows per page</p>
           <Select
             disabled={props.totalItems <= 10 || props.isLoading}
-            value={`${props.pageSize}`}
+            value={`${props.limit}`}
             onValueChange={(value) => {
               props.setPageSize(Number(value));
             }}
           >
             <SelectTrigger className='h-8 w-[70px]'>
-              <SelectValue placeholder={props.pageSize} />
+              <SelectValue placeholder={props.limit} />
             </SelectTrigger>
             <SelectContent side='top'>
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
+              {[10, 20, 30, 40, 50].map((limit) => (
+                <SelectItem key={limit} value={`${limit}`}>
+                  {limit}
                 </SelectItem>
               ))}
             </SelectContent>

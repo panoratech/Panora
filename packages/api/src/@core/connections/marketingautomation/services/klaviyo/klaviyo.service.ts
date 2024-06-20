@@ -1,45 +1,51 @@
 import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ITicketingConnectionService } from '../../types';
+import { IMarketingAutomationConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import {
-  AuthStrategy,
-  CONNECTORS_METADATA,
-  OAuth2AuthData,
-  providerToType,
-} from '@panora/shared';
+import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
+import { OAuth2AuthData, providerToType } from '@panora/shared';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
   OAuthCallbackParams,
   RefreshParams,
 } from '@@core/connections/@utils/types';
-import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
-import axios from 'axios';
 
-export type HelpscoutOAuthResponse = {
+export type KlaviyoOAuthResponse = {
   access_token: string;
   refresh_token: string;
   expires_in: string;
   token_type: string;
+  scope: string;
 };
+
 @Injectable()
-export class HelpscoutConnectionService implements ITicketingConnectionService {
+export class KlaviyoConnectionService
+  implements IMarketingAutomationConnectionService
+{
   private readonly type: string;
 
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
+    private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
     private connectionUtils: ConnectionUtils,
   ) {
-    this.logger.setContext(HelpscoutConnectionService.name);
-    this.registry.registerService('helpscout', this);
-    this.type = providerToType('helpscout', 'ticketing', AuthStrategy.oauth2);
+    this.logger.setContext(KlaviyoConnectionService.name);
+    this.registry.registerService('klaviyo', this);
+    this.type = providerToType(
+      'klaviyo',
+      'marketingautomation',
+      AuthStrategy.oauth2,
+    );
   }
 
   async handleCallback(opts: OAuthCallbackParams) {
@@ -48,34 +54,39 @@ export class HelpscoutConnectionService implements ITicketingConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'helpscout',
-          vertical: 'ticketing',
+          provider_slug: 'klaviyo',
+          vertical: 'marketingautomation',
         },
       });
 
+      //reconstruct the redirect URI that was passed in the githubend it must be the same
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
-      const formData = {
-        grant_type: 'authorization_code',
+      const formData = new URLSearchParams({
+        redirect_uri: REDIRECT_URI,
         code: code,
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-      };
+        code_verifier: '', // TODO
+        grant_type: 'authorization_code',
+      });
       const res = await axios.post(
-        `https://api.helpscout.net/v2/oauth2/token`,
-        JSON.stringify(formData),
+        'https://a.klaviyo.com/oauth/token',
+        formData.toString(),
         {
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            Authorization: `Basic ${Buffer.from(
+              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+            ).toString('base64')}`,
           },
         },
       );
-      const data: HelpscoutOAuthResponse = res.data;
+      const data: KlaviyoOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : helpscout ticketing ' + JSON.stringify(data),
+        'OAuth credentials : klaviyo ticketing ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -89,8 +100,8 @@ export class HelpscoutConnectionService implements ITicketingConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['ticketing']['helpscout'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['marketingautomation']['klaviyo']
+              .urls.apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -103,11 +114,11 @@ export class HelpscoutConnectionService implements ITicketingConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'helpscout',
-            vertical: 'ticketing',
+            provider_slug: 'klaviyo',
+            vertical: 'marketingautomation',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['ticketing']['helpscout'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['marketingautomation']['klaviyo']
+              .urls.apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -134,6 +145,7 @@ export class HelpscoutConnectionService implements ITicketingConnectionService {
       throw error;
     }
   }
+
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
@@ -144,12 +156,9 @@ export class HelpscoutConnectionService implements ITicketingConnectionService {
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
       });
-
       const res = await axios.post(
-        `https://api.helpscout.net/v2/oauth2/token`,
+        'https://a.klaviyo.com/oauth/token',
         formData.toString(),
         {
           headers: {
@@ -160,7 +169,7 @@ export class HelpscoutConnectionService implements ITicketingConnectionService {
           },
         },
       );
-      const data: HelpscoutOAuthResponse = res.data;
+      const data: KlaviyoOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
@@ -173,7 +182,7 @@ export class HelpscoutConnectionService implements ITicketingConnectionService {
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : helpscout ');
+      this.logger.log('OAuth credentials updated : klaviyo ');
     } catch (error) {
       throw error;
     }

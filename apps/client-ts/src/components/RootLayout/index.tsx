@@ -97,7 +97,6 @@ export const RootLayout = ({children}:{children:React.ReactNode}) => {
               <div className="space-y-4 py-4 pt-10">
                 <div className="px-3 py-2">
                   <div className="space-y-3">
-                    <p className='text-xs dark:text-gray-400 cursor-default text-gray-950 font-semibold'>Project</p>
                     <div className='flex gap-2 items-center'>
                       <TeamSwitcher className='w-40 ml-3' projects={projectsData? projectsData : []}/>
                       <div 

@@ -125,7 +125,7 @@ export default function ConnectionTable() {
           <AddConnectionButton setIsGenerated={setIsGenerated} />
         }
         <Suspense>
-          {ts && <DataTable data={ts} columns={columns} />}
+          {ts && <DataTable data={ts} columns={columns}/>}
         </Suspense>
       </div>
     </>

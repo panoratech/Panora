@@ -79,7 +79,7 @@ export class TeamService {
   async getTeams(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -107,7 +107,7 @@ export class TeamService {
       }
 
       const teams = await this.prisma.tcg_teams.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_team: cursor,
@@ -122,7 +122,7 @@ export class TeamService {
         },
       });
 
-      if (teams.length === pageSize + 1) {
+      if (teams.length === limit + 1) {
         next_cursor = Buffer.from(teams[teams.length - 1].id_tcg_team).toString(
           'base64',
         );

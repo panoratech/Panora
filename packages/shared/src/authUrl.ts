@@ -29,7 +29,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   if (!config) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
-  const authStrategy = config.authStrategy!;
+  const authStrategy = config.authStrategy!.strategy;
 
   switch (authStrategy) {
     case AuthStrategy.oauth2:
@@ -120,6 +120,10 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // Default URL structure
   let params = `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
+  if(providerName == "helpscout"){
+    params = `client_id=${encodeURIComponent(clientId)}&state=${state}`;
+  }
+
   if (scopes) {
     if(providerName === 'slack') {
       params += `&scope=&user_scope=${encodeURIComponent(scopes)}`;
@@ -160,6 +164,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     case 'notion':
       params += `&owner=user`
       break;
+    case 'klaviyo':
+      params += `&code_challenge_method=S256&code_challenge=` // TODO
     default:
       break;
   }

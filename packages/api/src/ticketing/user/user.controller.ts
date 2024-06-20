@@ -58,12 +58,12 @@ export class UserController {
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
-    const { remote_data, pageSize, cursor } = query;
+    const { remote_data, limit, cursor } = query;
 
     return this.userService.getUsers(
       remoteSource,
       linkedUserId,
-      pageSize,
+      limit,
       remote_data,
       cursor,
     );

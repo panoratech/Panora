@@ -79,7 +79,7 @@ export class StageService {
   async getStages(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -105,7 +105,7 @@ export class StageService {
       }
 
       const stages = await this.prisma.crm_deals_stages.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_deals_stage: cursor,
@@ -120,7 +120,7 @@ export class StageService {
         },
       });
 
-      if (stages.length === pageSize + 1) {
+      if (stages.length === limit + 1) {
         next_cursor = Buffer.from(
           stages[stages.length - 1].id_crm_deals_stage,
         ).toString('base64');

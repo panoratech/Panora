@@ -487,7 +487,7 @@ export class ContactService {
   async getContacts(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -515,7 +515,7 @@ export class ContactService {
       }
 
       const contacts = await this.prisma.crm_contacts.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_contact: cursor,
@@ -535,7 +535,7 @@ export class ContactService {
         },
       });
 
-      if (contacts.length === pageSize + 1) {
+      if (contacts.length === limit + 1) {
         next_cursor = Buffer.from(
           contacts[contacts.length - 1].id_crm_contact,
         ).toString('base64');

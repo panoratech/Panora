@@ -32,18 +32,18 @@ import {
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium">Rows per page</p>
             <Select
-              value={`${table.getState().pagination.pageSize}`}
+              value={`${table.getState().pagination.limit}`}
               onValueChange={(value) => {
                 table.setPageSize(Number(value))
               }}
             >
               <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue placeholder={table.getState().pagination.pageSize} />
+                <SelectValue placeholder={table.getState().pagination.limit} />
               </SelectTrigger>
               <SelectContent side="top">
-                {[10, 20, 30, 40, 50].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
+                {[10, 20, 30, 40, 50].map((limit) => (
+                  <SelectItem key={limit} value={`${limit}`}>
+                    {limit}
                   </SelectItem>
                 ))}
               </SelectContent>

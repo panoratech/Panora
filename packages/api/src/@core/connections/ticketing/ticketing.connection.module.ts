@@ -23,6 +23,7 @@ import { DixaConnectionService } from './services/dixa/dixa.service';
 import { HelpscoutConnectionService } from './services/helpscout/helpscout.service';
 import { AsanaConnectionService } from './services/asana/asana.service';
 import { WrikeConnectionService } from './services/wrike/wrike.service';
+import { IroncladConnectionService } from './services/ironclad/ironclad.service';
 
 @Module({
   imports: [WebhookModule, ManagedWebhooksModule],
@@ -49,6 +50,7 @@ import { WrikeConnectionService } from './services/wrike/wrike.service';
     HelpscoutConnectionService,
     AsanaConnectionService,
     WrikeConnectionService,
+    IroncladConnectionService,
   ],
   exports: [TicketingConnectionsService],
 })

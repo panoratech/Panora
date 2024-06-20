@@ -13,6 +13,7 @@ import { PodiumConnectionService } from './services/podium/podium.service';
 import { MailchimpConnectionService } from './services/mailchimp/mailchimp.service';
 import { GetresponseConnectionService } from './services/getresponse/getresponse.service';
 import { KeapConnectionService } from './services/keap/keap.service';
+import { KlaviyoConnectionService } from './services/klaviyo/klaviyo.service';
 
 @Module({
   imports: [WebhookModule],
@@ -31,6 +32,7 @@ import { KeapConnectionService } from './services/keap/keap.service';
     MailchimpConnectionService,
     GetresponseConnectionService,
     KeapConnectionService,
+    KlaviyoConnectionService,
   ],
   exports: [MarketingAutomationConnectionsService],
 })

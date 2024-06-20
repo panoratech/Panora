@@ -204,7 +204,7 @@ export class AttachmentService {
   async getAttachments(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -230,7 +230,7 @@ export class AttachmentService {
         }
       }
       const attachments = await this.prisma.tcg_attachments.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_attachment: cursor,
@@ -245,7 +245,7 @@ export class AttachmentService {
         },
       });
 
-      if (attachments.length === pageSize + 1) {
+      if (attachments.length === limit + 1) {
         next_cursor = Buffer.from(
           attachments[attachments.length - 1].id_tcg_attachment,
         ).toString('base64');

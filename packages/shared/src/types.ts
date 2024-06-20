@@ -3,7 +3,11 @@ export enum AuthStrategy {
     api_key = 'API Key',
     basic = 'Basic Auth'
 }
-  
+
+export type AuthType = {
+    strategy: AuthStrategy;
+    properties?: string[]; // for api key it is needed to know what is asked e.g apikey, usertoken etc
+}
 export enum SoftwareMode {
     cloud = 'CLOUD',
 }
@@ -19,7 +23,7 @@ export type ProviderConfig = {
     description: string;
     active?: boolean;
     customPropertiesUrl?: string;
-    authStrategy?: AuthStrategy;
+    authStrategy?: AuthType;
     urls: {
         docsUrl: string;
         apiUrl: StaticApiUrl | DynamicApiUrl;

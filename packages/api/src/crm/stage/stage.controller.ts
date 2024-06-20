@@ -59,11 +59,11 @@ export class StageController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, pageSize, cursor } = query;
+      const { remote_data, limit, cursor } = query;
       return this.stageService.getStages(
         remoteSource,
         linkedUserId,
-        pageSize,
+        limit,
         remote_data,
         cursor,
       );

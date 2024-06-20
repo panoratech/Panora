@@ -2,7 +2,7 @@ import { ApiProperty, ApiQuery } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
-// To provide a default pageSize
+// To provide a default limit
 const DEFAULT_PAGE_SIZE = 50;
 
 export class FetchObjectsQueryDto {
@@ -19,14 +19,14 @@ export class FetchObjectsQueryDto {
   remote_data: boolean;
 
   @ApiProperty({
-    name: 'pageSize',
+    name: 'limit',
     required: false,
     description: 'Set to get the number of records.',
   })
   @IsOptional()
   @IsNumber()
   @Transform((p) => Number(p.value))
-  pageSize: number = DEFAULT_PAGE_SIZE;
+  limit: number = DEFAULT_PAGE_SIZE;
 
   @ApiProperty({
     name: 'cursor',

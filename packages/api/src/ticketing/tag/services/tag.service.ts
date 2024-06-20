@@ -78,7 +78,7 @@ export class TagService {
   async getTags(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -106,7 +106,7 @@ export class TagService {
       }
 
       const tags = await this.prisma.tcg_tags.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_tag: cursor,
@@ -121,7 +121,7 @@ export class TagService {
         },
       });
 
-      if (tags.length === pageSize + 1) {
+      if (tags.length === limit + 1) {
         next_cursor = Buffer.from(tags[tags.length - 1].id_tcg_tag).toString(
           'base64',
         );

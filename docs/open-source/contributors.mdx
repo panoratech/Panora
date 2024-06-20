@@ -230,11 +230,14 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
   <Step title="Enable your new service">
     After these 3 files are successfully created and filled, you are ready to fix all dependencies/linting issues that you may have. <br/>
     To make sure the service is enabled, dependencies and imports must be added. <br/>
-    We built a script that does it in seconds. You can execute the given command from the root directory of Panora.
+    We built a script that does it in seconds. You can run the given Docker commands from the root directory of Panora.
 
     ```bash
-    cd packages/api && pnpm install && pnpm run validate-connectors --category="crm" --objectType="contact"
+      docker build -t validate_connectors -f ./packages/api/Dockerfile.validate-connectors .
     ```
+    ```bash
+      docker run -v $(pwd):/app/ -e VERTICAL=crm -e OBJECT_TYPE=contact validate_connectors
+    ```    
 
     The script will automatically scan the `/crm/contact/services` folder and detect any new service folder so all dependencies and imports are updated across the codebase.
 

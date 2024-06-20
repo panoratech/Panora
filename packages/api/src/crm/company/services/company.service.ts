@@ -458,7 +458,7 @@ export class CompanyService {
   async getCompanies(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -484,7 +484,7 @@ export class CompanyService {
       }
 
       const companies = await this.prisma.crm_companies.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_company: cursor,
@@ -504,7 +504,7 @@ export class CompanyService {
         },
       });
 
-      if (companies.length === pageSize + 1) {
+      if (companies.length === limit + 1) {
         next_cursor = Buffer.from(
           companies[companies.length - 1].id_crm_company,
         ).toString('base64');

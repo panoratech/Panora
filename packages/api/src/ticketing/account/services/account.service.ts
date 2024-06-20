@@ -79,7 +79,7 @@ export class AccountService {
   async getAccounts(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -107,7 +107,7 @@ export class AccountService {
       }
 
       const accounts = await this.prisma.tcg_accounts.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_account: cursor,
@@ -122,7 +122,7 @@ export class AccountService {
         },
       });
 
-      if (accounts.length === pageSize + 1) {
+      if (accounts.length === limit + 1) {
         next_cursor = Buffer.from(
           accounts[accounts.length - 1].id_tcg_account,
         ).toString('base64');
