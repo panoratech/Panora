@@ -34,7 +34,7 @@ export class OfficeController {
   }
 
   @ApiOperation({
-    operationId: 'getOffices',
+    operationId: 'list',
     summary: 'List a batch of Offices',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class OfficeController {
   @ApiCustomResponse(UnifiedOfficeOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getOffices(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -72,7 +72,7 @@ export class OfficeController {
   }
 
   @ApiOperation({
-    operationId: 'getOffice',
+    operationId: 'retrieve',
     summary: 'Retrieve a Office',
     description: 'Retrieve a office from any connected Ats software',
   })
@@ -91,7 +91,7 @@ export class OfficeController {
   @ApiCustomResponse(UnifiedOfficeOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getOffice(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -99,7 +99,7 @@ export class OfficeController {
   }
 
   @ApiOperation({
-    operationId: 'addOffice',
+    operationId: 'create',
     summary: 'Create a Office',
     description: 'Create a office in any supported Ats software',
   })
@@ -119,7 +119,7 @@ export class OfficeController {
   @ApiCustomResponse(UnifiedOfficeOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addOffice(
+  async create(
     @Body() unifiedOfficeData: UnifiedOfficeInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -131,47 +131,6 @@ export class OfficeController {
         );
       return this.officeService.addOffice(
         unifiedOfficeData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addOffices',
-    summary: 'Add a batch of Offices',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedOfficeInput, isArray: true })
-  @ApiCustomResponse(UnifiedOfficeOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addOffices(
-    @Body() unfiedOfficeData: UnifiedOfficeInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.officeService.batchAddOffices(
-        unfiedOfficeData,
         remoteSource,
         linkedUserId,
         remote_data,

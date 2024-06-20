@@ -34,7 +34,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationEvents',
+    operationId: 'list',
     summary: 'List a batch of Events',
   })
   @ApiHeader({
@@ -53,7 +53,7 @@ export class EventController {
   @ApiCustomResponse(UnifiedEventOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getEvents(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -73,7 +73,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'getEvent',
+    operationId: 'retrieve',
     summary: 'Retrieve a Event',
     description:
       'Retrieve a event from any connected Marketingautomation software',
@@ -94,7 +94,7 @@ export class EventController {
   @ApiCustomResponse(UnifiedEventOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getEvent(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'addEvent',
+    operationId: 'create',
     summary: 'Create a Event',
     description: 'Create a event in any supported Marketingautomation software',
   })
@@ -123,7 +123,7 @@ export class EventController {
   @ApiCustomResponse(UnifiedEventOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addEvent(
+  async create(
     @Body() unifiedEventData: UnifiedEventInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -135,48 +135,6 @@ export class EventController {
         );
       return this.eventService.addEvent(
         unifiedEventData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addEvents',
-    summary: 'Add a batch of Events',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedEventInput, isArray: true })
-  @ApiCustomResponse(UnifiedEventOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addEvents(
-    @Body() unfiedEventData: UnifiedEventInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.eventService.batchAddEvents(
-        unfiedEventData,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -37,7 +37,7 @@ export class BankinfoController {
   }
 
   @ApiOperation({
-    operationId: 'getBankinfos',
+    operationId: 'list',
     summary: 'List a batch of Bankinfos',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class BankinfoController {
   @ApiCustomResponse(UnifiedBankInfoOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getBankinfos(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class BankinfoController {
   }
 
   @ApiOperation({
-    operationId: 'getBankinfo',
+    operationId: 'retrieve',
     summary: 'Retrieve a Bankinfo',
     description: 'Retrieve a bankinfo from any connected Hris software',
   })
@@ -94,7 +94,7 @@ export class BankinfoController {
   @ApiCustomResponse(UnifiedBankInfoOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getBankinfo(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class BankinfoController {
   }
 
   @ApiOperation({
-    operationId: 'addBankinfo',
+    operationId: 'create',
     summary: 'Create a Bankinfo',
     description: 'Create a bankinfo in any supported Hris software',
   })
@@ -122,7 +122,7 @@ export class BankinfoController {
   @ApiCustomResponse(UnifiedBankInfoOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addBankinfo(
+  async create(
     @Body() unifiedBankinfoData: UnifiedBankInfoInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,47 +134,6 @@ export class BankinfoController {
         );
       return this.bankinfoService.addBankinfo(
         unifiedBankinfoData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addBankinfos',
-    summary: 'Add a batch of Bankinfos',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedBankInfoInput, isArray: true })
-  @ApiCustomResponse(UnifiedBankInfoOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addBankinfos(
-    @Body() unfiedBankinfoData: UnifiedBankInfoInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.bankinfoService.batchAddBankinfos(
-        unfiedBankinfoData,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -37,7 +37,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoffs',
+    operationId: 'list',
     summary: 'List a batch of Timeoffs',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class TimeoffController {
   @ApiCustomResponse(UnifiedTimeoffOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getTimeoffs(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoff',
+    operationId: 'retrieve',
     summary: 'Retrieve a Timeoff',
     description: 'Retrieve a timeoff from any connected Hris software',
   })
@@ -94,7 +94,7 @@ export class TimeoffController {
   @ApiCustomResponse(UnifiedTimeoffOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getTimeoff(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'addTimeoff',
+    operationId: 'create',
     summary: 'Create a Timeoff',
     description: 'Create a timeoff in any supported Hris software',
   })
@@ -122,7 +122,7 @@ export class TimeoffController {
   @ApiCustomResponse(UnifiedTimeoffOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addTimeoff(
+  async create(
     @Body() unifiedTimeoffData: UnifiedTimeoffInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,47 +134,6 @@ export class TimeoffController {
         );
       return this.timeoffService.addTimeoff(
         unifiedTimeoffData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addTimeoffs',
-    summary: 'Add a batch of Timeoffs',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedTimeoffInput, isArray: true })
-  @ApiCustomResponse(UnifiedTimeoffOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addTimeoffs(
-    @Body() unfiedTimeoffData: UnifiedTimeoffInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.timeoffService.batchAddTimeoffs(
-        unfiedTimeoffData,
         remoteSource,
         linkedUserId,
         remote_data,

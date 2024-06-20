@@ -37,7 +37,7 @@ export class InvoiceController {
   }
 
   @ApiOperation({
-    operationId: 'getInvoices',
+    operationId: 'list',
     summary: 'List a batch of Invoices',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class InvoiceController {
   @ApiCustomResponse(UnifiedInvoiceOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getInvoices(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class InvoiceController {
   }
 
   @ApiOperation({
-    operationId: 'getInvoice',
+    operationId: 'retrieve',
     summary: 'Retrieve a Invoice',
     description: 'Retrieve a invoice from any connected Accounting software',
   })
@@ -96,7 +96,7 @@ export class InvoiceController {
   @ApiCustomResponse(UnifiedInvoiceOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getInvoice(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -104,7 +104,7 @@ export class InvoiceController {
   }
 
   @ApiOperation({
-    operationId: 'addInvoice',
+    operationId: 'create',
     summary: 'Create a Invoice',
     description: 'Create a invoice in any supported Accounting software',
   })
@@ -125,7 +125,7 @@ export class InvoiceController {
   @ApiCustomResponse(UnifiedInvoiceOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addInvoice(
+  async create(
     @Body() unifiedInvoiceData: UnifiedInvoiceInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -137,48 +137,6 @@ export class InvoiceController {
         );
       return this.invoiceService.addInvoice(
         unifiedInvoiceData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addInvoices',
-    summary: 'Add a batch of Invoices',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedInvoiceInput, isArray: true })
-  @ApiCustomResponse(UnifiedInvoiceOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addInvoices(
-    @Body() unfiedInvoiceData: UnifiedInvoiceInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.invoiceService.batchAddInvoices(
-        unfiedInvoiceData,
         remoteSource,
         linkedUserId,
         remote_data,

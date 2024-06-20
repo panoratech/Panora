@@ -34,7 +34,7 @@ export class DriveController {
   }
 
   @ApiOperation({
-    operationId: 'getDrives',
+    operationId: 'list',
     summary: 'List a batch of Drives',
   })
   @ApiHeader({
@@ -53,7 +53,7 @@ export class DriveController {
   @ApiCustomResponse(UnifiedDriveOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getDrives(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -73,7 +73,7 @@ export class DriveController {
   }
 
   @ApiOperation({
-    operationId: 'getDrive',
+    operationId: 'retrieve',
     summary: 'Retrieve a Drive',
     description: 'Retrieve a drive from any connected Filestorage software',
   })
@@ -93,7 +93,7 @@ export class DriveController {
   @ApiCustomResponse(UnifiedDriveOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getDrive(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -101,7 +101,7 @@ export class DriveController {
   }
 
   @ApiOperation({
-    operationId: 'addDrive',
+    operationId: 'create',
     summary: 'Create a Drive',
     description: 'Create a drive in any supported Filestorage software',
   })
@@ -122,7 +122,7 @@ export class DriveController {
   @ApiCustomResponse(UnifiedDriveOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addDrive(
+  async create(
     @Body() unifiedDriveData: UnifiedDriveInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,48 +134,6 @@ export class DriveController {
         );
       return this.driveService.addDrive(
         unifiedDriveData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addDrives',
-    summary: 'Add a batch of Drives',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
-  @ApiBody({ type: UnifiedDriveInput, isArray: true })
-  @ApiCustomResponse(UnifiedDriveOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addDrives(
-    @Body() unfiedDriveData: UnifiedDriveInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.driveService.batchAddDrives(
-        unfiedDriveData,
         remoteSource,
         linkedUserId,
         remote_data,

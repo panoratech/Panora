@@ -34,7 +34,7 @@ export class ActionController {
   }
 
   @ApiOperation({
-    operationId: 'getActions',
+    operationId: 'list',
     summary: 'List a batch of Actions',
   })
   @ApiHeader({
@@ -53,7 +53,7 @@ export class ActionController {
   @ApiCustomResponse(UnifiedActionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getActions(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -73,7 +73,7 @@ export class ActionController {
   }
 
   @ApiOperation({
-    operationId: 'getAction',
+    operationId: 'retrieve',
     summary: 'Retrieve a Action',
     description:
       'Retrieve a action from any connected Marketingautomation software',
@@ -94,7 +94,7 @@ export class ActionController {
   @ApiCustomResponse(UnifiedActionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getAction(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class ActionController {
   }
 
   @ApiOperation({
-    operationId: 'addAction',
+    operationId: 'create',
     summary: 'Create a Action',
     description:
       'Create a action in any supported Marketingautomation software',
@@ -124,7 +124,7 @@ export class ActionController {
   @ApiCustomResponse(UnifiedActionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addAction(
+  async create(
     @Body() unifiedActionData: UnifiedActionInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -136,48 +136,6 @@ export class ActionController {
         );
       return this.actionService.addAction(
         unifiedActionData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addActions',
-    summary: 'Add a batch of Actions',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedActionInput, isArray: true })
-  @ApiCustomResponse(UnifiedActionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addActions(
-    @Body() unfiedActionData: UnifiedActionInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.actionService.batchAddActions(
-        unfiedActionData,
         remoteSource,
         linkedUserId,
         remote_data,

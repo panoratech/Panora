@@ -37,7 +37,7 @@ export class PermissionController {
   }
 
   @ApiOperation({
-    operationId: 'getPermissions',
+    operationId: 'list',
     summary: 'List a batch of Permissions',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class PermissionController {
   @ApiCustomResponse(UnifiedPermissionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getPermissions(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class PermissionController {
   }
 
   @ApiOperation({
-    operationId: 'getPermission',
+    operationId: 'retrieve',
     summary: 'Retrieve a Permission',
     description:
       'Retrieve a permission from any connected Filestorage software',
@@ -97,7 +97,7 @@ export class PermissionController {
   @ApiCustomResponse(UnifiedPermissionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getPermission(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -105,7 +105,7 @@ export class PermissionController {
   }
 
   @ApiOperation({
-    operationId: 'addPermission',
+    operationId: 'create',
     summary: 'Create a Permission',
     description: 'Create a permission in any supported Filestorage software',
   })
@@ -126,7 +126,7 @@ export class PermissionController {
   @ApiCustomResponse(UnifiedPermissionOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addPermission(
+  async create(
     @Body() unifiedPermissionData: UnifiedPermissionInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -145,61 +145,5 @@ export class PermissionController {
     } catch (error) {
       throw new Error(error);
     }
-  }
-
-  @ApiOperation({
-    operationId: 'addPermissions',
-    summary: 'Add a batch of Permissions',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
-  @ApiBody({ type: UnifiedPermissionInput, isArray: true })
-  @ApiCustomResponse(UnifiedPermissionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addPermissions(
-    @Body() unfiedPermissionData: UnifiedPermissionInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.permissionService.batchAddPermissions(
-        unfiedPermissionData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'updatePermission',
-    summary: 'Update a Permission',
-  })
-  @ApiCustomResponse(UnifiedPermissionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updatePermission(
-    @Query('id') id: string,
-    @Body() updatePermissionData: Partial<UnifiedPermissionInput>,
-  ) {
-    return;
   }
 }

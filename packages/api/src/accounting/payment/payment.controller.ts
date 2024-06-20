@@ -37,7 +37,7 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'getPayments',
+    operationId: 'list',
     summary: 'List a batch of Payments',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class PaymentController {
   @ApiCustomResponse(UnifiedPaymentOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getPayments(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'getPayment',
+    operationId: 'retrieve',
     summary: 'Retrieve a Payment',
     description: 'Retrieve a payment from any connected Accounting software',
   })
@@ -96,7 +96,7 @@ export class PaymentController {
   @ApiCustomResponse(UnifiedPaymentOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getPayment(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -104,7 +104,7 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'addPayment',
+    operationId: 'create',
     summary: 'Create a Payment',
     description: 'Create a payment in any supported Accounting software',
   })
@@ -125,7 +125,7 @@ export class PaymentController {
   @ApiCustomResponse(UnifiedPaymentOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addPayment(
+  async create(
     @Body() unifiedPaymentData: UnifiedPaymentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -137,48 +137,6 @@ export class PaymentController {
         );
       return this.paymentService.addPayment(
         unifiedPaymentData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addPayments',
-    summary: 'Add a batch of Payments',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedPaymentInput, isArray: true })
-  @ApiCustomResponse(UnifiedPaymentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addPayments(
-    @Body() unfiedPaymentData: UnifiedPaymentInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.paymentService.batchAddPayments(
-        unfiedPaymentData,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -41,7 +41,7 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'getTickets',
+    operationId: 'list',
     summary: 'List a batch of Tickets',
   })
   @ApiHeader({
@@ -54,7 +54,7 @@ export class TicketController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async getTickets(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -77,7 +77,7 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'getTicket',
+    operationId: 'retrieve',
     summary: 'Retrieve a Ticket',
     description: 'Retrieve a ticket from any connected Ticketing software',
   })
@@ -97,7 +97,7 @@ export class TicketController {
   @ApiCustomResponse(UnifiedTicketOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getTicket(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -105,7 +105,7 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'addTicket',
+    operationId: 'create',
     summary: 'Create a Ticket',
     description: 'Create a ticket in any supported Ticketing software',
   })
@@ -126,7 +126,7 @@ export class TicketController {
   @ApiCustomResponse(UnifiedTicketOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addTicket(
+  async create(
     @Body() unfiedTicketData: UnifiedTicketInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -148,54 +148,12 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'addTickets',
-    summary: 'Add a batch of Tickets',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Ticketing software.',
-  })
-  @ApiBody({ type: UnifiedTicketInput, isArray: true })
-  @ApiCustomResponse(UnifiedTicketOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addTickets(
-    @Body() unfiedTicketData: UnifiedTicketInput[],
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.ticketService.batchAddTickets(
-        unfiedTicketData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'updateTicket',
+    operationId: 'update',
     summary: 'Update a Ticket',
   })
   @UseGuards(ApiKeyAuthGuard)
   @Patch()
-  updateTicket(
+  update(
     @Query('id') id: string,
     @Body() updateTicketData: Partial<UnifiedTicketInput>,
   ) {

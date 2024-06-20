@@ -37,7 +37,7 @@ export class LocationController {
   }
 
   @ApiOperation({
-    operationId: 'getLocations',
+    operationId: 'list',
     summary: 'List a batch of Locations',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class LocationController {
   @ApiCustomResponse(UnifiedLocationOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getLocations(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class LocationController {
   }
 
   @ApiOperation({
-    operationId: 'getLocation',
+    operationId: 'retrieve',
     summary: 'Retrieve a Location',
     description: 'Retrieve a location from any connected Hris software',
   })
@@ -94,7 +94,7 @@ export class LocationController {
   @ApiCustomResponse(UnifiedLocationOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getLocation(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class LocationController {
   }
 
   @ApiOperation({
-    operationId: 'addLocation',
+    operationId: 'create',
     summary: 'Create a Location',
     description: 'Create a location in any supported Hris software',
   })
@@ -122,7 +122,7 @@ export class LocationController {
   @ApiCustomResponse(UnifiedLocationOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addLocation(
+  async create(
     @Body() unifiedLocationData: UnifiedLocationInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,47 +134,6 @@ export class LocationController {
         );
       return this.locationService.addLocation(
         unifiedLocationData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addLocations',
-    summary: 'Add a batch of Locations',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedLocationInput, isArray: true })
-  @ApiCustomResponse(UnifiedLocationOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addLocations(
-    @Body() unfiedLocationData: UnifiedLocationInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.locationService.batchAddLocations(
-        unfiedLocationData,
         remoteSource,
         linkedUserId,
         remote_data,

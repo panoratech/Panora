@@ -37,7 +37,7 @@ export class EmployerBenefitController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployerBenefits',
+    operationId: 'list',
     summary: 'List a batch of EmployerBenefits',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class EmployerBenefitController {
   @ApiCustomResponse(UnifiedEmployerBenefitOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getEmployerBenefits(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class EmployerBenefitController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployerBenefit',
+    operationId: 'retrieve',
     summary: 'Retrieve a EmployerBenefit',
     description: 'Retrieve a employerbenefit from any connected Hris software',
   })
@@ -94,7 +94,7 @@ export class EmployerBenefitController {
   @ApiCustomResponse(UnifiedEmployerBenefitOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getEmployerBenefit(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class EmployerBenefitController {
   }
 
   @ApiOperation({
-    operationId: 'addEmployerBenefit',
+    operationId: 'create',
     summary: 'Create a EmployerBenefit',
     description: 'Create a employerbenefit in any supported Hris software',
   })
@@ -122,7 +122,7 @@ export class EmployerBenefitController {
   @ApiCustomResponse(UnifiedEmployerBenefitOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addEmployerBenefit(
+  async create(
     @Body() unifiedEmployerBenefitData: UnifiedEmployerBenefitInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,47 +134,6 @@ export class EmployerBenefitController {
         );
       return this.employerbenefitService.addEmployerBenefit(
         unifiedEmployerBenefitData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addEmployerBenefits',
-    summary: 'Add a batch of EmployerBenefits',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedEmployerBenefitInput, isArray: true })
-  @ApiCustomResponse(UnifiedEmployerBenefitOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addEmployerBenefits(
-    @Body() unfiedEmployerBenefitData: UnifiedEmployerBenefitInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.employerbenefitService.batchAddEmployerBenefits(
-        unfiedEmployerBenefitData,
         remoteSource,
         linkedUserId,
         remote_data,

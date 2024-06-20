@@ -38,7 +38,7 @@ export class SharedlinkController {
   }
 
   @ApiOperation({
-    operationId: 'getSharedlinks',
+    operationId: 'list',
     summary: 'List a batch of Sharedlinks',
   })
   @ApiHeader({
@@ -57,7 +57,7 @@ export class SharedlinkController {
   @ApiCustomResponse(UnifiedSharedLinkOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getSharedlinks(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -77,7 +77,7 @@ export class SharedlinkController {
   }
 
   @ApiOperation({
-    operationId: 'getSharedlink',
+    operationId: 'retrieve',
     summary: 'Retrieve a Sharedlink',
     description:
       'Retrieve a sharedlink from any connected Filestorage software',
@@ -98,7 +98,7 @@ export class SharedlinkController {
   @ApiCustomResponse(UnifiedSharedLinkOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getSharedlink(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -106,7 +106,7 @@ export class SharedlinkController {
   }
 
   @ApiOperation({
-    operationId: 'addSharedlink',
+    operationId: 'create',
     summary: 'Create a Sharedlink',
     description: 'Create a sharedlink in any supported Filestorage software',
   })
@@ -127,7 +127,7 @@ export class SharedlinkController {
   @ApiCustomResponse(UnifiedSharedLinkOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addSharedlink(
+  async create(
     @Body() unifiedSharedlinkData: UnifiedSharedLinkInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -139,48 +139,6 @@ export class SharedlinkController {
         );
       return this.sharedlinkService.addSharedlink(
         unifiedSharedlinkData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addSharedlinks',
-    summary: 'Add a batch of Sharedlinks',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
-  @ApiBody({ type: UnifiedSharedLinkInput, isArray: true })
-  @ApiCustomResponse(UnifiedSharedLinkOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addSharedlinks(
-    @Body() unfiedSharedlinkData: UnifiedSharedLinkInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.sharedlinkService.batchAddSharedlinks(
-        unfiedSharedlinkData,
         remoteSource,
         linkedUserId,
         remote_data,

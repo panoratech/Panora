@@ -34,7 +34,7 @@ export class ItemController {
   }
 
   @ApiOperation({
-    operationId: 'getItems',
+    operationId: 'list',
     summary: 'List a batch of Items',
   })
   @ApiHeader({
@@ -53,7 +53,7 @@ export class ItemController {
   @ApiCustomResponse(UnifiedItemOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getItems(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -69,7 +69,7 @@ export class ItemController {
   }
 
   @ApiOperation({
-    operationId: 'getItem',
+    operationId: 'retrieve',
     summary: 'Retrieve a Item',
     description: 'Retrieve a item from any connected Accounting software',
   })
@@ -89,7 +89,7 @@ export class ItemController {
   @ApiCustomResponse(UnifiedItemOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getItem(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -97,7 +97,7 @@ export class ItemController {
   }
 
   @ApiOperation({
-    operationId: 'addItem',
+    operationId: 'create',
     summary: 'Create a Item',
     description: 'Create a item in any supported Accounting software',
   })
@@ -118,7 +118,7 @@ export class ItemController {
   @ApiCustomResponse(UnifiedItemOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addItem(
+  async create(
     @Body() unifiedItemData: UnifiedItemInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -130,48 +130,6 @@ export class ItemController {
         );
       return this.itemService.addItem(
         unifiedItemData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addItems',
-    summary: 'Add a batch of Items',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedItemInput, isArray: true })
-  @ApiCustomResponse(UnifiedItemOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addItems(
-    @Body() unfiedItemData: UnifiedItemInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.itemService.batchAddItems(
-        unfiedItemData,
         remoteSource,
         linkedUserId,
         remote_data,

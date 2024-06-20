@@ -40,7 +40,7 @@ export class NoteController {
   }
 
   @ApiOperation({
-    operationId: 'getNotes',
+    operationId: 'list',
     summary: 'List a batch of Notes',
   })
   @ApiHeader({
@@ -53,7 +53,7 @@ export class NoteController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async getNotes(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class NoteController {
   }
 
   @ApiOperation({
-    operationId: 'getNote',
+    operationId: 'retrieve',
     summary: 'Retrieve a Note',
     description: 'Retrieve a note from any connected Crm software',
   })
@@ -95,7 +95,7 @@ export class NoteController {
   @ApiCustomResponse(UnifiedNoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getNote(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -103,7 +103,7 @@ export class NoteController {
   }
 
   @ApiOperation({
-    operationId: 'addNote',
+    operationId: 'create',
     summary: 'Create a Note',
     description: 'Create a note in any supported Crm software',
   })
@@ -123,7 +123,7 @@ export class NoteController {
   @ApiCustomResponse(UnifiedNoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addNote(
+  async create(
     @Body() unifiedNoteData: UnifiedNoteInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -135,47 +135,6 @@ export class NoteController {
         );
       return this.noteService.addNote(
         unifiedNoteData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addNotes',
-    summary: 'Add a batch of Notes',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Crm software.',
-  })
-  @ApiBody({ type: UnifiedNoteInput, isArray: true })
-  @ApiCustomResponse(UnifiedNoteOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addNotes(
-    @Body() unfiedNoteData: UnifiedNoteInput[],
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.noteService.batchAddNotes(
-        unfiedNoteData,
         remoteSource,
         linkedUserId,
         remote_data,

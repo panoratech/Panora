@@ -37,7 +37,7 @@ export class InterviewController {
   }
 
   @ApiOperation({
-    operationId: 'getInterviews',
+    operationId: 'list',
     summary: 'List a batch of Interviews',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class InterviewController {
   @ApiCustomResponse(UnifiedInterviewOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getInterviews(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class InterviewController {
   }
 
   @ApiOperation({
-    operationId: 'getInterview',
+    operationId: 'retrieve',
     summary: 'Retrieve a Interview',
     description: 'Retrieve a interview from any connected Ats software',
   })
@@ -94,7 +94,7 @@ export class InterviewController {
   @ApiCustomResponse(UnifiedInterviewOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getInterview(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class InterviewController {
   }
 
   @ApiOperation({
-    operationId: 'addInterview',
+    operationId: 'create',
     summary: 'Create a Interview',
     description: 'Create a interview in any supported Ats software',
   })
@@ -122,7 +122,7 @@ export class InterviewController {
   @ApiCustomResponse(UnifiedInterviewOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addInterview(
+  async create(
     @Body() unifiedInterviewData: UnifiedInterviewInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,47 +134,6 @@ export class InterviewController {
         );
       return this.interviewService.addInterview(
         unifiedInterviewData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addInterviews',
-    summary: 'Add a batch of Interviews',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedInterviewInput, isArray: true })
-  @ApiCustomResponse(UnifiedInterviewOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addInterviews(
-    @Body() unfiedInterviewData: UnifiedInterviewInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.interviewService.batchAddInterviews(
-        unfiedInterviewData,
         remoteSource,
         linkedUserId,
         remote_data,

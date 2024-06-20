@@ -34,7 +34,7 @@ export class OfferController {
   }
 
   @ApiOperation({
-    operationId: 'getOffers',
+    operationId: 'list',
     summary: 'List a batch of Offers',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class OfferController {
   @ApiCustomResponse(UnifiedOfferOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getOffers(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -72,7 +72,7 @@ export class OfferController {
   }
 
   @ApiOperation({
-    operationId: 'getOffer',
+    operationId: 'retrieve',
     summary: 'Retrieve a Offer',
     description: 'Retrieve a offer from any connected Ats software',
   })
@@ -91,7 +91,7 @@ export class OfferController {
   @ApiCustomResponse(UnifiedOfferOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getOffer(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -99,7 +99,7 @@ export class OfferController {
   }
 
   @ApiOperation({
-    operationId: 'addOffer',
+    operationId: 'create',
     summary: 'Create a Offer',
     description: 'Create a offer in any supported Ats software',
   })
@@ -119,7 +119,7 @@ export class OfferController {
   @ApiCustomResponse(UnifiedOfferOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addOffer(
+  async create(
     @Body() unifiedOfferData: UnifiedOfferInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -131,47 +131,6 @@ export class OfferController {
         );
       return this.offerService.addOffer(
         unifiedOfferData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addOffers',
-    summary: 'Add a batch of Offers',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedOfferInput, isArray: true })
-  @ApiCustomResponse(UnifiedOfferOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addOffers(
-    @Body() unfiedOfferData: UnifiedOfferInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.offerService.batchAddOffers(
-        unfiedOfferData,
         remoteSource,
         linkedUserId,
         remote_data,

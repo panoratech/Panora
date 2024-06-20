@@ -41,7 +41,7 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'getDeals',
+    operationId: 'list',
     summary: 'List a batch of Deals',
   })
   @ApiHeader({
@@ -54,7 +54,7 @@ export class DealController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async getDeals(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -77,7 +77,7 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'getDeal',
+    operationId: 'retrieve',
     summary: 'Retrieve a Deal',
     description: 'Retrieve a deal from any connected Crm software',
   })
@@ -96,7 +96,7 @@ export class DealController {
   @ApiCustomResponse(UnifiedDealOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getDeal(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -104,7 +104,7 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'addDeal',
+    operationId: 'create',
     summary: 'Create a Deal',
     description: 'Create a deal in any supported Crm software',
   })
@@ -124,7 +124,7 @@ export class DealController {
   @ApiCustomResponse(UnifiedDealOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addDeal(
+  async create(
     @Body() unifiedDealData: UnifiedDealInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -146,54 +146,13 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'addDeals',
-    summary: 'Add a batch of Deals',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Crm software.',
-  })
-  @ApiBody({ type: UnifiedDealInput, isArray: true })
-  @ApiCustomResponse(UnifiedDealOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addDeals(
-    @Body() unfiedDealData: UnifiedDealInput[],
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.dealService.batchAddDeals(
-        unfiedDealData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'updateDeal',
+    operationId: 'update',
     summary: 'Update a Deal',
   })
   @ApiCustomResponse(UnifiedDealOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Patch(':id')
-  updateDeal(
+  update(
     @Param('id') id: string,
     @Body() updateDealData: Partial<UnifiedDealInput>,
   ) {

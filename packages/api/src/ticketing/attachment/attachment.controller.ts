@@ -43,7 +43,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAttachments',
+    operationId: 'list',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class AttachmentController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async getAttachments(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -80,7 +80,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAttachment',
+    operationId: 'retrieve',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Ticketing software',
   })
@@ -100,7 +100,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getAttachment(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -108,7 +108,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'downloadAttachment',
+    operationId: 'download',
     summary: 'Download a Attachment',
     description: 'Download a attachment from any connected Ticketing software',
   })
@@ -128,7 +128,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id/download')
-  downloadAttachment(
+  download(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -136,7 +136,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addTicketingAttachment',
+    operationId: 'create',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Ticketing software',
   })
@@ -157,7 +157,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addAttachment(
+  async create(
     @Body() unfiedAttachmentData: UnifiedAttachmentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -168,48 +168,6 @@ export class AttachmentController {
           connection_token,
         );
       return this.attachmentService.addAttachment(
-        unfiedAttachmentData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addTicketingAttachments',
-    summary: 'Add a batch of Attachments',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Ticketing software.',
-  })
-  @ApiBody({ type: UnifiedAttachmentInput, isArray: true })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addAttachments(
-    @Body() unfiedAttachmentData: UnifiedAttachmentInput[],
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.attachmentService.batchAddAttachments(
         unfiedAttachmentData,
         remoteSource,
         linkedUserId,

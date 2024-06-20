@@ -37,7 +37,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'getTemplates',
+    operationId: 'list',
     summary: 'List a batch of Templates',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class TemplateController {
   @ApiCustomResponse(UnifiedTemplateOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getTemplates(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'getTemplate',
+    operationId: 'retrieve',
     summary: 'Retrieve a Template',
     description:
       'Retrieve a template from any connected Marketingautomation software',
@@ -97,7 +97,7 @@ export class TemplateController {
   @ApiCustomResponse(UnifiedTemplateOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getTemplate(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -105,7 +105,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'addTemplate',
+    operationId: 'create',
     summary: 'Create a Template',
     description:
       'Create a template in any supported Marketingautomation software',
@@ -127,7 +127,7 @@ export class TemplateController {
   @ApiCustomResponse(UnifiedTemplateOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addTemplate(
+  async create(
     @Body() unifiedTemplateData: UnifiedTemplateInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -139,48 +139,6 @@ export class TemplateController {
         );
       return this.templateService.addTemplate(
         unifiedTemplateData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addTemplates',
-    summary: 'Add a batch of Templates',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedTemplateInput, isArray: true })
-  @ApiCustomResponse(UnifiedTemplateOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addTemplates(
-    @Body() unfiedTemplateData: UnifiedTemplateInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.templateService.batchAddTemplates(
-        unfiedTemplateData,
         remoteSource,
         linkedUserId,
         remote_data,

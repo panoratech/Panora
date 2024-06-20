@@ -37,7 +37,7 @@ export class AddressController {
   }
 
   @ApiOperation({
-    operationId: 'getAddresss',
+    operationId: 'list',
     summary: 'List a batch of Addresss',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class AddressController {
   @ApiCustomResponse(UnifiedAddressOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getAddresss(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class AddressController {
   }
 
   @ApiOperation({
-    operationId: 'getAddress',
+    operationId: 'retrieve',
     summary: 'Retrieve a Address',
     description: 'Retrieve a address from any connected Accounting software',
   })
@@ -96,7 +96,7 @@ export class AddressController {
   @ApiCustomResponse(UnifiedAddressOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getAddress(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -104,7 +104,7 @@ export class AddressController {
   }
 
   @ApiOperation({
-    operationId: 'addAddress',
+    operationId: 'create',
     summary: 'Create a Address',
     description: 'Create a address in any supported Accounting software',
   })
@@ -125,7 +125,7 @@ export class AddressController {
   @ApiCustomResponse(UnifiedAddressOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addAddress(
+  async create(
     @Body() unifiedAddressData: UnifiedAddressInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -137,48 +137,6 @@ export class AddressController {
         );
       return this.addressService.addAddress(
         unifiedAddressData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addAddresss',
-    summary: 'Add a batch of Addresss',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedAddressInput, isArray: true })
-  @ApiCustomResponse(UnifiedAddressOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addAddresss(
-    @Body() unfiedAddressData: UnifiedAddressInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.addressService.batchAddAddresss(
-        unfiedAddressData,
         remoteSource,
         linkedUserId,
         remote_data,

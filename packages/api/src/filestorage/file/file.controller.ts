@@ -33,7 +33,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'getFiles',
+    operationId: 'list',
     summary: 'List a batch of Files',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class FileController {
   @ApiCustomResponse(UnifiedFileOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getFiles(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -68,7 +68,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'getFile',
+    operationId: 'retrieve',
     summary: 'Retrieve a File',
     description: 'Retrieve a file from any connected Filestorage software',
   })
@@ -88,7 +88,7 @@ export class FileController {
   @ApiCustomResponse(UnifiedFileOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getFile(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -96,7 +96,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'addFile',
+    operationId: 'create',
     summary: 'Create a File',
     description: 'Create a file in any supported Filestorage software',
   })
@@ -117,7 +117,7 @@ export class FileController {
   @ApiCustomResponse(UnifiedFileOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addFile(
+  async create(
     @Body() unifiedFileData: UnifiedFileInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -129,48 +129,6 @@ export class FileController {
         );
       return this.fileService.addFile(
         unifiedFileData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addFiles',
-    summary: 'Add a batch of Files',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
-  @ApiBody({ type: UnifiedFileInput, isArray: true })
-  @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addFiles(
-    @Body() unfiedFileData: UnifiedFileInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.fileService.batchAddFiles(
-        unfiedFileData,
         remoteSource,
         linkedUserId,
         remote_data,

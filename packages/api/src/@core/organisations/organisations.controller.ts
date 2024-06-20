@@ -15,11 +15,11 @@ export class OrganisationsController {
   }
 
   @ApiOperation({
-    operationId: 'getOrganisations',
+    operationId: 'list',
     summary: 'Retrieve Organisations',
   })
   @Get()
-  getOragnisations() {
+  list() {
     return; //this.organizationsService.getOrganisations();
   }
 

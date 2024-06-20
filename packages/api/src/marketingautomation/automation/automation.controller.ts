@@ -37,7 +37,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'getAutomations',
+    operationId: 'list',
     summary: 'List a batch of Automations',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class AutomationController {
   @ApiCustomResponse(UnifiedAutomationOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getAutomations(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'getAutomation',
+    operationId: 'retrieve',
     summary: 'Retrieve a Automation',
     description:
       'Retrieve a automation from any connected Marketingautomation software',
@@ -97,7 +97,7 @@ export class AutomationController {
   @ApiCustomResponse(UnifiedAutomationOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getAutomation(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -105,7 +105,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'addAutomation',
+    operationId: 'create',
     summary: 'Create a Automation',
     description:
       'Create a automation in any supported Marketingautomation software',
@@ -127,7 +127,7 @@ export class AutomationController {
   @ApiCustomResponse(UnifiedAutomationOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addAutomation(
+  async create(
     @Body() unifiedAutomationData: UnifiedAutomationInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -139,48 +139,6 @@ export class AutomationController {
         );
       return this.automationService.addAutomation(
         unifiedAutomationData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addAutomations',
-    summary: 'Add a batch of Automations',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedAutomationInput, isArray: true })
-  @ApiCustomResponse(UnifiedAutomationOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addAutomations(
-    @Body() unfiedAutomationData: UnifiedAutomationInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.automationService.batchAddAutomations(
-        unfiedAutomationData,
         remoteSource,
         linkedUserId,
         remote_data,

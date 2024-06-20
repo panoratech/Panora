@@ -37,7 +37,7 @@ export class BalanceSheetController {
   }
 
   @ApiOperation({
-    operationId: 'getBalanceSheets',
+    operationId: 'list',
     summary: 'List a batch of BalanceSheets',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class BalanceSheetController {
   @ApiCustomResponse(UnifiedBalanceSheetOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getBalanceSheets(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class BalanceSheetController {
   }
 
   @ApiOperation({
-    operationId: 'getBalanceSheet',
+    operationId: 'retrieve',
     summary: 'Retrieve a BalanceSheet',
     description:
       'Retrieve a balancesheet from any connected Accounting software',
@@ -97,7 +97,7 @@ export class BalanceSheetController {
   @ApiCustomResponse(UnifiedBalanceSheetOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getBalanceSheet(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -105,7 +105,7 @@ export class BalanceSheetController {
   }
 
   @ApiOperation({
-    operationId: 'addBalanceSheet',
+    operationId: 'create',
     summary: 'Create a BalanceSheet',
     description: 'Create a balancesheet in any supported Accounting software',
   })
@@ -126,7 +126,7 @@ export class BalanceSheetController {
   @ApiCustomResponse(UnifiedBalanceSheetOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addBalanceSheet(
+  async create(
     @Body() unifiedBalanceSheetData: UnifiedBalanceSheetInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -138,48 +138,6 @@ export class BalanceSheetController {
         );
       return this.balancesheetService.addBalanceSheet(
         unifiedBalanceSheetData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addBalanceSheets',
-    summary: 'Add a batch of BalanceSheets',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedBalanceSheetInput, isArray: true })
-  @ApiCustomResponse(UnifiedBalanceSheetOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addBalanceSheets(
-    @Body() unfiedBalanceSheetData: UnifiedBalanceSheetInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.balancesheetService.batchAddBalanceSheets(
-        unfiedBalanceSheetData,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -37,7 +37,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsAttachments',
+    operationId: 'list',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getAttachments(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsAttachment',
+    operationId: 'retrieve',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Ats software',
   })
@@ -94,7 +94,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getAttachment(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAtsAttachment',
+    operationId: 'create',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Ats software',
   })
@@ -122,7 +122,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addAttachment(
+  async create(
     @Body() unifiedAttachmentData: UnifiedAttachmentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,47 +134,6 @@ export class AttachmentController {
         );
       return this.attachmentService.addAttachment(
         unifiedAttachmentData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addAtsAttachments',
-    summary: 'Add a batch of Attachments',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedAttachmentInput, isArray: true })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addAttachments(
-    @Body() unfiedAttachmentData: UnifiedAttachmentInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.attachmentService.batchAddAttachments(
-        unfiedAttachmentData,
         remoteSource,
         linkedUserId,
         remote_data,

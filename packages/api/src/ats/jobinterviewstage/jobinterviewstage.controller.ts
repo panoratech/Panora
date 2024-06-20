@@ -37,7 +37,7 @@ export class JobInterviewStageController {
   }
 
   @ApiOperation({
-    operationId: 'getJobInterviewStages',
+    operationId: 'list',
     summary: 'List a batch of JobInterviewStages',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class JobInterviewStageController {
   @ApiCustomResponse(UnifiedJobInterviewStageOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getJobInterviewStages(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class JobInterviewStageController {
   }
 
   @ApiOperation({
-    operationId: 'getJobInterviewStage',
+    operationId: 'retrieve',
     summary: 'Retrieve a JobInterviewStage',
     description: 'Retrieve a jobinterviewstage from any connected Ats software',
   })
@@ -94,7 +94,7 @@ export class JobInterviewStageController {
   @ApiCustomResponse(UnifiedJobInterviewStageOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getJobInterviewStage(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class JobInterviewStageController {
   }
 
   @ApiOperation({
-    operationId: 'addJobInterviewStage',
+    operationId: 'create',
     summary: 'Create a JobInterviewStage',
     description: 'Create a jobinterviewstage in any supported Ats software',
   })
@@ -122,7 +122,7 @@ export class JobInterviewStageController {
   @ApiCustomResponse(UnifiedJobInterviewStageOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addJobInterviewStage(
+  async create(
     @Body() unifiedJobInterviewStageData: UnifiedJobInterviewStageInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,47 +134,6 @@ export class JobInterviewStageController {
         );
       return this.jobinterviewstageService.addJobInterviewStage(
         unifiedJobInterviewStageData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addJobInterviewStages',
-    summary: 'Add a batch of JobInterviewStages',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedJobInterviewStageInput, isArray: true })
-  @ApiCustomResponse(UnifiedJobInterviewStageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addJobInterviewStages(
-    @Body() unfiedJobInterviewStageData: UnifiedJobInterviewStageInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.jobinterviewstageService.batchAddJobInterviewStages(
-        unfiedJobInterviewStageData,
         remoteSource,
         linkedUserId,
         remote_data,

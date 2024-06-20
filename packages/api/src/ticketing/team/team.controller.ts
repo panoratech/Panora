@@ -37,7 +37,7 @@ export class TeamController {
   }
 
   @ApiOperation({
-    operationId: 'getTeams',
+    operationId: 'list',
     summary: 'List a batch of Teams',
   })
   @ApiHeader({
@@ -50,7 +50,7 @@ export class TeamController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async getTeams(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class TeamController {
   }
 
   @ApiOperation({
-    operationId: 'getTeam',
+    operationId: 'retrieve',
     summary: 'Retrieve a Team',
     description: 'Retrieve a team from any connected Ticketing software',
   })
@@ -93,7 +93,7 @@ export class TeamController {
   @ApiCustomResponse(UnifiedTeamOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getTeam(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

@@ -306,7 +306,7 @@ private connectionUtils: ConnectionUtils
   }
 
   @ApiOperation({
-    operationId: 'get${ObjectCap}s',
+    operationId: 'list',
     summary: 'List a batch of ${ObjectCap}s',
   })
    @ApiHeader({
@@ -325,7 +325,7 @@ private connectionUtils: ConnectionUtils
   @ApiCustomResponse(Unified${ObjectCap}Output)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async get${ObjectCap}s(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -345,7 +345,7 @@ private connectionUtils: ConnectionUtils
   }
 
   @ApiOperation({
-    operationId: 'get${ObjectCap}',
+    operationId: 'retrieve',
     summary: 'Retrieve a ${ObjectCap}',
     description: 'Retrieve a ${objectType} from any connected ${VerticalCap} software',
   })
@@ -365,7 +365,7 @@ private connectionUtils: ConnectionUtils
   @ApiCustomResponse(Unified${ObjectCap}Output)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  get${ObjectCap}(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -373,7 +373,7 @@ private connectionUtils: ConnectionUtils
   }
 
   @ApiOperation({
-    operationId: 'add${ObjectCap}',
+    operationId: 'create',
     summary: 'Create a ${ObjectCap}',
     description: 'Create a ${objectType} in any supported ${VerticalCap} software',
   })
@@ -394,7 +394,7 @@ private connectionUtils: ConnectionUtils
   @ApiCustomResponse(Unified${ObjectCap}Output)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async add${ObjectCap}(
+  async create(
     @Body() unified${ObjectCap}Data: Unified${ObjectCap}Input,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -416,56 +416,13 @@ private connectionUtils: ConnectionUtils
   }
 
   @ApiOperation({
-    operationId: 'add${ObjectCap}s',
-    summary: 'Add a batch of ${ObjectCap}s',
-  })
-   @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original ${VerticalCap} software.',
-  })
-  @ApiBody({ type: Unified${ObjectCap}Input, isArray: true })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async add${ObjectCap}s(
-    @Body() unfied${ObjectCap}Data: Unified${ObjectCap}Input[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try{
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-      );
-      return this.${objectType}Service.batchAdd${ObjectCap}s(
-        unfied${ObjectCap}Data,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    }catch(error){
-      throw new Error(error);
-    }
-    
-  }
-
-  @ApiOperation({
-    operationId: 'update${ObjectCap}',
+    operationId: 'update',
     summary: 'Update a ${ObjectCap}',
   })
   @ApiCustomResponse(Unified${ObjectCap}Output)
   //@UseGuards(ApiKeyAuthGuard)
   @Patch()
-  update${ObjectCap}(
+  update$(
     @Query('id') id: string,
     @Body() update${ObjectCap}Data: Partial<Unified${ObjectCap}Input>,
   ) {

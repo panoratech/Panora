@@ -37,7 +37,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAccounts',
+    operationId: 'list',
     summary: 'List a batch of Accounts',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class AccountController {
   @ApiCustomResponse(UnifiedAccountOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getAccounts(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAccount',
+    operationId: 'retrieve',
     summary: 'Retrieve a Account',
     description: 'Retrieve a account from any connected Accounting software',
   })
@@ -96,7 +96,7 @@ export class AccountController {
   @ApiCustomResponse(UnifiedAccountOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getAccount(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -104,7 +104,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'addAccount',
+    operationId: 'create',
     summary: 'Create a Account',
     description: 'Create a account in any supported Accounting software',
   })
@@ -125,7 +125,7 @@ export class AccountController {
   @ApiCustomResponse(UnifiedAccountOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addAccount(
+  async create(
     @Body() unifiedAccountData: UnifiedAccountInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -137,48 +137,6 @@ export class AccountController {
         );
       return this.accountService.addAccount(
         unifiedAccountData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addAccounts',
-    summary: 'Add a batch of Accounts',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedAccountInput, isArray: true })
-  @ApiCustomResponse(UnifiedAccountOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addAccounts(
-    @Body() unfiedAccountData: UnifiedAccountInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.accountService.batchAddAccounts(
-        unfiedAccountData,
         remoteSource,
         linkedUserId,
         remote_data,

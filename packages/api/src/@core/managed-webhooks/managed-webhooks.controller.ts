@@ -26,23 +26,23 @@ export class ManagedWebhooksController {
   }
 
   @ApiOperation({
-    operationId: 'getManagedWebhooks',
+    operationId: 'retrieve',
     summary: 'Retrieve managed webhooks',
   })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @Get(':id_connection')
-  getManagedWebhook(@Param('id_connection') id_connection: string) {
+  retrieve(@Param('id_connection') id_connection: string) {
     return this.managedWebhookService.getManagedWebhook(id_connection);
   }
 
   @ApiOperation({
-    operationId: 'updateManagedWebhooksStatus',
+    operationId: 'update',
     summary: 'Update managed webhook status',
   })
   @UseGuards(JwtAuthGuard)
   @Put(':id_connection')
-  async updateManagedWebhooksStatus(
+  async update(
     @Param('id_connection') id_connection: string,
     @Body('active') active: boolean,
   ) {
@@ -53,14 +53,14 @@ export class ManagedWebhooksController {
   }
 
   @ApiOperation({
-    operationId: 'createManagedWebhook',
+    operationId: 'create',
     summary: 'Create managed webhook',
   })
   @ApiBody({ type: ManagedWebhooksDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
   @Post()
-  async addManagedWebhook(@Body() data: ManagedWebhooksDto) {
+  async create(@Body() data: ManagedWebhooksDto) {
     return this.managedWebhookService.createManagedWebhook(data);
   }
 

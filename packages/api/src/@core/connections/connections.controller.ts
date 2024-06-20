@@ -327,13 +327,13 @@ export class ConnectionsController {
   }
 
   @ApiOperation({
-    operationId: 'getConnections',
+    operationId: 'list',
     summary: 'List Connections',
   })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getConnections(@Request() req: any) {
+  async list(@Request() req: any) {
     try {
       const { id_project } = req.user;
       console.log('Req data is:', req.user);

@@ -34,7 +34,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationUsers',
+    operationId: 'list',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -53,7 +53,7 @@ export class UserController {
   @ApiCustomResponse(UnifiedUserOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getUsers(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -69,7 +69,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationUser',
+    operationId: 'retrieve',
     summary: 'Retrieve a User',
     description:
       'Retrieve a user from any connected Marketingautomation software',
@@ -90,7 +90,7 @@ export class UserController {
   @ApiCustomResponse(UnifiedUserOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getUser(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -98,7 +98,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'addMarketingAutomationUser',
+    operationId: 'create',
     summary: 'Create a User',
     description: 'Create a user in any supported Marketingautomation software',
   })
@@ -119,7 +119,7 @@ export class UserController {
   @ApiCustomResponse(UnifiedUserOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addUser(
+  async create(
     @Body() unifiedUserData: UnifiedUserInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -131,48 +131,6 @@ export class UserController {
         );
       return this.userService.addUser(
         unifiedUserData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addMarketingAutomationUsers',
-    summary: 'Add a batch of Users',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedUserInput, isArray: true })
-  @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addUsers(
-    @Body() unfiedUserData: UnifiedUserInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.userService.batchAddUsers(
-        unfiedUserData,
         remoteSource,
         linkedUserId,
         remote_data,

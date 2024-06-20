@@ -34,7 +34,7 @@ export class FolderController {
   }
 
   @ApiOperation({
-    operationId: 'getFolders',
+    operationId: 'list',
     summary: 'List a batch of Folders',
   })
   @ApiHeader({
@@ -53,7 +53,7 @@ export class FolderController {
   @ApiCustomResponse(UnifiedFolderOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getFolders(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -73,7 +73,7 @@ export class FolderController {
   }
 
   @ApiOperation({
-    operationId: 'getFolder',
+    operationId: 'retrieve',
     summary: 'Retrieve a Folder',
     description: 'Retrieve a folder from any connected Filestorage software',
   })
@@ -93,7 +93,7 @@ export class FolderController {
   @ApiCustomResponse(UnifiedFolderOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getFolder(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -101,7 +101,7 @@ export class FolderController {
   }
 
   @ApiOperation({
-    operationId: 'addFolder',
+    operationId: 'create',
     summary: 'Create a Folder',
     description: 'Create a folder in any supported Filestorage software',
   })
@@ -122,7 +122,7 @@ export class FolderController {
   @ApiCustomResponse(UnifiedFolderOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addFolder(
+  async create(
     @Body() unifiedFolderData: UnifiedFolderInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,48 +134,6 @@ export class FolderController {
         );
       return this.folderService.addFolder(
         unifiedFolderData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addFolders',
-    summary: 'Add a batch of Folders',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
-  @ApiBody({ type: UnifiedFolderInput, isArray: true })
-  @ApiCustomResponse(UnifiedFolderOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addFolders(
-    @Body() unfiedFolderData: UnifiedFolderInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.folderService.batchAddFolders(
-        unfiedFolderData,
         remoteSource,
         linkedUserId,
         remote_data,

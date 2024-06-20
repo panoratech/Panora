@@ -33,23 +33,23 @@ export class MagicLinkController {
   }
 
   @ApiOperation({
-    operationId: 'getMagicLinks',
+    operationId: 'list',
     summary: 'Retrieve Magic Links',
   })
   @ApiResponse({ status: 200 })
   @Get()
-  getMagicLinks() {
+  list() {
     return this.magicLinkService.getMagicLinks();
   }
 
   @ApiOperation({
-    operationId: 'getMagicLink',
+    operationId: 'retrieve',
     summary: 'Retrieve a Magic Link',
   })
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiResponse({ status: 200 })
   @Get('single')
-  getMagicLink(@Query('id') id: string) {
+  retrieve(@Query('id') id: string) {
     return this.magicLinkService.getMagicLink(id);
   }
 }

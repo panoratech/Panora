@@ -34,7 +34,7 @@ export class EmailController {
   }
 
   @ApiOperation({
-    operationId: 'getEmails',
+    operationId: 'list',
     summary: 'List a batch of Emails',
   })
   @ApiHeader({
@@ -53,7 +53,7 @@ export class EmailController {
   @ApiCustomResponse(UnifiedEmailOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getEmails(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -73,7 +73,7 @@ export class EmailController {
   }
 
   @ApiOperation({
-    operationId: 'getEmail',
+    operationId: 'retrieve',
     summary: 'Retrieve a Email',
     description:
       'Retrieve a email from any connected Marketingautomation software',
@@ -94,7 +94,7 @@ export class EmailController {
   @ApiCustomResponse(UnifiedEmailOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getEmail(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class EmailController {
   }
 
   @ApiOperation({
-    operationId: 'addEmail',
+    operationId: 'create',
     summary: 'Create a Email',
     description: 'Create a email in any supported Marketingautomation software',
   })
@@ -123,7 +123,7 @@ export class EmailController {
   @ApiCustomResponse(UnifiedEmailOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addEmail(
+  async create(
     @Body() unifiedEmailData: UnifiedEmailInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -135,48 +135,6 @@ export class EmailController {
         );
       return this.emailService.addEmail(
         unifiedEmailData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addEmails',
-    summary: 'Add a batch of Emails',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedEmailInput, isArray: true })
-  @ApiCustomResponse(UnifiedEmailOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addEmails(
-    @Body() unfiedEmailData: UnifiedEmailInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.emailService.batchAddEmails(
-        unfiedEmailData,
         remoteSource,
         linkedUserId,
         remote_data,

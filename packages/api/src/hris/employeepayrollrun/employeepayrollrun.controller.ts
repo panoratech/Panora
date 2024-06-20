@@ -37,7 +37,7 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployeePayrollRuns',
+    operationId: 'list',
     summary: 'List a batch of EmployeePayrollRuns',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class EmployeePayrollRunController {
   @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getEmployeePayrollRuns(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployeePayrollRun',
+    operationId: 'retrieve',
     summary: 'Retrieve a EmployeePayrollRun',
     description:
       'Retrieve a employeepayrollrun from any connected Hris software',
@@ -95,7 +95,7 @@ export class EmployeePayrollRunController {
   @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getEmployeePayrollRun(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -106,7 +106,7 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'addEmployeePayrollRun',
+    operationId: 'create',
     summary: 'Create a EmployeePayrollRun',
     description: 'Create a employeepayrollrun in any supported Hris software',
   })
@@ -126,7 +126,7 @@ export class EmployeePayrollRunController {
   @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addEmployeePayrollRun(
+  async create(
     @Body() unifiedEmployeePayrollRunData: UnifiedEmployeePayrollRunInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -138,47 +138,6 @@ export class EmployeePayrollRunController {
         );
       return this.employeepayrollrunService.addEmployeePayrollRun(
         unifiedEmployeePayrollRunData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addEmployeePayrollRuns',
-    summary: 'Add a batch of EmployeePayrollRuns',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedEmployeePayrollRunInput, isArray: true })
-  @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addEmployeePayrollRuns(
-    @Body() unfiedEmployeePayrollRunData: UnifiedEmployeePayrollRunInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.employeepayrollrunService.batchAddEmployeePayrollRuns(
-        unfiedEmployeePayrollRunData,
         remoteSource,
         linkedUserId,
         remote_data,

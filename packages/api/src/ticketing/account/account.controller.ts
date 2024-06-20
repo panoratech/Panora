@@ -37,7 +37,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAccounts',
+    operationId: 'list',
     summary: 'List a batch of Accounts',
   })
   @ApiHeader({
@@ -50,7 +50,7 @@ export class AccountController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async getAccounts(
+  async list(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAccount',
+    operationId: 'retrieve',
     summary: 'Retrieve an Account',
     description: 'Retrieve an account from any connected Ticketing software',
   })
@@ -93,7 +93,7 @@ export class AccountController {
   @ApiCustomResponse(UnifiedAccountOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getAccount(
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
