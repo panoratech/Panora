@@ -166,6 +166,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       break;
     case 'klaviyo':
       params += `&code_challenge_method=S256&code_challenge=` // TODO
+      break;
     default:
       break;
   }

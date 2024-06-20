@@ -50,7 +50,7 @@ export interface Provider {
   scopes?: string; 
   logoPath: string;
   description?: string;
-  authStrategy?: AuthType;
+  authStrategy: AuthType;
 }; 
 
 export function providersArray(vertical?: string): Provider[] {
