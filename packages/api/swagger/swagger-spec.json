@@ -576,7 +576,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -820,7 +820,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -954,7 +954,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -1088,7 +1088,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -1222,7 +1222,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -1432,7 +1432,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -1676,7 +1676,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -1931,7 +1931,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -2186,7 +2186,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -2396,7 +2396,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -2530,7 +2530,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -2785,7 +2785,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -2919,7 +2919,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -3053,7 +3053,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -3263,7 +3263,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -3397,7 +3397,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
@@ -3872,7 +3872,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "schema": {
@@ -15782,7 +15782,7 @@
             }
           },
           {
-            "name": "pageSize",
+            "name": "limit",
             "required": false,
             "in": "query",
             "description": "Set to get the number of records.",
