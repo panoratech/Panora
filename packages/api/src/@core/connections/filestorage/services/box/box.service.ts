@@ -12,7 +12,11 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { IFilestorageConnectionService } from '../../types';
+import {
+  CallbackParams,
+  RefreshParams,
+  IFilestorageConnectionService,
+} from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   AuthStrategy,
@@ -22,10 +26,6 @@ import {
 } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import {
-  OAuthCallbackParams,
-  RefreshParams,
-} from '@@core/connections/@utils/types';
 
 export type BoxOAuthResponse = {
   access_token: string;
@@ -53,7 +53,7 @@ export class BoxConnectionService implements IFilestorageConnectionService {
     this.type = providerToType('box', 'filestorage', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: OAuthCallbackParams) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -100,8 +100,7 @@ export class BoxConnectionService implements IFilestorageConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['filestorage']['box'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['filestorage']['box'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -117,8 +116,7 @@ export class BoxConnectionService implements IFilestorageConnectionService {
             provider_slug: 'box',
             vertical: 'filestorage',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['filestorage']['box'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['filestorage']['box'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -142,7 +140,18 @@ export class BoxConnectionService implements IFilestorageConnectionService {
       }
       return db_res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
+          message: `BoxConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'box',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -185,7 +194,18 @@ export class BoxConnectionService implements IFilestorageConnectionService {
       });
       this.logger.log('OAuth credentials updated : box ');
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_HRIS',
+          message: `BoxConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            'box',
+            Action.oauthRefresh,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

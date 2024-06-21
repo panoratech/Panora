@@ -44,7 +44,7 @@ export class TasksService implements OnModuleInit {
 
         switch (connection.vertical) {
           case ConnectorCategory.Crm:
-            await this.crmConnectionsService.handleCrmTokensRefresh(
+            await this.crmConnectionsService.handleCRMTokensRefresh(
               connection.id_connection,
               connection.provider_slug,
               connection.refresh_token,

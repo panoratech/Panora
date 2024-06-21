@@ -37,7 +37,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTicketingTags',
     summary: 'List a batch of Tags',
   })
   @ApiHeader({
@@ -50,7 +50,7 @@ export class TagController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getTags(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -59,11 +59,11 @@ export class TagController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, limit, cursor } = query;
+      const { remote_data, pageSize, cursor } = query;
       return this.tagService.getTags(
         remoteSource,
         linkedUserId,
-        limit,
+        pageSize,
         remote_data,
         cursor,
       );
@@ -73,7 +73,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTicketingTag',
     summary: 'Retrieve a Tag',
     description: 'Retrieve a tag from any connected Ticketing software',
   })
@@ -93,10 +93,7 @@ export class TagController {
   @ApiCustomResponse(UnifiedTagOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
-    @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
+  getTag(@Param('id') id: string, @Query('remote_data') remote_data?: boolean) {
     return this.tagService.getTag(id, remote_data);
   }
 }

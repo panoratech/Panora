@@ -37,7 +37,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getMarketingAutomationContacts',
     summary: 'List a batch of Contacts',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class ContactController {
   @ApiCustomResponse(UnifiedContactOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getContacts(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getMarketingAutomationContact',
     summary: 'Retrieve a Contact',
     description:
       'Retrieve a contact from any connected Marketingautomation software',
@@ -97,7 +97,7 @@ export class ContactController {
   @ApiCustomResponse(UnifiedContactOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getContact(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -105,7 +105,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addMarketingAutomationContact',
     summary: 'Create a Contact',
     description:
       'Create a contact in any supported Marketingautomation software',
@@ -127,7 +127,7 @@ export class ContactController {
   @ApiCustomResponse(UnifiedContactOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addContact(
     @Body() unifiedContactData: UnifiedContactInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -139,6 +139,48 @@ export class ContactController {
         );
       return this.contactService.addContact(
         unifiedContactData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addMarketingAutomationContacts',
+    summary: 'Add a batch of Contacts',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original Marketingautomation software.',
+  })
+  @ApiBody({ type: UnifiedContactInput, isArray: true })
+  @ApiCustomResponse(UnifiedContactOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addContacts(
+    @Body() unfiedContactData: UnifiedContactInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.contactService.batchAddContacts(
+        unfiedContactData,
         remoteSource,
         linkedUserId,
         remote_data,

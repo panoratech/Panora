@@ -39,7 +39,13 @@ export class AttachmentService {
 
       return responses;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_ATTACHMENTS_ERROR',
+          message: 'AttachmentService.batchAddAttachments() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -131,7 +137,13 @@ export class AttachmentService {
       );
       return result_attachment;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_ATTACHMENT_ERROR',
+          message: 'AttachmentService.addAttachment() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -197,14 +209,20 @@ export class AttachmentService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ATTACHMENT_ERROR',
+          message: 'AttachmentService.getAttachment() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getAttachments(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -230,7 +248,7 @@ export class AttachmentService {
         }
       }
       const attachments = await this.prisma.tcg_attachments.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_tcg_attachment: cursor,
@@ -245,7 +263,7 @@ export class AttachmentService {
         },
       });
 
-      if (attachments.length === limit + 1) {
+      if (attachments.length === pageSize + 1) {
         next_cursor = Buffer.from(
           attachments[attachments.length - 1].id_tcg_attachment,
         ).toString('base64');
@@ -331,7 +349,13 @@ export class AttachmentService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ATTACHMENTS_ERROR',
+          message: 'AttachmentService.getAttachments() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

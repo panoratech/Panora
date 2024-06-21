@@ -46,7 +46,13 @@ export class NoteService {
 
       return responses;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_NOTES_ERROR',
+          message: 'NoteService.batchAddNotes() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -268,7 +274,13 @@ export class NoteService {
       );
       return result_note;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_NOTE_ERROR',
+          message: 'NoteService.addNote()) call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -337,14 +349,20 @@ export class NoteService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_NOTE_ERROR',
+          message: 'NoteService.getNote() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getNotes(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -370,7 +388,7 @@ export class NoteService {
       }
 
       const notes = await this.prisma.crm_notes.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_crm_note: cursor,
@@ -385,7 +403,7 @@ export class NoteService {
         },
       });
 
-      if (notes.length === limit + 1) {
+      if (notes.length === pageSize + 1) {
         next_cursor = Buffer.from(notes[notes.length - 1].id_crm_note).toString(
           'base64',
         );
@@ -472,7 +490,13 @@ export class NoteService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_NOTES_ERROR',
+          message: 'NoteService.getNotes() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

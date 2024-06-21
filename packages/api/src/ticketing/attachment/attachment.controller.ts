@@ -43,7 +43,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTicketingAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class AttachmentController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getAttachments(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -65,12 +65,12 @@ export class AttachmentController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, limit, cursor } = query;
+      const { remote_data, pageSize, cursor } = query;
 
       return this.attachmentService.getAttachments(
         remoteSource,
         linkedUserId,
-        limit,
+        pageSize,
         remote_data,
         cursor,
       );
@@ -80,7 +80,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTicketingAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Ticketing software',
   })
@@ -100,7 +100,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getAttachment(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -108,7 +108,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'download',
+    operationId: 'downloadAttachment',
     summary: 'Download a Attachment',
     description: 'Download a attachment from any connected Ticketing software',
   })
@@ -128,7 +128,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id/download')
-  download(
+  downloadAttachment(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -136,7 +136,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addTicketingAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Ticketing software',
   })
@@ -157,7 +157,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addAttachment(
     @Body() unfiedAttachmentData: UnifiedAttachmentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -168,6 +168,48 @@ export class AttachmentController {
           connection_token,
         );
       return this.attachmentService.addAttachment(
+        unfiedAttachmentData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addTicketingAttachments',
+    summary: 'Add a batch of Attachments',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original Ticketing software.',
+  })
+  @ApiBody({ type: UnifiedAttachmentInput, isArray: true })
+  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addAttachments(
+    @Body() unfiedAttachmentData: UnifiedAttachmentInput[],
+    @Headers('x-connection-token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.attachmentService.batchAddAttachments(
         unfiedAttachmentData,
         remoteSource,
         linkedUserId,

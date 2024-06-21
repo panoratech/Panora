@@ -37,7 +37,7 @@ export class ScoreCardController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getScoreCards',
     summary: 'List a batch of ScoreCards',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class ScoreCardController {
   @ApiCustomResponse(UnifiedScoreCardOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getScoreCards(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class ScoreCardController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getScoreCard',
     summary: 'Retrieve a ScoreCard',
     description: 'Retrieve a scorecard from any connected Ats software',
   })
@@ -94,7 +94,7 @@ export class ScoreCardController {
   @ApiCustomResponse(UnifiedScoreCardOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getScoreCard(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class ScoreCardController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addScoreCard',
     summary: 'Create a ScoreCard',
     description: 'Create a scorecard in any supported Ats software',
   })
@@ -122,7 +122,7 @@ export class ScoreCardController {
   @ApiCustomResponse(UnifiedScoreCardOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addScoreCard(
     @Body() unifiedScoreCardData: UnifiedScoreCardInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,6 +134,47 @@ export class ScoreCardController {
         );
       return this.scorecardService.addScoreCard(
         unifiedScoreCardData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addScoreCards',
+    summary: 'Add a batch of ScoreCards',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original Ats software.',
+  })
+  @ApiBody({ type: UnifiedScoreCardInput, isArray: true })
+  @ApiCustomResponse(UnifiedScoreCardOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addScoreCards(
+    @Body() unfiedScoreCardData: UnifiedScoreCardInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.scorecardService.batchAddScoreCards(
+        unfiedScoreCardData,
         remoteSource,
         linkedUserId,
         remote_data,

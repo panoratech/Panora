@@ -11,6 +11,7 @@ import { MarketingAutomationModule } from './marketingautomation/marketingautoma
 import { AtsModule } from './ats/ats.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { FileStorageModule } from './filestorage/filestorage.module';
+import { SentryInterceptor, SentryModule } from '@ntegral/nestjs-sentry';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerService } from '@@core/logger/logger.service';
 import { CoreModule } from '@@core/core.module';
@@ -37,7 +38,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
       },
     ]),
     ConfigModule.forRoot({ isGlobal: true }),
-    /*...(process.env.DISTRIBUTION === 'managed'
+    ...(process.env.DISTRIBUTION === 'managed'
       ? [
           SentryModule.forRoot({
             dsn: process.env.SENTRY_DSN,
@@ -47,7 +48,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
             logLevels: ['debug'],
           }),
         ]
-      : []),*/
+      : []),
     ScheduleModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
@@ -55,7 +56,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
           context: 'HTTP',
           env: process.env.ENV,
           distribution: process.env.DISTRIBUTION,
-          commit_id: process.env.GIT_COMMIT_ID,
+          commit_id: process.env.GIT_COMMIT_ID,	
         }),
         transport:
           process.env.AXIOM_AGENT_STATUS === 'ENABLED'
@@ -96,7 +97,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    /*{
+    {
       provide: APP_INTERCEPTOR,
       useFactory: () =>
         new SentryInterceptor({
@@ -107,7 +108,7 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
             },
           ],
         }),
-    },*/
+    },
   ],
 })
 export class AppModule {}

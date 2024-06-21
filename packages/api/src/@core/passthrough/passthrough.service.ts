@@ -25,16 +25,14 @@ export class PassthroughService {
     linkedUserId: string,
     vertical: string,
   ): Promise<PassThroughResponse> {
-    // TODO
-    return;
-    /*try {
+    try {
       const { method, path, data, headers } = requestParams;
 
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
-          type: 'pull', 
+          type: 'pull',
           method: method,
           url: '/pasthrough',
           provider: integrationId,
@@ -95,7 +93,14 @@ export class PassthroughService {
         data: response.data,
       };
     } catch (error) {
-      throw error;
-    }*/
+      throwTypedError(
+        new PassthroughRequestError({
+          name: 'PASSTHROUGH_REMOTE_API_CALL_ERROR',
+          message: 'WebhookService.sendPassthroughRequest() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
+    }
   }
 }

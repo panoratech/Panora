@@ -23,10 +23,7 @@ export class EventsController {
     this.logger.setContext(EventsController.name);
   }
 
-  @ApiOperation({
-    operationId: 'getPanoraCoreEvents',
-    summary: 'Retrieve Events',
-  })
+  @ApiOperation({ operationId: 'getPanoraCoreEvents', summary: 'Retrieve Events' })
   @ApiResponse({ status: 200 })
   @UsePipes(
     new ValidationPipe({

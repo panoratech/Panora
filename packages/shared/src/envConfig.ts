@@ -91,29 +91,12 @@ export function needsSubdomain(provider: string, vertical: string): boolean {
 
     // Extract the provider's config
     const providerConfig = CONNECTORS_METADATA[vertical][provider];
-    if(providerConfig.options && providerConfig.options.company_subdomain) {
-        return providerConfig.options.company_subdomain;
-    }
-    return false;
-}
 
-export function needsEndUserSubdomain(provider: string, vertical: string): boolean {
-    // Check if the vertical exists in the config
-    if (!CONNECTORS_METADATA[vertical]) {
-        console.error(`Vertical ${vertical} not found in CONNECTORS_METADATA.`);
-        return false;
-    }
+    const authBaseUrlStartsWithSlash = providerConfig.urls.authBaseUrl!.substring(0,1) === '/';
+    const apiUrlStartsWithSlash = providerConfig.urls.apiUrl!.substring(0,1) === '/';
+    const apiUrlIsBlank = providerConfig.urls.apiUrl! === '';
 
-    // Check if the provider exists under the specified vertical
-    if (!CONNECTORS_METADATA[vertical][provider]) {
-        console.error(`Provider ${provider} not found under vertical ${vertical}.`);
-        return false;
-    }
+    // console.log("subdomain needed "+ authBaseUrlStartsWithSlash)
 
-    // Extract the provider's config
-    const providerConfig = CONNECTORS_METADATA[vertical][provider];
-    if(providerConfig.options && providerConfig.options.end_user_domain) {
-        return providerConfig.options.end_user_domain;
-    }
-    return false;
+    return authBaseUrlStartsWithSlash || apiUrlStartsWithSlash || apiUrlIsBlank;
 }

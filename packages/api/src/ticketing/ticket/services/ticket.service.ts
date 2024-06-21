@@ -48,7 +48,13 @@ export class TicketService {
       );
       return responses;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_TICKETS_ERROR',
+          message: 'TicketService.batchAddTickets() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -339,6 +345,13 @@ export class TicketService {
       return result_ticket;
     } catch (error) {
       throw error;
+      /*throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_TICKET_ERROR',
+          message: 'TicketService.addTicket() call failed',
+          cause: error,
+        }),
+      );*/
     }
   }
 
@@ -414,14 +427,20 @@ export class TicketService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TICKET_ERROR',
+          message: 'TicketService.getTicket() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getTickets(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -449,7 +468,7 @@ export class TicketService {
       }
 
       const tickets = await this.prisma.tcg_tickets.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_tcg_ticket: cursor,
@@ -468,7 +487,7 @@ export class TicketService {
         },*/
       });
 
-      if (tickets.length === limit + 1) {
+      if (tickets.length === pageSize + 1) {
         next_cursor = Buffer.from(
           tickets[tickets.length - 1].id_tcg_ticket,
         ).toString('base64');
@@ -564,7 +583,13 @@ export class TicketService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TICKETS_ERROR',
+          message: 'TicketService.getTickets() call failed',
+          cause: error,
+        }),
+      );
     }
   }
   //TODO

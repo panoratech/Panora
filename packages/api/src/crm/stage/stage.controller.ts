@@ -37,7 +37,7 @@ export class StageController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getStages',
     summary: 'List a batch of Stages',
   })
   @ApiHeader({
@@ -50,7 +50,7 @@ export class StageController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getStages(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -59,11 +59,11 @@ export class StageController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, limit, cursor } = query;
+      const { remote_data, pageSize, cursor } = query;
       return this.stageService.getStages(
         remoteSource,
         linkedUserId,
-        limit,
+        pageSize,
         remote_data,
         cursor,
       );
@@ -73,7 +73,7 @@ export class StageController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getStage',
     summary: 'Retrieve a Stage',
     description: 'Retrieve a stage from any connected Crm software',
   })
@@ -92,7 +92,7 @@ export class StageController {
   @ApiCustomResponse(UnifiedStageOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getStage(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

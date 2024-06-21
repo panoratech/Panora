@@ -49,7 +49,13 @@ export class EngagementService {
 
       return responses;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_ENGAGEMENTS_ERROR',
+          message: 'EngagmentService.batchAddEngagements() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -291,7 +297,13 @@ export class EngagementService {
       );
       return result_engagement;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_ENGAGEMENT_ERROR',
+          message: 'EngagmentService.addEngagement() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -368,14 +380,20 @@ export class EngagementService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_ENGAGEMENT_ERROR',
+          message: 'EngagmentService.getEngagement() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getEngagements(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -401,7 +419,7 @@ export class EngagementService {
       }
 
       const engagements = await this.prisma.crm_engagements.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_crm_engagement: cursor,
@@ -416,7 +434,7 @@ export class EngagementService {
         },
       });
 
-      if (engagements.length === limit + 1) {
+      if (engagements.length === pageSize + 1) {
         next_cursor = Buffer.from(
           engagements[engagements.length - 1].id_crm_engagement,
         ).toString('base64');
@@ -511,7 +529,13 @@ export class EngagementService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_ENGAGEMENTS_ERROR',
+          message: 'EngagmentService.getEngagements() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

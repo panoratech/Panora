@@ -72,14 +72,20 @@ export class TeamService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TEAM_ERROR',
+          message: 'TeamService.getTeam() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getTeams(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -107,7 +113,7 @@ export class TeamService {
       }
 
       const teams = await this.prisma.tcg_teams.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_tcg_team: cursor,
@@ -122,7 +128,7 @@ export class TeamService {
         },
       });
 
-      if (teams.length === limit + 1) {
+      if (teams.length === pageSize + 1) {
         next_cursor = Buffer.from(teams[teams.length - 1].id_tcg_team).toString(
           'base64',
         );
@@ -206,7 +212,13 @@ export class TeamService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TEAMS_ERROR',
+          message: 'TeamService.getTeams() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

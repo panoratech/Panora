@@ -110,7 +110,14 @@ export class SyncService implements OnModuleInit {
         }
       }
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new SyncError({
+          name: 'TICKETING_COLLECTION_SYNC_ERROR',
+          message: 'SyncService.syncCollections() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -140,7 +147,6 @@ export class SyncService implements OnModuleInit {
 
       const service: ICollectionService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
       const resp: ApiResponse<OriginalCollectionOutput[]> =
         await service.syncCollections(linkedUserId);
 

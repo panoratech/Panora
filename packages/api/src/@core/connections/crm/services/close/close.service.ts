@@ -12,11 +12,11 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ICrmConnectionService } from '../../types';
 import {
-  OAuthCallbackParams,
+  CallbackParams,
   RefreshParams,
-} from '@@core/connections/@utils/types';
+  ICrmConnectionService,
+} from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
@@ -54,7 +54,7 @@ export class CloseConnectionService implements ICrmConnectionService {
     this.type = providerToType('close', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: OAuthCallbackParams) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -102,8 +102,7 @@ export class CloseConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['crm']['close'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['crm']['close']?.urls?.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -119,7 +118,7 @@ export class CloseConnectionService implements ICrmConnectionService {
             provider_slug: 'close',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm'].close.urls.apiUrl as string,
+            account_url: CONNECTORS_METADATA['crm']?.close?.urls?.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -143,7 +142,18 @@ export class CloseConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_CRM',
+          message: `CloseConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'close',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -188,7 +198,18 @@ export class CloseConnectionService implements ICrmConnectionService {
       }
       this.logger.log('OAuth credentials updated : close ');
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_CRM',
+          message: `CloseConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            'close',
+            Action.oauthRefresh,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

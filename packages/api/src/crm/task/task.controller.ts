@@ -41,7 +41,7 @@ export class TaskController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTasks',
     summary: 'List a batch of Tasks',
   })
   @ApiHeader({
@@ -54,7 +54,7 @@ export class TaskController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getTasks(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -63,12 +63,12 @@ export class TaskController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, limit, cursor } = query;
+      const { remote_data, pageSize, cursor } = query;
 
       return this.taskService.getTasks(
         remoteSource,
         linkedUserId,
-        limit,
+        pageSize,
         remote_data,
         cursor,
       );
@@ -78,7 +78,7 @@ export class TaskController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTask',
     summary: 'Retrieve a Task',
     description: 'Retrieve a task from any connected Crm software',
   })
@@ -97,7 +97,7 @@ export class TaskController {
   @ApiCustomResponse(UnifiedTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getTask(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -105,7 +105,7 @@ export class TaskController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addTask',
     summary: 'Create a Task',
     description: 'Create a task in any supported Crm software',
   })
@@ -125,7 +125,7 @@ export class TaskController {
   @ApiCustomResponse(UnifiedTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addTask(
     @Body() unifiedTaskData: UnifiedTaskInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -145,14 +145,56 @@ export class TaskController {
       throw new Error(error);
     }
   }
+
   @ApiOperation({
-    operationId: 'update',
+    operationId: 'addTasks',
+    summary: 'Add a batch of Tasks',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original Crm software.',
+  })
+  @ApiBody({ type: UnifiedTaskInput, isArray: true })
+  @ApiCustomResponse(UnifiedTaskOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addTasks(
+    @Body() unfiedTaskData: UnifiedTaskInput[],
+    @Headers('x-connection-token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.taskService.batchAddTasks(
+        unfiedTaskData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'updateTask',
     summary: 'Update a Task',
   })
   @ApiCustomResponse(UnifiedTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Patch()
-  update(
+  updateTask(
     @Query('id') id: string,
     @Body() updateTaskData: Partial<UnifiedTaskInput>,
   ) {

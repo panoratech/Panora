@@ -26,7 +26,14 @@ export class AuthService {
     try {
       return await this.prisma.users.findMany();
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'GET_USERS_ERROR',
+          message: 'AuthService.getUsers() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -44,7 +51,14 @@ export class AuthService {
 
       return verifyUser;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'VERIFY_USER_ERROR',
+          message: 'AuthService.verifyUser() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -56,7 +70,14 @@ export class AuthService {
         },
       });
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'GET_API_KEYS_ERROR',
+          message: 'AuthService.getApiKeys() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -75,7 +96,14 @@ export class AuthService {
 
       return await this.createUser(user);
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'REGISTER_USER_ERROR',
+          message: 'AuthService.register() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -100,7 +128,14 @@ export class AuthService {
       });
       return user_;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'CREATE_USER_ERROR',
+          message: 'AuthService.createUser() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -158,7 +193,14 @@ export class AuthService {
         }), // token used to generate api keys
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'LOGIN_USER_ERROR',
+          message: 'AuthService.login() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -183,7 +225,14 @@ export class AuthService {
         }),
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'REFRESH_ACCESS_TOKEN_ERROR',
+          message: 'AuthService.refreshAccessToken() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -191,7 +240,14 @@ export class AuthService {
     try {
       return crypto.createHash('sha256').update(apiKey).digest('hex');
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'HASH_API_KEY_ERROR',
+          message: 'AuthService.hashApiKey() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -212,7 +268,14 @@ export class AuthService {
         }),
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'GENERATE_API_KEY_ERROR',
+          message: 'AuthService.generateApiKey() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -257,7 +320,14 @@ export class AuthService {
 
       return { api_key: access_token, ...new_api_key };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'GENERATE_API_KEY_ERROR',
+          message: 'AuthService.generateApiKeyForUser() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -269,7 +339,14 @@ export class AuthService {
         },
       });
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'DELETE_API_KEY_ERROR',
+          message: 'AuthService.deleteApiKey() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -304,7 +381,14 @@ export class AuthService {
       }
       return true;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new AuthError({
+          name: 'VALIDATE_API_KEY_ERROR',
+          message: 'AuthService.validateApiKey() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

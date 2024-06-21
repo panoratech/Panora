@@ -19,16 +19,12 @@ import { ConnectionsStrategiesService } from '@@core/connections-strategies/conn
 import { ManagedWebhooksModule } from '@@core/managed-webhooks/managed-webhooks.module';
 import { AhaConnectionService } from './services/aha/aha.service';
 import { ConnectionUtils } from '../@utils';
-import { DixaConnectionService } from './services/dixa/dixa.service';
-import { HelpscoutConnectionService } from './services/helpscout/helpscout.service';
-import { AsanaConnectionService } from './services/asana/asana.service';
-import { WrikeConnectionService } from './services/wrike/wrike.service';
-import { IroncladConnectionService } from './services/ironclad/ironclad.service';
 
 @Module({
   imports: [WebhookModule, ManagedWebhooksModule],
   providers: [
     TicketingConnectionsService,
+
     LoggerService,
     WebhookService,
     EnvironmentService,
@@ -46,11 +42,6 @@ import { IroncladConnectionService } from './services/ironclad/ironclad.service'
     ClickupConnectionService,
     GorgiasConnectionService,
     AhaConnectionService,
-    DixaConnectionService,
-    HelpscoutConnectionService,
-    AsanaConnectionService,
-    WrikeConnectionService,
-    IroncladConnectionService,
   ],
   exports: [TicketingConnectionsService],
 })

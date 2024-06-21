@@ -56,9 +56,9 @@ export function ConnectorList({ items }: ConnectorListProps) {
                   {item.vertical}
                 </Badge>
               }
-              {item.authStrategy.strategy && 
-                <Badge key={item.authStrategy.strategy} variant={getBadgeVariantFromLabel(item.authStrategy.strategy)}>
-                  {item.authStrategy.strategy}
+              {item.authStrategy && 
+                <Badge key={item.authStrategy} variant={getBadgeVariantFromLabel(item.authStrategy)}>
+                  {item.authStrategy}
                 </Badge>
               }
             </div>

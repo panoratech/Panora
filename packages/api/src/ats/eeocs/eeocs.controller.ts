@@ -34,7 +34,7 @@ export class EeocsController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getEeocss',
     summary: 'List a batch of Eeocss',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class EeocsController {
   @ApiCustomResponse(UnifiedEeocsOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getEeocss(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -72,7 +72,7 @@ export class EeocsController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getEeocs',
     summary: 'Retrieve a Eeocs',
     description: 'Retrieve a eeocs from any connected Ats software',
   })
@@ -91,7 +91,7 @@ export class EeocsController {
   @ApiCustomResponse(UnifiedEeocsOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getEeocs(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -99,7 +99,7 @@ export class EeocsController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addEeocs',
     summary: 'Create a Eeocs',
     description: 'Create a eeocs in any supported Ats software',
   })
@@ -119,7 +119,7 @@ export class EeocsController {
   @ApiCustomResponse(UnifiedEeocsOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addEeocs(
     @Body() unifiedEeocsData: UnifiedEeocsInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -131,6 +131,47 @@ export class EeocsController {
         );
       return this.eeocsService.addEeocs(
         unifiedEeocsData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addEeocss',
+    summary: 'Add a batch of Eeocss',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original Ats software.',
+  })
+  @ApiBody({ type: UnifiedEeocsInput, isArray: true })
+  @ApiCustomResponse(UnifiedEeocsOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addEeocss(
+    @Body() unfiedEeocsData: UnifiedEeocsInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.eeocsService.batchAddEeocss(
+        unfiedEeocsData,
         remoteSource,
         linkedUserId,
         remote_data,

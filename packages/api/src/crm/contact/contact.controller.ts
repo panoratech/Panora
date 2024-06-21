@@ -44,7 +44,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getCrmContacts',
     summary: 'List a batch of CRM Contacts',
   })
   @ApiHeader({
@@ -57,7 +57,7 @@ export class ContactController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getContacts(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -66,11 +66,11 @@ export class ContactController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, limit, cursor } = query;
+      const { remote_data, pageSize, cursor } = query;
       return this.contactService.getContacts(
         remoteSource,
         linkedUserId,
-        limit,
+        pageSize,
         remote_data,
         cursor,
       );
@@ -80,7 +80,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getCrmContact',
     summary: 'Retrieve a CRM Contact',
     description: 'Retrieve a contact from any connected CRM',
   })
@@ -99,7 +99,7 @@ export class ContactController {
   @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getContact(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -107,7 +107,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addCrmContact',
     summary: 'Create CRM Contact',
     description: 'Create a contact in any supported CRM',
   })
@@ -127,7 +127,7 @@ export class ContactController {
   @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addContact(
     @Body() unfiedContactData: UnifiedContactInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -150,12 +150,53 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'update',
+    operationId: 'addCrmContacts',
+    summary: 'Add a batch of CRM Contacts',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original CRM software.',
+  })
+  @ApiBody({ type: UnifiedContactInput, isArray: true })
+  @ApiCustomResponse(UnifiedContactOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addContacts(
+    @Body() unfiedContactData: UnifiedContactInput[],
+    @Headers('x-connection-token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.contactService.batchAddContacts(
+        unfiedContactData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'updateContact',
     summary: 'Update a CRM Contact',
   })
   @UseGuards(ApiKeyAuthGuard)
   @Patch()
-  update(
+  updateContact(
     @Query('id') id: string,
     @Body() updateContactData: Partial<UnifiedContactInput>,
   ) {

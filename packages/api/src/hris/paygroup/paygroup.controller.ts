@@ -37,7 +37,7 @@ export class PayGroupController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getPayGroups',
     summary: 'List a batch of PayGroups',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class PayGroupController {
   @ApiCustomResponse(UnifiedPayGroupOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getPayGroups(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class PayGroupController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getPayGroup',
     summary: 'Retrieve a PayGroup',
     description: 'Retrieve a paygroup from any connected Hris software',
   })
@@ -94,7 +94,7 @@ export class PayGroupController {
   @ApiCustomResponse(UnifiedPayGroupOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getPayGroup(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class PayGroupController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addPayGroup',
     summary: 'Create a PayGroup',
     description: 'Create a paygroup in any supported Hris software',
   })
@@ -122,7 +122,7 @@ export class PayGroupController {
   @ApiCustomResponse(UnifiedPayGroupOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addPayGroup(
     @Body() unifiedPayGroupData: UnifiedPayGroupInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,6 +134,47 @@ export class PayGroupController {
         );
       return this.paygroupService.addPayGroup(
         unifiedPayGroupData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addPayGroups',
+    summary: 'Add a batch of PayGroups',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original Hris software.',
+  })
+  @ApiBody({ type: UnifiedPayGroupInput, isArray: true })
+  @ApiCustomResponse(UnifiedPayGroupOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addPayGroups(
+    @Body() unfiedPayGroupData: UnifiedPayGroupInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.paygroupService.batchAddPayGroups(
+        unfiedPayGroupData,
         remoteSource,
         linkedUserId,
         remote_data,

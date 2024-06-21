@@ -26,7 +26,14 @@ export class WebhookService {
         .update(JSON.stringify(payload))
         .digest('hex');
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new WebhooksError({
+          name: 'SIGNATURE_GENERATION_ERROR',
+          message: 'WebhookService.generateSignature() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -38,7 +45,14 @@ export class WebhookService {
         },
       });
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new WebhooksError({
+          name: 'GET_WEBHOOKS_ERROR',
+          message: 'WebhookService.getWebhookEndpoints() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -49,7 +63,14 @@ export class WebhookService {
         data: { active: active },
       });
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new WebhooksError({
+          name: 'UPDATE_WEBHOOK_STATUS_ERROR',
+          message: 'WebhookService.updateStatusWebhookEndpoint() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -68,7 +89,14 @@ export class WebhookService {
         },
       });
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new WebhooksError({
+          name: 'CREATE_WEBHOOK_ERROR',
+          message: 'WebhookService.createWebhookEndpoint() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -80,7 +108,14 @@ export class WebhookService {
         },
       });
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new WebhooksError({
+          name: 'DELETE_WEBHOOK_ERROR',
+          message: 'WebhookService.deleteWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -141,7 +176,14 @@ export class WebhookService {
         webhook_delivery_id: w_delivery.id_webhook_delivery_attempt,
       });
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new WebhooksError({
+          name: 'DELIVERING_WEBHOOK_ERROR',
+          message: 'WebhookService.handleWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -265,7 +307,14 @@ export class WebhookService {
         }
       }
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new WebhooksError({
+          name: 'DELIVERING_PRIORITY_WEBHOOK_ERROR',
+          message: 'WebhookService.handlePriorityWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -278,7 +327,14 @@ export class WebhookService {
         { delay: 60000 },
       );
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new WebhooksError({
+          name: 'DELIVERING_FAILED_WEBHOOK_ERROR',
+          message: 'WebhookService.handleFailedWebhook() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -297,7 +353,14 @@ export class WebhookService {
       }
       return 200;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new WebhooksError({
+          name: 'VERIFY_PAYLOAD_ERROR',
+          message: 'WebhookService.verifyPayloadSignature() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

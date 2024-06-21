@@ -37,7 +37,7 @@ export class TaxRateController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTaxRates',
     summary: 'List a batch of TaxRates',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class TaxRateController {
   @ApiCustomResponse(UnifiedTaxRateOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getTaxRates(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class TaxRateController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTaxRate',
     summary: 'Retrieve a TaxRate',
     description: 'Retrieve a taxrate from any connected Accounting software',
   })
@@ -96,7 +96,7 @@ export class TaxRateController {
   @ApiCustomResponse(UnifiedTaxRateOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getTaxRate(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -104,7 +104,7 @@ export class TaxRateController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addTaxRate',
     summary: 'Create a TaxRate',
     description: 'Create a taxrate in any supported Accounting software',
   })
@@ -125,7 +125,7 @@ export class TaxRateController {
   @ApiCustomResponse(UnifiedTaxRateOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addTaxRate(
     @Body() unifiedTaxRateData: UnifiedTaxRateInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -137,6 +137,48 @@ export class TaxRateController {
         );
       return this.taxrateService.addTaxRate(
         unifiedTaxRateData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addTaxRates',
+    summary: 'Add a batch of TaxRates',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original Accounting software.',
+  })
+  @ApiBody({ type: UnifiedTaxRateInput, isArray: true })
+  @ApiCustomResponse(UnifiedTaxRateOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addTaxRates(
+    @Body() unfiedTaxRateData: UnifiedTaxRateInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.taxrateService.batchAddTaxRates(
+        unfiedTaxRateData,
         remoteSource,
         linkedUserId,
         remote_data,

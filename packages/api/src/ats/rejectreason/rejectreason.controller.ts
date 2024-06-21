@@ -37,7 +37,7 @@ export class RejectReasonController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getRejectReasons',
     summary: 'List a batch of RejectReasons',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class RejectReasonController {
   @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getRejectReasons(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class RejectReasonController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getRejectReason',
     summary: 'Retrieve a RejectReason',
     description: 'Retrieve a rejectreason from any connected Ats software',
   })
@@ -94,7 +94,7 @@ export class RejectReasonController {
   @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getRejectReason(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class RejectReasonController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addRejectReason',
     summary: 'Create a RejectReason',
     description: 'Create a rejectreason in any supported Ats software',
   })
@@ -122,7 +122,7 @@ export class RejectReasonController {
   @ApiCustomResponse(UnifiedRejectReasonOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addRejectReason(
     @Body() unifiedRejectReasonData: UnifiedRejectReasonInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,6 +134,47 @@ export class RejectReasonController {
         );
       return this.rejectreasonService.addRejectReason(
         unifiedRejectReasonData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addRejectReasons',
+    summary: 'Add a batch of RejectReasons',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original Ats software.',
+  })
+  @ApiBody({ type: UnifiedRejectReasonInput, isArray: true })
+  @ApiCustomResponse(UnifiedRejectReasonOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addRejectReasons(
+    @Body() unfiedRejectReasonData: UnifiedRejectReasonInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.rejectreasonService.batchAddRejectReasons(
+        unfiedRejectReasonData,
         remoteSource,
         linkedUserId,
         remote_data,

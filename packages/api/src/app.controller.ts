@@ -13,20 +13,20 @@ export class AppController {
     this.logger.setContext(AppController.name);
   }
 
-  @ApiOperation({ operationId: 'hello' })
+  @ApiOperation({ operationId: 'getHello' })
   @Get()
   hello(): string {
     return this.appService.getHello();
   }
 
-  @ApiOperation({ operationId: 'health' })
+  @ApiOperation({ operationId: 'getHealth' })
   @Get('health')
   health(): number {
     return 200;
   }
 
   @UseGuards(ApiKeyAuthGuard)
-  @ApiOperation({ operationId: 'helloProtected' })
+  @ApiOperation({ operationId: 'getHelloProtected' })
   @Get('protected')
   hello2(): string {
     return `Hello You Are On The Panora API PROTECTED endpoint!`;

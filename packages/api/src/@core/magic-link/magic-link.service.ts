@@ -15,7 +15,14 @@ export class MagicLinkService {
     try {
       return await this.prisma.invite_links.findMany();
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new MagicLinksError({
+          name: 'GET_MAGIC_LINKS_ERROR',
+          message: 'MagicLinkService.getMagicLinks() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -38,7 +45,14 @@ export class MagicLinkService {
         id_project: linkedUser.id_project,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new MagicLinksError({
+          name: 'GET_MAGIC_LINK_ERROR',
+          message: 'MagicLinkService.getMagicLink() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -73,7 +87,14 @@ export class MagicLinkService {
       });
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new MagicLinksError({
+          name: 'CREATE_MAGIC_LINK_ERROR',
+          message: 'MagicLinkService.createUniqueLink() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

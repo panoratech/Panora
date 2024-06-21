@@ -71,14 +71,20 @@ export class TagService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TAG_ERROR',
+          message: 'TagService.getTag() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getTags(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -106,7 +112,7 @@ export class TagService {
       }
 
       const tags = await this.prisma.tcg_tags.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_tcg_tag: cursor,
@@ -121,7 +127,7 @@ export class TagService {
         },
       });
 
-      if (tags.length === limit + 1) {
+      if (tags.length === pageSize + 1) {
         next_cursor = Buffer.from(tags[tags.length - 1].id_tcg_tag).toString(
           'base64',
         );
@@ -204,7 +210,13 @@ export class TagService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_TAGS_ERROR',
+          message: 'TagService.getTags() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

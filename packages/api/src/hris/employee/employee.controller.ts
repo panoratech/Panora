@@ -37,7 +37,7 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getEmployees',
     summary: 'List a batch of Employees',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class EmployeeController {
   @ApiCustomResponse(UnifiedEmployeeOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getEmployees(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getEmployee',
     summary: 'Retrieve a Employee',
     description: 'Retrieve a employee from any connected Hris software',
   })
@@ -94,7 +94,7 @@ export class EmployeeController {
   @ApiCustomResponse(UnifiedEmployeeOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getEmployee(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addEmployee',
     summary: 'Create a Employee',
     description: 'Create a employee in any supported Hris software',
   })
@@ -122,7 +122,7 @@ export class EmployeeController {
   @ApiCustomResponse(UnifiedEmployeeOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addEmployee(
     @Body() unifiedEmployeeData: UnifiedEmployeeInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,6 +134,47 @@ export class EmployeeController {
         );
       return this.employeeService.addEmployee(
         unifiedEmployeeData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addEmployees',
+    summary: 'Add a batch of Employees',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original Hris software.',
+  })
+  @ApiBody({ type: UnifiedEmployeeInput, isArray: true })
+  @ApiCustomResponse(UnifiedEmployeeOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addEmployees(
+    @Body() unfiedEmployeeData: UnifiedEmployeeInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.employeeService.batchAddEmployees(
+        unfiedEmployeeData,
         remoteSource,
         linkedUserId,
         remote_data,

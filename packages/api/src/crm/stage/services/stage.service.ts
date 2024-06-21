@@ -72,14 +72,20 @@ export class StageService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_STAGE_ERROR',
+          message: 'StageService.getStage() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getStages(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -105,7 +111,7 @@ export class StageService {
       }
 
       const stages = await this.prisma.crm_deals_stages.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_crm_deals_stage: cursor,
@@ -120,7 +126,7 @@ export class StageService {
         },
       });
 
-      if (stages.length === limit + 1) {
+      if (stages.length === pageSize + 1) {
         next_cursor = Buffer.from(
           stages[stages.length - 1].id_crm_deals_stage,
         ).toString('base64');
@@ -203,7 +209,13 @@ export class StageService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_STAGES_ERROR',
+          message: 'StageService.getStages() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }
