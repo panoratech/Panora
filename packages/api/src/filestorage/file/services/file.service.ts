@@ -25,15 +25,6 @@ export class FileService {
     this.logger.setContext(FileService.name);
   }
 
-  async batchAddFiles(
-    unifiedFileData: UnifiedFileInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedFileOutput[]> {
-    return;
-  }
-
   async addFile(
     unifiedFileData: UnifiedFileInput,
     integrationId: string,
