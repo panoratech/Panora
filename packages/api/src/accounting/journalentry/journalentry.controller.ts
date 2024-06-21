@@ -146,46 +146,4 @@ export class JournalEntryController {
       throw new Error(error);
     }
   }
-
-  @ApiOperation({
-    operationId: 'addJournalEntrys',
-    summary: 'Add a batch of JournalEntrys',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedJournalEntryInput, isArray: true })
-  @ApiCustomResponse(UnifiedJournalEntryOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addJournalEntrys(
-    @Body() unfiedJournalEntryData: UnifiedJournalEntryInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.journalentryService.batchAddJournalEntrys(
-        unfiedJournalEntryData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
 }
