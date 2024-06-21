@@ -1,3 +1,39 @@
-export class UnifiedDepartmentInput {}
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
 
-export class UnifiedDepartmentOutput extends UnifiedDepartmentInput {}
+export class UnifiedDepartmentInput {
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The name of the department',
+  })
+  @IsString()
+  @IsOptional()
+  name?: string;
+}
+
+export class UnifiedDepartmentOutput extends UnifiedDepartmentInput {
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The UUID of the department',
+  })
+  @IsUUID()
+  @IsOptional()
+  id?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    description:
+      'The remote ID of the department in the context of the 3rd Party',
+  })
+  @IsString()
+  @IsOptional()
+  remote_id?: string;
+
+  @ApiPropertyOptional({
+    type: {},
+    description:
+      'The remote data of the department in the context of the 3rd Party',
+  })
+  @IsOptional()
+  remote_data?: Record<string, any>;
+}

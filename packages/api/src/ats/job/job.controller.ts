@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -21,6 +22,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { JobService } from './services/job.service';
 import { UnifiedJobInput, UnifiedJobOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('ats/job')
 @Controller('ats/job')
@@ -50,7 +52,7 @@ export class JobController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedJobOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -85,54 +87,12 @@ export class JobController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedJobOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     return this.jobService.getJob(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'create',
-    summary: 'Create a Job',
-    description: 'Create a job in any supported Ats software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedJobInput })
-  @ApiCustomResponse(UnifiedJobOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async create(
-    @Body() unifiedJobData: UnifiedJobInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.jobService.addJob(
-        unifiedJobData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
   }
 }

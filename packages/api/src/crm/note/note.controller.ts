@@ -10,7 +10,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   ApiBody,
@@ -25,6 +24,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { NoteService } from './services/note.service';
 import { UnifiedNoteInput, UnifiedNoteOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiBearerAuth('JWT')

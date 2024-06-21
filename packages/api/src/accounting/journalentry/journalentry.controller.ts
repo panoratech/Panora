@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -24,6 +25,7 @@ import {
   UnifiedJournalEntryOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('accounting/journalentry')
 @Controller('accounting/journalentry')
@@ -54,8 +56,7 @@ export class JournalEntryController {
       'Set to true to include data from the original Accounting software.',
   })
   @ApiCustomResponse(UnifiedJournalEntryOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get()
+@UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -95,8 +96,7 @@ export class JournalEntryController {
       'Set to true to include data from the original Accounting software.',
   })
   @ApiCustomResponse(UnifiedJournalEntryOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
+@UseGuards(ApiKeyAuthGuard)  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
@@ -124,8 +124,7 @@ export class JournalEntryController {
   })
   @ApiBody({ type: UnifiedJournalEntryInput })
   @ApiCustomResponse(UnifiedJournalEntryOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
+@UseGuards(ApiKeyAuthGuard)  @Post()
   async create(
     @Body() unifiedJournalEntryData: UnifiedJournalEntryInput,
     @Headers('x-connection-token') connection_token: string,

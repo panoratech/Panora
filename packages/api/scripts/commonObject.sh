@@ -239,6 +239,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @Module({
   imports: [
@@ -277,6 +278,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -291,6 +293,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { ${ObjectCap}Service } from './services/${objectType}.service';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('${VerticalLow}/${objectType}')
 @Controller('${VerticalLow}/${objectType}')
@@ -323,8 +326,7 @@ private connectionUtils: ConnectionUtils
       'Set to true to include data from the original ${VerticalCap} software.',
   })
   @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get()
+@UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -363,8 +365,7 @@ private connectionUtils: ConnectionUtils
       'Set to true to include data from the original ${VerticalCap} software.',
   })
   @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
+@UseGuards(ApiKeyAuthGuard)  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
@@ -392,8 +393,7 @@ private connectionUtils: ConnectionUtils
   })
   @ApiBody({ type: Unified${ObjectCap}Input })
   @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
+@UseGuards(ApiKeyAuthGuard)  @Post()
   async create(
     @Body() unified${ObjectCap}Data: Unified${ObjectCap}Input,
     @Headers('x-connection-token') connection_token: string,
@@ -420,8 +420,7 @@ private connectionUtils: ConnectionUtils
     summary: 'Update a ${ObjectCap}',
   })
   @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
+@UseGuards(ApiKeyAuthGuard)  @Patch()
   update$(
     @Query('id') id: string,
     @Body() update${ObjectCap}Data: Partial<Unified${ObjectCap}Input>,

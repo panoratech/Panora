@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -24,6 +25,7 @@ import {
   UnifiedEmployeePayrollRunOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('hris/employeepayrollrun')
 @Controller('hris/employeepayrollrun')
@@ -53,7 +55,7 @@ export class EmployeePayrollRunController {
     description: 'Set to true to include data from the original Hris software.',
   })
   @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -93,7 +95,7 @@ export class EmployeePayrollRunController {
     description: 'Set to true to include data from the original Hris software.',
   })
   @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   retrieve(
     @Param('id') id: string,
@@ -124,7 +126,7 @@ export class EmployeePayrollRunController {
   })
   @ApiBody({ type: UnifiedEmployeePayrollRunInput })
   @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async create(
     @Body() unifiedEmployeePayrollRunData: UnifiedEmployeePayrollRunInput,

@@ -680,7 +680,7 @@ model fs_drives {
   remote_id         String?
   created_at        DateTime  @db.Timestamp(6)
   modified_at       DateTime  @db.Timestamp(6)
-}
+} 
 
 model fs_files {
   id_fs_file       String   @id(map: "pk_fs_files") @db.Uuid
@@ -707,7 +707,7 @@ model fs_folders {
   description      String?
   parent_folder    String?  @db.Uuid
   remote_id        String?
-  created_at       DateTime @db.Timestamp(6)
+  created_at       DateTime @db.Timestamp(6) 
   modified_at      DateTime @db.Timestamp(6)
   id_fs_drive      String?  @db.Uuid
   id_fs_permission String?  @db.Uuid
@@ -720,7 +720,7 @@ model fs_folders {
 model fs_permissions {
   id_fs_permission String   @id(map: "pk_fs_permissions") @db.Uuid
   remote_id        String?
-  user             String?  @db.Uuid
+  user             String?  @db.Uuid 
   group            String?  @db.Uuid
   type             String[]
   roles            String[]
@@ -1015,7 +1015,7 @@ model fs_groups {
 model fs_users {
   id_fs_user  String   @id(map: "pk_fs_users") @db.Uuid
   name        String?
-  email       String?
+  email       String? 
   is_me       Boolean
   remote_id   String?
   created_at  DateTime @db.Timestamp(6)

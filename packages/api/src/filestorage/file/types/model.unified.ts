@@ -1,3 +1,60 @@
-export class UnifiedFileInput {}
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsUUID, IsOptional, IsString } from 'class-validator';
 
-export class UnifiedFileOutput extends UnifiedFileInput {}
+export class UnifiedFileInput {
+  @ApiProperty({ type: String, description: 'The name of the file' })
+  @IsString()
+  name: string;
+
+  @ApiProperty({ type: String, description: 'The type of the file' })
+  @IsString()
+  type: string;
+
+  @ApiProperty({ type: String, description: 'The url of the file' })
+  @IsString()
+  file_url: string;
+
+  @ApiProperty({ type: String, description: 'The mime type of the file' })
+  @IsString()
+  mime_type: string;
+
+  @ApiProperty({ type: String, description: 'The size of the file' })
+  @IsString()
+  size: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The uuid of the folder tied to the file',
+  })
+  @IsString()
+  folder_id: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The uuid of the permission tied to the file',
+  })
+  @IsString()
+  permission_id: string;
+}
+
+export class UnifiedFileOutput extends UnifiedFileInput {
+  @ApiPropertyOptional({ type: String, description: 'The uuid of the file' })
+  @IsUUID()
+  @IsOptional()
+  id?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The id of the file in the context of the 3rd Party',
+  })
+  @IsString()
+  @IsOptional()
+  remote_id?: string;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The remote data of the file in the context of the 3rd Party',
+  })
+  @IsOptional()
+  remote_data?: Record<string, any>;
+}

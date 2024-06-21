@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -24,6 +25,7 @@ import {
   UnifiedPermissionOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('filestorage/permission')
 @Controller('filestorage/permission')
@@ -54,7 +56,7 @@ export class PermissionController {
       'Set to true to include data from the original Filestorage software.',
   })
   @ApiCustomResponse(UnifiedPermissionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -95,7 +97,7 @@ export class PermissionController {
       'Set to true to include data from the original Filestorage software.',
   })
   @ApiCustomResponse(UnifiedPermissionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   retrieve(
     @Param('id') id: string,
@@ -124,7 +126,7 @@ export class PermissionController {
   })
   @ApiBody({ type: UnifiedPermissionInput })
   @ApiCustomResponse(UnifiedPermissionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async create(
     @Body() unifiedPermissionData: UnifiedPermissionInput,

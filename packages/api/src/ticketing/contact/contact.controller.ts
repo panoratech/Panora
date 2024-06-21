@@ -19,6 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { ContactService } from './services/contact.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { UnifiedContactOutput } from './types/model.unified';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';

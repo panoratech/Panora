@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -23,6 +24,7 @@ import {
   UnifiedActivityOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ActivityService } from './services/activity.service';
 
 @ApiTags('ats/activity')
@@ -53,7 +55,7 @@ export class ActivityController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedActivityOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -92,7 +94,7 @@ export class ActivityController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedActivityOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   retrieve(
     @Param('id') id: string,
@@ -120,7 +122,7 @@ export class ActivityController {
   })
   @ApiBody({ type: UnifiedActivityInput })
   @ApiCustomResponse(UnifiedActivityOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async create(
     @Body() unifiedActivityData: UnifiedActivityInput,

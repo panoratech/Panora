@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -23,6 +24,7 @@ import {
   UnifiedCandidateOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { CandidateService } from './services/candidate.service';
 
 @ApiTags('ats/candidate')
@@ -53,7 +55,7 @@ export class CandidateController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedCandidateOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -92,7 +94,7 @@ export class CandidateController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedCandidateOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   retrieve(
     @Param('id') id: string,
@@ -120,7 +122,7 @@ export class CandidateController {
   })
   @ApiBody({ type: UnifiedCandidateInput })
   @ApiCustomResponse(UnifiedCandidateOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async create(
     @Body() unifiedCandidateData: UnifiedCandidateInput,

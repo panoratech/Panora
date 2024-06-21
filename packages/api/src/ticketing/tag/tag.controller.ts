@@ -20,6 +20,7 @@ import {
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TagService } from './services/tag.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { UnifiedTagOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';

@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -24,6 +25,7 @@ import {
   UnifiedIncomeStatementOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('accounting/incomestatement')
 @Controller('accounting/incomestatement')
@@ -54,8 +56,7 @@ export class IncomeStatementController {
       'Set to true to include data from the original Accounting software.',
   })
   @ApiCustomResponse(UnifiedIncomeStatementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get()
+@UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -95,8 +96,7 @@ export class IncomeStatementController {
       'Set to true to include data from the original Accounting software.',
   })
   @ApiCustomResponse(UnifiedIncomeStatementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
+@UseGuards(ApiKeyAuthGuard)  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
@@ -125,8 +125,7 @@ export class IncomeStatementController {
   })
   @ApiBody({ type: UnifiedIncomeStatementInput })
   @ApiCustomResponse(UnifiedIncomeStatementOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
+@UseGuards(ApiKeyAuthGuard)  @Post()
   async create(
     @Body() unifiedIncomeStatementData: UnifiedIncomeStatementInput,
     @Headers('x-connection-token') connection_token: string,

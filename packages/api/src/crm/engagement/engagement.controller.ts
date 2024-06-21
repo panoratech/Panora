@@ -12,7 +12,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import {
   ApiBody,
   ApiOperation,
@@ -29,6 +28,7 @@ import {
   UnifiedEngagementOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiBearerAuth('JWT')

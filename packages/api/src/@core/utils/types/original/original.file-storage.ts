@@ -15,12 +15,20 @@ export type OriginalSharedLinkInput = '';
 /* drive */
 export type OriginalDriveInput = '';
 
+/* group */
+export type OriginalGroupInput = '';
+
+/* user */
+export type OriginalUserInput = '';
+
 export type FileStorageObjectInput =
   | OriginalFileInput
   | OriginalFolderInput
   | OriginalPermissionInput
   | OriginalSharedLinkInput
-  | OriginalDriveInput;
+  | OriginalDriveInput
+  | OriginalGroupInput
+  | OriginalUserInput;
 
 /* OUTPUT */
 
@@ -39,9 +47,17 @@ export type OriginalSharedLinkOutput = '';
 /* drive */
 export type OriginalDriveOutput = '';
 
+/* group */
+export type OriginalGroupOutput = '';
+
+/* user */
+export type OriginalUserOutput = '';
+
 export type FileStorageObjectOutput =
   | OriginalFileOutput
   | OriginalFolderOutput
   | OriginalPermissionOutput
   | OriginalSharedLinkOutput
-  | OriginalDriveOutput;
+  | OriginalDriveOutput
+  | OriginalGroupOutput
+  | OriginalUserOutput;

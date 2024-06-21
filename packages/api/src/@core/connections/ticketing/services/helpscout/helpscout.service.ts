@@ -12,6 +12,7 @@ import {
   providerToType,
 } from '@panora/shared';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import {
   OAuthCallbackParams,
   RefreshParams,

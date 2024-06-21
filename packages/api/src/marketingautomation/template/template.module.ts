@@ -10,6 +10,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { CoreModule } from '@@core/core.module';
 
 @Module({

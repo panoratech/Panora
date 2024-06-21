@@ -10,6 +10,7 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { HubspotService } from './services/hubspot';
 import { PipedriveService } from './services/pipedrive';
 import { ZendeskService } from './services/zendesk';

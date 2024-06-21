@@ -17,6 +17,7 @@ import { UnificationRegistry } from '@@core/utils/registry/unification.registry'
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @Module({
   imports: [

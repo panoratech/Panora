@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -21,6 +22,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { OfficeService } from './services/office.service';
 import { UnifiedOfficeInput, UnifiedOfficeOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('ats/office')
 @Controller('ats/office')
@@ -50,8 +52,7 @@ export class OfficeController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedOfficeOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get()
+@UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -89,8 +90,7 @@ export class OfficeController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedOfficeOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
+@UseGuards(ApiKeyAuthGuard)  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
@@ -117,8 +117,7 @@ export class OfficeController {
   })
   @ApiBody({ type: UnifiedOfficeInput })
   @ApiCustomResponse(UnifiedOfficeOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
+@UseGuards(ApiKeyAuthGuard)  @Post()
   async create(
     @Body() unifiedOfficeData: UnifiedOfficeInput,
     @Headers('x-connection-token') connection_token: string,

@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -24,6 +25,7 @@ import {
   UnifiedScreeningQuestionOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('ats/screeningquestion')
 @Controller('ats/screeningquestion')
@@ -53,7 +55,7 @@ export class ScreeningQuestionController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedScreeningQuestionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -92,54 +94,12 @@ export class ScreeningQuestionController {
     description: 'Set to true to include data from the original Ats software.',
   })
   @ApiCustomResponse(UnifiedScreeningQuestionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     return this.screeningquestionService.getScreeningQuestion(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'create',
-    summary: 'Create a ScreeningQuestion',
-    description: 'Create a screeningquestion in any supported Ats software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedScreeningQuestionInput })
-  @ApiCustomResponse(UnifiedScreeningQuestionOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async create(
-    @Body() unifiedScreeningQuestionData: UnifiedScreeningQuestionInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.screeningquestionService.addScreeningQuestion(
-        unifiedScreeningQuestionData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
   }
 }

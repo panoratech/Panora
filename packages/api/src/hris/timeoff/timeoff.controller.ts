@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -24,6 +25,7 @@ import {
   UnifiedTimeoffOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('hris/timeoff')
 @Controller('hris/timeoff')
@@ -53,7 +55,7 @@ export class TimeoffController {
     description: 'Set to true to include data from the original Hris software.',
   })
   @ApiCustomResponse(UnifiedTimeoffOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -92,7 +94,7 @@ export class TimeoffController {
     description: 'Set to true to include data from the original Hris software.',
   })
   @ApiCustomResponse(UnifiedTimeoffOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   retrieve(
     @Param('id') id: string,
@@ -120,7 +122,7 @@ export class TimeoffController {
   })
   @ApiBody({ type: UnifiedTimeoffInput })
   @ApiCustomResponse(UnifiedTimeoffOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async create(
     @Body() unifiedTimeoffData: UnifiedTimeoffInput,

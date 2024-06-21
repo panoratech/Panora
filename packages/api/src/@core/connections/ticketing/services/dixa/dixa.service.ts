@@ -7,6 +7,7 @@ import { ITicketingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { CONNECTORS_METADATA } from '@panora/shared';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { APIKeyCallbackParams } from '@@core/connections/@utils/types';
 
 @Injectable()

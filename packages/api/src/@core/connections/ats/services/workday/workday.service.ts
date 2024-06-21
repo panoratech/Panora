@@ -6,6 +6,7 @@ import { EncryptionService } from '@@core/encryption/encryption.service';
 import { IAtsConnectionService } from '../../types';
 import { CONNECTORS_METADATA } from '@panora/shared';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { APIKeyCallbackParams } from '@@core/connections/@utils/types';
 import { ServiceRegistry } from '../registry.service';
 

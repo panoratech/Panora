@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -20,6 +21,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { FileService } from './services/file.service';
 import { UnifiedFileInput, UnifiedFileOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('filestorage/file')
 @Controller('filestorage/file')
@@ -50,7 +52,7 @@ export class FileController {
       'Set to true to include data from the original Filestorage software.',
   })
   @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -86,7 +88,7 @@ export class FileController {
       'Set to true to include data from the original Filestorage software.',
   })
   @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   retrieve(
     @Param('id') id: string,
@@ -115,7 +117,7 @@ export class FileController {
   })
   @ApiBody({ type: UnifiedFileInput })
   @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async create(
     @Body() unifiedFileData: UnifiedFileInput,

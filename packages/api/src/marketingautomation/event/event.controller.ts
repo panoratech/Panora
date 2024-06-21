@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -21,6 +22,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { EventService } from './services/event.service';
 import { UnifiedEventInput, UnifiedEventOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('marketingautomation/event')
 @Controller('marketingautomation/event')
@@ -51,8 +53,7 @@ export class EventController {
       'Set to true to include data from the original Marketingautomation software.',
   })
   @ApiCustomResponse(UnifiedEventOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get()
+@UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -92,8 +93,7 @@ export class EventController {
       'Set to true to include data from the original Marketingautomation software.',
   })
   @ApiCustomResponse(UnifiedEventOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
+@UseGuards(ApiKeyAuthGuard)  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
@@ -121,8 +121,7 @@ export class EventController {
   })
   @ApiBody({ type: UnifiedEventInput })
   @ApiCustomResponse(UnifiedEventOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
+@UseGuards(ApiKeyAuthGuard)  @Post()
   async create(
     @Body() unifiedEventData: UnifiedEventInput,
     @Headers('x-connection-token') connection_token: string,

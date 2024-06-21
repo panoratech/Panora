@@ -15,6 +15,7 @@ import {
 } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { OAuthCallbackParams } from '@@core/connections/@utils/types';
 
 export type BamboohrOAuthResponse = {

@@ -26,8 +26,8 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 

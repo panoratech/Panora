@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -21,6 +22,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { FolderService } from './services/folder.service';
 import { UnifiedFolderInput, UnifiedFolderOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('filestorage/folder')
 @Controller('filestorage/folder')
@@ -51,7 +53,7 @@ export class FolderController {
       'Set to true to include data from the original Filestorage software.',
   })
   @ApiCustomResponse(UnifiedFolderOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -91,7 +93,7 @@ export class FolderController {
       'Set to true to include data from the original Filestorage software.',
   })
   @ApiCustomResponse(UnifiedFolderOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   retrieve(
     @Param('id') id: string,
@@ -120,7 +122,7 @@ export class FolderController {
   })
   @ApiBody({ type: UnifiedFolderInput })
   @ApiCustomResponse(UnifiedFolderOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async create(
     @Body() unifiedFolderData: UnifiedFolderInput,
