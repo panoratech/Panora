@@ -26,6 +26,7 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { AccountService } from './services/account.service';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('accounting/account')
 @Controller('accounting/account')
@@ -48,28 +49,25 @@ export class AccountController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
   @ApiCustomResponse(UnifiedAccountOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get()
+  @UseGuards(ApiKeyAuthGuard)
+  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.accountService.getAccounts(
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -95,7 +93,8 @@ export class AccountController {
       'Set to true to include data from the original Accounting software.',
   })
   @ApiCustomResponse(UnifiedAccountOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get(':id')
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
@@ -123,7 +122,8 @@ export class AccountController {
   })
   @ApiBody({ type: UnifiedAccountInput })
   @ApiCustomResponse(UnifiedAccountOutput)
-@UseGuards(ApiKeyAuthGuard)  @Post()
+  @UseGuards(ApiKeyAuthGuard)
+  @Post()
   async create(
     @Body() unifiedAccountData: UnifiedAccountInput,
     @Headers('x-connection-token') connection_token: string,

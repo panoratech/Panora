@@ -23,6 +23,7 @@ import { ItemService } from './services/item.service';
 import { UnifiedItemInput, UnifiedItemOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('accounting/item')
 @Controller('accounting/item')
@@ -45,25 +46,26 @@ export class ItemController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
   @ApiCustomResponse(UnifiedItemOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get()
+  @UseGuards(ApiKeyAuthGuard)
+  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.itemService.getItems(remoteSource, linkedUserId, remote_data);
+      const { remote_data, limit, cursor } = query;
+      return this.itemService.getItems(
+        remoteSource,
+        linkedUserId,
+        limit,
+        remote_data,
+        cursor,
+      );
     } catch (error) {
       throw new Error(error);
     }
@@ -88,53 +90,12 @@ export class ItemController {
       'Set to true to include data from the original Accounting software.',
   })
   @ApiCustomResponse(UnifiedItemOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get(':id')
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     return this.itemService.getItem(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'create',
-    summary: 'Create a Item',
-    description: 'Create a item in any supported Accounting software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedItemInput })
-  @ApiCustomResponse(UnifiedItemOutput)
-@UseGuards(ApiKeyAuthGuard)  @Post()
-  async create(
-    @Body() unifiedItemData: UnifiedItemInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.itemService.addItem(
-        unifiedItemData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
   }
 }

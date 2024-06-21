@@ -28,15 +28,6 @@ export class ExpenseService {
     this.logger.setContext(ExpenseService.name);
   }
 
-  async batchAddExpenses(
-    unifiedExpenseData: UnifiedExpenseInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedExpenseOutput[]> {
-    return;
-  }
-
   async addExpense(
     unifiedExpenseData: UnifiedExpenseInput,
     integrationId: string,

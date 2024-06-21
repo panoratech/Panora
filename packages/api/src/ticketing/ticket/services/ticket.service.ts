@@ -29,29 +29,6 @@ export class TicketService {
     this.logger.setContext(TicketService.name);
   }
 
-  async batchAddTickets(
-    unifiedTicketData: UnifiedTicketInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTicketOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedTicketData.map((unifiedData) =>
-          this.addTicket(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-      return responses;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async addTicket(
     unifiedTicketData: UnifiedTicketInput,
     integrationId: string,

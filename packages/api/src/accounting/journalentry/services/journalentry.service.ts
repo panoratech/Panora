@@ -28,15 +28,6 @@ export class JournalEntryService {
     this.logger.setContext(JournalEntryService.name);
   }
 
-  async batchAddJournalEntrys(
-    unifiedJournalEntryData: UnifiedJournalEntryInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedJournalEntryOutput[]> {
-    return;
-  }
-
   async addJournalEntry(
     unifiedJournalEntryData: UnifiedJournalEntryInput,
     integrationId: string,

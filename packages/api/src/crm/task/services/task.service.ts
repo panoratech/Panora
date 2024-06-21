@@ -26,30 +26,6 @@ export class TaskService {
     this.logger.setContext(TaskService.name);
   }
 
-  async batchAddTasks(
-    unifiedTaskData: UnifiedTaskInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTaskOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedTaskData.map((unifiedData) =>
-          this.addTask(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async addTask(
     unifiedTaskData: UnifiedTaskInput,
     integrationId: string,

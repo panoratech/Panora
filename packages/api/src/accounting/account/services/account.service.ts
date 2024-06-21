@@ -27,15 +27,6 @@ export class AccountService {
     this.logger.setContext(AccountService.name);
   }
 
-  async batchAddAccounts(
-    unifiedAccountData: UnifiedAccountInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedAccountOutput[]> {
-    return;
-  }
-
   async addAccount(
     unifiedAccountData: UnifiedAccountInput,
     integrationId: string,

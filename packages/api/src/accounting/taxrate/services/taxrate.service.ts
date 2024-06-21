@@ -28,24 +28,6 @@ export class TaxRateService {
     this.logger.setContext(TaxRateService.name);
   }
 
-  async batchAddTaxRates(
-    unifiedTaxRateData: UnifiedTaxRateInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTaxRateOutput[]> {
-    return;
-  }
-
-  async addTaxRate(
-    unifiedTaxRateData: UnifiedTaxRateInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTaxRateOutput> {
-    return;
-  }
-
   async getTaxRate(
     id_taxrateing_taxrate: string,
     remote_data?: boolean,

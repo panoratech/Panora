@@ -26,6 +26,7 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('accounting/expense')
 @Controller('accounting/expense')
@@ -48,28 +49,25 @@ export class ExpenseController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
   @ApiCustomResponse(UnifiedExpenseOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get()
+  @UseGuards(ApiKeyAuthGuard)
+  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.expenseService.getExpenses(
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -95,7 +93,8 @@ export class ExpenseController {
       'Set to true to include data from the original Accounting software.',
   })
   @ApiCustomResponse(UnifiedExpenseOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get(':id')
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
@@ -123,7 +122,8 @@ export class ExpenseController {
   })
   @ApiBody({ type: UnifiedExpenseInput })
   @ApiCustomResponse(UnifiedExpenseOutput)
-@UseGuards(ApiKeyAuthGuard)  @Post()
+  @UseGuards(ApiKeyAuthGuard)
+  @Post()
   async create(
     @Body() unifiedExpenseData: UnifiedExpenseInput,
     @Headers('x-connection-token') connection_token: string,

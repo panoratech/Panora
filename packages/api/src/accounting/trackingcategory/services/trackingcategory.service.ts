@@ -28,24 +28,6 @@ export class TrackingCategoryService {
     this.logger.setContext(TrackingCategoryService.name);
   }
 
-  async batchAddTrackingCategorys(
-    unifiedTrackingCategoryData: UnifiedTrackingCategoryInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTrackingCategoryOutput[]> {
-    return;
-  }
-
-  async addTrackingCategory(
-    unifiedTrackingCategoryData: UnifiedTrackingCategoryInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTrackingCategoryOutput> {
-    return;
-  }
-
   async getTrackingCategory(
     id_trackingcategorying_trackingcategory: string,
     remote_data?: boolean,

@@ -27,30 +27,6 @@ export class CommentService {
     this.logger.setContext(CommentService.name);
   }
 
-  async batchAddComments(
-    unifiedCommentData: UnifiedCommentInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedCommentOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedCommentData.map((unifiedData) =>
-          this.addComment(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async addComment(
     unifiedCommentData: UnifiedCommentInput,
     integrationId: string,

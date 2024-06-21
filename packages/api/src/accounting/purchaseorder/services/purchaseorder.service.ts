@@ -28,15 +28,6 @@ export class PurchaseOrderService {
     this.logger.setContext(PurchaseOrderService.name);
   }
 
-  async batchAddPurchaseOrders(
-    unifiedPurchaseOrderData: UnifiedPurchaseOrderInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedPurchaseOrderOutput[]> {
-    return;
-  }
-
   async addPurchaseOrder(
     unifiedPurchaseOrderData: UnifiedPurchaseOrderInput,
     integrationId: string,

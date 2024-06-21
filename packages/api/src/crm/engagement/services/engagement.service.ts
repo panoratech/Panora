@@ -29,30 +29,6 @@ export class EngagementService {
     this.logger.setContext(EngagementService.name);
   }
 
-  async batchAddEngagements(
-    unifiedEngagementData: UnifiedEngagementInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedEngagementOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedEngagementData.map((unifiedData) =>
-          this.addEngagement(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async addEngagement(
     unifiedEngagementData: UnifiedEngagementInput,
     integrationId: string,

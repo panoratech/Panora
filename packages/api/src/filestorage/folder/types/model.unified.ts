@@ -38,6 +38,14 @@ export class UnifiedFolderInput {
   })
   @IsString()
   permission_id: string;
+
+  @ApiPropertyOptional({
+    type: {},
+    description:
+      'The custom field mappings of the object between the remote 3rd party & Panora',
+  })
+  @IsOptional()
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedFolderOutput extends UnifiedFolderInput {

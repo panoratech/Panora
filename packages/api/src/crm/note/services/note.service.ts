@@ -26,30 +26,6 @@ export class NoteService {
     this.logger.setContext(NoteService.name);
   }
 
-  async batchAddNotes(
-    unifiedNoteData: UnifiedNoteInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedNoteOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedNoteData.map((unifiedData) =>
-          this.addNote(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async addNote(
     unifiedNoteData: UnifiedNoteInput,
     integrationId: string,

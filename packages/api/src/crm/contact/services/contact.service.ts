@@ -14,7 +14,6 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from './registry.service';
 import { Utils } from '@crm/@lib/@utils';
-import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
@@ -29,30 +28,6 @@ export class ContactService {
     private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(ContactService.name);
-  }
-
-  async batchAddContacts(
-    unifiedContactData: UnifiedContactInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedContactOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedContactData.map((unifiedData) =>
-          this.addContact(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throw error;
-    }
   }
 
   async addContact(

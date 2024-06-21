@@ -318,18 +318,11 @@ private connectionUtils: ConnectionUtils
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original ${VerticalCap} software.',
-  })
   @ApiCustomResponse(Unified${ObjectCap}Output)
 @UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+        @Query() query: FetchObjectsQueryDto,
   ) {
     try{
       const { linkedUserId, remoteSource } =
@@ -339,7 +332,9 @@ private connectionUtils: ConnectionUtils
       return this.${objectType}Service.get${ObjectCap}s(
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     }catch(error){
       throw new Error(error);
@@ -408,7 +403,9 @@ private connectionUtils: ConnectionUtils
         unified${ObjectCap}Data,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     }catch(error){
       throw new Error(error);

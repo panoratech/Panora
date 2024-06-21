@@ -2,52 +2,85 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { ApiResponse } from '@@core/utils/types';
-import { throwTypedError } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedUserInput, UnifiedUserOutput } from '../types/model.unified';
-
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from './registry.service';
-import { OriginalUserOutput } from '@@core/utils/types/original/original.ats';
-
-import { IUserService } from '../types';
+import { UnifiedUserOutput } from '../types/model.unified';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private prisma: PrismaService,
-    private logger: LoggerService,
-    private webhook: WebhookService,
-    private fieldMappingService: FieldMappingService,
-    private serviceRegistry: ServiceRegistry,
-  ) {
+  constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(UserService.name);
   }
 
-  async batchAddUsers(
-    unifiedUserData: UnifiedUserInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedUserOutput[]> {
-    return;
-  }
-
-  async addUser(
-    unifiedUserData: UnifiedUserInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedUserOutput> {
-    return;
-  }
-
   async getUser(
-    id_usering_user: string,
+    id_ats_user: string,
     remote_data?: boolean,
   ): Promise<UnifiedUserOutput> {
-    return;
+    try {
+      const user = await this.prisma.ats_users.findUnique({
+        where: {
+          id_ats_user: id_ats_user,
+        },
+      });
+
+      if (!user) {
+        throw new Error(`User with ID ${id_ats_user} not found.`);
+      }
+
+      // Fetch field mappings for the user
+      const values = await this.prisma.value.findMany({
+        where: {
+          entity: {
+            ressource_owner_id: user.id_ats_user,
+          },
+        },
+        include: {
+          attribute: true,
+        },
+      });
+
+      // Create a map to store unique field mappings
+      const fieldMappingsMap = new Map();
+
+      values.forEach((value) => {
+        fieldMappingsMap.set(value.attribute.slug, value.data);
+      });
+
+      // Convert the map to an array of objects
+      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
+        [key]: value,
+      }));
+
+      // Transform to UnifiedUserOutput format
+      const unifiedUser: UnifiedUserOutput = {
+        id: user.id_ats_user,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        disabled: user.disabled,
+        access_role: user.access_role,
+        remote_created_at: user.remote_created_at,
+        remote_modified_at: user.remote_modified_at,
+        field_mappings: field_mappings,
+      };
+
+      let res: UnifiedUserOutput = unifiedUser;
+      if (remote_data) {
+        const resp = await this.prisma.remote_data.findFirst({
+          where: {
+            ressource_owner_id: user.id_ats_user,
+          },
+        });
+        const remote_data = JSON.parse(resp.data);
+
+        res = {
+          ...res,
+          remote_data: remote_data,
+        };
+      }
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getUsers(
@@ -55,6 +88,79 @@ export class UserService {
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedUserOutput[]> {
-    return;
+    try {
+      const users = await this.prisma.ats_users.findMany({
+        where: {
+          remote_platform: integrationId.toLowerCase(),
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      const unifiedUsers: UnifiedUserOutput[] = await Promise.all(
+        users.map(async (user) => {
+          // Fetch field mappings for the user
+          const values = await this.prisma.value.findMany({
+            where: {
+              entity: {
+                ressource_owner_id: user.id_ats_user,
+              },
+            },
+            include: {
+              attribute: true,
+            },
+          });
+
+          // Create a map to store unique field mappings
+          const fieldMappingsMap = new Map();
+
+          values.forEach((value) => {
+            fieldMappingsMap.set(value.attribute.slug, value.data);
+          });
+
+          // Convert the map to an array of objects
+          const field_mappings = Array.from(
+            fieldMappingsMap,
+            ([key, value]) => ({
+              [key]: value,
+            }),
+          );
+
+          // Transform to UnifiedUserOutput format
+          return {
+            id: user.id_ats_user,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            disabled: user.disabled,
+            access_role: user.access_role,
+            remote_created_at: user.remote_created_at,
+            remote_modified_at: user.remote_modified_at,
+            field_mappings: field_mappings,
+          };
+        }),
+      );
+
+      let res: UnifiedUserOutput[] = unifiedUsers;
+
+      if (remote_data) {
+        const remote_array_data: UnifiedUserOutput[] = await Promise.all(
+          res.map(async (user) => {
+            const resp = await this.prisma.remote_data.findFirst({
+              where: {
+                ressource_owner_id: user.id,
+              },
+            });
+            const remote_data = JSON.parse(resp.data);
+            return { ...user, remote_data };
+          }),
+        );
+
+        res = remote_array_data;
+      }
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
   }
 }

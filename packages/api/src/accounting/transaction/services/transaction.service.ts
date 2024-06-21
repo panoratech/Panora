@@ -28,24 +28,6 @@ export class TransactionService {
     this.logger.setContext(TransactionService.name);
   }
 
-  async batchAddTransactions(
-    unifiedTransactionData: UnifiedTransactionInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTransactionOutput[]> {
-    return;
-  }
-
-  async addTransaction(
-    unifiedTransactionData: UnifiedTransactionInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTransactionOutput> {
-    return;
-  }
-
   async getTransaction(
     id_transactioning_transaction: string,
     remote_data?: boolean,

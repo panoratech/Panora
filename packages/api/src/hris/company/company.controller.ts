@@ -26,6 +26,7 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { CompanyService } from './services/company.service';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('hris/company')
 @Controller('hris/company')
@@ -48,27 +49,25 @@ export class CompanyController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
   @ApiCustomResponse(UnifiedCompanyOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get()
+  @UseGuards(ApiKeyAuthGuard)
+  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.companyService.getCompanys(
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -93,7 +92,8 @@ export class CompanyController {
     description: 'Set to true to include data from the original Hris software.',
   })
   @ApiCustomResponse(UnifiedCompanyOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get(':id')
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
@@ -120,7 +120,8 @@ export class CompanyController {
   })
   @ApiBody({ type: UnifiedCompanyInput })
   @ApiCustomResponse(UnifiedCompanyOutput)
-@UseGuards(ApiKeyAuthGuard)  @Post()
+  @UseGuards(ApiKeyAuthGuard)
+  @Post()
   async create(
     @Body() unifiedCompanyData: UnifiedCompanyInput,
     @Headers('x-connection-token') connection_token: string,

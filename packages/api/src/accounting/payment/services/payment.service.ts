@@ -28,15 +28,6 @@ export class PaymentService {
     this.logger.setContext(PaymentService.name);
   }
 
-  async batchAddPayments(
-    unifiedPaymentData: UnifiedPaymentInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedPaymentOutput[]> {
-    return;
-  }
-
   async addPayment(
     unifiedPaymentData: UnifiedPaymentInput,
     integrationId: string,

@@ -27,15 +27,6 @@ export class AttachmentService {
     this.logger.setContext(AttachmentService.name);
   }
 
-  async batchAddAttachments(
-    unifiedAttachmentData: UnifiedAttachmentInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput[]> {
-    return;
-  }
-
   async addAttachment(
     unifiedAttachmentData: UnifiedAttachmentInput,
     integrationId: string,

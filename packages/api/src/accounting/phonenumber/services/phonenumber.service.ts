@@ -28,24 +28,6 @@ export class PhoneNumberService {
     this.logger.setContext(PhoneNumberService.name);
   }
 
-  async batchAddPhoneNumbers(
-    unifiedPhoneNumberData: UnifiedPhoneNumberInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedPhoneNumberOutput[]> {
-    return;
-  }
-
-  async addPhoneNumber(
-    unifiedPhoneNumberData: UnifiedPhoneNumberInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedPhoneNumberOutput> {
-    return;
-  }
-
   async getPhoneNumber(
     id_phonenumbering_phonenumber: string,
     remote_data?: boolean,

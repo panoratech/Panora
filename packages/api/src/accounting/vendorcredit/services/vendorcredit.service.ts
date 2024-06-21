@@ -28,24 +28,6 @@ export class VendorCreditService {
     this.logger.setContext(VendorCreditService.name);
   }
 
-  async batchAddVendorCredits(
-    unifiedVendorCreditData: UnifiedVendorCreditInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedVendorCreditOutput[]> {
-    return;
-  }
-
-  async addVendorCredit(
-    unifiedVendorCreditData: UnifiedVendorCreditInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedVendorCreditOutput> {
-    return;
-  }
-
   async getVendorCredit(
     id_vendorcrediting_vendorcredit: string,
     remote_data?: boolean,

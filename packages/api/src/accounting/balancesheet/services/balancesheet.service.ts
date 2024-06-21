@@ -28,24 +28,6 @@ export class BalanceSheetService {
     this.logger.setContext(BalanceSheetService.name);
   }
 
-  async batchAddBalanceSheets(
-    unifiedBalanceSheetData: UnifiedBalanceSheetInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedBalanceSheetOutput[]> {
-    return;
-  }
-
-  async addBalanceSheet(
-    unifiedBalanceSheetData: UnifiedBalanceSheetInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedBalanceSheetOutput> {
-    return;
-  }
-
   async getBalanceSheet(
     id_balancesheeting_balancesheet: string,
     remote_data?: boolean,

@@ -26,30 +26,6 @@ export class DealService {
     this.logger.setContext(DealService.name);
   }
 
-  async batchAddDeals(
-    unifiedDealData: UnifiedDealInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedDealOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedDealData.map((unifiedData) =>
-          this.addDeal(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async addDeal(
     unifiedDealData: UnifiedDealInput,
     integrationId: string,

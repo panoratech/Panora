@@ -28,15 +28,6 @@ export class InvoiceService {
     this.logger.setContext(InvoiceService.name);
   }
 
-  async batchAddInvoices(
-    unifiedInvoiceData: UnifiedInvoiceInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedInvoiceOutput[]> {
-    return;
-  }
-
   async addInvoice(
     unifiedInvoiceData: UnifiedInvoiceInput,
     integrationId: string,

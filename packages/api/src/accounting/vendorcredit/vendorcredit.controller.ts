@@ -26,6 +26,7 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('accounting/vendorcredit')
 @Controller('accounting/vendorcredit')
@@ -48,28 +49,25 @@ export class VendorCreditController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
   @ApiCustomResponse(UnifiedVendorCreditOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get()
+  @UseGuards(ApiKeyAuthGuard)
+  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.vendorcreditService.getVendorCredits(
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -96,53 +94,12 @@ export class VendorCreditController {
       'Set to true to include data from the original Accounting software.',
   })
   @ApiCustomResponse(UnifiedVendorCreditOutput)
-@UseGuards(ApiKeyAuthGuard)  @Get(':id')
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
   retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     return this.vendorcreditService.getVendorCredit(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'create',
-    summary: 'Create a VendorCredit',
-    description: 'Create a vendorcredit in any supported Accounting software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedVendorCreditInput })
-  @ApiCustomResponse(UnifiedVendorCreditOutput)
-@UseGuards(ApiKeyAuthGuard)  @Post()
-  async create(
-    @Body() unifiedVendorCreditData: UnifiedVendorCreditInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.vendorcreditService.addVendorCredit(
-        unifiedVendorCreditData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
   }
 }

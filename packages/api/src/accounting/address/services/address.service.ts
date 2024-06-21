@@ -27,24 +27,6 @@ export class AddressService {
     this.logger.setContext(AddressService.name);
   }
 
-  async batchAddAddresss(
-    unifiedAddressData: UnifiedAddressInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedAddressOutput[]> {
-    return;
-  }
-
-  async addAddress(
-    unifiedAddressData: UnifiedAddressInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedAddressOutput> {
-    return;
-  }
-
   async getAddress(
     id_addressing_address: string,
     remote_data?: boolean,

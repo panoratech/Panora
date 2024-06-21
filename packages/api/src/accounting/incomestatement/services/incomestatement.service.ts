@@ -28,24 +28,6 @@ export class IncomeStatementService {
     this.logger.setContext(IncomeStatementService.name);
   }
 
-  async batchAddIncomeStatements(
-    unifiedIncomeStatementData: UnifiedIncomeStatementInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedIncomeStatementOutput[]> {
-    return;
-  }
-
-  async addIncomeStatement(
-    unifiedIncomeStatementData: UnifiedIncomeStatementInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedIncomeStatementOutput> {
-    return;
-  }
-
   async getIncomeStatement(
     id_incomestatementing_incomestatement: string,
     remote_data?: boolean,

@@ -25,24 +25,6 @@ export class ItemService {
     this.logger.setContext(ItemService.name);
   }
 
-  async batchAddItems(
-    unifiedItemData: UnifiedItemInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedItemOutput[]> {
-    return;
-  }
-
-  async addItem(
-    unifiedItemData: UnifiedItemInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedItemOutput> {
-    return;
-  }
-
   async getItem(
     id_iteming_item: string,
     remote_data?: boolean,

@@ -28,24 +28,6 @@ export class CreditNoteService {
     this.logger.setContext(CreditNoteService.name);
   }
 
-  async batchAddCreditNotes(
-    unifiedCreditNoteData: UnifiedCreditNoteInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedCreditNoteOutput[]> {
-    return;
-  }
-
-  async addCreditNote(
-    unifiedCreditNoteData: UnifiedCreditNoteInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedCreditNoteOutput> {
-    return;
-  }
-
   async getCreditNote(
     id_creditnoteing_creditnote: string,
     remote_data?: boolean,

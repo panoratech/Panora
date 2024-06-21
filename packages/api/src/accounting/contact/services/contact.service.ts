@@ -28,15 +28,6 @@ export class ContactService {
     this.logger.setContext(ContactService.name);
   }
 
-  async batchAddContacts(
-    unifiedContactData: UnifiedContactInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedContactOutput[]> {
-    return;
-  }
-
   async addContact(
     unifiedContactData: UnifiedContactInput,
     integrationId: string,

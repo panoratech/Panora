@@ -28,24 +28,6 @@ export class CashflowStatementService {
     this.logger.setContext(CashflowStatementService.name);
   }
 
-  async batchAddCashflowStatements(
-    unifiedCashflowStatementData: UnifiedCashflowStatementInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedCashflowStatementOutput[]> {
-    return;
-  }
-
-  async addCashflowStatement(
-    unifiedCashflowStatementData: UnifiedCashflowStatementInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedCashflowStatementOutput> {
-    return;
-  }
-
   async getCashflowStatement(
     id_cashflowstatementing_cashflowstatement: string,
     remote_data?: boolean,
