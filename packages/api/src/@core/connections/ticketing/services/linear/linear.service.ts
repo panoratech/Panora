@@ -12,16 +12,16 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ITicketingConnectionService } from '../../types';
+import {
+  CallbackParams,
+  RefreshParams,
+  ITicketingConnectionService,
+} from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import {
-  OAuthCallbackParams,
-  RefreshParams,
-} from '@@core/connections/@utils/types';
 
 export type LinearOAuthResponse = {
   access_token: string;
@@ -48,7 +48,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
     this.type = providerToType('linear', 'ticketing', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: OAuthCallbackParams) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -98,8 +98,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
-            account_url: CONNECTORS_METADATA['ticketing']['linear'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['ticketing']['linear'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -115,8 +114,7 @@ export class LinearConnectionService implements ITicketingConnectionService {
             provider_slug: 'linear',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['ticketing']['linear'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['ticketing']['linear'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: '',
             expiration_timestamp: new Date(
@@ -140,7 +138,18 @@ export class LinearConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
+          message: `LinearConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'linear',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 

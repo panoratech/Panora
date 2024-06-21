@@ -63,6 +63,21 @@ export class CoreSyncService {
           break;
       }
     } catch (error) {
+      /*throwTypedError(
+        new CoreSyncError({
+          name: 'INITIAL_SYNC_ERROR',
+          message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+            {
+              vertical,
+              provider,
+              linkedUserId,
+              id_project,
+            },
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );*/
       throw error;
     }
   }
@@ -155,14 +170,42 @@ export class CoreSyncService {
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
         this.logger.error(`Task ${index} failed:`, result.reason);
-        throw result.reason;
+        throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'crm',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );
       }
     });
 
     stageResults.forEach((result, index) => {
       if (result.status === 'rejected') {
         this.logger.error(`Stage task ${index} failed:`, result.reason);
-        throw result.reason;
+        throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'crm',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );
       }
     });
   }
@@ -269,12 +312,42 @@ export class CoreSyncService {
           `contactTasksResults ${index} failed:`,
           result.reason,
         );
+        /*throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'ticketing',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );*/
         throw result.reason;
       }
     });
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
         this.logger.error(`Task ${index} failed:`, result.reason);
+        /*throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'ticketing',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );*/
         throw result.reason;
       }
     });
@@ -285,14 +358,42 @@ export class CoreSyncService {
           `Ticket Comment task ${index} failed:`,
           result.reason,
         );
-        throw result.reason;
+        throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'ticketing',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );
       }
     });
 
     ticketTagsResults.forEach((result, index) => {
       if (result.status === 'rejected') {
         this.logger.error(`Ticket Tags task ${index} failed:`, result.reason);
-        throw result.reason;
+        throwTypedError(
+          new CoreSyncError({
+            name: 'CRM_INITIAL_SYNC_ERROR',
+            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
+              {
+                vertical: 'ticketing',
+                provider,
+                linkedUserId,
+                id_project,
+              },
+            )}`,
+            cause: result.reason,
+          }),
+          this.logger,
+        );
       }
     });
   }
@@ -301,7 +402,14 @@ export class CoreSyncService {
   async getSyncStatus(vertical: string) {
     try {
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new CoreSyncError({
+          name: 'GET_SYNC_STATUS_ERROR',
+          message: 'CoreSyncService.getSyncStatus() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -341,7 +449,14 @@ export class CoreSyncService {
         status: `SYNCING`,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new CoreSyncError({
+          name: 'RESYNC_ERROR',
+          message: 'CoreSyncService.resync() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     } finally {
       // Handle background tasks completion
       Promise.allSettled(tasks).then((results) => {

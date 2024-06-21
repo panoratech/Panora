@@ -1,20 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
+import {
+  Action,
+  ActionType,
+  ConnectionsError,
+  format3rdPartyError,
+  throwTypedError,
+} from '@@core/utils/errors';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ITicketingConnectionService } from '../../types';
+import {
+  CallbackParams,
+  RefreshParams,
+  ITicketingConnectionService,
+} from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import {
-  OAuthCallbackParams,
-  RefreshParams,
-} from '@@core/connections/@utils/types';
 
 export type FrontOAuthResponse = {
   access_token: string;
@@ -41,7 +48,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
     this.type = providerToType('front', 'ticketing', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: OAuthCallbackParams) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -96,8 +103,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['ticketing']['front'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['ticketing']['front'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_at) * 1000,
             ),
@@ -113,8 +119,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
             provider_slug: 'front',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['ticketing']['front'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['ticketing']['front'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -139,6 +144,18 @@ export class FrontConnectionService implements ITicketingConnectionService {
       return db_res;
     } catch (error) {
       throw error;
+      /*throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
+          message: `FrontConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'front',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );*/
     }
   }
 
@@ -180,7 +197,18 @@ export class FrontConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : front ');
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
+          message: `FrontConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            'front',
+            Action.oauthRefresh,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

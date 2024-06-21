@@ -37,7 +37,7 @@ export class TeamController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTeams',
     summary: 'List a batch of Teams',
   })
   @ApiHeader({
@@ -50,7 +50,7 @@ export class TeamController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getTeams(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -59,11 +59,11 @@ export class TeamController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, limit, cursor } = query;
+      const { remote_data, pageSize, cursor } = query;
       return this.teamService.getTeams(
         remoteSource,
         linkedUserId,
-        limit,
+        pageSize,
         remote_data,
         cursor,
       );
@@ -73,7 +73,7 @@ export class TeamController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTeam',
     summary: 'Retrieve a Team',
     description: 'Retrieve a team from any connected Ticketing software',
   })
@@ -93,7 +93,7 @@ export class TeamController {
   @ApiCustomResponse(UnifiedTeamOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getTeam(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

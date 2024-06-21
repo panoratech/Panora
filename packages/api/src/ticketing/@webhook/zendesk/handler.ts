@@ -368,7 +368,14 @@ export class ZendeskHandlerService {
         }
       }
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ManagedWebhooksError({
+          name: 'RECEIVING_WEBHOOK_PAYLOAD_ERROR',
+          message: 'ZendeskHandlerService.handler() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 
@@ -405,7 +412,15 @@ export class ZendeskHandlerService {
       const sig = hmac.update(timestamp + body).digest('base64');
       return Buffer.compare(Buffer.from(signature), Buffer.from(sig)) === 0;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ManagedWebhooksError({
+          name: 'SIGNATURE_VERIFICATION_AUTHENTICITY_ERROR',
+          message:
+            'ZendeskHandlerService.verifyWebhookAuthenticity() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

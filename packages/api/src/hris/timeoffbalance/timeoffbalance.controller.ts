@@ -37,7 +37,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTimeoffBalances',
     summary: 'List a batch of TimeoffBalances',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class TimeoffBalanceController {
   @ApiCustomResponse(UnifiedTimeoffBalanceOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getTimeoffBalances(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTimeoffBalance',
     summary: 'Retrieve a TimeoffBalance',
     description: 'Retrieve a timeoffbalance from any connected Hris software',
   })
@@ -94,7 +94,7 @@ export class TimeoffBalanceController {
   @ApiCustomResponse(UnifiedTimeoffBalanceOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getTimeoffBalance(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addTimeoffBalance',
     summary: 'Create a TimeoffBalance',
     description: 'Create a timeoffbalance in any supported Hris software',
   })
@@ -122,7 +122,7 @@ export class TimeoffBalanceController {
   @ApiCustomResponse(UnifiedTimeoffBalanceOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addTimeoffBalance(
     @Body() unifiedTimeoffBalanceData: UnifiedTimeoffBalanceInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,6 +134,47 @@ export class TimeoffBalanceController {
         );
       return this.timeoffbalanceService.addTimeoffBalance(
         unifiedTimeoffBalanceData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addTimeoffBalances',
+    summary: 'Add a batch of TimeoffBalances',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original Hris software.',
+  })
+  @ApiBody({ type: UnifiedTimeoffBalanceInput, isArray: true })
+  @ApiCustomResponse(UnifiedTimeoffBalanceOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addTimeoffBalances(
+    @Body() unfiedTimeoffBalanceData: UnifiedTimeoffBalanceInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.timeoffbalanceService.batchAddTimeoffBalances(
+        unfiedTimeoffBalanceData,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -34,7 +34,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getAtsUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class UserController {
   @ApiCustomResponse(UnifiedUserOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getUsers(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -68,7 +68,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getAtsUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Ats software',
   })
@@ -87,7 +87,7 @@ export class UserController {
   @ApiCustomResponse(UnifiedUserOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getUser(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -95,7 +95,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addAtsUser',
     summary: 'Create a User',
     description: 'Create a user in any supported Ats software',
   })
@@ -115,7 +115,7 @@ export class UserController {
   @ApiCustomResponse(UnifiedUserOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addUser(
     @Body() unifiedUserData: UnifiedUserInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -127,6 +127,47 @@ export class UserController {
         );
       return this.userService.addUser(
         unifiedUserData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addAtsUsers',
+    summary: 'Add a batch of Users',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original Ats software.',
+  })
+  @ApiBody({ type: UnifiedUserInput, isArray: true })
+  @ApiCustomResponse(UnifiedUserOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addUsers(
+    @Body() unfiedUserData: UnifiedUserInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.userService.batchAddUsers(
+        unfiedUserData,
         remoteSource,
         linkedUserId,
         remote_data,

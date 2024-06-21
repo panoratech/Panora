@@ -12,7 +12,11 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ICrmConnectionService } from '../../types';
+import {
+  CallbackParams,
+  RefreshParams,
+  ICrmConnectionService,
+} from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
@@ -22,10 +26,6 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import {
-  OAuthCallbackParams,
-  RefreshParams,
-} from '@@core/connections/@utils/types';
 
 export type CopperOAuthResponse = {
   access_token: string;
@@ -50,7 +50,7 @@ export class CopperConnectionService implements ICrmConnectionService {
     this.type = providerToType('copper', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: OAuthCallbackParams) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -111,8 +111,7 @@ export class CopperConnectionService implements ICrmConnectionService {
             provider_slug: 'copper',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['copper'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['crm']['copper'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),
@@ -132,7 +131,22 @@ export class CopperConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_CRM',
+          message: `CopperConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'copper',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
+  }
+
+  async handleTokenRefresh(opts: RefreshParams) {
+    return;
   }
 }

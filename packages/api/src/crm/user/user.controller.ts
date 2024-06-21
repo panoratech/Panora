@@ -37,7 +37,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getCrmUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -50,7 +50,7 @@ export class UserController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getUsers(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -59,11 +59,11 @@ export class UserController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, limit, cursor } = query;
+      const { remote_data, pageSize, cursor } = query;
       return this.userService.getUsers(
         remoteSource,
         linkedUserId,
-        limit,
+        pageSize,
         remote_data,
         cursor,
       );
@@ -73,7 +73,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getCrmUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Crm software',
   })
@@ -92,7 +92,7 @@ export class UserController {
   @ApiCustomResponse(UnifiedUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getUser(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

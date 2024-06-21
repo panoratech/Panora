@@ -72,14 +72,20 @@ export class AccountService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ACCOUNT_ERROR',
+          message: 'AccountService.getAccount() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getAccounts(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -107,7 +113,7 @@ export class AccountService {
       }
 
       const accounts = await this.prisma.tcg_accounts.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_tcg_account: cursor,
@@ -122,7 +128,7 @@ export class AccountService {
         },
       });
 
-      if (accounts.length === limit + 1) {
+      if (accounts.length === pageSize + 1) {
         next_cursor = Buffer.from(
           accounts[accounts.length - 1].id_tcg_account,
         ).toString('base64');
@@ -205,7 +211,13 @@ export class AccountService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedTicketingError({
+          name: 'GET_ACCOUNTS_ERROR',
+          message: 'AccountService.getAccounts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 }

@@ -37,7 +37,7 @@ export class PurchaseOrderController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getPurchaseOrders',
     summary: 'List a batch of PurchaseOrders',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class PurchaseOrderController {
   @ApiCustomResponse(UnifiedPurchaseOrderOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getPurchaseOrders(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -76,7 +76,7 @@ export class PurchaseOrderController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getPurchaseOrder',
     summary: 'Retrieve a PurchaseOrder',
     description:
       'Retrieve a purchaseorder from any connected Accounting software',
@@ -97,7 +97,7 @@ export class PurchaseOrderController {
   @ApiCustomResponse(UnifiedPurchaseOrderOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getPurchaseOrder(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -105,7 +105,7 @@ export class PurchaseOrderController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addPurchaseOrder',
     summary: 'Create a PurchaseOrder',
     description: 'Create a purchaseorder in any supported Accounting software',
   })
@@ -126,7 +126,7 @@ export class PurchaseOrderController {
   @ApiCustomResponse(UnifiedPurchaseOrderOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addPurchaseOrder(
     @Body() unifiedPurchaseOrderData: UnifiedPurchaseOrderInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -138,6 +138,48 @@ export class PurchaseOrderController {
         );
       return this.purchaseorderService.addPurchaseOrder(
         unifiedPurchaseOrderData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addPurchaseOrders',
+    summary: 'Add a batch of PurchaseOrders',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original Accounting software.',
+  })
+  @ApiBody({ type: UnifiedPurchaseOrderInput, isArray: true })
+  @ApiCustomResponse(UnifiedPurchaseOrderOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addPurchaseOrders(
+    @Body() unfiedPurchaseOrderData: UnifiedPurchaseOrderInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.purchaseorderService.batchAddPurchaseOrders(
+        unfiedPurchaseOrderData,
         remoteSource,
         linkedUserId,
         remote_data,

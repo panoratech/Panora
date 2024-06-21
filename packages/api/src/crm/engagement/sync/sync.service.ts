@@ -117,7 +117,14 @@ export class SyncService implements OnModuleInit {
         }
       }
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new SyncError({
+          name: 'CRM_ENGAGEMENT_SYNC_ERROR',
+          message: 'SyncService.syncEngagements() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 

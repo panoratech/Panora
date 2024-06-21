@@ -18,7 +18,7 @@ export default function EventsTable() {
     error,
   } = useEvents({
     page: pagination.page,
-    limit: pagination.limit,
+    pageSize: pagination.pageSize,
   });
   
   const transformedEvents = events?.map((event: Event) => ({

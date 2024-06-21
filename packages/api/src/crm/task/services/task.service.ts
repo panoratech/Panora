@@ -46,7 +46,13 @@ export class TaskService {
 
       return responses;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_TASKS_ERROR',
+          message: 'TaskService.batchAddTasks() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -272,7 +278,13 @@ export class TaskService {
       );
       return result_task;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_TASK_ERROR',
+          message: 'TaskService.addTask() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -343,14 +355,20 @@ export class TaskService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_TASK_ERROR',
+          message: 'TaskService.getTask() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getTasks(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -376,7 +394,7 @@ export class TaskService {
       }
 
       const tasks = await this.prisma.crm_tasks.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_crm_task: cursor,
@@ -391,7 +409,7 @@ export class TaskService {
         },
       });
 
-      if (tasks.length === limit + 1) {
+      if (tasks.length === pageSize + 1) {
         next_cursor = Buffer.from(tasks[tasks.length - 1].id_crm_task).toString(
           'base64',
         );
@@ -480,7 +498,13 @@ export class TaskService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_TASKS_ERROR',
+          message: 'TaskService.getTasks() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

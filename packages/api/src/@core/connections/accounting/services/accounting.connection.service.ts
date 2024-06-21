@@ -5,8 +5,8 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
+import { CallbackParams, RefreshParams } from '../types';
 import { ServiceRegistry } from './registry.service';
-import { CallbackParams, RefreshParams } from '@@core/connections/@utils/types';
 
 @Injectable()
 export class AccountingConnectionsService {
@@ -33,40 +33,55 @@ export class AccountingConnectionsService {
   // to perform actions on his behalf
   // this call pass 1. integrationID 2. CustomerId 3. Panora Api Key
   async handleAccountingCallBack(
+    projectId: string,
+    linkedUserId: string,
     providerName: string,
-    callbackOpts: CallbackParams,
-    type_strategy: 'oauth' | 'apikey' | 'basic',
+    code: string,
   ) {
     try {
       const serviceName = providerName.toLowerCase();
-
       const service = this.serviceRegistry.getService(serviceName);
 
       if (!service) {
         throw new ReferenceError(`Unknown provider, found ${providerName}`);
       }
+      const callbackOpts: CallbackParams = {
+        linkedUserId: linkedUserId,
+        projectId: projectId,
+        code: code,
+      };
       const data: Connection = await service.handleCallback(callbackOpts);
+
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',
           type: 'connection.created',
           method: 'GET',
-          url: `/${type_strategy}/callback`,
+          url: '/oauth/callback',
           provider: providerName.toLowerCase(),
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: callbackOpts.linkedUserId,
+          id_linked_user: linkedUserId,
         },
       });
       //directly send the webhook
       await this.webhook.handlePriorityWebhook(
         data,
         'connection.created',
-        callbackOpts.projectId,
+        projectId,
         event.id_event,
       );
     } catch (error) {
+      /*throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
+          message:
+            'AccountingConnectionsService.handleAccountngCallback() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );*/
       throw error;
     }
   }
@@ -92,7 +107,15 @@ export class AccountingConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
+          message:
+            'AccountingConnectionsService.handleAccountingTokensRefresh() call failed',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

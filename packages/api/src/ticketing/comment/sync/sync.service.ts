@@ -121,7 +121,14 @@ export class SyncService implements OnModuleInit {
         }
       }
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new SyncError({
+          name: 'TICKETING_COMMENT_SYNC_ERROR',
+          message: 'SyncService.syncComments() call failed with args',
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 

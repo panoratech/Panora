@@ -46,7 +46,13 @@ export class DealService {
 
       return responses;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_DEALS_ERROR',
+          message: 'DealService.batchAddDeals() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -249,7 +255,13 @@ export class DealService {
       );
       return result_deal;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_DEAL_ERROR',
+          message: 'DealService.addDeal() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -318,14 +330,20 @@ export class DealService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_DEAL_ERROR',
+          message: 'DealService.getDeal() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getDeals(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -351,7 +369,7 @@ export class DealService {
       }
 
       const deals = await this.prisma.crm_deals.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_crm_deal: cursor,
@@ -366,7 +384,7 @@ export class DealService {
         },
       });
 
-      if (deals.length === limit + 1) {
+      if (deals.length === pageSize + 1) {
         next_cursor = Buffer.from(deals[deals.length - 1].id_crm_deal).toString(
           'base64',
         );
@@ -453,7 +471,13 @@ export class DealService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_DEALS_ERROR',
+          message: 'DealService.getDeals() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 

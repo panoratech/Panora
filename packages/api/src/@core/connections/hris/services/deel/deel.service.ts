@@ -12,7 +12,11 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import { IHrisConnectionService } from '../../types';
+import {
+  CallbackParams,
+  RefreshParams,
+  IHrisConnectionService,
+} from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   AuthStrategy,
@@ -22,10 +26,6 @@ import {
 } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import {
-  OAuthCallbackParams,
-  RefreshParams,
-} from '@@core/connections/@utils/types';
 
 export type DeelOAuthResponse = {
   access_token: string;
@@ -53,7 +53,7 @@ export class DeelConnectionService implements IHrisConnectionService {
     this.type = providerToType('deel', 'hris', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: OAuthCallbackParams) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -107,8 +107,7 @@ export class DeelConnectionService implements IHrisConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['hris']['deel'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['hris']['deel'].urls.apiUrl,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -124,8 +123,7 @@ export class DeelConnectionService implements IHrisConnectionService {
             provider_slug: 'deel',
             vertical: 'hris',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['hris']['deel'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['hris']['deel'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -149,7 +147,18 @@ export class DeelConnectionService implements IHrisConnectionService {
       }
       return db_res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
+          message: `DeelConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'deel',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -198,7 +207,18 @@ export class DeelConnectionService implements IHrisConnectionService {
       });
       this.logger.log('OAuth credentials updated : deel ');
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_REFRESH_HRIS',
+          message: `DeelConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
+            'deel',
+            Action.oauthRefresh,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
   }
 }

@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ICrmConnectionService } from '../../types';
+import {
+  CallbackParams,
+  ICrmConnectionService,
+  RefreshParams,
+} from '../../types';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -22,10 +26,6 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import {
-  OAuthCallbackParams,
-  RefreshParams,
-} from '@@core/connections/@utils/types';
 
 export interface AttioOAuthResponse {
   access_token: string;
@@ -49,7 +49,7 @@ export class AttioConnectionService implements ICrmConnectionService {
     this.type = providerToType('attio', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: OAuthCallbackParams) {
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       this.logger.log(
@@ -115,8 +115,7 @@ export class AttioConnectionService implements ICrmConnectionService {
             provider_slug: 'attio',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['attio'].urls
-              .apiUrl as string,
+            account_url: CONNECTORS_METADATA['crm']['attio'].urls.apiUrl,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
             created_at: new Date(),
@@ -137,7 +136,23 @@ export class AttioConnectionService implements ICrmConnectionService {
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new ConnectionsError({
+          name: 'HANDLE_OAUTH_CALLBACK_CRM',
+          message: `AttioConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
+            'attio',
+            Action.oauthCallback,
+            ActionType.POST,
+          )}`,
+          cause: error,
+        }),
+        this.logger,
+      );
     }
+  }
+
+  // It is not required for Attio as it does not provide refresh_token
+  async handleTokenRefresh(opts: RefreshParams) {
+    return;
   }
 }

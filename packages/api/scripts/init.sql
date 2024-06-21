@@ -468,17 +468,17 @@ CREATE TABLE crm_deals_stages
 CREATE TABLE connector_sets
 (
  id_connector_set uuid NOT NULL,
- crm_hubspot      boolean,
- crm_zoho         boolean,
- crm_attio        boolean,
- crm_pipedrive    boolean,
- tcg_zendesk      boolean,
- tcg_jira         boolean,
- tcg_gorgias      boolean,
- tcg_gitlab       boolean,
- tcg_front        boolean,
- crm_zendesk      boolean,
- crm_close        boolean,
+ crm_hubspot      boolean NOT NULL,
+ crm_zoho         boolean NOT NULL,
+ crm_attio        boolean NOT NULL,
+ crm_pipedrive    boolean NOT NULL,
+ tcg_zendesk      boolean NOT NULL,
+ tcg_jira         boolean NOT NULL,
+ tcg_gorgias      boolean NOT NULL,
+ tcg_gitlab       boolean NOT NULL,
+ tcg_front        boolean NOT NULL,
+ crm_zendesk      boolean NOT NULL,
+ crm_close        boolean NOT NULL,
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 

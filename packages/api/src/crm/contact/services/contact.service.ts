@@ -51,7 +51,13 @@ export class ContactService {
 
       return responses;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_CONTACTS_ERROR',
+          message: 'ContactService.batchAddContacts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -399,7 +405,13 @@ export class ContactService {
       );
       return result_contact;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'CREATE_CONTACT_ERROR',
+          message: 'ContactService.addContact() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
@@ -480,14 +492,20 @@ export class ContactService {
 
       return res;
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_CONTACT_ERROR',
+          message: 'ContactService.getContact() call failed',
+          cause: error,
+        }),
+      );
     }
   }
 
   async getContacts(
     integrationId: string,
     linkedUserId: string,
-    limit: number,
+    pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -515,7 +533,7 @@ export class ContactService {
       }
 
       const contacts = await this.prisma.crm_contacts.findMany({
-        take: limit + 1,
+        take: pageSize + 1,
         cursor: cursor
           ? {
               id_crm_contact: cursor,
@@ -535,7 +553,7 @@ export class ContactService {
         },
       });
 
-      if (contacts.length === limit + 1) {
+      if (contacts.length === pageSize + 1) {
         next_cursor = Buffer.from(
           contacts[contacts.length - 1].id_crm_contact,
         ).toString('base64');
@@ -630,7 +648,13 @@ export class ContactService {
         next_cursor,
       };
     } catch (error) {
-      throw error;
+      throwTypedError(
+        new UnifiedCrmError({
+          name: 'GET_CONTACTS_ERROR',
+          message: 'ContactService.getContacts() call failed',
+          cause: error,
+        }),
+      );
     }
   }
   //TODO

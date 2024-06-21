@@ -37,7 +37,7 @@ export class ActivityController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getActivitys',
     summary: 'List a batch of Activitys',
   })
   @ApiHeader({
@@ -55,7 +55,7 @@ export class ActivityController {
   @ApiCustomResponse(UnifiedActivityOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getActivitys(
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -75,7 +75,7 @@ export class ActivityController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getActivity',
     summary: 'Retrieve a Activity',
     description: 'Retrieve a activity from any connected Ats software',
   })
@@ -94,7 +94,7 @@ export class ActivityController {
   @ApiCustomResponse(UnifiedActivityOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  getActivity(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -102,7 +102,7 @@ export class ActivityController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addActivity',
     summary: 'Create a Activity',
     description: 'Create a activity in any supported Ats software',
   })
@@ -122,7 +122,7 @@ export class ActivityController {
   @ApiCustomResponse(UnifiedActivityOutput)
   //@UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addActivity(
     @Body() unifiedActivityData: UnifiedActivityInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -134,6 +134,47 @@ export class ActivityController {
         );
       return this.activityService.addActivity(
         unifiedActivityData,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @ApiOperation({
+    operationId: 'addActivitys',
+    summary: 'Add a batch of Activitys',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description: 'Set to true to include data from the original Ats software.',
+  })
+  @ApiBody({ type: UnifiedActivityInput, isArray: true })
+  @ApiCustomResponse(UnifiedActivityOutput)
+  //@UseGuards(ApiKeyAuthGuard)
+  @Post('batch')
+  async addActivitys(
+    @Body() unfiedActivityData: UnifiedActivityInput[],
+    @Headers('connection_token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.activityService.batchAddActivitys(
+        unfiedActivityData,
         remoteSource,
         linkedUserId,
         remote_data,
