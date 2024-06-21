@@ -6,6 +6,8 @@ import * as fs from 'fs';
 import * as cookieParser from 'cookie-parser';
 import { useContainer } from 'class-validator';
 import * as cors from 'cors';
+import * as yaml from 'js-yaml';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,7 +27,7 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   SwaggerModule.setup('docs', app, document);
-  //fs.writeFileSync('./swagger/swagger-spec.yaml', yaml.dump(document));
+  fs.writeFileSync('./swagger/swagger-spec.yaml', yaml.dump(document));
   fs.writeFileSync(
     './swagger/swagger-spec.json',
     JSON.stringify(document, null, 2),

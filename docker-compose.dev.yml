@@ -164,47 +164,47 @@ services:
       retries: 5
       start_period: 10s
     
-  webapp-nextjs:
-    build:
-      dockerfile: ./apps/client-ts/Dockerfile.dev
-      context: ./
-      args:
-        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
-        VITE_FRONTEND_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
-    environment:
-      NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
-      NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
-      NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
-      NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
-    restart: unless-stopped
-    ports:
-      - 80:8090
-    depends_on:
-      api:
-        condition: service_healthy
-    volumes:
-      - .:/app
-    networks:
-      - backend
-      - frontend
+  # webapp-nextjs:
+  #   build:
+  #     dockerfile: ./apps/client-ts/Dockerfile.dev
+  #     context: ./
+  #     args:
+  #       VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+  #       VITE_FRONTEND_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
+  #   environment:
+  #     NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
+  #     NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+  #     NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
+  #     NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
+  #   restart: unless-stopped
+  #   ports:
+  #     - 80:8090
+  #   depends_on:
+  #     api:
+  #       condition: service_healthy
+  #   volumes:
+  #     - .:/app
+  #   networks:
+  #     - backend
+  #     - frontend
 
-  magic-link-frontend:
-    build:
-      dockerfile: ./apps/magic-link/Dockerfile.dev
-      context: ./
-      args:
-        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
-    restart: always
-    ports:
-      - 81:5173
-    depends_on:
-      api:
-        condition: service_healthy
-    networks:
-      - backend
-      - frontend
-    volumes:
-      - .:/app
+  # magic-link-frontend:
+  #   build:
+  #     dockerfile: ./apps/magic-link/Dockerfile.dev
+  #     context: ./
+  #     args:
+  #       VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+  #   restart: always
+  #   ports:
+  #     - 81:5173
+  #   depends_on:
+  #     api:
+  #       condition: service_healthy
+  #   networks:
+  #     - backend
+  #     - frontend
+  #   volumes:
+  #     - .:/app
 
   # ngrok:
   #   image: ngrok/ngrok:latest
@@ -223,14 +223,14 @@ services:
   #       condition: service_healthy
   #   network_mode: "host"
 
-  docs:
-    build:
-      dockerfile: ./Dockerfile.dev
-      context: ./docs/
-    ports:
-      - 911:3000
-    volumes:
-      - ./docs/:/app
+  # docs:
+  #   build:
+  #     dockerfile: ./Dockerfile.dev
+  #     context: ./docs/
+  #   ports:
+  #     - 911:3000
+  #   volumes:
+  #     - ./docs/:/app
 
 networks:
   frontend:

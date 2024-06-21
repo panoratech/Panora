@@ -1,0 +1,7 @@
+x-speakeasy-name-override:
+  - operationId: ^get.*
+    methodNameOverride: retrieve
+  - operationId: ^list.*
+    methodNameOverride: list
+  - operationId: ^new.*
+    methodNameOverride: create
