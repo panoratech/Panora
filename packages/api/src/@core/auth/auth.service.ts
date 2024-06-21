@@ -62,6 +62,16 @@ export class AuthService {
     }
   }
 
+  async validateUser(user_id: string) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id_user: user_id,
+      },
+    });
+
+    return user;
+  }
+
   async getApiKeys(project_id: string) {
     try {
       return await this.prisma.api_keys.findMany({
@@ -352,12 +362,10 @@ export class AuthService {
 
   async validateApiKey(apiKey: string): Promise<boolean> {
     try {
-      // Decode the JWT to verify if it's valid and get the payload
       const decoded = this.jwtService.verify(apiKey, {
         secret: process.env.JWT_SECRET,
       });
 
-      //const hashed_api_key = this.hashApiKey(apiKey);
       const saved_api_key = await this.prisma.api_keys.findUnique({
         where: {
           api_key_hash: apiKey,
@@ -365,30 +373,19 @@ export class AuthService {
       });
 
       if (!saved_api_key) {
-        throw new ReferenceError('Api Key undefined');
-      }
-      if (String(decoded.projectId) !== String(saved_api_key.id_project)) {
-        throw new ReferenceError(
-          'Failed to validate API key: projectId mismatch.',
-        );
+        return false;
       }
 
-      // Validate that the JWT payload matches the provided userId and projectId
-      if (String(decoded.sub) !== String(saved_api_key.id_user)) {
-        throw new ReferenceError(
-          'Failed to validate API key: userId mismatch.',
-        );
+      if (
+        String(decoded.projectId) !== String(saved_api_key.id_project) ||
+        String(decoded.sub) !== String(saved_api_key.id_user)
+      ) {
+        return false;
       }
+
       return true;
     } catch (error) {
-      throwTypedError(
-        new AuthError({
-          name: 'VALIDATE_API_KEY_ERROR',
-          message: 'AuthService.validateApiKey() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      return false;
     }
   }
 }
