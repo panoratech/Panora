@@ -13,7 +13,6 @@ export class AppController {
     this.logger.setContext(AppController.name);
   }
 
-  @ApiOperation({ operationId: 'getHello' })
   @Get()
   hello(): string {
     return this.appService.getHello();
