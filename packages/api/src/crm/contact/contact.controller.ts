@@ -44,8 +44,8 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmContacts',
-    summary: 'List a batch of CRM Contacts',
+    operationId: 'listCrmContacts',
+    summary: 'List CRM Contacts',
   })
   @ApiHeader({
     name: 'x-connection-token',

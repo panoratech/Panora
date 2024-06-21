@@ -1658,8 +1658,8 @@
     },
     "/crm/contacts": {
       "get": {
-        "operationId": "getCrmContacts",
-        "summary": "List a batch of CRM Contacts",
+        "operationId": "listCrmContacts",
+        "summary": "List CRM Contacts",
         "parameters": [
           {
             "name": "x-connection-token",
