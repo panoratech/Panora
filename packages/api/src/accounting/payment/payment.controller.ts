@@ -145,46 +145,4 @@ export class PaymentController {
       throw new Error(error);
     }
   }
-
-  @ApiOperation({
-    operationId: 'addPayments',
-    summary: 'Add a batch of Payments',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedPaymentInput, isArray: true })
-  @ApiCustomResponse(UnifiedPaymentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addPayments(
-    @Body() unfiedPaymentData: UnifiedPaymentInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.paymentService.batchAddPayments(
-        unfiedPaymentData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
 }

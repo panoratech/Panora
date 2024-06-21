@@ -444,24 +444,6 @@ paths:
                 $ref: '#/components/schemas/UnifiedTicketOutput'
       tags: *ref_4
       security: *ref_5
-    patch:
-      operationId: updateTicket
-      summary: Update a Ticket
-      parameters:
-        - name: id
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UnifiedTicketOutput'
-      tags: *ref_4
-      security: *ref_5
   /ticketing/tickets/{id}:
     get:
       operationId: getTicket
@@ -491,52 +473,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTicketOutput'
-      tags: *ref_4
-      security: *ref_5
-  /ticketing/tickets/batch:
-    post:
-      operationId: addTickets
-      summary: Add a batch of Tickets
-      parameters:
-        - name: x-connection-token
-          required: true
-          in: header
-          description: The connection token
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ticketing software.
-          schema:
-            type: boolean
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedTicketInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTicketOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedTicketOutput'
       tags: *ref_4
       security: *ref_5
   /ticketing/users:
@@ -907,52 +843,6 @@ paths:
                         $ref: '#/components/schemas/UnifiedCompanyOutput'
       tags: *ref_12
       security: *ref_13
-  /crm/companies/batch:
-    post:
-      operationId: addCompanies
-      summary: Add a batch of Companies
-      parameters:
-        - name: x-connection-token
-          required: true
-          in: header
-          description: The connection token
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Crm software.
-          schema:
-            type: boolean
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedCompanyInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCompanyOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedCompanyOutput'
-      tags: *ref_12
-      security: *ref_13
   /crm/contacts:
     get:
       operationId: listCrmContacts
@@ -1040,24 +930,6 @@ paths:
                 $ref: '#/components/schemas/UnifiedContactOutput'
       tags: *ref_14
       security: *ref_15
-    patch:
-      operationId: updateContact
-      summary: Update a CRM Contact
-      parameters:
-        - name: id
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_14
-      security: *ref_15
   /crm/contacts/{id}:
     get:
       operationId: getCrmContact
@@ -1087,52 +959,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_14
-      security: *ref_15
-  /crm/contacts/batch:
-    post:
-      operationId: addCrmContacts
-      summary: Add a batch of CRM Contacts
-      parameters:
-        - name: x-connection-token
-          required: true
-          in: header
-          description: The connection token
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original CRM software.
-          schema:
-            type: boolean
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedContactInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedContactOutput'
       tags: *ref_14
       security: *ref_15
   /crm/deals:
@@ -1253,74 +1079,6 @@ paths:
                         $ref: '#/components/schemas/UnifiedDealOutput'
       tags: *ref_16
       security: *ref_17
-    patch:
-      operationId: updateDeal
-      summary: Update a Deal
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDealOutput'
-      tags: *ref_16
-      security: *ref_17
-  /crm/deals/batch:
-    post:
-      operationId: addDeals
-      summary: Add a batch of Deals
-      parameters:
-        - name: x-connection-token
-          required: true
-          in: header
-          description: The connection token
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Crm software.
-          schema:
-            type: boolean
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedDealInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDealOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedDealOutput'
-      tags: *ref_16
-      security: *ref_17
   /crm/engagements:
     get:
       operationId: getEngagements
@@ -1408,28 +1166,6 @@ paths:
                 $ref: '#/components/schemas/UnifiedEngagementOutput'
       tags: *ref_18
       security: *ref_19
-    patch:
-      operationId: updateEngagement
-      summary: Update a Engagement
-      parameters:
-        - name: id
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEngagementOutput'
-      tags: *ref_18
-      security: *ref_19
   /crm/engagements/{id}:
     get:
       operationId: getEngagement
@@ -1459,52 +1195,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEngagementOutput'
-      tags: *ref_18
-      security: *ref_19
-  /crm/engagements/batch:
-    post:
-      operationId: addEngagements
-      summary: Add a batch of Engagements
-      parameters:
-        - name: x-connection-token
-          required: true
-          in: header
-          description: The connection token
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Crm software.
-          schema:
-            type: boolean
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedEngagementInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEngagementOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedEngagementOutput'
       tags: *ref_18
       security: *ref_19
   /crm/notes:
@@ -1623,52 +1313,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedNoteOutput'
-      tags: *ref_20
-      security: *ref_21
-  /crm/notes/batch:
-    post:
-      operationId: addNotes
-      summary: Add a batch of Notes
-      parameters:
-        - name: x-connection-token
-          required: true
-          in: header
-          description: The connection token
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Crm software.
-          schema:
-            type: boolean
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedNoteInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedNoteOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedNoteOutput'
       tags: *ref_20
       security: *ref_21
   /crm/stages:
@@ -1834,28 +1478,6 @@ paths:
                 $ref: '#/components/schemas/UnifiedTaskOutput'
       tags: *ref_24
       security: *ref_25
-    patch:
-      operationId: updateTask
-      summary: Update a Task
-      parameters:
-        - name: id
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTaskOutput'
-      tags: *ref_24
-      security: *ref_25
   /crm/tasks/{id}:
     get:
       operationId: getTask
@@ -1885,52 +1507,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTaskOutput'
-      tags: *ref_24
-      security: *ref_25
-  /crm/tasks/batch:
-    post:
-      operationId: addTasks
-      summary: Add a batch of Tasks
-      parameters:
-        - name: x-connection-token
-          required: true
-          in: header
-          description: The connection token
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Crm software.
-          schema:
-            type: boolean
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedTaskInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTaskOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedTaskOutput'
       tags: *ref_24
       security: *ref_25
   /crm/users:
@@ -2201,52 +1777,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCommentOutput'
-      tags: *ref_30
-      security: *ref_31
-  /ticketing/comments/batch:
-    post:
-      operationId: addComments
-      summary: Add a batch of Comments
-      parameters:
-        - name: x-connection-token
-          required: true
-          in: header
-          description: The connection token
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ticketing software.
-          schema:
-            type: boolean
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedCommentInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCommentOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedCommentOutput'
       tags: *ref_30
       security: *ref_31
   /ticketing/tags:
@@ -2998,56 +2528,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedBankInfoOutput'
       tags: *ref_45
-  /hris/bankinfo/batch:
-    post:
-      operationId: addBankinfos
-      summary: Add a batch of Bankinfos
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedBankInfoInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedBankInfoOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedBankInfoOutput'
-      tags: *ref_45
   /hris/benefit:
     get:
       operationId: getBenefits
@@ -3148,56 +2628,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedBenefitOutput'
-      tags: *ref_46
-  /hris/benefit/batch:
-    post:
-      operationId: addBenefits
-      summary: Add a batch of Benefits
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedBenefitInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedBenefitOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedBenefitOutput'
       tags: *ref_46
   /hris/company:
     get:
@@ -3300,56 +2730,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedCompanyOutput'
       tags: *ref_47
-  /hris/company/batch:
-    post:
-      operationId: addCompanys
-      summary: Add a batch of Companys
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedCompanyInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCompanyOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedCompanyOutput'
-      tags: *ref_47
   /hris/dependent:
     get:
       operationId: getDependents
@@ -3450,56 +2830,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedDependentOutput'
-      tags: *ref_48
-  /hris/dependent/batch:
-    post:
-      operationId: addDependents
-      summary: Add a batch of Dependents
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedDependentInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDependentOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedDependentOutput'
       tags: *ref_48
   /hris/employeepayrollrun:
     get:
@@ -3602,56 +2932,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedEmployeePayrollRunOutput'
       tags: *ref_49
-  /hris/employeepayrollrun/batch:
-    post:
-      operationId: addEmployeePayrollRuns
-      summary: Add a batch of EmployeePayrollRuns
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedEmployeePayrollRunInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmployeePayrollRunOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedEmployeePayrollRunOutput'
-      tags: *ref_49
   /hris/employee:
     get:
       operationId: getEmployees
@@ -3752,56 +3032,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmployeeOutput'
-      tags: *ref_50
-  /hris/employee/batch:
-    post:
-      operationId: addEmployees
-      summary: Add a batch of Employees
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedEmployeeInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmployeeOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedEmployeeOutput'
       tags: *ref_50
   /hris/employerbenefit:
     get:
@@ -3904,56 +3134,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedEmployerBenefitOutput'
       tags: *ref_51
-  /hris/employerbenefit/batch:
-    post:
-      operationId: addEmployerBenefits
-      summary: Add a batch of EmployerBenefits
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedEmployerBenefitInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmployerBenefitOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedEmployerBenefitOutput'
-      tags: *ref_51
   /hris/employment:
     get:
       operationId: getEmployments
@@ -4054,56 +3234,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmploymentOutput'
-      tags: *ref_52
-  /hris/employment/batch:
-    post:
-      operationId: addEmployments
-      summary: Add a batch of Employments
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedEmploymentInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmploymentOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedEmploymentOutput'
       tags: *ref_52
   /hris/group:
     get:
@@ -4206,56 +3336,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedGroupOutput'
       tags: *ref_53
-  /hris/group/batch:
-    post:
-      operationId: addGroups
-      summary: Add a batch of Groups
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedGroupInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedGroupOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedGroupOutput'
-      tags: *ref_53
   /hris/location:
     get:
       operationId: getLocations
@@ -4356,56 +3436,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedLocationOutput'
-      tags: *ref_54
-  /hris/location/batch:
-    post:
-      operationId: addLocations
-      summary: Add a batch of Locations
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedLocationInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedLocationOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedLocationOutput'
       tags: *ref_54
   /hris/paygroup:
     get:
@@ -4508,56 +3538,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedPayGroupOutput'
       tags: *ref_55
-  /hris/paygroup/batch:
-    post:
-      operationId: addPayGroups
-      summary: Add a batch of PayGroups
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedPayGroupInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPayGroupOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedPayGroupOutput'
-      tags: *ref_55
   /hris/payrollrun:
     get:
       operationId: getPayrollRuns
@@ -4658,56 +3638,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPayrollRunOutput'
-      tags: *ref_56
-  /hris/payrollrun/batch:
-    post:
-      operationId: addPayrollRuns
-      summary: Add a batch of PayrollRuns
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedPayrollRunInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPayrollRunOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedPayrollRunOutput'
       tags: *ref_56
   /hris/timeoff:
     get:
@@ -4810,56 +3740,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedTimeoffOutput'
       tags: *ref_57
-  /hris/timeoff/batch:
-    post:
-      operationId: addTimeoffs
-      summary: Add a batch of Timeoffs
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedTimeoffInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTimeoffOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedTimeoffOutput'
-      tags: *ref_57
   /hris/timeoffbalance:
     get:
       operationId: getTimeoffBalances
@@ -4960,56 +3840,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTimeoffBalanceOutput'
-      tags: *ref_58
-  /hris/timeoffbalance/batch:
-    post:
-      operationId: addTimeoffBalances
-      summary: Add a batch of TimeoffBalances
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Hris software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedTimeoffBalanceInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTimeoffBalanceOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedTimeoffBalanceOutput'
       tags: *ref_58
   /marketingautomation/action:
     get:
@@ -5118,58 +3948,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedActionOutput'
       tags: *ref_59
-  /marketingautomation/action/batch:
-    post:
-      operationId: addActions
-      summary: Add a batch of Actions
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedActionInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedActionOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedActionOutput'
-      tags: *ref_59
   /marketingautomation/automation:
     get:
       operationId: getAutomations
@@ -5276,58 +4054,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAutomationOutput'
-      tags: *ref_60
-  /marketingautomation/automation/batch:
-    post:
-      operationId: addAutomations
-      summary: Add a batch of Automations
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedAutomationInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAutomationOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedAutomationOutput'
       tags: *ref_60
   /marketingautomation/campaign:
     get:
@@ -5436,58 +4162,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedCampaignOutput'
       tags: *ref_61
-  /marketingautomation/campaign/batch:
-    post:
-      operationId: addCampaigns
-      summary: Add a batch of Campaigns
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedCampaignInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCampaignOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: *ref_61
   /marketingautomation/contact:
     get:
       operationId: getMarketingAutomationContacts
@@ -5594,58 +4268,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_62
-  /marketingautomation/contact/batch:
-    post:
-      operationId: addMarketingAutomationContacts
-      summary: Add a batch of Contacts
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedContactInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedContactOutput'
       tags: *ref_62
   /marketingautomation/email:
     get:
@@ -5754,58 +4376,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedEmailOutput'
       tags: *ref_63
-  /marketingautomation/email/batch:
-    post:
-      operationId: addEmails
-      summary: Add a batch of Emails
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedEmailInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmailOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedEmailOutput'
-      tags: *ref_63
   /marketingautomation/event:
     get:
       operationId: getMarketingAutomationEvents
@@ -5912,58 +4482,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEventOutput'
-      tags: *ref_64
-  /marketingautomation/event/batch:
-    post:
-      operationId: addEvents
-      summary: Add a batch of Events
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedEventInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEventOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedEventOutput'
       tags: *ref_64
   /marketingautomation/list:
     get:
@@ -6072,58 +4590,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedListOutput'
       tags: *ref_65
-  /marketingautomation/list/batch:
-    post:
-      operationId: addLists
-      summary: Add a batch of Lists
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedListInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedListOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedListOutput'
-      tags: *ref_65
   /marketingautomation/message:
     get:
       operationId: getMessages
@@ -6230,58 +4696,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedMessageOutput'
-      tags: *ref_66
-  /marketingautomation/message/batch:
-    post:
-      operationId: addMessages
-      summary: Add a batch of Messages
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedMessageInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedMessageOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedMessageOutput'
       tags: *ref_66
   /marketingautomation/template:
     get:
@@ -6390,58 +4804,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedTemplateOutput'
       tags: *ref_67
-  /marketingautomation/template/batch:
-    post:
-      operationId: addTemplates
-      summary: Add a batch of Templates
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedTemplateInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTemplateOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedTemplateOutput'
-      tags: *ref_67
   /marketingautomation/user:
     get:
       operationId: getMarketingAutomationUsers
@@ -6549,58 +4911,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedUserOutput'
       tags: *ref_68
-  /marketingautomation/user/batch:
-    post:
-      operationId: addMarketingAutomationUsers
-      summary: Add a batch of Users
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: >-
-            Set to true to include data from the original Marketingautomation
-            software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedUserInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_68
   /ats/activity:
     get:
       operationId: getActivitys
@@ -6701,56 +5011,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedActivityOutput'
-      tags: *ref_69
-  /ats/activity/batch:
-    post:
-      operationId: addActivitys
-      summary: Add a batch of Activitys
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedActivityInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedActivityOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedActivityOutput'
       tags: *ref_69
   /ats/application:
     get:
@@ -6853,56 +5113,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedApplicationOutput'
       tags: *ref_70
-  /ats/application/batch:
-    post:
-      operationId: addApplications
-      summary: Add a batch of Applications
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedApplicationInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedApplicationOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedApplicationOutput'
-      tags: *ref_70
   /ats/attachment:
     get:
       operationId: getAtsAttachments
@@ -7003,56 +5213,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_71
-  /ats/attachment/batch:
-    post:
-      operationId: addAtsAttachments
-      summary: Add a batch of Attachments
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedAttachmentInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedAttachmentOutput'
       tags: *ref_71
   /ats/candidate:
     get:
@@ -7155,56 +5315,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedCandidateOutput'
       tags: *ref_72
-  /ats/candidate/batch:
-    post:
-      operationId: addCandidates
-      summary: Add a batch of Candidates
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedCandidateInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCandidateOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedCandidateOutput'
-      tags: *ref_72
   /ats/department:
     get:
       operationId: getDepartments
@@ -7305,56 +5415,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedDepartmentOutput'
-      tags: *ref_73
-  /ats/department/batch:
-    post:
-      operationId: addDepartments
-      summary: Add a batch of Departments
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedDepartmentInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDepartmentOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedDepartmentOutput'
       tags: *ref_73
   /ats/interview:
     get:
@@ -7457,56 +5517,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedInterviewOutput'
       tags: *ref_74
-  /ats/interview/batch:
-    post:
-      operationId: addInterviews
-      summary: Add a batch of Interviews
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedInterviewInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedInterviewOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedInterviewOutput'
-      tags: *ref_74
   /ats/jobinterviewstage:
     get:
       operationId: getJobInterviewStages
@@ -7607,56 +5617,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedJobInterviewStageOutput'
-      tags: *ref_75
-  /ats/jobinterviewstage/batch:
-    post:
-      operationId: addJobInterviewStages
-      summary: Add a batch of JobInterviewStages
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedJobInterviewStageInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedJobInterviewStageOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedJobInterviewStageOutput'
       tags: *ref_75
   /ats/job:
     get:
@@ -7759,56 +5719,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedJobOutput'
       tags: *ref_76
-  /ats/job/batch:
-    post:
-      operationId: addJobs
-      summary: Add a batch of Jobs
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedJobInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedJobOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedJobOutput'
-      tags: *ref_76
   /ats/offer:
     get:
       operationId: getOffers
@@ -7909,56 +5819,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedOfferOutput'
-      tags: *ref_77
-  /ats/offer/batch:
-    post:
-      operationId: addOffers
-      summary: Add a batch of Offers
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedOfferInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedOfferOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedOfferOutput'
       tags: *ref_77
   /ats/office:
     get:
@@ -8061,56 +5921,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedOfficeOutput'
       tags: *ref_78
-  /ats/office/batch:
-    post:
-      operationId: addOffices
-      summary: Add a batch of Offices
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedOfficeInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedOfficeOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedOfficeOutput'
-      tags: *ref_78
   /ats/rejectreason:
     get:
       operationId: getRejectReasons
@@ -8211,56 +6021,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedRejectReasonOutput'
-      tags: *ref_79
-  /ats/rejectreason/batch:
-    post:
-      operationId: addRejectReasons
-      summary: Add a batch of RejectReasons
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedRejectReasonInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedRejectReasonOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedRejectReasonOutput'
       tags: *ref_79
   /ats/scorecard:
     get:
@@ -8363,56 +6123,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedScoreCardOutput'
       tags: *ref_80
-  /ats/scorecard/batch:
-    post:
-      operationId: addScoreCards
-      summary: Add a batch of ScoreCards
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedScoreCardInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedScoreCardOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedScoreCardOutput'
-      tags: *ref_80
   /ats/screeningquestion:
     get:
       operationId: getScreeningQuestions
@@ -8513,56 +6223,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedScreeningQuestionOutput'
-      tags: *ref_81
-  /ats/screeningquestion/batch:
-    post:
-      operationId: addScreeningQuestions
-      summary: Add a batch of ScreeningQuestions
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedScreeningQuestionInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedScreeningQuestionOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedScreeningQuestionOutput'
       tags: *ref_81
   /ats/tag:
     get:
@@ -8665,56 +6325,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedTagOutput'
       tags: *ref_82
-  /ats/tag/batch:
-    post:
-      operationId: addTags
-      summary: Add a batch of Tags
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedTagInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTagOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedTagOutput'
-      tags: *ref_82
   /ats/user:
     get:
       operationId: getAtsUsers
@@ -8815,56 +6425,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_83
-  /ats/user/batch:
-    post:
-      operationId: addAtsUsers
-      summary: Add a batch of Users
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedUserInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedUserOutput'
       tags: *ref_83
   /ats/eeocs:
     get:
@@ -8967,56 +6527,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedEeocsOutput'
       tags: *ref_84
-  /ats/eeocs/batch:
-    post:
-      operationId: addEeocss
-      summary: Add a batch of Eeocss
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ats software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedEeocsInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEeocsOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedEeocsOutput'
-      tags: *ref_84
   /accounting/account:
     get:
       operationId: getAccountingAccounts
@@ -9117,56 +6627,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAccountOutput'
-      tags: *ref_85
-  /accounting/account/batch:
-    post:
-      operationId: addAccounts
-      summary: Add a batch of Accounts
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedAccountInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAccountOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedAccountOutput'
       tags: *ref_85
   /accounting/address:
     get:
@@ -9269,56 +6729,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedAddressOutput'
       tags: *ref_86
-  /accounting/address/batch:
-    post:
-      operationId: addAddresss
-      summary: Add a batch of Addresss
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedAddressInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAddressOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedAddressOutput'
-      tags: *ref_86
   /accounting/attachment:
     get:
       operationId: getAccountingAttachments
@@ -9419,56 +6829,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_87
-  /accounting/attachment/batch:
-    post:
-      operationId: addAccountingAttachments
-      summary: Add a batch of Attachments
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedAttachmentInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedAttachmentOutput'
       tags: *ref_87
   /accounting/balancesheet:
     get:
@@ -9571,56 +6931,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedBalanceSheetOutput'
       tags: *ref_88
-  /accounting/balancesheet/batch:
-    post:
-      operationId: addBalanceSheets
-      summary: Add a batch of BalanceSheets
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedBalanceSheetInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedBalanceSheetOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedBalanceSheetOutput'
-      tags: *ref_88
   /accounting/cashflowstatement:
     get:
       operationId: getCashflowStatements
@@ -9721,56 +7031,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCashflowStatementOutput'
-      tags: *ref_89
-  /accounting/cashflowstatement/batch:
-    post:
-      operationId: addCashflowStatements
-      summary: Add a batch of CashflowStatements
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedCashflowStatementInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCashflowStatementOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedCashflowStatementOutput'
       tags: *ref_89
   /accounting/companyinfo:
     get:
@@ -9873,56 +7133,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedCompanyInfoOutput'
       tags: *ref_90
-  /accounting/companyinfo/batch:
-    post:
-      operationId: addCompanyInfos
-      summary: Add a batch of CompanyInfos
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedCompanyInfoInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCompanyInfoOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedCompanyInfoOutput'
-      tags: *ref_90
   /accounting/contact:
     get:
       operationId: getAccountingContacts
@@ -10023,56 +7233,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_91
-  /accounting/contact/batch:
-    post:
-      operationId: addAccountingContacts
-      summary: Add a batch of Contacts
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedContactInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedContactOutput'
       tags: *ref_91
   /accounting/creditnote:
     get:
@@ -10175,56 +7335,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedCreditNoteOutput'
       tags: *ref_92
-  /accounting/creditnote/batch:
-    post:
-      operationId: addCreditNotes
-      summary: Add a batch of CreditNotes
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedCreditNoteInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCreditNoteOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedCreditNoteOutput'
-      tags: *ref_92
   /accounting/expense:
     get:
       operationId: getExpenses
@@ -10325,56 +7435,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedExpenseOutput'
-      tags: *ref_93
-  /accounting/expense/batch:
-    post:
-      operationId: addExpenses
-      summary: Add a batch of Expenses
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedExpenseInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedExpenseOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedExpenseOutput'
       tags: *ref_93
   /accounting/incomestatement:
     get:
@@ -10477,56 +7537,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedIncomeStatementOutput'
       tags: *ref_94
-  /accounting/incomestatement/batch:
-    post:
-      operationId: addIncomeStatements
-      summary: Add a batch of IncomeStatements
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedIncomeStatementInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedIncomeStatementOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedIncomeStatementOutput'
-      tags: *ref_94
   /accounting/invoice:
     get:
       operationId: getInvoices
@@ -10627,56 +7637,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedInvoiceOutput'
-      tags: *ref_95
-  /accounting/invoice/batch:
-    post:
-      operationId: addInvoices
-      summary: Add a batch of Invoices
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedInvoiceInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedInvoiceOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedInvoiceOutput'
       tags: *ref_95
   /accounting/item:
     get:
@@ -10779,56 +7739,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedItemOutput'
       tags: *ref_96
-  /accounting/item/batch:
-    post:
-      operationId: addItems
-      summary: Add a batch of Items
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedItemInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedItemOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedItemOutput'
-      tags: *ref_96
   /accounting/journalentry:
     get:
       operationId: getJournalEntrys
@@ -10929,56 +7839,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedJournalEntryOutput'
-      tags: *ref_97
-  /accounting/journalentry/batch:
-    post:
-      operationId: addJournalEntrys
-      summary: Add a batch of JournalEntrys
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedJournalEntryInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedJournalEntryOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedJournalEntryOutput'
       tags: *ref_97
   /accounting/payment:
     get:
@@ -11081,56 +7941,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedPaymentOutput'
       tags: *ref_98
-  /accounting/payment/batch:
-    post:
-      operationId: addPayments
-      summary: Add a batch of Payments
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedPaymentInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPaymentOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedPaymentOutput'
-      tags: *ref_98
   /accounting/phonenumber:
     get:
       operationId: getPhoneNumbers
@@ -11231,56 +8041,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPhoneNumberOutput'
-      tags: *ref_99
-  /accounting/phonenumber/batch:
-    post:
-      operationId: addPhoneNumbers
-      summary: Add a batch of PhoneNumbers
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedPhoneNumberInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPhoneNumberOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedPhoneNumberOutput'
       tags: *ref_99
   /accounting/purchaseorder:
     get:
@@ -11383,56 +8143,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
       tags: *ref_100
-  /accounting/purchaseorder/batch:
-    post:
-      operationId: addPurchaseOrders
-      summary: Add a batch of PurchaseOrders
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedPurchaseOrderInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
-      tags: *ref_100
   /accounting/taxrate:
     get:
       operationId: getTaxRates
@@ -11533,56 +8243,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTaxRateOutput'
-      tags: *ref_101
-  /accounting/taxrate/batch:
-    post:
-      operationId: addTaxRates
-      summary: Add a batch of TaxRates
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedTaxRateInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTaxRateOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedTaxRateOutput'
       tags: *ref_101
   /accounting/trackingcategory:
     get:
@@ -11685,56 +8345,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedTrackingCategoryOutput'
       tags: *ref_102
-  /accounting/trackingcategory/batch:
-    post:
-      operationId: addTrackingCategorys
-      summary: Add a batch of TrackingCategorys
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedTrackingCategoryInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTrackingCategoryOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedTrackingCategoryOutput'
-      tags: *ref_102
   /accounting/transaction:
     get:
       operationId: getTransactions
@@ -11835,56 +8445,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTransactionOutput'
-      tags: *ref_103
-  /accounting/transaction/batch:
-    post:
-      operationId: addTransactions
-      summary: Add a batch of Transactions
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedTransactionInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTransactionOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedTransactionOutput'
       tags: *ref_103
   /accounting/vendorcredit:
     get:
@@ -11987,56 +8547,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedVendorCreditOutput'
       tags: *ref_104
-  /accounting/vendorcredit/batch:
-    post:
-      operationId: addVendorCredits
-      summary: Add a batch of VendorCredits
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Accounting software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedVendorCreditInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedVendorCreditOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedVendorCreditOutput'
-      tags: *ref_104
   /filestorage/drive:
     get:
       operationId: getDrives
@@ -12137,56 +8647,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedDriveOutput'
-      tags: *ref_105
-  /filestorage/drive/batch:
-    post:
-      operationId: addDrives
-      summary: Add a batch of Drives
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Filestorage software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedDriveInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDriveOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedDriveOutput'
       tags: *ref_105
   /filestorage/file:
     get:
@@ -12289,56 +8749,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedFileOutput'
       tags: *ref_106
-  /filestorage/file/batch:
-    post:
-      operationId: addFiles
-      summary: Add a batch of Files
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Filestorage software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedFileInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedFileOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedFileOutput'
-      tags: *ref_106
   /filestorage/folder:
     get:
       operationId: getFolders
@@ -12439,56 +8849,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedFolderOutput'
-      tags: *ref_107
-  /filestorage/folder/batch:
-    post:
-      operationId: addFolders
-      summary: Add a batch of Folders
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Filestorage software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedFolderInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedFolderOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedFolderOutput'
       tags: *ref_107
   /filestorage/sharedlink:
     get:
@@ -12591,56 +8951,6 @@ paths:
                       data:
                         $ref: '#/components/schemas/UnifiedSharedLinkOutput'
       tags: *ref_108
-  /filestorage/sharedlink/batch:
-    post:
-      operationId: addSharedlinks
-      summary: Add a batch of Sharedlinks
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Filestorage software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedSharedLinkInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedSharedLinkOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedSharedLinkOutput'
-      tags: *ref_108
   /filestorage/permission:
     get:
       operationId: getPermissions
@@ -12712,27 +9022,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnifiedPermissionOutput'
       tags: *ref_109
-    patch:
-      operationId: updatePermission
-      summary: Update a Permission
-      parameters:
-        - name: id
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPermissionOutput'
-      tags: *ref_109
   /filestorage/permission/{id}:
     get:
       operationId: getPermission
@@ -12762,56 +9051,6 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPermissionOutput'
-      tags: *ref_109
-  /filestorage/permission/batch:
-    post:
-      operationId: addPermissions
-      summary: Add a batch of Permissions
-      parameters:
-        - name: connection_token
-          required: true
-          in: header
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Filestorage software.
-          schema:
-            type: boolean
-        - name: x-connection-token
-          in: header
-          description: The connection token
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedPermissionInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPermissionOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedPermissionOutput'
       tags: *ref_109
   /ticketing/attachments:
     get:
@@ -12962,65 +9201,12 @@ paths:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
       tags: *ref_110
       security: *ref_111
-  /ticketing/attachments/batch:
-    post:
-      operationId: addTicketingAttachments
-      summary: Add a batch of Attachments
-      parameters:
-        - name: x-connection-token
-          required: true
-          in: header
-          description: The connection token
-          schema:
-            type: string
-        - name: remote_data
-          required: false
-          in: query
-          description: Set to true to include data from the original Ticketing software.
-          schema:
-            type: boolean
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/UnifiedAttachmentInput'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_110
-      security: *ref_111
 info:
   title: Unified Panora API
   description: The Panora API description
   version: '1.0'
   contact: {}
 tags: []
-x-speakeasy-name-override:
-  - operationId: ^get.*
-    methodNameOverride: retrieve
-  - operationId: ^list.*
-    methodNameOverride: list
-  - operationId: ^new.*
-    methodNameOverride: create
 servers:
   - url: https://api.panora.dev
     description: Production server

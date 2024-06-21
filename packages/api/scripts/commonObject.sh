@@ -414,50 +414,7 @@ private connectionUtils: ConnectionUtils
       throw new Error(error);
     }
   }
-
-  @ApiOperation({
-    operationId: 'add${ObjectCap}s',
-    summary: 'Add a batch of ${ObjectCap}s',
-  })
-   @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original ${VerticalCap} software.',
-  })
-  @ApiBody({ type: Unified${ObjectCap}Input, isArray: true })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async add${ObjectCap}s(
-    @Body() unfied${ObjectCap}Data: Unified${ObjectCap}Input[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try{
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-      );
-      return this.${objectType}Service.batchAdd${ObjectCap}s(
-        unfied${ObjectCap}Data,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    }catch(error){
-      throw new Error(error);
-    }
-    
-  }
-
+  
   @ApiOperation({
     operationId: 'update${ObjectCap}',
     summary: 'Update a ${ObjectCap}',

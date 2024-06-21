@@ -142,45 +142,4 @@ export class ApplicationController {
       throw new Error(error);
     }
   }
-
-  @ApiOperation({
-    operationId: 'addApplications',
-    summary: 'Add a batch of Applications',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedApplicationInput, isArray: true })
-  @ApiCustomResponse(UnifiedApplicationOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addApplications(
-    @Body() unfiedApplicationData: UnifiedApplicationInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.applicationService.batchAddApplications(
-        unfiedApplicationData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
 }
