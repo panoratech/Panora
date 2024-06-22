@@ -5,8 +5,13 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { CallbackParams, RefreshParams } from '../types';
 import { ServiceRegistry } from './registry.service';
+import {
+  APIKeyCallbackParams,
+  CallbackParams,
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 @Injectable()
 export class CrmConnectionsService {
@@ -19,34 +24,12 @@ export class CrmConnectionsService {
     this.logger.setContext(CrmConnectionsService.name);
   }
 
-  //STEP 1:[FRONTEND STEP]
-  //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click
-  // on it to grant access => they grant US the access and then when confirmed
-  /*const authUrl =
-  'https://app.hubspot.com/oauth/authorize' +
-  `?client_id=${encodeURIComponent(CLIENT_ID)}` +
-  `&scope=${encodeURIComponent(SCOPES)}` +
-  `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;*/ //oauth/callback
-
-  // oauth server calls this redirect callback
-  // WE WOULD HAVE CREATED A DEV ACCOUNT IN THE 5 CRMs (Panora dev account)
-  // we catch the tmp token and swap it against oauth2 server for access/refresh tokens
-  // to perform actions on his behalf
-  // this call pass 1. integrationID 2. CustomerId 3. Panora Api Key
-  async handleCRMCallBack(
-    projectId: string,
-    linkedUserId: string,
+  async handleCrmCallBack(
     providerName: string,
-    code: string,
-    zohoLocation?: string,
+    callbackOpts: CallbackParams,
+    type_strategy: 'oauth' | 'apikey' | 'basic',
   ) {
     try {
-      if (!code) {
-        throw new ReferenceError(
-          `no ${providerName} code found, found ${code}`,
-        );
-      }
-
       const serviceName = providerName.toLowerCase();
 
       const service = this.serviceRegistry.getService(serviceName);
@@ -54,47 +37,33 @@ export class CrmConnectionsService {
       if (!service) {
         throw new ReferenceError(`Unknown provider, found ${providerName}`);
       }
-      const callbackOpts: CallbackParams = {
-        linkedUserId: linkedUserId,
-        projectId: projectId,
-        code: code,
-        location: zohoLocation || null,
-      };
       const data: Connection = await service.handleCallback(callbackOpts);
-      // this.logger.log('data is ' + data);
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',
           type: 'connection.created',
           method: 'GET',
-          url: '/oauth/callback',
+          url: `/${type_strategy}/callback`,
           provider: providerName.toLowerCase(),
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedUserId,
+          id_linked_user: callbackOpts.linkedUserId,
         },
       });
       //directly send the webhook
       await this.webhook.handlePriorityWebhook(
         data,
         'connection.created',
-        projectId,
+        callbackOpts.projectId,
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: 'CrmConnectionsService.handleCRMCallBack() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
-  async handleCRMTokensRefresh(
+  async handleCrmTokensRefresh(
     connectionId: string,
     providerName: string,
     refresh_token: string,
@@ -115,14 +84,7 @@ export class CrmConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: 'CrmConnectionsService.handleCRMTokensRefresh() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

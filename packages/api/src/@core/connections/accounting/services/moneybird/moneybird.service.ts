@@ -12,16 +12,16 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  IAccountingConnectionService,
-} from '../../types';
+import { IAccountingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export type MoneybirdOAuthResponse = {
   access_token: string;
@@ -52,7 +52,7 @@ export class MoneybirdConnectionService
     this.type = providerToType('moneybird', 'accounting', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -102,8 +102,8 @@ export class MoneybirdConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url:
-              CONNECTORS_METADATA['accounting']['moneybird'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['accounting']['moneybird'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -116,8 +116,8 @@ export class MoneybirdConnectionService
             provider_slug: 'moneybird',
             vertical: 'accounting',
             token_type: 'oauth',
-            account_url:
-              CONNECTORS_METADATA['accounting']['moneybird'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['accounting']['moneybird'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             status: 'valid',
@@ -138,18 +138,7 @@ export class MoneybirdConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
-          message: `MoneybirdConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'moneybird',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -190,18 +179,7 @@ export class MoneybirdConnectionService
       });
       this.logger.log('OAuth credentials updated : moneybird ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: `MoneybirdConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'moneybird',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

@@ -27,13 +27,17 @@ import { UserModule as TUserModule } from '@ticketing/user/user.module';
 import { FilestorageConnectionModule } from './filestorage/filestorage.connection.module';
 import { HrisConnectionModule } from './hris/hris.connection.module';
 import { ConnectionUtils } from './@utils';
+import { AtsConnectionModule } from './ats/ats.connection.module';
+import { ManagementConnectionsModule } from './management/management.connection.module';
 
 @Module({
   controllers: [ConnectionsController],
   imports: [
     CrmConnectionModule,
+    ManagementConnectionsModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
+    AtsConnectionModule,
     MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
     HrisConnectionModule,
@@ -64,9 +68,11 @@ import { ConnectionUtils } from './@utils';
     CrmConnectionModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
+    AtsConnectionModule,
     MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
     HrisConnectionModule,
+    ManagementConnectionsModule,
   ],
 })
 export class ConnectionsModule {}

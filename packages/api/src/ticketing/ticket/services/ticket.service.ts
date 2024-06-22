@@ -48,13 +48,7 @@ export class TicketService {
       );
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_TICKETS_ERROR',
-          message: 'TicketService.batchAddTickets() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -427,20 +421,14 @@ export class TicketService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_TICKET_ERROR',
-          message: 'TicketService.getTicket() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getTickets(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -468,7 +456,7 @@ export class TicketService {
       }
 
       const tickets = await this.prisma.tcg_tickets.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_ticket: cursor,
@@ -487,7 +475,7 @@ export class TicketService {
         },*/
       });
 
-      if (tickets.length === pageSize + 1) {
+      if (tickets.length === limit + 1) {
         next_cursor = Buffer.from(
           tickets[tickets.length - 1].id_tcg_ticket,
         ).toString('base64');
@@ -583,13 +571,7 @@ export class TicketService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_TICKETS_ERROR',
-          message: 'TicketService.getTickets() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
   //TODO

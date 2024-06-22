@@ -12,11 +12,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  ITicketingConnectionService,
-} from '../../types';
+import { ITicketingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   CONNECTORS_METADATA,
@@ -26,6 +22,10 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export type GithubOAuthResponse = string;
 
@@ -47,7 +47,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
     this.type = providerToType('github', 'ticketing', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -97,7 +97,8 @@ export class GithubConnectionService implements ITicketingConnectionService {
             access_token: this.cryptoService.encrypt(
               data.match(/access_token=([^&]*)/)[1],
             ),
-            account_url: CONNECTORS_METADATA['ticketing']['github'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['github'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
           },
@@ -113,7 +114,8 @@ export class GithubConnectionService implements ITicketingConnectionService {
             access_token: this.cryptoService.encrypt(
               data.match(/access_token=([^&]*)/)[1],
             ),
-            account_url: CONNECTORS_METADATA['ticketing']['github'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['github'].urls
+              .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -132,18 +134,7 @@ export class GithubConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `GithubConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'github',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 

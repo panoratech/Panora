@@ -5,5 +5,5 @@ export interface HookBaseReturn {
 
 export interface PaginationParams {
     page: number;
-    pageSize: number;
+    limit: number;
 }

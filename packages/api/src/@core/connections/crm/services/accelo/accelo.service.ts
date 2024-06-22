@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -22,10 +18,15 @@ import {
   OAuth2AuthData,
   CONNECTORS_METADATA,
   providerToType,
+  DynamicApiUrl,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 type AcceloOAuthResponse = {
   access_token: string;
@@ -53,7 +54,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
     this.type = providerToType('accelo', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       // this.logger.log('linkeduserid is ' + linkedUserId + ' inside callback accelo',);
@@ -77,7 +78,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
         code: code,
       });
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN}/oauth2/v0/token`,
+        `https://${CREDENTIALS.SUBDOMAIN}.api.accelo.com/oauth2/v0/token`,
         formData.toString(),
         {
           headers: {
@@ -95,9 +96,9 @@ export class AcceloConnectionService implements ICrmConnectionService {
       let db_res;
       const connection_token = uuidv4();
       //get the right BASE URL API
-      const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN +
-        CONNECTORS_METADATA['crm']['accelo'].urls.apiUrl;
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['crm']['accelo'].urls.apiUrl as DynamicApiUrl
+      )(CREDENTIALS.SUBDOMAIN);
 
       if (isNotUnique) {
         // Update existing connection
@@ -148,18 +149,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `AcceloConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'accelo',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -178,7 +168,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
       )) as OAuth2AuthData;
 
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN}/oauth2/v0/token`,
+        `https://${CREDENTIALS.SUBDOMAIN}.api.accelo.com/oauth2/v0/token`,
         formData.toString(),
         {
           headers: {
@@ -204,18 +194,7 @@ export class AcceloConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : accelo ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `AcceloConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'accelo',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

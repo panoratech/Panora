@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   Action,
@@ -22,10 +18,15 @@ import {
   OAuth2AuthData,
   CONNECTORS_METADATA,
   providerToType,
+  DynamicApiUrl,
 } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 type ZohoUrlType = {
   [key: string]: {
@@ -82,7 +83,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
     this.registry.registerService('zoho', this);
     this.type = providerToType('zoho', 'crm', AuthStrategy.oauth2);
   }
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code, location } = opts;
       if (!location) {
@@ -126,6 +127,9 @@ export class ZohoConnectionService implements ICrmConnectionService {
       let db_res;
       const connection_token = uuidv4();
       const apiDomain = ZOHOLocations[location].apiBase;
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl as DynamicApiUrl
+      )(apiDomain);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -142,8 +146,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
             ),
             status: 'valid',
             created_at: new Date(),
-            account_url:
-              apiDomain + CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl,
+            account_url: BASE_API_URL,
           },
         });
       } else {
@@ -182,18 +185,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
 
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `ZohoConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'zoho',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -235,18 +227,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : zoho ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `ZohoConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'zoho',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

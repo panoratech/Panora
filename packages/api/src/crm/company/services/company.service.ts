@@ -51,13 +51,7 @@ export class CompanyService {
 
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_COMPANIES_ERROR',
-          message: 'CompanyService.batchAddCompanies() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -373,13 +367,7 @@ export class CompanyService {
       );
       return result_company;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_COMPANY_ERROR',
-          message: 'CompanyService.addCompany() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -463,20 +451,14 @@ export class CompanyService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_COMPANY_ERROR',
-          message: 'CompanyService.getCompany() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getCompanies(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -502,7 +484,7 @@ export class CompanyService {
       }
 
       const companies = await this.prisma.crm_companies.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_company: cursor,
@@ -522,7 +504,7 @@ export class CompanyService {
         },
       });
 
-      if (companies.length === pageSize + 1) {
+      if (companies.length === limit + 1) {
         next_cursor = Buffer.from(
           companies[companies.length - 1].id_crm_company,
         ).toString('base64');
@@ -618,13 +600,7 @@ export class CompanyService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_COMPANIES_ERROR',
-          message: 'CompanyService.getCompanies() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 

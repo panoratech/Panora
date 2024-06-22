@@ -110,14 +110,7 @@ export class SyncService implements OnModuleInit {
         }
       }
     } catch (error) {
-      throwTypedError(
-        new SyncError({
-          name: 'TICKETING_COLLECTION_SYNC_ERROR',
-          message: 'SyncService.syncCollections() call failed with args',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 

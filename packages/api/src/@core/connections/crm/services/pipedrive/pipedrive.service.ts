@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import {
   Action,
   ActionType,
@@ -26,6 +22,10 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export interface PipedriveOAuthResponse {
   access_token: string;
@@ -53,7 +53,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
     this.type = providerToType('pipedrive', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -116,7 +116,8 @@ export class PipedriveConnectionService implements ICrmConnectionService {
             provider_slug: 'pipedrive',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['pipedrive'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['pipedrive'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -140,18 +141,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `PipedriveConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'pipedrive',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -196,18 +186,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : pipedrive ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `PipedriveConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'pipedrive',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

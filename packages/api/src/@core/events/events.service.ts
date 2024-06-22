@@ -27,8 +27,8 @@ export class EventsService {
       // Then, use those ids to filter the events
       return await this.prisma.events.findMany({
         orderBy: { timestamp: 'desc' },
-        skip: (dto.page - 1) * dto.pageSize,
-        take: dto.pageSize,
+        skip: (dto.page - 1) * dto.limit,
+        take: dto.limit,
         where: {
           id_linked_user: {
             in: linkedUserIds,
@@ -36,14 +36,7 @@ export class EventsService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new EventsError({
-          name: 'GET_EVENTS_ERROR',
-          message: 'EventsService.findEvents() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -69,14 +62,7 @@ export class EventsService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new EventsError({
-          name: 'GET_EVENTS_COUNT_ERROR',
-          message: 'EventsService.getEventsCount() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

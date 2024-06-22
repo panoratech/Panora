@@ -23,12 +23,11 @@ export class MWHandlerController {
   async handleThirdPartyWebhook(
     @Body() data: any,
     @Headers() headers: any,
-    @Param('endpoint_uuid') uuid: string,  // Changed 'uuid' to 'endpoint_uuid'
+    @Param('endpoint_uuid') uuid: string, // Changed 'uuid' to 'endpoint_uuid'
   ) {
     this.loggerService.log(
       'Realtime Webhook Received with Payload ---- ' + JSON.stringify(data),
     );
     await this.queue.add({ uuid, data, headers });
   }
-
 }

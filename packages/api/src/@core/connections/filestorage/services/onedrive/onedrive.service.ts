@@ -12,11 +12,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  IFilestorageConnectionService,
-} from '../../types';
+import { IFilestorageConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   AuthStrategy,
@@ -26,6 +22,10 @@ import {
 } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export type OneDriveOAuthResponse = {
   access_token: string;
@@ -55,7 +55,7 @@ export class OneDriveConnectionService
     this.type = providerToType('onedrive', 'filestorage', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -66,11 +66,7 @@ export class OneDriveConnectionService
         },
       });
 
-      const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
-          : this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
@@ -109,8 +105,8 @@ export class OneDriveConnectionService
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url:
-              CONNECTORS_METADATA['filestorage']['onedrive'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['filestorage']['onedrive'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -126,8 +122,8 @@ export class OneDriveConnectionService
             provider_slug: 'onedrive',
             vertical: 'filestorage',
             token_type: 'oauth',
-            account_url:
-              CONNECTORS_METADATA['filestorage']['onedrive'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['filestorage']['onedrive'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -151,28 +147,13 @@ export class OneDriveConnectionService
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_FILESTORAGE',
-          message: `OneDriveConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'onedrive',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
-          : this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
@@ -211,18 +192,7 @@ export class OneDriveConnectionService
       });
       this.logger.log('OAuth credentials updated : onedrive ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_FILESTORAGE',
-          message: `OneDriveConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'onedrive',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

@@ -75,20 +75,14 @@ export class UserService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_USER_ERROR',
-          message: 'UserService.getUser() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getUsers(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -115,7 +109,7 @@ export class UserService {
       }
 
       const users = await this.prisma.tcg_users.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_user: cursor,
@@ -130,7 +124,7 @@ export class UserService {
         },
       });
 
-      if (users.length === pageSize + 1) {
+      if (users.length === limit + 1) {
         next_cursor = Buffer.from(users[users.length - 1].id_tcg_user).toString(
           'base64',
         );
@@ -216,13 +210,7 @@ export class UserService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_USERS_ERROR',
-          message: 'UserService.getUsers() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

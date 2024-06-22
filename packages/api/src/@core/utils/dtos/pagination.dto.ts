@@ -15,5 +15,5 @@ export class PaginationDto {
   @IsPositive()
   @IsOptional()
   @ApiPropertyOptional()
-  pageSize: number = DEFAULT_PAGE_SIZE;
+  limit: number = DEFAULT_PAGE_SIZE;
 }

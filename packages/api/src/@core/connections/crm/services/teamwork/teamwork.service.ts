@@ -12,23 +12,33 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  ICrmConnectionService,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import {
-  OAuth2AuthData,
-  CONNECTORS_METADATA,
-  providerToType,
-} from '@panora/shared';
+import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export type TeamworkOAuthResponse = {
   access_token: string;
+  installation: {
+    apiEndPoint: string;
+    company: {
+      id: number;
+      logo: string;
+      name: string;
+    };
+    id: number;
+    logo: string;
+    name: string;
+    region: string;
+    url: string;
+  };
+  status: string;
 };
 
 @Injectable()
@@ -49,7 +59,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
     this.type = providerToType('teamwork', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -90,9 +100,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
       let db_res;
       const connection_token = uuidv4();
       //get the right BASE URL API
-      const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN +
-        CONNECTORS_METADATA['crm']['teamwork'].urls.apiUrl;
+      const BASE_API_URL = data.installation.apiEndPoint;
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -133,18 +141,7 @@ export class TeamworkConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `TeamworkConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'teamwork',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 

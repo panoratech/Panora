@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import axios from 'axios';
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
   Action,
@@ -26,6 +22,10 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export interface HubspotOAuthResponse {
   refresh_token: string;
@@ -51,7 +51,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
     this.type = providerToType('hubspot', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -116,7 +116,8 @@ export class HubspotConnectionService implements ICrmConnectionService {
             provider_slug: 'hubspot',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['hubspot'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['hubspot'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -141,18 +142,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
       this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `HubspotConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'hubspot',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -197,18 +187,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : hubspot ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `HubspotConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'hubspot',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

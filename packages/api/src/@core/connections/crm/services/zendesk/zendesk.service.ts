@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  CallbackParams,
-  ICrmConnectionService,
-  RefreshParams,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import {
   Action,
   ActionType,
@@ -26,6 +22,10 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export interface ZendeskSellOAuthResponse {
   access_token: string;
@@ -52,7 +52,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
     this.registry.registerService('zendesk', this);
     this.type = providerToType('zendesk', 'crm', AuthStrategy.oauth2);
   }
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -63,10 +63,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
         },
       });
 
-      //reconstruct the redirect URI that was passed in the frontend it must be the same
-      //const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
-      //TODO
-      const REDIRECT_URI = `http://localhost:3000/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -120,7 +117,8 @@ export class ZendeskConnectionService implements ICrmConnectionService {
             provider_slug: 'zendesk',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['zendesk'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['zendesk'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token
               ? this.cryptoService.encrypt(data.refresh_token)
@@ -146,18 +144,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `ZendeskConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'zendesk',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -199,18 +186,7 @@ export class ZendeskConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : zendesk ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `ZendeskConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'zendesk',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

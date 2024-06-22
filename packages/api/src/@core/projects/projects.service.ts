@@ -20,14 +20,7 @@ export class ProjectsService {
     try {
       return await this.prisma.projects.findMany();
     } catch (error) {
-      throwTypedError(
-        new ProjectError({
-          name: 'GET_PROJECTS_ERROR',
-          message: 'ProjectsService.getProjects() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -39,14 +32,7 @@ export class ProjectsService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new ProjectError({
-          name: 'GET_PROJECT_FOR_USER_ERROR',
-          message: 'ProjectsService.getProjectsByUser() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -89,14 +75,7 @@ export class ProjectsService {
       });
       return res;
     } catch (error) {
-      throwTypedError(
-        new ProjectError({
-          name: 'CREATE_PROJECT_ERROR',
-          message: 'ProjectsService.createProject() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

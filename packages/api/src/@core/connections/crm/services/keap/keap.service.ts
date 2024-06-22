@@ -12,11 +12,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  ICrmConnectionService,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
@@ -26,6 +22,10 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export type KeapOAuthResponse = {
   access_token: string;
@@ -51,7 +51,7 @@ export class KeapConnectionService implements ICrmConnectionService {
     this.type = providerToType('keap', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -116,7 +116,8 @@ export class KeapConnectionService implements ICrmConnectionService {
             provider_slug: 'keap',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['keap'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['keap'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -140,18 +141,7 @@ export class KeapConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `KeapConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'keap',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -194,18 +184,7 @@ export class KeapConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : keap ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `KeapConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'keap',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

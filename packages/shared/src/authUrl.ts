@@ -1,6 +1,6 @@
 import { CONNECTORS_METADATA } from './connectors/metadata';
-import { OAuth2AuthData, providerToType } from './envConfig';
-import { AuthStrategy, ProviderConfig } from './types';
+import { needsEndUserSubdomain, needsSubdomain, OAuth2AuthData, providerToType } from './envConfig';
+import { AuthStrategy, DynamicAuthorization, ProviderConfig, StringAuthorization } from './types';
 import { randomString } from './utils';
 
 interface AuthParams {
@@ -29,7 +29,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   if (!config) {
     throw new Error(`Unsupported provider: ${providerName}`);
   }
-  const authStrategy = config.authStrategy!;
+  const authStrategy = config.authStrategy!.strategy;
 
   switch (authStrategy) {
     case AuthStrategy.oauth2:
@@ -85,16 +85,32 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new ReferenceError(`No client id for type ${type}`)
-  const scopes = data.SCOPE
+  const scopes = data.SCOPE;
 
   const { urls: urls } = config;
   const { authBaseUrl: baseUrl } = urls;
 
   if (!baseUrl) throw new ReferenceError(`No authBaseUrl found for type ${type}`)
 
+  let BASE_URL: string;
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
-  const BASE_URL: string = providerName === 'gorgias' ? `${apiUrl}${baseUrl}` :
-    data.SUBDOMAIN ? data.SUBDOMAIN + baseUrl : baseUrl; 
+
+  if( needsSubdomain(providerName, vertical) ) {
+    if(typeof baseUrl === 'string') {
+      BASE_URL = baseUrl;
+    } else {
+      BASE_URL = (baseUrl as DynamicAuthorization)(data.SUBDOMAIN as string);
+    }
+  } else if (needsEndUserSubdomain(providerName, vertical)) {
+    if(typeof baseUrl === 'string') {
+      BASE_URL = baseUrl;
+    } else {
+      BASE_URL = (baseUrl as DynamicAuthorization)('END_USER_SUBDOMAIN'); // TODO: get the END-USER domain from the hook (data coming from webapp client)
+      // TODO: add the end user subdomain as query param on the redirect uri ?
+    }
+  } else {
+    BASE_URL = baseUrl as StringAuthorization;
+  }
 
   // console.log('BASE URL IS '+ BASE_URL)
   if (!baseUrl || !BASE_URL) {
@@ -102,43 +118,57 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   }
 
   // Default URL structure
-  let params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
+  let params = `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
-  // Adding scope for providers that require it, except for 'pipedrive'
-  const ignoreScopes = ['close']
-  if (scopes && !ignoreScopes.includes(providerName)) {
-    params += `&scope=${encodeURIComponent(scopes)}`;
+  if(providerName === 'helpscout') {
+    params = `client_id=${encodeURIComponent(clientId)}&state=${state}`;
+  }
+
+  if (scopes) {
+    if(providerName === 'slack') {
+      params += `&scope=&user_scope=${encodeURIComponent(scopes)}`;
+    } else {
+      params += `&scope=${encodeURIComponent(scopes)}`;
+    }
   }
 
   // Special cases for certain providers
   switch (providerName) {
-    case 'xero':
-      params += '&response_type=code&scope=offline_access openid profile email accounting.transactions'
-      break;
     case 'zoho':
-      params += '&response_type=code&access_type=offline';
+      params += '&access_type=offline';
       break;
     case 'jira':
-      params = `audience=api.atlassian.com&${params}&prompt=consent&response_type=code`;
+      params = `audience=api.atlassian.com&${params}&prompt=consent`;
       break;
     case 'jira_service_mgmt':
-      params = `audience=api.atlassian.com&${params}&prompt=consen&response_type=codet`;
+      params = `audience=api.atlassian.com&${params}&prompt=consent`;
       break;
     case 'gitlab':
-      params += '&response_type=code&code_challenge=&code_challenge_method=';
+      params += '&code_challenge=&code_challenge_method=';
       break;
     case 'gorgias':
-      params = `&response_type=code&nonce=${randomString()}`;
+      params = `&nonce=${randomString()}`;
       break;
     case 'googledrive':
-      params = `${params}&response_type=code&access_type=offline`;
+      params = `${params}&access_type=offline`;
       break;
     case 'dropbox':
-      params = `${params}&response_type=code&token_access_type=offline`
+      params = `${params}&token_access_type=offline`
+      break;
+    case 'basecamp':
+      params += `&type=web_server`
+      break;
+    case 'lever':
+      params += `&audience=https://api.lever.co/v1/`
+      break;
+    case 'notion':
+      params += `&owner=user`
+      break;
+    case 'klaviyo':
+      params += `&code_challenge_method=S256&code_challenge=` // TODO
       break;
     default:
-      // For most providers, response_type=code is common
-      params += '&response_type=code';
+      break;
   }
 
   const finalAuthUrl = `${BASE_URL}?${params}`;

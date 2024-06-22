@@ -58,20 +58,14 @@ export class CollectionService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_COLLECTION_ERROR',
-          message: 'CollectionService.getCollection() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getCollections(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -97,7 +91,7 @@ export class CollectionService {
       }
 
       const collections = await this.prisma.tcg_collections.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_collection: cursor,
@@ -112,7 +106,7 @@ export class CollectionService {
         },
       });
 
-      if (collections.length === pageSize + 1) {
+      if (collections.length === limit + 1) {
         next_cursor = Buffer.from(
           collections[collections.length - 1].id_tcg_collection,
         ).toString('base64');
@@ -171,13 +165,7 @@ export class CollectionService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_COLLECTIONS_ERROR',
-          message: 'CollectionService.getCollections() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

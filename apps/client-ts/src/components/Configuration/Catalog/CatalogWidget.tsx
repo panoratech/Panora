@@ -145,9 +145,9 @@ export function CatalogWidget() {
                       {item.vertical}
                     </Badge>
                   }
-                  {item.authStrategy && 
-                    <Badge key={item.authStrategy} variant={getBadgeVariantFromLabel(item.authStrategy)}>
-                      {item.authStrategy}
+                  {item.authStrategy.strategy && 
+                    <Badge key={item.authStrategy.strategy} variant={getBadgeVariantFromLabel(item.authStrategy.strategy)}>
+                      {item.authStrategy.strategy}
                     </Badge>
                   }
                 </div>
