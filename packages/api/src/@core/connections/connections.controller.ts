@@ -199,7 +199,7 @@ export class ConnectionsController {
   })
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiBody({ type: BodyDataType })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @ApiResponse({ status: 201 })
   @Post('apikey/callback')
   async handleApiKeyCallback(
@@ -324,7 +324,7 @@ export class ConnectionsController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getConnections',
     summary: 'List Connections',
   })
   @ApiResponse({ status: 200 })
