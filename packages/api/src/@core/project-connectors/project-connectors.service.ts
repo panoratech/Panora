@@ -50,15 +50,7 @@ export class ProjectConnectorsService {
       });
       return res;
     } catch (error) {
-      throwTypedError(
-        new ConnectorSetError({
-          name: 'UPDATE_CONNECTOR_SET_ERROR',
-          message:
-            'ProjectConnectorsService.updateProjectConnectors() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -84,15 +76,8 @@ export class ProjectConnectorsService {
       });
       return res;
     } catch (error) {
-      throwTypedError(
-        new ConnectorSetError({
-          name: 'CREATE_CONNECTOR_SET_ERROR',
-          message:
-            'ProjectConnectorsService.createProjectConnectors() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+            throw error;
+
     }
   }*/
 
@@ -118,15 +103,7 @@ export class ProjectConnectorsService {
       }
       return res;
     } catch (error) {
-      throwTypedError(
-        new ConnectorSetError({
-          name: 'GET_CONNECTOR_SET_BY_PROJECT_ERROR',
-          message:
-            'ProjectConnectorsService.getConnectorsbyProjectId() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

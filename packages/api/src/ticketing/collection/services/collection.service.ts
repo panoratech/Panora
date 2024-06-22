@@ -58,13 +58,7 @@ export class CollectionService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_COLLECTION_ERROR',
-          message: 'CollectionService.getCollection() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -171,13 +165,7 @@ export class CollectionService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_COLLECTIONS_ERROR',
-          message: 'CollectionService.getCollections() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

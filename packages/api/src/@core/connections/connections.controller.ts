@@ -210,10 +210,7 @@ export class ConnectionsController {
     try {
       const { state } = query;
       if (!state) {
-        throw new ConnectionsError({
-          name: 'API_CALLBACK_STATE_NOT_FOUND_ERROR',
-          message: `No Callback Params found for state, found ${state}`,
-        });
+        throw ReferenceError('State not found');
       }
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
       const { projectId, vertical, linkedUserId, providerName, returnUrl } =

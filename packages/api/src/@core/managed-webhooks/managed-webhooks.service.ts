@@ -28,14 +28,7 @@ export class ManagedWebhooksService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new ManagedWebhooksError({
-          name: 'GET_MANAGED_WEBHOOKS_ERROR',
-          message: 'ManagedWebhooksService.getManagedWebhook() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -46,15 +39,7 @@ export class ManagedWebhooksService {
         data: { active: active },
       });
     } catch (error) {
-      throwTypedError(
-        new ManagedWebhooksError({
-          name: 'UPDATE_MANAGED_WEBHOOK_STATUS_ERROR',
-          message:
-            'ManagedWebhooksService.updateStatusManagedWebhookEndpoint() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -74,14 +59,7 @@ export class ManagedWebhooksService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new ManagedWebhooksError({
-          name: 'CREATE_MANAGED_WEBHOOK_ERROR',
-          message: 'ManagedWebhooksService.createManagedWebhook() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -102,15 +80,7 @@ export class ManagedWebhooksService {
           );
       }
     } catch (error) {
-      throwTypedError(
-        new ManagedWebhooksError({
-          name: 'CREATE_REMOTE_WEBHOOK_ERROR',
-          message:
-            'ManagedWebhooksService.createRemoteThirdPartyWebhook() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

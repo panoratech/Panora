@@ -93,14 +93,7 @@ export class PassthroughService {
         data: response.data,
       };
     } catch (error) {
-      throwTypedError(
-        new PassthroughRequestError({
-          name: 'PASSTHROUGH_REMOTE_API_CALL_ERROR',
-          message: 'WebhookService.sendPassthroughRequest() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

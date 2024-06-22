@@ -74,13 +74,7 @@ export class ContactService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_CONTACT_ERROR',
-          message: 'ContactService.getContact() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -215,13 +209,7 @@ export class ContactService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_CONTACTS_ERROR',
-          message: 'ContactService.getContacts() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

@@ -46,13 +46,7 @@ export class DealService {
 
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_DEALS_ERROR',
-          message: 'DealService.batchAddDeals() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -255,13 +249,7 @@ export class DealService {
       );
       return result_deal;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_DEAL_ERROR',
-          message: 'DealService.addDeal() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -330,13 +318,7 @@ export class DealService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_DEAL_ERROR',
-          message: 'DealService.getDeal() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -471,13 +453,7 @@ export class DealService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_DEALS_ERROR',
-          message: 'DealService.getDeals() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 

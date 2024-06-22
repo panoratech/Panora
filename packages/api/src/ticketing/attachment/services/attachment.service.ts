@@ -39,13 +39,7 @@ export class AttachmentService {
 
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_ATTACHMENTS_ERROR',
-          message: 'AttachmentService.batchAddAttachments() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -137,13 +131,7 @@ export class AttachmentService {
       );
       return result_attachment;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_ATTACHMENT_ERROR',
-          message: 'AttachmentService.addAttachment() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -209,13 +197,7 @@ export class AttachmentService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_ATTACHMENT_ERROR',
-          message: 'AttachmentService.getAttachment() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -349,13 +331,7 @@ export class AttachmentService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_ATTACHMENTS_ERROR',
-          message: 'AttachmentService.getAttachments() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 

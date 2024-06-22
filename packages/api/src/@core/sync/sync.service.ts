@@ -402,14 +402,7 @@ export class CoreSyncService {
   async getSyncStatus(vertical: string) {
     try {
     } catch (error) {
-      throwTypedError(
-        new CoreSyncError({
-          name: 'GET_SYNC_STATUS_ERROR',
-          message: 'CoreSyncService.getSyncStatus() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -449,14 +442,7 @@ export class CoreSyncService {
         status: `SYNCING`,
       };
     } catch (error) {
-      throwTypedError(
-        new CoreSyncError({
-          name: 'RESYNC_ERROR',
-          message: 'CoreSyncService.resync() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     } finally {
       // Handle background tasks completion
       Promise.allSettled(tasks).then((results) => {

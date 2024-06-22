@@ -50,15 +50,7 @@ export class ConnectionsStrategiesService {
       if (!res) return false;
       return res.status;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'CUSTOM_CREDENTIALS_ERROR',
-          message:
-            'ConnectionsStrategiesService.isCustomCredentials() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -119,15 +111,7 @@ export class ConnectionsStrategiesService {
 
       return cs;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'CREATE_CONNECTION_STRATEGY_ERROR',
-          message:
-            'ConnectionsStrategiesService.createConnectionStrategy() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -151,14 +135,7 @@ export class ConnectionsStrategiesService {
 
       return updatedCs;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'TOGGLE_CONNECTION_STRATEGY_ERROR',
-          message: 'ConnectionsStrategiesService.toggle() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -368,14 +345,7 @@ export class ConnectionsStrategiesService {
         return res;
       }
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'GET_CREDENTIALS_ERROR',
-          message: 'ConnectionsStrategiesService.getCredentials() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -387,15 +357,7 @@ export class ConnectionsStrategiesService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'GET_CONNECTION_STRATEGIES_BY_PROJECT_ERROR',
-          message:
-            'ConnectionsStrategiesService.getConnectionStrategiesForProject() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -454,15 +416,7 @@ export class ConnectionsStrategiesService {
       }
       return cs;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'UPDATE_CONNECTION_STRATEGY_ERROR',
-          message:
-            'ConnectionsStrategiesService.updateConnectionStrategy() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -522,15 +476,7 @@ export class ConnectionsStrategiesService {
 
       return deleteCS;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'DELETE_CONNECTION_STRATEGY_ERROR',
-          message:
-            'ConnectionsStrategiesService.deleteConnectionStrategy() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

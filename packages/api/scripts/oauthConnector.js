@@ -166,18 +166,8 @@ private cService: ConnectionsStrategiesService,
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_${verticalUpper}',
-          message: \`${providerUpper}ConnectionService.handleCallback() call failed ---> \${format3rdPartyError(
-            '${provider}',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}\`,
-          cause: error,
-        }),
-        this.logger,
-      );
+            throw error;
+
     }
   }
     
@@ -219,18 +209,8 @@ private cService: ConnectionsStrategiesService,
       });
       this.logger.log('OAuth credentials updated : ${provider} ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_${verticalUpper}',
-          message: \`${providerUpper}ConnectionService.handleTokenRefresh() call failed ---> \${format3rdPartyError(
-            '${provider}',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}\`,
-          cause: error,
-        }),
-        this.logger,
-      );    
+            throw error;
+  
     }
   }
 } 

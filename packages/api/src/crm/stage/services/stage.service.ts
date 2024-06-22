@@ -72,13 +72,7 @@ export class StageService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_STAGE_ERROR',
-          message: 'StageService.getStage() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -209,13 +203,7 @@ export class StageService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_STAGES_ERROR',
-          message: 'StageService.getStages() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

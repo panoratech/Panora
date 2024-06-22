@@ -8,7 +8,6 @@ import { useContainer } from 'class-validator';
 import * as cors from 'cors';
 import * as yaml from 'js-yaml';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()

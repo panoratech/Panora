@@ -47,13 +47,7 @@ export class CommentService {
 
       return responses;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_COMMENTS_ERROR',
-          message: 'CommentService.addComments() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -305,13 +299,7 @@ export class CommentService {
       );
       return result_comment;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_COMMENT_ERROR',
-          message: 'CommentService.addComment() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -385,13 +373,7 @@ export class CommentService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_COMMENT_ERROR',
-          message: 'CommentService.getComment() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -530,13 +512,7 @@ export class CommentService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_COMMENTS_ERROR',
-          message: 'CommentService.getComments() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }
