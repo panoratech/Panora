@@ -400,7 +400,7 @@ export class CommentService {
   async getComments(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -426,7 +426,7 @@ export class CommentService {
       }
 
       const comments = await this.prisma.tcg_comments.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_comment: cursor,
@@ -441,7 +441,7 @@ export class CommentService {
         },
       });
 
-      if (comments.length === pageSize + 1) {
+      if (comments.length === limit + 1) {
         next_cursor = Buffer.from(
           comments[comments.length - 1].id_tcg_comment,
         ).toString('base64');

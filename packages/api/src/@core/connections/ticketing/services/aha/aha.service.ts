@@ -12,16 +12,17 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  ITicketingConnectionService,
-} from '../../types';
+import { ITicketingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  DynamicApiUrl,
+} from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { OAuthCallbackParams } from '@@core/connections/@utils/types';
 
 export type AhaOAuthResponse = {
   access_token: string;
@@ -46,7 +47,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
     this.type = providerToType('aha', 'ticketing', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -77,7 +78,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        `${CREDENTIALS.SUBDOMAIN}/oauth/token`,
+        `https://${CREDENTIALS.SUBDOMAIN}.aha.io/oauth/token`,
         formData.toString(),
         {
           headers: {
@@ -92,10 +93,10 @@ export class AhaConnectionService implements ITicketingConnectionService {
 
       let db_res;
       const connection_token = uuidv4();
-      //get the right BASE URL API
-      const BASE_API_URL =
-        CREDENTIALS.SUBDOMAIN +
-        CONNECTORS_METADATA['ticketing']['aha'].urls.apiUrl;
+
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['ticketing']['aha'].urls.apiUrl as DynamicApiUrl
+      )(CREDENTIALS.SUBDOMAIN);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -137,22 +138,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `AhaConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'aha',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
-  }
-
-  async handleTokenRefresh(opts: RefreshParams) {
-    return;
   }
 }

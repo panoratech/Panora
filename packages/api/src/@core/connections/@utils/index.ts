@@ -28,14 +28,7 @@ export class ConnectionUtils {
         remoteSource: res.provider_slug,
       };
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'GET_CONNECTION_FROM_CONNECTION_TOKEN_ERROR',
-          message:
-            'ConnectionUtils.getConnectionMetadataFromConnectionToken() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -64,5 +57,9 @@ export class ConnectionUtils {
       id_linked_user = linkedUserId;
     }
     return id_linked_user;
+  }
+
+  applyPanoraDelimiter(values: string[]): string {
+    return values.join('panoradelimiter');
   }
 }

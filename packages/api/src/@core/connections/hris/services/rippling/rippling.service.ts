@@ -12,11 +12,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  IHrisConnectionService,
-} from '../../types';
+import { IHrisConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   AuthStrategy,
@@ -26,6 +22,10 @@ import {
 } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export type RipplingOAuthResponse = {
   access_token: string;
@@ -53,7 +53,7 @@ export class RipplingConnectionService implements IHrisConnectionService {
     this.type = providerToType('rippling', 'hris', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -109,7 +109,8 @@ export class RipplingConnectionService implements IHrisConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['hris']['rippling'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['hris']['rippling'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -125,7 +126,8 @@ export class RipplingConnectionService implements IHrisConnectionService {
             provider_slug: 'rippling',
             vertical: 'hris',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['hris']['rippling'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['hris']['rippling'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -149,18 +151,7 @@ export class RipplingConnectionService implements IHrisConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_HRIS',
-          message: `RipplingConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'rippling',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async handleTokenRefresh(opts: RefreshParams) {
@@ -203,18 +194,7 @@ export class RipplingConnectionService implements IHrisConnectionService {
       });
       this.logger.log('OAuth credentials updated : rippling ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_HRIS',
-          message: `RipplingConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'rippling',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

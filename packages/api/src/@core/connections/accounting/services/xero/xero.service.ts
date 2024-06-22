@@ -12,11 +12,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  IAccountingConnectionService,
-} from '../../types';
+import { IAccountingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
@@ -26,6 +22,10 @@ import {
 } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 import { jwtDecode } from 'jwt-decode';
 
 export type XeroOAuthResponse = {
@@ -76,7 +76,7 @@ export class XeroConnectionService implements IAccountingConnectionService {
     this.type = providerToType('xero', 'accounting', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -99,6 +99,11 @@ export class XeroConnectionService implements IAccountingConnectionService {
         code: code,
         redirect_uri: REDIRECT_URI,
       });
+      this.logger.log(
+        `data 64 is ${Buffer.from(
+          `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+        ).toString('base64')}`,
+      );
       const res = await axios.post(
         'https://identity.xero.com/connect/token',
         formData.toString(),
@@ -130,7 +135,9 @@ export class XeroConnectionService implements IAccountingConnectionService {
       );
 
       //Important Note: Xero asks for a tenantId for which the token is valid for so we append it as a param and it MUST be extracted when making the calls in unified requests
-      const CUSTOM_ACCOUNT_URL = `${CONNECTORS_METADATA['accounting']['xero'].urls.apiUrl}?xeroTenantId=${res_.data[0].tenantId}`;
+      const CUSTOM_ACCOUNT_URL = `${
+        CONNECTORS_METADATA['accounting']['xero'].urls.apiUrl as string
+      }?xeroTenantId=${res_.data[0].tenantId}`;
 
       let db_res;
       const connection_token = uuidv4();
@@ -183,18 +190,6 @@ export class XeroConnectionService implements IAccountingConnectionService {
       }
       return db_res;
     } catch (error) {
-      /*throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_ACCOUNTING',
-          message: `XeroConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'xero',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );*/
       throw error;
     }
   }
@@ -238,18 +233,7 @@ export class XeroConnectionService implements IAccountingConnectionService {
       });
       this.logger.log('OAuth credentials updated : xero ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: `XeroConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'xero',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

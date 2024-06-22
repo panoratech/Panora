@@ -1,6 +1,6 @@
 import { CONNECTORS_METADATA } from './connectors/metadata';
 import { ACCOUNTING_PROVIDERS, ATS_PROVIDERS, CRM_PROVIDERS, FILESTORAGE_PROVIDERS, HRIS_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, TICKETING_PROVIDERS } from './connectors';
-import { AuthStrategy, VerticalConfig } from './types';
+import { AuthStrategy, AuthType, DynamicApiUrl, DynamicAuthorization, StaticApiUrl, StringAuthorization, VerticalConfig } from './types';
 import { categoriesVerticals, ConnectorCategory } from './categories';
 
 export const randomString = () => {
@@ -44,14 +44,14 @@ export interface Provider {
   name: string;
   urls: {
     docsUrl: string;
-    apiUrl: string;
-    authBaseUrl?: string | null;
+    apiUrl: StaticApiUrl | DynamicApiUrl;
+    authBaseUrl?: StringAuthorization | DynamicAuthorization;
   };
-  scopes?: string;
+  scopes?: string; 
   logoPath: string;
   description?: string;
-  authStrategy?: AuthStrategy;
-};
+  authStrategy: AuthType;
+}; 
 
 export function providersArray(vertical?: string): Provider[] {
   if (vertical) {
@@ -60,7 +60,7 @@ export function providersArray(vertical?: string): Provider[] {
     return Object.entries(activeProviders).map(([providerName, config]) => ({
       vertical: vertical.toLowerCase(),
       name: providerName,
-      urls: {
+      urls: { 
         docsUrl: config.urls.docsUrl,
         apiUrl: config.urls.apiUrl,
         authBaseUrl: config.urls.authBaseUrl,
@@ -68,7 +68,10 @@ export function providersArray(vertical?: string): Provider[] {
       scopes: config.scopes,
       logoPath: config.logoPath,
       description: config.description,
-      authStrategy: config.authStrategy,
+      authStrategy: {
+        strategy: config.authStrategy.strategy,
+        properties: config.authStrategy.properties ? config.authStrategy.properties : [],
+      }
     }));
   } else {
     // If no vertical is provided, return providers for all verticals
@@ -86,7 +89,10 @@ export function providersArray(vertical?: string): Provider[] {
         scopes: config.scopes,
         logoPath: config.logoPath,
         description: config.description,
-        authStrategy: config.authStrategy,
+        authStrategy: {
+          strategy: config.authStrategy.strategy,
+          properties: config.authStrategy.properties ? config.authStrategy.properties : [],
+        }
       }));
       allProviders = allProviders.concat(providersForVertical);
     });

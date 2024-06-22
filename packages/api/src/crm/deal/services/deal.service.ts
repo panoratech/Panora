@@ -343,7 +343,7 @@ export class DealService {
   async getDeals(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -369,7 +369,7 @@ export class DealService {
       }
 
       const deals = await this.prisma.crm_deals.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_deal: cursor,
@@ -384,7 +384,7 @@ export class DealService {
         },
       });
 
-      if (deals.length === pageSize + 1) {
+      if (deals.length === limit + 1) {
         next_cursor = Buffer.from(deals[deals.length - 1].id_crm_deal).toString(
           'base64',
         );

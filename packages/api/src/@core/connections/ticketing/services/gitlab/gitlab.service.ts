@@ -12,16 +12,16 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  ITicketingConnectionService,
-} from '../../types';
+import { ITicketingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export interface GitlabOAuthResponse {
   access_token: string;
@@ -49,7 +49,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
     this.type = providerToType('gitlab', 'ticketing', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -115,7 +115,8 @@ export class GitlabConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'gitlab',
             vertical: 'ticketing',
-            account_url: CONNECTORS_METADATA['ticketing']['gitlab'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['ticketing']['gitlab'].urls
+              .apiUrl as string,
             token_type: 'oauth',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
@@ -140,18 +141,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `GitlabConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'gitlab',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -194,18 +184,7 @@ export class GitlabConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : gitlab ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
-          message: `GitlabConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'gitlab',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

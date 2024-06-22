@@ -65,9 +65,9 @@ const Profile = () => {
         <CardContent>
             <h4 className="text-sm font-medium mb-2">Connected user</h4>
 
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 items-center">
             <Input value={`${profile?.email}`} readOnly />
-            <Button type="button" onClick={() => handleCopy(profile?.email!)}>
+            <Button type="button" onClick={() => handleCopy(profile?.email!)} size="sm" className="h-7 gap-1"> 
                 {copied ? 'Copied!' : (
                     <>
                     <p className="mr-1" >Copy</p>

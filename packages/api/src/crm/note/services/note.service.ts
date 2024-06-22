@@ -362,7 +362,7 @@ export class NoteService {
   async getNotes(
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
@@ -388,7 +388,7 @@ export class NoteService {
       }
 
       const notes = await this.prisma.crm_notes.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_note: cursor,
@@ -403,7 +403,7 @@ export class NoteService {
         },
       });
 
-      if (notes.length === pageSize + 1) {
+      if (notes.length === limit + 1) {
         next_cursor = Buffer.from(notes[notes.length - 1].id_crm_note).toString(
           'base64',
         );

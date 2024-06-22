@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-function getTotalPages(totalItems: number, pageSize: number) {
- return Math.ceil(totalItems / pageSize);
+function getTotalPages(totalItems: number, limit: number) {
+ return Math.ceil(totalItems / limit);
 }
 
 interface UseQueryPaginationProps {
@@ -19,18 +19,18 @@ export const useQueryPagination = ({ totalItems = 0 }: UseQueryPaginationProps =
 
  // Read query parameters directly from the URL
  const page = parseInt(searchParams.get('page')!) || DEFAULT_PAGE;
- const pageSize = parseInt(searchParams.get('pageSize')!) || DEFAULT_PAGE_SIZE;
+ const limit = parseInt(searchParams.get('limit')!) || DEFAULT_PAGE_SIZE;
 
- const totalPages = useMemo(() => getTotalPages(totalItems, pageSize), [totalItems, pageSize]);
+ const totalPages = useMemo(() => getTotalPages(totalItems, limit), [totalItems, limit]);
 
  const nextEnabled = useMemo(() => page < totalPages, [page, totalPages]);
  const previousEnabled = useMemo(() => page > 1, [page]);
 
- const navigate = useCallback((newPage: number, newPageSize: number = pageSize) => {
+ const navigate = useCallback((newPage: number, newPageSize: number = limit) => {
     // Use router.push to navigate to the new URL with updated query parameters
-    const url = `${pathname}?page=${newPage}&pageSize=${newPageSize}`;
+    const url = `${pathname}?page=${newPage}&limit=${newPageSize}`;
     router.push(url);
- }, [router, pathname, pageSize]); // Include pathname and pageSize in the dependency array
+ }, [router, pathname, limit]); // Include pathname and limit in the dependency array
 
  const setNextPage = useCallback(() => {
     if (!nextEnabled) return;
@@ -56,7 +56,7 @@ export const useQueryPagination = ({ totalItems = 0 }: UseQueryPaginationProps =
  return {
     page,
     resetPage,
-    pageSize,
+    limit,
     setPageSize: handlePageSizeChange,
     totalItems,
     totalPages: totalPages === 0 ? 1 : totalPages,

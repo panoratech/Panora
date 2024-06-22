@@ -12,11 +12,11 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
+import { ICrmConnectionService } from '../../types';
 import {
-  CallbackParams,
+  OAuthCallbackParams,
   RefreshParams,
-  ICrmConnectionService,
-} from '../../types';
+} from '@@core/connections/@utils/types';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
@@ -53,7 +53,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
     this.type = providerToType('capsule', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -101,7 +101,8 @@ export class CapsuleConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['crm']['capsule'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['capsule'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -117,7 +118,8 @@ export class CapsuleConnectionService implements ICrmConnectionService {
             provider_slug: 'capsule',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['capsule'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['capsule'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -141,18 +143,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `CapsuleConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'capsule',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -194,18 +185,7 @@ export class CapsuleConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : capsule ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `CapsuleConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'capsule',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

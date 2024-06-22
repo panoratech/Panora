@@ -94,7 +94,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     const { client_id, client_secret, scope, api_key, secret, username, subdomain } = values;
     const performUpdate = mappingConnectionStrategies && mappingConnectionStrategies.length > 0;
-    switch (item?.authStrategy) {
+    switch (item?.authStrategy.strategy) {
       case AuthStrategy.oauth2:
         const needs_subdomain = needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase());
         if (client_id === "" || client_secret === "" || scope === "") {
@@ -341,11 +341,11 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
     if (mappingConnectionStrategies && mappingConnectionStrategies.length > 0) {
       fetchCredentials({
         type: mappingConnectionStrategies[0].type,
-        attributes: item?.authStrategy === AuthStrategy.oauth2 ? needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["subdomain", "client_id", "client_secret", "scope"] : ["client_id", "client_secret", "scope"]
-          : item?.authStrategy === AuthStrategy.api_key ? ["api_key"] : ["username", "secret"]
+        attributes: item?.authStrategy.strategy === AuthStrategy.oauth2 ? needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["subdomain", "client_id", "client_secret", "scope"] : ["client_id", "client_secret", "scope"]
+          : item?.authStrategy.strategy === AuthStrategy.api_key ? ["api_key"] : ["username", "secret"]
       }, {
         onSuccess(data) {
-          if (item?.authStrategy === AuthStrategy.oauth2) {
+          if (item?.authStrategy.strategy === AuthStrategy.oauth2) {
             let i = 0;
             if(needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase())){
               form.setValue("subdomain", data[i]);
@@ -355,10 +355,10 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
             form.setValue("client_secret", data[i + 1]);
             form.setValue("scope", data[i + 2]);
           }
-          if (item?.authStrategy === AuthStrategy.api_key) {
+          if (item?.authStrategy.strategy === AuthStrategy.api_key) {
             form.setValue("api_key", data[0]);
           }
-          if (item?.authStrategy === AuthStrategy.basic) {
+          if (item?.authStrategy.strategy === AuthStrategy.basic) {
             form.setValue("username", data[0]);
             form.setValue("secret", data[1]);
           }
@@ -435,7 +435,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
           <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
-                { item.authStrategy == AuthStrategy.oauth2 &&
+                { item.authStrategy.strategy == AuthStrategy.oauth2 &&
                   <>
                   { needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase()) &&
                       <div className="flex flex-col">
@@ -516,7 +516,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                   </> 
                 }
                 {
-                  item.authStrategy == AuthStrategy.api_key &&
+                  item.authStrategy.strategy == AuthStrategy.api_key &&
                   <>
                     <div className="flex flex-col">
                         <FormField
@@ -536,7 +536,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                     </> 
                 }
                 {
-                  item.authStrategy == AuthStrategy.basic &&
+                  item.authStrategy.strategy == AuthStrategy.basic &&
                     <>
                       <div className="flex flex-col">
                           <FormField

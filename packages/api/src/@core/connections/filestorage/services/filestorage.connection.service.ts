@@ -5,8 +5,8 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { CallbackParams, RefreshParams } from '../types';
 import { ServiceRegistry } from './registry.service';
+import { CallbackParams, RefreshParams } from '@@core/connections/@utils/types';
 
 @Injectable()
 export class FilestorageConnectionsService {
@@ -34,10 +34,9 @@ export class FilestorageConnectionsService {
   // to perform actions on his behalf
   // this call pass 1. integrationID 2. CustomerId 3. Panora Api Key
   async handleFilestorageCallBack(
-    projectId: string,
-    linkedUserId: string,
     providerName: string,
-    code: string,
+    callbackOpts: CallbackParams,
+    type_strategy: 'oauth' | 'apikey' | 'basic',
   ) {
     try {
       const serviceName = providerName.toLowerCase();
@@ -47,11 +46,6 @@ export class FilestorageConnectionsService {
       if (!service) {
         throw new ReferenceError(`Unknown provider, found ${providerName}`);
       }
-      const callbackOpts: CallbackParams = {
-        linkedUserId: linkedUserId,
-        projectId: projectId,
-        code: code,
-      };
       const data: Connection = await service.handleCallback(callbackOpts);
       const event = await this.prisma.events.create({
         data: {
@@ -59,30 +53,21 @@ export class FilestorageConnectionsService {
           status: 'success',
           type: 'connection.created',
           method: 'GET',
-          url: '/oauth/callback',
+          url: `/${type_strategy}/callback`,
           provider: providerName.toLowerCase(),
           direction: '0',
           timestamp: new Date(),
-          id_linked_user: linkedUserId,
+          id_linked_user: callbackOpts.linkedUserId,
         },
       });
       //directly send the webhook
       await this.webhook.handlePriorityWebhook(
         data,
         'connection.created',
-        projectId,
+        callbackOpts.projectId,
         event.id_event,
       );
     } catch (error) {
-      /*throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_FILESTORAGE',
-          message:
-            'FilestorageConnectionsService.handleFilestorageCallBack() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );*/
       throw error;
     }
   }
@@ -108,15 +93,7 @@ export class FilestorageConnectionsService {
       };
       const data = await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_FILESTORAGE',
-          message:
-            'FilestorageConnectionsService.handleFilestorageTokensRefresh() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

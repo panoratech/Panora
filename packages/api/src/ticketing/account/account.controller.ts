@@ -59,11 +59,11 @@ export class AccountController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, pageSize, cursor } = query;
+      const { remote_data, limit, cursor } = query;
       return this.accountService.getAccounts(
         remoteSource,
         linkedUserId,
-        pageSize,
+        limit,
         remote_data,
         cursor,
       );

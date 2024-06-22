@@ -12,11 +12,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvironmentService } from '@@core/environment/environment.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
-import {
-  CallbackParams,
-  RefreshParams,
-  ICrmConnectionService,
-} from '../../types';
+import { ICrmConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,
@@ -26,6 +22,10 @@ import {
 import { AuthStrategy } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  OAuthCallbackParams,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 
 export type TeamleaderOAuthResponse = {
   access_token: string;
@@ -52,7 +52,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
     this.type = providerToType('teamleader', 'crm', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: CallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -102,7 +102,8 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['crm']['teamleader'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['teamleader'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -118,7 +119,8 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
             provider_slug: 'teamleader',
             vertical: 'crm',
             token_type: 'oauth',
-            account_url: CONNECTORS_METADATA['crm']['teamleader'].urls.apiUrl,
+            account_url: CONNECTORS_METADATA['crm']['teamleader'].urls
+              .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -142,18 +144,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: `TeamleaderConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'teamleader',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -195,18 +186,7 @@ export class TeamleaderConnectionService implements ICrmConnectionService {
       });
       this.logger.log('OAuth credentials updated : teamleader ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_CRM',
-          message: `TeamleaderConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'teamleader',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

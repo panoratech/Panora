@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 const fetchEvents = async (params: PaginationParams): Promise<Event[]> => {
   const searchParams = new URLSearchParams({
     page: params.page.toString(),
-    pageSize: params.pageSize.toString(),
+    limit: params.limit.toString(),
   });
 
   const response = await fetch(`${config.API_URL}/events?${searchParams.toString()}`,
@@ -28,7 +28,7 @@ const fetchEvents = async (params: PaginationParams): Promise<Event[]> => {
 
 const useEvents = (params: PaginationParams) => {
   return useQuery({
-    queryKey: ['events', { page: params.page, pageSize: params.pageSize }],
+    queryKey: ['events', { page: params.page, limit: params.limit }],
     queryFn: () => fetchEvents(params),
   });
 };
