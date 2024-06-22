@@ -25,15 +25,6 @@ export class TagService {
     this.logger.setContext(TagService.name);
   }
 
-  async batchAddTags(
-    unifiedTagData: UnifiedTagInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTagOutput[]> {
-    return;
-  }
-
   async addTag(
     unifiedTagData: UnifiedTagInput,
     integrationId: string,

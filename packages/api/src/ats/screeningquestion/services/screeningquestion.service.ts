@@ -28,15 +28,6 @@ export class ScreeningQuestionService {
     this.logger.setContext(ScreeningQuestionService.name);
   }
 
-  async batchAddScreeningQuestions(
-    unifiedScreeningQuestionData: UnifiedScreeningQuestionInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedScreeningQuestionOutput[]> {
-    return;
-  }
-
   async addScreeningQuestion(
     unifiedScreeningQuestionData: UnifiedScreeningQuestionInput,
     integrationId: string,

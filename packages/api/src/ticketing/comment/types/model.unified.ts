@@ -96,4 +96,18 @@ export class UnifiedCommentOutput extends UnifiedCommentInput {
   })
   @IsOptional()
   attachments?: UnifiedAttachmentOutput[]; // Attachments objects
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of th object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

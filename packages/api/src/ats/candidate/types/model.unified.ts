@@ -92,6 +92,51 @@ export class UnifiedCandidateInput {
   last_interaction_at?: string;
 
   @ApiPropertyOptional({
+    type: [String],
+    description: 'The attachments UUIDs of the candidate',
+  })
+  @IsString({ each: true })
+  @IsOptional()
+  attachments?: string[];
+
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'The applications UUIDs of the candidate',
+  })
+  @IsString({ each: true })
+  @IsOptional()
+  applications?: string[];
+
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'The tags of the candidate',
+  })
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  @ApiPropertyOptional({
+    type: [],
+    description: 'The urls of the candidate',
+  })
+  @IsOptional()
+  urls?: { type: string; value: string }[];
+
+  @ApiPropertyOptional({
+    type: [],
+    description: 'The phone numbers of the candidate',
+  })
+  @IsOptional()
+  phone_numbers?: { type: string; value: string }[];
+
+  @ApiPropertyOptional({
+    type: [],
+    description: 'The email addresses of the candidate',
+  })
+  @IsOptional()
+  email_addresses?: { type: string; value: string }[];
+
+  @ApiPropertyOptional({
     type: {},
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
@@ -124,6 +169,20 @@ export class UnifiedCandidateOutput extends UnifiedCandidateInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of th object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }
 
 export class UnifiedCandidateTagInput {

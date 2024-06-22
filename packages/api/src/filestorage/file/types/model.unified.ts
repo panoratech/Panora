@@ -65,4 +65,18 @@ export class UnifiedFileOutput extends UnifiedFileInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of th object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }
