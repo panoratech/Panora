@@ -8,6 +8,9 @@ import { ConnectorCategory } from '@panora/shared';
 import { AccountingConnectionsService } from '@@core/connections/accounting/services/accounting.connection.service';
 import { MarketingAutomationConnectionsService } from '@@core/connections/marketingautomation/services/marketingautomation.connection.service';
 import { TicketingConnectionsService } from '@@core/connections/ticketing/services/ticketing.connection.service';
+import { AtsConnectionsService } from '@@core/connections/ats/services/ats.connection.service';
+import { HrisConnectionsService } from '@@core/connections/hris/services/hris.connection.service';
+import { FilestorageConnectionsService } from '@@core/connections/filestorage/services/filestorage.connection.service';
 
 @Injectable()
 export class TasksService implements OnModuleInit {
@@ -17,6 +20,9 @@ export class TasksService implements OnModuleInit {
     private readonly ticketingConnectionsService: TicketingConnectionsService,
     private readonly accountingConnectionsService: AccountingConnectionsService,
     private readonly marketingAutomationConnectionsService: MarketingAutomationConnectionsService,
+    private readonly atsConnectionsService: AtsConnectionsService,
+    private readonly hrisConnectionsService: HrisConnectionsService,
+    private readonly fileStorageConnectionsService: FilestorageConnectionsService,
     private logger: LoggerService,
   ) {}
 
@@ -54,6 +60,13 @@ export class TasksService implements OnModuleInit {
             break;
 
           case ConnectorCategory.Ats:
+            this.atsConnectionsService.handleAtsTokensRefresh(
+              connection.id_connection,
+              connection.provider_slug,
+              connection.refresh_token,
+              connection.id_project,
+              account_url,
+            );
             break;
 
           case ConnectorCategory.Accounting:
@@ -67,9 +80,23 @@ export class TasksService implements OnModuleInit {
             break;
 
           case ConnectorCategory.FileStorage:
+            this.fileStorageConnectionsService.handleFilestorageTokensRefresh(
+              connection.id_connection,
+              connection.provider_slug,
+              connection.refresh_token,
+              connection.id_project,
+              account_url,
+            );
             break;
 
           case ConnectorCategory.Hris:
+            this.hrisConnectionsService.handleHrisTokensRefresh(
+              connection.id_connection,
+              connection.provider_slug,
+              connection.refresh_token,
+              connection.id_project,
+              account_url,
+            );
             break;
 
           case ConnectorCategory.MarketingAutomation:
