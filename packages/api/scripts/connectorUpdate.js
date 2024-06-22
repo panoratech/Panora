@@ -376,10 +376,13 @@ function updateSeedSQLFile(seedSQLFile, newServiceDirs, vertical) {
     fileContent = fileContent.replace(lastMatch[1], newColumnsSection);
 
     // Update each VALUES section
-    fileContent = fileContent.replace(/VALUES(.*?);/gs, (match) => {
+    fileContent = fileContent.replace(/INSERT INTO connector_sets \(([^)]+)\) VALUES(.*?);/gs, (match) => {
       return match
         .replace(/\),\s*\(/g, '),\n    (') // Fix line formatting
-        .replace(/\([^\)]+\)/g, (values) => {
+        .replace(/\([^\)]+\)/g, (values, index) => {
+          if (values.startsWith('(id_connector_set')) {
+            return values
+          }
           let newValues = newColumns.map(() => 'TRUE').join(', ');
           return values.slice(0, -1) + ', ' + newValues + ')';
         });
@@ -439,13 +442,13 @@ function updateObjectTypes(baseDir, objectType, vertical) {
   updateModuleFile(moduleFile, newServiceDirs, servicesDir);
 
   // Path to the mappings file
-  const mappingsFile = path.join(
-    __dirname,
-    `../src/${vertical}/${objectType.toLowerCase()}/types/mappingsTypes.ts`,
-  );
+  // const mappingsFile = path.join(
+  //   __dirname,
+  //   `../src/${vertical}/${objectType.toLowerCase()}/types/mappingsTypes.ts`,
+  // );
 
-  // Call updateMappingsFile to update the mappings file with new services
-  updateMappingsFile(mappingsFile, newServiceDirs, objectType, vertical);
+  // // Call updateMappingsFile to update the mappings file with new services
+  // updateMappingsFile(mappingsFile, newServiceDirs, objectType, vertical);
 
   const possibleProviderForImportStatements = getProvidersForImportStatements(
     targetFile,
