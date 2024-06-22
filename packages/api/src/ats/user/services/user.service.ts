@@ -60,6 +60,9 @@ export class UserService {
         remote_created_at: user.remote_created_at,
         remote_modified_at: user.remote_modified_at,
         field_mappings: field_mappings,
+        remote_id: user.remote_id,
+        created_at: user.created_at,
+        modified_at: user.modified_at,
       };
 
       let res: UnifiedUserOutput = unifiedUser;
@@ -136,6 +139,9 @@ export class UserService {
             remote_created_at: user.remote_created_at,
             remote_modified_at: user.remote_modified_at,
             field_mappings: field_mappings,
+            remote_id: user.remote_id,
+            created_at: user.created_at,
+            modified_at: user.modified_at,
           };
         }),
       );

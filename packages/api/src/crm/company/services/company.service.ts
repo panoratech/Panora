@@ -14,7 +14,6 @@ import { ServiceRegistry } from './registry.service';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 import { ICompanyService } from '../types';
 import { Utils } from '@crm/@lib/@utils';
-import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
@@ -29,30 +28,6 @@ export class CompanyService {
     private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(CompanyService.name);
-  }
-
-  async batchAddCompanies(
-    unifiedCompanyData: UnifiedCompanyInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedCompanyOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedCompanyData.map((unifiedData) =>
-          this.addCompany(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throw error;
-    }
   }
 
   async addCompany(
@@ -429,6 +404,9 @@ export class CompanyService {
         addresses: company.crm_addresses.map((addy) => ({
           ...addy,
         })),
+        remote_id: company.remote_id,
+        created_at: company.created_at,
+        modified_at: company.modified_at,
       };
 
       let res: UnifiedCompanyOutput = {
@@ -559,6 +537,9 @@ export class CompanyService {
             addresses: company.crm_addresses.map((addy) => ({
               ...addy,
             })),
+            remote_id: company.remote_id,
+            created_at: company.created_at,
+            modified_at: company.modified_at,
           };
         }),
       );

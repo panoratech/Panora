@@ -52,6 +52,9 @@ export class DriveService {
         name: drive.name,
         drive_url: drive.drive_url,
         field_mappings: field_mappings,
+        remote_id: drive.remote_id,
+        created_at: drive.created_at,
+        modified_at: drive.modified_at,
       };
 
       let res: UnifiedDriveOutput = unifiedDrive;
@@ -165,6 +168,9 @@ export class DriveService {
             name: drive.name,
             remote_created_at: drive.remote_created_at,
             field_mappings: field_mappings,
+            remote_id: drive.remote_id,
+            created_at: drive.created_at,
+            modified_at: drive.modified_at,
           };
         }),
       );

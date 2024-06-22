@@ -7,12 +7,12 @@ import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.f
 import { ApiResponse } from '@@core/utils/types';
 
 export interface ISharedLinkService {
-  addSharedlink(
+  addSharedLink(
     sharedlinkData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalSharedLinkOutput>>;
 
-  syncSharedlinks(
+  syncSharedLinks(
     linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalSharedLinkOutput[]>>;

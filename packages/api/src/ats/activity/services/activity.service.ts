@@ -250,6 +250,9 @@ export class ActivityService {
         candidate_id: activity.id_ats_candidate,
         remote_created_at: activity.remote_created_at,
         field_mappings: field_mappings,
+        remote_id: activity.remote_id,
+        created_at: activity.created_at,
+        modified_at: activity.modified_at,
       };
 
       let res: UnifiedActivityOutput = unifiedActivity;
@@ -346,6 +349,9 @@ export class ActivityService {
             candidate_id: activity.id_ats_candidate,
             remote_created_at: activity.remote_created_at,
             field_mappings: field_mappings,
+            remote_id: activity.remote_id,
+            created_at: activity.created_at,
+            modified_at: activity.modified_at,
           };
         }),
       );

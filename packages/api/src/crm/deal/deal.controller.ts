@@ -64,7 +64,7 @@ export class DealController {
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.dealService.getDeals(
+      return await this.dealService.getDeals(
         remoteSource,
         linkedUserId,
         limit,
@@ -134,7 +134,7 @@ export class DealController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.dealService.addDeal(
+      return await this.dealService.addDeal(
         unifiedDealData,
         remoteSource,
         linkedUserId,

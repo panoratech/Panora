@@ -1,44 +1,83 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { ApiResponse } from '@@core/utils/types';
-import { throwTypedError } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedTagInput, UnifiedTagOutput } from '../types/model.unified';
-
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from './registry.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
-
-import { ITagService } from '../types';
+import { UnifiedTagOutput } from '../types/model.unified';
 
 @Injectable()
 export class TagService {
-  constructor(
-    private prisma: PrismaService,
-    private logger: LoggerService,
-    private webhook: WebhookService,
-    private fieldMappingService: FieldMappingService,
-    private serviceRegistry: ServiceRegistry,
-  ) {
+  constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(TagService.name);
   }
 
-  async addTag(
-    unifiedTagData: UnifiedTagInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTagOutput> {
-    return;
-  }
-
   async getTag(
-    id_taging_tag: string,
+    id_ats_tag: string,
     remote_data?: boolean,
   ): Promise<UnifiedTagOutput> {
-    return;
+    try {
+      const tag = await this.prisma.ats_tags.findUnique({
+        where: {
+          id_ats_tag: id_ats_tag,
+        },
+      });
+
+      if (!tag) {
+        throw new Error(`Tag with ID ${id_ats_tag} not found.`);
+      }
+
+      // Fetch field mappings for the tag
+      const values = await this.prisma.value.findMany({
+        where: {
+          entity: {
+            ressource_owner_id: tag.id_ats_tag,
+          },
+        },
+        include: {
+          attribute: true,
+        },
+      });
+
+      // Create a map to store unique field mappings
+      const fieldMappingsMap = new Map();
+
+      values.forEach((value) => {
+        fieldMappingsMap.set(value.attribute.slug, value.data);
+      });
+
+      // Convert the map to an array of objects
+      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
+        [key]: value,
+      }));
+
+      // Transform to UnifiedTagOutput format
+      const unifiedTag: UnifiedTagOutput = {
+        id: tag.id_ats_tag,
+        name: tag.name,
+        id_ats_candidate: tag.id_ats_candidate,
+        field_mappings: field_mappings,
+        remote_id: tag.remote_id,
+        created_at: tag.created_at,
+        modified_at: tag.modified_at,
+      };
+
+      let res: UnifiedTagOutput = unifiedTag;
+      if (remote_data) {
+        const resp = await this.prisma.remote_data.findFirst({
+          where: {
+            ressource_owner_id: tag.id_ats_tag,
+          },
+        });
+        const remote_data = JSON.parse(resp.data);
+
+        res = {
+          ...res,
+          remote_data: remote_data,
+        };
+      }
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getTags(
@@ -46,6 +85,79 @@ export class TagService {
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTagOutput[]> {
-    return;
+    try {
+      const tags = await this.prisma.ats_tags.findMany({
+        where: {
+          remote_platform: integrationId.toLowerCase(),
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      const unifiedTags: UnifiedTagOutput[] = await Promise.all(
+        tags.map(async (tag) => {
+          // Fetch field mappings for the tag
+          const values = await this.prisma.value.findMany({
+            where: {
+              entity: {
+                ressource_owner_id: tag.id_ats_tag,
+              },
+            },
+            include: {
+              attribute: true,
+            },
+          });
+
+          // Create a map to store unique field mappings
+          const fieldMappingsMap = new Map();
+
+          values.forEach((value) => {
+            fieldMappingsMap.set(value.attribute.slug, value.data);
+          });
+
+          // Convert the map to an array of objects
+          const field_mappings = Array.from(
+            fieldMappingsMap,
+            ([key, value]) => ({
+              [key]: value,
+            }),
+          );
+
+          // Transform to UnifiedTagOutput format
+          return {
+            id: tag.id_ats_tag,
+            name: tag.name,
+            id_ats_candidate: tag.id_ats_candidate,
+            remote_created_at: tag.remote_created_at,
+            remote_modified_at: tag.remote_modified_at,
+            field_mappings: field_mappings,
+            remote_id: tag.remote_id,
+            created_at: tag.created_at,
+            modified_at: tag.modified_at,
+          };
+        }),
+      );
+
+      let res: UnifiedTagOutput[] = unifiedTags;
+
+      if (remote_data) {
+        const remote_array_data: UnifiedTagOutput[] = await Promise.all(
+          res.map(async (tag) => {
+            const resp = await this.prisma.remote_data.findFirst({
+              where: {
+                ressource_owner_id: tag.id,
+              },
+            });
+            const remote_data = JSON.parse(resp.data);
+            return { ...tag, remote_data };
+          }),
+        );
+
+        res = remote_array_data;
+      }
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
   }
 }

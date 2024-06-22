@@ -54,6 +54,9 @@ export class ContactService {
         details: contact.details,
         phone_number: contact.phone_number,
         field_mappings: field_mappings,
+        remote_id: contact.remote_id,
+        created_at: contact.created_at,
+        modified_at: contact.modified_at,
       };
 
       let res: UnifiedContactOutput = unifiedContact;
@@ -168,6 +171,9 @@ export class ContactService {
             details: contact.details,
             phone_number: contact.phone_number,
             field_mappings: field_mappings,
+            remote_id: contact.remote_id,
+            created_at: contact.created_at,
+            modified_at: contact.modified_at,
           };
         }),
       );

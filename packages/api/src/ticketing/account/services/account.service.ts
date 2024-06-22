@@ -52,6 +52,9 @@ export class AccountService {
         name: account.name,
         domains: account.domains,
         field_mappings: field_mappings,
+        remote_id: account.remote_id,
+        created_at: account.created_at,
+        modified_at: account.modified_at,
       };
 
       let res: UnifiedAccountOutput = unifiedAccount;
@@ -165,6 +168,9 @@ export class AccountService {
             name: account.name,
             domains: account.domains,
             field_mappings: field_mappings,
+            remote_id: account.remote_id,
+            created_at: account.created_at,
+            modified_at: account.modified_at,
           };
         }),
       );

@@ -12,7 +12,7 @@ export class UnifiedAttachmentInput {
 
   @ApiProperty({
     type: String,
-    description: "The uploader's uuid of the attachment",
+    description: "The uploader's UUID of the attachment",
   })
   @IsString()
   @IsOptional()
@@ -30,7 +30,7 @@ export class UnifiedAttachmentInput {
 export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the attachment',
+    description: 'The UUID of the attachment',
   })
   @IsUUID()
   @IsOptional()
@@ -61,7 +61,7 @@ export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

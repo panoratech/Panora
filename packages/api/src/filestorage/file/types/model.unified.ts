@@ -24,14 +24,14 @@ export class UnifiedFileInput {
 
   @ApiProperty({
     type: String,
-    description: 'The uuid of the folder tied to the file',
+    description: 'The UUID of the folder tied to the file',
   })
   @IsString()
   folder_id: string;
 
   @ApiProperty({
     type: String,
-    description: 'The uuid of the permission tied to the file',
+    description: 'The UUID of the permission tied to the file',
   })
   @IsString()
   permission_id: string;
@@ -46,7 +46,7 @@ export class UnifiedFileInput {
 }
 
 export class UnifiedFileOutput extends UnifiedFileInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the file' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the file' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -75,7 +75,7 @@ export class UnifiedFileOutput extends UnifiedFileInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

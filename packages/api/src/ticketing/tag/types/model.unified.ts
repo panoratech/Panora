@@ -19,7 +19,7 @@ export class UnifiedTagInput {
 }
 
 export class UnifiedTagOutput extends UnifiedTagInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the tag' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the tag' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -48,7 +48,7 @@ export class UnifiedTagOutput extends UnifiedTagInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

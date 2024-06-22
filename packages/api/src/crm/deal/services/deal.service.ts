@@ -272,6 +272,9 @@ export class DealService {
         stage_id: deal.id_crm_deals_stage, // uuid of Stage object
         user_id: deal.id_crm_user, // uuid of User object
         field_mappings: field_mappings,
+        remote_id: deal.remote_id,
+        created_at: deal.created_at,
+        modified_at: deal.modified_at,
       };
 
       let res: UnifiedDealOutput = {
@@ -388,6 +391,9 @@ export class DealService {
             stage_id: deal.id_crm_deals_stage, // uuid of Stage object
             user_id: deal.id_crm_user, // uuid of User object
             field_mappings: field_mappings,
+            remote_id: deal.remote_id,
+            created_at: deal.created_at,
+            modified_at: deal.modified_at,
           };
         }),
       );

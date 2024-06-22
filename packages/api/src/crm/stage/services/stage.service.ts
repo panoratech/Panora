@@ -50,6 +50,9 @@ export class StageService {
         id: stage.id_crm_deals_stage,
         stage_name: stage.stage_name,
         field_mappings: field_mappings,
+        remote_id: stage.remote_id,
+        created_at: stage.created_at,
+        modified_at: stage.modified_at,
       };
 
       let res: UnifiedStageOutput = {
@@ -162,6 +165,9 @@ export class StageService {
             id: stage.id_crm_deals_stage,
             stage_name: stage.stage_name,
             field_mappings: field_mappings,
+            remote_id: stage.remote_id,
+            created_at: stage.created_at,
+            modified_at: stage.modified_at,
           };
         }),
       );

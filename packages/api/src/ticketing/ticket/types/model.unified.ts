@@ -48,7 +48,7 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the parent ticket',
+    description: 'The UUID of the parent ticket',
   })
   @IsUUID()
   @IsOptional()
@@ -56,7 +56,7 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the collection (project) the ticket belongs to',
+    description: 'The UUID of the collection (project) the ticket belongs to',
   })
   @IsUUID()
   @IsOptional()
@@ -89,10 +89,10 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: [String],
-    description: 'The users uuids the ticket is assigned to',
+    description: 'The users UUIDs the ticket is assigned to',
   })
   @IsOptional()
-  assigned_to?: string[]; //uuid of Users objects ?
+  assigned_to?: string[]; //UUID of Users objects ?
 
   @ApiPropertyOptional({
     type: UnifiedCommentInput,
@@ -103,7 +103,7 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the account which the ticket belongs to',
+    description: 'The UUID of the account which the ticket belongs to',
   })
   @IsUUID()
   @IsOptional()
@@ -111,7 +111,7 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the contact which the ticket belongs to',
+    description: 'The UUID of the contact which the ticket belongs to',
   })
   @IsUUID()
   @IsOptional()
@@ -126,7 +126,7 @@ export class UnifiedTicketInput {
   field_mappings?: Record<string, any>;
 }
 export class UnifiedTicketOutput extends UnifiedTicketInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the ticket' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the ticket' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -156,7 +156,7 @@ export class UnifiedTicketOutput extends UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

@@ -3,7 +3,6 @@ import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
-import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedCommentInput,
@@ -327,6 +326,9 @@ export class CommentService {
         ticket_id: comment.id_tcg_ticket,
         contact_id: comment.id_tcg_contact, // uuid of Contact object
         user_id: comment.id_tcg_user, // uuid of User object
+        remote_id: comment.remote_id,
+        created_at: comment.created_at,
+        modified_at: comment.modified_at,
       };
 
       let res: UnifiedCommentOutput = {
@@ -447,6 +449,9 @@ export class CommentService {
             ticket_id: comment.id_tcg_ticket,
             contact_id: comment.id_tcg_contact, // uuid of Contact object
             user_id: comment.id_tcg_user, // uuid of User object
+            remote_id: comment.remote_id,
+            created_at: comment.created_at,
+            modified_at: comment.modified_at,
           };
         }),
       );

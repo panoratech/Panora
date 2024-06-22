@@ -261,6 +261,9 @@ export class PermissionService {
         type: permission.type,
         roles: permission.roles,
         field_mappings: field_mappings,
+        remote_id: permission.remote_id,
+        created_at: permission.created_at,
+        modified_at: permission.modified_at,
       };
 
       let res: UnifiedPermissionOutput = unifiedPermission;
@@ -374,6 +377,9 @@ export class PermissionService {
             type: permission.type,
             roles: permission.roles,
             field_mappings: field_mappings,
+            remote_id: permission.remote_id,
+            created_at: permission.created_at,
+            modified_at: permission.modified_at,
           };
         }),
       );

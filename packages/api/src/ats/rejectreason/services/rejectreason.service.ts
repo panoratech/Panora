@@ -56,6 +56,9 @@ export class RejectReasonService {
         id: rejectReason.id_ats_reject_reason,
         name: rejectReason.name,
         field_mappings: field_mappings,
+        remote_id: rejectReason.remote_id,
+        created_at: rejectReason.created_at,
+        modified_at: rejectReason.modified_at,
       };
 
       let res: UnifiedRejectReasonOutput = unifiedRejectReason;
@@ -127,6 +130,9 @@ export class RejectReasonService {
               id: rejectReason.id_ats_reject_reason,
               name: rejectReason.name,
               field_mappings: field_mappings,
+              remote_id: rejectReason.remote_id,
+              created_at: rejectReason.created_at,
+              modified_at: rejectReason.modified_at,
             };
           }),
         );

@@ -65,6 +65,9 @@ export class JobService {
         remote_created_at: job.remote_created_at,
         remote_updated_at: job.remote_updated_at,
         field_mappings: field_mappings,
+        remote_id: job.remote_id,
+        created_at: job.created_at,
+        modified_at: job.modified_at,
       };
 
       let res: UnifiedJobOutput = unifiedJob;
@@ -146,6 +149,9 @@ export class JobService {
             remote_created_at: job.remote_created_at,
             remote_updated_at: job.remote_updated_at,
             field_mappings: field_mappings,
+            remote_id: job.remote_id,
+            created_at: job.created_at,
+            modified_at: job.modified_at,
           };
         }),
       );

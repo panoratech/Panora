@@ -322,6 +322,9 @@ export class EngagementService {
         type: engagement.type,
         company_id: engagement.id_crm_company,
         field_mappings: field_mappings,
+        remote_id: engagement.remote_id,
+        created_at: engagement.created_at,
+        modified_at: engagement.modified_at,
       };
 
       let res: UnifiedEngagementOutput = {
@@ -446,6 +449,9 @@ export class EngagementService {
             type: engagement.type,
             company_id: engagement.id_crm_company,
             field_mappings: field_mappings,
+            remote_id: engagement.remote_id,
+            created_at: engagement.created_at,
+            modified_at: engagement.modified_at,
           };
         }),
       );

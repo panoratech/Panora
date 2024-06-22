@@ -36,6 +36,9 @@ export class CollectionService {
         name: collection.name,
         description: collection.description,
         collection_type: collection.collection_type,
+        remote_id: collection.remote_id,
+        created_at: collection.created_at,
+        modified_at: collection.modified_at,
       };
 
       let res: UnifiedCollectionOutput = {
@@ -124,6 +127,9 @@ export class CollectionService {
             name: collection.name,
             description: collection.description,
             collection_type: collection.collection_type,
+            remote_id: collection.remote_id,
+            created_at: collection.created_at,
+            modified_at: collection.modified_at,
           };
         }),
       );

@@ -270,6 +270,9 @@ export class SharedLinkService {
         password_protected: sharedlink.password_protected,
         password: sharedlink.password,
         field_mappings: field_mappings,
+        remote_id: sharedlink.remote_id,
+        created_at: sharedlink.created_at,
+        modified_at: sharedlink.modified_at,
       };
 
       let res: UnifiedSharedLinkOutput = unifiedSharedLink;
@@ -386,6 +389,9 @@ export class SharedLinkService {
             password_protected: sharedlink.password_protected,
             password: sharedlink.password,
             field_mappings: field_mappings,
+            remote_id: sharedlink.remote_id,
+            created_at: sharedlink.created_at,
+            modified_at: sharedlink.modified_at,
           };
         }),
       );

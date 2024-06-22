@@ -56,6 +56,9 @@ export class GroupService {
         users: group.users,
         remote_was_deleted: group.remote_was_deleted,
         field_mappings: field_mappings,
+        remote_id: group.remote_id,
+        created_at: group.created_at,
+        modified_at: group.modified_at,
       };
 
       let res: UnifiedGroupOutput = unifiedGroup;
@@ -130,6 +133,9 @@ export class GroupService {
             users: group.users,
             remote_was_deleted: group.remote_was_deleted,
             field_mappings: field_mappings,
+            remote_id: group.remote_id,
+            created_at: group.created_at,
+            modified_at: group.modified_at,
           };
         }),
       );

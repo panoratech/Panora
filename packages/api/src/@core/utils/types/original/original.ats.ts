@@ -1,52 +1,52 @@
 /* INPUT */
 
 /* activity */
-export type OriginalActivityInput = '';
+export type OriginalActivityInput = any;
 
 /* application */
-export type OriginalApplicationInput = '';
+export type OriginalApplicationInput = any;
 
 /* attachment */
-export type OriginalAttachmentInput = '';
+export type OriginalAttachmentInput = any;
 
 /* candidate */
-export type OriginalCandidateInput = '';
+export type OriginalCandidateInput = any;
 
 /* department */
-export type OriginalDepartmentInput = '';
+export type OriginalDepartmentInput = any;
 
 /* interview */
-export type OriginalInterviewInput = '';
+export type OriginalInterviewInput = any;
 
 /* jobinterviewstage */
-export type OriginalJobInterviewStageInput = '';
+export type OriginalJobInterviewStageInput = any;
 
 /* job */
-export type OriginalJobInput = '';
+export type OriginalJobInput = any;
 
 /* offer */
-export type OriginalOfferInput = '';
+export type OriginalOfferInput = any;
 
 /* office */
-export type OriginalOfficeInput = '';
+export type OriginalOfficeInput = any;
 
 /* rejectreason */
-export type OriginalRejectReasonInput = '';
+export type OriginalRejectReasonInput = any;
 
 /* scorecard */
-export type OriginalScoreCardInput = '';
+export type OriginalScoreCardInput = any;
 
 /* screeningquestion */
-export type OriginalScreeningQuestionInput = '';
+export type OriginalScreeningQuestionInput = any;
 
 /* tag */
-export type OriginalTagInput = '';
+export type OriginalTagInput = any;
 
 /* user */
-export type OriginalUserInput = '';
+export type OriginalUserInput = any;
 
 /* eeocs */
-export type OriginalEeocsInput = '';
+export type OriginalEeocsInput = any;
 
 export type AtsObjectInput =
   | OriginalActivityInput
@@ -69,52 +69,52 @@ export type AtsObjectInput =
 /* OUTPUT */
 
 /* activity */
-export type OriginalActivityOutput = '';
+export type OriginalActivityOutput = any;
 
 /* application */
-export type OriginalApplicationOutput = '';
+export type OriginalApplicationOutput = any;
 
 /* attachment */
-export type OriginalAttachmentOutput = '';
+export type OriginalAttachmentOutput = any;
 
 /* candidate */
-export type OriginalCandidateOutput = '';
+export type OriginalCandidateOutput = any;
 
 /* department */
-export type OriginalDepartmentOutput = '';
+export type OriginalDepartmentOutput = any;
 
 /* interview */
-export type OriginalInterviewOutput = '';
+export type OriginalInterviewOutput = any;
 
 /* jobinterviewstage */
-export type OriginalJobInterviewStageOutput = '';
+export type OriginalJobInterviewStageOutput = any;
 
 /* job */
-export type OriginalJobOutput = '';
+export type OriginalJobOutput = any;
 
 /* offer */
-export type OriginalOfferOutput = '';
+export type OriginalOfferOutput = any;
 
 /* office */
-export type OriginalOfficeOutput = '';
+export type OriginalOfficeOutput = any;
 
 /* rejectreason */
-export type OriginalRejectReasonOutput = '';
+export type OriginalRejectReasonOutput = any;
 
 /* scorecard */
-export type OriginalScoreCardOutput = '';
+export type OriginalScoreCardOutput = any;
 
 /* screeningquestion */
-export type OriginalScreeningQuestionOutput = '';
+export type OriginalScreeningQuestionOutput = any;
 
 /* tag */
-export type OriginalTagOutput = '';
+export type OriginalTagOutput = any;
 
 /* user */
-export type OriginalUserOutput = '';
+export type OriginalUserOutput = any;
 
 /* eeocs */
-export type OriginalEeocsOutput = '';
+export type OriginalEeocsOutput = any;
 
 export type AtsObjectOutput =
   | OriginalActivityOutput

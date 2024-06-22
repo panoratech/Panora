@@ -51,6 +51,9 @@ export class TagService {
         id: tag.id_tcg_tag,
         name: tag.name,
         field_mappings: field_mappings,
+        remote_id: tag.remote_id,
+        created_at: tag.created_at,
+        modified_at: tag.modified_at,
       };
 
       let res: UnifiedTagOutput = unifiedTag;
@@ -163,6 +166,9 @@ export class TagService {
             id: tag.id_tcg_tag,
             name: tag.name,
             field_mappings: field_mappings,
+            remote_id: tag.remote_id,
+            created_at: tag.created_at,
+            modified_at: tag.modified_at,
           };
         }),
       );

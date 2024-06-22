@@ -436,6 +436,9 @@ export class ContactService {
         })),
         user_id: contact.id_crm_user,
         field_mappings: field_mappings,
+        remote_id: contact.remote_id,
+        created_at: contact.created_at,
+        modified_at: contact.modified_at,
       };
 
       let res: UnifiedContactOutput = unifiedContact;
@@ -565,6 +568,9 @@ export class ContactService {
             })),
             user_id: contact.id_crm_user,
             field_mappings: field_mappings,
+            remote_id: contact.remote_id,
+            created_at: contact.created_at,
+            modified_at: contact.modified_at,
           };
         }),
       );

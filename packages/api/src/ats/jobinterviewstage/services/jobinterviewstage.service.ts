@@ -58,6 +58,9 @@ export class JobInterviewStageService {
         stage_order: stage.stage_order,
         job_id: stage.job_id,
         field_mappings: field_mappings,
+        remote_id: stage.remote_id,
+        created_at: stage.created_at,
+        modified_at: stage.modified_at,
       };
 
       let res: UnifiedJobInterviewStageOutput = unifiedJobInterviewStage;
@@ -130,6 +133,9 @@ export class JobInterviewStageService {
             stage_order: stage.stage_order,
             job_id: stage.job_id,
             field_mappings: field_mappings,
+            remote_id: stage.remote_id,
+            created_at: stage.created_at,
+            modified_at: stage.modified_at,
           };
         }),
       );

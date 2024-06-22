@@ -9,7 +9,7 @@ export interface IActivityService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalActivityOutput>>;
 
-  syncActivitys(
+  syncActivities(
     linkedUserId: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalActivityOutput[]>>;

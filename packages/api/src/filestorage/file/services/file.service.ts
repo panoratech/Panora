@@ -263,6 +263,9 @@ export class FileService {
         folder_id: file.folder_id,
         permission_id: file.permission_id,
         field_mappings: field_mappings,
+        remote_id: file.remote_id,
+        created_at: file.created_at,
+        modified_at: file.modified_at,
       };
 
       let res: UnifiedFileOutput = unifiedFile;
@@ -379,6 +382,9 @@ export class FileService {
             folder_id: file.folder_id,
             permission_id: file.permission_id,
             field_mappings: field_mappings,
+            remote_id: file.remote_id,
+            created_at: file.created_at,
+            modified_at: file.modified_at,
           };
         }),
       );

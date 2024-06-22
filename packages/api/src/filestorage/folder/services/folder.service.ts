@@ -272,6 +272,9 @@ export class FolderService {
         drive_id: folder.id_fs_drive,
         permission_id: folder.id_fs_permission,
         field_mappings: field_mappings,
+        remote_id: folder.remote_id,
+        created_at: folder.created_at,
+        modified_at: folder.modified_at,
       };
 
       let res: UnifiedFolderOutput = unifiedFolder;
@@ -388,6 +391,9 @@ export class FolderService {
             drive_id: folder.id_fs_drive,
             permission_id: folder.id_fs_permission,
             field_mappings: field_mappings,
+            remote_id: folder.remote_id,
+            created_at: folder.created_at,
+            modified_at: folder.modified_at,
           };
         }),
       );

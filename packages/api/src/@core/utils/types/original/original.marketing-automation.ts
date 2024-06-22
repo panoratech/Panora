@@ -1,34 +1,34 @@
 /* INPUT */
 
 /* action */
-export type OriginalActionInput = '';
+export type OriginalActionInput = any;
 
 /* automation */
-export type OriginalAutomationInput = '';
+export type OriginalAutomationInput = any;
 
 /* campaign */
-export type OriginalCampaignInput = '';
+export type OriginalCampaignInput = any;
 
 /* contact */
-export type OriginalContactInput = '';
+export type OriginalContactInput = any;
 
 /* email */
-export type OriginalEmailInput = '';
+export type OriginalEmailInput = any;
 
 /* event */
-export type OriginalEventInput = '';
+export type OriginalEventInput = any;
 
 /* list */
-export type OriginalListInput = '';
+export type OriginalListInput = any;
 
 /* message */
-export type OriginalMessageInput = '';
+export type OriginalMessageInput = any;
 
 /* template */
-export type OriginalTemplateInput = '';
+export type OriginalTemplateInput = any;
 
 /* user */
-export type OriginalUserInput = '';
+export type OriginalUserInput = any;
 
 export type MarketingAutomationObjectInput =
   | OriginalActionInput
@@ -45,34 +45,34 @@ export type MarketingAutomationObjectInput =
 /* OUTPUT */
 
 /* action */
-export type OriginalActionOutput = '';
+export type OriginalActionOutput = any;
 
 /* automation */
-export type OriginalAutomationOutput = '';
+export type OriginalAutomationOutput = any;
 
 /* campaign */
-export type OriginalCampaignOutput = '';
+export type OriginalCampaignOutput = any;
 
 /* contact */
-export type OriginalContactOutput = '';
+export type OriginalContactOutput = any;
 
 /* email */
-export type OriginalEmailOutput = '';
+export type OriginalEmailOutput = any;
 
 /* event */
-export type OriginalEventOutput = '';
+export type OriginalEventOutput = any;
 
 /* list */
-export type OriginalListOutput = '';
+export type OriginalListOutput = any;
 
 /* message */
-export type OriginalMessageOutput = '';
+export type OriginalMessageOutput = any;
 
 /* template */
-export type OriginalTemplateOutput = '';
+export type OriginalTemplateOutput = any;
 
 /* user */
-export type OriginalUserOutput = '';
+export type OriginalUserOutput = any;
 
 export type MarketingAutomationObjectOutput =
   | OriginalActionOutput

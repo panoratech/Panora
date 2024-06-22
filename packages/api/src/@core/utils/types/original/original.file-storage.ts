@@ -1,25 +1,25 @@
 /* INPUT */
 
 /* file */
-export type OriginalFileInput = '';
+export type OriginalFileInput = any;
 
 /* folder */
-export type OriginalFolderInput = '';
+export type OriginalFolderInput = any;
 
 /* permission */
-export type OriginalPermissionInput = '';
+export type OriginalPermissionInput = any;
 
 /* shared link */
-export type OriginalSharedLinkInput = '';
+export type OriginalSharedLinkInput = any;
 
 /* drive */
-export type OriginalDriveInput = '';
+export type OriginalDriveInput = any;
 
 /* group */
-export type OriginalGroupInput = '';
+export type OriginalGroupInput = any;
 
 /* user */
-export type OriginalUserInput = '';
+export type OriginalUserInput = any;
 
 export type FileStorageObjectInput =
   | OriginalFileInput
@@ -33,25 +33,25 @@ export type FileStorageObjectInput =
 /* OUTPUT */
 
 /* file */
-export type OriginalFileOutput = '';
+export type OriginalFileOutput = any;
 
 /* folder */
-export type OriginalFolderOutput = '';
+export type OriginalFolderOutput = any;
 
 /* permission */
-export type OriginalPermissionOutput = '';
+export type OriginalPermissionOutput = any;
 
 /* shared link */
-export type OriginalSharedLinkOutput = '';
+export type OriginalSharedLinkOutput = any;
 
 /* drive */
-export type OriginalDriveOutput = '';
+export type OriginalDriveOutput = any;
 
 /* group */
-export type OriginalGroupOutput = '';
+export type OriginalGroupOutput = any;
 
 /* user */
-export type OriginalUserOutput = '';
+export type OriginalUserOutput = any;
 
 export type FileStorageObjectOutput =
   | OriginalFileOutput

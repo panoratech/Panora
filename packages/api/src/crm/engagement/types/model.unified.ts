@@ -49,7 +49,7 @@ export class UnifiedEngagementInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the user tied to the engagement',
+    description: 'The UUID of the user tied to the engagement',
   })
   @IsUUID()
   @IsOptional()
@@ -57,18 +57,18 @@ export class UnifiedEngagementInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the company tied to the engagement',
+    description: 'The UUID of the company tied to the engagement',
   })
   @IsUUID()
   @IsOptional()
-  company_id?: string; // uuid of Company object
+  company_id?: string; // UUID of Company object
 
   @ApiPropertyOptional({
     type: [String],
-    description: 'The uuids of contacts tied to the engagement object',
+    description: 'The UUIDs of contacts tied to the engagement object',
   })
   @IsOptional()
-  contacts?: string[]; // array of uuids of Engagement Contacts objects
+  contacts?: string[]; // array of UUIDs of Engagement Contacts objects
 
   @ApiPropertyOptional({
     type: {},
@@ -82,7 +82,7 @@ export class UnifiedEngagementInput {
 export class UnifiedEngagementOutput extends UnifiedEngagementInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the engagement',
+    description: 'The UUID of the engagement',
   })
   @IsUUID()
   @IsOptional()
@@ -113,7 +113,7 @@ export class UnifiedEngagementOutput extends UnifiedEngagementInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

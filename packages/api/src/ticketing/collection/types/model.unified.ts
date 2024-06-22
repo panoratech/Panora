@@ -32,7 +32,7 @@ export class UnifiedCollectionInput {
 export class UnifiedCollectionOutput extends UnifiedCollectionInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the collection',
+    description: 'The UUID of the collection',
   })
   @IsUUID()
   @IsOptional()
@@ -63,7 +63,7 @@ export class UnifiedCollectionOutput extends UnifiedCollectionInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

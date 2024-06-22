@@ -279,6 +279,9 @@ export class InterviewService {
         remote_created_at: interview.remote_created_at,
         remote_updated_at: interview.remote_updated_at,
         field_mappings: field_mappings,
+        remote_id: interview.remote_id,
+        created_at: interview.created_at,
+        modified_at: interview.modified_at,
       };
 
       let res: UnifiedInterviewOutput = unifiedInterview;
@@ -398,6 +401,9 @@ export class InterviewService {
             remote_created_at: interview.remote_created_at,
             remote_updated_at: interview.remote_updated_at,
             field_mappings: field_mappings,
+            remote_id: interview.remote_id,
+            created_at: interview.created_at,
+            modified_at: interview.modified_at,
           };
         }),
       );

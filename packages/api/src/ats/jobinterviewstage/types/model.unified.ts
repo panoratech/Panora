@@ -70,7 +70,7 @@ export class UnifiedJobInterviewStageOutput extends UnifiedJobInterviewStageInpu
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

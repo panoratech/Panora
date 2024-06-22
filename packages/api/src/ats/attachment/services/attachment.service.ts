@@ -263,6 +263,9 @@ export class AttachmentService {
         remote_modified_at: attachment.remote_modified_at,
         candidate_id: attachment.id_ats_candidate,
         field_mappings: field_mappings,
+        remote_id: attachment.remote_id,
+        created_at: attachment.created_at,
+        modified_at: attachment.modified_at,
       };
 
       let res: UnifiedAttachmentOutput = unifiedAttachment;
@@ -364,6 +367,9 @@ export class AttachmentService {
             remote_modified_at: attachment.remote_modified_at,
             candidate_id: attachment.id_ats_candidate,
             field_mappings: field_mappings,
+            remote_id: attachment.remote_id,
+            created_at: attachment.created_at,
+            modified_at: attachment.modified_at,
           };
         }),
       );

@@ -12,14 +12,14 @@ export class UnifiedPermissionInput {
 
   @ApiProperty({
     type: String,
-    description: 'The uuid of the user tied to the permission',
+    description: 'The UUID of the user tied to the permission',
   })
   @IsString()
   user_id: string;
 
   @ApiProperty({
     type: String,
-    description: 'The uuid of the group tied to the permission',
+    description: 'The UUID of the group tied to the permission',
   })
   @IsString()
   group_id: string;
@@ -36,7 +36,7 @@ export class UnifiedPermissionInput {
 export class UnifiedPermissionOutput extends UnifiedPermissionInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the permission',
+    description: 'The UUID of the permission',
   })
   @IsUUID()
   @IsOptional()
@@ -67,7 +67,7 @@ export class UnifiedPermissionOutput extends UnifiedPermissionInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

@@ -268,6 +268,9 @@ export class ApplicationService {
         candidate_id: application.id_ats_candidate,
         job_id: application.id_ats_job,
         field_mappings: field_mappings,
+        remote_id: application.remote_id,
+        created_at: application.created_at,
+        modified_at: application.modified_at,
       };
 
       let res: UnifiedApplicationOutput = unifiedApplication;
@@ -369,6 +372,9 @@ export class ApplicationService {
             candidate_id: application.id_ats_candidate,
             job_id: application.id_ats_job,
             field_mappings: field_mappings,
+            remote_id: application.remote_id,
+            created_at: application.created_at,
+            modified_at: application.modified_at,
           };
         }),
       );

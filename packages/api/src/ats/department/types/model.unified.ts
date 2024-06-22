@@ -54,7 +54,7 @@ export class UnifiedDepartmentOutput extends UnifiedDepartmentInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

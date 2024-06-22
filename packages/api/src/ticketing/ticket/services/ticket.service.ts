@@ -13,7 +13,6 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from './registry.service';
-import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
@@ -369,6 +368,9 @@ export class TicketService {
         priority: ticket.priority || '',
         assigned_to: ticket.assigned_to || [],
         field_mappings: field_mappings,
+        remote_id: ticket.remote_id,
+        created_at: ticket.created_at,
+        modified_at: ticket.modified_at,
       };
 
       let res: UnifiedTicketOutput = {
@@ -497,6 +499,9 @@ export class TicketService {
             assigned_to: ticket.assigned_to || [],
             collections: ticket.collections || [],
             field_mappings: field_mappings,
+            remote_id: ticket.remote_id,
+            created_at: ticket.created_at,
+            modified_at: ticket.modified_at,
           };
         }),
       );

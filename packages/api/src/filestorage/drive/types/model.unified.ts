@@ -27,7 +27,7 @@ export class UnifiedDriveInput {
 }
 
 export class UnifiedDriveOutput extends UnifiedDriveInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the drive' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the drive' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -56,7 +56,7 @@ export class UnifiedDriveOutput extends UnifiedDriveInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

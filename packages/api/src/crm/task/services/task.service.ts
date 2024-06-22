@@ -297,6 +297,9 @@ export class TaskService {
         company_id: task.id_crm_company,
         deal_id: task.id_crm_deal, // uuid of Contact object
         user_id: task.id_crm_user, // uuid of User object
+        remote_id: task.remote_id,
+        created_at: task.created_at,
+        modified_at: task.modified_at,
       };
 
       let res: UnifiedTaskOutput = {
@@ -415,6 +418,9 @@ export class TaskService {
             company_id: task.id_crm_company,
             deal_id: task.id_crm_deal, // uuid of Contact object
             user_id: task.id_crm_user, // uuid of User object
+            remote_id: task.remote_id,
+            created_at: task.created_at,
+            modified_at: task.modified_at,
           };
         }),
       );

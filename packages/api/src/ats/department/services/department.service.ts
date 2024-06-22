@@ -54,6 +54,9 @@ export class DepartmentService {
         id: department.id_ats_department,
         name: department.name,
         field_mappings: field_mappings,
+        remote_id: department.remote_id,
+        created_at: department.created_at,
+        modified_at: department.modified_at,
       };
 
       let res: UnifiedDepartmentOutput = unifiedDepartment;
@@ -124,6 +127,9 @@ export class DepartmentService {
             id: department.id_ats_department,
             name: department.name,
             field_mappings: field_mappings,
+            remote_id: department.remote_id,
+            created_at: department.created_at,
+            modified_at: department.modified_at,
           };
         }),
       );

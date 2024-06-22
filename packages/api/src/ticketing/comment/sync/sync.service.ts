@@ -1,6 +1,5 @@
 import { LoggerService } from '@@core/logger/logger.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { SyncError, throwTypedError } from '@@core/utils/errors';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
@@ -324,7 +323,7 @@ export class SyncService implements OnModuleInit {
                 where: {
                   remote_platform: originSource,
                   id_linked_user: linkedUserId,
-                  file_name: attchmt.file_name,
+                  remote_id: attchmt.id,
                 },
               });
 
@@ -335,7 +334,6 @@ export class SyncService implements OnModuleInit {
                   id_tcg_attachment: existingAttachmt.id_tcg_attachment,
                 },
                 data: {
-                  remote_id: attchmt.id,
                   file_url: attchmt.file_url,
                   id_tcg_comment: unique_ticketing_comment_id,
                   id_tcg_ticket: id_ticket,

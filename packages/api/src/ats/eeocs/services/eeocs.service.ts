@@ -59,6 +59,9 @@ export class EeocsService {
         veteran_status: eeocs.veteran_status,
         disability_status: eeocs.disability_status,
         field_mappings: field_mappings,
+        remote_id: eeocs.remote_id,
+        created_at: eeocs.created_at,
+        modified_at: eeocs.modified_at,
       };
 
       let res: UnifiedEeocsOutput = unifiedEeocs;
@@ -134,6 +137,9 @@ export class EeocsService {
             veteran_status: eeocs.veteran_status,
             disability_status: eeocs.disability_status,
             field_mappings: field_mappings,
+            remote_id: eeocs.remote_id,
+            created_at: eeocs.created_at,
+            modified_at: eeocs.modified_at,
           };
         }),
       );

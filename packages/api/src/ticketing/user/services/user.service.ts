@@ -55,6 +55,9 @@ export class UserService {
         name: user.name,
         teams: user.teams,
         field_mappings: field_mappings,
+        remote_id: user.remote_id,
+        created_at: user.created_at,
+        modified_at: user.modified_at,
       };
 
       let res: UnifiedUserOutput = unifiedUser;
@@ -168,6 +171,9 @@ export class UserService {
             name: user.name,
             teams: user.teams,
             field_mappings: field_mappings,
+            remote_id: user.remote_id,
+            created_at: user.created_at,
+            modified_at: user.modified_at,
           };
         }),
       );

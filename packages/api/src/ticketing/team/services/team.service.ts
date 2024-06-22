@@ -52,6 +52,9 @@ export class TeamService {
         name: team.name,
         description: team.description,
         field_mappings: field_mappings,
+        remote_id: team.remote_id,
+        created_at: team.created_at,
+        modified_at: team.modified_at,
       };
 
       let res: UnifiedTeamOutput = unifiedTeam;
@@ -165,6 +168,9 @@ export class TeamService {
             name: team.name,
             description: team.description,
             field_mappings: field_mappings,
+            remote_id: team.remote_id,
+            created_at: team.created_at,
+            modified_at: team.modified_at,
           };
         }),
       );

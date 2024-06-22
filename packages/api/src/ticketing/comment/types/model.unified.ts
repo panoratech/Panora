@@ -36,40 +36,40 @@ export class UnifiedCommentInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the ticket the comment is tied to',
+    description: 'The UUID of the ticket the comment is tied to',
   })
   @IsUUID()
   @IsOptional()
-  ticket_id?: string; // uuid of Ticket object
+  ticket_id?: string; // UUID of Ticket object
 
   @ApiPropertyOptional({
     type: String,
     description:
-      'The uuid of the contact which the comment belongs to (if no user_id specified)',
+      'The UUID of the contact which the comment belongs to (if no user_id specified)',
   })
   @IsUUID()
   @IsOptional()
-  contact_id?: string; // uuid of Contact object
+  contact_id?: string; // UUID of Contact object
 
   @ApiPropertyOptional({
     type: String,
     description:
-      'The uuid of the user which the comment belongs to (if no contact_id specified)',
+      'The UUID of the user which the comment belongs to (if no contact_id specified)',
   })
   @IsUUID()
   @IsOptional()
-  user_id?: string; // uuid of User object
+  user_id?: string; // UUID of User object
 
   @ApiPropertyOptional({
     type: [String],
-    description: 'The attachements uuids tied to the comment',
+    description: 'The attachements UUIDs tied to the comment',
   })
   @IsOptional()
-  attachments?: any[]; //uuids of Attachments objects
+  attachments?: any[]; //UUIDs of Attachments objects
 }
 
 export class UnifiedCommentOutput extends UnifiedCommentInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the comment' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the comment' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -106,7 +106,7 @@ export class UnifiedCommentOutput extends UnifiedCommentInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

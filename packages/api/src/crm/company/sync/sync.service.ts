@@ -15,7 +15,6 @@ import { crm_companies as CrmCompany } from '@prisma/client';
 import { CRM_PROVIDERS } from '@panora/shared';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
-import { throwTypedError, SyncError } from '@@core/utils/errors';
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@crm/@lib/@utils';
 

@@ -291,6 +291,9 @@ export class NoteService {
         deal_id: note.id_crm_deal, // uuid of Contact object
         user_id: note.id_crm_user,
         field_mappings: field_mappings,
+        remote_id: note.remote_id,
+        created_at: note.created_at,
+        modified_at: note.modified_at,
       };
 
       let res: UnifiedNoteOutput = {
@@ -407,6 +410,9 @@ export class NoteService {
             deal_id: note.id_crm_deal, // uuid of Contact object
             user_id: note.id_crm_user,
             field_mappings: field_mappings,
+            remote_id: note.remote_id,
+            created_at: note.created_at,
+            modified_at: note.modified_at,
           };
         }),
       );

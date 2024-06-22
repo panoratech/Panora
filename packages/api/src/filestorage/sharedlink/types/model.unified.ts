@@ -14,14 +14,14 @@ export class UnifiedSharedLinkInput {
 
   @ApiProperty({
     type: String,
-    description: 'The uuid of the folder tied to the shared link',
+    description: 'The UUID of the folder tied to the shared link',
   })
   @IsString()
   folder_id: string;
 
   @ApiProperty({
     type: String,
-    description: 'The uuid of the file tied to the shared link',
+    description: 'The UUID of the file tied to the shared link',
   })
   @IsString()
   file_id: string;
@@ -53,7 +53,7 @@ export class UnifiedSharedLinkInput {
 export class UnifiedSharedLinkOutput extends UnifiedSharedLinkInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the shared link',
+    description: 'The UUID of the shared link',
   })
   @IsUUID()
   @IsOptional()
@@ -84,7 +84,7 @@ export class UnifiedSharedLinkOutput extends UnifiedSharedLinkInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

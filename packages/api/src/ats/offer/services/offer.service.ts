@@ -60,6 +60,9 @@ export class OfferService {
         status: offer.status,
         application_id: offer.application_id,
         field_mappings: field_mappings,
+        remote_id: offer.remote_id,
+        created_at: offer.created_at,
+        modified_at: offer.modified_at,
       };
 
       let res: UnifiedOfferOutput = unifiedOffer;
@@ -137,6 +140,9 @@ export class OfferService {
             status: offer.status,
             application_id: offer.application_id,
             field_mappings: field_mappings,
+            remote_id: offer.remote_id,
+            created_at: offer.created_at,
+            modified_at: offer.modified_at,
           };
         }),
       );

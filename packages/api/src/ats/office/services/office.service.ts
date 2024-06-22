@@ -55,6 +55,9 @@ export class OfficeService {
         name: office.name,
         location: office.location,
         field_mappings: field_mappings,
+        remote_id: office.remote_id,
+        created_at: office.created_at,
+        modified_at: office.modified_at,
       };
 
       let res: UnifiedOfficeOutput = unifiedOffice;
@@ -126,6 +129,9 @@ export class OfficeService {
             name: office.name,
             location: office.location,
             field_mappings: field_mappings,
+            remote_id: office.remote_id,
+            created_at: office.created_at,
+            modified_at: office.modified_at,
           };
         }),
       );

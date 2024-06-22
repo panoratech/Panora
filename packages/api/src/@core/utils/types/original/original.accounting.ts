@@ -1,64 +1,64 @@
 /* INPUT */
 
 /* attachment */
-export type OriginalAttachmentInput = '';
+export type OriginalAttachmentInput = any;
 
 /* address */
-export type OriginalAddressInput = '';
+export type OriginalAddressInput = any;
 
 /* account */
-export type OriginalAccountInput = '';
+export type OriginalAccountInput = any;
 
 /* balancesheet */
-export type OriginalBalanceSheetInput = '';
+export type OriginalBalanceSheetInput = any;
 
 /* cashflowstatement */
-export type OriginalCashflowStatementInput = '';
+export type OriginalCashflowStatementInput = any;
 
 /* companyinfo */
-export type OriginalCompanyInfoInput = '';
+export type OriginalCompanyInfoInput = any;
 
 /* contact */
-export type OriginalContactInput = '';
+export type OriginalContactInput = any;
 
 /* creditnote */
-export type OriginalCreditNoteInput = '';
+export type OriginalCreditNoteInput = any;
 
 /* expense */
-export type OriginalExpenseInput = '';
+export type OriginalExpenseInput = any;
 
 /* incomestatement */
-export type OriginalIncomeStatementInput = '';
+export type OriginalIncomeStatementInput = any;
 
 /* invoice */
-export type OriginalInvoiceInput = '';
+export type OriginalInvoiceInput = any;
 
 /* item */
-export type OriginalItemInput = '';
+export type OriginalItemInput = any;
 
 /* journalentry */
-export type OriginalJournalEntryInput = '';
+export type OriginalJournalEntryInput = any;
 
 /* payment */
-export type OriginalPaymentInput = '';
+export type OriginalPaymentInput = any;
 
 /* phonenumber */
-export type OriginalPhoneNumberInput = '';
+export type OriginalPhoneNumberInput = any;
 
 /* purchaseorder */
-export type OriginalPurchaseOrderInput = '';
+export type OriginalPurchaseOrderInput = any;
 
 /* taxrate */
-export type OriginalTaxRateInput = '';
+export type OriginalTaxRateInput = any;
 
 /* trackingcategory */
-export type OriginalTrackingCategoryInput = '';
+export type OriginalTrackingCategoryInput = any;
 
 /* transaction */
-export type OriginalTransactionInput = '';
+export type OriginalTransactionInput = any;
 
 /* vendorcredit */
-export type OriginalVendorCreditInput = '';
+export type OriginalVendorCreditInput = any;
 
 export type AccountingObjectInput =
   | OriginalAttachmentInput
@@ -85,64 +85,64 @@ export type AccountingObjectInput =
 /* OUTPUT */
 
 /* attachment */
-export type OriginalAttachmentOutput = '';
+export type OriginalAttachmentOutput = any;
 
 /* address */
-export type OriginalAddressOutput = '';
+export type OriginalAddressOutput = any;
 
 /* account */
-export type OriginalAccountOutput = '';
+export type OriginalAccountOutput = any;
 
 /* balancesheet */
-export type OriginalBalanceSheetOutput = '';
+export type OriginalBalanceSheetOutput = any;
 
 /* cashflowstatement */
-export type OriginalCashflowStatementOutput = '';
+export type OriginalCashflowStatementOutput = any;
 
 /* companyinfo */
-export type OriginalCompanyInfoOutput = '';
+export type OriginalCompanyInfoOutput = any;
 
 /* contact */
-export type OriginalContactOutput = '';
+export type OriginalContactOutput = any;
 
 /* creditnote */
-export type OriginalCreditNoteOutput = '';
+export type OriginalCreditNoteOutput = any;
 
 /* expense */
-export type OriginalExpenseOutput = '';
+export type OriginalExpenseOutput = any;
 
 /* incomestatement */
-export type OriginalIncomeStatementOutput = '';
+export type OriginalIncomeStatementOutput = any;
 
 /* invoice */
-export type OriginalInvoiceOutput = '';
+export type OriginalInvoiceOutput = any;
 
 /* item */
-export type OriginalItemOutput = '';
+export type OriginalItemOutput = any;
 
 /* journalentry */
-export type OriginalJournalEntryOutput = '';
+export type OriginalJournalEntryOutput = any;
 
 /* payment */
-export type OriginalPaymentOutput = '';
+export type OriginalPaymentOutput = any;
 
 /* phonenumber */
-export type OriginalPhoneNumberOutput = '';
+export type OriginalPhoneNumberOutput = any;
 
 /* purchaseorder */
-export type OriginalPurchaseOrderOutput = '';
+export type OriginalPurchaseOrderOutput = any;
 
 /* taxrate */
-export type OriginalTaxRateOutput = '';
+export type OriginalTaxRateOutput = any;
 
 /* trackingcategory */
-export type OriginalTrackingCategoryOutput = '';
+export type OriginalTrackingCategoryOutput = any;
 
 /* transaction */
-export type OriginalTransactionOutput = '';
+export type OriginalTransactionOutput = any;
 
 /* vendorcredit */
-export type OriginalVendorCreditOutput = '';
+export type OriginalVendorCreditOutput = any;
 
 export type AccountingObjectOutput =
   | OriginalAttachmentOutput

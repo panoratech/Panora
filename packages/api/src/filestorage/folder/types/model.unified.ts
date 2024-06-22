@@ -20,21 +20,21 @@ export class UnifiedFolderInput {
 
   @ApiProperty({
     type: String,
-    description: 'The uuid of the drive tied to the folder',
+    description: 'The UUID of the drive tied to the folder',
   })
   @IsString()
   drive_id: string;
 
   @ApiProperty({
     type: String,
-    description: 'The uuid of the parent folder',
+    description: 'The UUID of the parent folder',
   })
   @IsString()
   parent_folder_id: string;
 
   @ApiProperty({
     type: String,
-    description: 'The uuid of the permission tied to the folder',
+    description: 'The UUID of the permission tied to the folder',
   })
   @IsString()
   permission_id: string;
@@ -49,7 +49,7 @@ export class UnifiedFolderInput {
 }
 
 export class UnifiedFolderOutput extends UnifiedFolderInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the folder' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the folder' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -79,7 +79,7 @@ export class UnifiedFolderOutput extends UnifiedFolderInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;

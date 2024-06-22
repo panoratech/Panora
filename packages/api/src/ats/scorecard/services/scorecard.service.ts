@@ -58,6 +58,9 @@ export class ScoreCardService {
         remote_created_at: scorecard.remote_created_at,
         submitted_at: scorecard.submitted_at,
         field_mappings: field_mappings,
+        remote_id: scorecard.remote_id,
+        created_at: scorecard.created_at,
+        modified_at: scorecard.modified_at,
       };
 
       let res: UnifiedScoreCardOutput = unifiedScoreCard;
@@ -132,6 +135,9 @@ export class ScoreCardService {
             remote_created_at: scorecard.remote_created_at,
             submitted_at: scorecard.submitted_at,
             field_mappings: field_mappings,
+            remote_id: scorecard.remote_id,
+            created_at: scorecard.created_at,
+            modified_at: scorecard.modified_at,
           };
         }),
       );

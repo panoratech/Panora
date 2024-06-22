@@ -148,7 +148,7 @@ export class UnifiedCandidateInput {
 export class UnifiedCandidateOutput extends UnifiedCandidateInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the candidate',
+    description: 'The UUID of the candidate',
   })
   @IsUUID()
   @IsOptional()
@@ -179,65 +179,10 @@ export class UnifiedCandidateOutput extends UnifiedCandidateInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;
-}
-
-export class UnifiedCandidateTagInput {
-  @ApiPropertyOptional({ type: String, description: 'The name of the tag' })
-  @IsString()
-  @IsOptional()
-  name?: string;
-
-  @ApiPropertyOptional({
-    type: String,
-    description: 'The UUID of the candidate',
-  })
-  @IsUUID()
-  @IsOptional()
-  id_ats_candidate?: string;
-
-  @ApiPropertyOptional({
-    type: String,
-    format: 'date-time',
-    description: 'The creation date of the tag',
-  })
-  @IsDateString()
-  @IsOptional()
-  created_at?: string;
-
-  @ApiPropertyOptional({
-    type: String,
-    format: 'date-time',
-    description: 'The modification date of the tag',
-  })
-  @IsDateString()
-  @IsOptional()
-  modified_at?: string;
-}
-
-export class UnifiedCandidateTagOutput extends UnifiedCandidateTagInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the tag' })
-  @IsUUID()
-  @IsOptional()
-  id?: string;
-
-  @ApiPropertyOptional({
-    type: String,
-    description: 'The remote ID of the tag in the context of the 3rd Party',
-  })
-  @IsString()
-  @IsOptional()
-  remote_id?: string;
-
-  @ApiPropertyOptional({
-    type: {},
-    description: 'The remote data of the tag in the context of the 3rd Party',
-  })
-  @IsOptional()
-  remote_data?: Record<string, any>;
 }
 
 export class UnifiedCandidateUrlInput {

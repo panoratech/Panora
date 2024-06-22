@@ -177,6 +177,9 @@ export class AttachmentService {
         file_url: attachment.file_url,
         uploader: attachment.uploader,
         field_mappings: field_mappings,
+        remote_id: attachment.remote_id,
+        created_at: attachment.created_at,
+        modified_at: attachment.modified_at,
       };
 
       let res: UnifiedAttachmentOutput = unifiedAttachment;
@@ -289,6 +292,9 @@ export class AttachmentService {
             file_url: attachment.file_url,
             uploader: attachment.uploader, //TODO
             field_mappings: field_mappings,
+            remote_id: attachment.remote_id,
+            created_at: attachment.created_at,
+            modified_at: attachment.modified_at,
           };
         }),
       );

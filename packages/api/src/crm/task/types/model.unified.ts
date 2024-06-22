@@ -30,7 +30,7 @@ export class UnifiedTaskInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the user tied to the task',
+    description: 'The UUID of the user tied to the task',
   })
   @IsUUID()
   @IsOptional()
@@ -38,7 +38,7 @@ export class UnifiedTaskInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid fo the company tied to the task',
+    description: 'The UUID fo the company tied to the task',
   })
   @IsUUID()
   @IsOptional()
@@ -46,7 +46,7 @@ export class UnifiedTaskInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the deal tied to the task',
+    description: 'The UUID of the deal tied to the task',
   })
   @IsString()
   @IsOptional()
@@ -62,7 +62,7 @@ export class UnifiedTaskInput {
 }
 
 export class UnifiedTaskOutput extends UnifiedTaskInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the task' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the task' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -93,7 +93,7 @@ export class UnifiedTaskOutput extends UnifiedTaskInput {
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of th object',
+    description: 'The modified date of the object',
   })
   @IsOptional()
   modified_at?: any;
