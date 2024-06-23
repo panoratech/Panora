@@ -387,7 +387,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           apiUrl: (domain) => `https://${domain}.gorgias.com/api`,
           authBaseUrl: (domain) => `https://${domain}.com/connections/gorgias/oauth/install`,
         },
-        active: false,
         options: {
           company_subdomain: true,
         },

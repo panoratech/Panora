@@ -1,5 +1,5 @@
 version: 2
-authtoken: NGROK_TOKEN
+authtoken: TOKEN
 log_level: debug
 log: stdout
 
@@ -7,4 +7,4 @@ tunnels:
   api-tunnel:
     proto: http
     addr: 3000
-    domain: NGROK_DOMAIN
+    domain: DOMAIN

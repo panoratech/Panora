@@ -13,7 +13,6 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { ServiceRegistry } from './registry.service';
-import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
