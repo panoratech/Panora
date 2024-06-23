@@ -32,7 +32,9 @@ export class LocationService {
     unifiedLocationData: UnifiedLocationInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedLocationOutput[]> {
     return;
   }
@@ -56,7 +58,9 @@ export class LocationService {
   async getLocations(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedLocationOutput[]> {
     return;
   }

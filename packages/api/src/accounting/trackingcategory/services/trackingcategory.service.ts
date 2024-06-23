@@ -38,7 +38,9 @@ export class TrackingCategoryService {
   async getTrackingCategorys(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTrackingCategoryOutput[]> {
     return;
   }

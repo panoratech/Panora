@@ -31,7 +31,9 @@ export class MessageService {
     unifiedMessageData: UnifiedMessageInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedMessageOutput[]> {
     return;
   }
@@ -55,7 +57,9 @@ export class MessageService {
   async getMessages(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedMessageOutput[]> {
     return;
   }

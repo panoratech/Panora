@@ -27,15 +27,6 @@ export class ActionService {
     this.logger.setContext(ActionService.name);
   }
 
-  async batchAddActions(
-    unifiedActionData: UnifiedActionInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedActionOutput[]> {
-    return;
-  }
-
   async addAction(
     unifiedActionData: UnifiedActionInput,
     integrationId: string,
@@ -55,7 +46,9 @@ export class ActionService {
   async getActions(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedActionOutput[]> {
     return;
   }

@@ -31,7 +31,9 @@ export class PermissionService {
     unifiedPermissionData: UnifiedPermissionInput,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedPermissionOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

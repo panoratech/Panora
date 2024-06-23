@@ -84,7 +84,9 @@ export class OfficeService {
   async getOffices(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedOfficeOutput[]> {
     try {
       const offices = await this.prisma.ats_offices.findMany({

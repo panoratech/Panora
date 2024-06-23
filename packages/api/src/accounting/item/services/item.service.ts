@@ -35,7 +35,9 @@ export class ItemService {
   async getItems(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedItemOutput[]> {
     return;
   }

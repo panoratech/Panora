@@ -32,7 +32,9 @@ export class EmploymentService {
     unifiedEmploymentData: UnifiedEmploymentInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEmploymentOutput[]> {
     return;
   }
@@ -56,7 +58,9 @@ export class EmploymentService {
   async getEmployments(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEmploymentOutput[]> {
     return;
   }

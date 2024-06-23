@@ -29,7 +29,9 @@ export class GroupService {
     unifiedGroupData: UnifiedGroupInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedGroupOutput[]> {
     return;
   }
@@ -53,7 +55,9 @@ export class GroupService {
   async getGroups(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedGroupOutput[]> {
     return;
   }

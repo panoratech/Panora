@@ -32,7 +32,9 @@ export class TimeoffService {
     unifiedTimeoffData: UnifiedTimeoffInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTimeoffOutput[]> {
     return;
   }
@@ -56,7 +58,9 @@ export class TimeoffService {
   async getTimeoffs(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTimeoffOutput[]> {
     return;
   }

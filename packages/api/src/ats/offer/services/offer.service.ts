@@ -89,7 +89,9 @@ export class OfferService {
   async getOffers(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedOfferOutput[]> {
     try {
       const offers = await this.prisma.ats_offers.findMany({

@@ -38,7 +38,9 @@ export class VendorCreditService {
   async getVendorCredits(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedVendorCreditOutput[]> {
     return;
   }

@@ -83,7 +83,9 @@ export class TagService {
   async getTags(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTagOutput[]> {
     try {
       const tags = await this.prisma.ats_tags.findMany({

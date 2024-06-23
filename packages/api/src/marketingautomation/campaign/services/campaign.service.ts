@@ -31,7 +31,9 @@ export class CampaignService {
     unifiedCampaignData: UnifiedCampaignInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedCampaignOutput[]> {
     return;
   }
@@ -55,7 +57,9 @@ export class CampaignService {
   async getCampaigns(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedCampaignOutput[]> {
     return;
   }

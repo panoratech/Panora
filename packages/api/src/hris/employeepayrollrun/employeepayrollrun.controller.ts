@@ -136,7 +136,6 @@ export class EmployeePayrollRunController {
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, limit, cursor } = query;
       return this.employeepayrollrunService.addEmployeePayrollRun(
         unifiedEmployeePayrollRunData,
         remoteSource,

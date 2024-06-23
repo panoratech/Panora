@@ -28,7 +28,9 @@ export class FileService {
     unifiedFileData: UnifiedFileInput,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedFileOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

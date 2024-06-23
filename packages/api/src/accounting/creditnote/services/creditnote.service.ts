@@ -38,7 +38,9 @@ export class CreditNoteService {
   async getCreditNotes(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedCreditNoteOutput[]> {
     return;
   }

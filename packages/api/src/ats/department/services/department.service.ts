@@ -83,7 +83,9 @@ export class DepartmentService {
   async getDepartments(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedDepartmentOutput[]> {
     try {
       const departments = await this.prisma.ats_departments.findMany({

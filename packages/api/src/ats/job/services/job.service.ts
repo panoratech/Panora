@@ -94,7 +94,9 @@ export class JobService {
   async getJobs(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedJobOutput[]> {
     try {
       const jobs = await this.prisma.ats_jobs.findMany({

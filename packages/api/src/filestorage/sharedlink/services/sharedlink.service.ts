@@ -31,7 +31,9 @@ export class SharedLinkService {
     unifiedSharedlinkData: UnifiedSharedLinkInput,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedSharedLinkOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

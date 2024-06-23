@@ -38,7 +38,9 @@ export class TransactionService {
   async getTransactions(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTransactionOutput[]> {
     return;
   }

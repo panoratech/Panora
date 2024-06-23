@@ -32,7 +32,9 @@ export class CandidateService {
     unifiedCandidateData: UnifiedCandidateInput,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedCandidateOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

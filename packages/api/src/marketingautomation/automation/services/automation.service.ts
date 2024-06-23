@@ -31,7 +31,9 @@ export class AutomationService {
     unifiedAutomationData: UnifiedAutomationInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedAutomationOutput[]> {
     return;
   }
@@ -55,7 +57,9 @@ export class AutomationService {
   async getAutomations(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedAutomationOutput[]> {
     return;
   }

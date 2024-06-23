@@ -32,7 +32,9 @@ export class JournalEntryService {
     unifiedJournalEntryData: UnifiedJournalEntryInput,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedJournalEntryOutput> {
     return;
   }
@@ -47,7 +49,9 @@ export class JournalEntryService {
   async getJournalEntrys(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedJournalEntryOutput[]> {
     return;
   }

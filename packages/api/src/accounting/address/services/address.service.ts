@@ -37,7 +37,9 @@ export class AddressService {
   async getAddresss(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedAddressOutput[]> {
     return;
   }

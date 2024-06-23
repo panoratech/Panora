@@ -22,7 +22,9 @@ export class AttachmentService {
     unifiedAttachmentData: UnifiedAttachmentInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedAttachmentOutput[]> {
     try {
       const responses = await Promise.all(

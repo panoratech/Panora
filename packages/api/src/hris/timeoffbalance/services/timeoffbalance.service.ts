@@ -32,7 +32,9 @@ export class TimeoffBalanceService {
     unifiedTimeoffBalanceData: UnifiedTimeoffBalanceInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTimeoffBalanceOutput[]> {
     return;
   }
@@ -56,7 +58,9 @@ export class TimeoffBalanceService {
   async getTimeoffBalances(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTimeoffBalanceOutput[]> {
     return;
   }

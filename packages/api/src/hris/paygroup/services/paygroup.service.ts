@@ -32,7 +32,9 @@ export class PayGroupService {
     unifiedPayGroupData: UnifiedPayGroupInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedPayGroupOutput[]> {
     return;
   }
@@ -56,7 +58,9 @@ export class PayGroupService {
   async getPayGroups(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedPayGroupOutput[]> {
     return;
   }

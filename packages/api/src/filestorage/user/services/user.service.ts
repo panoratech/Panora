@@ -85,7 +85,9 @@ export class UserService {
   async getUsers(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedUserOutput[]> {
     try {
       const users = await this.prisma.fs_users.findMany({

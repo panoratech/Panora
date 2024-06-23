@@ -38,7 +38,9 @@ export class CashflowStatementService {
   async getCashflowStatements(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedCashflowStatementOutput[]> {
     return;
   }

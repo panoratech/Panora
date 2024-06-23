@@ -32,7 +32,9 @@ export class PurchaseOrderService {
     unifiedPurchaseOrderData: UnifiedPurchaseOrderInput,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedPurchaseOrderOutput> {
     return;
   }
@@ -47,7 +49,9 @@ export class PurchaseOrderService {
   async getPurchaseOrders(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedPurchaseOrderOutput[]> {
     return;
   }

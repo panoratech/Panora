@@ -87,7 +87,9 @@ export class JobInterviewStageService {
   async getJobInterviewStages(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedJobInterviewStageOutput[]> {
     try {
       const stages = await this.prisma.ats_job_interview_stages.findMany({

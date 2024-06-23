@@ -25,7 +25,6 @@ export class SyncService implements OnModuleInit {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
-    private utils: Utils,
     private coreUnification: CoreUnification,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {

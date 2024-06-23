@@ -32,7 +32,9 @@ export class BenefitService {
     unifiedBenefitData: UnifiedBenefitInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedBenefitOutput[]> {
     return;
   }
@@ -56,7 +58,9 @@ export class BenefitService {
   async getBenefits(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedBenefitOutput[]> {
     return;
   }

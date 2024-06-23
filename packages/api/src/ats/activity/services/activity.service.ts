@@ -32,7 +32,9 @@ export class ActivityService {
     unifiedActivityData: UnifiedActivityInput,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedActivityOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

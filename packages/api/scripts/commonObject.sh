@@ -93,7 +93,9 @@ export class ${ObjectCap}Service {
     unified${ObjectCap}Data: Unified${ObjectCap}Input[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<Unified${ObjectCap}Output[]> {
     return;
   }
@@ -102,7 +104,9 @@ export class ${ObjectCap}Service {
     unified${ObjectCap}Data: Unified${ObjectCap}Input,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<Unified${ObjectCap}Output> {
         return;
   }
@@ -119,7 +123,9 @@ export class ${ObjectCap}Service {
   async get${ObjectCap}s(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<Unified${ObjectCap}Output[]> {
        return;
 

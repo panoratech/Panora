@@ -28,7 +28,9 @@ export class ListService {
     unifiedListData: UnifiedListInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedListOutput[]> {
     return;
   }
@@ -52,7 +54,9 @@ export class ListService {
   async getLists(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedListOutput[]> {
     return;
   }

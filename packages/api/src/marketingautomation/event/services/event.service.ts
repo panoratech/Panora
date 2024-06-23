@@ -28,7 +28,9 @@ export class EventService {
     unifiedEventData: UnifiedEventInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEventOutput[]> {
     return;
   }
@@ -52,7 +54,9 @@ export class EventService {
   async getEvents(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEventOutput[]> {
     return;
   }

@@ -32,7 +32,9 @@ export class ExpenseService {
     unifiedExpenseData: UnifiedExpenseInput,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedExpenseOutput> {
     return;
   }
@@ -47,7 +49,9 @@ export class ExpenseService {
   async getExpenses(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedExpenseOutput[]> {
     return;
   }

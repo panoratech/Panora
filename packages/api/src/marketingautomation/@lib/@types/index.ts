@@ -1,47 +1,39 @@
 import { IActionService } from '@marketingautomation/action/types';
-import { actionUnificationMapping } from '@marketingautomation/action/types/mappingsTypes';
 import {
   UnifiedActionInput,
   UnifiedActionOutput,
 } from '@marketingautomation/action/types/model.unified';
 import { IAutomationService } from '@marketingautomation/automation/types';
-import { automationUnificationMapping } from '@marketingautomation/automation/types/mappingsTypes';
 import {
   UnifiedAutomationInput,
   UnifiedAutomationOutput,
 } from '@marketingautomation/automation/types/model.unified';
 import { ICampaignService } from '@marketingautomation/campaign/types';
-import { campaignUnificationMapping } from '@marketingautomation/campaign/types/mappingsTypes';
 import {
   UnifiedCampaignInput,
   UnifiedCampaignOutput,
 } from '@marketingautomation/campaign/types/model.unified';
 import { IEmailService } from '@marketingautomation/email/types';
-import { emailUnificationMapping } from '@marketingautomation/email/types/mappingsTypes';
 import {
   UnifiedEmailInput,
   UnifiedEmailOutput,
 } from '@marketingautomation/email/types/model.unified';
 import { IEventService } from '@marketingautomation/event/types';
-import { eventUnificationMapping } from '@marketingautomation/event/types/mappingsTypes';
 import {
   UnifiedEventInput,
   UnifiedEventOutput,
 } from '@marketingautomation/event/types/model.unified';
 import { IListService } from '@marketingautomation/list/types';
-import { listUnificationMapping } from '@marketingautomation/list/types/mappingsTypes';
 import {
   UnifiedListInput,
   UnifiedListOutput,
 } from '@marketingautomation/list/types/model.unified';
 import { IMessageService } from '@marketingautomation/message/types';
-import { messageUnificationMapping } from '@marketingautomation/message/types/mappingsTypes';
 import {
   UnifiedMessageInput,
   UnifiedMessageOutput,
 } from '@marketingautomation/message/types/model.unified';
 import { ITemplateService } from '@marketingautomation/template/types';
-import { templateUnificationMapping } from '@marketingautomation/template/types/mappingsTypes';
 import {
   UnifiedTemplateInput,
   UnifiedTemplateOutput,

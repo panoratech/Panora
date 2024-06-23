@@ -85,7 +85,9 @@ export class RejectReasonService {
   async getRejectReasons(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedRejectReasonOutput[]> {
     try {
       const rejectReasons = await this.prisma.ats_reject_reasons.findMany({

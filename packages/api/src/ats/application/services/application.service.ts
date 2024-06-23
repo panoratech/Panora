@@ -32,7 +32,9 @@ export class ApplicationService {
     unifiedApplicationData: UnifiedApplicationInput,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedApplicationOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

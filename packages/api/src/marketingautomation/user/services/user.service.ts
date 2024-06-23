@@ -28,7 +28,9 @@ export class UserService {
     unifiedUserData: UnifiedUserInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedUserOutput[]> {
     return;
   }
@@ -52,7 +54,9 @@ export class UserService {
   async getUsers(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedUserOutput[]> {
     return;
   }

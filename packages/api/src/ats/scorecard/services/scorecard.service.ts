@@ -87,7 +87,9 @@ export class ScoreCardService {
   async getScoreCards(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedScoreCardOutput[]> {
     try {
       const scorecards = await this.prisma.ats_scorecards.findMany({

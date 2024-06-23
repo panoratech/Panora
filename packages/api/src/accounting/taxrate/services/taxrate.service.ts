@@ -38,7 +38,9 @@ export class TaxRateService {
   async getTaxRates(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTaxRateOutput[]> {
     return;
   }

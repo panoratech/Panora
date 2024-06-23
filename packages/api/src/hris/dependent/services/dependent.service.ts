@@ -32,7 +32,9 @@ export class DependentService {
     unifiedDependentData: UnifiedDependentInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedDependentOutput[]> {
     return;
   }
@@ -56,7 +58,9 @@ export class DependentService {
   async getDependents(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedDependentOutput[]> {
     return;
   }

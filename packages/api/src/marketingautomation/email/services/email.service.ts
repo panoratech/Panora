@@ -28,7 +28,9 @@ export class EmailService {
     unifiedEmailData: UnifiedEmailInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEmailOutput[]> {
     return;
   }
@@ -52,7 +54,9 @@ export class EmailService {
   async getEmails(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEmailOutput[]> {
     return;
   }

@@ -32,7 +32,9 @@ export class EmployeePayrollRunService {
     unifiedEmployeePayrollRunData: UnifiedEmployeePayrollRunInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEmployeePayrollRunOutput[]> {
     return;
   }
@@ -56,7 +58,9 @@ export class EmployeePayrollRunService {
   async getEmployeePayrollRuns(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEmployeePayrollRunOutput[]> {
     return;
   }

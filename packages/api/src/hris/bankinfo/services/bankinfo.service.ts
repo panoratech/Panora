@@ -29,7 +29,9 @@ export class BankInfoService {
     unifiedBankinfoData: UnifiedBankInfoInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedBankInfoOutput[]> {
     return;
   }
@@ -53,7 +55,9 @@ export class BankInfoService {
   async getBankinfos(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedBankInfoOutput[]> {
     return;
   }

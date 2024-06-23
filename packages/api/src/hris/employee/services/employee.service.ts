@@ -32,7 +32,9 @@ export class EmployeeService {
     unifiedEmployeeData: UnifiedEmployeeInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEmployeeOutput[]> {
     return;
   }
@@ -56,7 +58,9 @@ export class EmployeeService {
   async getEmployees(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedEmployeeOutput[]> {
     return;
   }

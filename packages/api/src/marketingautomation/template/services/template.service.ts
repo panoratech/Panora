@@ -31,7 +31,9 @@ export class TemplateService {
     unifiedTemplateData: UnifiedTemplateInput[],
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTemplateOutput[]> {
     return;
   }
@@ -55,7 +57,9 @@ export class TemplateService {
   async getTemplates(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedTemplateOutput[]> {
     return;
   }
