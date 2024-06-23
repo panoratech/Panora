@@ -123,10 +123,6 @@ export class CommentService {
           remote_id: true,
         },
       });
-      if (!ticket)
-        throw new ReferenceError(
-          'ticket does not exist for the comment you try to create',
-        );
       const resp: ApiResponse<OriginalCommentOutput> = await service.addComment(
         desunifiedObject,
         linkedUserId,
