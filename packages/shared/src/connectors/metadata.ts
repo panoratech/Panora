@@ -2713,7 +2713,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: '',
         urls: {
           docsUrl: 'https://developer.box.com/reference/',
-          apiUrl: 'https://api.box.com',
+          apiUrl: 'https://api.box.com/2.0',
           authBaseUrl: 'https://account.box.com/api/oauth2/authorize'
         },
         logoPath: 'https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/95b201e8-845a-4064-a9b2-a8eb49d19ca3.png?w=128&h=128&fit=max&dpr=3&auto=format&q=50',
