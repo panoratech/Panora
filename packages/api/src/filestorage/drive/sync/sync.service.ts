@@ -11,7 +11,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { ApiResponse } from '@@core/utils/types';
 import { IDriveService } from '../types';
-import { OriginalDriveOutput } from '@@core/utils/types/original/original.filestorage';
+import { OriginalDriveOutput } from '@@core/utils/types/original/original.file-storage';
 import { UnifiedDriveOutput } from '../types/model.unified';
 import { fs_drives as FileStorageDrive } from '@prisma/client';
 import { FILESTORAGE_PROVIDERS } from '@panora/shared';

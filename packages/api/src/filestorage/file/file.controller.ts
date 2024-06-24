@@ -121,6 +121,7 @@ export class FileController {
         unifiedFileData,
         remoteSource,
         linkedUserId,
+        remote_data,
       );
     } catch (error) {
       throw new Error(error);

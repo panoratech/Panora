@@ -31,9 +31,7 @@ export class FolderService {
     unifiedFolderData: UnifiedFolderInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedFolderOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
@@ -267,7 +265,7 @@ export class FolderService {
       const unifiedFolder: UnifiedFolderOutput = {
         id: folder.id_fs_folder,
         folder_url: folder.folder_url,
-        size: folder.size,
+        size: String(folder.size),
         name: folder.name,
         description: folder.description,
         parent_folder_id: folder.parent_folder,
@@ -386,7 +384,7 @@ export class FolderService {
           return {
             id: folder.id_fs_folder,
             folder_url: folder.folder_url,
-            size: folder.size,
+            size: String(folder.size),
             name: folder.name,
             description: folder.description,
             parent_folder_id: folder.parent_folder,

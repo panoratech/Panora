@@ -32,9 +32,7 @@ export class CandidateService {
     unifiedCandidateData: UnifiedCandidateInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedCandidateOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
@@ -299,9 +297,9 @@ export class CandidateService {
         last_name: candidate.last_name,
         company: candidate.company,
         title: candidate.title,
-        remote_created_at: candidate.remote_created_at,
-        remote_modified_at: candidate.remote_modified_at,
-        last_interaction_at: candidate.last_interaction_at,
+        remote_created_at: String(candidate.remote_created_at),
+        remote_modified_at: String(candidate.remote_modified_at),
+        last_interaction_at: String(candidate.last_interaction_at),
         is_private: candidate.is_private,
         email_reachable: candidate.email_reachable,
         locations: candidate.locations,
@@ -319,9 +317,7 @@ export class CandidateService {
           value: phone.value,
           type: phone.type,
         })),
-        tags: tags.map((tag) => ({
-          name: tag.name,
-        })),
+        tags: tags.map((tag) => tag.name),
         urls: urls.map((url) => ({
           value: url.value,
           type: url.type,
@@ -405,7 +401,7 @@ export class CandidateService {
             });
 
           const applications = await this.prisma.ats_applications.findMany({
-            where: { id_ats_candidate: id_ats_candidate },
+            where: { id_ats_candidate: candidate.id_ats_candidate },
           });
 
           const emailAddresses =
@@ -452,9 +448,9 @@ export class CandidateService {
             last_name: candidate.last_name,
             company: candidate.company,
             title: candidate.title,
-            remote_created_at: candidate.remote_created_at,
-            remote_modified_at: candidate.remote_modified_at,
-            last_interaction_at: candidate.last_interaction_at,
+            remote_created_at: String(candidate.remote_created_at),
+            remote_modified_at: String(candidate.remote_modified_at),
+            last_interaction_at: String(candidate.last_interaction_at),
             is_private: candidate.is_private,
             email_reachable: candidate.email_reachable,
             locations: candidate.locations,
@@ -472,9 +468,7 @@ export class CandidateService {
               value: phone.value,
               type: phone.type,
             })),
-            tags: tags.map((tag) => ({
-              name: tag.name,
-            })),
+            tags: tags.map((tag) => tag.name),
             urls: urls.map((url) => ({
               value: url.value,
               type: url.type,

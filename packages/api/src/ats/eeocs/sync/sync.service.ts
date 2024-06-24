@@ -148,7 +148,7 @@ export class SyncService implements OnModuleInit {
 
       const service: IEeocsService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalEeocsOutput[]> = await service.syncEeocs(
+      const resp: ApiResponse<OriginalEeocsOutput[]> = await service.syncEeocss(
         linkedUserId,
         remoteProperties,
       );

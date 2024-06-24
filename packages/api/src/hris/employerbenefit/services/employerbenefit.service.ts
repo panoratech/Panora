@@ -28,17 +28,6 @@ export class EmployerBenefitService {
     this.logger.setContext(EmployerBenefitService.name);
   }
 
-  async batchAddEmployerBenefits(
-    unifiedEmployerBenefitData: UnifiedEmployerBenefitInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedEmployerBenefitOutput[]> {
-    return;
-  }
-
   async addEmployerBenefit(
     unifiedEmployerBenefitData: UnifiedEmployerBenefitInput,
     integrationId: string,

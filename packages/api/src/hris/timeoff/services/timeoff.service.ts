@@ -28,17 +28,6 @@ export class TimeoffService {
     this.logger.setContext(TimeoffService.name);
   }
 
-  async batchAddTimeoffs(
-    unifiedTimeoffData: UnifiedTimeoffInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedTimeoffOutput[]> {
-    return;
-  }
-
   async addTimeoff(
     unifiedTimeoffData: UnifiedTimeoffInput,
     integrationId: string,

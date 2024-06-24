@@ -24,17 +24,6 @@ export class UserService {
     this.logger.setContext(UserService.name);
   }
 
-  async batchAddUsers(
-    unifiedUserData: UnifiedUserInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedUserOutput[]> {
-    return;
-  }
-
   async addUser(
     unifiedUserData: UnifiedUserInput,
     integrationId: string,

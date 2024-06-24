@@ -86,15 +86,6 @@ export class GitlabService implements ICommentService {
         },
       });
 
-      // const ticket = await this.prisma.tcg_tickets.findUnique({
-      //     where: {
-      //         id_tcg_ticket: remoteIdTicket,
-      //     },
-      //     select: {
-      //         collections: true
-      //     },
-      // });
-
       const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(
         ticket.collections[0],
       );

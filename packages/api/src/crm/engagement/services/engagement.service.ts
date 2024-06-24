@@ -33,9 +33,7 @@ export class EngagementService {
     unifiedEngagementData: UnifiedEngagementInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedEngagementOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

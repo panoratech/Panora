@@ -27,17 +27,6 @@ export class AutomationService {
     this.logger.setContext(AutomationService.name);
   }
 
-  async batchAddAutomations(
-    unifiedAutomationData: UnifiedAutomationInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedAutomationOutput[]> {
-    return;
-  }
-
   async addAutomation(
     unifiedAutomationData: UnifiedAutomationInput,
     integrationId: string,

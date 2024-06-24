@@ -34,9 +34,7 @@ export class ContactService {
     unifiedContactData: UnifiedContactInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedContactOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

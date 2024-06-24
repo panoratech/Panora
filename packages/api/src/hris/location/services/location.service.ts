@@ -28,17 +28,6 @@ export class LocationService {
     this.logger.setContext(LocationService.name);
   }
 
-  async batchAddLocations(
-    unifiedLocationData: UnifiedLocationInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedLocationOutput[]> {
-    return;
-  }
-
   async addLocation(
     unifiedLocationData: UnifiedLocationInput,
     integrationId: string,

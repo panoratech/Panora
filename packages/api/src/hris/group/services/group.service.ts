@@ -25,17 +25,6 @@ export class GroupService {
     this.logger.setContext(GroupService.name);
   }
 
-  async batchAddGroups(
-    unifiedGroupData: UnifiedGroupInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedGroupOutput[]> {
-    return;
-  }
-
   async addGroup(
     unifiedGroupData: UnifiedGroupInput,
     integrationId: string,

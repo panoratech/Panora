@@ -28,17 +28,6 @@ export class TimeoffBalanceService {
     this.logger.setContext(TimeoffBalanceService.name);
   }
 
-  async batchAddTimeoffBalances(
-    unifiedTimeoffBalanceData: UnifiedTimeoffBalanceInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedTimeoffBalanceOutput[]> {
-    return;
-  }
-
   async addTimeoffBalance(
     unifiedTimeoffBalanceData: UnifiedTimeoffBalanceInput,
     integrationId: string,

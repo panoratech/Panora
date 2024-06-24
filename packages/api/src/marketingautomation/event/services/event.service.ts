@@ -24,17 +24,6 @@ export class EventService {
     this.logger.setContext(EventService.name);
   }
 
-  async batchAddEvents(
-    unifiedEventData: UnifiedEventInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedEventOutput[]> {
-    return;
-  }
-
   async addEvent(
     unifiedEventData: UnifiedEventInput,
     integrationId: string,

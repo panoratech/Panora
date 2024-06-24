@@ -32,9 +32,7 @@ export class ActivityService {
     unifiedActivityData: UnifiedActivityInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedActivityOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
@@ -250,7 +248,7 @@ export class ActivityService {
         body: activity.body,
         visibility: activity.visibility,
         candidate_id: activity.id_ats_candidate,
-        remote_created_at: activity.remote_created_at,
+        remote_created_at: String(activity.remote_created_at),
         field_mappings: field_mappings,
         remote_id: activity.remote_id,
         created_at: activity.created_at,
@@ -349,7 +347,7 @@ export class ActivityService {
             body: activity.body,
             visibility: activity.visibility,
             candidate_id: activity.id_ats_candidate,
-            remote_created_at: activity.remote_created_at,
+            remote_created_at: String(activity.remote_created_at),
             field_mappings: field_mappings,
             remote_id: activity.remote_id,
             created_at: activity.created_at,

@@ -28,17 +28,6 @@ export class EmploymentService {
     this.logger.setContext(EmploymentService.name);
   }
 
-  async batchAddEmployments(
-    unifiedEmploymentData: UnifiedEmploymentInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedEmploymentOutput[]> {
-    return;
-  }
-
   async addEmployment(
     unifiedEmploymentData: UnifiedEmploymentInput,
     integrationId: string,

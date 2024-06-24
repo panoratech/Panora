@@ -27,17 +27,6 @@ export class CampaignService {
     this.logger.setContext(CampaignService.name);
   }
 
-  async batchAddCampaigns(
-    unifiedCampaignData: UnifiedCampaignInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedCampaignOutput[]> {
-    return;
-  }
-
   async addCampaign(
     unifiedCampaignData: UnifiedCampaignInput,
     integrationId: string,

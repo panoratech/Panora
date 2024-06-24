@@ -28,17 +28,6 @@ export class CompanyService {
     this.logger.setContext(CompanyService.name);
   }
 
-  async batchAddCompanys(
-    unifiedCompanyData: UnifiedCompanyInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedCompanyOutput[]> {
-    return;
-  }
-
   async addCompany(
     unifiedCompanyData: UnifiedCompanyInput,
     integrationId: string,

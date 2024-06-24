@@ -307,7 +307,6 @@ export class CoreSyncService {
 
   // todo: test behaviour
   async resync(vertical: string, user_id: string) {
-    // premium feature
     // trigger a resync for the vertical but only for linked_users who belong to user_id account
     const tasks = [];
     try {

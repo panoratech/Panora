@@ -27,17 +27,6 @@ export class TemplateService {
     this.logger.setContext(TemplateService.name);
   }
 
-  async batchAddTemplates(
-    unifiedTemplateData: UnifiedTemplateInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedTemplateOutput[]> {
-    return;
-  }
-
   async addTemplate(
     unifiedTemplateData: UnifiedTemplateInput,
     integrationId: string,

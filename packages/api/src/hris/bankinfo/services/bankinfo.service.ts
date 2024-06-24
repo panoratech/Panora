@@ -25,17 +25,6 @@ export class BankInfoService {
     this.logger.setContext(BankInfoService.name);
   }
 
-  async batchAddBankinfos(
-    unifiedBankinfoData: UnifiedBankInfoInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedBankInfoOutput[]> {
-    return;
-  }
-
   async addBankinfo(
     unifiedBankinfoData: UnifiedBankInfoInput,
     integrationId: string,

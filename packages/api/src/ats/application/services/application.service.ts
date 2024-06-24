@@ -32,9 +32,7 @@ export class ApplicationService {
     unifiedApplicationData: UnifiedApplicationInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedApplicationOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
@@ -260,8 +258,8 @@ export class ApplicationService {
 
       const unifiedApplication: UnifiedApplicationOutput = {
         id: application.id_ats_application,
-        applied_at: application.applied_at,
-        rejected_at: application.rejected_at,
+        applied_at: String(application.applied_at),
+        rejected_at: String(application.rejected_at),
         offers: application.offers,
         source: application.source,
         credited_to: application.credited_to,
@@ -364,8 +362,8 @@ export class ApplicationService {
 
           return {
             id: application.id_ats_application,
-            applied_at: application.applied_at,
-            rejected_at: application.rejected_at,
+            applied_at: String(application.applied_at),
+            rejected_at: String(application.rejected_at),
             offers: application.offers,
             source: application.source,
             credited_to: application.credited_to,

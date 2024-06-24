@@ -59,7 +59,13 @@ export class UserController {
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
+      return this.userService.getUsers(
+        remoteSource,
+        linkedUserId,
+        limit,
+        remote_data,
+        cursor,
+      );
     } catch (error) {
       throw new Error(error);
     }

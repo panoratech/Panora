@@ -28,17 +28,6 @@ export class PayrollRunService {
     this.logger.setContext(PayrollRunService.name);
   }
 
-  async batchAddPayrollRuns(
-    unifiedPayrollRunData: UnifiedPayrollRunInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedPayrollRunOutput[]> {
-    return;
-  }
-
   async addPayrollRun(
     unifiedPayrollRunData: UnifiedPayrollRunInput,
     integrationId: string,

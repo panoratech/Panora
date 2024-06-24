@@ -49,7 +49,7 @@ export class UserController {
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.permissionService.getUsers(
+      return await this.permissionService.getUsers(
         remoteSource,
         linkedUserId,
         limit,

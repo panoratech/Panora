@@ -24,17 +24,6 @@ export class EmailService {
     this.logger.setContext(EmailService.name);
   }
 
-  async batchAddEmails(
-    unifiedEmailData: UnifiedEmailInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedEmailOutput[]> {
-    return;
-  }
-
   async addEmail(
     unifiedEmailData: UnifiedEmailInput,
     integrationId: string,

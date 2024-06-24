@@ -18,32 +18,6 @@ export class AttachmentService {
     this.logger.setContext(AttachmentService.name);
   }
 
-  async batchAddAttachments(
-    unifiedAttachmentData: UnifiedAttachmentInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedAttachmentOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedAttachmentData.map((unifiedData) =>
-          this.addAttachment(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async addAttachment(
     unifiedAttachmentData: UnifiedAttachmentInput,
     integrationId: string,

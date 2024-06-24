@@ -89,24 +89,12 @@ export class ${ObjectCap}Service {
     this.logger.setContext(${ObjectCap}Service.name);
   }
 
-  async batchAdd${ObjectCap}s(
-    unified${ObjectCap}Data: Unified${ObjectCap}Input[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<Unified${ObjectCap}Output[]> {
-    return;
-  }
 
   async add${ObjectCap}(
     unified${ObjectCap}Data: Unified${ObjectCap}Input,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
+        remote_data?: boolean,
   ): Promise<Unified${ObjectCap}Output> {
         return;
   }

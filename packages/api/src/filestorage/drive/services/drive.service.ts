@@ -48,7 +48,7 @@ export class DriveService {
       // Transform to UnifiedContactInput format
       const unifiedDrive: UnifiedDriveOutput = {
         id: drive.id_fs_drive,
-        remote_created_at: drive.remote_created_at,
+        remote_created_at: String(drive.remote_created_at),
         name: drive.name,
         drive_url: drive.drive_url,
         field_mappings: field_mappings,
@@ -139,7 +139,7 @@ export class DriveService {
           const values = await this.prisma.value.findMany({
             where: {
               entity: {
-                ressource_owner_id: drive.id_crm_drive,
+                ressource_owner_id: drive.id_fs_drive,
               },
             },
             include: {
@@ -166,7 +166,7 @@ export class DriveService {
             id: drive.id_fs_drive,
             drive_url: drive.drive_url,
             name: drive.name,
-            remote_created_at: drive.remote_created_at,
+            remote_created_at: String(drive.remote_created_at),
             field_mappings: field_mappings,
             remote_id: drive.remote_id,
             created_at: drive.created_at,

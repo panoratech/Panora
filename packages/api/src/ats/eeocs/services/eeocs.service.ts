@@ -53,7 +53,7 @@ export class EeocsService {
       const unifiedEeocs: UnifiedEeocsOutput = {
         id: eeocs.id_ats_eeoc,
         candidate_id: eeocs.id_ats_candidate,
-        submitted_at: eeocs.submitted_at,
+        submitted_at: String(eeocs.submitted_at),
         race: eeocs.race,
         gender: eeocs.gender,
         veteran_status: eeocs.veteran_status,
@@ -133,7 +133,7 @@ export class EeocsService {
           return {
             id: eeocs.id_ats_eeoc,
             candidate_id: eeocs.id_ats_candidate,
-            submitted_at: eeocs.submitted_at,
+            submitted_at: String(eeocs.submitted_at),
             race: eeocs.race,
             gender: eeocs.gender,
             veteran_status: eeocs.veteran_status,

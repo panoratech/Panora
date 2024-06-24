@@ -62,7 +62,7 @@ export class ActivityController {
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.activityService.getActivitys(
+      return this.activityService.getActivities(
         remoteSource,
         linkedUserId,
         limit,

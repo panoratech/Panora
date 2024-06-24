@@ -28,17 +28,6 @@ export class BenefitService {
     this.logger.setContext(BenefitService.name);
   }
 
-  async batchAddBenefits(
-    unifiedBenefitData: UnifiedBenefitInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedBenefitOutput[]> {
-    return;
-  }
-
   async addBenefit(
     unifiedBenefitData: UnifiedBenefitInput,
     integrationId: string,

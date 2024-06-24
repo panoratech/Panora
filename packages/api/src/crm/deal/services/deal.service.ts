@@ -30,9 +30,7 @@ export class DealService {
     unifiedDealData: UnifiedDealInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedDealOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

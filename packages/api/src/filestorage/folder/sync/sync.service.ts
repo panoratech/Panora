@@ -11,7 +11,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { ApiResponse } from '@@core/utils/types';
 import { IFolderService } from '../types';
-import { OriginalFolderOutput } from '@@core/utils/types/original/original.filestorage';
+import { OriginalFolderOutput } from '@@core/utils/types/original/original.file-storage';
 import { UnifiedFolderOutput } from '../types/model.unified';
 import { fs_folders as FileStorageFolder } from '@prisma/client';
 import { FILESTORAGE_PROVIDERS } from '@panora/shared';

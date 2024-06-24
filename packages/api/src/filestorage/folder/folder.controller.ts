@@ -121,6 +121,7 @@ export class FolderController {
         unifiedFolderData,
         remoteSource,
         linkedUserId,
+        remote_data,
       );
     } catch (error) {
       throw new Error(error);

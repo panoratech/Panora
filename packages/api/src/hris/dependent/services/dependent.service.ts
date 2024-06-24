@@ -28,17 +28,6 @@ export class DependentService {
     this.logger.setContext(DependentService.name);
   }
 
-  async batchAddDependents(
-    unifiedDependentData: UnifiedDependentInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedDependentOutput[]> {
-    return;
-  }
-
   async addDependent(
     unifiedDependentData: UnifiedDependentInput,
     integrationId: string,

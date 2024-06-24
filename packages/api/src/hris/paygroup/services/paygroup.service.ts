@@ -28,17 +28,6 @@ export class PayGroupService {
     this.logger.setContext(PayGroupService.name);
   }
 
-  async batchAddPayGroups(
-    unifiedPayGroupData: UnifiedPayGroupInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedPayGroupOutput[]> {
-    return;
-  }
-
   async addPayGroup(
     unifiedPayGroupData: UnifiedPayGroupInput,
     integrationId: string,

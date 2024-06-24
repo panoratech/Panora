@@ -11,7 +11,7 @@ import {
 import { Response } from 'express';
 import { CrmConnectionsService } from './crm/services/crm.connection.service';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
+import { ConnectionsError } from '@@core/utils/errors';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import {
   ApiBody,
@@ -216,8 +216,7 @@ export class ConnectionsController {
         });
       }
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
-      const { projectId, vertical, linkedUserId, providerName, returnUrl } =
-        stateData;
+      const { projectId, vertical, linkedUserId, providerName } = stateData;
       const { apikey, ...body_data } = body;
       switch (vertical.toLowerCase()) {
         case ConnectorCategory.Crm:
@@ -305,9 +304,6 @@ export class ConnectionsController {
           );
           break;
       }
-
-      res.redirect(returnUrl);
-
       /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
@@ -336,7 +332,6 @@ export class ConnectionsController {
   async list(@Request() req: any) {
     try {
       const { id_project } = req.user;
-      console.log('Req data is:', req.user);
       return await this.prisma.connections.findMany({
         where: {
           id_project: id_project,

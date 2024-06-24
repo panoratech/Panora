@@ -67,7 +67,7 @@ export class ContactController {
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.contactService.getContacts(
+      return await this.contactService.getContacts(
         remoteSource,
         linkedUserId,
         limit,

@@ -27,17 +27,6 @@ export class MessageService {
     this.logger.setContext(MessageService.name);
   }
 
-  async batchAddMessages(
-    unifiedMessageData: UnifiedMessageInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedMessageOutput[]> {
-    return;
-  }
-
   async addMessage(
     unifiedMessageData: UnifiedMessageInput,
     integrationId: string,

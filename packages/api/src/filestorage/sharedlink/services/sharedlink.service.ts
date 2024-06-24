@@ -31,9 +31,7 @@ export class SharedLinkService {
     unifiedSharedlinkData: UnifiedSharedLinkInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedSharedLinkOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
@@ -66,7 +64,7 @@ export class SharedLinkService {
 
       const service = this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalSharedLinkOutput> =
-        await service.addSharedlink(desunifiedObject, linkedUserId);
+        await service.addSharedLink(desunifiedObject, linkedUserId);
 
       const unifiedObject = (await this.coreUnification.unify<
         OriginalSharedLinkOutput[]

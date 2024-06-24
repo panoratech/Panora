@@ -24,17 +24,6 @@ export class ListService {
     this.logger.setContext(ListService.name);
   }
 
-  async batchAddLists(
-    unifiedListData: UnifiedListInput[],
-    integrationId: string,
-    linkedUserId: string,
-    limit: number,
-    remote_data?: boolean,
-    cursor?: string,
-  ): Promise<UnifiedListOutput[]> {
-    return;
-  }
-
   async addList(
     unifiedListData: UnifiedListInput,
     integrationId: string,

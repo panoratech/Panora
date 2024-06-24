@@ -34,9 +34,7 @@ export class CompanyService {
     unifiedCompanyData: UnifiedCompanyInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedCompanyOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({

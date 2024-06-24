@@ -32,9 +32,7 @@ export class ScreeningQuestionService {
     unifiedScreeningQuestionData: UnifiedScreeningQuestionInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedScreeningQuestionOutput> {
     return;
   }

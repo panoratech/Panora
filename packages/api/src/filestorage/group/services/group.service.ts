@@ -130,7 +130,7 @@ export class GroupService {
           return {
             id: group.id_fs_group,
             name: group.name,
-            users: group.users,
+            users: group.users as string[],
             remote_was_deleted: group.remote_was_deleted,
             field_mappings: field_mappings,
             remote_id: group.remote_id,

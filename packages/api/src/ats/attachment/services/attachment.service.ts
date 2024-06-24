@@ -32,9 +32,7 @@ export class AttachmentService {
     unifiedAttachmentData: UnifiedAttachmentInput,
     integrationId: string,
     linkedUserId: string,
-    limit: number,
     remote_data?: boolean,
-    cursor?: string,
   ): Promise<UnifiedAttachmentOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
@@ -261,8 +259,8 @@ export class AttachmentService {
         file_url: attachment.file_url,
         file_name: attachment.file_name,
         file_type: attachment.file_type,
-        remote_created_at: attachment.remote_created_at,
-        remote_modified_at: attachment.remote_modified_at,
+        remote_created_at: String(attachment.remote_created_at),
+        remote_modified_at: String(attachment.remote_modified_at),
         candidate_id: attachment.id_ats_candidate,
         field_mappings: field_mappings,
         remote_id: attachment.remote_id,
@@ -365,8 +363,8 @@ export class AttachmentService {
             file_url: attachment.file_url,
             file_name: attachment.file_name,
             file_type: attachment.file_type,
-            remote_created_at: attachment.remote_created_at,
-            remote_modified_at: attachment.remote_modified_at,
+            remote_created_at: String(attachment.remote_created_at),
+            remote_modified_at: String(attachment.remote_modified_at),
             candidate_id: attachment.id_ats_candidate,
             field_mappings: field_mappings,
             remote_id: attachment.remote_id,

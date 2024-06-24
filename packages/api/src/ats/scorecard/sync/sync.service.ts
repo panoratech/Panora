@@ -13,7 +13,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IScoreCardService } from '../types';
 import { OriginalScoreCardOutput } from '@@core/utils/types/original/original.ats';
 import { UnifiedScoreCardOutput } from '../types/model.unified';
-import { ats_score_cards as AtsScoreCard } from '@prisma/client';
+import { ats_scorecards as AtsScoreCard } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
 
@@ -211,7 +211,7 @@ export class SyncService implements OnModuleInit {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingScoreCard = await this.prisma.ats_score_cards.findFirst({
+        const existingScoreCard = await this.prisma.ats_scorecards.findFirst({
           where: {
             remote_id: originId,
             remote_platform: originSource,
@@ -244,13 +244,13 @@ export class SyncService implements OnModuleInit {
           if (scoreCard.submitted_at) {
             data = { ...data, submitted_at: scoreCard.submitted_at };
           }
-          const res = await this.prisma.ats_score_cards.update({
+          const res = await this.prisma.ats_scorecards.update({
             where: {
-              id_ats_score_card: existingScoreCard.id_ats_score_card,
+              id_ats_scorecard: existingScoreCard.id_ats_scorecard,
             },
             data: data,
           });
-          unique_ats_score_card_id = res.id_ats_score_card;
+          unique_ats_score_card_id = res.id_ats_scorecard;
           scoreCards_results = [...scoreCards_results, res];
         } else {
           // Create a new score card
@@ -284,11 +284,11 @@ export class SyncService implements OnModuleInit {
             data = { ...data, submitted_at: scoreCard.submitted_at };
           }
 
-          const newScoreCard = await this.prisma.ats_score_cards.create({
+          const newScoreCard = await this.prisma.ats_scorecards.create({
             data: data,
           });
 
-          unique_ats_score_card_id = newScoreCard.id_ats_score_card;
+          unique_ats_score_card_id = newScoreCard.id_ats_scorecard;
           scoreCards_results = [...scoreCards_results, newScoreCard];
         }
 
