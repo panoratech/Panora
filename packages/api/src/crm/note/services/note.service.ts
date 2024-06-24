@@ -28,6 +28,7 @@ export class NoteService {
 
   async addNote(
     unifiedNoteData: UnifiedNoteInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -132,8 +133,7 @@ export class NoteService {
       const existingNote = await this.prisma.crm_notes.findFirst({
         where: {
           remote_id: target_note.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -174,9 +174,8 @@ export class NoteService {
           id_crm_note: uuidv4(),
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_note.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
         if (target_note.content) {
           data = { ...data, content: target_note.content };
@@ -321,6 +320,7 @@ export class NoteService {
   }
 
   async getNotes(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -338,8 +338,7 @@ export class NoteService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_notes.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_note: cursor,
           },
         });
@@ -359,8 +358,7 @@ export class NoteService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

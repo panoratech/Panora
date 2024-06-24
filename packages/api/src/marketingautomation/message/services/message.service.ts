@@ -27,15 +27,6 @@ export class MessageService {
     this.logger.setContext(MessageService.name);
   }
 
-  async addMessage(
-    unifiedMessageData: UnifiedMessageInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedMessageOutput> {
-    return;
-  }
-
   async getMessage(
     id_messageing_message: string,
     remote_data?: boolean,
@@ -44,6 +35,7 @@ export class MessageService {
   }
 
   async getMessages(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

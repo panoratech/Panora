@@ -56,12 +56,13 @@ export class BankinfoController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.bankinfoService.getBankinfos(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -98,47 +99,5 @@ export class BankinfoController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     return this.bankinfoService.getBankinfo(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'create',
-    summary: 'Create a Bankinfo',
-    description: 'Create a bankinfo in any supported Hris software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedBankInfoInput })
-  @ApiCustomResponse(UnifiedBankInfoOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async create(
-    @Body() unifiedBankinfoData: UnifiedBankInfoInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.bankinfoService.addBankinfo(
-        unifiedBankinfoData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
   }
 }

@@ -168,6 +168,7 @@ export class SyncService implements OnModuleInit {
 
       // insert the data in the DB with the fieldMappings (value table)
       const files_data = await this.saveFilesInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -198,6 +199,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveFilesInDb(
+    connection_id: string,
     linkedUserId: string,
     files: UnifiedFileOutput[],
     originSource: string,
@@ -216,8 +218,7 @@ export class SyncService implements OnModuleInit {
         const existingFile = await this.prisma.fs_files.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -265,9 +266,8 @@ export class SyncService implements OnModuleInit {
             id_fs_file: uuid,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (file.name) {

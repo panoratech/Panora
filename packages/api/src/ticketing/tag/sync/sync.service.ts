@@ -95,11 +95,16 @@ export class SyncService implements OnModuleInit {
                 const providers = TICKETING_PROVIDERS;
                 for (const provider of providers) {
                   try {
+                    const connection = await this.prisma.connections.findFirst({
+                      where: {
+                        id_linked_user: linkedUser.id_linked_user,
+                        provider_slug: provider.toLowerCase(),
+                      },
+                    });
                     //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
                     const tickets = await this.prisma.tcg_tickets.findMany({
                       where: {
-                        remote_platform: provider,
-                        id_linked_user: linkedUser.id_linked_user,
+                        id_connection: connection.id_connection,
                       },
                     });
                     for (const ticket of tickets) {
@@ -188,6 +193,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const tag_data = await this.saveTagsInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -219,6 +225,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveTagsInDb(
+    connection_id: string,
     linkedUserId: string,
     tags: UnifiedTagOutput[],
     originSource: string,
@@ -238,8 +245,7 @@ export class SyncService implements OnModuleInit {
         const existingTag = await this.prisma.tcg_tags.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -268,9 +274,8 @@ export class SyncService implements OnModuleInit {
             created_at: new Date(),
             modified_at: new Date(),
             id_tcg_ticket: id_ticket,
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
           const res = await this.prisma.tcg_tags.create({
             data: data,

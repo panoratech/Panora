@@ -28,15 +28,6 @@ export class LocationService {
     this.logger.setContext(LocationService.name);
   }
 
-  async addLocation(
-    unifiedLocationData: UnifiedLocationInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedLocationOutput> {
-    return;
-  }
-
   async getLocation(
     id_locationing_location: string,
     remote_data?: boolean,
@@ -45,6 +36,7 @@ export class LocationService {
   }
 
   async getLocations(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

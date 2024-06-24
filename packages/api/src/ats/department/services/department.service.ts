@@ -81,6 +81,7 @@ export class DepartmentService {
   }
 
   async getDepartments(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -90,8 +91,7 @@ export class DepartmentService {
     try {
       const departments = await this.prisma.ats_departments.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

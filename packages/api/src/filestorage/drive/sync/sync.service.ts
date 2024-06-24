@@ -168,6 +168,7 @@ export class SyncService implements OnModuleInit {
 
       // insert the data in the DB with the fieldMappings (value table)
       const drives_data = await this.saveDrivesInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -198,6 +199,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveDrivesInDb(
+    connection_id: string,
     linkedUserId: string,
     drives: UnifiedDriveOutput[],
     originSource: string,
@@ -216,8 +218,7 @@ export class SyncService implements OnModuleInit {
         const existingDrive = await this.prisma.fs_drives.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -253,9 +254,8 @@ export class SyncService implements OnModuleInit {
             id_fs_drive: uuid,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (drive.name) {

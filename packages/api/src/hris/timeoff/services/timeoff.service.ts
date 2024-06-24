@@ -30,6 +30,7 @@ export class TimeoffService {
 
   async addTimeoff(
     unifiedTimeoffData: UnifiedTimeoffInput,
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -45,6 +46,7 @@ export class TimeoffService {
   }
 
   async getTimeoffs(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

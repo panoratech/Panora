@@ -216,8 +216,7 @@ export class SyncService implements OnModuleInit {
         const existingJob = await this.prisma.ats_jobs.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -280,9 +279,8 @@ export class SyncService implements OnModuleInit {
             id_ats_job: uuid,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (job.name) {

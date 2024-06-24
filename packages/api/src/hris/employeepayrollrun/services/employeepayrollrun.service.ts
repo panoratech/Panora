@@ -27,16 +27,6 @@ export class EmployeePayrollRunService {
   ) {
     this.logger.setContext(EmployeePayrollRunService.name);
   }
-
-  async addEmployeePayrollRun(
-    unifiedEmployeePayrollRunData: UnifiedEmployeePayrollRunInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedEmployeePayrollRunOutput> {
-    return;
-  }
-
   async getEmployeePayrollRun(
     id_employeepayrollruning_employeepayrollrun: string,
     remote_data?: boolean,
@@ -45,6 +35,7 @@ export class EmployeePayrollRunService {
   }
 
   async getEmployeePayrollRuns(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

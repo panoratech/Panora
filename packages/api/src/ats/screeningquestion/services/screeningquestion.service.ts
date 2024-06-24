@@ -45,6 +45,7 @@ export class ScreeningQuestionService {
   }
 
   async getScreeningQuestions(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -57,12 +57,13 @@ export class AttachmentController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.attachmentService.getAttachments(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -128,12 +129,13 @@ export class AttachmentController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.attachmentService.addAttachment(
         unifiedAttachmentData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

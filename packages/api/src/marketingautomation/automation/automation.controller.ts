@@ -57,12 +57,13 @@ export class AutomationController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.automationService.getAutomations(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -132,12 +133,13 @@ export class AutomationController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.automationService.addAutomation(
         unifiedAutomationData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

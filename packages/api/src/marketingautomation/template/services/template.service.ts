@@ -29,6 +29,7 @@ export class TemplateService {
 
   async addTemplate(
     unifiedTemplateData: UnifiedTemplateInput,
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -44,6 +45,7 @@ export class TemplateService {
   }
 
   async getTemplates(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

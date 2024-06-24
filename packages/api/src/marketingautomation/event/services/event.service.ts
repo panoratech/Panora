@@ -24,15 +24,6 @@ export class EventService {
     this.logger.setContext(EventService.name);
   }
 
-  async addEvent(
-    unifiedEventData: UnifiedEventInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedEventOutput> {
-    return;
-  }
-
   async getEvent(
     id_eventing_event: string,
     remote_data?: boolean,
@@ -41,6 +32,7 @@ export class EventService {
   }
 
   async getEvents(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

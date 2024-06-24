@@ -30,6 +30,7 @@ export class TicketService {
 
   async addTicket(
     unifiedTicketData: UnifiedTicketInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -133,8 +134,7 @@ export class TicketService {
       const existingTicket = await this.prisma.tcg_tickets.findFirst({
         where: {
           remote_id: target_ticket.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -188,9 +188,8 @@ export class TicketService {
           id_tcg_ticket: uuidv4(),
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_ticket.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
         if (target_ticket.name) {
           data = { ...data, name: target_ticket.name };
@@ -398,6 +397,7 @@ export class TicketService {
   }
 
   async getTickets(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -417,8 +417,7 @@ export class TicketService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_tickets.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_ticket: cursor,
           },
         });
@@ -438,8 +437,7 @@ export class TicketService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
         /* TODO: only if params 
         include: {

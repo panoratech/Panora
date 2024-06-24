@@ -214,8 +214,7 @@ export class SyncService implements OnModuleInit {
         const existingAttachment = await this.prisma.ats_attachments.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -263,9 +262,8 @@ export class SyncService implements OnModuleInit {
             id_ats_attachment: uuid,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (attachment.file_url) {

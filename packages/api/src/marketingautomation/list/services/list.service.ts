@@ -26,6 +26,7 @@ export class ListService {
 
   async addList(
     unifiedListData: UnifiedListInput,
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -41,6 +42,7 @@ export class ListService {
   }
 
   async getLists(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

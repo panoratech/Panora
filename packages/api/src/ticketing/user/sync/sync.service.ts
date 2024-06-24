@@ -169,8 +169,7 @@ export class SyncService implements OnModuleInit {
         switch (wh_real_time_trigger.action) {
           case 'DELETE':
             return await this.removeUserInDb(
-              linkedUserId,
-              integrationId,
+              connection.id_connection,
               wh_real_time_trigger.data.remote_id,
             );
           default:
@@ -205,6 +204,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const user_data = await this.saveUsersInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -235,6 +235,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveUsersInDb(
+    connection_id: string,
     linkedUserId: string,
     users: UnifiedUserOutput[],
     originSource: string,
@@ -253,8 +254,7 @@ export class SyncService implements OnModuleInit {
         const existingUser = await this.prisma.tcg_users.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -286,10 +286,9 @@ export class SyncService implements OnModuleInit {
             teams: user.teams || [],
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             // id_tcg_account: user.account_id || '',
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           // console.log("Tcg user Data: ", data)
@@ -363,16 +362,11 @@ export class SyncService implements OnModuleInit {
     }
   }
 
-  async removeUserInDb(
-    linkedUserId: string,
-    originSource: string,
-    remote_id: string,
-  ) {
+  async removeUserInDb(connection_id: string, remote_id: string) {
     const existingUser = await this.prisma.tcg_users.findFirst({
       where: {
         remote_id: remote_id,
-        remote_platform: originSource,
-        id_linked_user: linkedUserId,
+        id_connection: connection_id,
       },
     });
     await this.prisma.tcg_users.delete({

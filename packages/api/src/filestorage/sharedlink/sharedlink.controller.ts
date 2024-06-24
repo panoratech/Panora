@@ -55,12 +55,13 @@ export class SharedlinkController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.sharedlinkService.getSharedlinks(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -115,12 +116,13 @@ export class SharedlinkController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.sharedlinkService.addSharedlink(
         unifiedSharedlinkData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

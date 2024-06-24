@@ -216,8 +216,7 @@ export class SyncService implements OnModuleInit {
         const existingOffer = await this.prisma.ats_offers.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -267,7 +266,7 @@ export class SyncService implements OnModuleInit {
             modified_at: new Date(),
             id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (offer.created_by) {

@@ -32,6 +32,7 @@ export class CompanyService {
 
   async addCompany(
     unifiedCompanyData: UnifiedCompanyInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -96,8 +97,7 @@ export class CompanyService {
       const existingCompany = await this.prisma.crm_companies.findFirst({
         where: {
           remote_id: target_company.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
         include: {
           crm_email_addresses: true,
@@ -229,9 +229,8 @@ export class CompanyService {
           id_crm_company: uuid,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_company.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         if (target_company.name) {
@@ -434,6 +433,7 @@ export class CompanyService {
   }
 
   async getCompanies(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -451,8 +451,7 @@ export class CompanyService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_companies.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_company: cursor,
           },
         });
@@ -472,8 +471,7 @@ export class CompanyService {
           modified_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
         include: {
           crm_email_addresses: true,

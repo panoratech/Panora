@@ -173,6 +173,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const notes_data = await this.saveNotesInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -203,6 +204,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveNotesInDb(
+    connection_id: string,
     linkedUserId: string,
     notes: UnifiedNoteOutput[],
     originSource: string,
@@ -221,8 +223,7 @@ export class SyncService implements OnModuleInit {
         const existingNote = await this.prisma.crm_notes.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -264,9 +265,8 @@ export class SyncService implements OnModuleInit {
             id_crm_note: uuidv4(),
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
           if (note.content) {
             data = { ...data, content: note.content };

@@ -217,8 +217,7 @@ export class SyncService implements OnModuleInit {
         const existingActivity = await this.prisma.ats_activities.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -263,9 +262,8 @@ export class SyncService implements OnModuleInit {
             id_ats_activity: uuid,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (activity.activity_type) {

@@ -28,15 +28,6 @@ export class PayGroupService {
     this.logger.setContext(PayGroupService.name);
   }
 
-  async addPayGroup(
-    unifiedPayGroupData: UnifiedPayGroupInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedPayGroupOutput> {
-    return;
-  }
-
   async getPayGroup(
     id_paygrouping_paygroup: string,
     remote_data?: boolean,
@@ -45,6 +36,7 @@ export class PayGroupService {
   }
 
   async getPayGroups(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

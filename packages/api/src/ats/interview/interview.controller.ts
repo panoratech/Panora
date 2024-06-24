@@ -57,12 +57,13 @@ export class InterviewController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.interviewService.getInterviews(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -122,12 +123,13 @@ export class InterviewController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.interviewService.addInterview(
         unifiedInterviewData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

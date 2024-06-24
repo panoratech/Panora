@@ -61,12 +61,13 @@ export class CommentController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.commentService.getComments(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -134,12 +135,13 @@ export class CommentController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.commentService.addComment(
         unfiedCommentData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

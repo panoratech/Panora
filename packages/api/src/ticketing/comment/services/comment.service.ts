@@ -28,6 +28,7 @@ export class CommentService {
 
   async addComment(
     unifiedCommentData: UnifiedCommentInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -147,8 +148,7 @@ export class CommentService {
       const existingComment = await this.prisma.tcg_comments.findFirst({
         where: {
           remote_id: target_comment.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -199,9 +199,8 @@ export class CommentService {
           created_at: new Date(),
           modified_at: new Date(),
           id_tcg_ticket: unifiedCommentData.ticket_id,
-          id_linked_user: linkedUserId,
           remote_id: target_comment.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         if (target_comment.body) {
@@ -354,6 +353,7 @@ export class CommentService {
   //TODO: return attachments if specified in param
 
   async getComments(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -371,8 +371,7 @@ export class CommentService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_comments.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_comment: cursor,
           },
         });
@@ -392,8 +391,7 @@ export class CommentService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

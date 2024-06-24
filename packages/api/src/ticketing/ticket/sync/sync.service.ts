@@ -198,6 +198,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const tickets_data = await this.saveTicketsInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -230,6 +231,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveTicketsInDb(
+    connection_id: string,
     linkedUserId: string,
     tickets: UnifiedTicketOutput[],
     originSource: string,
@@ -248,8 +250,7 @@ export class SyncService implements OnModuleInit {
         const existingTicket = await this.prisma.tcg_tickets.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -303,9 +304,8 @@ export class SyncService implements OnModuleInit {
             id_tcg_ticket: uuidv4(),
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
           if (ticket.name) {
             data = { ...data, name: ticket.name };
@@ -415,8 +415,7 @@ export class SyncService implements OnModuleInit {
     const existingTicket = await this.prisma.tcg_tickets.findFirst({
       where: {
         remote_id: remote_id,
-        remote_platform: originSource,
-        id_linked_user: linkedUserId,
+        id_connection: connection_id,
       },
     });
     await this.prisma.tcg_tickets.delete({

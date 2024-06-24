@@ -29,6 +29,7 @@ export class CampaignService {
 
   async addCampaign(
     unifiedCampaignData: UnifiedCampaignInput,
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -44,6 +45,7 @@ export class CampaignService {
   }
 
   async getCampaigns(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

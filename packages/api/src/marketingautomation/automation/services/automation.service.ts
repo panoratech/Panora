@@ -29,6 +29,7 @@ export class AutomationService {
 
   async addAutomation(
     unifiedAutomationData: UnifiedAutomationInput,
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -44,6 +45,7 @@ export class AutomationService {
   }
 
   async getAutomations(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

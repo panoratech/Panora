@@ -166,6 +166,7 @@ export class SyncService implements OnModuleInit {
 
       // insert the data in the DB with the fieldMappings (value table)
       const folders_data = await this.saveFoldersInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -196,6 +197,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveFoldersInDb(
+    connection_id: string,
     linkedUserId: string,
     folders: UnifiedFolderOutput[],
     originSource: string,
@@ -214,8 +216,7 @@ export class SyncService implements OnModuleInit {
         const existingFolder = await this.prisma.fs_folders.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -263,9 +264,8 @@ export class SyncService implements OnModuleInit {
             id_fs_folder: uuid,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (folder.name) {

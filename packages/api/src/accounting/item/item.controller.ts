@@ -54,12 +54,13 @@ export class ItemController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.itemService.getItems(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,

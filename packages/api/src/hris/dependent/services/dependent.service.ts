@@ -28,15 +28,6 @@ export class DependentService {
     this.logger.setContext(DependentService.name);
   }
 
-  async addDependent(
-    unifiedDependentData: UnifiedDependentInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedDependentOutput> {
-    return;
-  }
-
   async getDependent(
     id_dependenting_dependent: string,
     remote_data?: boolean,
@@ -45,6 +36,7 @@ export class DependentService {
   }
 
   async getDependents(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

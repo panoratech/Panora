@@ -36,6 +36,7 @@ export class PhoneNumberService {
   }
 
   async getPhoneNumbers(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

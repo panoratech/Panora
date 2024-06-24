@@ -28,15 +28,6 @@ export class EmploymentService {
     this.logger.setContext(EmploymentService.name);
   }
 
-  async addEmployment(
-    unifiedEmploymentData: UnifiedEmploymentInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedEmploymentOutput> {
-    return;
-  }
-
   async getEmployment(
     id_employmenting_employment: string,
     remote_data?: boolean,
@@ -45,6 +36,7 @@ export class EmploymentService {
   }
 
   async getEmployments(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

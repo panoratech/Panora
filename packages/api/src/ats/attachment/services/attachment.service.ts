@@ -30,6 +30,7 @@ export class AttachmentService {
 
   async addAttachment(
     unifiedAttachmentData: UnifiedAttachmentInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -82,8 +83,7 @@ export class AttachmentService {
         await this.prisma.ats_candidate_attachments.findFirst({
           where: {
             remote_id: target_attachment.remote_id,
-            remote_platform: integrationId,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -118,9 +118,8 @@ export class AttachmentService {
           remote_modified_at: target_attachment.remote_modified_at,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_attachment.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const newAttachment =
@@ -288,6 +287,7 @@ export class AttachmentService {
   }
 
   async getAttachments(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -306,8 +306,7 @@ export class AttachmentService {
         const isCursorPresent =
           await this.prisma.ats_candidate_attachments.findFirst({
             where: {
-              remote_platform: integrationId.toLowerCase(),
-              id_linked_user: linkedUserId,
+              id_connection: connection_id,
               id_ats_candidate_attachment: cursor,
             },
           });
@@ -321,8 +320,7 @@ export class AttachmentService {
         cursor: cursor ? { id_ats_candidate_attachment: cursor } : undefined,
         orderBy: { created_at: 'asc' },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

@@ -28,15 +28,6 @@ export class TimeoffBalanceService {
     this.logger.setContext(TimeoffBalanceService.name);
   }
 
-  async addTimeoffBalance(
-    unifiedTimeoffBalanceData: UnifiedTimeoffBalanceInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedTimeoffBalanceOutput> {
-    return;
-  }
-
   async getTimeoffBalance(
     id_timeoffbalanceing_timeoffbalance: string,
     remote_data?: boolean,
@@ -45,6 +36,7 @@ export class TimeoffBalanceService {
   }
 
   async getTimeoffBalances(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

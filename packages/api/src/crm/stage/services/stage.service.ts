@@ -80,6 +80,7 @@ export class StageService {
   }
 
   async getStages(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -97,8 +98,7 @@ export class StageService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_deals_stages.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_deals_stage: cursor,
           },
         });
@@ -118,8 +118,7 @@ export class StageService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

@@ -131,13 +131,19 @@ export class CoreSyncService {
       ),
     );
 
+    const connection = await this.prisma.connections.findFirst({
+      where: {
+        id_linked_user: linkedUserId,
+        provider_slug: provider.toLowerCase(),
+      },
+    });
+
     // Execute all tasks and handle results
     const results = await Promise.allSettled(tasks.map((task) => task()));
 
     const deals = await this.prisma.crm_deals.findMany({
       where: {
-        remote_platform: provider,
-        id_linked_user: linkedUserId,
+        id_connection: connection.id_connection,
       },
     });
 
@@ -205,12 +211,18 @@ export class CoreSyncService {
         ),
     ];
 
+    const connection = await this.prisma.connections.findFirst({
+      where: {
+        id_linked_user: linkedUserId,
+        provider_slug: provider.toLowerCase(),
+      },
+    });
+
     const results = await Promise.allSettled(tasks.map((task) => task()));
 
     const accounts = await this.prisma.tcg_accounts.findMany({
       where: {
-        remote_platform: provider,
-        id_linked_user: linkedUserId,
+        id_connection: connection.id_connection,
       },
     });
     let contactTasks = [];
@@ -233,12 +245,12 @@ export class CoreSyncService {
           ),
       ];
     }
+
     const contactTasksResults = await Promise.allSettled(contactTasks);
 
     const tickets = await this.prisma.tcg_tickets.findMany({
       where: {
-        remote_platform: provider,
-        id_linked_user: linkedUserId,
+        id_connection: connection.id_connection,
       },
     });
 

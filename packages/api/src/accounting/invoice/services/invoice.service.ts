@@ -30,6 +30,7 @@ export class InvoiceService {
 
   async addInvoice(
     unifiedInvoiceData: UnifiedInvoiceInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -45,6 +46,7 @@ export class InvoiceService {
   }
 
   async getInvoices(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

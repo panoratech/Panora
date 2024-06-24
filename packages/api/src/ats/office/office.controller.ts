@@ -54,12 +54,13 @@ export class OfficeController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.officeService.getOffices(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -96,47 +97,5 @@ export class OfficeController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     return this.officeService.getOffice(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'create',
-    summary: 'Create a Office',
-    description: 'Create a office in any supported Ats software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedOfficeInput })
-  @ApiCustomResponse(UnifiedOfficeOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async create(
-    @Body() unifiedOfficeData: UnifiedOfficeInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.officeService.addOffice(
-        unifiedOfficeData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
   }
 }

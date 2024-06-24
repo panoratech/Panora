@@ -26,6 +26,7 @@ export class FileService {
 
   async addFile(
     unifiedFileData: UnifiedFileInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -81,8 +82,7 @@ export class FileService {
       const existingFile = await this.prisma.fs_files.findFirst({
         where: {
           remote_id: target_file.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -120,9 +120,8 @@ export class FileService {
           permission_id: target_file.permission_id,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_file.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const newFile = await this.prisma.fs_files.create({
@@ -290,6 +289,7 @@ export class FileService {
   }
 
   async getFiles(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -307,8 +307,7 @@ export class FileService {
       if (cursor) {
         const isCursorPresent = await this.prisma.fs_files.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_fs_file: cursor,
           },
         });
@@ -328,8 +327,7 @@ export class FileService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

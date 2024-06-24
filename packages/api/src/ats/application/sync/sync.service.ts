@@ -215,8 +215,7 @@ export class SyncService implements OnModuleInit {
           await this.prisma.ats_applications.findFirst({
             where: {
               remote_id: originId,
-              remote_platform: originSource,
-              id_linked_user: linkedUserId,
+              id_connection: connection_id,
             },
           });
 
@@ -270,9 +269,8 @@ export class SyncService implements OnModuleInit {
             id_ats_application: uuid,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (application.applied_at) {

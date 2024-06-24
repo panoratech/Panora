@@ -54,13 +54,14 @@ export class UserController {
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     const { remote_data, limit, cursor } = query;
 
     return this.userService.getUsers(
+      connectionId,
       remoteSource,
       linkedUserId,
       limit,

@@ -92,6 +92,7 @@ export class JobService {
   }
 
   async getJobs(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -101,8 +102,7 @@ export class JobService {
     try {
       const jobs = await this.prisma.ats_jobs.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

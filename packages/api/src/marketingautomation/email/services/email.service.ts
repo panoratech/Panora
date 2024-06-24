@@ -24,15 +24,6 @@ export class EmailService {
     this.logger.setContext(EmailService.name);
   }
 
-  async addEmail(
-    unifiedEmailData: UnifiedEmailInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedEmailOutput> {
-    return;
-  }
-
   async getEmail(
     id_emailing_email: string,
     remote_data?: boolean,
@@ -41,6 +32,7 @@ export class EmailService {
   }
 
   async getEmails(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

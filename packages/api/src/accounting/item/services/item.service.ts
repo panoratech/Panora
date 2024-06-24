@@ -33,6 +33,7 @@ export class ItemService {
   }
 
   async getItems(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

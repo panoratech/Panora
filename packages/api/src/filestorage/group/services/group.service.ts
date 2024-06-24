@@ -83,7 +83,8 @@ export class GroupService {
   }
 
   async getGroups(
-    integrationId: string,
+    connection_id: string,
+    remoteSource: string,
     linkedUserId: string,
     limit: number,
     remote_data?: any,
@@ -92,8 +93,7 @@ export class GroupService {
     try {
       const groups = await this.prisma.fs_groups.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

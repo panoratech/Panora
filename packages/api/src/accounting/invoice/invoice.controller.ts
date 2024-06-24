@@ -57,12 +57,13 @@ export class InvoiceController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.invoiceService.getInvoices(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -130,12 +131,13 @@ export class InvoiceController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.invoiceService.addInvoice(
         unifiedInvoiceData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -30,6 +30,7 @@ export class CandidateService {
 
   async addCandidate(
     unifiedCandidateData: UnifiedCandidateInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -79,8 +80,7 @@ export class CandidateService {
       const existingCandidate = await this.prisma.ats_candidates.findFirst({
         where: {
           remote_id: target_candidate.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -122,9 +122,8 @@ export class CandidateService {
           locations: target_candidate.locations,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_candidate.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const newCandidate = await this.prisma.ats_candidates.create({
@@ -345,6 +344,7 @@ export class CandidateService {
   }
 
   async getCandidates(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -362,8 +362,7 @@ export class CandidateService {
       if (cursor) {
         const isCursorPresent = await this.prisma.ats_candidates.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_ats_candidate: cursor,
           },
         });
@@ -377,8 +376,7 @@ export class CandidateService {
         cursor: cursor ? { id_ats_candidate: cursor } : undefined,
         orderBy: { created_at: 'asc' },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

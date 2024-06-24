@@ -166,6 +166,7 @@ export class SyncService implements OnModuleInit {
 
       // insert the data in the DB with the fieldMappings (value table)
       const shared_links_data = await this.saveSharedLinksInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -196,6 +197,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveSharedLinksInDb(
+    connection_id: string,
     linkedUserId: string,
     sharedLinks: UnifiedSharedLinkOutput[],
     originSource: string,
@@ -214,8 +216,7 @@ export class SyncService implements OnModuleInit {
         const existingSharedLink = await this.prisma.fs_shared_links.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -266,9 +267,8 @@ export class SyncService implements OnModuleInit {
             id_fs_shared_link: uuid,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (sharedLink.url) {

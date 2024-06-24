@@ -29,6 +29,7 @@ export class FolderService {
 
   async addFolder(
     unifiedFolderData: UnifiedFolderInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -84,8 +85,7 @@ export class FolderService {
       const existingFolder = await this.prisma.fs_folders.findFirst({
         where: {
           remote_id: target_folder.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -123,9 +123,8 @@ export class FolderService {
           id_fs_permission: target_folder.permission_id,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_folder.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const newFolder = await this.prisma.fs_folders.create({
@@ -299,6 +298,7 @@ export class FolderService {
   }
 
   async getFolders(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -316,8 +316,7 @@ export class FolderService {
       if (cursor) {
         const isCursorPresent = await this.prisma.fs_folders.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_fs_folder: cursor,
           },
         });
@@ -337,8 +336,7 @@ export class FolderService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

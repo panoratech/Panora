@@ -85,6 +85,7 @@ export class ScoreCardService {
   }
 
   async getScoreCards(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -94,8 +95,7 @@ export class ScoreCardService {
     try {
       const scorecards = await this.prisma.ats_scorecards.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

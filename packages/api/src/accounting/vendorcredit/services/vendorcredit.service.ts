@@ -36,6 +36,7 @@ export class VendorCreditService {
   }
 
   async getVendorCredits(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

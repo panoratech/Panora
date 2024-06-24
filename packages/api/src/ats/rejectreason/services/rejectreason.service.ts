@@ -83,6 +83,7 @@ export class RejectReasonService {
   }
 
   async getRejectReasons(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -92,8 +93,7 @@ export class RejectReasonService {
     try {
       const rejectReasons = await this.prisma.ats_reject_reasons.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

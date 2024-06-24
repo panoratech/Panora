@@ -62,13 +62,14 @@ export class EngagementController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
 
       return this.engagementService.getEngagements(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -134,12 +135,13 @@ export class EngagementController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.engagementService.addEngagement(
         unifiedEngagementData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

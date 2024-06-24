@@ -28,15 +28,6 @@ export class BenefitService {
     this.logger.setContext(BenefitService.name);
   }
 
-  async addBenefit(
-    unifiedBenefitData: UnifiedBenefitInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedBenefitOutput> {
-    return;
-  }
-
   async getBenefit(
     id_benefiting_benefit: string,
     remote_data?: boolean,
@@ -45,6 +36,7 @@ export class BenefitService {
   }
 
   async getBenefits(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

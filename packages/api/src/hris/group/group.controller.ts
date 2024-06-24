@@ -54,12 +54,13 @@ export class GroupController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.groupService.getGroups(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -96,47 +97,5 @@ export class GroupController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     return this.groupService.getGroup(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'create',
-    summary: 'Create a Group',
-    description: 'Create a group in any supported Hris software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedGroupInput })
-  @ApiCustomResponse(UnifiedGroupOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async create(
-    @Body() unifiedGroupData: UnifiedGroupInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.groupService.addGroup(
-        unifiedGroupData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
   }
 }

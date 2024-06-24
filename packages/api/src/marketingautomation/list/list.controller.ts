@@ -54,12 +54,13 @@ export class ListController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.listService.getLists(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -128,12 +129,13 @@ export class ListController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.listService.addList(
         unifiedListData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

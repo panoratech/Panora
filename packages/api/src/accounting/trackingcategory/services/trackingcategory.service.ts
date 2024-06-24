@@ -36,6 +36,7 @@ export class TrackingCategoryService {
   }
 
   async getTrackingCategorys(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

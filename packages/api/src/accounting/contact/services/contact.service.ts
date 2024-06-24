@@ -30,6 +30,7 @@ export class ContactService {
 
   async addContact(
     unifiedContactData: UnifiedContactInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -45,6 +46,7 @@ export class ContactService {
   }
 
   async getContacts(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

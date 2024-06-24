@@ -30,6 +30,7 @@ export class JournalEntryService {
 
   async addJournalEntry(
     unifiedJournalEntryData: UnifiedJournalEntryInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -45,6 +46,7 @@ export class JournalEntryService {
   }
 
   async getJournalEntrys(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

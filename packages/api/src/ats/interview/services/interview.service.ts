@@ -29,6 +29,7 @@ export class InterviewService {
 
   async addInterview(
     unifiedInterviewData: UnifiedInterviewInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -82,8 +83,7 @@ export class InterviewService {
       const existingInterview = await this.prisma.ats_interviews.findFirst({
         where: {
           remote_id: target_interview.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -127,9 +127,8 @@ export class InterviewService {
           remote_updated_at: target_interview.remote_updated_at,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_interview.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const newInterview = await this.prisma.ats_interviews.create({
@@ -306,6 +305,7 @@ export class InterviewService {
   }
 
   async getInterviews(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -323,8 +323,7 @@ export class InterviewService {
       if (cursor) {
         const isCursorPresent = await this.prisma.ats_interviews.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_ats_interview: cursor,
           },
         });
@@ -344,8 +343,7 @@ export class InterviewService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

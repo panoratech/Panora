@@ -28,15 +28,6 @@ export class CompanyService {
     this.logger.setContext(CompanyService.name);
   }
 
-  async addCompany(
-    unifiedCompanyData: UnifiedCompanyInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedCompanyOutput> {
-    return;
-  }
-
   async getCompany(
     id_companying_company: string,
     remote_data?: boolean,
@@ -45,6 +36,7 @@ export class CompanyService {
   }
 
   async getCompanys(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -66,6 +66,7 @@ export class CollectionService {
   }
 
   async getCollections(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -83,8 +84,7 @@ export class CollectionService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_collections.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_collection: cursor,
           },
         });
@@ -104,8 +104,7 @@ export class CollectionService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

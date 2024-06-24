@@ -83,6 +83,7 @@ export class UserService {
   }
 
   async getUsers(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -92,8 +93,7 @@ export class UserService {
     try {
       const users = await this.prisma.fs_users.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

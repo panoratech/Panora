@@ -55,12 +55,13 @@ export class TeamController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.teamService.getTeams(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,

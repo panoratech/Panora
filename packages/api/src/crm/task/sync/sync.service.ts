@@ -173,6 +173,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const tasks_data = await this.saveTasksInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -203,6 +204,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveTasksInDb(
+    connection_id: string,
     linkedUserId: string,
     tasks: UnifiedTaskOutput[],
     originSource: string,
@@ -221,8 +223,7 @@ export class SyncService implements OnModuleInit {
         const existingTask = await this.prisma.crm_tasks.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -273,9 +274,8 @@ export class SyncService implements OnModuleInit {
             id_crm_task: uuidv4(),
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (task.subject) {

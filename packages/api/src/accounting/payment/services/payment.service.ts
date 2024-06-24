@@ -30,6 +30,7 @@ export class PaymentService {
 
   async addPayment(
     unifiedPaymentData: UnifiedPaymentInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -45,6 +46,7 @@ export class PaymentService {
   }
 
   async getPayments(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

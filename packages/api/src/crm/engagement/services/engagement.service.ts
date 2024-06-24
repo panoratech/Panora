@@ -31,6 +31,7 @@ export class EngagementService {
 
   async addEngagement(
     unifiedEngagementData: UnifiedEngagementInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -124,8 +125,7 @@ export class EngagementService {
       const existingEngagement = await this.prisma.crm_engagements.findFirst({
         where: {
           remote_id: target_engagement.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -180,9 +180,8 @@ export class EngagementService {
           id_crm_engagement: uuidv4(),
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_engagement.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         if (target_engagement.content) {
@@ -352,6 +351,7 @@ export class EngagementService {
   }
 
   async getEngagements(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -369,8 +369,7 @@ export class EngagementService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_engagements.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_engagement: cursor,
           },
         });
@@ -390,8 +389,7 @@ export class EngagementService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

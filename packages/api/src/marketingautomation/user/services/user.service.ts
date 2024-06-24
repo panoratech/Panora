@@ -24,15 +24,6 @@ export class UserService {
     this.logger.setContext(UserService.name);
   }
 
-  async addUser(
-    unifiedUserData: UnifiedUserInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedUserOutput> {
-    return;
-  }
-
   async getUser(
     id_usering_user: string,
     remote_data?: boolean,
@@ -41,6 +32,7 @@ export class UserService {
   }
 
   async getUsers(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

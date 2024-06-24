@@ -28,6 +28,7 @@ export class TaskService {
 
   async addTask(
     unifiedTaskData: UnifiedTaskInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -119,8 +120,7 @@ export class TaskService {
       const existingTask = await this.prisma.crm_tasks.findFirst({
         where: {
           remote_id: target_task.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -170,9 +170,8 @@ export class TaskService {
           id_crm_task: uuidv4(),
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_task.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         if (target_task.subject) {
@@ -327,6 +326,7 @@ export class TaskService {
   }
 
   async getTasks(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -344,8 +344,7 @@ export class TaskService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_tasks.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_task: cursor,
           },
         });
@@ -365,8 +364,7 @@ export class TaskService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

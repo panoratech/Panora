@@ -29,6 +29,7 @@ export class PermissionService {
 
   async addPermission(
     unifiedPermissionData: UnifiedPermissionInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -82,8 +83,7 @@ export class PermissionService {
       const existingPermission = await this.prisma.fs_permissions.findFirst({
         where: {
           remote_id: target_permission.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -115,9 +115,8 @@ export class PermissionService {
           roles: target_permission.roles,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_permission.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const newPermission = await this.prisma.fs_permissions.create({
@@ -288,6 +287,7 @@ export class PermissionService {
   }
 
   async getPermissions(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -305,8 +305,7 @@ export class PermissionService {
       if (cursor) {
         const isCursorPresent = await this.prisma.fs_permissions.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connectionId,
             id_fs_permission: cursor,
           },
         });
@@ -326,8 +325,7 @@ export class PermissionService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connectionId,
         },
       });
 

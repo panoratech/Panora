@@ -54,12 +54,13 @@ export class GroupController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { connectionId, linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.permissionService.getGroups(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,

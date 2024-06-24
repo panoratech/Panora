@@ -30,6 +30,7 @@ export class PurchaseOrderService {
 
   async addPurchaseOrder(
     unifiedPurchaseOrderData: UnifiedPurchaseOrderInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -45,6 +46,7 @@ export class PurchaseOrderService {
   }
 
   async getPurchaseOrders(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

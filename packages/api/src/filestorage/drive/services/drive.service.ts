@@ -79,6 +79,7 @@ export class DriveService {
   }
 
   async getDrives(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     pageSize: number,
@@ -96,8 +97,7 @@ export class DriveService {
       if (cursor) {
         const isCursorPresent = await this.prisma.fs_drives.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_fs_drive: cursor,
           },
         });
@@ -117,8 +117,7 @@ export class DriveService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

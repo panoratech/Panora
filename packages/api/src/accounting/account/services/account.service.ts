@@ -44,6 +44,7 @@ export class AccountService {
   }
 
   async getAccounts(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -10,12 +10,12 @@ export class Utils {
     return fs.createReadStream(file_url);
   }
 
-  async getUserUuidFromRemoteId(remote_id: string, remote_platform: string) {
+  async getUserUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.tcg_users.findFirst({
         where: {
           remote_id: remote_id,
-          remote_platform: remote_platform,
+          id_connection: connection_id,
         },
       });
       if (!res) return undefined;
@@ -40,12 +40,12 @@ export class Utils {
     }
   }
 
-  async getContactUuidFromRemoteId(remote_id: string, remote_platform: string) {
+  async getContactUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.tcg_contacts.findFirst({
         where: {
           remote_id: remote_id,
-          remote_platform: remote_platform,
+          id_connection: connection_id,
         },
       });
       if (!res) return undefined;
@@ -101,13 +101,13 @@ export class Utils {
 
   async getCollectionUuidFromRemoteId(
     remote_id: string,
-    remote_platform: string,
+    connection_id: string,
   ) {
     try {
       const res = await this.prisma.tcg_collections.findFirst({
         where: {
           remote_id: remote_id,
-          remote_platform: remote_platform,
+          id_connection: connection_id,
         },
       });
       if (!res) return undefined;
@@ -133,12 +133,12 @@ export class Utils {
     }
   }
 
-  async getTicketUuidFromRemoteId(remote_id: string, remote_platform: string) {
+  async getTicketUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.tcg_tickets.findFirst({
         where: {
           remote_id: remote_id,
-          remote_platform: remote_platform,
+          id_connection: connection_id,
         },
       });
       if (!res) return undefined;

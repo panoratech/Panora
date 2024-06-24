@@ -82,6 +82,7 @@ export class ContactService {
   }
 
   async getContacts(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -100,8 +101,7 @@ export class ContactService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_contacts.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_contact: cursor,
           },
         });
@@ -121,8 +121,7 @@ export class ContactService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

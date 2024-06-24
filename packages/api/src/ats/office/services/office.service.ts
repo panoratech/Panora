@@ -82,6 +82,7 @@ export class OfficeService {
   }
 
   async getOffices(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -91,8 +92,7 @@ export class OfficeService {
     try {
       const offices = await this.prisma.ats_offices.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

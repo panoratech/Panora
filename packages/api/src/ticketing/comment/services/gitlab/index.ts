@@ -78,7 +78,7 @@ export class GitlabService implements ICommentService {
       const ticket = await this.prisma.tcg_tickets.findFirst({
         where: {
           remote_id: remoteIdTicket,
-          remote_platform: 'gitlab',
+          id_connection: connection.id_connection,
         },
         select: {
           collections: true,

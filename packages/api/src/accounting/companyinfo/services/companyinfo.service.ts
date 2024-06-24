@@ -36,6 +36,7 @@ export class CompanyInfoService {
   }
 
   async getCompanyInfos(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

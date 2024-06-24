@@ -181,6 +181,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const deals_data = await this.saveDealsInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -211,6 +212,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveDealsInDb(
+    connection_id: string,
     linkedUserId: string,
     deals: UnifiedDealOutput[],
     originSource: string,
@@ -229,8 +231,7 @@ export class SyncService implements OnModuleInit {
         const existingDeal = await this.prisma.crm_deals.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -277,10 +278,9 @@ export class SyncService implements OnModuleInit {
             id_crm_deal: uuidv4(),
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             description: '',
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           this.logger.log('deal name is ' + deal.name);

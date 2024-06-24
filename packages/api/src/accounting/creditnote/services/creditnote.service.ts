@@ -36,6 +36,7 @@ export class CreditNoteService {
   }
 
   async getCreditNotes(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

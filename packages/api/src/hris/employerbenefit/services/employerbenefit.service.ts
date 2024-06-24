@@ -28,15 +28,6 @@ export class EmployerBenefitService {
     this.logger.setContext(EmployerBenefitService.name);
   }
 
-  async addEmployerBenefit(
-    unifiedEmployerBenefitData: UnifiedEmployerBenefitInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedEmployerBenefitOutput> {
-    return;
-  }
-
   async getEmployerBenefit(
     id_employerbenefiting_employerbenefit: string,
     remote_data?: boolean,
@@ -45,6 +36,7 @@ export class EmployerBenefitService {
   }
 
   async getEmployerBenefits(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -30,6 +30,7 @@ export class ActivityService {
 
   async addActivity(
     unifiedActivityData: UnifiedActivityInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -79,8 +80,7 @@ export class ActivityService {
       const existingActivity = await this.prisma.ats_activities.findFirst({
         where: {
           remote_id: target_activity.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -112,9 +112,8 @@ export class ActivityService {
           remote_created_at: target_activity.remote_created_at,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_activity.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const newActivity = await this.prisma.ats_activities.create({
@@ -275,6 +274,7 @@ export class ActivityService {
   }
 
   async getActivities(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -292,8 +292,7 @@ export class ActivityService {
       if (cursor) {
         const isCursorPresent = await this.prisma.ats_activities.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_ats_activity: cursor,
           },
         });
@@ -307,8 +306,7 @@ export class ActivityService {
         cursor: cursor ? { id_ats_activity: cursor } : undefined,
         orderBy: { created_at: 'asc' },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

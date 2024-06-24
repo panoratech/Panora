@@ -90,6 +90,7 @@ export class UserService {
   }
 
   async getUsers(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -107,8 +108,7 @@ export class UserService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_users.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_user: cursor,
           },
         });
@@ -128,8 +128,7 @@ export class UserService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

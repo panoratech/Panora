@@ -29,6 +29,7 @@ export class AttachmentService {
 
   async addAttachment(
     unifiedAttachmentData: UnifiedAttachmentInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -44,6 +45,7 @@ export class AttachmentService {
   }
 
   async getAttachments(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

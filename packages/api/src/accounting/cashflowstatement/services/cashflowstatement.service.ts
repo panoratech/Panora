@@ -36,6 +36,7 @@ export class CashflowStatementService {
   }
 
   async getCashflowStatements(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

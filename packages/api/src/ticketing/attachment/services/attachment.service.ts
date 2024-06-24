@@ -20,6 +20,7 @@ export class AttachmentService {
 
   async addAttachment(
     unifiedAttachmentData: UnifiedAttachmentInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -40,8 +41,7 @@ export class AttachmentService {
       const existingAttachment = await this.prisma.tcg_attachments.findFirst({
         where: {
           file_name: unifiedAttachmentData.file_name,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -69,8 +69,7 @@ export class AttachmentService {
           uploader: linkedUserId,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const res = await this.prisma.tcg_attachments.create({
@@ -180,6 +179,7 @@ export class AttachmentService {
   }
 
   async getAttachments(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -198,8 +198,7 @@ export class AttachmentService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_attachments.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_attachment: cursor,
           },
         });
@@ -218,8 +217,7 @@ export class AttachmentService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

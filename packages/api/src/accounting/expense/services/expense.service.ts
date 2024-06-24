@@ -30,6 +30,7 @@ export class ExpenseService {
 
   async addExpense(
     unifiedExpenseData: UnifiedExpenseInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -45,6 +46,7 @@ export class ExpenseService {
   }
 
   async getExpenses(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

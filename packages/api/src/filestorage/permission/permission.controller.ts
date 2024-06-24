@@ -57,12 +57,13 @@ export class PermissionController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.permissionService.getPermissions(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -117,12 +118,13 @@ export class PermissionController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.permissionService.addPermission(
         unifiedPermissionData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

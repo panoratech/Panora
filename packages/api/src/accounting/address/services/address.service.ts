@@ -35,6 +35,7 @@ export class AddressService {
   }
 
   async getAddresss(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

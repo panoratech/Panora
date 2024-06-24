@@ -85,6 +85,7 @@ export class JobInterviewStageService {
   }
 
   async getJobInterviewStages(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -94,8 +95,7 @@ export class JobInterviewStageService {
     try {
       const stages = await this.prisma.ats_job_interview_stages.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

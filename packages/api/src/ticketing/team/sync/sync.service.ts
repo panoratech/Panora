@@ -172,6 +172,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const team_data = await this.saveTeamsInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -204,6 +205,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveTeamsInDb(
+    connection_id: string,
     linkedUserId: string,
     teams: UnifiedTeamOutput[],
     originSource: string,
@@ -222,8 +224,7 @@ export class SyncService implements OnModuleInit {
         const existingTeam = await this.prisma.tcg_teams.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -252,9 +253,8 @@ export class SyncService implements OnModuleInit {
             description: team.description,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
           const res = await this.prisma.tcg_teams.create({
             data: data,

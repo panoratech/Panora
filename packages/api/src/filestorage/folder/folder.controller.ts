@@ -54,12 +54,13 @@ export class FolderController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.folderService.getFolders(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -113,12 +114,13 @@ export class FolderController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.folderService.addFolder(
         unifiedFolderData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

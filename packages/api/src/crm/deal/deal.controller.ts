@@ -59,12 +59,13 @@ export class DealController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return await this.dealService.getDeals(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -130,12 +131,13 @@ export class DealController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return await this.dealService.addDeal(
         unifiedDealData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -25,15 +25,6 @@ export class BankInfoService {
     this.logger.setContext(BankInfoService.name);
   }
 
-  async addBankinfo(
-    unifiedBankinfoData: UnifiedBankInfoInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedBankInfoOutput> {
-    return;
-  }
-
   async getBankinfo(
     id_bankinfoing_bankinfo: string,
     remote_data?: boolean,
@@ -42,6 +33,7 @@ export class BankInfoService {
   }
 
   async getBankinfos(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

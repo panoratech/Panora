@@ -28,6 +28,7 @@ export class DealService {
 
   async addDeal(
     unifiedDealData: UnifiedDealInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -105,8 +106,7 @@ export class DealService {
       const existingDeal = await this.prisma.crm_deals.findFirst({
         where: {
           remote_id: target_deal.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -152,9 +152,8 @@ export class DealService {
           amount: target_deal.amount,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_deal.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
           description: '',
         };
 
@@ -302,6 +301,7 @@ export class DealService {
   }
 
   async getDeals(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -319,8 +319,7 @@ export class DealService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_deals.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_deal: cursor,
           },
         });
@@ -340,8 +339,7 @@ export class DealService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

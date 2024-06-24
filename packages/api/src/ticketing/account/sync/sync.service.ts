@@ -165,8 +165,7 @@ export class SyncService implements OnModuleInit {
         switch (wh_real_time_trigger.action) {
           case 'DELETE':
             return await this.removeAccountInDb(
-              linkedUserId,
-              integrationId,
+              connection.id_connection,
               wh_real_time_trigger.data.remote_id,
             );
           default:
@@ -201,6 +200,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const account_data = await this.saveAccountsInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -231,6 +231,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveAccountsInDb(
+    connection_id: string,
     linkedUserId: string,
     accounts: UnifiedAccountOutput[],
     originSource: string,
@@ -249,8 +250,7 @@ export class SyncService implements OnModuleInit {
         const existingAccount = await this.prisma.tcg_accounts.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -279,9 +279,8 @@ export class SyncService implements OnModuleInit {
             domains: account.domains,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
           const res = await this.prisma.tcg_accounts.create({
             data: data,
@@ -353,16 +352,11 @@ export class SyncService implements OnModuleInit {
     }
   }
 
-  async removeAccountInDb(
-    linkedUserId: string,
-    originSource: string,
-    remote_id: string,
-  ) {
+  async removeAccountInDb(connection_id: string, remote_id: string) {
     const existingAccount = await this.prisma.tcg_accounts.findFirst({
       where: {
         remote_id: remote_id,
-        remote_platform: originSource,
-        id_linked_user: linkedUserId,
+        id_connection: connection_id,
       },
     });
     await this.prisma.tcg_accounts.delete({

@@ -29,6 +29,7 @@ export class ActionService {
 
   async addAction(
     unifiedActionData: UnifiedActionInput,
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -44,6 +45,7 @@ export class ActionService {
   }
 
   async getActions(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

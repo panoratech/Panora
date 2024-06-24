@@ -80,6 +80,7 @@ export class AccountService {
   }
 
   async getAccounts(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -99,8 +100,7 @@ export class AccountService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_accounts.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_account: cursor,
           },
         });
@@ -120,8 +120,7 @@ export class AccountService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

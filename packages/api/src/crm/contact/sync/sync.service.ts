@@ -188,6 +188,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const contacts_data = await this.saveContactsInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -218,6 +219,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveContactsInDb(
+    connection_id: string,
     linkedUserId: string,
     contacts: UnifiedContactOutput[],
     originSource: string,
@@ -236,8 +238,7 @@ export class SyncService implements OnModuleInit {
         const existingContact = await this.prisma.crm_contacts.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
           include: {
             crm_email_addresses: true,
@@ -372,9 +373,8 @@ export class SyncService implements OnModuleInit {
             last_name: '',
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (contact.first_name) {

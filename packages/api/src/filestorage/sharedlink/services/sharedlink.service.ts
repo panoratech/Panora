@@ -29,6 +29,7 @@ export class SharedLinkService {
 
   async addSharedlink(
     unifiedSharedlinkData: UnifiedSharedLinkInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -82,8 +83,7 @@ export class SharedLinkService {
       const existingSharedLink = await this.prisma.fs_shared_links.findFirst({
         where: {
           remote_id: target_sharedlink.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -121,9 +121,8 @@ export class SharedLinkService {
           password: target_sharedlink.password,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_sharedlink.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const newSharedLink = await this.prisma.fs_shared_links.create({
@@ -297,6 +296,7 @@ export class SharedLinkService {
   }
 
   async getSharedlinks(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -314,8 +314,7 @@ export class SharedLinkService {
       if (cursor) {
         const isCursorPresent = await this.prisma.fs_shared_links.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_fs_shared_link: cursor,
           },
         });
@@ -335,8 +334,7 @@ export class SharedLinkService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

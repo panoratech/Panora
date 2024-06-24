@@ -174,6 +174,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const users_data = await this.saveUsersInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -204,6 +205,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveUsersInDb(
+    connection_id: string,
     linkedUserId: string,
     users: UnifiedUserOutput[],
     originSource: string,
@@ -222,8 +224,7 @@ export class SyncService implements OnModuleInit {
         const existingUser = await this.prisma.crm_users.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -257,9 +258,8 @@ export class SyncService implements OnModuleInit {
             id_crm_user: uuidv4(),
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
 
           if (user.email) {

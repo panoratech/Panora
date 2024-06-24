@@ -30,6 +30,7 @@ export class ApplicationService {
 
   async addApplication(
     unifiedApplicationData: UnifiedApplicationInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -79,8 +80,7 @@ export class ApplicationService {
       const existingApplication = await this.prisma.ats_applications.findFirst({
         where: {
           remote_id: target_application.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -116,9 +116,8 @@ export class ApplicationService {
           reject_reason: target_application.reject_reason,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_application.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const newApplication = await this.prisma.ats_applications.create({
@@ -293,6 +292,7 @@ export class ApplicationService {
   }
 
   async getApplications(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -310,8 +310,7 @@ export class ApplicationService {
       if (cursor) {
         const isCursorPresent = await this.prisma.ats_applications.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_ats_application: cursor,
           },
         });
@@ -325,8 +324,7 @@ export class ApplicationService {
         cursor: cursor ? { id_ats_application: cursor } : undefined,
         orderBy: { created_at: 'asc' },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

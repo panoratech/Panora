@@ -210,6 +210,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const contact_data = await this.saveContactsInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -241,6 +242,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveContactsInDb(
+    connection_id: string,
     linkedUserId: string,
     contacts: UnifiedContactOutput[],
     originSource: string,
@@ -260,8 +262,7 @@ export class SyncService implements OnModuleInit {
         const existingContact = await this.prisma.tcg_contacts.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
         });
 
@@ -281,7 +282,7 @@ export class SyncService implements OnModuleInit {
             const res = await this.prisma.tcg_accounts.findFirst({
               where: {
                 remote_id: remote_account_id,
-                remote_platform: originSource,
+                id_connection: connection_id,
               },
             });
             data.id_tcg_account = res.id_tcg_account;
@@ -307,15 +308,14 @@ export class SyncService implements OnModuleInit {
             details: contact.details,
             created_at: new Date(),
             modified_at: new Date(),
-            id_linked_user: linkedUserId,
             remote_id: originId,
-            remote_platform: originSource,
+            id_connection: connection_id,
           };
           if (remote_account_id) {
             const res = await this.prisma.tcg_accounts.findFirst({
               where: {
                 remote_id: remote_account_id,
-                remote_platform: originSource,
+                id_connection: connection_id,
               },
             });
             data.id_tcg_account = res.id_tcg_account;
@@ -397,8 +397,7 @@ export class SyncService implements OnModuleInit {
     const existingContact = await this.prisma.tcg_contacts.findFirst({
       where: {
         remote_id: remote_id,
-        remote_platform: originSource,
-        id_linked_user: linkedUserId,
+        id_connection: connection_id,
       },
     });
     await this.prisma.tcg_contacts.delete({

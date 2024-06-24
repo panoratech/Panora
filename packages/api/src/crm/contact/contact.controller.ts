@@ -62,12 +62,13 @@ export class ContactController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return await this.contactService.getContacts(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -134,12 +135,13 @@ export class ContactController {
   ) {
     try {
       // this.logger.log('x-connection-token is ' + connection_token);
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.contactService.addContact(
         unfiedContactData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

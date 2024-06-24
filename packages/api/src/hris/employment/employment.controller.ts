@@ -57,12 +57,13 @@ export class EmploymentController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.employmentService.getEmployments(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -99,47 +100,5 @@ export class EmploymentController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     return this.employmentService.getEmployment(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'create',
-    summary: 'Create a Employment',
-    description: 'Create a employment in any supported Hris software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedEmploymentInput })
-  @ApiCustomResponse(UnifiedEmploymentOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async create(
-    @Body() unifiedEmploymentData: UnifiedEmploymentInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.employmentService.addEmployment(
-        unifiedEmploymentData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
   }
 }

@@ -32,6 +32,7 @@ export class ContactService {
 
   async addContact(
     unifiedContactData: UnifiedContactInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -92,8 +93,7 @@ export class ContactService {
       const existingContact = await this.prisma.crm_contacts.findFirst({
         where: {
           remote_id: target_contact.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
         include: {
           crm_email_addresses: true,
@@ -222,9 +222,8 @@ export class ContactService {
           last_name: '',
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
           remote_id: target_contact.remote_id,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         if (target_contact.first_name) {
@@ -463,6 +462,7 @@ export class ContactService {
   }
 
   async getContacts(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -482,8 +482,7 @@ export class ContactService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_contacts.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_contact: cursor,
           },
         });
@@ -503,8 +502,7 @@ export class ContactService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
         include: {
           crm_email_addresses: true,

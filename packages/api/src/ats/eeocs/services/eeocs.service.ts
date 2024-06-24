@@ -86,6 +86,7 @@ export class EeocsService {
   }
 
   async getEeocss(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -95,8 +96,7 @@ export class EeocsService {
     try {
       const eeocss = await this.prisma.ats_eeocs.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

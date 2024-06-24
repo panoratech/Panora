@@ -30,6 +30,7 @@ export class EmployeeService {
 
   async addEmployee(
     unifiedEmployeeData: UnifiedEmployeeInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -45,6 +46,7 @@ export class EmployeeService {
   }
 
   async getEmployees(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -98,11 +98,17 @@ export class SyncService implements OnModuleInit {
                 for (const provider of providers) {
                   try {
                     try {
+                      const connection =
+                        await this.prisma.connections.findFirst({
+                          where: {
+                            id_linked_user: linkedUser.id_linked_user,
+                            provider_slug: provider.toLowerCase(),
+                          },
+                        });
                       //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
                       const deals = await this.prisma.crm_deals.findMany({
                         where: {
-                          remote_platform: provider,
-                          id_linked_user: linkedUser.id_linked_user,
+                          id_connection: connection.id_connection,
                         },
                       });
                       for (const deal of deals) {
@@ -190,6 +196,7 @@ export class SyncService implements OnModuleInit {
 
       //insert the data in the DB with the fieldMappings (value table)
       const stages_data = await this.saveStagesInDb(
+        connection.id_connection,
         linkedUserId,
         unifiedObject,
         integrationId,
@@ -221,6 +228,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async saveStagesInDb(
+    connection_id: string,
     linkedUserId: string,
     stages: UnifiedStageOutput[],
     originSource: string,
@@ -273,7 +281,7 @@ export class SyncService implements OnModuleInit {
           const isExistingStage = await this.prisma.crm_deals_stages.findFirst({
             where: {
               remote_id: originId,
-              remote_platform: originSource,
+              id_connection: connection_id,
             },
           });
           if (isExistingStage) {
@@ -295,9 +303,8 @@ export class SyncService implements OnModuleInit {
               id_crm_deals_stage: uuidv4(),
               created_at: new Date(),
               modified_at: new Date(),
-              id_linked_user: linkedUserId,
               remote_id: originId || '',
-              remote_platform: originSource,
+              id_connection: connection_id,
             };
 
             if (stage.stage_name) {

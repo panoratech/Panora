@@ -87,6 +87,7 @@ export class OfferService {
   }
 
   async getOffers(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -96,8 +97,7 @@ export class OfferService {
     try {
       const offers = await this.prisma.ats_offers.findMany({
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 

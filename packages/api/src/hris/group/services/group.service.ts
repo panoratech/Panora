@@ -25,15 +25,6 @@ export class GroupService {
     this.logger.setContext(GroupService.name);
   }
 
-  async addGroup(
-    unifiedGroupData: UnifiedGroupInput,
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedGroupOutput> {
-    return;
-  }
-
   async getGroup(
     id_grouping_group: string,
     remote_data?: boolean,
@@ -42,6 +33,7 @@ export class GroupService {
   }
 
   async getGroups(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
