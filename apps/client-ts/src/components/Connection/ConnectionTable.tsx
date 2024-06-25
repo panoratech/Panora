@@ -44,7 +44,6 @@ export default function ConnectionTable() {
   } 
  
   const linkedConnections = (filter: string) => connections?.filter((connection) => connection.status == filter);
-  //console.log("connections are => "+ JSON.stringify(connections))
   const ts = connections?.map((connection) => ({
     organisation: nameOrg, 
     app: connection.provider_slug,

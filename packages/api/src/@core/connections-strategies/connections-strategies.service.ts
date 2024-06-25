@@ -311,7 +311,6 @@ export class ConnectionsStrategiesService {
   async getCredentials(projectId: string, type: string) {
     try {
       const isCustomCred = await this.isCustomCredentials(projectId, type);
-      console.log('inside get credentials...');
       const provider = extractProvider(type);
       const vertical = extractVertical(type);
       //TODO: extract sofwtaremode
@@ -341,7 +340,6 @@ export class ConnectionsStrategiesService {
           authStrategy,
           SoftwareMode.cloud,
         );
-        console.log('CONNECTION STRATEGY result is' + JSON.stringify(res));
         return res;
       }
     } catch (error) {

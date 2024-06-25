@@ -184,7 +184,6 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
           });
         }
         form.reset();
-        console.log(values)
         break;
 
       case AuthStrategy.api_key:
@@ -255,7 +254,6 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
           });
         }
         form.reset();
-        console.log(values)
         break;
 
       case AuthStrategy.basic:
@@ -332,7 +330,6 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
           });
         }
         form.reset();
-        console.log(values)
         break;
     }
   }
