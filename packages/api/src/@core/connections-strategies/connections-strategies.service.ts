@@ -15,6 +15,7 @@ import {
   extractVertical,
   needsSubdomain,
   CONNECTORS_METADATA,
+  OAuth2AuthData,
 } from '@panora/shared';
 import { SoftwareMode } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
@@ -308,7 +309,29 @@ export class ConnectionsStrategiesService {
     }
   }
 
-  async getCredentials(projectId: string, type: string) {
+  isOAuth2AuthData(data: AuthData): data is OAuth2AuthData {
+    return (
+      (data as OAuth2AuthData).CLIENT_ID !== undefined &&
+      (data as OAuth2AuthData).CLIENT_SECRET !== undefined
+    );
+  }
+
+  async getSafeCredentials(projectId: string, type: string) {
+    try {
+      const res = await this.getCredentials(projectId, type);
+
+      if (this.isOAuth2AuthData(res)) {
+        const { CLIENT_SECRET, ...safeData } = res;
+        return safeData;
+      }
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCredentials(projectId: string, type: string): Promise<AuthData> {
     try {
       const isCustomCred = await this.isCustomCredentials(projectId, type);
       const provider = extractProvider(type);
