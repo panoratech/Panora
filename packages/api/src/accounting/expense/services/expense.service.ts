@@ -40,6 +40,8 @@ export class ExpenseService {
 
   async getExpense(
     id_expenseing_expense: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedExpenseOutput> {
     return;

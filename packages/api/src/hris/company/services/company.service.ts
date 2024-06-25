@@ -30,6 +30,8 @@ export class CompanyService {
 
   async getCompany(
     id_companying_company: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCompanyOutput> {
     return;

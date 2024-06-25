@@ -22,6 +22,8 @@ export class UserService {
 
   async getUser(
     id_user: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedUserOutput> {
     try {
@@ -82,6 +84,19 @@ export class UserService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'crm.user.pull',
+          method: 'GET',
+          url: '/crm/user',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -199,7 +214,7 @@ export class UserService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

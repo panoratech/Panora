@@ -30,6 +30,8 @@ export class IncomeStatementService {
 
   async getIncomeStatement(
     id_incomestatementing_incomestatement: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedIncomeStatementOutput> {
     return;

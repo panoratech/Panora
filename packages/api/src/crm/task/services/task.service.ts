@@ -222,7 +222,12 @@ export class TaskService {
         },
       });
 
-      const result_task = await this.getTask(unique_crm_task_id, remote_data);
+      const result_task = await this.getTask(
+        unique_crm_task_id,
+        undefined,
+        undefined,
+        remote_data,
+      );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
 
@@ -253,6 +258,8 @@ export class TaskService {
 
   async getTask(
     id_task: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTaskOutput> {
     try {
@@ -317,6 +324,21 @@ export class TaskService {
           ...res,
           remote_data: remote_data,
         };
+      }
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'crm.task.pull',
+            method: 'GET',
+            url: '/crm/task',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
       }
 
       return res;
@@ -440,7 +462,7 @@ export class TaskService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

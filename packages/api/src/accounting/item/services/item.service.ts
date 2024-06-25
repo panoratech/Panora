@@ -27,6 +27,8 @@ export class ItemService {
 
   async getItem(
     id_iteming_item: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedItemOutput> {
     return;

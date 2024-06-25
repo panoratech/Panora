@@ -29,6 +29,8 @@ export class MessageService {
 
   async getMessage(
     id_messageing_message: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedMessageOutput> {
     return;

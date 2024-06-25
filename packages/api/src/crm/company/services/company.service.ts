@@ -314,6 +314,8 @@ export class CompanyService {
 
       const result_company = await this.getCompany(
         unique_crm_company_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -347,6 +349,8 @@ export class CompanyService {
 
   async getCompany(
     id_company: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCompanyOutput> {
     try {
@@ -425,7 +429,21 @@ export class CompanyService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'crm.company.pull',
+            method: 'GET',
+            url: '/crm/company',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -559,7 +577,7 @@ export class CompanyService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

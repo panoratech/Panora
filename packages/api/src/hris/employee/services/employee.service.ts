@@ -40,6 +40,8 @@ export class EmployeeService {
 
   async getEmployee(
     id_employeeing_employee: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedEmployeeOutput> {
     return;

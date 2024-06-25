@@ -209,6 +209,8 @@ export class CandidateService {
 
       const result_candidate = await this.getCandidate(
         unique_ats_candidate_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -240,6 +242,8 @@ export class CandidateService {
 
   async getCandidate(
     id_ats_candidate: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCandidateOutput> {
     try {
@@ -336,7 +340,21 @@ export class CandidateService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ats.candidate.pull',
+            method: 'GET',
+            url: '/ats/candidate',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -492,7 +510,7 @@ export class CandidateService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

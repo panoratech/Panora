@@ -39,6 +39,8 @@ export class ContactService {
 
   async getContact(
     id_contacting_contact: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedContactOutput> {
     return;

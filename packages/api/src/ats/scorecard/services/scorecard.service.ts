@@ -12,6 +12,8 @@ export class ScoreCardService {
 
   async getScoreCard(
     id_ats_scorecard: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedScoreCardOutput> {
     try {
@@ -77,6 +79,19 @@ export class ScoreCardService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.scorecard.pull',
+          method: 'GET',
+          url: '/ats/scorecard',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -91,13 +106,52 @@ export class ScoreCardService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedScoreCardOutput[]> {
+  ): Promise<{
+    data: UnifiedScoreCardOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.ats_scorecards.findFirst({
+          where: {
+            id_connection: connection_id,
+            id_ats_scorecard: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const scorecards = await this.prisma.ats_scorecards.findMany({
+        take: limit + 1,
+        cursor: cursor
+          ? {
+              id_ats_scorecard: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           id_connection: connection_id,
         },
       });
+
+      if (scorecards.length === limit + 1) {
+        next_cursor = Buffer.from(
+          scorecards[scorecards.length - 1].id_ats_scorecard,
+        ).toString('base64');
+        scorecards.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedScoreCards: UnifiedScoreCardOutput[] = await Promise.all(
         scorecards.map(async (scorecard) => {
@@ -161,8 +215,25 @@ export class ScoreCardService {
 
         res = remote_array_data;
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.scorecard.pull',
+          method: 'GET',
+          url: '/ats/scorecards',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throw error;
     }

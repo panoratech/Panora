@@ -26,6 +26,8 @@ export class UserService {
 
   async getUser(
     id_usering_user: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedUserOutput> {
     return;

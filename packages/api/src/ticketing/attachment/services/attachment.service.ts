@@ -80,6 +80,8 @@ export class AttachmentService {
 
       const result_attachment = await this.getAttachment(
         unique_ticketing_attachment_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -111,6 +113,8 @@ export class AttachmentService {
 
   async getAttachment(
     id_ticketing_attachment: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAttachmentOutput> {
     try {
@@ -171,7 +175,21 @@ export class AttachmentService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ticketing.attachment.pull',
+            method: 'GET',
+            url: '/ticketing/attachment',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -290,7 +308,7 @@ export class AttachmentService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

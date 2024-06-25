@@ -40,6 +40,8 @@ export class TimeoffService {
 
   async getTimeoff(
     id_timeoffing_timeoff: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTimeoffOutput> {
     return;

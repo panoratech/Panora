@@ -12,6 +12,8 @@ export class DriveService {
 
   async getDrive(
     id_fs_drive: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedDriveOutput> {
     try {
@@ -71,6 +73,19 @@ export class DriveService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'filestorage.drive.pull',
+          method: 'GET',
+          url: '/filestorage/drive',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -191,7 +206,7 @@ export class DriveService {
 
         res = remote_array_data;
       }
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

@@ -12,6 +12,8 @@ export class OfferService {
 
   async getOffer(
     id_ats_offer: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedOfferOutput> {
     try {
@@ -79,6 +81,19 @@ export class OfferService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.offer.pull',
+          method: 'GET',
+          url: '/ats/offer',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -93,14 +108,52 @@ export class OfferService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedOfferOutput[]> {
+  ): Promise<{
+    data: UnifiedOfferOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.ats_offers.findFirst({
+          where: {
+            id_connection: connection_id,
+            id_ats_offer: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const offers = await this.prisma.ats_offers.findMany({
+        take: limit + 1,
+        cursor: cursor
+          ? {
+              id_ats_offer: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           id_connection: connection_id,
         },
       });
 
+      if (offers.length === limit + 1) {
+        next_cursor = Buffer.from(
+          offers[offers.length - 1].id_ats_offer,
+        ).toString('base64');
+        offers.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
       const unifiedOffers: UnifiedOfferOutput[] = await Promise.all(
         offers.map(async (offer) => {
           // Fetch field mappings for the offer
@@ -165,8 +218,25 @@ export class OfferService {
 
         res = remote_array_data;
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.offer.pull',
+          method: 'GET',
+          url: '/ats/offers',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throw error;
     }

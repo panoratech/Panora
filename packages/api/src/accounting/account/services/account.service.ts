@@ -38,6 +38,8 @@ export class AccountService {
 
   async getAccount(
     id_accounting_account: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountOutput> {
     return;

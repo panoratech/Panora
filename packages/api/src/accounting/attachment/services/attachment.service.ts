@@ -39,6 +39,8 @@ export class AttachmentService {
 
   async getAttachment(
     id_attachmenting_attachment: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAttachmentOutput> {
     return;

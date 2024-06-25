@@ -21,6 +21,8 @@ export class CollectionService {
   }
   async getCollection(
     id_ticketing_collection: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCollectionOutput> {
     try {
@@ -58,6 +60,19 @@ export class CollectionService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.collection.pull',
+          method: 'GET',
+          url: '/ticketing/collection',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -150,13 +165,13 @@ export class CollectionService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.collection.pulled',
           method: 'GET',
-          url: '/ticketing/collection',
+          url: '/ticketing/collections',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

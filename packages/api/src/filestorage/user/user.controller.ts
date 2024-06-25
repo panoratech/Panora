@@ -7,7 +7,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
-import { ApiOperation, ApiParam, ApiTags, ApiHeader } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  ApiHeader,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { UserService } from './services/user.service';
 import { UnifiedUserOutput } from './types/model.unified';
@@ -74,13 +80,36 @@ export class UserController {
     type: String,
     description: 'id of the permission you want to retrieve.',
   })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original File Storage software.',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.permissionService.getUser(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.permissionService.getUser(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

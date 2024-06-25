@@ -188,6 +188,8 @@ export class PermissionService {
 
       const result_permission = await this.getPermission(
         unique_fs_permission_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -219,6 +221,8 @@ export class PermissionService {
 
   async getPermission(
     id_fs_permission: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedPermissionOutput> {
     try {
@@ -279,7 +283,21 @@ export class PermissionService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'filestorage.permission.pull',
+            method: 'GET',
+            url: '/filestorage/permission',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -400,7 +418,7 @@ export class PermissionService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

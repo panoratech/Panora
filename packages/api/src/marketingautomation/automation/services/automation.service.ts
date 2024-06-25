@@ -39,6 +39,8 @@ export class AutomationService {
 
   async getAutomation(
     id_automationing_automation: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAutomationOutput> {
     return;

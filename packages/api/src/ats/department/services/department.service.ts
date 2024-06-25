@@ -12,6 +12,8 @@ export class DepartmentService {
 
   async getDepartment(
     id_ats_department: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedDepartmentOutput> {
     try {
@@ -73,6 +75,19 @@ export class DepartmentService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.department.pull',
+          method: 'GET',
+          url: '/ats/department',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -87,13 +102,52 @@ export class DepartmentService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedDepartmentOutput[]> {
+  ): Promise<{
+    data: UnifiedDepartmentOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.ats_departments.findFirst({
+          where: {
+            id_connection: connection_id,
+            id_ats_department: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const departments = await this.prisma.ats_departments.findMany({
+        take: limit + 1,
+        cursor: cursor
+          ? {
+              id_ats_department: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           id_connection: connection_id,
         },
       });
+
+      if (departments.length === limit + 1) {
+        next_cursor = Buffer.from(
+          departments[departments.length - 1].id_ats_department,
+        ).toString('base64');
+        departments.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedDepartments: UnifiedDepartmentOutput[] = await Promise.all(
         departments.map(async (department) => {
@@ -154,7 +208,25 @@ export class DepartmentService {
         res = remote_array_data;
       }
 
-      return res;
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.department.pull',
+          method: 'GET',
+          url: '/ats/departments',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throw error;
     }

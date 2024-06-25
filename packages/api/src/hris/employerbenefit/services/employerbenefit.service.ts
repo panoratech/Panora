@@ -30,6 +30,8 @@ export class EmployerBenefitService {
 
   async getEmployerBenefit(
     id_employerbenefiting_employerbenefit: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedEmployerBenefitOutput> {
     return;

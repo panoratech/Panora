@@ -40,6 +40,8 @@ export class InvoiceService {
 
   async getInvoice(
     id_invoiceing_invoice: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedInvoiceOutput> {
     return;

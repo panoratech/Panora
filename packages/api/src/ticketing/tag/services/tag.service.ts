@@ -13,6 +13,8 @@ export class TagService {
 
   async getTag(
     id_ticketing_tag: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTagOutput> {
     try {
@@ -71,6 +73,19 @@ export class TagService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.tag.pull',
+          method: 'GET',
+          url: '/ticketing/tag',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -189,7 +204,7 @@ export class TagService {
 
         res = remote_array_data;
       }
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

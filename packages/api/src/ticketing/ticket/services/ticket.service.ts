@@ -288,6 +288,8 @@ export class TicketService {
 
       const result_ticket = await this.getTicket(
         unique_ticketing_ticket_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -320,6 +322,8 @@ export class TicketService {
   //TODO: given params return attachments and comments
   async getTicket(
     id_ticketing_ticket: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketOutput> {
     try {
@@ -389,7 +393,21 @@ export class TicketService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ticketing.ticket.pull',
+            method: 'GET',
+            url: '/ticketing/ticket',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -524,7 +542,7 @@ export class TicketService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

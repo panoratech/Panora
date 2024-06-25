@@ -188,7 +188,12 @@ export class FileService {
         },
       });
 
-      const result_file = await this.getFile(unique_fs_file_id, remote_data);
+      const result_file = await this.getFile(
+        unique_fs_file_id,
+        undefined,
+        undefined,
+        remote_data,
+      );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
@@ -218,6 +223,8 @@ export class FileService {
 
   async getFile(
     id_fs_file: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedFileOutput> {
     try {
@@ -281,7 +288,21 @@ export class FileService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'filestorage.file.pull',
+            method: 'GET',
+            url: '/filestorage/file',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -405,7 +426,7 @@ export class FileService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

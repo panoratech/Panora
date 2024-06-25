@@ -30,6 +30,8 @@ export class EmploymentService {
 
   async getEmployment(
     id_employmenting_employment: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedEmploymentOutput> {
     return;

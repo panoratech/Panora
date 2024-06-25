@@ -39,6 +39,8 @@ export class TemplateService {
 
   async getTemplate(
     id_templateing_template: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTemplateOutput> {
     return;

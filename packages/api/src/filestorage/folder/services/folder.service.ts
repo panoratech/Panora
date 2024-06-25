@@ -196,6 +196,8 @@ export class FolderService {
 
       const result_folder = await this.getFolder(
         unique_fs_folder_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -227,6 +229,8 @@ export class FolderService {
 
   async getFolder(
     id_fs_folder: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedFolderOutput> {
     try {
@@ -290,7 +294,21 @@ export class FolderService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'filestorage.folder.pull',
+            method: 'GET',
+            url: '/filestorage/folder',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -414,7 +432,7 @@ export class FolderService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

@@ -188,6 +188,8 @@ export class ActivityService {
 
       const result_activity = await this.getActivity(
         unique_ats_activity_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -219,6 +221,8 @@ export class ActivityService {
 
   async getActivity(
     id_ats_activity: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedActivityOutput> {
     try {
@@ -265,6 +269,21 @@ export class ActivityService {
           ...res,
           remote_data: remote_data,
         };
+      }
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ats.activity.pull',
+            method: 'GET',
+            url: '/ats/activity',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
       }
 
       return res;
@@ -370,7 +389,7 @@ export class ActivityService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

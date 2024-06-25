@@ -210,9 +210,9 @@ export class SyncService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'success',
-          type: 'ticketing.account.pulled',
-          method: 'PULL',
-          url: '/pull',
+          type: 'ticketing.account.synced',
+          method: 'SYNC',
+          url: '/sync',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -221,7 +221,7 @@ export class SyncService implements OnModuleInit {
       });
       await this.webhook.handleWebhook(
         account_data,
-        'ticketing.account.pulled',
+        'ticketing.account.sync',
         id_project,
         event.id_event,
       );

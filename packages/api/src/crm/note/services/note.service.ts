@@ -218,7 +218,12 @@ export class NoteService {
         },
       });
 
-      const result_note = await this.getNote(unique_crm_note_id, remote_data);
+      const result_note = await this.getNote(
+        unique_crm_note_id,
+        undefined,
+        undefined,
+        remote_data,
+      );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
 
@@ -249,6 +254,8 @@ export class NoteService {
 
   async getNote(
     id_note: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedNoteOutput> {
     try {
@@ -312,7 +319,21 @@ export class NoteService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'crm.note.pull',
+            method: 'GET',
+            url: '/crm/note',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -432,7 +453,7 @@ export class NoteService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

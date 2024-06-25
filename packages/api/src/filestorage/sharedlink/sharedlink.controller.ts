@@ -15,6 +15,7 @@ import {
   ApiParam,
   ApiTags,
   ApiHeader,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { SharedLinkService } from './services/sharedlink.service';
@@ -85,14 +86,37 @@ export class SharedlinkController {
     type: String,
     description: 'id of the sharedlink you want to retrieve.',
   })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original File Storage software.',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedSharedLinkOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.sharedlinkService.getSharedlink(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.sharedlinkService.getSharedlink(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 
   @ApiOperation({

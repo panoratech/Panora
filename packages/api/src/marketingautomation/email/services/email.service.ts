@@ -26,6 +26,8 @@ export class EmailService {
 
   async getEmail(
     id_emailing_email: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedEmailOutput> {
     return;

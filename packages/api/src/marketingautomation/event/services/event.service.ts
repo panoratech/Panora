@@ -26,6 +26,8 @@ export class EventService {
 
   async getEvent(
     id_eventing_event: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedEventOutput> {
     return;

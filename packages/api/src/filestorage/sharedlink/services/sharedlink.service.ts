@@ -194,6 +194,8 @@ export class SharedLinkService {
 
       const result_sharedlink = await this.getSharedlink(
         unique_fs_shared_link_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -225,6 +227,8 @@ export class SharedLinkService {
 
   async getSharedlink(
     id_fs_shared_link: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedSharedLinkOutput> {
     try {
@@ -288,7 +292,21 @@ export class SharedLinkService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'filestorage.sharedlink.pull',
+            method: 'GET',
+            url: '/filestorage/sharedlink',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -412,7 +430,7 @@ export class SharedLinkService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

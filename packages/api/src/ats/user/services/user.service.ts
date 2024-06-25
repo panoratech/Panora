@@ -12,6 +12,8 @@ export class UserService {
 
   async getUser(
     id_ats_user: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedUserOutput> {
     try {
@@ -79,6 +81,19 @@ export class UserService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.user.pull',
+          method: 'GET',
+          url: '/ats/user',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -93,14 +108,52 @@ export class UserService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedUserOutput[]> {
+  ): Promise<{
+    data: UnifiedUserOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.ats_users.findFirst({
+          where: {
+            id_connection: connection_id,
+            id_ats_user: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const users = await this.prisma.ats_users.findMany({
+        take: limit + 1,
+        cursor: cursor
+          ? {
+              id_ats_user: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           id_connection: connection_id,
         },
       });
 
+      if (users.length === limit + 1) {
+        next_cursor = Buffer.from(users[users.length - 1].id_ats_user).toString(
+          'base64',
+        );
+        users.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
       const unifiedUsers: UnifiedUserOutput[] = await Promise.all(
         users.map(async (user) => {
           // Fetch field mappings for the user
@@ -165,8 +218,25 @@ export class UserService {
 
         res = remote_array_data;
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.user.pull',
+          method: 'GET',
+          url: '/ats/users',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throw error;
     }

@@ -199,7 +199,12 @@ export class DealService {
         },
       });
 
-      const result_deal = await this.getDeal(unique_crm_deal_id, remote_data);
+      const result_deal = await this.getDeal(
+        unique_crm_deal_id,
+        undefined,
+        undefined,
+        remote_data,
+      );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
 
@@ -230,6 +235,8 @@ export class DealService {
 
   async getDeal(
     id_dealing_deal: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedDealOutput> {
     try {
@@ -292,6 +299,21 @@ export class DealService {
           ...res,
           remote_data: remote_data,
         };
+      }
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'crm.deal.pull',
+            method: 'GET',
+            url: '/crm/deal',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
       }
 
       return res;
@@ -413,7 +435,7 @@ export class DealService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

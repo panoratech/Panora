@@ -39,6 +39,8 @@ export class ScreeningQuestionService {
 
   async getScreeningQuestion(
     id_screeningquestioning_screeningquestion: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedScreeningQuestionOutput> {
     return;

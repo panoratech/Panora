@@ -30,6 +30,8 @@ export class BenefitService {
 
   async getBenefit(
     id_benefiting_benefit: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedBenefitOutput> {
     return;

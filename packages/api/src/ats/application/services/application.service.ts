@@ -201,6 +201,8 @@ export class ApplicationService {
 
       const result_application = await this.getApplication(
         unique_ats_application_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -232,6 +234,8 @@ export class ApplicationService {
 
   async getApplication(
     id_ats_application: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedApplicationOutput> {
     try {
@@ -283,6 +287,21 @@ export class ApplicationService {
           ...res,
           remote_data: remote_data,
         };
+      }
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ats.application.pull',
+            method: 'GET',
+            url: '/ats/application',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
       }
 
       return res;
@@ -393,7 +412,7 @@ export class ApplicationService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

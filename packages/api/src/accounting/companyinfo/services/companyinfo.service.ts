@@ -30,6 +30,8 @@ export class CompanyInfoService {
 
   async getCompanyInfo(
     id_companyinfoing_companyinfo: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCompanyInfoOutput> {
     return;

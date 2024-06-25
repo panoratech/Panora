@@ -13,6 +13,8 @@ export class ContactService {
 
   async getContact(
     id_ticketing_contact: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedContactOutput> {
     try {
@@ -74,6 +76,19 @@ export class ContactService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.contact.pull',
+          method: 'GET',
+          url: '/ticketing/contact',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -194,7 +209,7 @@ export class ContactService {
 
         res = remote_array_data;
       }
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

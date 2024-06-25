@@ -29,6 +29,8 @@ export class EmployeePayrollRunService {
   }
   async getEmployeePayrollRun(
     id_employeepayrollruning_employeepayrollrun: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedEmployeePayrollRunOutput> {
     return;

@@ -178,9 +178,9 @@ export class SyncService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'success',
-          type: 'filestorage.drive.pulled',
-          method: 'PULL',
-          url: '/pull',
+          type: 'filestorage.drive.synced',
+          method: 'SYNC',
+          url: '/sync',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

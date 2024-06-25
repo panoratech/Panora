@@ -91,13 +91,29 @@ export class AccountController {
     description:
       'Set to true to include data from the original Ticketing software.',
   })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedAccountOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  retrieve(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.accountService.getAccount(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.accountService.getAccount(
+      id,
+      remoteSource,
+      linkedUserId,
+      remote_data,
+    );
   }
 }

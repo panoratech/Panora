@@ -39,6 +39,8 @@ export class CampaignService {
 
   async getCampaign(
     id_campaigning_campaign: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCampaignOutput> {
     return;

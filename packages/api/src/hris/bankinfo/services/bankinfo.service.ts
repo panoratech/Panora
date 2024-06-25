@@ -27,6 +27,8 @@ export class BankInfoService {
 
   async getBankinfo(
     id_bankinfoing_bankinfo: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedBankInfoOutput> {
     return;

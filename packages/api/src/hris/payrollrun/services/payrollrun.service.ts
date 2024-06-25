@@ -30,6 +30,8 @@ export class PayrollRunService {
 
   async getPayrollRun(
     id_payrollruning_payrollrun: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedPayrollRunOutput> {
     return;

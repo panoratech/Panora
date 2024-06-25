@@ -30,6 +30,8 @@ export class CashflowStatementService {
 
   async getCashflowStatement(
     id_cashflowstatementing_cashflowstatement: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCashflowStatementOutput> {
     return;

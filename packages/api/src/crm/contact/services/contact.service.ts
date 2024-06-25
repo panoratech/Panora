@@ -348,6 +348,8 @@ export class ContactService {
 
       const result_contact = await this.getContact(
         unique_crm_contact_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -379,6 +381,8 @@ export class ContactService {
 
   async getContact(
     id_crm_contact: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedContactOutput> {
     try {
@@ -454,7 +458,21 @@ export class ContactService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'crm.contact.pull',
+            method: 'GET',
+            url: '/crm/contact',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -590,7 +608,7 @@ export class ContactService {
 
         res = remote_array_data;
       }
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

@@ -200,6 +200,8 @@ export class InterviewService {
 
       const result_interview = await this.getInterview(
         unique_ats_interview_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -231,6 +233,8 @@ export class InterviewService {
 
   async getInterview(
     id_ats_interview: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedInterviewOutput> {
     try {
@@ -296,6 +300,21 @@ export class InterviewService {
           ...res,
           remote_data: remote_data,
         };
+      }
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ats.interview.pull',
+            method: 'GET',
+            url: '/ats/interview',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
       }
 
       return res;
@@ -424,7 +443,7 @@ export class InterviewService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

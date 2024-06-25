@@ -40,6 +40,8 @@ export class JournalEntryService {
 
   async getJournalEntry(
     id_journalentrying_journalentry: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedJournalEntryOutput> {
     return;

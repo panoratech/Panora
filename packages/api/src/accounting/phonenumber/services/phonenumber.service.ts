@@ -30,6 +30,8 @@ export class PhoneNumberService {
 
   async getPhoneNumber(
     id_phonenumbering_phonenumber: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedPhoneNumberOutput> {
     return;

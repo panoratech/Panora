@@ -30,6 +30,8 @@ export class LocationService {
 
   async getLocation(
     id_locationing_location: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedLocationOutput> {
     return;

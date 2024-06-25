@@ -36,6 +36,8 @@ export class ListService {
 
   async getList(
     id_listing_list: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedListOutput> {
     return;

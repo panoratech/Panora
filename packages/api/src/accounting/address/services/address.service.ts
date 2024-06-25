@@ -29,6 +29,8 @@ export class AddressService {
 
   async getAddress(
     id_addressing_address: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAddressOutput> {
     return;

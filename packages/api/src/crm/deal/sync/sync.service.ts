@@ -191,9 +191,9 @@ export class SyncService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'success',
-          type: 'crm.deal.pulled',
-          method: 'PULL',
-          url: '/pull',
+          type: 'crm.deal.synced',
+          method: 'SYNC',
+          url: '/sync',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

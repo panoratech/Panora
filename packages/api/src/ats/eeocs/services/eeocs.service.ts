@@ -12,6 +12,8 @@ export class EeocsService {
 
   async getEeocs(
     id_ats_eeoc: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedEeocsOutput> {
     try {
@@ -78,6 +80,19 @@ export class EeocsService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.eeocs.pull',
+          method: 'GET',
+          url: '/ats/eeocs',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -92,13 +107,52 @@ export class EeocsService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedEeocsOutput[]> {
+  ): Promise<{
+    data: UnifiedEeocsOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.ats_eeocs.findFirst({
+          where: {
+            id_connection: connection_id,
+            id_ats_eeoc: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const eeocss = await this.prisma.ats_eeocs.findMany({
+        take: limit + 1,
+        cursor: cursor
+          ? {
+              id_ats_eeoc: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           id_connection: connection_id,
         },
       });
+
+      if (eeocss.length === limit + 1) {
+        next_cursor = Buffer.from(
+          eeocss[eeocss.length - 1].id_ats_eeoc,
+        ).toString('base64');
+        eeocss.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedEeocss: UnifiedEeocsOutput[] = await Promise.all(
         eeocss.map(async (eeocs) => {
@@ -163,8 +217,25 @@ export class EeocsService {
 
         res = remote_array_data;
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ats.eeocss.pull',
+          method: 'GET',
+          url: '/ats/eeocss',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throw error;
     }

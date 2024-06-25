@@ -12,6 +12,8 @@ export class GroupService {
 
   async getGroup(
     id_fs_group: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedGroupOutput> {
     try {
@@ -75,6 +77,19 @@ export class GroupService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'filestorage.group.pull',
+          method: 'GET',
+          url: '/filestorage/group',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -84,18 +99,57 @@ export class GroupService {
 
   async getGroups(
     connection_id: string,
-    remoteSource: string,
+    integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: any,
     cursor?: string,
-  ): Promise<UnifiedGroupOutput[]> {
+  ): Promise<{
+    data: UnifiedGroupOutput[];
+    prev_cursor: null | string;
+    next_cursor: null | string;
+  }> {
     try {
+      let prev_cursor = null;
+      let next_cursor = null;
+
+      if (cursor) {
+        const isCursorPresent = await this.prisma.fs_groups.findFirst({
+          where: {
+            id_connection: connection_id,
+            id_fs_group: cursor,
+          },
+        });
+        if (!isCursorPresent) {
+          throw new ReferenceError(`The provided cursor does not exist!`);
+        }
+      }
+
       const groups = await this.prisma.fs_groups.findMany({
+        take: limit + 1,
+        cursor: cursor
+          ? {
+              id_fs_group: cursor,
+            }
+          : undefined,
+        orderBy: {
+          created_at: 'asc',
+        },
         where: {
           id_connection: connection_id,
         },
       });
+
+      if (groups.length === limit + 1) {
+        next_cursor = Buffer.from(
+          groups[groups.length - 1].id_fs_group,
+        ).toString('base64');
+        groups.pop();
+      }
+
+      if (cursor) {
+        prev_cursor = Buffer.from(cursor).toString('base64');
+      }
 
       const unifiedGroups: UnifiedGroupOutput[] = await Promise.all(
         groups.map(async (group) => {
@@ -157,8 +211,25 @@ export class GroupService {
 
         res = remote_array_data;
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'filestorage.group.pull',
+          method: 'GET',
+          url: '/filestorage/groups',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-      return res;
+      return {
+        data: res,
+        prev_cursor,
+        next_cursor,
+      };
     } catch (error) {
       throw error;
     }

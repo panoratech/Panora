@@ -30,6 +30,8 @@ export class PayGroupService {
 
   async getPayGroup(
     id_paygrouping_paygroup: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedPayGroupOutput> {
     return;

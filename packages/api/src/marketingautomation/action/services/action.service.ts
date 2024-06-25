@@ -39,6 +39,8 @@ export class ActionService {
 
   async getAction(
     id_actioning_action: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedActionOutput> {
     return;

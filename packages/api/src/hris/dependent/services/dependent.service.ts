@@ -30,6 +30,8 @@ export class DependentService {
 
   async getDependent(
     id_dependenting_dependent: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedDependentOutput> {
     return;

@@ -30,6 +30,8 @@ export class BalanceSheetService {
 
   async getBalanceSheet(
     id_balancesheeting_balancesheet: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedBalanceSheetOutput> {
     return;

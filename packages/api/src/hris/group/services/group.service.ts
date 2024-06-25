@@ -27,6 +27,8 @@ export class GroupService {
 
   async getGroup(
     id_grouping_group: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedGroupOutput> {
     return;

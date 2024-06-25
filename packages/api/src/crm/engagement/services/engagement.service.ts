@@ -240,6 +240,8 @@ export class EngagementService {
 
       const result_engagement = await this.getEngagement(
         unique_crm_engagement_id,
+        undefined,
+        undefined,
         remote_data,
       );
 
@@ -273,6 +275,8 @@ export class EngagementService {
   //TODO: include engagements contacts
   async getEngagement(
     id_engagement: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedEngagementOutput> {
     try {
@@ -343,7 +347,21 @@ export class EngagementService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'crm.engagement.pull',
+            method: 'GET',
+            url: '/crm/engagement',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
       throw error;
@@ -471,7 +489,7 @@ export class EngagementService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

@@ -175,9 +175,9 @@ export class SyncService implements OnModuleInit {
         data: {
           id_event: uuidv4(),
           status: 'success',
-          type: 'ats.job_interview_stage.pulled',
-          method: 'PULL',
-          url: '/pull',
+          type: 'ats.jobinterviewstage.synced',
+          method: 'SYNC',
+          url: '/sync',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
