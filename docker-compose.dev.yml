@@ -235,22 +235,22 @@ services:
     volumes:
       - .:/app
 
-  ngrok:
-    image: ngrok/ngrok:latest
-    restart: always
-    command:
-      - "start"
-      - "--all"
-      - "--config"
-      - "/etc/ngrok.yml"
-    volumes:
-      - ./ngrok.yml:/etc/ngrok.yml
-    ports:
-    - 4040:4040
-    depends_on:
-      api:
-        condition: service_healthy
-    network_mode: "host"
+  #ngrok:
+    #image: ngrok/ngrok:latest
+    #restart: always
+    #command:
+     # - "start"
+     # - "--all"
+     # - "--config"
+     # - "/etc/ngrok.yml"
+    #volumes:
+     # - ./ngrok.yml:/etc/ngrok.yml
+    #ports:
+    #- 4040:4040
+    #depends_on:
+    #  api:
+    #    condition: service_healthy
+    #network_mode: "host"
 
   docs:
     build:

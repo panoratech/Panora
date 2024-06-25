@@ -42,11 +42,16 @@ We made a docker file that builds Panora from sources, specifically to help you 
     ```bash 
     rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
     ```
+    <Info>For Mac users only: <br/>
+      ```bash 
+      echo -e "node-linker=hoisted\n package-import-method=clone-or-copy" > .npmrc 
+      ```
+    <Info/>
   </Step>
-  <Step title="Mac Users only:">
-    ```bash 
-    echo -e "node-linker=hoisted\n package-import-method=clone-or-copy" > .npmrc 
-    ```
+  <Step title="(Optional) Enable Grok">
+    If you have to create an oAuth app for a provider and needs an **https** redirect uri you must enable Grok service and use your secure domain from them (it proxies requests to `localhost:3000`): <br/>
+    - Add your auth token and domain from your Ngrok dashboard to the `ngrok.yml` file.<br/>
+    - Uncomment the Grok service inside the `docker-compose.dev.yml` file.
   </Step>
   <Step title="Start the Dockerfile">
     ```bash 
