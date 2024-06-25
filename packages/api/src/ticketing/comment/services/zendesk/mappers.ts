@@ -116,7 +116,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
     if (comment.author_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.author_id),
-        'zendesk',
+        connectionId,
       );
 
       if (user_id) {
@@ -124,7 +124,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
       } else {
         const contact_id = await this.utils.getContactUuidFromRemoteId(
           String(comment.author_id),
-          'zendesk',
+          connectionId,
         );
         if (contact_id) {
           opts = { creator_type: 'CONTACT', contact_id: contact_id };
@@ -133,8 +133,8 @@ export class ZendeskCommentMapper implements ICommentMapper {
     }
 
     const res = {
-      body: comment.body || '',
-      html_body: comment.html_body || '',
+      body: comment.body || null,
+      html_body: comment.html_body || null,
       is_private: !comment.public,
       ...opts,
     };

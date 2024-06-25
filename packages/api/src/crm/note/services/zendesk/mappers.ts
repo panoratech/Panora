@@ -67,7 +67,11 @@ export class ZendeskNoteMapper implements INoteMapper {
     }[],
   ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleNoteToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleNoteToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
@@ -98,7 +102,7 @@ export class ZendeskNoteMapper implements INoteMapper {
     if (type == 'contact') {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         String(note.resource_id),
-        'zendesk',
+        connectionId,
       );
       if (contact_id) {
         opts = {
@@ -110,7 +114,7 @@ export class ZendeskNoteMapper implements INoteMapper {
     if (type == 'deal') {
       const deal_id = await this.utils.getDealUuidFromRemoteId(
         String(note.resource_id),
-        'zendesk',
+        connectionId,
       );
       if (deal_id) {
         opts = {

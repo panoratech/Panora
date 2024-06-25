@@ -35,7 +35,7 @@ export class ZohoNoteMapper implements INoteMapper {
           api_name: 'Contacts',
           id: await this.utils.getRemoteIdFromContactUuid(source.contact_id),
         }
-      : { api_name: '', id: '' };
+      : { api_name: null, id: null };
 
     const result: ZohoNoteInput = {
       Note_Content: source.content,
@@ -44,7 +44,7 @@ export class ZohoNoteMapper implements INoteMapper {
           api_name: module.api_name,
           id: module.id,
         },
-        id: '', // todo
+        id: null, // todo
       },
     };
 
@@ -71,7 +71,11 @@ export class ZohoNoteMapper implements INoteMapper {
     }[],
   ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleNoteToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleNoteToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
@@ -104,18 +108,21 @@ export class ZohoNoteMapper implements INoteMapper {
 
     const module = note.Parent_Id.module;
     if (module.api_name === 'Deals' && module.id) {
-      res.deal_id = await this.utils.getDealUuidFromRemoteId(module.id, 'zoho');
+      res.deal_id = await this.utils.getDealUuidFromRemoteId(
+        module.id,
+        connectionId,
+      );
     }
     if (module.api_name === 'Accounts' && module.id) {
       res.company_id = await this.utils.getCompanyUuidFromRemoteId(
         module.id,
-        'zoho',
+        connectionId,
       );
     }
     if (module.api_name === 'Contacts' && module.id) {
       res.contact_id = await this.utils.getContactUuidFromRemoteId(
         module.id,
-        'zoho',
+        connectionId,
       );
     }
 

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { CoreSyncService } from './sync.service';
 import { SyncController } from './sync.controller';
 import { LoggerService } from '../logger/logger.service';
-import { PrismaService } from '../prisma/prisma.service';
 import { BullModule } from '@nestjs/bull';
 import { CompanyModule } from '@crm/company/company.module';
 import { ContactModule } from '@crm/contact/contact.module';
@@ -20,6 +19,7 @@ import { TagModule } from '@ticketing/tag/tag.module';
 import { TeamModule } from '@ticketing/team/team.module';
 import { TicketModule } from '@ticketing/ticket/ticket.module';
 import { UserModule as TUserModule } from '@ticketing/user/user.module';
+import { CoreSyncRegistry } from './registry.service';
 
 @Module({
   imports: [
@@ -44,7 +44,7 @@ import { UserModule as TUserModule } from '@ticketing/user/user.module';
     TicketModule,
     TUserModule,
   ],
-  providers: [CoreSyncService, LoggerService],
+  providers: [CoreSyncService, CoreSyncRegistry, LoggerService],
   controllers: [SyncController],
 })
 export class SyncModule {}

@@ -72,7 +72,11 @@ export class PipedriveNoteMapper implements INoteMapper {
     }[],
   ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleNoteToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleNoteToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotNoteOutput
@@ -103,7 +107,7 @@ export class PipedriveNoteMapper implements INoteMapper {
     if (note.person_id) {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         String(note.person_id),
-        'pipedrive',
+        connectionId,
       );
       if (contact_id) {
         opts = {
@@ -115,7 +119,7 @@ export class PipedriveNoteMapper implements INoteMapper {
     if (note.deal_id) {
       const deal_id = await this.utils.getDealUuidFromRemoteId(
         String(note.deal_id),
-        'pipedrive',
+        connectionId,
       );
       if (deal_id) {
         opts = {
@@ -127,7 +131,7 @@ export class PipedriveNoteMapper implements INoteMapper {
     if (note.org_id) {
       const org_id = await this.utils.getCompanyUuidFromRemoteId(
         String(note.org_id),
-        'pipedrive',
+        connectionId,
       );
       if (org_id) {
         opts = {

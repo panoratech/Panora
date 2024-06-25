@@ -135,7 +135,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
     if (company.values.team[0]?.target_record_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         company.values.team[0].target_record_id,
-        'attio',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -165,7 +165,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
       ], // Assuming 'street', 'city', 'state', 'postal_code', 'country' are properties in company.properties
       phone_numbers: [
         {
-          phone_number: '',
+          phone_number: null,
           phone_type: 'primary',
           owner_type: 'company',
         },

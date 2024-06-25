@@ -27,7 +27,7 @@ export class GitlabCollectionMapper implements ICollectionMapper {
   ): GitlabCollectionInput {
     const result: GitlabCollectionInput = {
       name: source.name,
-      description: source.description ? source.description : '',
+      description: source.description ? source.description : null,
       path: source.name,
     };
 

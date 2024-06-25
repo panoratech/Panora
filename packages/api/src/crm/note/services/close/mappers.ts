@@ -56,7 +56,11 @@ export class CloseNoteMapper implements INoteMapper {
     }[],
   ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleNoteToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleNoteToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
@@ -85,7 +89,7 @@ export class CloseNoteMapper implements INoteMapper {
     if (note.created_by || note.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         note.created_by || note.user_id,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -96,7 +100,7 @@ export class CloseNoteMapper implements INoteMapper {
     if (note.contact_id) {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         note.contact_id,
-        'close',
+        connectionId,
       );
       if (contact_id) {
         opts = {
@@ -108,7 +112,7 @@ export class CloseNoteMapper implements INoteMapper {
     if (note.lead_id) {
       const lead_id = await this.utils.getCompanyUuidFromRemoteId(
         note.lead_id,
-        'close',
+        connectionId,
       );
       if (lead_id) {
         opts = {

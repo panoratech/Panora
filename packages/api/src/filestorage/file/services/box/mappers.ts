@@ -67,7 +67,7 @@ export class BoxFileMapper implements IFileMapper {
       name: file.name || null,
       type: file.extension || null,
       file_url: file.shared_link?.url || null,
-      mime_type: file.metadata?.['content-type'] || '',
+      mime_type: file.metadata?.['content-type'] || null,
       size: file.size?.toString() || '0',
       folder_id:
         (await this.utils.getFolderIdFromRemote(

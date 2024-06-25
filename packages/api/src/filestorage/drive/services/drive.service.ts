@@ -27,7 +27,7 @@ export class DriveService {
       const values = await this.prisma.value.findMany({
         where: {
           entity: {
-            ressource_owner_id: drive.id_crm_contact,
+            ressource_owner_id: drive.id_fs_drive,
           },
         },
         include: {

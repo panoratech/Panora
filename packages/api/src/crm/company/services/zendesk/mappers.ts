@@ -76,12 +76,20 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, connectionId, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -104,7 +112,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
     // Constructing the email and phone details
     const email_addresses = company.email
       ? [{ email_address: company.email, email_address_type: 'primary' }]
-      : [];
+      : null;
     const phone_numbers = [];
 
     if (company.phone) {
@@ -121,7 +129,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
     if (company.owner_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(company.owner_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
         opts = {

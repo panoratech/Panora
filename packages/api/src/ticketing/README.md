@@ -7,6 +7,6 @@ Panora supports integration with the following objects across multiple platforms
 | Zendesk     | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ |  |
 | Front       | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ |  |
 | Jira        | ✔        | ✔     | ✔    |            |      | ✔    | ✔ | ✔ |
-| Gorgias     | ✔        | ✔     | ✔    | ✔          |      | ✔    | ✔ |  |
+| Gitlab     | ✔        | ✔     | ✔    |           |      |     |  |  ✔|
 
 Your favourite software is missing? [Ask the community to build a connector!](https://github.com/panoratech/Panora/issues/new)

@@ -21,12 +21,12 @@ export class CloseTaskMapper implements ITaskMapper {
     }[],
   ): Promise<CloseTaskInput> {
     const result: CloseTaskInput = {
-      text: source?.content ?? '',
+      text: source?.content ?? null,
       is_complete: source.status === 'COMPLETED',
       _type: 'lead',
-      lead_id: '',
-      assigned_to: '',
-      date: '',
+      lead_id: null,
+      assigned_to: null,
+      date: null,
     };
 
     if (source.user_id) {
@@ -67,7 +67,11 @@ export class CloseTaskMapper implements ITaskMapper {
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleTaskToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
@@ -95,7 +99,7 @@ export class CloseTaskMapper implements ITaskMapper {
     if (task.assigned_to) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         task.assigned_to,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -106,7 +110,7 @@ export class CloseTaskMapper implements ITaskMapper {
     if (task.contact_id) {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         task.contact_id,
-        'close',
+        connectionId,
       );
       if (contact_id) {
         opts = {
@@ -118,7 +122,7 @@ export class CloseTaskMapper implements ITaskMapper {
     if (task.lead_id) {
       const lead_id = await this.utils.getCompanyUuidFromRemoteId(
         task.lead_id,
-        'close',
+        connectionId,
       );
       if (lead_id) {
         opts = {
@@ -130,11 +134,11 @@ export class CloseTaskMapper implements ITaskMapper {
 
     return {
       remote_id: task.id,
-      subject: '',
+      subject: null,
       content: task.text,
       status: task?.is_complete ? 'COMPLETED' : 'PENDING',
       due_date: new Date(task.due_date),
-      finished_date: task.finished_date ? new Date(task.finished_date) : '',
+      finished_date: task.finished_date ? new Date(task.finished_date) : null,
       field_mappings,
       ...opts,
       // Additional fields mapping based on UnifiedTaskOutput structure

@@ -63,8 +63,8 @@ export class FrontContactMapper implements IContactMapper {
     const unifiedContact: UnifiedContactOutput = {
       remote_id: contact.id,
       name: contact.name,
-      email_address: emailHandle.handle || '',
-      phone_number: phoneHandle.handle || '',
+      email_address: emailHandle.handle || null,
+      phone_number: phoneHandle.handle || null,
       field_mappings: field_mappings,
     };
 

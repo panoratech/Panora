@@ -78,13 +78,21 @@ export class ZendeskContactMapper implements IContactMapper {
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleContactToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotContactOutput
     return Promise.all(
       source.map((contact) =>
-        this.mapSingleContactToUnified(contact, connectionId, customFieldMappings),
+        this.mapSingleContactToUnified(
+          contact,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -123,7 +131,7 @@ export class ZendeskContactMapper implements IContactMapper {
     if (contact.owner_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(contact.owner_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
         opts = {

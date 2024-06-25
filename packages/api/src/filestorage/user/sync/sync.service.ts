@@ -9,6 +9,7 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreSyncRegistry } from '@@core/sync/registry.service';
 import { ApiResponse } from '@@core/utils/types';
 import { IUserService } from '../types';
 import { OriginalUserOutput } from '@@core/utils/types/original/original.file-storage';
@@ -26,9 +27,11 @@ export class SyncService implements OnModuleInit {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private registry: CoreSyncRegistry,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
+    this.registry.registerService('filestorage', 'user', this);
   }
 
   async onModuleInit() {
@@ -91,6 +94,25 @@ export class SyncService implements OnModuleInit {
                 const providers = FILESTORAGE_PROVIDERS;
                 for (const provider of providers) {
                   try {
+                    const connection = await this.prisma.connections.findFirst({
+                      where: {
+                        id_linked_user: linkedUser.id_linked_user,
+                        provider_slug: provider.toLowerCase(),
+                      },
+                    });
+                    const groups = await this.prisma.fs_groups.findMany({
+                      where: {
+                        id_connection: connection.id_connection,
+                      },
+                    });
+                    for (const group of groups) {
+                      await this.syncUsersForLinkedUser(
+                        provider,
+                        linkedUser.id_linked_user,
+                        id_project,
+                        group.id_fs_group,
+                      );
+                    }
                     await this.syncUsersForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
@@ -116,6 +138,7 @@ export class SyncService implements OnModuleInit {
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    group_id?: string,
   ) {
     try {
       this.logger.log(
@@ -148,11 +171,13 @@ export class SyncService implements OnModuleInit {
 
       const service: IUserService =
         this.serviceRegistry.getService(integrationId);
+      if (!service) return;
       const resp: ApiResponse<OriginalUserOutput[]> = await service.syncUsers(
         linkedUserId,
+        group_id,
         remoteProperties,
       );
-
+      if (!resp) return;
       const sourceObject: OriginalUserOutput[] = resp.data;
 
       // unify the data according to the target obj wanted

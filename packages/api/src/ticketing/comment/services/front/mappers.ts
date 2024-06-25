@@ -92,7 +92,7 @@ export class FrontCommentMapper implements ICommentMapper {
     if (comment.author.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.author.id),
-        'front',
+        connectionId,
       );
 
       if (user_id) {

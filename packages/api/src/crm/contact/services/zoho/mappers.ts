@@ -65,13 +65,21 @@ export class ZohoContactMapper implements IContactMapper {
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotContactOutput
     return Promise.all(
       source.map((contact) =>
-        this.mapSingleContactToUnified(contact, connectionId, customFieldMappings),
+        this.mapSingleContactToUnified(
+          contact,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -133,14 +141,14 @@ export class ZohoContactMapper implements IContactMapper {
 
     return {
       remote_id: String(contact.id),
-      first_name: contact.First_Name ? contact.First_Name : '',
-      last_name: contact.Last_Name ? contact.Last_Name : '',
+      first_name: contact.First_Name ? contact.First_Name : null,
+      last_name: contact.Last_Name ? contact.Last_Name : null,
       email_addresses,
       phone_numbers,
       field_mappings,
       user_id: await this.utils.getUserUuidFromRemoteId(
         contact.Owner.id,
-        'zoho',
+        connectionId,
       ),
       addresses: [address],
     };

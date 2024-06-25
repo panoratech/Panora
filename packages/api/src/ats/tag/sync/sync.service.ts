@@ -9,6 +9,7 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreSyncRegistry } from '@@core/sync/registry.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ITagService } from '../types';
 import { UnifiedTagOutput } from '../types/model.unified';
@@ -26,9 +27,11 @@ export class SyncService implements OnModuleInit {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private registry: CoreSyncRegistry,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
+    this.registry.registerService('ats', 'tag', this);
   }
 
   async onModuleInit() {
@@ -148,6 +151,7 @@ export class SyncService implements OnModuleInit {
 
       const service: ITagService =
         this.serviceRegistry.getService(integrationId);
+      if (!service) return;
       const resp: ApiResponse<OriginalTagOutput[]> = await service.syncTags(
         linkedUserId,
         remoteProperties,

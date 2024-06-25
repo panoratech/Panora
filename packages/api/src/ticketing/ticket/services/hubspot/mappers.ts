@@ -27,9 +27,9 @@ export class HubspotTicketMapper implements ITicketMapper {
   ): HubspotTicketInput {
     const result = {
       subject: source.name,
-      hs_pipeline: '',
-      hubspot_owner_id: '',
-      hs_pipeline_stage: '',
+      hs_pipeline: null,
+      hubspot_owner_id: null,
+      hs_pipeline_stage: null,
       hs_ticket_priority: source.priority || 'MEDIUM',
     };
 
@@ -81,11 +81,11 @@ export class HubspotTicketMapper implements ITicketMapper {
     return {
       remote_id: ticket.id,
       name: ticket.properties.name,
-      status: '', // hs_pipeline_stage: '',
+      status: null, // hs_pipeline_stage: null,
       description: ticket.properties.description,
       due_date: new Date(ticket.properties.createdate),
-      type: '', //ticket.properties.hs_pipeline,
-      parent_ticket: '', // Define how you determine the parent ticket
+      type: null, //ticket.properties.hs_pipeline,
+      parent_ticket: null, // Define how you determine the parent ticket
       completed_at: new Date(ticket.properties.hs_lastmodifieddate),
       priority: ticket.properties.hs_ticket_priority,
       assigned_to: [ticket.properties.hubspot_owner_id], // Define how you determine assigned users

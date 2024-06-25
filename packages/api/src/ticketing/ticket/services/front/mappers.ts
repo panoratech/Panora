@@ -81,7 +81,11 @@ export class FrontTicketMapper implements ITicketMapper {
 
     return Promise.all(
       sourcesArray.map((ticket) =>
-        this.mapSingleTicketToUnified(ticket, connectionId, customFieldMappings),
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -107,7 +111,7 @@ export class FrontTicketMapper implements ITicketMapper {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee.id),
-        'front',
+        connectionId,
       );
       if (user_id) {
         opts = { assigned_to: [user_id] };

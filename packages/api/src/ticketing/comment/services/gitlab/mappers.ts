@@ -101,7 +101,7 @@ export class GitlabCommentMapper implements ICommentMapper {
     if (comment.author.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.author.id),
-        'gitlab',
+        connectionId,
       );
       if (user_id) {
         opts = { ...opts, user_id };
@@ -113,7 +113,7 @@ export class GitlabCommentMapper implements ICommentMapper {
     //   } else {
     //     const contact_id = await this.utils.getContactUuidFromRemoteId(
     //       String(comment.sender.id),
-    //       'gorgias',
+    //       connectionId,
     //     );
     //     if (contact_id) {
     //       opts = { creator_type: 'CONTACT', contact_id: contact_id };
@@ -123,7 +123,7 @@ export class GitlabCommentMapper implements ICommentMapper {
     if (comment.noteable_id) {
       const ticket_id = await this.utils.getTicketUuidFromRemoteId(
         String(comment.noteable_id),
-        'gitlab',
+        connectionId,
       );
       if (ticket_id) {
         opts = { ...opts, ticket_id };
@@ -132,7 +132,7 @@ export class GitlabCommentMapper implements ICommentMapper {
 
     const res: UnifiedCommentOutput = {
       remote_id: String(comment.id),
-      body: comment.body ? comment.body : '',
+      body: comment.body ? comment.body : null,
       is_private: comment.internal,
       creator_type: 'USER',
       ...opts,

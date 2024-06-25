@@ -36,8 +36,8 @@ export class GorgiasTicketMapper implements ITicketMapper {
           via: source.type ?? 'email',
           from_agent: false,
           channel: source.type ?? 'email',
-          body_html: source.comment.html_body || '',
-          body_text: source.comment.body || '',
+          body_html: source.comment.html_body || null,
+          body_text: source.comment.body || null,
           attachments: source.comment.attachments
             ? source.comment.attachments.map((att) => ({
                 extra: att,
@@ -100,7 +100,11 @@ export class GorgiasTicketMapper implements ITicketMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
     return Promise.all(
       sourcesArray.map(async (ticket) =>
-        this.mapSingleTicketToUnified(ticket, connectionId, customFieldMappings),
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -126,7 +130,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee_user.id),
-        'gorgias',
+        connectionId,
       );
       if (user_id) {
         opts = { assigned_to: [user_id] };

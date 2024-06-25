@@ -44,7 +44,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
     }[],
   ): Promise<ZendeskEngagementInput> {
     const result: ZendeskEngagementInput = {
-      summary: source.content || '',
+      summary: source.content || null,
       incoming: source.direction === 'incoming', // Example mapping
     };
 
@@ -142,7 +142,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
-        'zendesk',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -157,7 +157,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
     return {
       remote_id: String(engagement.id),
       content: engagement.summary,
-      subject: '',
+      subject: null,
       start_at: new Date(engagement.made_at),
       end_time: new Date(engagement.updated_at),
       type: 'CALL', // Placeholder, needs appropriate mapping

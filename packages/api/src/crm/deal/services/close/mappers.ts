@@ -27,7 +27,7 @@ export class CloseDealMapper implements IDealMapper {
       value: source.amount || 0,
       value_period: 'one_time',
       custom: {},
-      lead_id: '',
+      lead_id: null,
     };
 
     if (source.company_id) {
@@ -69,7 +69,11 @@ export class CloseDealMapper implements IDealMapper {
     }[],
   ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleDealToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of CloseDealOutput
     return Promise.all(
@@ -98,7 +102,7 @@ export class CloseDealMapper implements IDealMapper {
     if (deal.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         deal.user_id,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -110,7 +114,7 @@ export class CloseDealMapper implements IDealMapper {
     if (deal.lead_id) {
       const lead_id = await this.utils.getCompanyUuidFromRemoteId(
         deal.lead_id,
-        'close',
+        connectionId,
       );
       if (lead_id) {
         opts = {
@@ -122,7 +126,7 @@ export class CloseDealMapper implements IDealMapper {
     if (deal.contact_id) {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         deal.contact_id,
-        'close',
+        connectionId,
       );
       if (contact_id) {
         opts = {

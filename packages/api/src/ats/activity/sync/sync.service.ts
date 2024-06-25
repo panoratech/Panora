@@ -16,6 +16,7 @@ import { ATS_PROVIDERS } from '@panora/shared';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreSyncRegistry } from '@@core/sync/registry.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -26,9 +27,11 @@ export class SyncService implements OnModuleInit {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private registry: CoreSyncRegistry,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
+    this.registry.registerService('ats', 'activity', this);
   }
 
   async onModuleInit() {
@@ -151,6 +154,7 @@ export class SyncService implements OnModuleInit {
 
       const service: IActivityService =
         this.serviceRegistry.getService(integrationId);
+      if (!service) return;
       const resp: ApiResponse<OriginalActivityOutput[]> =
         await service.syncActivities(linkedUserId, remoteProperties);
 

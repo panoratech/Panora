@@ -109,7 +109,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
     if (comment.sender.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.sender.id),
-        'gorgias',
+        connectionId,
       );
 
       if (user_id) {
@@ -117,7 +117,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
       } else {
         const contact_id = await this.utils.getContactUuidFromRemoteId(
           String(comment.sender.id),
-          'gorgias',
+          connectionId,
         );
         if (contact_id) {
           opts = { creator_type: 'CONTACT', contact_id: contact_id };
@@ -126,8 +126,8 @@ export class GorgiasCommentMapper implements ICommentMapper {
     }
 
     const res = {
-      body: comment.body_text || '',
-      html_body: comment.body_html || '',
+      body: comment.body_text || null,
+      html_body: comment.body_html || null,
       ...opts,
     };
 

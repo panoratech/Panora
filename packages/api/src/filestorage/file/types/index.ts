@@ -11,7 +11,7 @@ export interface IFileService {
 
   syncFiles(
     linkedUserId: string,
-    folder_id: string,
+    folder_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalFileOutput[]>>;
 }

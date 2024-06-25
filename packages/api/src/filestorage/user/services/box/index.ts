@@ -26,6 +26,7 @@ export class BoxService implements IUserService {
 
   async syncUsers(
     linkedUserId: string,
+    group_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<BoxUserOutput[]>> {
     try {

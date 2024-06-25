@@ -68,13 +68,21 @@ export class AttioContactMapper implements IContactMapper {
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleContactToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotContactOutput
     return Promise.all(
       source.map((contact) =>
-        this.mapSingleContactToUnified(contact, connectionId, customFieldMappings),
+        this.mapSingleContactToUnified(
+          contact,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -94,11 +102,11 @@ export class AttioContactMapper implements IContactMapper {
       }
     }
     const address: Address = {
-      street_1: '',
-      city: '',
-      state: '',
-      postal_code: '',
-      country: '',
+      street_1: null,
+      city: null,
+      state: null,
+      postal_code: null,
+      country: null,
     };
     const opts: any = {};
 
@@ -109,11 +117,11 @@ export class AttioContactMapper implements IContactMapper {
       // user_id: contact.values.created_by[0]?.referenced_actor_id,
       email_addresses: contact.values.email_addresses?.map((e) => ({
         email_address: e.email_address,
-        email_address_type: e.attribute_type ? e.attribute_type : '',
+        email_address_type: e.attribute_type ? e.attribute_type : null,
       })), // Map each email
       phone_numbers: contact.values.phone_numbers?.map((p) => ({
         phone_number: p.original_phone_number,
-        phone_type: p.attribute_type ? p.attribute_type : '',
+        phone_type: p.attribute_type ? p.attribute_type : null,
       })), // Map each phone number,
       field_mappings,
       addresses: [address],

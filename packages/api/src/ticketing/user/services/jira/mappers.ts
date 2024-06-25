@@ -50,7 +50,7 @@ export class JiraUserMapper implements IUserMapper {
     const unifiedUser: UnifiedUserOutput = {
       remote_id: user.accountId,
       name: `${user.displayName}`,
-      email_address: '',
+      email_address: null,
     };
 
     return unifiedUser;

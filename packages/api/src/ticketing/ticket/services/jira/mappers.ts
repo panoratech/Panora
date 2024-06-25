@@ -29,11 +29,11 @@ export class JiraTicketMapper implements ITicketMapper {
     const result: JiraTicketInput = {
       fields: {
         project: {
-          key: source.project_id || '',
+          key: source.project_id || null,
         },
         description: source.description,
         issuetype: {
-          name: source.type || '',
+          name: source.type || null,
         },
       },
     };
@@ -105,7 +105,7 @@ export class JiraTicketMapper implements ITicketMapper {
     const assigneeId = ticket.fields.assignee.id;
     const user_id = await this.utils.getUserUuidFromRemoteId(
       assigneeId,
-      'jira',
+      connectionId,
     );
     if (user_id) {
       opts = { assigned_to: [user_id] };

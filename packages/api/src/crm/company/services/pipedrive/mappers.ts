@@ -39,10 +39,10 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
           id: Number(owner.remote_id),
           name: owner.name,
           email: owner.email,
-          has_pic: 0,
-          pic_hash: '',
+          has_pic: null,
+          pic_hash: null,
           active_flag: false,
-          value: 0,
+          value: null,
         };
       }
     }
@@ -69,12 +69,20 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCompanyToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, connectionId, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -96,11 +104,11 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
 
     const res = {
       name: company.name,
-      industry: '', // Pipedrive may not directly provide this, need custom mapping
-      number_of_employees: 0, // Placeholder, as there's no direct mapping provided
-      email_addresses: [],
-      phone_numbers: [],
-      addresses: [],
+      industry: null,
+      number_of_employees: null,
+      email_addresses: null,
+      phone_numbers: null,
+      addresses: null,
       field_mappings,
     };
 
@@ -108,7 +116,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
     if (company.owner_id.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(company.owner_id.id),
-        'pipedrive',
+        connectionId,
       );
       if (user_id) {
         opts = {

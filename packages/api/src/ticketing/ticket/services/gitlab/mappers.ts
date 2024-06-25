@@ -29,7 +29,7 @@ export class GitlabTicketMapper implements ITicketMapper {
 
     const result: GitlabTicketInput = {
       title: source.name,
-      description: source.description ? source.description : '',
+      description: source.description ? source.description : null,
       project_id: Number(remote_project_id),
     };
 
@@ -77,7 +77,11 @@ export class GitlabTicketMapper implements ITicketMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
     return Promise.all(
       sourcesArray.map(async (ticket) =>
-        this.mapSingleTicketToUnified(ticket, connectionId, customFieldMappings),
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -106,7 +110,7 @@ export class GitlabTicketMapper implements ITicketMapper {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee),
-        'gitlab',
+        connectionId,
       );
       if (user_id) {
         opts = { ...opts, assigned_to: [user_id] };
@@ -116,7 +120,7 @@ export class GitlabTicketMapper implements ITicketMapper {
     if (ticket.project_id) {
       const tcg_collection_id = await this.utils.getCollectionUuidFromRemoteId(
         String(ticket.project_id),
-        'gitlab',
+        connectionId,
       );
       if (tcg_collection_id) {
         opts = { ...opts, project_id: tcg_collection_id };
@@ -126,7 +130,7 @@ export class GitlabTicketMapper implements ITicketMapper {
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: String(ticket.id),
       name: ticket.title,
-      description: ticket.description ? ticket.description : '',
+      description: ticket.description ? ticket.description : null,
       due_date: new Date(ticket.created_at),
       tags: ticket.labels ? ticket.labels : [],
       field_mappings,

@@ -64,7 +64,11 @@ export class PipedriveDealMapper implements IDealMapper {
     }[],
   ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleDealToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotDealOutput
@@ -94,7 +98,7 @@ export class PipedriveDealMapper implements IDealMapper {
     if (deal.creator_user_id.id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(deal.creator_user_id.id),
-        'pipedrive',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -105,7 +109,7 @@ export class PipedriveDealMapper implements IDealMapper {
     if (deal.stage_id) {
       const stage_id = await this.utils.getStageUuidFromRemoteId(
         String(deal.stage_id),
-        'pipedrive',
+        connectionId,
       );
       if (stage_id) {
         opts = {
@@ -118,7 +122,7 @@ export class PipedriveDealMapper implements IDealMapper {
       remote_id: String(deal.id),
       name: deal.title,
       amount: deal.value,
-      description: '',
+      description: null,
       field_mappings,
       ...opts,
     };

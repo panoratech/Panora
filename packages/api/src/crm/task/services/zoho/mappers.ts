@@ -42,7 +42,6 @@ export class ZohoTaskMapper implements ITaskMapper {
       );
       result.What_Id.name = await this.utils.getCompanyNameFromUuid(
         source.company_id,
-        'zoho',
       );
     }
     if (source.user_id) {
@@ -74,7 +73,11 @@ export class ZohoTaskMapper implements ITaskMapper {
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleTaskToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
@@ -110,13 +113,13 @@ export class ZohoTaskMapper implements ITaskMapper {
     if (task.What_Id.id) {
       res.company_id = await this.utils.getCompanyUuidFromRemoteId(
         task.What_Id.id,
-        'zoho',
+        connectionId,
       );
     }
     if (task.Owner.id) {
       res.user_id = await this.utils.getUserUuidFromRemoteId(
         task.Owner.id,
-        'zoho',
+        connectionId,
       );
     }
     return res;

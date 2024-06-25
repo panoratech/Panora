@@ -86,7 +86,7 @@ export class GithubTicketMapper implements ITicketMapper {
           for (const assignee of ticket.assignees) {
             const userUuid = await this.utils.getUserUuidFromRemoteId(
               String(assignee.id),
-              'github',
+              connectionId,
             );
             if (userUuid) {
               opts.assigned_to.push(userUuid);

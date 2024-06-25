@@ -57,9 +57,10 @@ export class CloseEngagementMapper implements IEngagementMapper {
           new Date(source.start_at).getTime()
         : 0;
     const result: CloseEngagementCallInput = {
-      note_html: source.content || '',
+      note_html: source.content || null,
       direction: (
-        (source.direction === 'OUTBOUND' ? 'outgoing' : source.direction) || ''
+        (source.direction === 'OUTBOUND' ? 'outgoing' : source.direction) ||
+        null
       ).toLowerCase(),
       duration: Math.floor(diffInMilliseconds / (1000 * 60)),
     };
@@ -118,14 +119,15 @@ export class CloseEngagementMapper implements IEngagementMapper {
     }[],
   ): Promise<CloseEngagementEmailInput> {
     const result: CloseEngagementEmailInput = {
-      body_text: source.content || '',
-      status: '', // Placeholder, needs appropriate mapping
-      sender: '',
+      body_text: source.content || null,
+      status: null, // Placeholder, needs appropriate mapping
+      sender: null,
       to: [],
       bcc: [],
       cc: [],
       direction: (
-        (source.direction === 'OUTBOUND' ? 'outgoing' : source.direction) || ''
+        (source.direction === 'OUTBOUND' ? 'outgoing' : source.direction) ||
+        null
       ).toLowerCase(),
     };
 
@@ -177,6 +179,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
           source as
             | CloseEngagementMeetingOutput
             | CloseEngagementMeetingOutput[],
+          connectionId,
           customFieldMappings,
         );
       case 'EMAIL':
@@ -219,6 +222,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
 
   private async unifyMeeting(
     source: CloseEngagementMeetingOutput | CloseEngagementMeetingOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -227,6 +231,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (!Array.isArray(source)) {
       return this.mapSingleEngagementMeetingToUnified(
         source,
+        connectionId,
         customFieldMappings,
       );
     }
@@ -235,6 +240,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       source.map((engagement) =>
         this.mapSingleEngagementMeetingToUnified(
           engagement,
+          connectionId,
           customFieldMappings,
         ),
       ),
@@ -287,7 +293,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.created_by || engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         engagement.created_by || engagement.user_id,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -298,7 +304,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.contact_id) {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         engagement.contact_id,
-        'close',
+        connectionId,
       );
       if (contact_id) {
         opts = {
@@ -310,7 +316,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.lead_id) {
       const lead_id = await this.utils.getCompanyUuidFromRemoteId(
         engagement.lead_id,
-        'close',
+        connectionId,
       );
       if (lead_id) {
         opts = {
@@ -335,6 +341,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
 
   private async mapSingleEngagementMeetingToUnified(
     engagement: CloseEngagementMeetingOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -351,7 +358,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         engagement.user_id,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -362,7 +369,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         engagement.user_id,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -373,7 +380,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.contact_id) {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         engagement.contact_id,
-        'close',
+        connectionId,
       );
       if (contact_id) {
         opts = {
@@ -385,7 +392,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.lead_id) {
       const lead_id = await this.utils.getCompanyUuidFromRemoteId(
         engagement.lead_id,
-        'close',
+        connectionId,
       );
       if (lead_id) {
         opts = {
@@ -427,7 +434,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         engagement.user_id,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -438,7 +445,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.contact_id) {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         engagement.contact_id,
-        'close',
+        connectionId,
       );
       if (contact_id) {
         opts = {
@@ -450,7 +457,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (engagement.lead_id) {
       const lead_id = await this.utils.getCompanyUuidFromRemoteId(
         engagement.lead_id,
-        'close',
+        connectionId,
       );
       if (lead_id) {
         opts = {
@@ -463,7 +470,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     return {
       remote_id: engagement.id,
       content: engagement.body_html,
-      subject: '',
+      subject: null,
       start_at: new Date(engagement.date_created),
       end_time: new Date(engagement.date_updated), // Assuming end time can be mapped from last modified date
       type: 'EMAIL',
@@ -472,7 +479,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
           ? 'OUTBOUND'
           : engagement.direction === 'inbound'
           ? 'INBOUND'
-          : '',
+          : null,
       field_mappings,
       ...opts,
     };

@@ -21,12 +21,12 @@ export class HubspotCompanyMapper implements ICompanyMapper {
     }[],
   ): Promise<HubspotCompanyInput> {
     const result: HubspotCompanyInput = {
-      city: '',
+      city: null,
       name: source.name,
-      phone: '',
-      state: '',
-      domain: '',
-      industry: source.industry || '',
+      phone: null,
+      state: null,
+      domain: null,
+      industry: source.industry || null,
     };
 
     // Assuming 'phone_numbers' array contains at least one phone number
@@ -108,7 +108,7 @@ export class HubspotCompanyMapper implements ICompanyMapper {
     if (company.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         company.properties.hubspot_owner_id,
-        'hubspot',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -121,14 +121,14 @@ export class HubspotCompanyMapper implements ICompanyMapper {
       remote_id: company.id,
       name: company.properties.name,
       industry: company.properties.industry,
-      number_of_employees: 0, // Placeholder, as there's no direct mapping provided
+      number_of_employees: null,
       addresses: [
         {
-          street_1: '',
+          street_1: null,
           city: company.properties.city,
           state: company.properties.state,
-          postal_code: '',
-          country: '',
+          postal_code: null,
+          country: null,
           address_type: 'primary',
           owner_type: 'company',
         },

@@ -18,6 +18,7 @@ import { LoggerService } from './logger/logger.service';
 import { MappersRegistry } from './utils/registry/mappings.registry';
 import { UnificationRegistry } from './utils/registry/unification.registry';
 import { CoreUnification } from './utils/services/core.service';
+import { CoreSyncRegistry } from './sync/registry.service';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { CoreUnification } from './utils/services/core.service';
     MappersRegistry,
     UnificationRegistry,
     CoreUnification,
+    CoreSyncRegistry,
   ],
   providers: [
     EncryptionService,
@@ -61,6 +63,7 @@ import { CoreUnification } from './utils/services/core.service';
     MappersRegistry,
     UnificationRegistry,
     CoreUnification,
+    CoreSyncRegistry,
   ],
 })
 export class CoreModule {}

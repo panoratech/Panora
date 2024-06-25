@@ -11,6 +11,7 @@ export interface IUserService {
 
   syncUsers(
     linkedUserId: string,
+    group_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalUserOutput[]>>;
 }

@@ -91,7 +91,7 @@ export class CloseCompanyMapper implements ICompanyMapper {
     if (company?.created_by || company?.custom?.close_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         (company?.created_by || company?.custom?.close_owner_id) as string,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -102,8 +102,8 @@ export class CloseCompanyMapper implements ICompanyMapper {
     return {
       remote_id: company.id,
       name: company.name,
-      industry: company?.custom?.Industry || '',
-      number_of_employees: company?.custom?.employees || 0, // Placeholder, as there's no direct mapping provided
+      industry: company?.custom?.Industry || null,
+      number_of_employees: company?.custom?.employees || null,
       addresses: company?.addresses?.map((address) => ({
         street_1: address.address_1,
         street_2: address.address_2,
@@ -114,7 +114,7 @@ export class CloseCompanyMapper implements ICompanyMapper {
         address_type: address.label,
         owner_type: 'company',
       })), // Assuming 'street', 'city', 'state', 'postal_code', 'country' are properties in company.properties
-      phone_numbers: [],
+      phone_numbers: null,
       field_mappings,
       ...opts,
     };

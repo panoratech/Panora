@@ -6,7 +6,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-
 import { CrmObject } from '@crm/@lib/@types';
 import { WebhookService } from '@@core/webhook/webhook.service';
 import { UnifiedStageOutput } from '../types/model.unified';
@@ -16,8 +15,8 @@ import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
 import { CRM_PROVIDERS } from '@panora/shared';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { throwTypedError, SyncError } from '@@core/utils/errors';
 import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreSyncRegistry } from '@@core/sync/registry.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -28,9 +27,11 @@ export class SyncService implements OnModuleInit {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private registry: CoreSyncRegistry,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
+    this.registry.registerService('crm', 'stage', this);
   }
 
   async onModuleInit() {
@@ -175,6 +176,7 @@ export class SyncService implements OnModuleInit {
 
       const service: IStageService =
         this.serviceRegistry.getService(integrationId);
+      if (!service) return;
       const resp: ApiResponse<OriginalStageOutput[]> = await service.syncStages(
         linkedUserId,
         deal_id,

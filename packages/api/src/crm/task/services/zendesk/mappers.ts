@@ -77,7 +77,11 @@ export class ZendeskTaskMapper implements ITaskMapper {
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleTaskToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
@@ -108,7 +112,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
     if (type == 'deal') {
       const deal_id = await this.utils.getDealUuidFromRemoteId(
         String(task.resource_id),
-        'zendesk',
+        connectionId,
       );
       if (deal_id) {
         opts = {
@@ -120,7 +124,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
     if (type == 'contact') {
       const company_id = await this.utils.getCompanyUuidFromRemoteId(
         String(task.resource_id),
-        'zendesk',
+        connectionId,
       );
       if (company_id) {
         opts = {
@@ -132,7 +136,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
     if (task.owner_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(task.owner_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
         opts = {

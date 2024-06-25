@@ -30,6 +30,7 @@ export class BoxService implements IFileService {
     custom_properties?: string[],
   ): Promise<ApiResponse<BoxFileOutput[]>> {
     try {
+      if (!folder_id) return;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

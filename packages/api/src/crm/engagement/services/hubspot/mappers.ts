@@ -51,17 +51,17 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     }[],
   ): Promise<HubspotEngagementCallInput> {
     const result: HubspotEngagementCallInput = {
-      hs_call_body: source.content || '',
-      hs_timestamp: source.start_at?.toISOString() || '',
-      hs_call_title: source.subject || '',
+      hs_call_body: source.content || null,
+      hs_timestamp: source.start_at?.toISOString() || null,
+      hs_call_title: source.subject || null,
       // Assuming direction is used to determine call status
-      hs_call_status: '',
-      hs_call_duration: '', // Needs appropriate mapping
-      hs_call_direction: source.direction || '', // Needs appropriate mapping
-      hubspot_owner_id: '',
-      hs_call_to_number: '', // Needs appropriate mapping
-      hs_call_from_number: '', // Needs appropriate mapping
-      hs_call_recording_url: '', // Needs appropriate mapping
+      hs_call_status: null,
+      hs_call_duration: null, // Needs appropriate mapping
+      hs_call_direction: source.direction || null, // Needs appropriate mapping
+      hubspot_owner_id: null,
+      hs_call_to_number: null, // Needs appropriate mapping
+      hs_call_from_number: null, // Needs appropriate mapping
+      hs_call_recording_url: null, // Needs appropriate mapping
     };
 
     // Map HubSpot owner ID from user ID
@@ -94,16 +94,16 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     }[],
   ): Promise<HubspotEngagementMeetingInput> {
     const result: HubspotEngagementMeetingInput = {
-      hs_timestamp: source.start_at?.toISOString() || '',
-      hs_meeting_body: source.content || '',
-      hs_meeting_title: source.subject || '',
-      hs_meeting_outcome: '', // Placeholder, needs appropriate mapping
-      hs_meeting_end_time: source.end_time?.toISOString() || '',
-      hs_meeting_location: '', // Placeholder, needs appropriate mapping
-      hs_meeting_start_time: source.start_at?.toISOString() || '',
-      hs_meeting_external_url: '', // Placeholder, needs appropriate mapping
-      hs_internal_meeting_notes: '', // Placeholder, needs appropriate mapping
-      hubspot_owner_id: '',
+      hs_timestamp: source.start_at?.toISOString() || null,
+      hs_meeting_body: source.content || null,
+      hs_meeting_title: source.subject || null,
+      hs_meeting_outcome: null, // Placeholder, needs appropriate mapping
+      hs_meeting_end_time: source.end_time?.toISOString() || null,
+      hs_meeting_location: null, // Placeholder, needs appropriate mapping
+      hs_meeting_start_time: source.start_at?.toISOString() || null,
+      hs_meeting_external_url: null, // Placeholder, needs appropriate mapping
+      hs_internal_meeting_notes: null, // Placeholder, needs appropriate mapping
+      hubspot_owner_id: null,
     };
 
     // Map HubSpot owner ID from user ID
@@ -136,23 +136,23 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     }[],
   ): Promise<HubspotEngagementEmailInput> {
     const result: HubspotEngagementEmailInput = {
-      hs_timestamp: source.start_at?.toISOString() || '',
-      hs_email_text: source.content || '',
-      hs_email_subject: source.subject || '',
-      hs_email_status: '', // Placeholder, needs appropriate mapping
-      hs_email_to_email: '', // Placeholder, needs appropriate mapping
+      hs_timestamp: source.start_at?.toISOString() || null,
+      hs_email_text: source.content || null,
+      hs_email_subject: source.subject || null,
+      hs_email_status: null, // Placeholder, needs appropriate mapping
+      hs_email_to_email: null, // Placeholder, needs appropriate mapping
       hs_email_direction:
         source.direction === 'INBOUND'
           ? 'INCOMING_EMAIL'
           : source.direction === 'OUTBOUND'
           ? 'FORWARDED_EMAIL'
-          : '',
-      hs_email_to_lastname: '', // Placeholder, needs appropriate mapping
-      hs_email_sender_email: '', // Placeholder, needs appropriate mapping
-      hs_email_to_firstname: '', // Placeholder, needs appropriate mapping
-      hs_email_sender_lastname: '', // Placeholder, needs appropriate mapping
-      hs_email_sender_firstname: '', // Placeholder, needs appropriate mapping
-      hubspot_owner_id: '',
+          : null,
+      hs_email_to_lastname: null, // Placeholder, needs appropriate mapping
+      hs_email_sender_email: null, // Placeholder, needs appropriate mapping
+      hs_email_to_firstname: null, // Placeholder, needs appropriate mapping
+      hs_email_sender_lastname: null, // Placeholder, needs appropriate mapping
+      hs_email_sender_firstname: null, // Placeholder, needs appropriate mapping
+      hubspot_owner_id: null,
     };
 
     // Map HubSpot owner ID from user ID
@@ -198,6 +198,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
           source as
             | HubspotEngagementMeetingOutput
             | HubspotEngagementMeetingOutput[],
+          connectionId,
           customFieldMappings,
         );
       case 'EMAIL':
@@ -242,6 +243,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
 
   private async unifyMeeting(
     source: HubspotEngagementMeetingOutput | HubspotEngagementMeetingOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -250,6 +252,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     if (!Array.isArray(source)) {
       return this.mapSingleEngagementMeetingToUnified(
         source,
+        connectionId,
         customFieldMappings,
       );
     }
@@ -258,6 +261,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
       source.map((engagement) =>
         this.mapSingleEngagementMeetingToUnified(
           engagement,
+          connectionId,
           customFieldMappings,
         ),
       ),
@@ -310,7 +314,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     if (engagement.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         engagement.properties.hubspot_owner_id,
-        'hubspot',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -333,6 +337,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
 
   private async mapSingleEngagementMeetingToUnified(
     engagement: HubspotEngagementMeetingOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -349,7 +354,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     if (engagement.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         engagement.properties.hubspot_owner_id,
-        'hubspot',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -388,7 +393,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     if (engagement.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         engagement.properties.hubspot_owner_id,
-        'hubspot',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -409,7 +414,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
           ? 'INBOUND'
           : engagement.properties.hs_email_direction === 'FORWARDED_EMAIL'
           ? 'OUTBOUND'
-          : '',
+          : null,
       field_mappings,
       ...opts,
     };

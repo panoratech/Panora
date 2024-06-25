@@ -91,11 +91,11 @@ export class HubspotContactMapper implements IContactMapper {
     }
 
     /*todo: const address: Address = {
-      street_1: '',
-      city: '',
-      state: '',
-      postal_code: '',
-      country: '',
+      street_1: null,
+      city: null,
+      state: null,
+      postal_code: null,
+      country: null,
     };*/
 
     return {

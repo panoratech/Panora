@@ -3,45 +3,13 @@ import { LoggerService } from '../logger/logger.service';
 import { ConnectorCategory } from '@panora/shared';
 import { ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { SyncService as CrmCompanySyncService } from '@crm/company/sync/sync.service';
-import { SyncService as CrmContactSyncService } from '@crm/contact/sync/sync.service';
-import { SyncService as CrmDealSyncService } from '@crm/deal/sync/sync.service';
-import { SyncService as CrmEngagementSyncService } from '@crm/engagement/sync/sync.service';
-import { SyncService as CrmNoteSyncService } from '@crm/note/sync/sync.service';
-import { SyncService as CrmStageSyncService } from '@crm/stage/sync/sync.service';
-import { SyncService as CrmTaskSyncService } from '@crm/task/sync/sync.service';
-import { SyncService as CrmUserSyncService } from '@crm/user/sync/sync.service';
-import { SyncService as TicketingAccountSyncService } from '@ticketing/account/sync/sync.service';
-import { SyncService as TicketingCollectionSyncService } from '@ticketing/collection/sync/sync.service';
-import { SyncService as TicketingCommentSyncService } from '@ticketing/comment/sync/sync.service';
-import { SyncService as TicketingContactSyncService } from '@ticketing/contact/sync/sync.service';
-import { SyncService as TicketingTagSyncService } from '@ticketing/tag/sync/sync.service';
-import { SyncService as TicketingTeamSyncService } from '@ticketing/team/sync/sync.service';
-import { SyncService as TicketingTicketSyncService } from '@ticketing/ticket/sync/sync.service';
-import { SyncService as TicketingUserSyncService } from '@ticketing/user/sync/sync.service';
-import { throwTypedError, CoreSyncError } from '@@core/utils/errors';
-
+import { CoreSyncRegistry } from './registry.service';
 @Injectable()
 export class CoreSyncService {
   constructor(
     private logger: LoggerService,
     private prisma: PrismaService,
-    private CrmCompanySyncService: CrmCompanySyncService,
-    private CrmContactSyncService: CrmContactSyncService,
-    private CrmDealSyncService: CrmDealSyncService,
-    private CrmEngagementSyncService: CrmEngagementSyncService,
-    private CrmNoteSyncService: CrmNoteSyncService,
-    private CrmStageSyncService: CrmStageSyncService,
-    private CrmTaskSyncService: CrmTaskSyncService,
-    private CrmUserSyncService: CrmUserSyncService,
-    private TicketingAccountSyncService: TicketingAccountSyncService,
-    private TicketingCollectionSyncService: TicketingCollectionSyncService,
-    private TicketingCommentSyncService: TicketingCommentSyncService,
-    private TicketingContactSyncService: TicketingContactSyncService,
-    private TicketingTagSyncService: TicketingTagSyncService,
-    private TicketingTeamSyncService: TicketingTeamSyncService,
-    private TicketingTicketSyncService: TicketingTicketSyncService,
-    private TicketingUserSyncService: TicketingUserSyncService,
+    private registry: CoreSyncRegistry,
   ) {
     this.logger.setContext(CoreSyncService.name);
   }
@@ -61,6 +29,9 @@ export class CoreSyncService {
         case ConnectorCategory.Ticketing:
           await this.handleTicketingSync(provider, linkedUserId, id_project);
           break;
+        case ConnectorCategory.FileStorage:
+          await this.handleFileStorageSync(provider, linkedUserId, id_project);
+          break;
       }
     } catch (error) {
       throw error;
@@ -74,61 +45,45 @@ export class CoreSyncService {
   ) {
     const tasks = [
       () =>
-        this.CrmUserSyncService.syncUsersForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry
+          .getService('crm', 'user')
+          .syncUsersForLinkedUser(provider, linkedUserId, id_project),
       () =>
-        this.CrmCompanySyncService.syncCompaniesForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry
+          .getService('crm', 'company')
+          .syncCompaniesForLinkedUser(provider, linkedUserId, id_project),
       () =>
-        this.CrmCompanySyncService.syncCompaniesForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry
+          .getService('crm', 'contact')
+          .syncContactsForLinkedUser(provider, linkedUserId, id_project),
       () =>
-        this.CrmContactSyncService.syncContactsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
-      () =>
-        this.CrmDealSyncService.syncDealsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry
+          .getService('crm', 'deal')
+          .syncDealsForLinkedUser(provider, linkedUserId, id_project),
     ];
 
     for (const type of ENGAGEMENTS_TYPE) {
       tasks.push(() =>
-        this.CrmEngagementSyncService.syncEngagementsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-          type,
-        ),
+        this.registry
+          .getService('crm', 'engagement')
+          .syncEngagementsForLinkedUser(
+            provider,
+            linkedUserId,
+            id_project,
+            type,
+          ),
       );
     }
 
     tasks.push(() =>
-      this.CrmNoteSyncService.syncNotesForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-      ),
+      this.registry
+        .getService('crm', 'note')
+        .syncNotesForLinkedUser(provider, linkedUserId, id_project),
     );
     tasks.push(() =>
-      this.CrmTaskSyncService.syncTasksForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-      ),
+      this.registry
+        .getService('crm', 'task')
+        .syncTasksForLinkedUser(provider, linkedUserId, id_project),
     );
 
     const connection = await this.prisma.connections.findFirst({
@@ -148,12 +103,14 @@ export class CoreSyncService {
     });
 
     const stageTasks = deals.map((deal) =>
-      this.CrmStageSyncService.syncStagesForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-        deal.id_crm_deal,
-      ),
+      this.registry
+        .getService('crm', 'stage')
+        .syncStagesForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+          deal.id_crm_deal,
+        ),
     );
 
     const stageResults = await Promise.allSettled(stageTasks);
@@ -180,35 +137,25 @@ export class CoreSyncService {
   ) {
     const tasks = [
       () =>
-        this.TicketingTicketSyncService.syncTicketsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry
+          .getService('ticketing', 'ticket')
+          .syncTicketsForLinkedUser(provider, linkedUserId, id_project),
       () =>
-        this.TicketingUserSyncService.syncUsersForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry
+          .getService('ticketing', 'user')
+          .syncUsersForLinkedUser(provider, linkedUserId, id_project),
       () =>
-        this.TicketingAccountSyncService.syncAccountsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry
+          .getService('ticketing', 'account')
+          .syncAccountsForLinkedUser(provider, linkedUserId, id_project),
       () =>
-        this.TicketingCollectionSyncService.syncCollectionsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry
+          .getService('ticketing', 'collection')
+          .syncCollectionsForLinkedUser(provider, linkedUserId, id_project),
       () =>
-        this.TicketingTeamSyncService.syncTeamsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry
+          .getService('ticketing', 'team')
+          .syncTeamsForLinkedUser(provider, linkedUserId, id_project),
     ];
 
     const connection = await this.prisma.connections.findFirst({
@@ -228,21 +175,21 @@ export class CoreSyncService {
     let contactTasks = [];
     if (accounts) {
       contactTasks = accounts.map((acc) =>
-        this.TicketingContactSyncService.syncContactsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-          acc.id_tcg_account,
-        ),
+        this.registry
+          .getService('ticketing', 'contact')
+          .syncContactsForLinkedUser(
+            provider,
+            linkedUserId,
+            id_project,
+            acc.id_tcg_account,
+          ),
       );
     } else {
       contactTasks = [
         () =>
-          this.TicketingContactSyncService.syncContactsForLinkedUser(
-            provider,
-            linkedUserId,
-            id_project,
-          ),
+          this.registry
+            .getService('ticketing', 'contact')
+            .syncContactsForLinkedUser(provider, linkedUserId, id_project),
       ];
     }
 
@@ -255,21 +202,25 @@ export class CoreSyncService {
     });
 
     const ticketCommentTasks = tickets.map((ticket) =>
-      this.TicketingCommentSyncService.syncCommentsForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-        ticket.id_tcg_ticket,
-      ),
+      this.registry
+        .getService('ticketing', 'comment')
+        .syncCommentsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+          ticket.id_tcg_ticket,
+        ),
     );
 
     const ticketTagsTasks = tickets.map((ticket) =>
-      this.TicketingTagSyncService.syncTagsForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-        ticket.id_tcg_ticket,
-      ),
+      this.registry
+        .getService('ticketing', 'tag')
+        .syncTagsForLinkedUser(
+          provider,
+          linkedUserId,
+          id_project,
+          ticket.id_tcg_ticket,
+        ),
     );
 
     const ticketCommentResults = await Promise.allSettled(ticketCommentTasks);
@@ -309,6 +260,14 @@ export class CoreSyncService {
     });
   }
 
+  async handleFileStorageSync(
+    provider: string,
+    linkedUserId: string,
+    id_project: string,
+  ) {
+    //TODO
+  }
+
   // we must have a sync_jobs table with 7 (verticals) rows, one of each is syncing details
   async getSyncStatus(vertical: string) {
     try {
@@ -324,26 +283,68 @@ export class CoreSyncService {
     try {
       switch (vertical.toLowerCase()) {
         case 'crm':
-          tasks.push(this.CrmCompanySyncService.syncCompanies(user_id));
-          tasks.push(this.CrmContactSyncService.syncContacts(user_id));
-          tasks.push(this.CrmDealSyncService.syncDeals(user_id));
-          tasks.push(this.CrmEngagementSyncService.syncEngagements(user_id));
-          tasks.push(this.CrmNoteSyncService.syncNotes(user_id));
-          tasks.push(this.CrmStageSyncService.syncStages(user_id));
-          tasks.push(this.CrmTaskSyncService.syncTasks(user_id));
-          tasks.push(this.CrmUserSyncService.syncUsers(user_id));
+          tasks.push(
+            this.registry.getService('crm', 'company').syncCompanies(user_id),
+          );
+          tasks.push(
+            this.registry.getService('crm', 'contact').syncContacts(user_id),
+          );
+          tasks.push(
+            this.registry.getService('crm', 'deal').syncDeals(user_id),
+          );
+          tasks.push(
+            this.registry
+              .getService('crm', 'engagement')
+              .syncEngagements(user_id),
+          );
+          tasks.push(
+            this.registry.getService('crm', 'note').syncNotes(user_id),
+          );
+          tasks.push(
+            this.registry.getService('crm', 'stage').syncStages(user_id),
+          );
+          tasks.push(
+            this.registry.getService('crm', 'task').syncTasks(user_id),
+          );
+          tasks.push(
+            this.registry.getService('crm', 'user').syncUsers(user_id),
+          );
           break;
         case 'ticketing':
-          tasks.push(this.TicketingAccountSyncService.syncAccounts(user_id));
           tasks.push(
-            this.TicketingCollectionSyncService.syncCollections(user_id),
+            this.registry
+              .getService('ticketing', 'account')
+              .syncAccounts(user_id),
           );
-          tasks.push(this.TicketingCommentSyncService.syncComments(user_id));
-          tasks.push(this.TicketingContactSyncService.syncContacts(user_id));
-          tasks.push(this.TicketingTagSyncService.syncTags(user_id));
-          tasks.push(this.TicketingTeamSyncService.syncTeams(user_id));
-          tasks.push(this.TicketingTicketSyncService.syncTickets(user_id));
-          tasks.push(this.TicketingUserSyncService.syncUsers(user_id));
+          tasks.push(
+            this.registry
+              .getService('ticketing', 'collection')
+              .syncCollections(user_id),
+          );
+          tasks.push(
+            this.registry
+              .getService('ticketing', 'comment')
+              .syncComments(user_id),
+          );
+          tasks.push(
+            this.registry
+              .getService('ticketing', 'contact')
+              .syncContacts(user_id),
+          );
+          tasks.push(
+            this.registry.getService('ticketing', 'tag').syncTags(user_id),
+          );
+          tasks.push(
+            this.registry.getService('ticketing', 'team').syncTeams(user_id),
+          );
+          tasks.push(
+            this.registry
+              .getService('ticketing', 'ticket')
+              .syncTickets(user_id),
+          );
+          tasks.push(
+            this.registry.getService('ticketing', 'user').syncUsers(user_id),
+          );
           break;
       }
       return {

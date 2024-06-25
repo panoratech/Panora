@@ -55,7 +55,7 @@ export class GroupService {
       const unifiedGroup: UnifiedGroupOutput = {
         id: group.id_fs_group,
         name: group.name,
-        users: group.users,
+        users: group.users, // TODO fetch all users for this group id
         remote_was_deleted: group.remote_was_deleted,
         field_mappings: field_mappings,
         remote_id: group.remote_id,
@@ -184,7 +184,7 @@ export class GroupService {
           return {
             id: group.id_fs_group,
             name: group.name,
-            users: group.users as string[],
+            users: group.users, // TODO fetch all users for this group id
             remote_was_deleted: group.remote_was_deleted,
             field_mappings: field_mappings,
             remote_id: group.remote_id,

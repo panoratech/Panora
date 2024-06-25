@@ -22,10 +22,10 @@ export class HubspotTaskMapper implements ITaskMapper {
     }[],
   ): Promise<HubspotTaskInput> {
     const result: HubspotTaskInput = {
-      hs_task_subject: source.subject || '',
-      hs_task_body: source.content || '',
+      hs_task_subject: source.subject || null,
+      hs_task_body: source.content || null,
       hs_task_status: source.status,
-      hs_task_priority: '',
+      hs_task_priority: null,
       hs_timestamp: source.due_date
         ? source.due_date.toISOString()
         : new Date().toISOString(),
@@ -61,7 +61,11 @@ export class HubspotTaskMapper implements ITaskMapper {
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleTaskToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
@@ -89,7 +93,7 @@ export class HubspotTaskMapper implements ITaskMapper {
     if (task.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         task.properties.hubspot_owner_id,
-        'hubspot',
+        connectionId,
       );
       if (owner_id) {
         opts = {

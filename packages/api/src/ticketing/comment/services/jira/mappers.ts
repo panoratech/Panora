@@ -41,11 +41,19 @@ export class JiraCommentMapper implements ICommentMapper {
     }[],
   ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCommentToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleCommentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return Promise.all(
       source.map((comment) =>
-        this.mapSingleCommentToUnified(comment, connectionId, customFieldMappings),
+        this.mapSingleCommentToUnified(
+          comment,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -69,7 +77,7 @@ export class JiraCommentMapper implements ICommentMapper {
     if (comment.author.accountId) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         comment.author.accountId,
-        'jira',
+        connectionId,
       );
 
       if (user_id) {

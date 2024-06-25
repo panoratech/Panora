@@ -69,12 +69,20 @@ export class ZohoCompanyMapper implements ICompanyMapper {
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, connectionId, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -118,7 +126,7 @@ export class ZohoCompanyMapper implements ICompanyMapper {
       industry: company.Industry, //TODO: map to correct industry
       user_id: await this.utils.getUserUuidFromRemoteId(
         company.Owner.id,
-        'zoho',
+        connectionId,
       ),
       number_of_employees: company.Employees,
       field_mappings,

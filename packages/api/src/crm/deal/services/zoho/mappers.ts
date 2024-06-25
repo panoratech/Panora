@@ -31,13 +31,11 @@ export class ZohoDealMapper implements IDealMapper {
       );
       result.Account_Name.name = await this.utils.getCompanyNameFromUuid(
         source.company_id,
-        'zoho',
       );
     }
     if (source.stage_id) {
       result.Stage = await this.utils.getStageNameFromStageUuid(
         source.stage_id,
-        'zoho',
       );
     }
     if (source.user_id) {
@@ -69,7 +67,11 @@ export class ZohoDealMapper implements IDealMapper {
     }[],
   ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleDealToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
@@ -103,13 +105,13 @@ export class ZohoDealMapper implements IDealMapper {
     if (deal.Owner.id) {
       res.user_id = await this.utils.getUserUuidFromRemoteId(
         deal.Owner.id,
-        'zoho',
+        connectionId,
       );
     }
     if (deal.Account_Name.id) {
       res.company_id = await this.utils.getCompanyUuidFromRemoteId(
         deal.Account_Name.id,
-        'zoho',
+        connectionId,
       );
     }
     return res;

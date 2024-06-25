@@ -121,12 +121,11 @@ export class Utils {
     }
   }
 
-  async getCompanyNameFromUuid(id: string, connection_id: string) {
+  async getCompanyNameFromUuid(id: string) {
     try {
       const res = await this.prisma.crm_companies.findFirst({
         where: {
           id_crm_company: id,
-          id_connection: connection_id,
         },
       });
 
@@ -139,12 +138,11 @@ export class Utils {
     }
   }
 
-  async getStageNameFromStageUuid(id: string, connection_id: string) {
+  async getStageNameFromStageUuid(id: string) {
     try {
       const res = await this.prisma.crm_deals_stages.findFirst({
         where: {
           id_crm_deals_stage: id,
-          id_connection: connection_id,
         },
       });
       if (!res) return undefined;

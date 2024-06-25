@@ -24,9 +24,9 @@ export class HubspotDealMapper implements IDealMapper {
     const result: HubspotDealInput = {
       dealname: source.name,
       amount: source.amount.toString(),
-      pipeline: source.stage_id || '',
-      closedate: '',
-      dealstage: '',
+      pipeline: source.stage_id || null,
+      closedate: null,
+      dealstage: null,
     };
 
     if (source.user_id) {
@@ -40,7 +40,7 @@ export class HubspotDealMapper implements IDealMapper {
     /*if (source.stage_id) {
       const stage_id = await this.utils.getRemo(source.user_id);
       if (owner_id) {
-        result.dealstage = '';
+        result.dealstage = null;
       }
     }*/
 
@@ -66,7 +66,11 @@ export class HubspotDealMapper implements IDealMapper {
     }[],
   ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleDealToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotDealOutput
     return Promise.all(
@@ -95,7 +99,7 @@ export class HubspotDealMapper implements IDealMapper {
     if (deal.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         deal.properties.hubspot_owner_id,
-        'hubspot',
+        connectionId,
       );
       if (owner_id) {
         opts = {

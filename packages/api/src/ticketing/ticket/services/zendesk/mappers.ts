@@ -30,7 +30,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       description: source.description,
       subject: source.name,
       comment: {
-        body: source.comment.body || '',
+        body: source.comment.body || null,
         public: !source.comment.is_private || true,
         uploads: source.comment.attachments || [], //fetch token attachments for this uuid, would be done on the fly in dest service
       },
@@ -134,7 +134,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
     if (ticket.assignee_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
         opts = { assigned_to: [user_id] };

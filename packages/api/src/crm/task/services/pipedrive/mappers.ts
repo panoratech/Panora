@@ -22,15 +22,15 @@ export class PipedriveTaskMapper implements ITaskMapper {
     }[],
   ): Promise<PipedriveTaskInput> {
     const result: PipedriveTaskInput = {
-      subject: source.subject || '',
-      public_description: source.content || '',
+      subject: source.subject || null,
+      public_description: source.content || null,
       done: source.status === 'Completed',
       due_date: source.due_date
         ? source.due_date.toISOString().split('T')[0]
-        : '',
+        : null,
       due_time: source.due_date
         ? source.due_date.toISOString().split('T')[1]
-        : '',
+        : null,
     };
 
     if (source.user_id) {
@@ -77,7 +77,11 @@ export class PipedriveTaskMapper implements ITaskMapper {
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, connectionId, customFieldMappings);
+      return await this.mapSingleTaskToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
@@ -107,7 +111,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
     if (task.user_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(task.user_id),
-        'pipedrive',
+        connectionId,
       );
       if (user_id) {
         opts = {
@@ -119,7 +123,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
     if (task.company_id) {
       const company_id = await this.utils.getCompanyUuidFromRemoteId(
         String(task.company_id),
-        'pipedrive',
+        connectionId,
       );
       if (company_id) {
         opts = {
@@ -130,7 +134,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
     if (task.deal_id) {
       const deal_id = await this.utils.getDealUuidFromRemoteId(
         String(task.deal_id),
-        'pipedrive',
+        connectionId,
       );
       if (deal_id) {
         opts = {

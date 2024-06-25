@@ -93,6 +93,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (!Array.isArray(source)) {
       return this.mapSingleEngagementMeetingToUnified(
         source,
+        connectionId,
         customFieldMappings,
       );
     }
@@ -101,6 +102,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       source.map((engagement) =>
         this.mapSingleEngagementMeetingToUnified(
           engagement,
+          connectionId,
           customFieldMappings,
         ),
       ),
@@ -153,7 +155,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
-        'pipedrive',
+        connectionId,
       );
       if (owner_id) {
         opts.user_id = owner_id;
@@ -177,6 +179,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
 
   private async mapSingleEngagementMeetingToUnified(
     engagement: PipedriveEngagementOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -193,7 +196,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
-        'pipedrive',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -238,7 +241,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
-        'pipedrive',
+        connectionId,
       );
       if (owner_id) {
         opts.user_id = owner_id;

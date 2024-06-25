@@ -9,6 +9,7 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreSyncRegistry } from '@@core/sync/registry.service';
 import { ApiResponse } from '@@core/utils/types';
 import { IFileService } from '../types';
 import { OriginalFileOutput } from '@@core/utils/types/original/original.file-storage';
@@ -26,9 +27,11 @@ export class SyncService implements OnModuleInit {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private registry: CoreSyncRegistry,
     @InjectQueue('syncTasks') private syncQueue: Queue,
   ) {
     this.logger.setContext(SyncService.name);
+    this.registry.registerService('filestorage', 'file', this);
   }
 
   async onModuleInit() {
@@ -97,7 +100,7 @@ export class SyncService implements OnModuleInit {
                         provider_slug: provider.toLowerCase(),
                       },
                     });
-                    //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
+                    //call the sync files for every folder of the linkedUser (a file might be tied to a folder)
                     const folders = await this.prisma.fs_folders.findMany({
                       where: {
                         id_connection: connection.id_connection,
@@ -111,6 +114,12 @@ export class SyncService implements OnModuleInit {
                         folder.id_fs_folder,
                       );
                     }
+                    // do a batch sync without folders as some providers might accept it
+                    await this.syncFilesForLinkedUser(
+                      provider,
+                      linkedUser.id_linked_user,
+                      id_project,
+                    );
                   } catch (error) {
                     throw error;
                   }
@@ -131,7 +140,7 @@ export class SyncService implements OnModuleInit {
     integrationId: string,
     linkedUserId: string,
     id_project: string,
-    folder_id: string,
+    folder_id?: string,
   ) {
     try {
       this.logger.log(
@@ -164,11 +173,13 @@ export class SyncService implements OnModuleInit {
 
       const service: IFileService =
         this.serviceRegistry.getService(integrationId);
+      if (!service) return;
       const resp: ApiResponse<OriginalFileOutput[]> = await service.syncFiles(
         linkedUserId,
         folder_id,
         remoteProperties,
       );
+      if (!resp) return;
 
       const sourceObject: OriginalFileOutput[] = resp.data;
 
