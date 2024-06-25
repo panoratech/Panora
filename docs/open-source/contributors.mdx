@@ -202,7 +202,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
               slug: string;
               remote_id: string;
             }[]
-          ): UnifiedContactOutput | UnifiedContactOutput[];
+          ): Promise<UnifiedContactOutput | UnifiedContactOutput[]>;
         }
         ```
 
@@ -222,7 +222,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
               slug: string;
               remote_id: string;
             }[],
-          ): UnifiedContactOutput | UnifiedContactOutput[] {}
+          ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {}
         }
         ```
 
@@ -269,7 +269,7 @@ Now you must test Panora unified endpoints with the new connector built.
           The values for `linkedUserId` and `projectId` are to be found within the webapp at `localhost`
         ```shell Insert an api key connection
         curl --request POST \
-             --url http://localhost:3000/connections/apikey/callback?query=state \
+             --url http://localhost:3000/connections/apikey/callback?state=state \
              --header 'Content-Type: application/json' \
              --data '{
                 "apikey": "YOUR_CONNECTOR_API_KEY",
