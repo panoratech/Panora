@@ -213,7 +213,7 @@ export class ConnectionsController {
         throw ReferenceError('State not found');
       }
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
-      const { projectId, vertical, linkedUserId, providerName, returnUrl } =
+      const { projectId, vertical, linkedUserId, providerName } =
         stateData;
       const { apikey, ...body_data } = body;
       switch (vertical.toLowerCase()) {
@@ -303,7 +303,9 @@ export class ConnectionsController {
           break;
       }
 
-      res.redirect(returnUrl);
+      res.send(JSON.stringify({ message: "The API Key connection successfully created" }))
+
+      // res.redirect(returnUrl);
 
       if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]

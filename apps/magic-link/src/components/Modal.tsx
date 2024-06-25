@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react'
-import {PartyPopper, Unplug,X} from 'lucide-react'
+import {X} from 'lucide-react'
 
 const Modal = ({open,setOpen,children} : {open:boolean,setOpen: (op : boolean) => void,children: React.ReactNode}) => {
   return (
@@ -19,12 +19,12 @@ const Modal = ({open,setOpen,children} : {open:boolean,setOpen: (op : boolean) =
           ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}
         `}
       >
-        {/* <button
+        <button
           onClick={() => setOpen(false)}
-          className="absolute top-2 right-2 p-1 rounded-lg text-gray-400 bg-[#1d1d1d] hover:text-gray-600"
+          className="absolute top-2 right-2 p-1 rounded-lg text-gray-400 bg-[#1d1d1d]"
         >
           <X color='gray' />
-        </button> */}
+        </button>
         {children}
       </div>
     </div>
