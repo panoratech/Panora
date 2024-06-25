@@ -4,13 +4,14 @@ import { OriginalFileOutput } from '@@core/utils/types/original/original.file-st
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IFileService {
-  addFile(
+  addFile?(
     fileData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalFileOutput>>;
 
   syncFiles(
     linkedUserId: string,
+    folder_id: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalFileOutput[]>>;
 }
@@ -26,9 +27,10 @@ export interface IFileMapper {
 
   unify(
     source: OriginalFileOutput | OriginalFileOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedFileOutput | UnifiedFileOutput[];
+  ): Promise<UnifiedFileOutput | UnifiedFileOutput[]>;
 }

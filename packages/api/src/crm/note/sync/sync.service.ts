@@ -168,6 +168,7 @@ export class SyncService implements OnModuleInit {
         targetType: CrmObject.note,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedNoteOutput[];
 

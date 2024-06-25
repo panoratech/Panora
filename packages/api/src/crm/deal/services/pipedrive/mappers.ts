@@ -57,25 +57,27 @@ export class PipedriveDealMapper implements IDealMapper {
 
   async unify(
     source: PipedriveDealOutput | PipedriveDealOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, customFieldMappings);
+      return await this.mapSingleDealToUnified(source, connectionId, customFieldMappings);
     }
 
     // Handling array of HubspotDealOutput
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleDealToUnified(deal, customFieldMappings),
+        this.mapSingleDealToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleDealToUnified(
     deal: PipedriveDealOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

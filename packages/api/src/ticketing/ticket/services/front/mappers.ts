@@ -70,6 +70,7 @@ export class FrontTicketMapper implements ITicketMapper {
 
   async unify(
     source: FrontTicketOutput | FrontTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -80,13 +81,14 @@ export class FrontTicketMapper implements ITicketMapper {
 
     return Promise.all(
       sourcesArray.map((ticket) =>
-        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+        this.mapSingleTicketToUnified(ticket, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleTicketToUnified(
     ticket: FrontTicketOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

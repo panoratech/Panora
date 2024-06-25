@@ -26,6 +26,7 @@ export interface IDealMapper {
 
   unify(
     source: OriginalDealOutput | OriginalDealOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

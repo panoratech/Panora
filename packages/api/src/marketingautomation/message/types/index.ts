@@ -26,9 +26,10 @@ export interface IMessageMapper {
 
   unify(
     source: OriginalMessageOutput | OriginalMessageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedMessageOutput | UnifiedMessageOutput[];
+  ): Promise<UnifiedMessageOutput | UnifiedMessageOutput[]>;
 }

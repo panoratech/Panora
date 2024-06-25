@@ -26,6 +26,7 @@ export interface INoteMapper {
 
   unify(
     source: OriginalNoteOutput | OriginalNoteOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

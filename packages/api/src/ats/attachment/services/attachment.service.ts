@@ -73,6 +73,7 @@ export class AttachmentService {
         targetType: AtsObject.attachment,
         providerName: integrationId,
         vertical: 'ats',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedAttachmentOutput[];
 

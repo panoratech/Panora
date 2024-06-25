@@ -27,23 +27,33 @@ export class ZohoEngagementMapper implements IEngagementMapper {
   async unify(
     source: ZohoEngagementOutput | ZohoEngagementOutput[],
     engagement_type: string,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleEngagementToUnified(source, customFieldMappings);
+      return this.mapSingleEngagementToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotEngagementOutput
     return source.map((engagement) =>
-      this.mapSingleEngagementToUnified(engagement, customFieldMappings),
+      this.mapSingleEngagementToUnified(
+        engagement,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 
   private mapSingleEngagementToUnified(
     engagement: ZohoEngagementOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

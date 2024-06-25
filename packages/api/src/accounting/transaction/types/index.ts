@@ -29,9 +29,10 @@ export interface ITransactionMapper {
 
   unify(
     source: OriginalTransactionOutput | OriginalTransactionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTransactionOutput | UnifiedTransactionOutput[];
+  ): Promise<UnifiedTransactionOutput | UnifiedTransactionOutput[]>;
 }

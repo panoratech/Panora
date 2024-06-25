@@ -29,9 +29,10 @@ export interface IDepartmentMapper {
 
   unify(
     source: OriginalDepartmentOutput | OriginalDepartmentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedDepartmentOutput | UnifiedDepartmentOutput[];
+  ): Promise<UnifiedDepartmentOutput | UnifiedDepartmentOutput[]>;
 }

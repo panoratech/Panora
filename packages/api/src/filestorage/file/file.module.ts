@@ -11,6 +11,7 @@ import { WebhookService } from '@@core/webhook/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { BoxService } from './services/box';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
     ServiceRegistry,
     ConnectionUtils,
     /* PROVIDERS SERVICES */
+    BoxService,
   ],
   exports: [SyncService],
 })

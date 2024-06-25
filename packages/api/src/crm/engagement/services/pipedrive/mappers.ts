@@ -33,6 +33,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
   async unify(
     source: PipedriveEngagementOutput | PipedriveEngagementOutput[],
     engagement_type: string,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -40,11 +41,15 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
   ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
     switch (engagement_type) {
       case 'CALL':
-        return await this.unifyCall(source, customFieldMappings);
+        return await this.unifyCall(source, connectionId, customFieldMappings);
       case 'MEETING':
-        return await this.unifyMeeting(source, customFieldMappings);
+        return await this.unifyMeeting(
+          source,
+          connectionId,
+          customFieldMappings,
+        );
       case 'EMAIL':
-        return await this.unifyEmail(source, customFieldMappings);
+        return await this.unifyEmail(source, connectionId, customFieldMappings);
       default:
         break;
     }
@@ -52,24 +57,34 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
 
   private async unifyCall(
     source: PipedriveEngagementOutput | PipedriveEngagementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ) {
     if (!Array.isArray(source)) {
-      return this.mapSingleEngagementCallToUnified(source, customFieldMappings);
+      return this.mapSingleEngagementCallToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of PipedriveEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementCallToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementCallToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async unifyMeeting(
     source: PipedriveEngagementOutput | PipedriveEngagementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -94,6 +109,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
 
   private async unifyEmail(
     source: PipedriveEngagementOutput | PipedriveEngagementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -102,19 +118,25 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (!Array.isArray(source)) {
       return this.mapSingleEngagementEmailToUnified(
         source,
+        connectionId,
         customFieldMappings,
       );
     }
     // Handling array of PipedriveEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementEmailToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementEmailToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleEngagementCallToUnified(
     engagement: PipedriveEngagementOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -199,6 +221,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
 
   private async mapSingleEngagementEmailToUnified(
     engagement: PipedriveEngagementOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

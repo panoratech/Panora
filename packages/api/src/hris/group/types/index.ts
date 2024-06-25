@@ -26,9 +26,10 @@ export interface IGroupMapper {
 
   unify(
     source: OriginalGroupOutput | OriginalGroupOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedGroupOutput | UnifiedGroupOutput[];
+  ): Promise<UnifiedGroupOutput | UnifiedGroupOutput[]>;
 }

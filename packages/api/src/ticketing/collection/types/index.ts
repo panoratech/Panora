@@ -27,6 +27,7 @@ export interface ICollectionMapper {
 
   unify(
     source: OriginalCollectionOutput | OriginalCollectionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

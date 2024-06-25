@@ -91,11 +91,26 @@ export class SyncService implements OnModuleInit {
                 const providers = FILESTORAGE_PROVIDERS;
                 for (const provider of providers) {
                   try {
-                    await this.syncFilesForLinkedUser(
-                      provider,
-                      linkedUser.id_linked_user,
-                      id_project,
-                    );
+                    const connection = await this.prisma.connections.findFirst({
+                      where: {
+                        id_linked_user: linkedUser.id_linked_user,
+                        provider_slug: provider.toLowerCase(),
+                      },
+                    });
+                    //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
+                    const folders = await this.prisma.fs_folders.findMany({
+                      where: {
+                        id_connection: connection.id_connection,
+                      },
+                    });
+                    for (const folder of folders) {
+                      await this.syncFilesForLinkedUser(
+                        provider,
+                        linkedUser.id_linked_user,
+                        id_project,
+                        folder.id_fs_folder,
+                      );
+                    }
                   } catch (error) {
                     throw error;
                   }
@@ -116,6 +131,7 @@ export class SyncService implements OnModuleInit {
     integrationId: string,
     linkedUserId: string,
     id_project: string,
+    folder_id: string,
   ) {
     try {
       this.logger.log(
@@ -150,6 +166,7 @@ export class SyncService implements OnModuleInit {
         this.serviceRegistry.getService(integrationId);
       const resp: ApiResponse<OriginalFileOutput[]> = await service.syncFiles(
         linkedUserId,
+        folder_id,
         remoteProperties,
       );
 
@@ -163,6 +180,7 @@ export class SyncService implements OnModuleInit {
         targetType: FileStorageObject.file,
         providerName: integrationId,
         vertical: 'filestorage',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedFileOutput[];
 

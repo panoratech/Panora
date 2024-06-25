@@ -62,24 +62,26 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: PipedriveCompanyOutput | PipedriveCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return await this.mapSingleCompanyToUnified(source, connectionId, customFieldMappings);
     }
 
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(company, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: PipedriveCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

@@ -65,24 +65,34 @@ export class HubspotCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: HubspotCompanyOutput | HubspotCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotCompanyOutput
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: HubspotCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

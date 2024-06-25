@@ -26,6 +26,7 @@ export interface ITaskMapper {
 
   unify(
     source: OriginalTaskOutput | OriginalTaskOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

@@ -161,6 +161,7 @@ export class SyncService implements OnModuleInit {
         targetType: AtsObject.interview,
         providerName: integrationId,
         vertical: 'ats',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedInterviewOutput[];
 

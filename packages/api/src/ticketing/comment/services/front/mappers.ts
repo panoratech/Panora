@@ -38,23 +38,33 @@ export class FrontCommentMapper implements ICommentMapper {
 
   async unify(
     source: FrontCommentOutput | FrontCommentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCommentToUnified(source, customFieldMappings);
+      return await this.mapSingleCommentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return Promise.all(
       source.map((comment) =>
-        this.mapSingleCommentToUnified(comment, customFieldMappings),
+        this.mapSingleCommentToUnified(
+          comment,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCommentToUnified(
     comment: FrontCommentOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -72,6 +82,7 @@ export class FrontCommentMapper implements ICommentMapper {
         targetType: TicketingObject.attachment,
         providerName: 'front',
         vertical: 'ticketing',
+        connectionId: connectionId,
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
 

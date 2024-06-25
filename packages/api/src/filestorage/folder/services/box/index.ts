@@ -38,12 +38,7 @@ export class BoxService implements IFolderService {
       });
       const resp = await axios.post(
         `${connection.account_url}/folders`,
-        JSON.stringify({
-          name: folderData.name,
-          parent: {
-            id: folderData.parent.id,
-          },
-        }),
+        JSON.stringify(folderData),
         {
           headers: {
             'Content-Type': 'application/json',
@@ -93,7 +88,7 @@ export class BoxService implements IFolderService {
           },
         },
       );
-      const folders = resp.data.filter((elem) => elem.type == 'folder');
+      const folders = resp.data.entries.filter((elem) => elem.type == 'folder');
       let results: BoxFolderOutput[] = folders;
       for (const folder of folders) {
         // Recursively get subfolders

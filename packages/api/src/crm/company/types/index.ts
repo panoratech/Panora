@@ -26,6 +26,7 @@ export interface ICompanyMapper {
 
   unify(
     source: OriginalCompanyOutput | OriginalCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

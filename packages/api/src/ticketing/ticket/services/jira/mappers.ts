@@ -68,6 +68,7 @@ export class JiraTicketMapper implements ITicketMapper {
 
   async unify(
     source: JiraTicketOutput | JiraTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -78,13 +79,18 @@ export class JiraTicketMapper implements ITicketMapper {
 
     return Promise.all(
       sourcesArray.map((ticket) =>
-        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleTicketToUnified(
     ticket: JiraTicketOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

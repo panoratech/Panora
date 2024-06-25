@@ -57,23 +57,33 @@ export class GorgiasCommentMapper implements ICommentMapper {
 
   async unify(
     source: GorgiasCommentOutput | GorgiasCommentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCommentToUnified(source, customFieldMappings);
+      return await this.mapSingleCommentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return Promise.all(
       source.map((comment) =>
-        this.mapSingleCommentToUnified(comment, customFieldMappings),
+        this.mapSingleCommentToUnified(
+          comment,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCommentToUnified(
     comment: GorgiasCommentOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -89,6 +99,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
         targetType: TicketingObject.attachment,
         providerName: 'gorgias',
         vertical: 'ticketing',
+        connectionId: connectionId,
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
 

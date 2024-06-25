@@ -29,9 +29,10 @@ export interface IRejectReasonMapper {
 
   unify(
     source: OriginalRejectReasonOutput | OriginalRejectReasonOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedRejectReasonOutput | UnifiedRejectReasonOutput[];
+  ): Promise<UnifiedRejectReasonOutput | UnifiedRejectReasonOutput[]>;
 }

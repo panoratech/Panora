@@ -48,11 +48,13 @@ export class AccountingUnificationService implements IUnification {
     sourceObject,
     targetType_,
     providerName,
+    connectionId,
     customFieldMappings,
   }: {
     sourceObject: T;
     targetType_: AccountingObject;
     providerName: string;
+    connectionId: string;
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -65,7 +67,7 @@ export class AccountingUnificationService implements IUnification {
     );
 
     if (mapping) {
-      return mapping.unify(sourceObject, customFieldMappings);
+      return mapping.unify(sourceObject, connectionId, customFieldMappings);
     }
 
     throw new Error(

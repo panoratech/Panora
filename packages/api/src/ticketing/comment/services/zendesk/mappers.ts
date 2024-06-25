@@ -64,23 +64,33 @@ export class ZendeskCommentMapper implements ICommentMapper {
 
   async unify(
     source: ZendeskCommentOutput | ZendeskCommentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCommentToUnified(source, customFieldMappings);
+      return this.mapSingleCommentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return Promise.all(
       source.map((comment) =>
-        this.mapSingleCommentToUnified(comment, customFieldMappings),
+        this.mapSingleCommentToUnified(
+          comment,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCommentToUnified(
     comment: ZendeskCommentOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -96,6 +106,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
         targetType: TicketingObject.attachment,
         providerName: 'zendesk',
         vertical: 'ticketing',
+        connectionId: connectionId,
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
 

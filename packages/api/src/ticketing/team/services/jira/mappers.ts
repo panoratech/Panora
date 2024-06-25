@@ -25,6 +25,7 @@ export class JiraTeamMapper implements ITeamMapper {
 
   unify(
     source: JiraTeamOutput | JiraTeamOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,12 +35,13 @@ export class JiraTeamMapper implements ITeamMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((team) =>
-      this.mapSingleTeamToUnified(team, customFieldMappings),
+      this.mapSingleTeamToUnified(team, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTeamToUnified(
     team: JiraTeamOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

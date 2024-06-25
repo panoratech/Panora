@@ -59,6 +59,7 @@ export class GithubTicketMapper implements ITicketMapper {
 
   async unify(
     source: GithubTicketOutput | GithubTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

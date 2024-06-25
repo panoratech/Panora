@@ -29,9 +29,10 @@ export interface ICashflowStatementMapper {
 
   unify(
     source: OriginalCashflowStatementOutput | OriginalCashflowStatementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCashflowStatementOutput | UnifiedCashflowStatementOutput[];
+  ): Promise<UnifiedCashflowStatementOutput | UnifiedCashflowStatementOutput[]>;
 }

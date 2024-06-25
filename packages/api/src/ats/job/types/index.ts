@@ -26,9 +26,10 @@ export interface IJobMapper {
 
   unify(
     source: OriginalJobOutput | OriginalJobOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedJobOutput | UnifiedJobOutput[];
+  ): Promise<UnifiedJobOutput | UnifiedJobOutput[]>;
 }

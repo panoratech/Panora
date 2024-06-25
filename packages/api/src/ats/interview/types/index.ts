@@ -26,9 +26,10 @@ export interface IInterviewMapper {
 
   unify(
     source: OriginalInterviewOutput | OriginalInterviewOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedInterviewOutput | UnifiedInterviewOutput[];
+  ): Promise<UnifiedInterviewOutput | UnifiedInterviewOutput[]>;
 }

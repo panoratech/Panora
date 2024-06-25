@@ -29,9 +29,10 @@ export interface IAttachmentMapper {
 
   unify(
     source: OriginalAttachmentOutput | OriginalAttachmentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAttachmentOutput | UnifiedAttachmentOutput[];
+  ): Promise<UnifiedAttachmentOutput | UnifiedAttachmentOutput[]>;
 }

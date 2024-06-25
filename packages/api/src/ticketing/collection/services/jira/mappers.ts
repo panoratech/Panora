@@ -30,6 +30,7 @@ export class JiraCollectionMapper implements ICollectionMapper {
 
   unify(
     source: JiraCollectionOutput | JiraCollectionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -39,12 +40,13 @@ export class JiraCollectionMapper implements ICollectionMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((collection) =>
-      this.mapSingleCollectionToUnified(collection, customFieldMappings),
+      this.mapSingleCollectionToUnified(collection, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleCollectionToUnified(
     collection: JiraCollectionOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

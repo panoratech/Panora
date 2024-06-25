@@ -25,6 +25,7 @@ export class JiraTagMapper implements ITagMapper {
 
   unify(
     source: JiraTagOutput | JiraTagOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,12 +35,13 @@ export class JiraTagMapper implements ITagMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((tag) =>
-      this.mapSingleTagToUnified(tag, customFieldMappings),
+      this.mapSingleTagToUnified(tag, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTagToUnified(
     tag: JiraTagOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

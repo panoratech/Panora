@@ -49,6 +49,7 @@ export class HubspotTicketMapper implements ITicketMapper {
 
   async unify(
     source: HubspotTicketOutput | HubspotTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -58,12 +59,13 @@ export class HubspotTicketMapper implements ITicketMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((ticket) =>
-      this.mapSingleTicketToUnified(ticket, customFieldMappings),
+      this.mapSingleTicketToUnified(ticket, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTicketToUnified(
     ticket: HubspotTicketOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

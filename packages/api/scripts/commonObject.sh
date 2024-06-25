@@ -36,32 +36,32 @@ for objectType in "${objectTypes[@]}"; do
     # Create and fill files
 
     cat > "services/registry.service.ts" <<EOF
-import { Injectable } from '@nestjs/common';
-import { I${ObjectCap}Service } from '../types';
+    import { Injectable } from '@nestjs/common';
+    import { I${ObjectCap}Service } from '../types';
 
-@Injectable()
-export class ServiceRegistry {
-  private serviceMap: Map<string, I${ObjectCap}Service>;
+    @Injectable()
+    export class ServiceRegistry {
+      private serviceMap: Map<string, I${ObjectCap}Service>;
 
-  constructor() {
-    this.serviceMap = new Map<string, I${ObjectCap}Service>();
-  }
+      constructor() {
+        this.serviceMap = new Map<string, I${ObjectCap}Service>();
+      }
 
-  registerService(serviceKey: string, service: I${ObjectCap}Service) {
-    this.serviceMap.set(serviceKey, service);
-  }
+      registerService(serviceKey: string, service: I${ObjectCap}Service) {
+        this.serviceMap.set(serviceKey, service);
+      }
 
-  getService(integrationId: string): I${ObjectCap}Service {
-    const service = this.serviceMap.get(integrationId);
-    if (!service) {
-      throw new ReferenceError(\`Service not found for integration ID: \${integrationId}\`);
+      getService(integrationId: string): I${ObjectCap}Service {
+        const service = this.serviceMap.get(integrationId);
+        if (!service) {
+          throw new ReferenceError(\`Service not found for integration ID: \${integrationId}\`);
+        }
+        return service;
+      }
     }
-    return service;
-  }
-}
-EOF 
+    EOF 
 
-    cat > "services/${objectType}.service.ts" <<EOF
+cat > "services/${objectType}.service.ts" <<EOF
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
@@ -186,11 +186,12 @@ export interface I${ObjectCap}Mapper {
 
   unify(
     source: Original${ObjectCap}Output | Original${ObjectCap}Output[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Unified${ObjectCap}Output | Unified${ObjectCap}Output[];
+  ): Promise<Unified${ObjectCap}Output | Unified${ObjectCap}Output[]>;
 }
 EOF
 

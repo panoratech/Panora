@@ -26,9 +26,10 @@ export interface IOfferMapper {
 
   unify(
     source: OriginalOfferOutput | OriginalOfferOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedOfferOutput | UnifiedOfferOutput[];
+  ): Promise<UnifiedOfferOutput | UnifiedOfferOutput[]>;
 }

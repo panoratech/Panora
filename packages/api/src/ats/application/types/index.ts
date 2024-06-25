@@ -29,9 +29,10 @@ export interface IApplicationMapper {
 
   unify(
     source: OriginalApplicationOutput | OriginalApplicationOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedApplicationOutput | UnifiedApplicationOutput[];
+  ): Promise<UnifiedApplicationOutput | UnifiedApplicationOutput[]>;
 }

@@ -22,6 +22,7 @@ export interface IUserMapper {
 
   unify(
     source: OriginalUserOutput | OriginalUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

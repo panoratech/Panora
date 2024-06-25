@@ -34,23 +34,25 @@ export class JiraCommentMapper implements ICommentMapper {
 
   async unify(
     source: JiraCommentOutput | JiraCommentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCommentToUnified(source, customFieldMappings);
+      return await this.mapSingleCommentToUnified(source, connectionId, customFieldMappings);
     }
     return Promise.all(
       source.map((comment) =>
-        this.mapSingleCommentToUnified(comment, customFieldMappings),
+        this.mapSingleCommentToUnified(comment, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleCommentToUnified(
     comment: JiraCommentOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

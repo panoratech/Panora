@@ -62,24 +62,26 @@ export class CloseDealMapper implements IDealMapper {
 
   async unify(
     source: CloseDealOutput | CloseDealOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, customFieldMappings);
+      return await this.mapSingleDealToUnified(source, connectionId, customFieldMappings);
     }
     // Handling array of CloseDealOutput
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleDealToUnified(deal, customFieldMappings),
+        this.mapSingleDealToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleDealToUnified(
     deal: CloseDealOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

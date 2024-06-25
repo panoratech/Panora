@@ -179,6 +179,7 @@ export class SyncService implements OnModuleInit {
         targetType: TicketingObject.comment,
         providerName: integrationId,
         vertical: 'ticketing',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedCommentOutput[];
 

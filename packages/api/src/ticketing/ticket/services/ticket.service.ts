@@ -124,6 +124,7 @@ export class TicketService {
         targetType: TicketingObject.ticket,
         providerName: integrationId,
         vertical: 'ticketing',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedTicketOutput[];
 

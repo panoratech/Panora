@@ -26,9 +26,10 @@ export interface IDriveMapper {
 
   unify(
     source: OriginalDriveOutput | OriginalDriveOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedDriveOutput | UnifiedDriveOutput[];
+  ): Promise<UnifiedDriveOutput | UnifiedDriveOutput[]>;
 }

@@ -63,24 +63,26 @@ export class ZendeskDealMapper implements IDealMapper {
 
   async unify(
     source: ZendeskDealOutput | ZendeskDealOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, customFieldMappings);
+      return await this.mapSingleDealToUnified(source, connectionId, customFieldMappings);
     }
 
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleDealToUnified(deal, customFieldMappings),
+        this.mapSingleDealToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleDealToUnified(
     deal: ZendeskDealOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

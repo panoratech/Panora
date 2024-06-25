@@ -30,21 +30,23 @@ export class ZendeskAttachmentMapper implements IAttachmentMapper {
 
   unify(
     source: ZendeskAttachmentOutput | ZendeskAttachmentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedAttachmentOutput | UnifiedAttachmentOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleAttachmentToUnified(source, customFieldMappings);
+      return this.mapSingleAttachmentToUnified(source, connectionId, customFieldMappings);
     }
     return source.map((attachment) =>
-      this.mapSingleAttachmentToUnified(attachment, customFieldMappings),
+      this.mapSingleAttachmentToUnified(attachment, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleAttachmentToUnified(
     attachment: ZendeskAttachmentOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

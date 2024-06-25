@@ -78,6 +78,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
   async unify(
     source: ZendeskEngagementOutput | ZendeskEngagementOutput[],
     engagement_type: string,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -85,7 +86,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
   ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
     switch (engagement_type) {
       case 'CALL':
-        return await this.unifyCall(source, customFieldMappings);
+        return await this.unifyCall(source, connectionId, customFieldMappings);
       case 'MEETING':
         return;
       case 'EMAIL':
@@ -97,24 +98,34 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
 
   private async unifyCall(
     source: ZendeskEngagementOutput | ZendeskEngagementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ) {
     if (!Array.isArray(source)) {
-      return this.mapSingleEngagementCallToUnified(source, customFieldMappings);
+      return this.mapSingleEngagementCallToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of ZendeskEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementCallToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementCallToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleEngagementCallToUnified(
     engagement: ZendeskEngagementOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

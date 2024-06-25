@@ -26,9 +26,10 @@ export interface IPaymentMapper {
 
   unify(
     source: OriginalPaymentOutput | OriginalPaymentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedPaymentOutput | UnifiedPaymentOutput[];
+  ): Promise<UnifiedPaymentOutput | UnifiedPaymentOutput[]>;
 }

@@ -7,7 +7,7 @@ import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.f
 import { ApiResponse } from '@@core/utils/types';
 
 export interface ISharedLinkService {
-  addSharedLink(
+  addSharedLink?(
     sharedlinkData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalSharedLinkOutput>>;
@@ -29,9 +29,10 @@ export interface ISharedLinkMapper {
 
   unify(
     source: OriginalSharedLinkOutput | OriginalSharedLinkOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedSharedLinkOutput | UnifiedSharedLinkOutput[];
+  ): Promise<UnifiedSharedLinkOutput | UnifiedSharedLinkOutput[]>;
 }

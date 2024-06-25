@@ -87,6 +87,7 @@ export class CompanyService {
         targetType: CrmObject.company,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection_id,
         customFieldMappings: [],
       })) as UnifiedCompanyOutput[];
 

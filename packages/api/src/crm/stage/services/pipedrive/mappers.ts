@@ -25,23 +25,25 @@ export class PipedriveStageMapper implements IStageMapper {
 
   unify(
     source: PipedriveStageOutput | PipedriveStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedStageOutput | UnifiedStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, customFieldMappings);
+      return this.mapSingleStageToUnified(source, connectionId, customFieldMappings);
     }
 
     // Handling array of PipedriveStageOutput
     return source.map((stage) =>
-      this.mapSingleStageToUnified(stage, customFieldMappings),
+      this.mapSingleStageToUnified(stage, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleStageToUnified(
     stage: PipedriveStageOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

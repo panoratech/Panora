@@ -26,9 +26,10 @@ export interface IItemMapper {
 
   unify(
     source: OriginalItemOutput | OriginalItemOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedItemOutput | UnifiedItemOutput[];
+  ): Promise<UnifiedItemOutput | UnifiedItemOutput[]>;
 }

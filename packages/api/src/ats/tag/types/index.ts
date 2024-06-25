@@ -26,9 +26,10 @@ export interface ITagMapper {
 
   unify(
     source: OriginalTagOutput | OriginalTagOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTagOutput | UnifiedTagOutput[];
+  ): Promise<UnifiedTagOutput | UnifiedTagOutput[]>;
 }

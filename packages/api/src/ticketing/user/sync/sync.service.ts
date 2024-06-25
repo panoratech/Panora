@@ -199,6 +199,7 @@ export class SyncService implements OnModuleInit {
         targetType: TicketingObject.user,
         providerName: integrationId,
         vertical: 'ticketing',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedUserOutput[];
 

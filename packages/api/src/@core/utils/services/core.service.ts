@@ -33,12 +33,14 @@ export class CoreUnification {
     targetType,
     providerName,
     vertical,
+    connectionId,
     customFieldMappings,
   }: {
     sourceObject: T;
     targetType: TargetObject;
     providerName: string;
     vertical: string;
+    connectionId: string; //needed because inside mappers we might need it alongside remote_id to fetch a unified model in db
     customFieldMappings: {
       slug: string;
       remote_id: string;
@@ -54,6 +56,7 @@ export class CoreUnification {
           sourceObject,
           targetType_,
           providerName,
+          connectionId,
           customFieldMappings,
         });
       case ConnectorCategory.Ats:
@@ -63,16 +66,17 @@ export class CoreUnification {
           sourceObject,
           targetType_,
           providerName,
+          connectionId,
           customFieldMappings,
         });
       case ConnectorCategory.Accounting:
         targetType_ = targetType as AccountingObject;
         const accountingRegistry = this.registry.getService('accounting');
-
         return accountingRegistry.unify({
           sourceObject,
           targetType_,
           providerName,
+          connectionId,
           customFieldMappings,
         });
       case ConnectorCategory.FileStorage:
@@ -83,16 +87,17 @@ export class CoreUnification {
           sourceObject,
           targetType_,
           providerName,
+          connectionId,
           customFieldMappings,
         });
       case ConnectorCategory.Hris:
         targetType_ = targetType as HrisObject;
         const hrisRegistry = this.registry.getService('hris');
-
         return hrisRegistry.unify({
           sourceObject,
           targetType_,
           providerName,
+          connectionId,
           customFieldMappings,
         });
       case ConnectorCategory.MarketingAutomation:
@@ -100,21 +105,21 @@ export class CoreUnification {
         const marketingautomationRegistry = this.registry.getService(
           'marketingautomation',
         );
-
         return marketingautomationRegistry.unify({
           sourceObject,
           targetType_,
           providerName,
+          connectionId,
           customFieldMappings,
         });
       case ConnectorCategory.Ticketing:
         targetType_ = targetType as TicketingObject;
         const ticketingRegistry = this.registry.getService('ticketing');
-
         return ticketingRegistry.unify({
           sourceObject,
           targetType_,
           providerName,
+          connectionId,
           customFieldMappings,
         });
     }

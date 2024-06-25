@@ -61,25 +61,27 @@ export class AttioContactMapper implements IContactMapper {
 
   async unify(
     source: AttioContactOutput | AttioContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleContactToUnified(source, customFieldMappings);
+      return await this.mapSingleContactToUnified(source, connectionId, customFieldMappings);
     }
 
     // Handling array of HubspotContactOutput
     return Promise.all(
       source.map((contact) =>
-        this.mapSingleContactToUnified(contact, customFieldMappings),
+        this.mapSingleContactToUnified(contact, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleContactToUnified(
     contact: AttioContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

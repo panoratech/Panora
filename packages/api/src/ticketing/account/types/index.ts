@@ -22,6 +22,7 @@ export interface IAccountMapper {
 
   unify(
     source: OriginalAccountOutput | OriginalAccountOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

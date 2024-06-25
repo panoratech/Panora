@@ -83,6 +83,7 @@ export class ContactService {
         targetType: CrmObject.contact,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedContactOutput[];
 

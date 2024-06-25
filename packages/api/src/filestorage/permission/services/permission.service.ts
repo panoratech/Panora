@@ -74,6 +74,7 @@ export class PermissionService {
         targetType: FileStorageObject.permission,
         providerName: integrationId,
         vertical: 'filestorage',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedPermissionOutput[];
 

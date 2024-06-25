@@ -76,6 +76,7 @@ export class FolderService {
         targetType: FileStorageObject.folder,
         providerName: integrationId,
         vertical: 'filestorage',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedFolderOutput[];
 

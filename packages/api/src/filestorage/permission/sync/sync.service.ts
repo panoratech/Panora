@@ -161,6 +161,7 @@ export class SyncService implements OnModuleInit {
         targetType: FileStorageObject.permission,
         providerName: integrationId,
         vertical: 'filestorage',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedPermissionOutput[];
 

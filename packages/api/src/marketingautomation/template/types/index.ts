@@ -26,9 +26,10 @@ export interface ITemplateMapper {
 
   unify(
     source: OriginalTemplateOutput | OriginalTemplateOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTemplateOutput | UnifiedTemplateOutput[];
+  ): Promise<UnifiedTemplateOutput | UnifiedTemplateOutput[]>;
 }

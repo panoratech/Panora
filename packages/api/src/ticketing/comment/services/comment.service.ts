@@ -138,6 +138,7 @@ export class CommentService {
         targetType: TicketingObject.comment,
         providerName: integrationId,
         vertical: 'ticketing',
+        connectionId: connection_id,
         customFieldMappings: [],
       })) as UnifiedCommentOutput[];
 

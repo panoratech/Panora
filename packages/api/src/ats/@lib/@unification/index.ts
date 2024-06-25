@@ -5,7 +5,6 @@ import { AtsObjectInput } from '@@core/utils/types/original/original.ats';
 import { IUnification } from '@@core/utils/types/interface';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { fileUnificationMapping } from '@filestorage/file/types/mappingsTypes';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -35,7 +34,7 @@ export class AtsUnificationService implements IUnification {
       targetType_,
       providerName,
     );
-    if (fileUnificationMapping) {
+    if (mapping) {
       return mapping.desunify(sourceObject, customFieldMappings);
     }
 
@@ -48,11 +47,13 @@ export class AtsUnificationService implements IUnification {
     sourceObject,
     targetType_,
     providerName,
+    connectionId,
     customFieldMappings,
   }: {
     sourceObject: T;
     targetType_: AtsObject;
     providerName: string;
+    connectionId: string;
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -64,7 +65,7 @@ export class AtsUnificationService implements IUnification {
       providerName,
     );
     if (mapping) {
-      return mapping.unify(sourceObject, customFieldMappings);
+      return mapping.unify(sourceObject, connectionId, customFieldMappings);
     }
 
     throw new Error(

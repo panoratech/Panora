@@ -29,9 +29,10 @@ export interface IJobInterviewStageMapper {
 
   unify(
     source: OriginalJobInterviewStageOutput | OriginalJobInterviewStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedJobInterviewStageOutput | UnifiedJobInterviewStageOutput[];
+  ): Promise<UnifiedJobInterviewStageOutput | UnifiedJobInterviewStageOutput[]>;
 }

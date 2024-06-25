@@ -117,5 +117,4 @@ type BoxItem = {
   etag: string;
   sequence_id: string;
   name: string;
-  // ... other common properties for both files and folders
 };

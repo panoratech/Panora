@@ -22,11 +22,13 @@ export interface IUnification {
     sourceObject,
     targetType_,
     providerName,
+    connectionId,
     customFieldMappings,
   }: {
     sourceObject: T;
     targetType_: TargetObject;
     providerName: string;
+    connectionId: string;
     customFieldMappings?: {
       slug: string;
       remote_id: string;

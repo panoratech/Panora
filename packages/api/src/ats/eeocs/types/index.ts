@@ -26,9 +26,10 @@ export interface IEeocsMapper {
 
   unify(
     source: OriginalEeocsOutput | OriginalEeocsOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEeocsOutput | UnifiedEeocsOutput[];
+  ): Promise<UnifiedEeocsOutput | UnifiedEeocsOutput[]>;
 }

@@ -90,24 +90,34 @@ export class AttioCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: AttioCompanyOutput | AttioCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of AttioCompanyOutput
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: AttioCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

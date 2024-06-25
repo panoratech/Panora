@@ -26,22 +26,24 @@ export class HubspotStageMapper implements IStageMapper {
 
   unify(
     source: HubspotStageOutput | HubspotStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedStageOutput | UnifiedStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, customFieldMappings);
+      return this.mapSingleStageToUnified(source, connectionId, customFieldMappings);
     }
     // Handling array of HubspotStageOutput
     return source.map((stage) =>
-      this.mapSingleStageToUnified(stage, customFieldMappings),
+      this.mapSingleStageToUnified(stage, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleStageToUnified(
     stage: HubspotStageOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

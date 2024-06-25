@@ -63,22 +63,24 @@ export class CloseContactMapper implements IContactMapper {
 
   async unify(
     source: CloseContactOutput | CloseContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
+      return this.mapSingleContactToUnified(source, connectionId, customFieldMappings);
     }
     // Handling array of CloseContactOutput
     return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(contact, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleContactToUnified(
     contact: CloseContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

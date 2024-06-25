@@ -59,24 +59,26 @@ export class HubspotDealMapper implements IDealMapper {
 
   async unify(
     source: HubspotDealOutput | HubspotDealOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, customFieldMappings);
+      return await this.mapSingleDealToUnified(source, connectionId, customFieldMappings);
     }
     // Handling array of HubspotDealOutput
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleDealToUnified(deal, customFieldMappings),
+        this.mapSingleDealToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleDealToUnified(
     deal: HubspotDealOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

@@ -29,9 +29,10 @@ export interface ITrackingCategoryMapper {
 
   unify(
     source: OriginalTrackingCategoryOutput | OriginalTrackingCategoryOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTrackingCategoryOutput | UnifiedTrackingCategoryOutput[];
+  ): Promise<UnifiedTrackingCategoryOutput | UnifiedTrackingCategoryOutput[]>;
 }

@@ -25,23 +25,25 @@ export class ZendeskStageMapper implements IStageMapper {
 
   unify(
     source: ZendeskStageOutput | ZendeskStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedStageOutput | UnifiedStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, customFieldMappings);
+      return this.mapSingleStageToUnified(source, connectionId, customFieldMappings);
     }
 
     // Handling array of ZendeskStageOutput
     return source.map((stage) =>
-      this.mapSingleStageToUnified(stage, customFieldMappings),
+      this.mapSingleStageToUnified(stage, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleStageToUnified(
     stage: ZendeskStageOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

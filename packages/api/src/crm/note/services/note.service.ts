@@ -123,6 +123,7 @@ export class NoteService {
         targetType: CrmObject.note,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection_id,
         customFieldMappings: [],
       })) as UnifiedNoteOutput[];
 

@@ -74,6 +74,7 @@ export class InterviewService {
         targetType: AtsObject.interview,
         providerName: integrationId,
         vertical: 'ats',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedInterviewOutput[];
 

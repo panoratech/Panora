@@ -180,6 +180,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
   async unify(
     source: HubspotEngagementOutput | HubspotEngagementOutput[],
     engagement_type: string,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -189,6 +190,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
       case 'CALL':
         return await this.unifyCall(
           source as HubspotEngagementCallOutput | HubspotEngagementCallOutput[],
+          connectionId,
           customFieldMappings,
         );
       case 'MEETING':
@@ -203,6 +205,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
           source as
             | HubspotEngagementEmailOutput
             | HubspotEngagementEmailOutput[],
+          connectionId,
           customFieldMappings,
         );
       default:
@@ -212,18 +215,27 @@ export class HubspotEngagementMapper implements IEngagementMapper {
 
   private async unifyCall(
     source: HubspotEngagementCallOutput | HubspotEngagementCallOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ) {
     if (!Array.isArray(source)) {
-      return this.mapSingleEngagementCallToUnified(source, customFieldMappings);
+      return this.mapSingleEngagementCallToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementCallToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementCallToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -254,6 +266,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
 
   private async unifyEmail(
     source: HubspotEngagementEmailOutput | HubspotEngagementEmailOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -262,19 +275,25 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     if (!Array.isArray(source)) {
       return this.mapSingleEngagementEmailToUnified(
         source,
+        connectionId,
         customFieldMappings,
       );
     }
     // Handling array of HubspotEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementEmailToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementEmailToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleEngagementCallToUnified(
     engagement: HubspotEngagementCallOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -352,6 +371,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
 
   private async mapSingleEngagementEmailToUnified(
     engagement: HubspotEngagementEmailOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

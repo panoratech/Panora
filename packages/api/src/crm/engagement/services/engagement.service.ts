@@ -115,6 +115,7 @@ export class EngagementService {
         targetType: targetType,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection_id,
         customFieldMappings: [],
       })) as UnifiedEngagementOutput[];
 

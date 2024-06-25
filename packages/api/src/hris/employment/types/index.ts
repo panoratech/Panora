@@ -29,9 +29,10 @@ export interface IEmploymentMapper {
 
   unify(
     source: OriginalEmploymentOutput | OriginalEmploymentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEmploymentOutput | UnifiedEmploymentOutput[];
+  ): Promise<UnifiedEmploymentOutput | UnifiedEmploymentOutput[]>;
 }

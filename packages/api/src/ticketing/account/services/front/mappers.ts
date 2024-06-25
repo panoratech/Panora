@@ -25,6 +25,7 @@ export class FrontAccountMapper implements IAccountMapper {
 
   unify(
     source: FrontAccountOutput | FrontAccountOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,12 +35,13 @@ export class FrontAccountMapper implements IAccountMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((account) =>
-      this.mapSingleAccountToUnified(account, customFieldMappings),
+      this.mapSingleAccountToUnified(account, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleAccountToUnified(
     account: FrontAccountOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

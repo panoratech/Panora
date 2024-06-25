@@ -163,6 +163,7 @@ export class SyncService implements OnModuleInit {
         targetType: AtsObject.eeocs,
         providerName: integrationId,
         vertical: 'ats',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedEeocsOutput[];
 

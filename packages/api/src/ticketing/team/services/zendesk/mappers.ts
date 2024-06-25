@@ -26,21 +26,23 @@ export class ZendeskTeamMapper implements ITeamMapper {
 
   unify(
     source: ZendeskTeamOutput | ZendeskTeamOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedTeamOutput | UnifiedTeamOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleTeamToUnified(source, customFieldMappings);
+      return this.mapSingleTeamToUnified(source, connectionId, customFieldMappings);
     }
     return source.map((ticket) =>
-      this.mapSingleTeamToUnified(ticket, customFieldMappings),
+      this.mapSingleTeamToUnified(ticket, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTeamToUnified(
     team: ZendeskTeamOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

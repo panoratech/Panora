@@ -26,9 +26,10 @@ export interface IScoreCardMapper {
 
   unify(
     source: OriginalScoreCardOutput | OriginalScoreCardOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedScoreCardOutput | UnifiedScoreCardOutput[];
+  ): Promise<UnifiedScoreCardOutput | UnifiedScoreCardOutput[]>;
 }

@@ -36,6 +36,7 @@ export class GitlabCollectionMapper implements ICollectionMapper {
 
   unify(
     source: GitlabCollectionOutput | GitlabCollectionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -45,12 +46,13 @@ export class GitlabCollectionMapper implements ICollectionMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((collection) =>
-      this.mapSingleCollectionToUnified(collection, customFieldMappings),
+      this.mapSingleCollectionToUnified(collection, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleCollectionToUnified(
     collection: GitlabCollectionOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

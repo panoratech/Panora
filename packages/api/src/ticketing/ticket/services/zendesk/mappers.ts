@@ -84,23 +84,33 @@ export class ZendeskTicketMapper implements ITicketMapper {
 
   async unify(
     source: ZendeskTicketOutput | ZendeskTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleTicketToUnified(source, customFieldMappings);
+      return this.mapSingleTicketToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return Promise.all(
       source.map((ticket) =>
-        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleTicketToUnified(
     ticket: ZendeskTicketOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

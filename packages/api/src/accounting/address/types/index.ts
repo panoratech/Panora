@@ -26,9 +26,10 @@ export interface IAddressMapper {
 
   unify(
     source: OriginalAddressOutput | OriginalAddressOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAddressOutput | UnifiedAddressOutput[];
+  ): Promise<UnifiedAddressOutput | UnifiedAddressOutput[]>;
 }

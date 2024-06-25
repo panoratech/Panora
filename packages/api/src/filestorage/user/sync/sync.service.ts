@@ -163,6 +163,7 @@ export class SyncService implements OnModuleInit {
         targetType: FileStorageObject.user,
         providerName: integrationId,
         vertical: 'filestorage',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedUserOutput[];
 

@@ -26,9 +26,10 @@ export interface IEventMapper {
 
   unify(
     source: OriginalEventOutput | OriginalEventOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEventOutput | UnifiedEventOutput[];
+  ): Promise<UnifiedEventOutput | UnifiedEventOutput[]>;
 }

@@ -159,6 +159,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
   async unify(
     source: CloseEngagementOutput | CloseEngagementOutput[],
     engagement_type: string,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -168,6 +169,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       case 'CALL':
         return await this.unifyCall(
           source as CloseEngagementCallOutput | CloseEngagementCallOutput[],
+          connectionId,
           customFieldMappings,
         );
       case 'MEETING':
@@ -180,6 +182,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       case 'EMAIL':
         return await this.unifyEmail(
           source as CloseEngagementEmailOutput | CloseEngagementEmailOutput[],
+          connectionId,
           customFieldMappings,
         );
       default:
@@ -189,18 +192,27 @@ export class CloseEngagementMapper implements IEngagementMapper {
 
   private async unifyCall(
     source: CloseEngagementCallOutput | CloseEngagementCallOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ) {
     if (!Array.isArray(source)) {
-      return this.mapSingleEngagementCallToUnified(source, customFieldMappings);
+      return this.mapSingleEngagementCallToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of CloseEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementCallToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementCallToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
@@ -231,6 +243,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
 
   private async unifyEmail(
     source: CloseEngagementEmailOutput | CloseEngagementEmailOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -239,19 +252,25 @@ export class CloseEngagementMapper implements IEngagementMapper {
     if (!Array.isArray(source)) {
       return this.mapSingleEngagementEmailToUnified(
         source,
+        connectionId,
         customFieldMappings,
       );
     }
     // Handling array of CloseEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementEmailToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementEmailToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleEngagementCallToUnified(
     engagement: CloseEngagementCallOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -391,6 +410,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
 
   private async mapSingleEngagementEmailToUnified(
     engagement: CloseEngagementEmailOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

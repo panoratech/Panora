@@ -25,6 +25,7 @@ export class FrontTeamMapper implements ITeamMapper {
 
   unify(
     source: FrontTeamOutput | FrontTeamOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,12 +35,13 @@ export class FrontTeamMapper implements ITeamMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((team) =>
-      this.mapSingleTeamToUnified(team, customFieldMappings),
+      this.mapSingleTeamToUnified(team, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTeamToUnified(
     team: FrontTeamOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

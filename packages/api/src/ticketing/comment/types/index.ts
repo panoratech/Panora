@@ -27,6 +27,7 @@ export interface ICommentMapper {
 
   unify(
     source: OriginalCommentOutput | OriginalCommentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

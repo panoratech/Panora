@@ -186,6 +186,7 @@ export class SyncService implements OnModuleInit {
         targetType: TicketingObject.tag,
         providerName: integrationId,
         vertical: 'ticketing',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedTagOutput[];
 

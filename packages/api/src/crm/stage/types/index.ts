@@ -22,6 +22,7 @@ export interface IStageMapper {
 
   unify(
     source: OriginalStageOutput | OriginalStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

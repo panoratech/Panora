@@ -25,6 +25,7 @@ export class JiraUserMapper implements IUserMapper {
 
   unify(
     source: JiraUserOutput | JiraUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,12 +35,13 @@ export class JiraUserMapper implements IUserMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((user) =>
-      this.mapSingleUserToUnified(user, customFieldMappings),
+      this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleUserToUnified(
     user: JiraUserOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

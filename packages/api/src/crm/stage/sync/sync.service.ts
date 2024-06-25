@@ -191,6 +191,7 @@ export class SyncService implements OnModuleInit {
         targetType: CrmObject.stage,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedStageOutput[];
 

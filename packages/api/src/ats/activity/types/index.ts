@@ -26,9 +26,10 @@ export interface IActivityMapper {
 
   unify(
     source: OriginalActivityOutput | OriginalActivityOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedActivityOutput | UnifiedActivityOutput[];
+  ): Promise<UnifiedActivityOutput | UnifiedActivityOutput[]>;
 }

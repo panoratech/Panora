@@ -4,7 +4,7 @@ import { OriginalUserOutput } from '@@core/utils/types/original/original.file-st
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IUserService {
-  addUser(
+  addUser?(
     permissionData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalUserOutput>>;
@@ -26,9 +26,10 @@ export interface IUserMapper {
 
   unify(
     source: OriginalUserOutput | OriginalUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[];
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]>;
 }

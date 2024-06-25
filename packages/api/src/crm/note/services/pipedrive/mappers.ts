@@ -65,25 +65,27 @@ export class PipedriveNoteMapper implements INoteMapper {
 
   async unify(
     source: PipedriveNoteOutput | PipedriveNoteOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleNoteToUnified(source, customFieldMappings);
+      return await this.mapSingleNoteToUnified(source, connectionId, customFieldMappings);
     }
 
     // Handling array of HubspotNoteOutput
     return Promise.all(
       source.map((note) =>
-        this.mapSingleNoteToUnified(note, customFieldMappings),
+        this.mapSingleNoteToUnified(note, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleNoteToUnified(
     note: PipedriveNoteOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

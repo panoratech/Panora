@@ -69,24 +69,26 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: ZendeskCompanyOutput | ZendeskCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return this.mapSingleCompanyToUnified(source, connectionId, customFieldMappings);
     }
 
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(company, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: ZendeskCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

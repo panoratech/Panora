@@ -25,6 +25,7 @@ export class ZendeskTagMapper implements ITagMapper {
 
   unify(
     source: ZendeskTagOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -33,12 +34,13 @@ export class ZendeskTagMapper implements ITagMapper {
     if (!source) return [];
 
     return source.map((tag) =>
-      this.mapSingleTagToUnified(tag, customFieldMappings),
+      this.mapSingleTagToUnified(tag, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTagToUnified(
     tag: string,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

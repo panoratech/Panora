@@ -71,6 +71,7 @@ export class ApplicationService {
         targetType: AtsObject.application,
         providerName: integrationId,
         vertical: 'ats',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedApplicationOutput[];
 

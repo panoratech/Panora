@@ -74,6 +74,7 @@ export class SharedLinkService {
         targetType: FileStorageObject.sharedlink,
         providerName: integrationId,
         vertical: 'filestorage',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedSharedLinkOutput[];
 

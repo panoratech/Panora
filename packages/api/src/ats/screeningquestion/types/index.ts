@@ -29,9 +29,10 @@ export interface IScreeningQuestionMapper {
 
   unify(
     source: OriginalScreeningQuestionOutput | OriginalScreeningQuestionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedScreeningQuestionOutput | UnifiedScreeningQuestionOutput[];
+  ): Promise<UnifiedScreeningQuestionOutput | UnifiedScreeningQuestionOutput[]>;
 }

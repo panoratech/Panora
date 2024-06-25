@@ -73,6 +73,7 @@ export class FileService {
         targetType: FileStorageObject.file,
         providerName: integrationId,
         vertical: 'filestorage',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedFileOutput[];
 

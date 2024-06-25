@@ -32,6 +32,7 @@ export interface IEngagementMapper {
   unify(
     source: OriginalEngagementOutput | OriginalEngagementOutput[],
     engagement_type: string,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

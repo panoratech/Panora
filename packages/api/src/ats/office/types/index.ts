@@ -26,9 +26,10 @@ export interface IOfficeMapper {
 
   unify(
     source: OriginalOfficeOutput | OriginalOfficeOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedOfficeOutput | UnifiedOfficeOutput[];
+  ): Promise<UnifiedOfficeOutput | UnifiedOfficeOutput[]>;
 }

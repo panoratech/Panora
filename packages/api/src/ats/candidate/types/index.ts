@@ -26,9 +26,10 @@ export interface ICandidateMapper {
 
   unify(
     source: OriginalCandidateOutput | OriginalCandidateOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCandidateOutput | UnifiedCandidateOutput[];
+  ): Promise<UnifiedCandidateOutput | UnifiedCandidateOutput[]>;
 }

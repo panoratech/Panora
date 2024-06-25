@@ -26,9 +26,10 @@ export interface IContactMapper {
 
   unify(
     source: OriginalContactOutput | OriginalContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[];
+  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]>;
 }

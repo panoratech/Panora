@@ -25,21 +25,27 @@ export class ZendeskUserMapper implements IUserMapper {
 
   unify(
     source: ZendeskUserOutput | ZendeskUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedUserOutput | UnifiedUserOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleUserToUnified(source, customFieldMappings);
+      return this.mapSingleUserToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return source.map((user) =>
-      this.mapSingleUserToUnified(user, customFieldMappings),
+      this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleUserToUnified(
     user: ZendeskUserOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

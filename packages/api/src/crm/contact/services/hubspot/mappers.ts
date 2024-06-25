@@ -60,22 +60,24 @@ export class HubspotContactMapper implements IContactMapper {
 
   async unify(
     source: HubspotContactOutput | HubspotContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
+      return this.mapSingleContactToUnified(source, connectionId, customFieldMappings);
     }
     // Handling array of HubspotContactOutput
     return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(contact, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleContactToUnified(
     contact: HubspotContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

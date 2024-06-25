@@ -177,6 +177,7 @@ export class SyncService implements OnModuleInit {
         }` as CrmObject,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedEngagementOutput[];
 

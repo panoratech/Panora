@@ -71,6 +71,7 @@ export class CandidateService {
         targetType: AtsObject.candidate,
         providerName: integrationId,
         vertical: 'ats',
+        connectionId: connection_id,
         customFieldMappings: customFieldMappings,
       })) as UnifiedCandidateOutput[];
 

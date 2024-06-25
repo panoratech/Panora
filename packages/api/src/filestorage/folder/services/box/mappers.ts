@@ -21,6 +21,13 @@ export class BoxFolderMapper implements IFolderMapper {
       remote_id: string;
     }[],
   ): Promise<BoxFolderInput> {
+    const result = {
+      name: source.name,
+      parent: {
+        id: await this.utils.getRemoteFolderParentId(source.parent_folder_id),
+      },
+    };
+
     if (customFieldMappings && source.field_mappings) {
       for (const [k, v] of Object.entries(source.field_mappings)) {
         const mapping = customFieldMappings.find(
@@ -36,24 +43,34 @@ export class BoxFolderMapper implements IFolderMapper {
 
   async unify(
     source: BoxFolderOutput | BoxFolderOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedFolderOutput | UnifiedFolderOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleFolderToUnified(source, customFieldMappings);
+      return await this.mapSingleFolderToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of BoxFolderOutput
     return Promise.all(
       source.map((folder) =>
-        this.mapSingleFolderToUnified(folder, customFieldMappings),
+        this.mapSingleFolderToUnified(
+          folder,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleFolderToUnified(
     folder: BoxFolderOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -66,6 +83,22 @@ export class BoxFolderMapper implements IFolderMapper {
       }
     }
 
-    return;
+    return {
+      remote_id: folder.id,
+      name: folder.name || null,
+      size: folder.size?.toString() || null,
+      folder_url: folder.shared_link?.url || null,
+      description: folder.description || null,
+      drive_id: null,
+      parent_folder_id:
+        (await this.utils.getFolderIdFromRemote(
+          folder.parent?.id,
+          connectionId,
+        )) || null,
+      permission_id: null,
+      field_mappings,
+      //remote_created_at: folder.created_at || null,
+      //remote_modified_at: folder.modified_at || null,
+    };
   }
 }

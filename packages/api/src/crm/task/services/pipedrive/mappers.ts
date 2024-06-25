@@ -70,24 +70,26 @@ export class PipedriveTaskMapper implements ITaskMapper {
 
   async unify(
     source: PipedriveTaskOutput | PipedriveTaskOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, customFieldMappings);
+      return await this.mapSingleTaskToUnified(source, connectionId, customFieldMappings);
     }
 
     return Promise.all(
       source.map((task) =>
-        this.mapSingleTaskToUnified(task, customFieldMappings),
+        this.mapSingleTaskToUnified(task, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleTaskToUnified(
     task: PipedriveTaskOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

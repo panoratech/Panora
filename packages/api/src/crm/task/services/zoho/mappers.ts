@@ -67,24 +67,26 @@ export class ZohoTaskMapper implements ITaskMapper {
 
   async unify(
     source: ZohoTaskOutput | ZohoTaskOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, customFieldMappings);
+      return await this.mapSingleTaskToUnified(source, connectionId, customFieldMappings);
     }
 
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleTaskToUnified(deal, customFieldMappings),
+        this.mapSingleTaskToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleTaskToUnified(
     task: ZohoTaskOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

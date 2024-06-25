@@ -4,7 +4,7 @@ import { OriginalGroupOutput } from '@@core/utils/types/original/original.file-s
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IGroupService {
-  addGroup(
+  addGroup?(
     permissionData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalGroupOutput>>;
@@ -26,9 +26,10 @@ export interface IGroupMapper {
 
   unify(
     source: OriginalGroupOutput | OriginalGroupOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedGroupOutput | UnifiedGroupOutput[];
+  ): Promise<UnifiedGroupOutput | UnifiedGroupOutput[]>;
 }

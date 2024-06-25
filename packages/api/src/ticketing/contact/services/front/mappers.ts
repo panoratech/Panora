@@ -25,6 +25,7 @@ export class FrontContactMapper implements IContactMapper {
 
   unify(
     source: FrontContactOutput | FrontContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,12 +35,13 @@ export class FrontContactMapper implements IContactMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(contact, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleContactToUnified(
     contact: FrontContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

@@ -91,6 +91,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
 
   async unify(
     source: GorgiasTicketOutput | GorgiasTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -99,13 +100,14 @@ export class GorgiasTicketMapper implements ITicketMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
     return Promise.all(
       sourcesArray.map(async (ticket) =>
-        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+        this.mapSingleTicketToUnified(ticket, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleTicketToUnified(
     ticket: GorgiasTicketOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

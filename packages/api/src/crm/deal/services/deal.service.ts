@@ -96,6 +96,7 @@ export class DealService {
         targetType: CrmObject.deal,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection_id,
         customFieldMappings: [],
       })) as UnifiedDealOutput[];
 

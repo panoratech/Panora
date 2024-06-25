@@ -183,6 +183,7 @@ export class SyncService implements OnModuleInit {
         targetType: CrmObject.contact,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection.id_connection,
         customFieldMappings,
       })) as UnifiedContactOutput[];
 

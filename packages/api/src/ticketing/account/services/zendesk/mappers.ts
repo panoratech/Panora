@@ -30,21 +30,23 @@ export class ZendeskAccountMapper implements IAccountMapper {
 
   unify(
     source: ZendeskAccountOutput | ZendeskAccountOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedAccountOutput | UnifiedAccountOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleAccountToUnified(source, customFieldMappings);
+      return this.mapSingleAccountToUnified(source, connectionId, customFieldMappings);
     }
     return source.map((ticket) =>
-      this.mapSingleAccountToUnified(ticket, customFieldMappings),
+      this.mapSingleAccountToUnified(ticket, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleAccountToUnified(
     account: ZendeskAccountOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

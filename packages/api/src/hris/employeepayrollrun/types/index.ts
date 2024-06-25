@@ -31,9 +31,12 @@ export interface IEmployeePayrollRunMapper {
     source:
       | OriginalEmployeePayrollRunOutput
       | OriginalEmployeePayrollRunOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEmployeePayrollRunOutput | UnifiedEmployeePayrollRunOutput[];
+  ): Promise<
+    UnifiedEmployeePayrollRunOutput | UnifiedEmployeePayrollRunOutput[]
+  >;
 }

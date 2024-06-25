@@ -7,7 +7,7 @@ import { OriginalPermissionOutput } from '@@core/utils/types/original/original.f
 import { ApiResponse } from '@@core/utils/types';
 
 export interface IPermissionService {
-  addPermission(
+  addPermission?(
     permissionData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalPermissionOutput>>;
@@ -29,9 +29,10 @@ export interface IPermissionMapper {
 
   unify(
     source: OriginalPermissionOutput | OriginalPermissionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedPermissionOutput | UnifiedPermissionOutput[];
+  ): Promise<UnifiedPermissionOutput | UnifiedPermissionOutput[]>;
 }

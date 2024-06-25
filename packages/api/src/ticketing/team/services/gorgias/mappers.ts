@@ -25,6 +25,7 @@ export class GorgiasTeamMapper implements ITeamMapper {
 
   unify(
     source: GorgiasTeamOutput | GorgiasTeamOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,12 +35,13 @@ export class GorgiasTeamMapper implements ITeamMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((team) =>
-      this.mapSingleTeamToUnified(team, customFieldMappings),
+      this.mapSingleTeamToUnified(team, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTeamToUnified(
     team: GorgiasTeamOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

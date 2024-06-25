@@ -26,9 +26,10 @@ export interface IFolderMapper {
 
   unify(
     source: OriginalFolderOutput | OriginalFolderOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedFolderOutput | UnifiedFolderOutput[];
+  ): Promise<UnifiedFolderOutput | UnifiedFolderOutput[]>;
 }
