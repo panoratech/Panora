@@ -15,9 +15,11 @@ import { fs_drives as FileStorageDrive } from '@prisma/client';
 import { FILESTORAGE_PROVIDERS } from '@panora/shared';
 import { FileStorageObject } from '@filestorage/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -27,6 +29,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('filestorage', 'drive', this);
@@ -78,7 +81,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncDrivesForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -96,11 +98,7 @@ export class SyncService implements OnModuleInit {
     }
   }
 
-  async syncDrivesForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async syncDrivesForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} drives for linkedUser ${linkedUserId}`,
@@ -140,51 +138,23 @@ export class SyncService implements OnModuleInit {
 
       const sourceObject: OriginalDriveOutput[] = resp.data;
 
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalDriveOutput[]
-      >({
+      await this.ingestService.ingestData<
+        UnifiedDriveOutput,
+        OriginalDriveOutput
+      >(
         sourceObject,
-        targetType: FileStorageObject.drive,
-        providerName: integrationId,
-        vertical: 'filestorage',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedDriveOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const drives_data = await this.saveDrivesInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
         integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'filestorage.drive.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        drives_data,
-        'filestorage.drive.pulled',
-        id_project,
-        event.id_event,
+        connection.id_connection,
+        'filestorage',
+        'drive',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveDrivesInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
     drives: UnifiedDriveOutput[],

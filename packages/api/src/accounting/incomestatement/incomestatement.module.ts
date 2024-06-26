@@ -8,6 +8,7 @@ import { IncomeStatementController } from './incomestatement.controller';
 import { IncomeStatementService } from './services/incomestatement.service';
 import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [IncomeStatementController],
@@ -20,6 +21,7 @@ import { SyncService } from './sync/sync.service';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

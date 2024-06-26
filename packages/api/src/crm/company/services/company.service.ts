@@ -336,7 +336,7 @@ export class CompanyService {
         },
       });
 
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_company,
         'crm.company.created',
         linkedUser.id_project,

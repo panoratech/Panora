@@ -8,6 +8,7 @@ import { ScoreCardController } from './scorecard.controller';
 import { ServiceRegistry } from './services/registry.service';
 import { ScoreCardService } from './services/scorecard.service';
 import { SyncService } from './sync/sync.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [ScoreCardController],
@@ -20,6 +21,7 @@ import { SyncService } from './sync/sync.service';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

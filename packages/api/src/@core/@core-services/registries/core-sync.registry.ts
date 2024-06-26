@@ -1,18 +1,19 @@
+import { IBaseSync } from '@@core/utils/types/interface';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CoreSyncRegistry {
-  private serviceMap: Map<string, any>;
+  private serviceMap: Map<string, IBaseSync>;
 
   constructor() {
-    this.serviceMap = new Map<string, any>();
+    this.serviceMap = new Map<string, IBaseSync>();
   }
 
   // Register a service with a composite key
   registerService(
     category_vertical: string,
     common_object: string,
-    service: any,
+    service: IBaseSync,
   ) {
     const compositeKey = this.createCompositeKey(
       category_vertical,
@@ -22,7 +23,7 @@ export class CoreSyncRegistry {
   }
 
   // Retrieve a service using the composite key
-  getService(category_vertical: string, common_object: string): any {
+  getService(category_vertical: string, common_object: string): IBaseSync {
     const compositeKey = this.createCompositeKey(
       category_vertical,
       common_object,

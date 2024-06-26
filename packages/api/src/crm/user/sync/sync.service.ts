@@ -15,10 +15,12 @@ import { OriginalUserOutput } from '@@core/utils/types/original/original.crm';
 import { CRM_PROVIDERS } from '@panora/shared';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('crm', 'user', this);
@@ -81,7 +84,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncUsersForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -100,11 +102,7 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncUsersForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async syncUsersForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} users for linkedUser ${linkedUserId}`,
@@ -142,62 +140,34 @@ export class SyncService implements OnModuleInit {
       );
 
       const sourceObject: OriginalUserOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalUserOutput[]
-      >({
-        sourceObject,
-        targetType: CrmObject.user,
-        providerName: integrationId,
-        vertical: 'crm',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedUserOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const users_data = await this.saveUsersInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
+      await this.ingestService.ingestData<
+        UnifiedUserOutput,
+        OriginalUserOutput
+      >(
         sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'crm.user.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        users_data,
-        'crm.user.pulled',
-        id_project,
-        event.id_event,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'user',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveUsersInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    users: UnifiedUserOutput[],
+    data: UnifiedUserOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmUser[]> {
     try {
       let users_results: CrmUser[] = [];
-      for (let i = 0; i < users.length; i++) {
-        const user = users[i];
+      for (let i = 0; i < data.length; i++) {
+        const user = data[i];
         const originId = user.remote_id;
 
         if (!originId || originId == '') {

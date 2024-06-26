@@ -35,3 +35,13 @@ export interface IUnification {
     }[];
   }): Promise<UnifyReturnType>;
 }
+
+export interface IBaseSync {
+  saveToDb(
+    connection_id: string,
+    linkedUserId: string,
+    data: any[],
+    originSource: string,
+    remote_data: Record<string, any>[],
+  ): Promise<any[]>;
+}

@@ -13,6 +13,7 @@ import { JiraService } from './services/jira';
 import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [],
@@ -29,6 +30,7 @@ import { MappersRegistry } from '@@core/@core-services/registries/mappers.regist
     CoreUnification,
     UnificationRegistry,
     MappersRegistry,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     JiraService,
     GitlabService,

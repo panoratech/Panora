@@ -222,7 +222,7 @@ export class InterviewService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_interview,
         'ats.interview.created',
         linkedUser.id_project,

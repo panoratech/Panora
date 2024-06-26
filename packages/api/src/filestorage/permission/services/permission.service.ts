@@ -209,7 +209,7 @@ export class PermissionService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_permission,
         'filestorage.permission.created',
         linkedUser.id_project,

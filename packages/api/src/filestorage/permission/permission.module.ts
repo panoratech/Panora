@@ -8,6 +8,7 @@ import { PermissionController } from './permission.controller';
 import { PermissionService } from './services/permission.service';
 import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [PermissionController],
@@ -20,6 +21,7 @@ import { SyncService } from './sync/sync.service';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

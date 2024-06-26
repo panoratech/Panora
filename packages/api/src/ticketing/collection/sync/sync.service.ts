@@ -15,10 +15,12 @@ import { tcg_collections as TicketingCollection } from '@prisma/client';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -27,6 +29,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'collection', this);
@@ -81,7 +84,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncCollectionsForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -103,7 +105,6 @@ export class SyncService implements OnModuleInit {
   async syncCollectionsForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
   ) {
     try {
       this.logger.log(
@@ -130,65 +131,34 @@ export class SyncService implements OnModuleInit {
         await service.syncCollections(linkedUserId);
 
       const sourceObject: OriginalCollectionOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalCollectionOutput[]
-      >({
-        sourceObject,
-        targetType: TicketingObject.collection,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        connectionId: connection.id_connection,
-        customFieldMappings: [],
-      })) as UnifiedCollectionOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const collection_data = await this.saveCollectionsInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
+      await this.ingestService.ingestData<
+        UnifiedCollectionOutput,
+        OriginalCollectionOutput
+      >(
+        sourceObject,
         integrationId,
-        sourceObject,
-      );
-
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.collection.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-
-      await this.webhook.handleWebhook(
-        collection_data,
-        'ticketing.collection.pulled',
-        id_project,
-        event.id_event,
+        connection.id_connection,
+        'ticketing',
+        'collection',
+        [],
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveCollectionsInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    collections: UnifiedCollectionOutput[],
+    data: UnifiedCollectionOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingCollection[]> {
     try {
       let collections_results: TicketingCollection[] = [];
-      console.log(collections);
-      for (let i = 0; i < collections.length; i++) {
-        const collection = collections[i];
+      for (let i = 0; i < data.length; i++) {
+        const collection = data[i];
         const originId = collection.remote_id;
 
         if (!originId || originId == '') {

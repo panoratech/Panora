@@ -12,7 +12,7 @@ import { UnifiedInvoiceOutput } from '../types/model.unified';
 import { IInvoiceService } from '../types';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,

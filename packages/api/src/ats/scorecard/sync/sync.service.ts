@@ -4,7 +4,8 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ServiceRegistry } from '../services/registry.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { ApiResponse } from '@@core/utils/types';
 import { IScoreCardService } from '../types';
@@ -14,10 +15,12 @@ import { ats_scorecards as AtsScoreCard } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -27,9 +30,13 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'scorecard', this);
+  saveToDb(connection_id: string, linkedUserId: string, data: any[], originSource: string, remote_data: Record<string, any>[]): Promise<any[]> {
+    throw new Error('Method not implemented.');
+  }
   }
 
   async onModuleInit() {
@@ -78,7 +85,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncScoreCardsForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -99,7 +105,6 @@ export class SyncService implements OnModuleInit {
   async syncScoreCardsForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
   ) {
     try {
       this.logger.log(
@@ -138,6 +143,17 @@ export class SyncService implements OnModuleInit {
 
       const sourceObject: OriginalScoreCardOutput[] = resp.data;
 
+      await this.ingestService.ingestData<
+        UnifiedCompanyOutput,
+        OriginalCompanyOutput
+      >(
+        sourceObject,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'company',
+        customFieldMappings,
+      );
       // unify the data according to the target obj wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalScoreCardOutput[]
@@ -170,7 +186,7 @@ export class SyncService implements OnModuleInit {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         scoreCards_data,
         'ats.score_card.pulled',
         id_project,

@@ -217,7 +217,7 @@ export class FolderService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_folder,
         'filestorage.folder.created',
         linkedUser.id_project,

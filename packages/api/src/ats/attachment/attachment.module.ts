@@ -8,6 +8,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [AttachmentController],
@@ -20,6 +21,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

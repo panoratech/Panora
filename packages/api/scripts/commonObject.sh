@@ -137,7 +137,7 @@ import { Unified${ObjectCap}Output } from '../types/model.unified';
 import { I${ObjectCap}Service } from '../types';
  
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,

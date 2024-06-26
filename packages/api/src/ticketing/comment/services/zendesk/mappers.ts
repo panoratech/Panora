@@ -5,20 +5,17 @@ import {
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-
-import { TicketingObject } from '@ticketing/@lib/@types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
 import { Utils } from '@ticketing/@lib/@utils';
-
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Injectable()
 export class ZendeskCommentMapper implements ICommentMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -100,18 +97,20 @@ export class ZendeskCommentMapper implements ICommentMapper {
     let opts;
 
     if (comment.attachments && comment.attachments.length > 0) {
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalAttachmentOutput[]
-      >({
-        sourceObject: comment.attachments,
-        targetType: TicketingObject.attachment,
-        providerName: 'zendesk',
-        vertical: 'ticketing',
-        connectionId: connectionId,
-        customFieldMappings: [],
-      })) as UnifiedAttachmentOutput[];
+      const results = await this.ingestService.ingestData<
+        UnifiedAttachmentOutput,
+        OriginalAttachmentOutput
+      >(
+        comment.attachments,
+        'zendesk',
+        connectionId,
+        'ticketing',
+        'attachment',
+        [],
+      );
+      const attachment_ids: string[] = results.map((res) => res.id);
 
-      opts = { ...opts, attachments: unifiedObject };
+      opts = { ...opts, attachments: attachment_ids };
     }
 
     if (comment.author_id) {

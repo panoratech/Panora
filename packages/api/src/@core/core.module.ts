@@ -22,6 +22,7 @@ import { BullQueueModule } from './@core-services/queues/queue.module';
 import { WebhookModule } from './@core-services/webhooks/panora-webhooks/webhook.module';
 import { ManagedWebhooksModule } from './@core-services/webhooks/third-parties-webhooks/managed-webhooks.module';
 import { CategoryConnectionRegistry } from './@core-services/registries/connections-categories.registry';
+import { IngestDataService } from './@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { CategoryConnectionRegistry } from './@core-services/registries/connecti
     UnificationRegistry,
     CoreUnification,
     CoreSyncRegistry,
+    IngestDataService,
     CategoryConnectionRegistry,
   ],
 })

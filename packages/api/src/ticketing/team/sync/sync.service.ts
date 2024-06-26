@@ -1,6 +1,8 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -18,7 +20,7 @@ import { ITeamService } from '../types';
 import { UnifiedTeamOutput } from '../types/model.unified';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'team', this);
@@ -82,7 +85,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncTeamsForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -101,11 +103,7 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncTeamsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async syncTeamsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} teams for linkedTeam ${linkedUserId}`,
@@ -143,54 +141,24 @@ export class SyncService implements OnModuleInit {
       );
 
       const sourceObject: OriginalTeamOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalTeamOutput[]
-      >({
-        sourceObject,
-        targetType: TicketingObject.team,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedTeamOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const team_data = await this.saveTeamsInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
+      await this.ingestService.ingestData<
+        UnifiedTeamOutput,
+        OriginalTeamOutput
+      >(
+        sourceObject,
         integrationId,
-        sourceObject,
-      );
-
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.team..synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-
-      await this.webhook.handleWebhook(
-        team_data,
-        'ticketing.team.pulled',
-        id_project,
-        event.id_event,
+        connection.id_connection,
+        'ticketing',
+        'team',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveTeamsInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
     teams: UnifiedTeamOutput[],

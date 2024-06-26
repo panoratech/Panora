@@ -16,10 +16,12 @@ import { tcg_tags as TicketingTag } from '@prisma/client';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -29,6 +31,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'tag', this);
@@ -96,7 +99,6 @@ export class SyncService implements OnModuleInit {
                       await this.syncTagsForLinkedUser(
                         provider,
                         linkedUser.id_linked_user,
-                        id_project,
                         ticket.id_tcg_ticket,
                       );
                     }
@@ -120,7 +122,6 @@ export class SyncService implements OnModuleInit {
   async syncTagsForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
     id_ticket: string,
   ) {
     try {
@@ -158,60 +159,25 @@ export class SyncService implements OnModuleInit {
 
       const sourceObject: OriginalTagOutput[] = resp.data;
 
+      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
+        sourceObject,
+        integrationId,
+        connection.id_connection,
+        'ticketing',
+        'tag',
+        customFieldMappings,
+      );
       //TODO; do it in every file
       if (!sourceObject || sourceObject.length == 0) {
         this.logger.warn('Source object is empty, returning :) ....');
         return;
       }
-
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalTagOutput[]
-      >({
-        sourceObject,
-        targetType: TicketingObject.tag,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedTagOutput[];
-
-      //TODO: exceptionally we use the unifiedObject as we might need to get the fake remote ids from Zendesk store in id field
-
-      //insert the data in the DB with the fieldMappings (value table)
-      const tag_data = await this.saveTagsInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        id_ticket,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.tag.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        tag_data,
-        'ticketing.tag.pulled',
-        id_project,
-        event.id_event,
-      );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveTagsInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
     tags: UnifiedTagOutput[],

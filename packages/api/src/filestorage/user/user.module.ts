@@ -9,6 +9,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { UserService } from './services/user.service';
 import { SyncService } from './sync/sync.service';
 import { UserController } from './user.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [UserController],
@@ -21,6 +22,7 @@ import { UserController } from './user.controller';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     BoxService,
   ],

@@ -19,6 +19,7 @@ import { MappersRegistry } from '@@core/@core-services/registries/mappers.regist
 import { Utils } from '@ticketing/@lib/@utils';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [],
@@ -36,6 +37,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
     UnificationRegistry,
     MappersRegistry,
     Utils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     ZendeskService,
     HubspotService,

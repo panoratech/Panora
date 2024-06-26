@@ -11,6 +11,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { BullModule } from '@nestjs/bull';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   
@@ -23,6 +24,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

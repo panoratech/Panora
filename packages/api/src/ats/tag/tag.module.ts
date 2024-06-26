@@ -8,6 +8,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { TagService } from './services/tag.service';
 import { SyncService } from './sync/sync.service';
 import { TagController } from './tag.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [TagController],
@@ -20,6 +21,7 @@ import { TagController } from './tag.controller';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

@@ -6,8 +6,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { CrmObject } from '@crm/@lib/@types';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { UnifiedDealOutput } from '../types/model.unified';
 import { IDealService } from '../types';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
@@ -15,19 +13,19 @@ import { crm_deals as CrmDeal } from '@prisma/client';
 import { CRM_PROVIDERS } from '@panora/shared';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
-    private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('crm', 'deal', this);
@@ -81,7 +79,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncDealsForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -100,11 +97,7 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncDealsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async syncDealsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} deals for linkedUser ${linkedUserId}`,
@@ -142,62 +135,34 @@ export class SyncService implements OnModuleInit {
       );
 
       const sourceObject: OriginalDealOutput[] = resp.data;
-      // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalDealOutput[]
-      >({
-        sourceObject,
-        targetType: CrmObject.deal,
-        providerName: integrationId,
-        vertical: 'crm',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedDealOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const deals_data = await this.saveDealsInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
+      await this.ingestService.ingestData<
+        UnifiedDealOutput,
+        OriginalDealOutput
+      >(
         sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'crm.deal.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        deals_data,
-        'crm.deal.pulled',
-        id_project,
-        event.id_event,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'deal',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveDealsInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    deals: UnifiedDealOutput[],
+    data: UnifiedDealOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmDeal[]> {
     try {
       let deals_results: CrmDeal[] = [];
-      for (let i = 0; i < deals.length; i++) {
-        const deal = deals[i];
+      for (let i = 0; i < data.length; i++) {
+        const deal = data[i];
         const originId = deal.remote_id;
 
         if (!originId || originId == '') {

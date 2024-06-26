@@ -71,7 +71,7 @@ export class MarketingAutomationConnectionsService
         },
       });
       //directly send the webhook
-      await this.webhook.handlePriorityWebhook(
+      await this.webhook.deliverWebhook(
         data,
         'connection.created',
         callbackOpts.projectId,

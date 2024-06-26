@@ -83,7 +83,7 @@ export class WebhookService {
     }
   }
 
-  async handleWebhook(
+  async dispatchWebhook(
     data: any,
     eventType: string,
     projectId: string,
@@ -144,7 +144,7 @@ export class WebhookService {
     }
   }
 
-  async handlePriorityWebhook(
+  async deliverWebhook(
     data: any,
     eventType: string,
     projectId: string,
@@ -258,7 +258,7 @@ export class WebhookService {
           });
 
           //re-insert the webhook in the queue
-          await this.handleFailedWebhook(
+          await this.dispatchFailedWebhook(
             w_delivery.id_webhook_delivery_attempt,
           );
         }
@@ -268,7 +268,7 @@ export class WebhookService {
     }
   }
 
-  async handleFailedWebhook(failed_id_delivery_webhook: string) {
+  async dispatchFailedWebhook(failed_id_delivery_webhook: string) {
     try {
       await this.queues.getPanoraWebhookSender().add(
         {

@@ -6,8 +6,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { CrmObject } from '@crm/@lib/@types';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { UnifiedCompanyOutput } from '../types/model.unified';
 import { ICompanyService } from '../types';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
@@ -16,20 +14,20 @@ import { CRM_PROVIDERS } from '@panora/shared';
 import { Utils } from '@crm/@lib/@utils';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private utils: Utils,
-    private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('crm', 'company', this);
@@ -86,7 +84,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncCompaniesForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -108,7 +105,6 @@ export class SyncService implements OnModuleInit {
   async syncCompaniesForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
   ) {
     try {
       this.logger.log(
@@ -145,62 +141,34 @@ export class SyncService implements OnModuleInit {
         await service.syncCompanies(linkedUserId, remoteProperties);
 
       const sourceObject: OriginalCompanyOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalCompanyOutput[]
-      >({
-        sourceObject,
-        targetType: CrmObject.company,
-        providerName: integrationId,
-        vertical: 'crm',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedCompanyOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const companies_data = await this.saveCompanysInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
+      await this.ingestService.ingestData<
+        UnifiedCompanyOutput,
+        OriginalCompanyOutput
+      >(
         sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'crm.company.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        companies_data,
-        'crm.company.pulled',
-        id_project,
-        event.id_event,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'company',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveCompanysInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    companies: UnifiedCompanyOutput[],
+    data: UnifiedCompanyOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmCompany[]> {
     try {
       let companies_results: CrmCompany[] = [];
-      for (let i = 0; i < companies.length; i++) {
-        const company = companies[i];
+      for (let i = 0; i < data.length; i++) {
+        const company = data[i];
         const originId = company.remote_id;
 
         if (!originId || originId == '') {

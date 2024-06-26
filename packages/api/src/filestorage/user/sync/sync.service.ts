@@ -15,10 +15,12 @@ import { fs_users as FileStorageUser } from '@prisma/client';
 import { FILESTORAGE_PROVIDERS } from '@panora/shared';
 import { FileStorageObject } from '@filestorage/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('filestorage', 'user', this);
@@ -91,14 +94,12 @@ export class SyncService implements OnModuleInit {
                       await this.syncUsersForLinkedUser(
                         provider,
                         linkedUser.id_linked_user,
-                        id_project,
                         group.id_fs_group,
                       );
                     }
                     await this.syncUsersForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -119,7 +120,6 @@ export class SyncService implements OnModuleInit {
   async syncUsersForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
     group_id?: string,
   ) {
     try {
@@ -162,51 +162,23 @@ export class SyncService implements OnModuleInit {
       if (!resp) return;
       const sourceObject: OriginalUserOutput[] = resp.data;
 
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalUserOutput[]
-      >({
+      await this.ingestService.ingestData<
+        UnifiedUserOutput,
+        OriginalUserOutput
+      >(
         sourceObject,
-        targetType: FileStorageObject.user,
-        providerName: integrationId,
-        vertical: 'filestorage',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedUserOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const users_data = await this.saveUsersInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
         integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'filestorage.user.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        users_data,
-        'filestorage.user.pulled',
-        id_project,
-        event.id_event,
+        connection.id_connection,
+        'filestorage',
+        'user',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveUsersInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
     users: UnifiedUserOutput[],

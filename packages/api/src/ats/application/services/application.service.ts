@@ -223,7 +223,7 @@ export class ApplicationService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_application,
         'ats.application.created',
         linkedUser.id_project,

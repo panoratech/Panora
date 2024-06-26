@@ -1,33 +1,31 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { IUserService } from '../types';
-import { OriginalUserOutput } from '@@core/utils/types/original/original.ticketing';
-import { tcg_users as TicketingUser } from '@prisma/client';
-import { UnifiedUserOutput } from '../types/model.unified';
-import { TICKETING_PROVIDERS } from '@panora/shared';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { OriginalUserOutput } from '@@core/utils/types/original/original.ticketing';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { TICKETING_PROVIDERS } from '@panora/shared';
+import { tcg_users as TicketingUser } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IUserService } from '../types';
+import { UnifiedUserOutput } from '../types/model.unified';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
-    private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'user', this);
@@ -82,7 +80,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncUsersForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -104,7 +101,6 @@ export class SyncService implements OnModuleInit {
   async syncUsersForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
     wh_real_time_trigger?: {
       action: 'UPDATE' | 'DELETE';
       data: {
@@ -169,63 +165,34 @@ export class SyncService implements OnModuleInit {
       }
 
       const sourceObject: OriginalUserOutput[] = resp.data;
-      // this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      // console.log("Source Data ", sourceObject)
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalUserOutput[]
-      >({
-        sourceObject,
-        targetType: TicketingObject.user,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedUserOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const user_data = await this.saveUsersInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
+      await this.ingestService.ingestData<
+        UnifiedUserOutput,
+        OriginalUserOutput
+      >(
         sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.user.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        user_data,
-        'ticketing.user.pulled',
-        id_project,
-        event.id_event,
+        integrationId,
+        connection.id_connection,
+        'ticketing',
+        'user',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveUsersInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    users: UnifiedUserOutput[],
+    data: UnifiedUserOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingUser[]> {
     try {
       let users_results: TicketingUser[] = [];
-      for (let i = 0; i < users.length; i++) {
-        const user = users[i];
+      for (let i = 0; i < data.length; i++) {
+        const user = data[i];
         const originId = user.remote_id;
 
         if (!originId || originId == '') {

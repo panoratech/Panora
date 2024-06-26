@@ -1,6 +1,8 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -18,7 +20,7 @@ import { UnifiedActivityOutput } from '../types/model.unified';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'activity', this);
@@ -82,7 +85,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncActivitiesForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -104,7 +106,6 @@ export class SyncService implements OnModuleInit {
   async syncActivitiesForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
   ) {
     try {
       this.logger.log(
@@ -142,6 +143,17 @@ export class SyncService implements OnModuleInit {
 
       const sourceObject: OriginalActivityOutput[] = resp.data;
 
+      await this.ingestService.ingestData<
+        UnifiedCompanyOutput,
+        OriginalCompanyOutput
+      >(
+        sourceObject,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'company',
+        customFieldMappings,
+      );
       //unify the data according to the target obj wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalActivityOutput[]
@@ -174,7 +186,7 @@ export class SyncService implements OnModuleInit {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         activities_data,
         'ats.activity.pulled',
         id_project,

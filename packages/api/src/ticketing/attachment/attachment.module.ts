@@ -10,6 +10,7 @@ import { AttachmentController } from './attachment.controller';
 import { AttachmentService } from './services/attachment.service';
 import { ServiceRegistry } from './services/registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [],
@@ -25,6 +26,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
     CoreUnification,
     UnificationRegistry,
     MappersRegistry,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
 })

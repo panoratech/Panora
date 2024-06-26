@@ -11,6 +11,7 @@ import { CrmWebhookHandlerService } from './handler.service';
     EncryptionService,
     EnvironmentService,
     CrmWebhookHandlerService,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [LoggerService, CrmWebhookHandlerService],

@@ -78,7 +78,6 @@ export class BoxFileMapper implements IFileMapper {
       field_mappings,
       //remote_created_at: file.created_at || null,
       //remote_modified_at: file.modified_at || null,
-      remote_data: file,
     };
   }
 }

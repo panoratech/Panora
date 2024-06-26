@@ -1,33 +1,31 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { ApiResponse } from '@@core/utils/types';
-import { IFolderService } from '../types';
-import { OriginalFolderOutput } from '@@core/utils/types/original/original.file-storage';
-import { UnifiedFolderOutput } from '../types/model.unified';
-import { fs_folders as FileStorageFolder } from '@prisma/client';
-import { FILESTORAGE_PROVIDERS } from '@panora/shared';
-import { FileStorageObject } from '@filestorage/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { OriginalFolderOutput } from '@@core/utils/types/original/original.file-storage';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { FILESTORAGE_PROVIDERS } from '@panora/shared';
+import { fs_folders as FileStorageFolder } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IFolderService } from '../types';
+import { UnifiedFolderOutput } from '../types/model.unified';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
-    private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('filestorage', 'folder', this);
@@ -79,7 +77,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncFoldersForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -97,11 +94,7 @@ export class SyncService implements OnModuleInit {
     }
   }
 
-  async syncFoldersForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async syncFoldersForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} folders for linkedUser ${linkedUserId}`,
@@ -140,61 +133,30 @@ export class SyncService implements OnModuleInit {
 
       const sourceObject: OriginalFolderOutput[] = resp.data;
 
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalFolderOutput[]
-      >({
+      await this.ingestService.ingestData(
         sourceObject,
-        targetType: FileStorageObject.folder,
-        providerName: integrationId,
-        vertical: 'filestorage',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedFolderOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const folders_data = await this.saveFoldersInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
         integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'filestorage.folder.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        folders_data,
-        'filestorage.folder.pulled',
-        id_project,
-        event.id_event,
+        connection.id_connection,
+        'filestorage',
+        'folder',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveFoldersInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    folders: UnifiedFolderOutput[],
+    data: UnifiedFolderOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<FileStorageFolder[]> {
     try {
       let folders_results: FileStorageFolder[] = [];
-      for (let i = 0; i < folders.length; i++) {
-        const folder = folders[i];
+      for (let i = 0; i < data.length; i++) {
+        const folder = data[i];
         const originId = folder.remote_id;
 
         if (!originId || originId === '') {

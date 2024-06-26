@@ -6,7 +6,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ServiceRegistry } from '../services/registry.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,

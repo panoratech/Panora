@@ -16,10 +16,12 @@ import { CRM_PROVIDERS } from '@panora/shared';
 import { throwTypedError, SyncError } from '@@core/utils/errors';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -29,6 +31,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('crm', 'task', this);
@@ -82,7 +85,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncTasksForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -101,11 +103,7 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncTasksForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async syncTasksForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} tasks for linkedUser ${linkedUserId}`,
@@ -143,62 +141,34 @@ export class SyncService implements OnModuleInit {
       );
 
       const sourceObject: OriginalTaskOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalTaskOutput[]
-      >({
-        sourceObject,
-        targetType: CrmObject.task,
-        providerName: integrationId,
-        vertical: 'crm',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedTaskOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const tasks_data = await this.saveTasksInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
+      await this.ingestService.ingestData<
+        UnifiedTaskOutput,
+        OriginalTaskOutput
+      >(
         sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'crm.task.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        tasks_data,
-        'crm.task.pulled',
-        id_project,
-        event.id_event,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'task',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveTasksInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    tasks: UnifiedTaskOutput[],
+    data: UnifiedTaskOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmTask[]> {
     try {
       let tasks_results: CrmTask[] = [];
-      for (let i = 0; i < tasks.length; i++) {
-        const task = tasks[i];
+      for (let i = 0; i < data.length; i++) {
+        const task = data[i];
         const originId = task.remote_id;
 
         if (!originId || originId == '') {

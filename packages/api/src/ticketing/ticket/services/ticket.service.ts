@@ -308,7 +308,7 @@ export class TicketService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_ticket,
         'ticketing.ticket.created',
         linkedUser.id_project,

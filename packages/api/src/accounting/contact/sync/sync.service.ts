@@ -12,7 +12,7 @@ import { UnifiedContactOutput } from '../types/model.unified';
 import { IContactService } from '../types';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,

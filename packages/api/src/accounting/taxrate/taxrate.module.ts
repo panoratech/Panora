@@ -8,6 +8,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { TaxRateService } from './services/taxrate.service';
 import { SyncService } from './sync/sync.service';
 import { TaxRateController } from './taxrate.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [TaxRateController],
@@ -20,6 +21,7 @@ import { TaxRateController } from './taxrate.controller';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

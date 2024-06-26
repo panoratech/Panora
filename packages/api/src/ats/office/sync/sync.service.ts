@@ -15,10 +15,12 @@ import { ats_offices as AtsOffice } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'office', this);
@@ -76,7 +79,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncOfficesForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -97,7 +99,6 @@ export class SyncService implements OnModuleInit {
   async syncOfficesForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
   ) {
     try {
       this.logger.log(
@@ -136,6 +137,17 @@ export class SyncService implements OnModuleInit {
 
       const sourceObject: OriginalOfficeOutput[] = resp.data;
 
+      await this.ingestService.ingestData<
+        UnifiedCompanyOutput,
+        OriginalCompanyOutput
+      >(
+        sourceObject,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'company',
+        customFieldMappings,
+      );
       // unify the data according to the target obj wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalOfficeOutput[]
@@ -168,7 +180,7 @@ export class SyncService implements OnModuleInit {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         offices_data,
         'ats.office.pulled',
         id_project,

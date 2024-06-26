@@ -211,7 +211,7 @@ export class FileService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_file,
         'filestorage.file.created',
         linkedUser.id_project,

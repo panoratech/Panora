@@ -8,6 +8,7 @@ import { RejectReasonController } from './rejectreason.controller';
 import { ServiceRegistry } from './services/registry.service';
 import { RejectReasonService } from './services/rejectreason.service';
 import { SyncService } from './sync/sync.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [RejectReasonController],
@@ -20,6 +21,7 @@ import { SyncService } from './sync/sync.service';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

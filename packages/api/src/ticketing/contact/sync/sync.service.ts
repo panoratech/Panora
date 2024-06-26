@@ -17,10 +17,12 @@ import { OriginalContactOutput } from '@@core/utils/types/original/original.tick
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -30,9 +32,19 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'contact', this);
+  }
+  saveToDb(
+    connection_id: string,
+    linkedUserId: string,
+    data: any[],
+    originSource: string,
+    remote_data: Record<string, any>[],
+  ): Promise<any[]> {
+    throw new Error('Method not implemented.');
   }
 
   async onModuleInit() {
@@ -87,7 +99,6 @@ export class SyncService implements OnModuleInit {
                         await this.syncContactsForLinkedUser(
                           provider,
                           linkedUser.id_linked_user,
-                          id_project,
                           acc.remote_id,
                         );
                       }
@@ -118,7 +129,6 @@ export class SyncService implements OnModuleInit {
   async syncContactsForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
     remote_account_id?: string,
     wh_real_time_trigger?: {
       action: 'UPDATE' | 'DELETE';
@@ -163,8 +173,7 @@ export class SyncService implements OnModuleInit {
         switch (wh_real_time_trigger.action) {
           case 'DELETE':
             return await this.removeContactInDb(
-              linkedUserId,
-              integrationId,
+              connection.id_connection,
               wh_real_time_trigger.data.remote_id,
             );
           default:
@@ -183,45 +192,17 @@ export class SyncService implements OnModuleInit {
         );
       }
       const sourceObject: OriginalContactOutput[] = resp.data;
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalContactOutput[]
-      >({
-        sourceObject,
-        targetType: TicketingObject.contact,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedContactOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const contact_data = await this.saveContactsInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
+      await this.ingestService.ingestData<
+        UnifiedContactOutput,
+        OriginalContactOutput
+      >(
         sourceObject,
-        remote_account_id,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.contact.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        contact_data,
-        'ticketing.contact.pulled',
-        id_project,
-        event.id_event,
+        integrationId,
+        connection.id_connection,
+        'ticketing',
+        'contact',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
@@ -376,11 +357,7 @@ export class SyncService implements OnModuleInit {
       throw error;
     }
   }
-  async removeContactInDb(
-    linkedUserId: string,
-    originSource: string,
-    remote_id: string,
-  ) {
+  async removeContactInDb(connection_id: string, remote_id: string) {
     const existingContact = await this.prisma.tcg_contacts.findFirst({
       where: {
         remote_id: remote_id,

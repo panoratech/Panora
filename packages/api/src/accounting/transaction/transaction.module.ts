@@ -8,6 +8,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { TransactionService } from './services/transaction.service';
 import { SyncService } from './sync/sync.service';
 import { TransactionController } from './transaction.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [TransactionController],
@@ -20,6 +21,7 @@ import { TransactionController } from './transaction.controller';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

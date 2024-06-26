@@ -8,6 +8,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { TrackingCategoryService } from './services/trackingcategory.service';
 import { SyncService } from './sync/sync.service';
 import { TrackingCategoryController } from './trackingcategory.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [TrackingCategoryController],
@@ -20,6 +21,7 @@ import { TrackingCategoryController } from './trackingcategory.controller';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

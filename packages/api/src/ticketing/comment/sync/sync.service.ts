@@ -15,10 +15,12 @@ import { ServiceRegistry } from '../services/registry.service';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'comment', this);
@@ -95,7 +98,6 @@ export class SyncService implements OnModuleInit {
                       await this.syncCommentsForLinkedUser(
                         provider,
                         linkedUser.id_linked_user,
-                        id_project,
                         ticket.id_tcg_ticket,
                       );
                     }
@@ -119,7 +121,6 @@ export class SyncService implements OnModuleInit {
   async syncCommentsForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
     id_ticket: string,
   ) {
     try {
@@ -158,52 +159,23 @@ export class SyncService implements OnModuleInit {
 
       const sourceObject: OriginalCommentOutput[] = resp.data;
 
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalCommentOutput[]
-      >({
+      await this.ingestService.ingestData<
+        UnifiedCommentOutput,
+        OriginalCommentOutput
+      >(
         sourceObject,
-        targetType: TicketingObject.comment,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedCommentOutput[];
-
-      //insert the data in the DB with the fieldMappings (value table)
-      const comments_data = await this.saveCommentsInDb(
+        integrationId,
         connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        id_ticket,
-        sourceObject,
-      );
-
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.comment.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        comments_data,
-        'ticketing.comment.pulled',
-        id_project,
-        event.id_event,
+        'tikceting',
+        'comment',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveCommentsInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
     comments: UnifiedCommentOutput[],

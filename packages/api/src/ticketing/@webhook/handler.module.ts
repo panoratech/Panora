@@ -16,6 +16,7 @@ import { ZendeskHandlerService } from './zendesk/handler';
     EncryptionService,
     EnvironmentService,
     TicketingWebhookHandlerService,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     ZendeskHandlerService,
   ],

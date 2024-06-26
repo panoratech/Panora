@@ -264,7 +264,7 @@ export class CommentService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_comment,
         'ticketing.comment.created',
         linkedUser.id_project,

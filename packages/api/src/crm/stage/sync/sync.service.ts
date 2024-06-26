@@ -15,10 +15,12 @@ import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
 import { CRM_PROVIDERS } from '@panora/shared';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('crm', 'stage', this);
@@ -96,7 +99,6 @@ export class SyncService implements OnModuleInit {
                         await this.syncStagesForLinkedUser(
                           provider,
                           linkedUser.id_linked_user,
-                          id_project,
                           deal.id_crm_deal,
                         );
                       }
@@ -123,7 +125,6 @@ export class SyncService implements OnModuleInit {
   async syncStagesForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
     deal_id: string,
   ) {
     try {
@@ -164,64 +165,35 @@ export class SyncService implements OnModuleInit {
       );
 
       const sourceObject: OriginalStageOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalStageOutput[]
-      >({
-        sourceObject,
-        targetType: CrmObject.stage,
-        providerName: integrationId,
-        vertical: 'crm',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedStageOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const stages_data = await this.saveStagesInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        deal_id,
+      await this.ingestService.ingestData<
+        UnifiedStageOutput,
+        OriginalStageOutput
+      >(
         sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'crm.stage.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        stages_data,
-        'crm.stage.pulled',
-        id_project,
-        event.id_event,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'stage',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveStagesInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    stages: UnifiedStageOutput[],
+    data: UnifiedStageOutput[],
     originSource: string,
     deal_id: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmStage[]> {
     try {
       let stages_results: CrmStage[] = [];
-      for (let i = 0; i < stages.length; i++) {
-        const stage = stages[i];
+      for (let i = 0; i < data.length; i++) {
+        const stage = data[i];
         const originId = stage.remote_id;
 
         if (!originId || originId == '') {

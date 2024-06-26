@@ -207,7 +207,7 @@ export class ActivityService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_activity,
         'ats.activity.created',
         linkedUser.id_project,

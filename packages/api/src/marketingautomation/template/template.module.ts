@@ -10,6 +10,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { TemplateService } from './services/template.service';
 import { SyncService } from './sync/sync.service';
 import { TemplateController } from './template.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TemplateController } from './template.controller';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService, CoreModule],

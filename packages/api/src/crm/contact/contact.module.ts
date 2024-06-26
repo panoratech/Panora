@@ -18,6 +18,7 @@ import { ZendeskService } from './services/zendesk';
 import { ZohoService } from './services/zoho';
 import { SyncService } from './sync/sync.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [],
@@ -35,6 +36,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
     MappersRegistry,
     Utils,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     AttioService,
     ZendeskService,

@@ -15,10 +15,12 @@ import { OriginalEngagementOutput } from '@@core/utils/types/original/original.c
 import { CRM_PROVIDERS } from '@panora/shared';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('crm', 'engagement', this);
@@ -85,7 +88,6 @@ export class SyncService implements OnModuleInit {
                       await this.syncEngagementsForLinkedUser(
                         provider,
                         linkedUser.id_linked_user,
-                        id_project,
                         type,
                       );
                     }
@@ -109,7 +111,6 @@ export class SyncService implements OnModuleInit {
   async syncEngagementsForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
     engagement_type: string,
   ) {
     try {
@@ -151,64 +152,34 @@ export class SyncService implements OnModuleInit {
         );
 
       const sourceObject: OriginalEngagementOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalEngagementOutput[]
-      >({
-        sourceObject,
-        targetType: `engagement${
-          engagement_type ? `_${engagement_type}` : ''
-        }` as CrmObject,
-        providerName: integrationId,
-        vertical: 'crm',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedEngagementOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const engagements_data = await this.saveEngagementsInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
+      await this.ingestService.ingestData<
+        UnifiedEngagementOutput,
+        OriginalEngagementOutput
+      >(
         sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'crm.engagement.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        engagements_data,
-        'crm.engagement.pulled',
-        id_project,
-        event.id_event,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'engagement',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveEngagementsInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    engagements: UnifiedEngagementOutput[],
+    data: UnifiedEngagementOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmEngagement[]> {
     try {
       let engagements_results: CrmEngagement[] = [];
-      for (let i = 0; i < engagements.length; i++) {
-        const engagement = engagements[i];
+      for (let i = 0; i < data.length; i++) {
+        const engagement = data[i];
         const originId = engagement.remote_id;
 
         if (!originId || originId == '') {

@@ -99,7 +99,7 @@ export class AttachmentService {
         },
       });
 
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_attachment,
         'ticketing.attachment.created',
         linkedUser.id_project,

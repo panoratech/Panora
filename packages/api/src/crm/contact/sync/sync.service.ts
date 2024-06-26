@@ -17,9 +17,11 @@ import { Utils } from '@crm/@lib/@utils';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -30,6 +32,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('crm', 'contact', this);
@@ -86,7 +89,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncContactsForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -105,11 +107,7 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncContactsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async syncContactsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} contacts for linkedUser ${linkedUserId}`,
@@ -145,62 +143,34 @@ export class SyncService implements OnModuleInit {
         await service.syncContacts(linkedUserId, remoteProperties);
 
       const sourceObject: OriginalContactOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalContactOutput[]
-      >({
-        sourceObject,
-        targetType: CrmObject.contact,
-        providerName: integrationId,
-        vertical: 'crm',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedContactOutput[];
 
-      //insert the data in the DB with the fieldMappings (value table)
-      const contacts_data = await this.saveContactsInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
-        integrationId,
+      await this.ingestService.ingestData<
+        OriginalContactOutput,
+        OriginalContactOutput
+      >(
         sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'crm.contact.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        contacts_data,
-        'crm.contact.pulled',
-        id_project,
-        event.id_event,
+        integrationId,
+        connection.id_connection,
+        'crm',
+        'contact',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveContactsInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    contacts: UnifiedContactOutput[],
+    data: UnifiedContactOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmContact[]> {
     try {
       let contacts_results: CrmContact[] = [];
-      for (let i = 0; i < contacts.length; i++) {
-        const contact = contacts[i];
+      for (let i = 0; i < data.length; i++) {
+        const contact = data[i];
         const originId = contact.remote_id;
 
         if (!originId || originId == '') {

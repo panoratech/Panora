@@ -17,6 +17,7 @@ import { ZohoService } from './services/zoho';
 import { SyncService } from './sync/sync.service';
 import { TaskController } from './task.controller';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [],
@@ -34,6 +35,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
     UnificationRegistry,
     MappersRegistry,
     Utils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     ZendeskService,
     ZohoService,

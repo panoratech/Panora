@@ -92,7 +92,7 @@ export class WebhookProcessor {
         });
 
         //re-insert the webhook in the queue
-        await this.webhookService.handleFailedWebhook(id_webhook_delivery);
+        await this.webhookService.dispatchFailedWebhook(id_webhook_delivery);
 
         this.logger.log(
           'Webhook delivery failed. Job reinserted in the queue for retry.',

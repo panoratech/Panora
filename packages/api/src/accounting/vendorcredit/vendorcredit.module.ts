@@ -8,6 +8,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { VendorCreditService } from './services/vendorcredit.service';
 import { SyncService } from './sync/sync.service';
 import { VendorCreditController } from './vendorcredit.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   controllers: [VendorCreditController],
@@ -20,6 +21,7 @@ import { VendorCreditController } from './vendorcredit.controller';
     FieldMappingService,
     ServiceRegistry,
     ConnectionUtils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

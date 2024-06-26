@@ -16,9 +16,11 @@ import { TICKETING_PROVIDERS } from '@panora/shared';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit {
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'account', this);
@@ -82,7 +85,6 @@ export class SyncService implements OnModuleInit {
                     await this.syncAccountsForLinkedUser(
                       provider,
                       linkedUser.id_linked_user,
-                      id_project,
                     );
                   } catch (error) {
                     throw error;
@@ -104,7 +106,6 @@ export class SyncService implements OnModuleInit {
   async syncAccountsForLinkedUser(
     integrationId: string,
     linkedUserId: string,
-    id_project: string,
     wh_real_time_trigger?: {
       action: 'UPDATE' | 'DELETE';
       data: {
@@ -170,63 +171,34 @@ export class SyncService implements OnModuleInit {
       }
 
       const sourceObject: OriginalAccountOutput[] = resp.data;
-      // this.logger.log('resp is ' + sourceObject);
 
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalAccountOutput[]
-      >({
+      await this.ingestService.ingestData<
+        UnifiedAccountOutput,
+        OriginalAccountOutput
+      >(
         sourceObject,
-        targetType: TicketingObject.account,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedAccountOutput[];
-
-      //insert the data in the DB with the fieldMappings (value table)
-      const account_data = await this.saveAccountsInDb(
-        connection.id_connection,
-        linkedUserId,
-        unifiedObject,
         integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.account.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        account_data,
-        'ticketing.account.sync',
-        id_project,
-        event.id_event,
+        connection.id_connection,
+        'ticketing',
+        'account',
+        customFieldMappings,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveAccountsInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    accounts: UnifiedAccountOutput[],
+    data: UnifiedAccountOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingAccount[]> {
     try {
       let accounts_results: TicketingAccount[] = [];
-      for (let i = 0; i < accounts.length; i++) {
-        const account = accounts[i];
+      for (let i = 0; i < data.length; i++) {
+        const account = data[i];
         const originId = account.remote_id;
 
         if (!originId || originId == '') {
