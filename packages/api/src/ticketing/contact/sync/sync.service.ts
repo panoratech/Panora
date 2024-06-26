@@ -37,15 +37,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'contact', this);
   }
-  saveToDb(
-    connection_id: string,
-    linkedUserId: string,
-    data: any[],
-    originSource: string,
-    remote_data: Record<string, any>[],
-  ): Promise<any[]> {
-    throw new Error('Method not implemented.');
-  }
 
   async onModuleInit() {
     try {
@@ -203,13 +194,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
         'ticketing',
         'contact',
         customFieldMappings,
+        { remote_account_id: remote_account_id },
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveContactsInDb(
+  async saveToDb(
     connection_id: string,
     linkedUserId: string,
     contacts: UnifiedContactOutput[],

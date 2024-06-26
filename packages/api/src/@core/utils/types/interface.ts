@@ -43,5 +43,6 @@ export interface IBaseSync {
     data: any[],
     originSource: string,
     remote_data: Record<string, any>[],
+    ...rest: any
   ): Promise<any[]>;
 }

@@ -34,9 +34,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'user', this);
-  saveToDb(connection_id: string, linkedUserId: string, data: any[], originSource: string, remote_data: Record<string, any>[]): Promise<any[]> {
-    throw new Error('Method not implemented.');
-  }
   }
 
   async onModuleInit() {
@@ -193,7 +190,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     }
   }
 
-  async saveUsersInDb(
+  async saveToDb(
     linkedUserId: string,
     users: UnifiedUserOutput[],
     originSource: string,

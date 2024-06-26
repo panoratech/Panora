@@ -169,6 +169,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         'tikceting',
         'comment',
         customFieldMappings,
+        { id_ticket: id_ticket },
       );
     } catch (error) {
       throw error;
@@ -179,8 +180,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
     connection_id: string,
     linkedUserId: string,
     comments: UnifiedCommentOutput[],
-    id_ticket: string,
+    originSource: string,
     remote_data: Record<string, any>[],
+    id_ticket?: string,
   ): Promise<TicketingComment[]> {
     try {
       let comments_results: TicketingComment[] = [];

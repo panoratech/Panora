@@ -166,6 +166,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         'ticketing',
         'tag',
         customFieldMappings,
+        { id_ticket: id_ticket },
       );
       //TODO; do it in every file
       if (!sourceObject || sourceObject.length == 0) {
@@ -182,8 +183,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
     tags: UnifiedTagOutput[],
     originSource: string,
-    id_ticket: string,
     remote_data: Record<string, any>[],
+    id_ticket: string,
   ): Promise<TicketingTag[]> {
     try {
       let tags_results: TicketingTag[] = [];

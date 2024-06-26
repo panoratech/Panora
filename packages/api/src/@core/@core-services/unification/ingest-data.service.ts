@@ -28,6 +28,7 @@ export class IngestDataService {
       slug: string;
       remote_id: string;
     }[],
+    extraParams?: { [key: string]: any },
   ): Promise<any[]> {
     const unifiedObject = (await this.coreUnification.unify<U[]>({
       sourceObject,
@@ -52,6 +53,7 @@ export class IngestDataService {
         unifiedObject,
         integrationId,
         sourceObject,
+        ...Object.values(extraParams || {}),
       );
     const event = await this.prisma.events.create({
       data: {

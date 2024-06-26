@@ -176,6 +176,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         'crm',
         'stage',
         customFieldMappings,
+        { id_deal: deal_id },
       );
     } catch (error) {
       throw error;
@@ -187,8 +188,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
     data: UnifiedStageOutput[],
     originSource: string,
-    deal_id: string,
     remote_data: Record<string, any>[],
+    deal_id: string,
   ): Promise<CrmStage[]> {
     try {
       let stages_results: CrmStage[] = [];
