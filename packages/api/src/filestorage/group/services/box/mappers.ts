@@ -5,7 +5,7 @@ import {
 } from '@filestorage/group/types/model.unified';
 import { IGroupMapper } from '@filestorage/group/types';
 import { Utils } from '@filestorage/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

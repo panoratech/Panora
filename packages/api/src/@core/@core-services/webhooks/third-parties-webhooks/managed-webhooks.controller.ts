@@ -1,20 +1,21 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Put,
-  Param,
   UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ApiBody, ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
-import { ManagedWebhooksService } from './managed-webhooks.service';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   ManagedWebhooksDto,
   RemoteThirdPartyCreationDto,
 } from './dto/managed-webhooks.dto';
-import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { ManagedWebhooksService } from './managed-webhooks.service';
+
 @ApiTags('managed-webhooks')
 @Controller('managed-webhooks')
 export class ManagedWebhooksController {

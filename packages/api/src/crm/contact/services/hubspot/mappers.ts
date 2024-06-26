@@ -5,7 +5,7 @@ import {
 import { IContactMapper } from '@crm/contact/types';
 import { HubspotContactInput, HubspotContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

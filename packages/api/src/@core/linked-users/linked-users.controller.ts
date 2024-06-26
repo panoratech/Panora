@@ -8,7 +8,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { LinkedUsersService } from './linked-users.service';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import {
   CreateBatchLinkedUserDto,
   CreateLinkedUserDto,

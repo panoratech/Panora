@@ -1,17 +1,16 @@
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
-  UseGuards,
   Request,
+  UseGuards,
 } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
-import { LoggerService } from '../logger/logger.service';
-import { CreateProjectDto } from './dto/create-project.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { ProjectsService } from './projects.service';
 
 @ApiTags('projects')
 @Controller('projects')

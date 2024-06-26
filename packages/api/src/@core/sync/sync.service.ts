@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { ConnectorCategory } from '@panora/shared';
 import { ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { CoreSyncRegistry } from './registry.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreSyncRegistry } from '../@core-services/registries/core-sync.registry';
 @Injectable()
 export class CoreSyncService {
   constructor(

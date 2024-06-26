@@ -1,7 +1,7 @@
 import { Address, countryPhoneFormats, Email, Phone } from '@crm/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 
 @Injectable()
 export class Utils {

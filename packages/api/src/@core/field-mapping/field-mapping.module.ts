@@ -1,9 +1,8 @@
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { Module } from '@nestjs/common';
-import { FieldMappingService } from './field-mapping.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { FieldMappingController } from './field-mapping.controller';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { FieldMappingService } from './field-mapping.service';
 
 @Module({
   providers: [FieldMappingService, LoggerService, EncryptionService],

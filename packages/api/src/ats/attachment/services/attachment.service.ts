@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
   UnifiedAttachmentInput,
@@ -8,12 +8,14 @@ import {
 } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ats';
 import { IAttachmentService } from '../types';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { AtsObject } from '@ats/@lib/@types';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
 export class AttachmentService {

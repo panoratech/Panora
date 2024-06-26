@@ -1,4 +1,4 @@
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { AxiosError } from 'axios';
 import { TargetObject } from './types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';

@@ -4,7 +4,7 @@ import {
 } from '@crm/company/types/model.unified';
 import { ZohoCompanyInput, ZohoCompanyOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { ICompanyMapper } from '@crm/company/types';
 

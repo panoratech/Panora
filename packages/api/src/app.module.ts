@@ -1,23 +1,22 @@
-import { HttpException, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { CrmModule } from './crm/crm.module';
-import { ConfigModule } from '@nestjs/config';
-import { ScheduleModule } from '@nestjs/schedule';
-import { TasksService } from './@core/tasks/tasks.service';
-import { LoggerModule } from 'nestjs-pino';
-import { HrisModule } from './hris/hris.module';
-import { MarketingAutomationModule } from './marketingautomation/marketingautomation.module';
-import { AtsModule } from './ats/ats.module';
-import { AccountingModule } from './accounting/accounting.module';
-import { FileStorageModule } from './filestorage/filestorage.module';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaModule } from '@@core/@core-services/prisma/prisma.module';
 import { CoreModule } from '@@core/core.module';
 import { BullModule } from '@nestjs/bull';
-import { TicketingModule } from '@ticketing/ticketing.module';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { PrismaModule } from '@@core/prisma/prisma.module';
+import { TicketingModule } from '@ticketing/ticketing.module';
+import { LoggerModule } from 'nestjs-pino';
+import { AccountingModule } from './accounting/accounting.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AtsModule } from './ats/ats.module';
+import { CrmModule } from './crm/crm.module';
+import { FileStorageModule } from './filestorage/filestorage.module';
+import { HrisModule } from './hris/hris.module';
+import { MarketingAutomationModule } from './marketingautomation/marketingautomation.module';
 
 @Module({
   imports: [
@@ -90,7 +89,6 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
   controllers: [AppController],
   providers: [
     AppService,
-    TasksService,
     LoggerService,
     {
       provide: APP_GUARD,

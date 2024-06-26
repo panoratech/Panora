@@ -1,23 +1,16 @@
-import { CrmObject } from '@crm/@lib/@types';
-import { TargetObject, Unified, UnifyReturnType } from '../types';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { UnifySourceType } from '../types/unify.output';
-import { ConnectorCategory } from '@panora/shared';
-import { FileStorageObject } from '@filestorage/@lib/@types';
-import { MarketingAutomationObject } from '@marketingautomation/@lib/@types';
-import { HrisObject } from '@hris/@lib/@types';
 import { AccountingObject } from '@accounting/@lib/@types';
 import { AtsObject } from '@ats/@lib/@types';
+import { CrmObject } from '@crm/@lib/@types';
+import { FileStorageObject } from '@filestorage/@lib/@types';
+import { HrisObject } from '@hris/@lib/@types';
+import { MarketingAutomationObject } from '@marketingautomation/@lib/@types';
 import { Injectable } from '@nestjs/common';
-import { UnificationRegistry } from '../registry/unification.registry';
-import { CrmUnificationService } from '@crm/@lib/@unification';
-import { AtsUnificationService } from '@ats/@lib/@unification';
-import { DesunifyReturnType } from '../types/desunify.input';
-import { AccountingUnificationService } from '@accounting/@lib/@unification';
-import { FileStorageUnificationService } from '@filestorage/@lib/@unification';
-import { HrisUnificationService } from '@hris/@lib/@unification';
-import { MarketingAutomationUnificationService } from '@marketingautomation/@lib/@unification';
-import { TicketingUnificationService } from '@ticketing/@lib/@unification';
+import { ConnectorCategory } from '@panora/shared';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { TargetObject, Unified, UnifyReturnType } from '../../utils/types';
+import { DesunifyReturnType } from '../../utils/types/desunify.input';
+import { UnifySourceType } from '../../utils/types/unify.output';
+import { UnificationRegistry } from '../registries/unification.registry';
 
 @Injectable()
 export class CoreUnification {

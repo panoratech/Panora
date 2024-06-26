@@ -1,13 +1,9 @@
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { PassThroughRequestDto } from './dto/passthrough.dto';
 import { PassThroughResponse } from './types';
-import axios, { AxiosResponse } from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { v4 as uuidv4 } from 'uuid';
-import { LoggerService } from '@@core/logger/logger.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { CONNECTORS_METADATA } from '@panora/shared';
-import { PassthroughRequestError, throwTypedError } from '@@core/utils/errors';
 
 @Injectable()
 export class PassthroughService {

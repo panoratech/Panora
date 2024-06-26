@@ -4,7 +4,7 @@ import {
   UnifiedAttachmentOutput,
 } from '@ticketing/attachment/types/model.unified';
 import { FrontAttachmentOutput } from './types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 

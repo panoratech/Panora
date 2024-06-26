@@ -1,28 +1,22 @@
 import { Module } from '@nestjs/common';
 import { EmployeePayrollRunController } from './employeepayrollrun.controller';
 import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { EmployeePayrollRunService } from './services/employeepayrollrun.service';
 import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
-  ],
+  
   controllers: [EmployeePayrollRunController],
   providers: [
-    EmployeePayrollRunService,
-
-    LoggerService,
+    EmployeePayrollRunService,LoggerService,
     SyncService,
     WebhookService,
     EncryptionService,

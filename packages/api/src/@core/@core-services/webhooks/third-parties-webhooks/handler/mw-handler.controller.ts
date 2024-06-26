@@ -1,14 +1,13 @@
 import { Body, Controller, Post, Param, Headers } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 
 @ApiTags('mw')
 @Controller('mw')
 export class MWHandlerController {
   constructor(
-    @InjectQueue('realTimeWebhookQueue') private queue: Queue,
+    private readonly queues: BullQueueService,
     private loggerService: LoggerService,
   ) {
     this.loggerService.setContext(MWHandlerController.name);
@@ -28,6 +27,6 @@ export class MWHandlerController {
     this.loggerService.log(
       'Realtime Webhook Received with Payload ---- ' + JSON.stringify(data),
     );
-    await this.queue.add({ uuid, data, headers });
+    await this.queues.getRealtimeWebhookReceiver().add({ uuid, data, headers });
   }
 }

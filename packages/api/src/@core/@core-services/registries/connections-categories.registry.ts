@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { IUnification } from '../types/interface';
+import { IConnectionCategory } from '@@core/connections/@utils/types';
 
 @Injectable()
-export class UnificationRegistry<T extends IUnification> {
+export class CategoryConnectionRegistry<T = IConnectionCategory> {
   private serviceMap: Map<string, T>;
 
   constructor() {

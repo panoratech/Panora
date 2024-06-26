@@ -68,7 +68,7 @@ import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError, Unified${VerticalCap}Error } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -131,9 +131,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-
 import { ${VerticalCap}Object } from '@${VerticalLow}/@utils/@types';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Unified${ObjectCap}Output } from '../types/model.unified';
 import { I${ObjectCap}Service } from '../types';
  
@@ -231,17 +230,13 @@ import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
-  ],
+  
   controllers: [${ObjectCap}Controller],
   providers: [
     ${ObjectCap}Service,

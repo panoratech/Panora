@@ -1,4 +1,4 @@
-import '@@core/sentry/instrument';
+import '@@core/@core-services/sentry/instrument';
 import * as Sentry from '@sentry/node';
 import {
   BaseExceptionFilter,

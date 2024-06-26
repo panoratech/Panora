@@ -7,7 +7,7 @@ import { IContactMapper } from '@crm/contact/types';
 import { AttioContactInput, AttioContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 
 @Injectable()
 export class AttioContactMapper implements IContactMapper {

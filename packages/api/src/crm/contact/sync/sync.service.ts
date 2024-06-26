@@ -1,9 +1,8 @@
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { UnifiedContactOutput } from '@crm/contact/types/model.unified';
 import { CrmObject } from '@crm/@lib/@types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -14,12 +13,10 @@ import { IContactService } from '../types';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from '../services/registry.service';
 import { CRM_PROVIDERS } from '@panora/shared';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
 import { Utils } from '@crm/@lib/@utils';
-import { throwTypedError, SyncError } from '@@core/utils/errors';
-import { CoreUnification } from '@@core/utils/services/core.service';
-import { CoreSyncRegistry } from '@@core/sync/registry.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -32,7 +29,7 @@ export class SyncService implements OnModuleInit {
     private utils: Utils,
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
-    @InjectQueue('syncTasks') private syncQueue: Queue,
+    private bullQueueService: BullQueueService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('crm', 'contact', this);
@@ -40,44 +37,14 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.scheduleSyncJob();
+      await this.bullQueueService.queueSyncJob(
+        'crm-sync-contacts',
+        '0 0 * * *',
+      );
     } catch (error) {
       throw error;
     }
   }
-
-  private async scheduleSyncJob() {
-    const jobName = 'crm-sync-contacts';
-
-    // Remove existing jobs to avoid duplicates in case of application restart
-    const jobs = await this.syncQueue.getRepeatableJobs();
-    console.log(`Found ${jobs.length} repeatable jobs.`);
-    for (const job of jobs) {
-      console.log(`Checking job: ${job.name}`);
-      if (job.name === jobName) {
-        console.log(`Removing job with key: ${job.key}`);
-        await this.syncQueue.removeRepeatableByKey(job.key);
-      }
-    }
-
-    // Add new job to the queue with a CRON expression
-    console.log(`Adding new job: ${jobName}`);
-    await this.syncQueue
-      .add(
-        jobName,
-        {},
-        {
-          repeat: { cron: '*/2 * * * *' }, // Runs once a day at midnight
-        },
-      )
-      .then(() => {
-        console.log('Crm Sync Contact Job added successfully');
-      })
-      .catch((error) => {
-        console.error('Failed to add job', error);
-      });
-  }
-
   //function used by sync worker which populate our crm_contacts table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
   // @Cron('*/2 * * * *') // every 2 minutes (for testing)

@@ -1,18 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ApiResponse } from '@@core/utils/types';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { v4 as uuidv4 } from 'uuid';
+import { ICommentService } from '../types';
 import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '../types/model.unified';
-import { ICommentService } from '../types';
-import { TicketingObject } from '@ticketing/@lib/@types';
 import { ServiceRegistry } from './registry.service';
-import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
-import { CoreUnification } from '@@core/utils/services/core.service';
 
 @Injectable()
 export class CommentService {

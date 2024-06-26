@@ -1,17 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { ApiResponse } from '@@core/utils/types';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedDealInput, UnifiedDealOutput } from '../types/model.unified';
-import { CrmObject } from '@crm/@lib/@types';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from './registry.service';
+import { ApiResponse } from '@@core/utils/types';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
+import { CrmObject } from '@crm/@lib/@types';
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { IDealService } from '../types';
-import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { UnifiedDealInput, UnifiedDealOutput } from '../types/model.unified';
+import { ServiceRegistry } from './registry.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
 export class DealService {

@@ -1,20 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { IContactService } from '../types';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { CrmObject } from '@crm/@lib/@types';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
+import { Utils } from '@crm/@lib/@utils';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@crm/contact/types/model.unified';
-import { ApiResponse } from '@@core/utils/types';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import { IContactService } from '../types';
 import { ServiceRegistry } from './registry.service';
-import { Utils } from '@crm/@lib/@utils';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
 export class ContactService {

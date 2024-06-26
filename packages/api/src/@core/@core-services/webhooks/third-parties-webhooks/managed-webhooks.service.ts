@@ -1,14 +1,13 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { ConnectorCategory } from '@panora/shared';
+import { TicketingWebhookHandlerService } from '@ticketing/@webhook/handler.service';
 import { v4 as uuidv4 } from 'uuid';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ManagedWebhooksError, throwTypedError } from '@@core/utils/errors';
 import {
   ManagedWebhooksDto,
   RemoteThirdPartyCreationDto,
 } from './dto/managed-webhooks.dto';
-import { ConnectorCategory } from '@panora/shared';
-import { TicketingWebhookHandlerService } from '@ticketing/@webhook/handler.service';
 
 @Injectable()
 export class ManagedWebhooksService {

@@ -1,22 +1,19 @@
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  ConnectionStrategiesError,
-  throwTypedError,
-} from '@@core/utils/errors';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { ConnectionStrategiesError } from '@@core/utils/errors';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   AuthData,
   AuthStrategy,
+  CONNECTORS_METADATA,
   extractAuthMode,
   extractProvider,
   extractVertical,
   needsSubdomain,
-  CONNECTORS_METADATA,
+  SoftwareMode,
 } from '@panora/shared';
-import { SoftwareMode } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 
 export type OAuth = {

@@ -1,28 +1,28 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiCustomResponse } from '@@core/utils/types';
 import {
   Controller,
-  Query,
   Get,
-  Param,
   Headers,
+  Param,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
 import {
+  ApiBearerAuth,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
-  ApiHeader,
   ApiTags,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ContactService } from './services/contact.service';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { UnifiedContactOutput } from './types/model.unified';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiBearerAuth('JWT')
 @ApiTags('ticketing/contacts')

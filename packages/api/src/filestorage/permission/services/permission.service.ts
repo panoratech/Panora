@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
   UnifiedPermissionInput,
   UnifiedPermissionOutput,
 } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalPermissionOutput } from '@@core/utils/types/original/original.file-storage';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ServiceRegistry } from './registry.service';
 import { FileStorageObject } from '@filestorage/@lib/@types';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
 export class PermissionService {

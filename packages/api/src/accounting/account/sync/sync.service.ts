@@ -1,15 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
-import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ServiceRegistry } from '../services/registry.service';
-
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedAccountOutput } from '../types/model.unified';
-import { IAccountService } from '../types';
 
 @Injectable()
 export class SyncService implements OnModuleInit {

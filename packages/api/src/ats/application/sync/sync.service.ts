@@ -1,22 +1,21 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
-import { CoreUnification } from '@@core/utils/services/core.service';
-import { CoreSyncRegistry } from '@@core/sync/registry.service';
 import { ApiResponse } from '@@core/utils/types';
-import { IApplicationService } from '../types';
 import { OriginalApplicationOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedApplicationOutput } from '../types/model.unified';
-import { ats_applications as AtsApplication } from '@prisma/client';
-import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { ATS_PROVIDERS } from '@panora/shared';
+import { ats_applications as AtsApplication } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IApplicationService } from '../types';
+import { UnifiedApplicationOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -28,7 +27,7 @@ export class SyncService implements OnModuleInit {
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
-    @InjectQueue('syncTasks') private syncQueue: Queue,
+    private bullQueueService: BullQueueService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'application', this);
@@ -36,30 +35,13 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.scheduleSyncJob();
+      await this.bullQueueService.queueSyncJob(
+        'ats-sync-applications',
+        '0 0 * * *',
+      );
     } catch (error) {
       throw error;
     }
-  }
-
-  private async scheduleSyncJob() {
-    const jobName = 'ats-sync-applications';
-
-    // Remove existing jobs to avoid duplicates in case of application restart
-    const jobs = await this.syncQueue.getRepeatableJobs();
-    for (const job of jobs) {
-      if (job.name === jobName) {
-        await this.syncQueue.removeRepeatableByKey(job.key);
-      }
-    }
-    // Add new job to the queue with a CRON expression
-    await this.syncQueue.add(
-      jobName,
-      {},
-      {
-        repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
-      },
-    );
   }
 
   @Cron('0 */8 * * *') // every 8 hours

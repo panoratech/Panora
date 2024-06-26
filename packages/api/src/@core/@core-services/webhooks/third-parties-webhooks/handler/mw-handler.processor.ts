@@ -1,12 +1,13 @@
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { Queues } from '@@core/@core-services/queues/types';
 import { CrmWebhookHandlerService } from '@crm/@webhook/handler.service';
 import { OnQueueActive, Process, Processor } from '@nestjs/bull';
 import { ConnectorCategory } from '@panora/shared';
 import { TicketingWebhookHandlerService } from '@ticketing/@webhook/handler.service';
 import { Job } from 'bull';
 
-@Processor('realTimeWebhookQueue')
+@Processor(Queues.REMOTE_REAL_TIME_WEBHOOKS_RECEIVER)
 export class MwHandlerProcessor {
   constructor(
     private logger: LoggerService,

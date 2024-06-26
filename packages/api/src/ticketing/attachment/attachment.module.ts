@@ -1,32 +1,21 @@
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { Module } from '@nestjs/common';
 import { AttachmentController } from './attachment.controller';
-import { LoggerService } from '@@core/logger/logger.service';
 import { AttachmentService } from './services/attachment.service';
 import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [],
   controllers: [AttachmentController],
   providers: [
     AttachmentService,
-
     LoggerService,
     WebhookService,
     EncryptionService,

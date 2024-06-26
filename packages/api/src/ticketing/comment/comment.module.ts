@@ -1,39 +1,28 @@
-import { GitlabService } from './services/gitlab';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { Module } from '@nestjs/common';
-import { SyncService } from './sync/sync.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskService } from './services/zendesk';
-import { BullModule } from '@nestjs/bull';
+import { Utils } from '@ticketing/@lib/@utils';
 import { CommentController } from './comment.controller';
 import { CommentService } from './services/comment.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from './services/registry.service';
 import { FrontService } from './services/front';
-import { JiraService } from './services/jira';
+import { GitlabService } from './services/gitlab';
 import { GorgiasService } from './services/gorgias';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { CoreUnification } from '@@core/utils/services/core.service';
-import { Utils } from '@ticketing/@lib/@utils';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { JiraService } from './services/jira';
+import { ServiceRegistry } from './services/registry.service';
+import { ZendeskService } from './services/zendesk';
+import { SyncService } from './sync/sync.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [],
   controllers: [CommentController],
   providers: [
     CommentService,
-
     LoggerService,
     SyncService,
     WebhookService,

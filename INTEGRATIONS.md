@@ -275,11 +275,7 @@ Don't forget to add your service you've defined at step 1 inside the module unde
 
 ```ts
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
-  ],
+  
   controllers: [ContactController],
   providers: [
     ContactService,

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import axios from 'axios';
 import { ICrmConnectionService } from '../../types';
 import {
@@ -9,10 +9,10 @@ import {
   format3rdPartyError,
   throwTypedError,
 } from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ServiceRegistry } from '../registry.service';
 import {
   OAuth2AuthData,

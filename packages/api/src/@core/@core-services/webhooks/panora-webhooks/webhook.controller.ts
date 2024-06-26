@@ -9,7 +9,7 @@ import {
   Request,
   Delete,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiBody, ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { WebhookService } from './webhook.service';
 import { SignatureVerificationDto, WebhookDto } from './dto/webhook.dto';

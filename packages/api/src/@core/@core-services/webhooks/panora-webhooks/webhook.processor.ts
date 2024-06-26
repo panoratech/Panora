@@ -1,12 +1,13 @@
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { OnQueueActive, Process, Processor } from '@nestjs/bull';
 import axios from 'axios';
 import { Job } from 'bull';
 import { v4 as uuidv4 } from 'uuid';
 import { WebhookService } from './webhook.service';
+import { Queues } from '@@core/@core-services/queues/types';
 
-@Processor('webhookDelivery')
+@Processor(Queues.PANORA_WEBHOOKS_SENDER)
 export class WebhookProcessor {
   constructor(
     private logger: LoggerService,

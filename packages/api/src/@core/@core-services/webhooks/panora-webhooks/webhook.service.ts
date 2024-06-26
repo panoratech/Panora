@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { LoggerService } from '@@core/logger/logger.service';
-import { throwTypedError, WebhooksError } from '@@core/utils/errors';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { WebhooksError } from '@@core/utils/errors';
 import { WebhookDto } from './dto/webhook.dto';
 import axios from 'axios';
 import crypto from 'crypto';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 
 @Injectable()
 export class WebhookService {
   constructor(
-    @InjectQueue('webhookDelivery') private queue: Queue,
+    private readonly queues: BullQueueService,
     private prisma: PrismaService,
     private logger: LoggerService,
   ) {
@@ -137,7 +136,7 @@ export class WebhookService {
       });
       this.logger.log('adding webhook to the queue ');
       // we send the delivery webhook to the queue so it can be processed by our dispatcher worker
-      const job = await this.queue.add({
+      const job = await this.queues.getPanoraWebhookSender().add({
         webhook_delivery_id: w_delivery.id_webhook_delivery_attempt,
       });
     } catch (error) {
@@ -271,7 +270,7 @@ export class WebhookService {
 
   async handleFailedWebhook(failed_id_delivery_webhook: string) {
     try {
-      await this.queue.add(
+      await this.queues.getPanoraWebhookSender().add(
         {
           webhook_delivery_id: failed_id_delivery_webhook,
         },

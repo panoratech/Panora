@@ -1,23 +1,21 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { SyncError, throwTypedError } from '@@core/utils/errors';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
 import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { UnifiedAccountOutput } from '../types/model.unified';
 import { IAccountService } from '../types';
 import { OriginalAccountOutput } from '@@core/utils/types/original/original.ticketing';
 import { tcg_accounts as TicketingAccount } from '@prisma/client';
 import { TICKETING_PROVIDERS } from '@panora/shared';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
-import { CoreUnification } from '@@core/utils/services/core.service';
-import { CoreSyncRegistry } from '@@core/sync/registry.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -29,7 +27,7 @@ export class SyncService implements OnModuleInit {
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
-    @InjectQueue('syncTasks') private syncQueue: Queue,
+    private bullQueueService: BullQueueService,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'account', this);
@@ -37,31 +35,15 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.scheduleSyncJob();
+      await this.bullQueueService.queueSyncJob(
+        'ticketing-sync-accounts',
+        '0 0 * * *',
+      );
     } catch (error) {
       throw error;
     }
   }
 
-  private async scheduleSyncJob() {
-    const jobName = 'ticketing-sync-accounts';
-
-    // Remove existing jobs to avoid duplicates in case of application restart
-    const jobs = await this.syncQueue.getRepeatableJobs();
-    for (const job of jobs) {
-      if (job.name === jobName) {
-        await this.syncQueue.removeRepeatableByKey(job.key);
-      }
-    }
-    // Add new job to the queue with a CRON expression
-    await this.syncQueue.add(
-      jobName,
-      {},
-      {
-        repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
-      },
-    );
-  }
   //function used by sync worker which populate our tcg_accounts table
   //its role is to fetch all accounts from providers 3rd parties and save the info inside our db
   //@Cron('*/2 * * * *') // every 2 minutes (for testing)

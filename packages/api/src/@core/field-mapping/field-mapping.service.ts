@@ -1,22 +1,15 @@
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
+import { CONNECTORS_METADATA } from '@panora/shared';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
 import {
   CustomFieldCreateDto,
   DefineTargetFieldDto,
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
-import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
-import {
-  ActionType,
-  CustomFieldsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { CrmObject } from '@crm/@lib/@types';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { CONNECTORS_METADATA } from '@panora/shared';
 
 @Injectable()
 export class FieldMappingService {

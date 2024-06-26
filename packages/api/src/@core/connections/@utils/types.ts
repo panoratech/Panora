@@ -23,3 +23,19 @@ export type RefreshParams = {
   account_url?: string;
   projectId: string;
 };
+
+export interface IConnectionCategory {
+  handleCallBack(
+    providerName: string,
+    callbackOpts: CallbackParams,
+    type_strategy: 'oauth' | 'apikey' | 'basic',
+  ): Promise<void>;
+
+  handleTokensRefresh(
+    connectionId: string,
+    providerName: string,
+    refresh_token: string,
+    id_project: string,
+    account_url?: string,
+  ): Promise<void>;
+}

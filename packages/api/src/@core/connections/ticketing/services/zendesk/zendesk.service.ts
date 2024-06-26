@@ -1,17 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  Action,
-  ActionType,
-  ConnectionsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ITicketingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
@@ -22,9 +15,8 @@ import {
 import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { OAuthCallbackParams } from '@@core/connections/@utils/types';
-import { ManagedWebhooksService } from '@@core/managed-webhooks/managed-webhooks.service';
+import { ManagedWebhooksService } from '@@core/@core-services/webhooks/third-parties-webhooks/managed-webhooks.service';
 
 export interface ZendeskOAuthResponse {
   access_token: string;

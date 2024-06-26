@@ -1,23 +1,21 @@
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { mapToRemoteEvent } from './utils';
-import * as crypto from 'crypto';
-import { NonTicketPayload, Payload } from './types';
-import { SyncService as TicketSyncService } from '@ticketing/ticket/sync/sync.service';
-import { SyncService as UserSyncService } from '@ticketing/user/sync/sync.service';
-import { SyncService as ContactSyncService } from '@ticketing/contact/sync/sync.service';
-import { SyncService as AccountSyncService } from '@ticketing/account/sync/sync.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import {
   Action,
   ActionType,
   handle3rdPartyServiceError,
-  ManagedWebhooksError,
-  throwTypedError,
 } from '@@core/utils/errors';
+import { Injectable } from '@nestjs/common';
+import { SyncService as AccountSyncService } from '@ticketing/account/sync/sync.service';
+import { SyncService as ContactSyncService } from '@ticketing/contact/sync/sync.service';
+import { SyncService as TicketSyncService } from '@ticketing/ticket/sync/sync.service';
+import { SyncService as UserSyncService } from '@ticketing/user/sync/sync.service';
+import axios from 'axios';
+import * as crypto from 'crypto';
+import { NonTicketPayload, Payload } from './types';
+import { mapToRemoteEvent } from './utils';
 
 @Injectable()
 export class ZendeskHandlerService {

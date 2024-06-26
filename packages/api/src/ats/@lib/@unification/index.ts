@@ -1,10 +1,12 @@
 import { AtsObject } from '@ats/@lib/@types';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { Unified, UnifyReturnType } from '@@core/utils/types';
 import { UnifySourceType } from '@@core/utils/types/unify.output';
 import { AtsObjectInput } from '@@core/utils/types/original/original.ats';
 import { IUnification } from '@@core/utils/types/interface';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
