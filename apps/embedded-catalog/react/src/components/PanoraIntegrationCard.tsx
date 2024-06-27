@@ -20,16 +20,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
 import useCreateApiKeyConnection from '@/hooks/queries/useCreateApiKeyConnection';
 import { LoadingSpinner } from './ui/loading-spinner';
+import { Label } from './ui/label';
 
 
 export interface ProviderCardProp {
@@ -40,11 +33,16 @@ export interface ProviderCardProp {
   optionalApiUrl?: string,
 }
 
-const formSchema = z.object({
-  apiKey: z.string().min(2, {
-    message: "Api Key must be at least 2 characters.",
-  })
-})
+// const formSchema = z.object({
+//   apiKey: z.string().min(2, {
+//     message: "Api Key must be at least 2 characters.",
+//   })
+// })
+
+interface IApiKeyFormData {
+  apikey: string,
+  [key : string]: string
+}
 
 const PanoraIntegrationCard = ({name, category, projectId, linkedUserId, optionalApiUrl}: ProviderCardProp) => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -61,12 +59,14 @@ const PanoraIntegrationCard = ({name, category, projectId, linkedUserId, optiona
     ? window.location.href 
     : '';
 
-    const form = useForm<z.infer<typeof formSchema>>({
-      resolver: zodResolver(formSchema),
-      defaultValues: {
-        apiKey: "",
-      },
-    })
+    // const form = useForm<z.infer<typeof formSchema>>({
+    //   resolver: zodResolver(formSchema),
+    //   defaultValues: {
+    //     apiKey: "",
+    //   },
+    // })
+  const {register,formState: {errors},handleSubmit,reset} = useForm<IApiKeyFormData>();
+
 
 
     const { open, isReady } = useOAuth({
@@ -119,9 +119,14 @@ const PanoraIntegrationCard = ({name, category, projectId, linkedUserId, optiona
       
     }
 
-    const onApiKeySubmit = (values: z.infer<typeof formSchema>) => {
+    const onCloseApiKeyDialog = (dialogState : boolean) => {
+      setOpenApiKeyDialog(dialogState);
+      reset();
+    }
+
+    const onApiKeySubmit = (values: IApiKeyFormData) => {
       setErrorResponse({errorPresent:false,errorMessage:''});
-      setOpenApiKeyDialog(false);
+      onCloseApiKeyDialog(false);
       setLoading(true);
   
       // Creating API Key Connection
@@ -132,9 +137,7 @@ const PanoraIntegrationCard = ({name, category, projectId, linkedUserId, optiona
           providerName: name.toLowerCase(),
           vertical: category.toLowerCase()
         },
-        data: {
-          apikey: values.apiKey
-        },
+        data: values,
         api_url: optionalApiUrl ?? config.API_URL!
       },
       {
@@ -150,7 +153,6 @@ const PanoraIntegrationCard = ({name, category, projectId, linkedUserId, optiona
     }
 
     const CONNECTOR = CONNECTORS_METADATA[category!.toLowerCase()][name.toLowerCase()]
-  
     const img = CONNECTOR.logoPath;
       
 
@@ -184,11 +186,7 @@ const PanoraIntegrationCard = ({name, category, projectId, linkedUserId, optiona
                     )}
                     
                   </div>
-                  
-
                   {errorResponse.errorPresent ? <p className='mt-2 text-xs text-red-700'>{errorResponse.errorMessage}</p> : (<></>)}
-
-            
                 </div>
                 <div>
                 </div>
@@ -196,41 +194,61 @@ const PanoraIntegrationCard = ({name, category, projectId, linkedUserId, optiona
             </Card>
 
             {/* Dialog for apikey input */}
-            <Dialog open={openApiKeyDialog} onOpenChange={setOpenApiKeyDialog}>
+            <Dialog open={openApiKeyDialog} onOpenChange={onCloseApiKeyDialog}>
               <DialogContent>
               <DialogHeader>
                 <DialogTitle>Enter a API key</DialogTitle>
               </DialogHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onApiKeySubmit)}>
+              {/* <Form {...form}> */}
+                <form onSubmit={handleSubmit(onApiKeySubmit)}>
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                  <FormField
-                        control={form.control}
-                        name="apiKey"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Enter your API key for {name}</FormLabel>
-                            <FormControl>
-                              <Input 
-                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                              placeholder="Your awesome key name" {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                  <Label className={errors.apikey ? 'text-destructive' : ''}>Enter your API key for {name}</Label>
+                  <Input 
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                            placeholder="Your api key"
+                            {...register('apikey',{
+                              required: 'Api Key must be at least 2 characters',
+                              minLength: {
+                                value:2,
+                                message: 'Api Key must be at least 2 characters'
+                              }
+                            
+                            })}
                     />
+                    <div>{errors.apikey && (<p className='text-sm font-medium text-destructive'>{errors.apikey.message}</p>)}</div>
+                    
+
+                  {/* </div> */}
+                  {CONNECTORS_METADATA[category.toLowerCase()][name.toLowerCase()].authStrategy.properties?.map((fieldName :string) => 
+                  (
+                    <>
+                    <Label className={errors[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {name}</Label>
+                    <Input
+                          type='text'
+                          placeholder={`Your ${fieldName}`}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                          {...register(fieldName,{
+                            required: `${fieldName} must be at least 2 characters`,
+                            minLength:{
+                              value:2,
+                              message: `${fieldName} must be at least 2 characters`,
+                            }
+                          })}
+                    />
+                    {errors[fieldName] && (<p className='text-sm font-medium text-destructive'>{errors[fieldName]?.message}</p>)}
+                    </>
+                  ))}
                   </div>
                 </div>
               <DialogFooter>
-                <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => setOpenApiKeyDialog(false)}>Cancel</Button>
+                <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCloseApiKeyDialog(false)}>Cancel</Button>
                 <Button type='submit' size="sm" className="h-7 gap-1">
                   Continue
                 </Button>
               </DialogFooter>
                 </form>
-              </Form>
+              {/* </Form> */}
               </DialogContent>
             </Dialog>
 

@@ -10,7 +10,7 @@ interface IApiKeyConnectionDto {
   },
   data: {
     apikey: string,
-    username?: string
+    [key : string]: string
   }
 }
 
