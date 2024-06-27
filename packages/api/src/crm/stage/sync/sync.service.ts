@@ -209,7 +209,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             id_crm_deals_stage: true,
           },
         });
-
+        // TODO: stage
         let unique_crm_stage_id: string;
 
         if (existingStage.id_crm_deals_stage) {

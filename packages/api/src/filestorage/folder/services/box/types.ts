@@ -88,6 +88,8 @@ type BoxSharedLink = {
   };
   download_count: number;
   preview_count: number;
+} & {
+  [key: string]: any;
 };
 
 type BoxFolderUploadEmail = {

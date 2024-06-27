@@ -7,10 +7,17 @@ import { IFileMapper } from '@filestorage/file/types';
 import { Utils } from '@filestorage/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { OriginalPermissionOutput } from '@@core/utils/types/original/original.file-storage';
+import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class BoxFileMapper implements IFileMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService('filestorage', 'file', 'box', this);
   }
 
@@ -62,13 +69,25 @@ export class BoxFileMapper implements IFileMapper {
       }
     }
 
+    await this.ingestService.ingestData<
+      UnifiedPermissionOutput,
+      OriginalPermissionOutput
+    >(
+      [{ ...file.shared_link, parent_file_remote_id: String(file.id) }],
+      'box',
+      connectionId,
+      'filestorage',
+      'sharedlink',
+      customFieldMappings,
+    );
+
     return {
       remote_id: file.id,
       name: file.name || null,
       type: file.extension || null,
       file_url: file.shared_link?.url || null,
       mime_type: file.metadata?.['content-type'] || null,
-      size: file.size?.toString() || '0',
+      size: file.size?.toString() || null,
       folder_id:
         (await this.utils.getFolderIdFromRemote(
           file.parent?.id,

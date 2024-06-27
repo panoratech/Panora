@@ -7,10 +7,17 @@ import { IFolderMapper } from '@filestorage/folder/types';
 import { Utils } from '@filestorage/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { OriginalPermissionOutput } from '@@core/utils/types/original/original.file-storage';
+import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class BoxFolderMapper implements IFolderMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService('filestorage', 'folder', 'box', this);
   }
 
@@ -82,6 +89,17 @@ export class BoxFolderMapper implements IFolderMapper {
         field_mappings[mapping.slug] = folder[mapping.remote_id];
       }
     }
+    await this.ingestService.ingestData<
+      UnifiedPermissionOutput,
+      OriginalPermissionOutput
+    >(
+      [{ ...folder.shared_link, parent_folder_remote_id: String(folder.id) }],
+      'box',
+      connectionId,
+      'filestorage',
+      'sharedlink',
+      customFieldMappings,
+    );
 
     return {
       remote_id: folder.id,

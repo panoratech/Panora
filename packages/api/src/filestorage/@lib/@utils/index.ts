@@ -31,4 +31,19 @@ export class Utils {
       throw error;
     }
   }
+
+  async getFileIdFromRemote(remote_id: string, connection_id: string) {
+    try {
+      const res = await this.prisma.fs_files.findFirst({
+        where: {
+          remote_id: remote_id,
+          id_connection: connection_id,
+        },
+      });
+      if (!res) return;
+      return res.id_fs_file;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

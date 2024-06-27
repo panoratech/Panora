@@ -1,19 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.file-storage';
+import { FileStorageObject } from '@filestorage/@lib/@types';
+import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import {
   UnifiedSharedLinkInput,
   UnifiedSharedLinkOutput,
 } from '../types/model.unified';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { ApiResponse } from '@@core/utils/types';
-import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.file-storage';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ServiceRegistry } from './registry.service';
-import { FileStorageObject } from '@filestorage/@lib/@types';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
 export class SharedLinkService {
@@ -275,7 +274,6 @@ export class SharedLinkService {
         password_protected: sharedlink.password_protected,
         password: sharedlink.password,
         field_mappings: field_mappings,
-        remote_id: sharedlink.remote_id,
         created_at: sharedlink.created_at,
         modified_at: sharedlink.modified_at,
       };
@@ -407,7 +405,6 @@ export class SharedLinkService {
             password_protected: sharedlink.password_protected,
             password: sharedlink.password,
             field_mappings: field_mappings,
-            remote_id: sharedlink.remote_id,
             created_at: sharedlink.created_at,
             modified_at: sharedlink.modified_at,
           };
@@ -453,14 +450,5 @@ export class SharedLinkService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async updateSharedLink(
-    id: string,
-    updateSharedLinkData: Partial<UnifiedSharedLinkInput>,
-  ): Promise<UnifiedSharedLinkOutput> {
-    try {
-    } catch (error) {}
-    return;
   }
 }

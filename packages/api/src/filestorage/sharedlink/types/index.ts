@@ -14,6 +14,7 @@ export interface ISharedLinkService {
 
   syncSharedLinks(
     linkedUserId: string,
+    remote_object_id?: string, // folder id or file id
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalSharedLinkOutput[]>>;
 }

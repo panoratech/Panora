@@ -9,7 +9,6 @@ import {
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { FileStorageObject } from '@filestorage/@lib/@types';
 import { OriginalFolderOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
@@ -100,7 +99,7 @@ export class FolderService {
           name: target_folder.name,
           description: target_folder.description,
           parent_folder: target_folder.parent_folder_id,
-          id_fs_drive: target_folder.id,
+          id_fs_drive: target_folder.drive_id,
           id_fs_permission: target_folder.permission_id,
           modified_at: new Date(),
         };
@@ -121,7 +120,7 @@ export class FolderService {
           name: target_folder.name,
           description: target_folder.description,
           parent_folder: target_folder.parent_folder_id,
-          id_fs_drive: target_folder.id,
+          id_fs_drive: target_folder.drive_id,
           id_fs_permission: target_folder.permission_id,
           created_at: new Date(),
           modified_at: new Date(),
@@ -282,7 +281,6 @@ export class FolderService {
         modified_at: folder.modified_at,
       };
 
-      let res: UnifiedFolderOutput = unifiedFolder;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -290,11 +288,7 @@ export class FolderService {
           },
         });
         const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedFolder.remote_data = remote_data;
       }
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
@@ -311,7 +305,7 @@ export class FolderService {
           },
         });
       }
-      return res;
+      return unifiedFolder;
     } catch (error) {
       throw error;
     }
@@ -455,14 +449,5 @@ export class FolderService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async updateFolder(
-    id: string,
-    updateFolderData: Partial<UnifiedFolderInput>,
-  ): Promise<UnifiedFolderOutput> {
-    try {
-    } catch (error) {}
-    return;
   }
 }

@@ -1,45 +1,54 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 export class UnifiedSharedLinkInput {
-  @ApiProperty({ type: String, description: 'The url of the shared link' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The url of the shared link',
+  })
   @IsString()
-  url: string;
+  url?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: 'The download url of the shared link',
   })
   @IsString()
-  download_url: string;
+  download_url?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the folder tied to the shared link',
   })
   @IsString()
-  folder_id: string;
+  folder_id?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the file tied to the shared link',
   })
   @IsString()
-  file_id: string;
+  file_id?: string;
 
-  @ApiProperty({ type: String, description: 'The scope of the shared link' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The scope of the shared link',
+  })
   @IsString()
-  scope: string;
+  scope?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Boolean,
     description: 'If the shared link is protected by a password or not',
   })
   @IsString()
-  password_protected: boolean;
+  password_protected?: boolean;
 
-  @ApiProperty({ type: String, description: 'The password of the shared link' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The password of the shared link',
+  })
   @IsString()
-  password: string;
+  password?: string;
 
   @ApiPropertyOptional({
     type: {},
