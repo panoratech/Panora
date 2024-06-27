@@ -34,9 +34,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'scorecard', this);
-  saveToDb(connection_id: string, linkedUserId: string, data: any[], originSource: string, remote_data: Record<string, any>[]): Promise<any[]> {
-    throw new Error('Method not implemented.');
-  }
   }
 
   async onModuleInit() {
@@ -144,60 +141,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const sourceObject: OriginalScoreCardOutput[] = resp.data;
 
       await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
+        UnifiedScoreCardOutput,
+        OriginalScoreCardOutput
       >(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'scorecard',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalScoreCardOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.scorecard,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedScoreCardOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const scoreCards_data = await this.saveScoreCardsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.scorecard.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        scoreCards_data,
-        'ats.score_card.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveScoreCardsInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     scoreCards: UnifiedScoreCardOutput[],
     originSource: string,

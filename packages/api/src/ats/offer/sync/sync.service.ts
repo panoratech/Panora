@@ -4,7 +4,8 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ServiceRegistry } from '../services/registry.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { ApiResponse } from '@@core/utils/types';
 import { IOfferService } from '../types';
@@ -95,10 +96,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     }
   }
 
-  async syncOffersForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-  ) {
+  async syncOffersForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} offers for linkedUser ${linkedUserId}`,
@@ -139,60 +137,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const sourceObject: OriginalOfferOutput[] = resp.data;
 
       await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
+        UnifiedOfferOutput,
+        OriginalOfferOutput
       >(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'offer',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalOfferOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.offer,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedOfferOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const offers_data = await this.saveOffersInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.offer.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        offers_data,
-        'ats.offer.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveOffersInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     offers: UnifiedOfferOutput[],
     originSource: string,

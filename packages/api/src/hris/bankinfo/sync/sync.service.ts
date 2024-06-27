@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { IBaseSync } from '@@core/utils/types/interface';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -18,6 +19,16 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(SyncService.name);
+  }
+  saveToDb(
+    connection_id: string,
+    linkedUserId: string,
+    data: any[],
+    originSource: string,
+    remote_data: Record<string, any>[],
+    ...rest: any
+  ): Promise<any[]> {
+    throw new Error('Method not implemented.');
   }
 
   async onModuleInit() {

@@ -9,6 +9,7 @@ import { ServiceRegistry } from '../services/registry.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { UnifiedAttachmentOutput } from '../types/model.unified';
 import { IAttachmentService } from '../types';
+import { IBaseSync } from '@@core/utils/types/interface';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {

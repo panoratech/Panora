@@ -8,6 +8,7 @@ import { TicketModule } from '@ticketing/ticket/ticket.module';
 import { UserModule } from '@ticketing/user/user.module';
 import { TicketingWebhookHandlerService } from './handler.service';
 import { ZendeskHandlerService } from './zendesk/handler';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [TicketModule, UserModule, AccountModule, ContactModule],

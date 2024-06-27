@@ -141,60 +141,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const sourceObject: OriginalAttachmentOutput[] = resp.data;
 
       await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
+        UnifiedAttachmentOutput,
+        OriginalAttachmentOutput
       >(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'attachment',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalAttachmentOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.attachment,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedAttachmentOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const attachments_data = await this.saveAttachmentsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.attachment.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        attachments_data,
-        'ats.attachment.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveAttachmentsInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     attachments: UnifiedAttachmentOutput[],
     originSource: string,

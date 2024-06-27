@@ -4,7 +4,8 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ServiceRegistry } from '../services/registry.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { ApiResponse } from '@@core/utils/types';
 import { IDepartmentService } from '../types';
@@ -140,60 +141,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const sourceObject: OriginalDepartmentOutput[] = resp.data;
 
       await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
+        UnifiedDepartmentOutput,
+        OriginalDepartmentOutput
       >(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'department',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalDepartmentOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.department,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedDepartmentOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const departments_data = await this.saveDepartmentsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.department.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        departments_data,
-        'ats.department.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveDepartmentsInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     departments: UnifiedDepartmentOutput[],
     originSource: string,

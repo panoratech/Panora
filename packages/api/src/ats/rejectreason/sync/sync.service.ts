@@ -34,9 +34,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'rejectreason', this);
-  saveToDb(connection_id: string, linkedUserId: string, data: any[], originSource: string, remote_data: Record<string, any>[]): Promise<any[]> {
-    throw new Error('Method not implemented.');
-  }
   }
 
   async onModuleInit() {
@@ -144,60 +141,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const sourceObject: OriginalRejectReasonOutput[] = resp.data;
 
       await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
+        UnifiedRejectReasonOutput,
+        OriginalRejectReasonOutput
       >(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'rejectreason',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalRejectReasonOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.rejectreason,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedRejectReasonOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const rejectReasons_data = await this.saveRejectReasonsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.rejectreason.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        rejectReasons_data,
-        'ats.reject_reason.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveRejectReasonsInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     rejectReasons: UnifiedRejectReasonOutput[],
     originSource: string,

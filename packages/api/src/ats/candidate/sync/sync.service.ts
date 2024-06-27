@@ -4,7 +4,8 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ServiceRegistry } from '../services/registry.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { ApiResponse } from '@@core/utils/types';
 import { ICandidateService } from '../types';
@@ -140,60 +141,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const sourceObject: OriginalCandidateOutput[] = resp.data;
 
       await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
+        UnifiedCandidateOutput,
+        OriginalCandidateOutput
       >(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'candidate',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalCandidateOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.candidate,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedCandidateOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const candidates_data = await this.saveCandidatesInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.candidate.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        candidates_data,
-        'ats.candidate.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveCandidatesInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     candidates: UnifiedCandidateOutput[],
     originSource: string,

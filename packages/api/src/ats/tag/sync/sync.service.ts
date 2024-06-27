@@ -4,7 +4,8 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ServiceRegistry } from '../services/registry.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { ApiResponse } from '@@core/utils/types';
 import { ITagService } from '../types';
@@ -95,10 +96,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     }
   }
 
-  async syncTagsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-  ) {
+  async syncTagsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} tags for linkedUser ${linkedUserId}`,
@@ -138,61 +136,21 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
       const sourceObject: OriginalTagOutput[] = resp.data;
 
-      await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
-      >(
+      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'tag',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalTagOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.tag,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedTagOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const tags_data = await this.saveTagsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.tag.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        tags_data,
-        'ats.tag.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveTagsInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     tags: UnifiedTagOutput[],
     originSource: string,

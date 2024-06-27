@@ -137,53 +137,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const sourceObject: OriginalUserOutput[] = resp.data;
 
       await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
+        UnifiedUserOutput,
+        OriginalUserOutput
       >(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'user',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalUserOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.user,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedUserOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const users_data = await this.saveUsersInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.user.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        users_data,
-        'ats.user.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
@@ -191,6 +153,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
 
   async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     users: UnifiedUserOutput[],
     originSource: string,

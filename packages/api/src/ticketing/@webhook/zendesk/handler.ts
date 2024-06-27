@@ -302,7 +302,6 @@ export class ZendeskHandlerService {
         await this.syncTicketsService.syncTicketsForLinkedUser(
           connection.provider_slug.toLowerCase(),
           connection.id_linked_user,
-          connection.id_project,
           {
             action: 'UPDATE',
             data: { remote_id: payload.ticketId as string },
@@ -319,7 +318,6 @@ export class ZendeskHandlerService {
                 await this.syncContactsService.syncContactsForLinkedUser(
                   connection.provider_slug.toLowerCase(),
                   connection.id_linked_user,
-                  connection.id_project,
                   payload_.detail.id,
                   {
                     action:
@@ -336,7 +334,6 @@ export class ZendeskHandlerService {
                 await this.syncUsersService.syncUsersForLinkedUser(
                   connection.provider_slug.toLowerCase(),
                   connection.id_linked_user,
-                  connection.id_project,
                   {
                     action:
                       event_action.toLowerCase() == 'deleted'
@@ -354,7 +351,6 @@ export class ZendeskHandlerService {
             await this.syncAccountsService.syncAccountsForLinkedUser(
               connection.provider_slug.toLowerCase(),
               connection.id_linked_user,
-              connection.id_project,
               {
                 action:
                   event_action.toLowerCase() == 'deleted' ? 'DELETE' : 'UPDATE',

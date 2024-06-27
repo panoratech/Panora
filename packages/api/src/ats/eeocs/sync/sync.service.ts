@@ -34,9 +34,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'eeocs', this);
-  saveToDb(connection_id: string, linkedUserId: string, data: any[], originSource: string, remote_data: Record<string, any>[]): Promise<any[]> {
-    throw new Error('Method not implemented.');
-  }
   }
 
   async onModuleInit() {
@@ -140,60 +137,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const sourceObject: OriginalEeocsOutput[] = resp.data;
 
       await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
+        UnifiedEeocsOutput,
+        OriginalEeocsOutput
       >(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'eecos',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalEeocsOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.eeocs,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedEeocsOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const eeocs_data = await this.saveEeocsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.eeocs..synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        eeocs_data,
-        'ats.eeocs.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveEeocsInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     eeocs: UnifiedEeocsOutput[],
     originSource: string,

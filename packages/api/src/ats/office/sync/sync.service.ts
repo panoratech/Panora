@@ -96,10 +96,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     }
   }
 
-  async syncOfficesForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-  ) {
+  async syncOfficesForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} offices for linkedUser ${linkedUserId}`,
@@ -138,60 +135,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const sourceObject: OriginalOfficeOutput[] = resp.data;
 
       await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
+        UnifiedOfficeOutput,
+        OriginalOfficeOutput
       >(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'office',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalOfficeOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.office,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedOfficeOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const offices_data = await this.saveOfficesInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.office.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        offices_data,
-        'ats.office.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveOfficesInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     offices: UnifiedOfficeOutput[],
     originSource: string,

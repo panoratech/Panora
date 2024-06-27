@@ -96,10 +96,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     }
   }
 
-  async syncJobsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-  ) {
+  async syncJobsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
       this.logger.log(
         `Syncing ${integrationId} jobs for linkedUser ${linkedUserId}`,
@@ -139,61 +136,21 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
       const sourceObject: OriginalJobOutput[] = resp.data;
 
-      await this.ingestService.ingestData<
-        UnifiedCompanyOutput,
-        OriginalCompanyOutput
-      >(
+      await this.ingestService.ingestData<UnifiedJobOutput, OriginalJobOutput>(
         sourceObject,
         integrationId,
         connection.id_connection,
-        'crm',
-        'company',
+        'ats',
+        'job',
         customFieldMappings,
-      );
-      // unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalJobOutput[]
-      >({
-        sourceObject,
-        targetType: AtsObject.job,
-        providerName: integrationId,
-        vertical: 'ats',
-        connectionId: connection.id_connection,
-        customFieldMappings,
-      })) as UnifiedJobOutput[];
-
-      // insert the data in the DB with the fieldMappings (value table)
-      const jobs_data = await this.saveJobsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ats.job.synced',
-          method: 'SYNC',
-          url: '/sync',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.dispatchWebhook(
-        jobs_data,
-        'ats.job.pulled',
-        id_project,
-        event.id_event,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveJobsInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     jobs: UnifiedJobOutput[],
     originSource: string,
