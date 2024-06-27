@@ -1,24 +1,22 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { ICommentMapper } from '@ticketing/comment/types';
 import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { GitlabCommentInput, GitlabCommentOutput } from './types';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-import { TicketingObject } from '@ticketing/@lib/@types';
-
-import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { Injectable } from '@nestjs/common';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
 export class GitlabCommentMapper implements ICommentMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -82,22 +80,25 @@ export class GitlabCommentMapper implements ICommentMapper {
   ): Promise<UnifiedCommentOutput> {
     let opts;
 
-    // TODO - Unify attachment attribute
     if (comment.attachment && comment.attachment.length > 0) {
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalAttachmentOutput[]
-      >({
-        sourceObject: comment.attachment,
-        targetType: TicketingObject.attachment,
-        providerName: 'gitlab',
-        vertical: 'ticketing',
-        connectionId: connectionId,
-        customFieldMappings: [],
-      })) as UnifiedAttachmentOutput[];
+      const results = await this.ingestService.ingestData<
+        UnifiedAttachmentOutput,
+        OriginalAttachmentOutput
+      >(
+        comment.attachment.map((attach) => ({
+          ...attach,
+          parent_remote_id: String(comment.id),
+        })),
+        'gitlab',
+        connectionId,
+        'ticketing',
+        'attachment',
+        [],
+      );
+      const attachment_ids: string[] = results.map((res) => res.id);
 
-      opts = { ...opts, attachments: unifiedObject };
+      opts = { ...opts, attachments: attachment_ids };
     }
-
     if (comment.author.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.author.id),
@@ -107,19 +108,6 @@ export class GitlabCommentMapper implements ICommentMapper {
         opts = { ...opts, user_id };
       }
     }
-
-    //   if (user_id) {
-    //     opts = { user_id: user_id, creator_type: 'user' };
-    //   } else {
-    //     const contact_id = await this.utils.getContactUuidFromRemoteId(
-    //       String(comment.sender.id),
-    //       connectionId,
-    //     );
-    //     if (contact_id) {
-    //       opts = { creator_type: 'CONTACT', contact_id: contact_id };
-    //     }
-    //   }
-    // }
     if (comment.noteable_id) {
       const ticket_id = await this.utils.getTicketUuidFromRemoteId(
         String(comment.noteable_id),
@@ -130,17 +118,12 @@ export class GitlabCommentMapper implements ICommentMapper {
       }
     }
 
-    const res: UnifiedCommentOutput = {
+    return {
       remote_id: String(comment.id),
-      body: comment.body ? comment.body : null,
+      body: comment.body || null,
       is_private: comment.internal,
       creator_type: 'USER',
       ...opts,
-    };
-
-    return {
-      remote_id: String(comment.id),
-      ...res,
     };
   }
 }

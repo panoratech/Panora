@@ -36,7 +36,7 @@ interface Visibility {
   value: string;
 }
 
-interface Attachment {
+type Attachment = {
   author: User;
   content: string;
   created: string;
@@ -46,7 +46,9 @@ interface Attachment {
   self: string;
   size: number;
   thumbnail?: string;
-}
+} & {
+  [key: string]: any;
+};
 
 interface IssueLink {
   id: string;
@@ -105,10 +107,10 @@ interface Issue {
   fields: Partial<{
     assignee: Partial<{ id: string }>;
     watcher: Partial<Watcher>;
-    attachment: Partial<Attachment>[];
+    attachment: Attachment[];
     'sub-tasks': Partial<SubTask>[];
     description: any;
-    project: Partial<Project>;
+    project: Project;
     comment: Partial<Comment>[];
     issuelinks: Partial<IssueLink>[];
     worklog: Partial<Worklog>[];

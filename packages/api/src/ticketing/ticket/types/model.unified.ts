@@ -56,11 +56,11 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The UUID of the collection (project) the ticket belongs to',
+    description: 'The collection UUIDs the ticket belongs to',
   })
   @IsUUID()
   @IsOptional()
-  project_id?: string;
+  collections?: string[];
 
   @ApiPropertyOptional({
     type: [String],
@@ -116,6 +116,14 @@ export class UnifiedTicketInput {
   @IsUUID()
   @IsOptional()
   contact_id?: string;
+
+  // optional but may exist if ticket contains attachments
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'The attachements UUIDs tied to the ticket',
+  })
+  @IsOptional()
+  attachments?: any[]; //UUIDs of Attachments objects
 
   @ApiPropertyOptional({
     type: {},

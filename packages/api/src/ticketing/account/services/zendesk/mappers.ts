@@ -37,7 +37,11 @@ export class ZendeskAccountMapper implements IAccountMapper {
     }[],
   ): UnifiedAccountOutput | UnifiedAccountOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleAccountToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleAccountToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return source.map((ticket) =>
       this.mapSingleAccountToUnified(ticket, connectionId, customFieldMappings),

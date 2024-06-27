@@ -36,7 +36,7 @@ export class JiraService implements ITeamService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/user/groups`, {
+      const resp = await axios.get(`${connection.account_url}/groups/picker`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

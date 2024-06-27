@@ -361,26 +361,25 @@ export class TicketService {
       // Transform to UnifiedTicketOutput format
       const unifiedTicket: UnifiedTicketOutput = {
         id: ticket.id_tcg_ticket,
-        name: ticket.name || '',
-        status: ticket.status || '',
-        description: ticket.description || '',
+        name: ticket.name || null,
+        status: ticket.status || null,
+        description: ticket.description || null,
         due_date: ticket.due_date || null,
-        type: ticket.ticket_type || '',
-        parent_ticket: ticket.parent_ticket || '',
-        tags: ticket.tags || [],
+        type: ticket.ticket_type || null,
+        parent_ticket: ticket.parent_ticket || null,
+        tags: ticket.tags || null,
         completed_at: ticket.completed_at || null,
-        priority: ticket.priority || '',
-        assigned_to: ticket.assigned_to || [],
+        priority: ticket.priority || null,
+        assigned_to: ticket.assigned_to || null,
+        collections: ticket.collections || null,
         field_mappings: field_mappings,
         remote_id: ticket.remote_id,
         created_at: ticket.created_at,
         modified_at: ticket.modified_at,
       };
-
-      let res: UnifiedTicketOutput = {
-        ...unifiedTicket,
-      };
-
+      if (ticket.id_tcg_attachment) {
+        unifiedTicket.attachments = ticket.id_tcg_attachment;
+      }
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -388,11 +387,7 @@ export class TicketService {
           },
         });
         const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedTicket.remote_data = remote_data;
       }
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
@@ -409,7 +404,7 @@ export class TicketService {
           },
         });
       }
-      return res;
+      return unifiedTicket;
     } catch (error) {
       throw error;
     }
@@ -502,7 +497,7 @@ export class TicketService {
           );
 
           // Transform to UnifiedTicketOutput format
-          return {
+          const unifiedTicket: UnifiedTicketOutput = {
             id: ticket.id_tcg_ticket,
             name: ticket.name || '',
             status: ticket.status || '',
@@ -514,12 +509,16 @@ export class TicketService {
             completed_at: ticket.completed_at || null,
             priority: ticket.priority || '',
             assigned_to: ticket.assigned_to || [],
-            collections: ticket.collections || [],
+            collections: ticket.collections || null,
             field_mappings: field_mappings,
             remote_id: ticket.remote_id,
             created_at: ticket.created_at,
             modified_at: ticket.modified_at,
           };
+          if (ticket.id_tcg_attachment) {
+            unifiedTicket.attachments = ticket.id_tcg_attachment;
+          }
+          return unifiedTicket;
         }),
       );
 

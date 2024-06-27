@@ -28,33 +28,57 @@ export class GorgiasAttachmentMapper implements IAttachmentMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: GorgiasAttachmentOutput | GorgiasAttachmentOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAttachmentOutput | UnifiedAttachmentOutput[] {
+  ): Promise<UnifiedAttachmentOutput | UnifiedAttachmentOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleAttachmentToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleAttachmentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
-    return source.map((attachment) =>
-      this.mapSingleAttachmentToUnified(attachment, connectionId, customFieldMappings),
+    return Promise.all(
+      source.map((attachment) =>
+        this.mapSingleAttachmentToUnified(
+          attachment,
+          connectionId,
+          customFieldMappings,
+        ),
+      ),
     );
   }
 
-  private mapSingleAttachmentToUnified(
+  private async mapSingleAttachmentToUnified(
     attachment: GorgiasAttachmentOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAttachmentOutput {
+  ): Promise<UnifiedAttachmentOutput> {
+    let opts = {};
+    if (attachment.parent_remote_id) {
+      // we might find a comment id tied to it
+      const id_comment = await this.utils.getCommentUuidFromRemoteId(
+        attachment.parent_remote_id,
+        connectionId,
+      );
+      if (id_comment) {
+        opts = {
+          comment_id: id_comment,
+        };
+      }
+    }
     return {
       file_name: attachment.name,
       file_url: attachment.url,
+      ...opts,
     };
   }
 }

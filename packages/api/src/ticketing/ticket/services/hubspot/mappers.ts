@@ -58,37 +58,51 @@ export class HubspotTicketMapper implements ITicketMapper {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
-    return sourcesArray.map((ticket) =>
-      this.mapSingleTicketToUnified(ticket, connectionId, customFieldMappings),
+    return Promise.all(
+      sourcesArray.map((ticket) =>
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
+      ),
     );
   }
 
-  private mapSingleTicketToUnified(
+  private async mapSingleTicketToUnified(
     ticket: HubspotTicketOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTicketOutput {
+  ): Promise<UnifiedTicketOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
         field_mappings[mapping.slug] = ticket.properties[mapping.remote_id];
       }
     }
-
+    const owner_id = ticket.properties.hubspot_owner_id;
+    const user_id = await this.utils.getUserUuidFromRemoteId(
+      owner_id,
+      connectionId,
+    );
+    let opts = {};
+    if (user_id) {
+      opts = { assigned_to: [user_id] };
+    }
     return {
       remote_id: ticket.id,
       name: ticket.properties.name,
-      status: null, // hs_pipeline_stage: null,
+      status: null,
       description: ticket.properties.description,
       due_date: new Date(ticket.properties.createdate),
-      type: null, //ticket.properties.hs_pipeline,
-      parent_ticket: null, // Define how you determine the parent ticket
+      type: null,
+      parent_ticket: null,
       completed_at: new Date(ticket.properties.hs_lastmodifieddate),
       priority: ticket.properties.hs_ticket_priority,
-      assigned_to: [ticket.properties.hubspot_owner_id], // Define how you determine assigned users
+      ...opts,
       field_mappings: field_mappings,
     };
   }

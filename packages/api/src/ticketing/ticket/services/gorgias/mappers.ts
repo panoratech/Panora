@@ -7,10 +7,17 @@ import {
 import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
 
 @Injectable()
 export class GorgiasTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService(
       'ticketing',
       'ticket',
@@ -136,16 +143,26 @@ export class GorgiasTicketMapper implements ITicketMapper {
         opts = { assigned_to: [user_id] };
       }
     }
+    const tags = ticket.tags?.map((tag) => tag.name);
+    if (tags) {
+      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
+        tags,
+        'gorgias',
+        connectionId,
+        'ticketing',
+        'tag',
+        [],
+      );
+    }
 
-    // Assuming additional processing is needed to fully populate the UnifiedTicketOutput
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: String(ticket.id),
       name: ticket.subject,
       status: ticket.status,
-      description: ticket.subject, // Assuming the description is similar to the subject
+      description: ticket.subject,
       field_mappings,
       due_date: new Date(ticket.created_datetime),
-      tags: ticket.tags?.map((tag) => tag.name),
+      tags: tags,
       ...opts,
     };
 

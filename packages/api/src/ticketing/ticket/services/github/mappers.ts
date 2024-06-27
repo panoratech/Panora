@@ -7,10 +7,17 @@ import {
 import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class GithubTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'github', this);
   }
 
@@ -93,13 +100,19 @@ export class GithubTicketMapper implements ITicketMapper {
             }
           }
         }
-
+        const labels = ticket.labels.map((label) => label.name);
+        if (labels) {
+          await this.ingestService.ingestData<
+            UnifiedTagOutput,
+            OriginalTagOutput
+          >(ticket.labels, 'github', connectionId, 'ticketing', 'tag', []);
+        }
         const unifiedTicket: UnifiedTicketOutput = {
           remote_id: String(ticket.id),
           name: ticket.title,
           description: ticket.body,
           status: ticket.state,
-          tags: ticket.labels.map((label) => label.name),
+          tags: labels || null,
           field_mappings: field_mappings,
           ...opts,
         };

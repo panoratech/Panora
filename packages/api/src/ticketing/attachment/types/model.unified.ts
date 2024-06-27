@@ -19,6 +19,22 @@ export class UnifiedAttachmentInput {
   uploader?: string;
 
   @ApiPropertyOptional({
+    type: String,
+    description: 'The UUID of the ticket the attachment is tied to',
+  })
+  @IsUUID()
+  @IsOptional()
+  ticket_id?: string; // UUID of Ticket object
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The UUID of the comment the attachment is tied to',
+  })
+  @IsUUID()
+  @IsOptional()
+  comment_id?: string; // UUID of Comment object
+
+  @ApiPropertyOptional({
     type: {},
     description:
       'The custom field mappings of the attachment between the remote 3rd party & Panora',

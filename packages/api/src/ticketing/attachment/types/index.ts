@@ -34,5 +34,5 @@ export interface IAttachmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAttachmentOutput | UnifiedAttachmentOutput[];
+  ): Promise<UnifiedAttachmentOutput | UnifiedAttachmentOutput[]>;
 }

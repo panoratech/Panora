@@ -37,7 +37,11 @@ export class ZendeskContactMapper implements IContactMapper {
     }[],
   ): UnifiedContactOutput | UnifiedContactOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return source.map((ticket) =>
       this.mapSingleContactToUnified(ticket, connectionId, customFieldMappings),

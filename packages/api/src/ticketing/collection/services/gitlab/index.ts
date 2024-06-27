@@ -36,16 +36,6 @@ export class GitlabService implements ICollectionService {
         },
       });
 
-      // It fetches all project from gitlab
-      // const resp = await axios.get(`${connection.account_url}/projects`, {
-      //     headers: {
-      //         'Content-Type': 'application/json',
-      //         Authorization: `Bearer ${this.cryptoService.decrypt(
-      //             connection.access_token,
-      //         )}`,
-      //     },
-      // });
-
       const currentUser = await axios.get(`${connection.account_url}/user`, {
         headers: {
           'Content-Type': 'application/json',
@@ -68,8 +58,6 @@ export class GitlabService implements ICollectionService {
       );
 
       this.logger.log(`Synced gitlab collections !`);
-
-      // console.log("In index of gitlab", JSON.stringify(resp.data))
 
       return {
         data: resp.data,

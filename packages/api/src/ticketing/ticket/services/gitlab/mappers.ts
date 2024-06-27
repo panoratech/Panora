@@ -7,10 +7,19 @@ import {
 import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { OriginalCollectionOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
 
 @Injectable()
 export class GitlabTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'gitlab', this);
   }
 
@@ -117,22 +126,34 @@ export class GitlabTicketMapper implements ITicketMapper {
       }
     }
 
+    const tags = ticket.labels;
+    if (tags) {
+      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
+        tags,
+        'gitlab',
+        connectionId,
+        'ticketing',
+        'tag',
+        [],
+      );
+    }
+
     if (ticket.project_id) {
       const tcg_collection_id = await this.utils.getCollectionUuidFromRemoteId(
         String(ticket.project_id),
         connectionId,
       );
       if (tcg_collection_id) {
-        opts = { ...opts, project_id: tcg_collection_id };
+        opts = { ...opts, collections: [tcg_collection_id] };
       }
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: String(ticket.id),
       name: ticket.title,
-      description: ticket.description ? ticket.description : null,
+      description: ticket.description || null,
       due_date: new Date(ticket.created_at),
-      tags: ticket.labels ? ticket.labels : [],
+      tags: tags || null,
       field_mappings,
       ...opts,
     };

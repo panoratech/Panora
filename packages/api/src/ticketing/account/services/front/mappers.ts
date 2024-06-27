@@ -35,7 +35,11 @@ export class FrontAccountMapper implements IAccountMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((account) =>
-      this.mapSingleAccountToUnified(account, connectionId, customFieldMappings),
+      this.mapSingleAccountToUnified(
+        account,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 

@@ -1,24 +1,22 @@
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { ICommentMapper } from '@ticketing/comment/types';
 import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { GorgiasCommentInput, GorgiasCommentOutput } from './types';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-import { TicketingObject } from '@ticketing/@lib/@types';
-
-import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
-import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable } from '@nestjs/common';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class GorgiasCommentMapper implements ICommentMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -92,18 +90,23 @@ export class GorgiasCommentMapper implements ICommentMapper {
     let opts;
 
     if (comment.attachments && comment.attachments.length > 0) {
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalAttachmentOutput[]
-      >({
-        sourceObject: comment.attachments,
-        targetType: TicketingObject.attachment,
-        providerName: 'gorgias',
-        vertical: 'ticketing',
-        connectionId: connectionId,
-        customFieldMappings: [],
-      })) as UnifiedAttachmentOutput[];
+      const results = await this.ingestService.ingestData<
+        UnifiedAttachmentOutput,
+        OriginalAttachmentOutput
+      >(
+        comment.attachments.map((attach) => ({
+          ...attach,
+          parent_remote_id: String(comment.id),
+        })),
+        'gorgias',
+        connectionId,
+        'ticketing',
+        'attachment',
+        [],
+      );
+      const attachment_ids: string[] = results.map((res) => res.id);
 
-      opts = { ...opts, attachments: unifiedObject };
+      opts = { ...opts, attachments: attachment_ids };
     }
 
     if (comment.sender.id) {
@@ -125,15 +128,11 @@ export class GorgiasCommentMapper implements ICommentMapper {
       }
     }
 
-    const res = {
+    return {
+      remote_id: String(comment.id),
       body: comment.body_text || null,
       html_body: comment.body_html || null,
       ...opts,
-    };
-
-    return {
-      remote_id: String(comment.id),
-      ...res,
     };
   }
 }

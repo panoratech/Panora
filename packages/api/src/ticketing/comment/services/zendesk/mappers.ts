@@ -101,7 +101,10 @@ export class ZendeskCommentMapper implements ICommentMapper {
         UnifiedAttachmentOutput,
         OriginalAttachmentOutput
       >(
-        comment.attachments,
+        comment.attachments.map((attach) => ({
+          ...attach,
+          parent_remote_id: String(comment.id),
+        })),
         'zendesk',
         connectionId,
         'ticketing',
@@ -132,16 +135,12 @@ export class ZendeskCommentMapper implements ICommentMapper {
       }
     }
 
-    const res = {
+    return {
+      remote_id: String(comment.id),
       body: comment.body || null,
       html_body: comment.html_body || null,
       is_private: !comment.public,
       ...opts,
-    };
-
-    return {
-      remote_id: String(comment.id),
-      ...res,
     };
   }
 }

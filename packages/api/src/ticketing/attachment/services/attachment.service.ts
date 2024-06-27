@@ -149,7 +149,7 @@ export class AttachmentService {
       }));
 
       // Transform to UnifiedAttachmentOutput format
-      const unifiedAttachment: UnifiedAttachmentOutput = {
+      let unifiedAttachment: UnifiedAttachmentOutput = {
         id: attachment.id_tcg_attachment,
         file_name: attachment.file_name,
         file_url: attachment.file_url,
@@ -159,6 +159,18 @@ export class AttachmentService {
         created_at: attachment.created_at,
         modified_at: attachment.modified_at,
       };
+      if (attachment.id_tcg_comment) {
+        unifiedAttachment = {
+          ...unifiedAttachment,
+          comment_id: attachment.id_tcg_comment,
+        };
+      }
+      if (attachment.id_tcg_ticket) {
+        unifiedAttachment = {
+          ...unifiedAttachment,
+          ticket_id: attachment.id_tcg_ticket,
+        };
+      }
 
       let res: UnifiedAttachmentOutput = unifiedAttachment;
 
@@ -275,18 +287,31 @@ export class AttachmentService {
             fieldMappingsMap,
             ([key, value]) => ({ [key]: value }),
           );
-
-          // Transform to UnifiedAttachmentOutput format
-          return {
+          let unifiedAttachment: UnifiedAttachmentOutput = {
             id: attachment.id_tcg_attachment,
             file_name: attachment.file_name,
             file_url: attachment.file_url,
-            uploader: attachment.uploader, //TODO
+            uploader: attachment.uploader,
             field_mappings: field_mappings,
             remote_id: attachment.remote_id,
             created_at: attachment.created_at,
             modified_at: attachment.modified_at,
           };
+          if (attachment.id_tcg_comment) {
+            unifiedAttachment = {
+              ...unifiedAttachment,
+              comment_id: attachment.id_tcg_comment,
+            };
+          }
+          if (attachment.id_tcg_ticket) {
+            unifiedAttachment = {
+              ...unifiedAttachment,
+              ticket_id: attachment.id_tcg_ticket,
+            };
+          }
+
+          // Transform to UnifiedAttachmentOutput format
+          return unifiedAttachment;
         }),
       );
 

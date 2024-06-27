@@ -10,6 +10,22 @@ export class Utils {
     return fs.createReadStream(file_url);
   }
 
+  async getCommentUuidFromRemoteId(remote_id: string, connection_id: string) {
+    try {
+      const res = await this.prisma.tcg_comments.findFirst({
+        where: {
+          remote_id: remote_id,
+          id_connection: connection_id,
+        },
+      });
+      if (!res) return undefined;
+
+      return res.id_tcg_comment;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getUserUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.tcg_users.findFirst({

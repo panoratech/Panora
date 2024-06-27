@@ -7,10 +7,23 @@ import {
 import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import {
+  OriginalAttachmentOutput,
+  OriginalCollectionOutput,
+} from '@@core/utils/types/original/original.ticketing';
+import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
 
 @Injectable()
 export class JiraTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'jira', this);
   }
 
@@ -110,13 +123,60 @@ export class JiraTicketMapper implements ITicketMapper {
     if (user_id) {
       opts = { assigned_to: [user_id] };
     }
+    if (ticket.fields.labels) {
+      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
+        ticket.fields.labels,
+        'jira',
+        connectionId,
+        'ticketing',
+        'tag',
+        [],
+      );
+    }
 
+    let attachment_uuids: string[] = [];
+
+    if (ticket.fields.attachment) {
+      const results = await this.ingestService.ingestData<
+        UnifiedAttachmentOutput,
+        OriginalAttachmentOutput
+      >(
+        ticket.fields.attachment.map((attach) => ({
+          ...attach,
+          parent_remote_id: String(ticket.id),
+        })),
+        'jira',
+        connectionId,
+        'ticketing',
+        'attachment',
+        [],
+      );
+      attachment_uuids = results.map((res) => res.id);
+    }
+
+    let collection_uuids: string[] = [];
+    if (ticket.fields.project) {
+      const results = await this.ingestService.ingestData<
+        UnifiedCollectionOutput,
+        OriginalCollectionOutput
+      >(
+        [ticket.fields.project],
+        'jira',
+        connectionId,
+        'ticketing',
+        'collection',
+        [],
+      );
+      collection_uuids = results.map((res) => res.id);
+    }
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: ticket.id,
       name: ticket.fields.description,
       status: ticket.fields.status.name,
       description: ticket.fields.description,
       due_date: new Date(ticket.fields.duedate),
+      attachments: attachment_uuids || null,
+      collections: collection_uuids || null,
       tags: ticket.fields.labels,
       field_mappings: [], //TODO
       ...opts,

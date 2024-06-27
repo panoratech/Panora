@@ -331,10 +331,6 @@ export class CommentService {
         modified_at: comment.modified_at,
       };
 
-      let res: UnifiedCommentOutput = {
-        ...unifiedComment,
-      };
-
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -342,11 +338,7 @@ export class CommentService {
           },
         });
         const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedComment.remote_data = remote_data;
       }
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
@@ -363,7 +355,7 @@ export class CommentService {
           },
         });
       }
-      return res;
+      return unifiedComment;
     } catch (error) {
       throw error;
     }

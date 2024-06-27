@@ -44,10 +44,31 @@ export class JiraService implements IUserService {
           )}`,
         },
       });
+      //todo: ratelimiting in jira ?
+      const userEmailPromises = resp.data.map(async (user) => {
+        const accountId = user.account_id;
+        const emailResp = await axios.get(
+          `${connection.account_url}/users/email?accountId=${accountId}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          },
+        );
+        return {
+          ...user,
+          email: emailResp.data.email,
+        };
+      });
+      const dataPromise = await Promise.all(userEmailPromises);
+
       this.logger.log(`Synced jira users !`);
 
       return {
-        data: resp.data,
+        data: dataPromise,
         message: 'Jira users retrieved',
         statusCode: 200,
       };

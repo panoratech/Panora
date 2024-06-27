@@ -33,7 +33,11 @@ export class ZendeskTeamMapper implements ITeamMapper {
     }[],
   ): UnifiedTeamOutput | UnifiedTeamOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleTeamToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleTeamToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return source.map((ticket) =>
       this.mapSingleTeamToUnified(ticket, connectionId, customFieldMappings),

@@ -58,8 +58,6 @@ export class TagService {
         modified_at: tag.modified_at,
       };
 
-      let res: UnifiedTagOutput = unifiedTag;
-
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -67,11 +65,7 @@ export class TagService {
           },
         });
         const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedTag.remote_data = remote_data;
       }
       await this.prisma.events.create({
         data: {
@@ -87,7 +81,7 @@ export class TagService {
         },
       });
 
-      return res;
+      return unifiedTag;
     } catch (error) {
       throw error;
     }

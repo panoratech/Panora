@@ -43,10 +43,6 @@ export class CollectionService {
         modified_at: collection.modified_at,
       };
 
-      let res: UnifiedCollectionOutput = {
-        ...unifiedCollection,
-      };
-
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -55,10 +51,7 @@ export class CollectionService {
         });
         const remote_data = JSON.parse(resp.data);
 
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedCollection.remote_data = remote_data;
       }
       await this.prisma.events.create({
         data: {
@@ -74,7 +67,7 @@ export class CollectionService {
         },
       });
 
-      return res;
+      return unifiedCollection;
     } catch (error) {
       throw error;
     }

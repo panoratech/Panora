@@ -1,15 +1,12 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 import { ICommentMapper } from '@ticketing/comment/types';
 import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { JiraCommentInput, JiraCommentOutput } from './types';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { Injectable } from '@nestjs/common';
 @Injectable()
 export class JiraCommentMapper implements ICommentMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
@@ -66,13 +63,7 @@ export class JiraCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput> {
-    //map the jira attachment to our unified version of attachment
-    //unifying the original attachment object coming from Jira
-
     let opts;
-
-    //TODO: find a way to retrieve attachments for jira
-    // issue: attachments are tied to issues not comments in Jira
 
     if (comment.author.accountId) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
@@ -86,14 +77,10 @@ export class JiraCommentMapper implements ICommentMapper {
       }
     }
 
-    const res = {
-      body: comment.body,
-      ...opts,
-    };
-
     return {
       remote_id: comment.id,
-      ...res,
+      body: comment.body,
+      ...opts,
     };
   }
 }

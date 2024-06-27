@@ -40,7 +40,11 @@ export class GorgiasContactMapper implements IContactMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((contact) =>
-      this.mapSingleContactToUnified(contact, connectionId, customFieldMappings),
+      this.mapSingleContactToUnified(
+        contact,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 

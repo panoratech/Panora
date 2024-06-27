@@ -7,10 +7,17 @@ import {
 import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
 
 @Injectable()
 export class ZendeskTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService(
       'ticketing',
       'ticket',
@@ -147,6 +154,18 @@ export class ZendeskTicketMapper implements ITicketMapper {
       };
     }
 
+    if (ticket.tags) {
+      //insert tags without remote id as it doesnt have...
+      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
+        ticket.tags,
+        'zendesk',
+        connectionId,
+        'ticketing',
+        'tag',
+        [],
+      );
+    }
+
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: String(ticket.id),
       name: ticket.subject,
@@ -154,8 +173,8 @@ export class ZendeskTicketMapper implements ITicketMapper {
         ticket.status === 'new' || ticket.status === 'open' ? 'OPEN' : 'CLOSED', // todo: handle pending status ?
       description: ticket.description,
       due_date: ticket.due_at ? new Date(ticket.due_at) : undefined,
-      parent_ticket: undefined, // If available, add logic to map parent ticket
-      tags: ticket.tags,
+      parent_ticket: null,
+      tags: ticket.tags || null,
       completed_at: new Date(ticket.updated_at),
       priority: ticket.priority,
       field_mappings: field_mappings,

@@ -45,7 +45,6 @@ export class GorgiasUserMapper implements IUserMapper {
       remote_id: string;
     }[],
   ): UnifiedUserOutput {
-    // Initialize field_mappings array from customFields, if provided
     const field_mappings = customFieldMappings
       ? customFieldMappings
           .map((mapping) => ({

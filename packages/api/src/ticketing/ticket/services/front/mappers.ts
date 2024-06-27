@@ -7,10 +7,17 @@ import {
 import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class FrontTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'front', this);
   }
   async desunify(
@@ -117,14 +124,24 @@ export class FrontTicketMapper implements ITicketMapper {
         opts = { assigned_to: [user_id] };
       }
     }
-
+    const tags = ticket.tags?.map((tag) => tag.name);
+    if (tags) {
+      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
+        ticket.tags,
+        'front',
+        connectionId,
+        'ticketing',
+        'tag',
+        [],
+      );
+    }
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: ticket.id,
       name: ticket.subject,
       status: ticket.status,
-      description: ticket.subject, // todo: ?
-      due_date: new Date(ticket.created_at), // todo ?
-      tags: ticket.tags?.map((tag) => tag.name),
+      description: ticket.subject,
+      due_date: null,
+      tags: tags || null,
       field_mappings: field_mappings,
       ...opts,
     };

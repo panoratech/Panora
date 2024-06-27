@@ -61,8 +61,6 @@ export class ContactService {
         modified_at: contact.modified_at,
       };
 
-      let res: UnifiedContactOutput = unifiedContact;
-
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -70,11 +68,7 @@ export class ContactService {
           },
         });
         const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedContact.remote_data = remote_data;
       }
       await this.prisma.events.create({
         data: {
@@ -90,7 +84,7 @@ export class ContactService {
         },
       });
 
-      return res;
+      return unifiedContact;
     } catch (error) {
       throw error;
     }

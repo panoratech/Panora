@@ -152,6 +152,7 @@ export class JiraService implements ICommentService {
           },
         },
       );
+
       this.logger.log(`Synced jira comments !`);
 
       return {

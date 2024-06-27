@@ -59,8 +59,6 @@ export class TeamService {
         modified_at: team.modified_at,
       };
 
-      let res: UnifiedTeamOutput = unifiedTeam;
-
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -68,11 +66,7 @@ export class TeamService {
           },
         });
         const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedTeam.remote_data = remote_data;
       }
       await this.prisma.events.create({
         data: {
@@ -87,7 +81,7 @@ export class TeamService {
           id_linked_user: linkedUserId,
         },
       });
-      return res;
+      return unifiedTeam;
     } catch (error) {
       throw error;
     }

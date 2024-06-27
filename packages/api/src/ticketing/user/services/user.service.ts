@@ -61,8 +61,6 @@ export class UserService {
         modified_at: user.modified_at,
       };
 
-      let res: UnifiedUserOutput = unifiedUser;
-
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -71,10 +69,7 @@ export class UserService {
         });
         const remote_data = JSON.parse(resp.data);
 
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedUser.remote_data = remote_data;
       }
       await this.prisma.events.create({
         data: {
@@ -90,7 +85,7 @@ export class UserService {
         },
       });
 
-      return res;
+      return unifiedUser;
     } catch (error) {
       throw error;
     }

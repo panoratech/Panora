@@ -1,10 +1,10 @@
 export type JiraCollectionOutput = {
   avatarUrls: AvatarUrls;
   id: string;
-  insight: Insight;
+  insight?: Insight;
   key: string;
   name: string;
-  projectCategory: ProjectCategory;
+  projectCategory?: ProjectCategory;
   self: string;
   simplified: boolean;
   style: string;

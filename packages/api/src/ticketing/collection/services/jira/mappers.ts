@@ -40,7 +40,11 @@ export class JiraCollectionMapper implements ICollectionMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((collection) =>
-      this.mapSingleCollectionToUnified(collection, connectionId, customFieldMappings),
+      this.mapSingleCollectionToUnified(
+        collection,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 
