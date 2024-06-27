@@ -434,19 +434,4 @@ export class ApplicationService {
       throw error;
     }
   }
-
-  async updateApplication(
-    id: string,
-    updateApplicationData: Partial<UnifiedApplicationInput>,
-  ): Promise<UnifiedApplicationOutput> {
-    try {
-      // TODO: fetch the application from the database using 'id'
-      // TODO: update the application with 'updateApplicationData'
-      // TODO: save the updated application back to the database
-      // TODO: return the updated application
-      return;
-    } catch (error) {
-      throw error;
-    }
-  }
 }

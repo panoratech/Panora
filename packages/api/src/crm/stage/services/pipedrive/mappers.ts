@@ -32,7 +32,11 @@ export class PipedriveStageMapper implements IStageMapper {
     }[],
   ): UnifiedStageOutput | UnifiedStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleStageToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of PipedriveStageOutput

@@ -33,7 +33,11 @@ export class HubspotStageMapper implements IStageMapper {
     }[],
   ): UnifiedStageOutput | UnifiedStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleStageToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotStageOutput
     return source.map((stage) =>
@@ -56,8 +60,8 @@ export class HubspotStageMapper implements IStageMapper {
       }
     }
     return {
-      remote_id: stage.id,
-      stage_name: stage.properties.dealstage,
+      remote_id: stage.stageId,
+      stage_name: stage.label,
       field_mappings,
     };
   }

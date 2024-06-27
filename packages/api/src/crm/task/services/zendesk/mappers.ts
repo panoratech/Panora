@@ -23,7 +23,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
   ): Promise<ZendeskTaskInput> {
     const result: ZendeskTaskInput = {
       content: source.content,
-      completed: source.status === 'Completed',
+      completed: source.status === 'COMPLETED',
     };
 
     if (source.due_date) {
@@ -148,7 +148,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
     return {
       remote_id: String(task.id),
       content: task.content,
-      status: task.completed ? 'Completed' : 'Pending',
+      status: task.completed ? 'COMPLETED' : 'PENDING',
       finished_date: task.completed_at
         ? new Date(task.completed_at)
         : undefined,

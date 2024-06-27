@@ -161,6 +161,25 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         opts.user_id = owner_id;
       }
     }
+    if (engagement.company_id) {
+      const company_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(engagement.company_id),
+        connectionId,
+      );
+      if (company_id) {
+        opts.company_id = company_id;
+      }
+    }
+
+    if (engagement.person_id) {
+      const person_id = await this.utils.getContactUuidFromRemoteId(
+        String(engagement.person_id),
+        connectionId,
+      );
+      if (person_id) {
+        opts.contacts = [person_id];
+      }
+    }
 
     return {
       content: engagement.public_description,
@@ -170,10 +189,6 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       type: 'CALL',
       field_mappings,
       ...opts,
-      /*TODO: company_id: engagement.company_id
-        ? String(engagement.company_id)
-        : undefined,*/
-      //contacts: engagement.participants.map((p) => String(p.person_id)), // Assuming participants are contacts
     };
   }
 
@@ -204,6 +219,25 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         };
       }
     }
+    if (engagement.company_id) {
+      const company_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(engagement.company_id),
+        connectionId,
+      );
+      if (company_id) {
+        opts.company_id = company_id;
+      }
+    }
+
+    if (engagement.person_id) {
+      const person_id = await this.utils.getContactUuidFromRemoteId(
+        String(engagement.person_id),
+        connectionId,
+      );
+      if (person_id) {
+        opts.contacts = [person_id];
+      }
+    }
 
     return {
       content: engagement.note,
@@ -213,10 +247,6 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         ? new Date(engagement.add_time + ' ' + engagement.duration)
         : undefined, // Derive end time if duration is provided
       type: 'MEETING',
-      /*TODO: company_id: engagement.company_id
-        ? String(engagement.company_id)
-        : undefined,*/
-      //contacts: engagement.participants.map((p) => String(p.person_id)), // Assuming participants are contacts
       field_mappings,
       ...opts,
     };
@@ -247,6 +277,25 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         opts.user_id = owner_id;
       }
     }
+    if (engagement.company_id) {
+      const company_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(engagement.company_id),
+        connectionId,
+      );
+      if (company_id) {
+        opts.company_id = company_id;
+      }
+    }
+
+    if (engagement.person_id) {
+      const person_id = await this.utils.getContactUuidFromRemoteId(
+        String(engagement.person_id),
+        connectionId,
+      );
+      if (person_id) {
+        opts.contacts = [person_id];
+      }
+    }
 
     return {
       remote_id: String(engagement.id),
@@ -255,14 +304,10 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       start_at: new Date(engagement.add_time), // Using 'add_time' as the start time
       end_time: engagement.marked_as_done_time
         ? new Date(engagement.marked_as_done_time)
-        : undefined, // Using 'marked_as_done_time' as end time if available
+        : null, // Using 'marked_as_done_time' as end time if available
       type: 'EMAIL',
       field_mappings,
       ...opts,
-      /*TODO: company_id: engagement.company_id
-        ? String(engagement.company_id)
-        : undefined,*/
-      //contacts: engagement.participants.map((p) => String(p.person_id)), // Assuming participants are contacts
     };
   }
 }

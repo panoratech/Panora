@@ -315,7 +315,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 id_tcg_comment: unique_ticketing_comment_id,
                 created_at: new Date(),
                 modified_at: new Date(),
-                uploader: linkedUserId, //TODO
+                uploader: attchmt.uploader,
                 id_tcg_ticket: id_ticket,
                 id_connection: connection_id,
               };

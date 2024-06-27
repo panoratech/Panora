@@ -109,7 +109,6 @@ export class HubspotTaskMapper implements ITaskMapper {
       due_date: new Date(task.properties.hs_timestamp),
       field_mappings,
       ...opts,
-      // Additional fields mapping based on UnifiedTaskOutput structure
     };
   }
 }

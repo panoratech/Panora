@@ -102,16 +102,6 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       }
     }
 
-    const res = {
-      name: company.name,
-      industry: null,
-      number_of_employees: null,
-      email_addresses: null,
-      phone_numbers: null,
-      addresses: null,
-      field_mappings,
-    };
-
     let opts: any = {};
     if (company.owner_id.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
@@ -133,8 +123,14 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       };
     }
     return {
+      name: company.name,
+      industry: null,
+      number_of_employees: null,
+      email_addresses: null,
+      phone_numbers: null,
+      addresses: null,
+      field_mappings,
       remote_id: company.id,
-      ...res,
       ...opts,
     };
   }

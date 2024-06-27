@@ -49,9 +49,16 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
     };
 
     if (source.start_at && source.end_time) {
-      // TODO; compute a date difference instead of raw difference
-      result.duration =
-        source.end_time.getSeconds() - source.start_at.getSeconds();
+      const startDate = new Date(source.start_at);
+      const endDate = new Date(source.end_time);
+
+      // Calculate the difference in milliseconds
+      const diffMilliseconds = endDate.getTime() - startDate.getTime();
+
+      // Convert milliseconds to seconds
+      const durationInSeconds = Math.round(diffMilliseconds / 1000);
+
+      result.duration = durationInSeconds;
     }
 
     if (source.user_id) {
@@ -151,8 +158,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
       }
     }
 
-    // Example mapping of 'direction' based on 'incoming' boolean value
-    const direction = engagement.incoming ? 'incoming' : 'outgoing';
+    const direction = engagement.incoming ? 'INBOUND' : 'OUTBOUND';
 
     return {
       remote_id: String(engagement.id),
@@ -160,7 +166,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
       subject: null,
       start_at: new Date(engagement.made_at),
       end_time: new Date(engagement.updated_at),
-      type: 'CALL', // Placeholder, needs appropriate mapping
+      type: 'CALL',
       field_mappings,
       direction: direction,
       ...opts,

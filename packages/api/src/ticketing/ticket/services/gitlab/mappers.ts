@@ -30,10 +30,8 @@ export class GitlabTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<GitlabTicketInput> {
-    // TODO - Project_id should be mandatory field for gitlab provider
-
     const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(
-      source.project_id,
+      source.collections[0],
     );
 
     const result: GitlabTicketInput = {

@@ -120,6 +120,22 @@ export class Utils {
       throw error;
     }
   }
+  async getStageUuidFromStageName(stage_name: string, connection_id: string) {
+    try {
+      const res = await this.prisma.crm_deals_stages.findFirst({
+        where: {
+          stage_name: stage_name,
+          id_connection: connection_id,
+        },
+      });
+      if (!res) {
+        return undefined;
+      }
+      return res.id_crm_deals_stage;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   async getCompanyNameFromUuid(id: string) {
     try {

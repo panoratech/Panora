@@ -37,20 +37,8 @@ export class HubspotService implements IStageService {
           vertical: 'crm',
         },
       });
-
-      const res = await this.prisma.crm_deals.findUnique({
-        where: { id_crm_deal: deal_id },
-      });
-
-      const commonPropertyNames = Object.keys(commonStageHubspotProperties);
-      const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/objects/deals/${res.remote_id}`;
-
-      const queryString = allProperties
-        .map((prop) => `properties=${encodeURIComponent(prop)}`)
-        .join('&');
-
-      const url = `${baseURL}?${queryString}`;
+      // get all stages for all deals
+      const url = 'https://api.hubapi.com/crm-pipelines/v1/pipelines/deals';
 
       const resp = await axios.get(url, {
         headers: {
@@ -61,9 +49,10 @@ export class HubspotService implements IStageService {
         },
       });
       this.logger.log(`Synced hubspot stages !`);
+      const final_res = resp.data.results.stages;
 
       return {
-        data: [resp.data],
+        data: final_res,
         message: 'Hubspot stages retrieved',
         statusCode: 200,
       };

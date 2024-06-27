@@ -408,19 +408,4 @@ export class ActivityService {
       throw error;
     }
   }
-
-  async updateActivity(
-    id: string,
-    updateActivityData: Partial<UnifiedActivityInput>,
-  ): Promise<UnifiedActivityOutput> {
-    try {
-      // TODO: fetch the activity from the database using 'id'
-      // TODO: update the activity with 'updateActivityData'
-      // TODO: save the updated activity back to the database
-      // TODO: return the updated activity
-      return;
-    } catch (error) {
-      throw error;
-    }
-  }
 }

@@ -77,7 +77,7 @@ export class CloseService implements IDealService {
         },
       });
 
-      const baseURL = `${connection.account_url}/opportunity/`;
+      const baseURL = `${connection.account_url}/opportunity`;
       const resp = await axios.get(baseURL, {
         headers: {
           'Content-Type': 'application/json',

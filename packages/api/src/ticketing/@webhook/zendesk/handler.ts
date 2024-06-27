@@ -298,7 +298,7 @@ export class ZendeskHandlerService {
       });
       if ('ticketId' in payload) {
         // ticket payload
-        // TODO:update the tickzt inside our db
+        // TODO: update the ticket inside our db
         await this.syncTicketsService.syncTicketsForLinkedUser(
           connection.provider_slug.toLowerCase(),
           connection.id_linked_user,

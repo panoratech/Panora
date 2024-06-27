@@ -115,11 +115,22 @@ export class HubspotDealMapper implements IDealMapper {
       };
     }
 
+    if (deal.properties.dealstage) {
+      const stage_id = await this.utils.getStageUuidFromStageName(
+        deal.properties.dealstage,
+        connectionId,
+      );
+      if (stage_id) {
+        opts = {
+          stage_id: stage_id,
+        };
+      }
+    }
+
     return {
       remote_id: deal.id,
       name: deal.properties.dealname,
-      description: deal.properties.dealname, // Placeholder if there's no direct mapping
-      //TODO; stage_id: deal.properties.dealstage,
+      description: null,
       field_mappings,
       ...opts,
     };

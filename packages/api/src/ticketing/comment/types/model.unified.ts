@@ -95,7 +95,7 @@ export class UnifiedCommentOutput extends UnifiedCommentInput {
     description: 'The attachments tied to the comment',
   })
   @IsOptional()
-  attachments?: UnifiedAttachmentOutput[]; // Attachments objects
+  attachments?: string[] | UnifiedAttachmentOutput[]; // Attachments objects
 
   @ApiPropertyOptional({
     type: {},

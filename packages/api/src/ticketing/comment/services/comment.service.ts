@@ -276,7 +276,6 @@ export class CommentService {
     }
   }
 
-  //TODO: return attachments if specified in param
   async getComment(
     id_commenting_comment: string,
     linkedUserId: string,
@@ -326,6 +325,7 @@ export class CommentService {
         ticket_id: comment.id_tcg_ticket,
         contact_id: comment.id_tcg_contact, // uuid of Contact object
         user_id: comment.id_tcg_user, // uuid of User object
+        attachments: comment.id_tcg_attachment,
         remote_id: comment.remote_id,
         created_at: comment.created_at,
         modified_at: comment.modified_at,
@@ -360,8 +360,6 @@ export class CommentService {
       throw error;
     }
   }
-
-  //TODO: return attachments if specified in param
 
   async getComments(
     connection_id: string,
@@ -454,6 +452,7 @@ export class CommentService {
             ticket_id: comment.id_tcg_ticket,
             contact_id: comment.id_tcg_contact, // uuid of Contact object
             user_id: comment.id_tcg_user, // uuid of User object
+            attachements: comment.id_tcg_attachment,
             remote_id: comment.remote_id,
             created_at: comment.created_at,
             modified_at: comment.modified_at,

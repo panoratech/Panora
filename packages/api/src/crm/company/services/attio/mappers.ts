@@ -151,7 +151,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
         typeof company.values.categories[0]?.option === 'string'
           ? company.values.categories[0]?.option
           : company.values.categories[0]?.option.title,
-      number_of_employees: 0, // Placeholder, as there's no direct mapping provided
+      number_of_employees: null,
       addresses: [
         {
           street_1: company.values.primary_location[0]?.line_1,
@@ -162,7 +162,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
           address_type: 'primary',
           owner_type: 'company',
         },
-      ], // Assuming 'street', 'city', 'state', 'postal_code', 'country' are properties in company.properties
+      ],
       phone_numbers: [
         {
           phone_number: null,

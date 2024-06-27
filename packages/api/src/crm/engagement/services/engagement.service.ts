@@ -272,7 +272,6 @@ export class EngagementService {
     }
   }
 
-  //TODO: include engagements contacts
   async getEngagement(
     id_engagement: string,
     linkedUserId: string,
@@ -309,11 +308,6 @@ export class EngagementService {
         [key]: value,
       }));
 
-      /*TODO:
-      if (target_engagement.contacts) {
-        data = { ...data, end_time: target_engagement.end_time };
-      }*/
-
       // Transform to UnifiedEngagementOutput format
       const unifiedEngagement: UnifiedEngagementOutput = {
         id: engagement.id_crm_engagement,
@@ -328,6 +322,7 @@ export class EngagementService {
         remote_id: engagement.remote_id,
         created_at: engagement.created_at,
         modified_at: engagement.modified_at,
+        contacts: engagement.id_crm_contact,
       };
 
       let res: UnifiedEngagementOutput = {
@@ -449,12 +444,6 @@ export class EngagementService {
           );
 
           // Transform to UnifiedEngagementOutput format
-          /*TODO:
-          if (target_engagement.contacts) {
-            data = { ...data, end_time: target_engagement.end_time };
-          }*/
-
-          // Transform to UnifiedEngagementOutput format
           return {
             id: engagement.id_crm_engagement,
             content: engagement.content,
@@ -468,6 +457,7 @@ export class EngagementService {
             remote_id: engagement.remote_id,
             created_at: engagement.created_at,
             modified_at: engagement.modified_at,
+            contacts: engagement.id_crm_contact,
           };
         }),
       );

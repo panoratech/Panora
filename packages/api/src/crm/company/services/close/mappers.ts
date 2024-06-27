@@ -113,7 +113,7 @@ export class CloseCompanyMapper implements ICompanyMapper {
         country: address.country,
         address_type: address.label,
         owner_type: 'company',
-      })), // Assuming 'street', 'city', 'state', 'postal_code', 'country' are properties in company.properties
+      })),
       phone_numbers: null,
       field_mappings,
       ...opts,

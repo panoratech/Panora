@@ -24,7 +24,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
     const result: PipedriveTaskInput = {
       subject: source.subject || null,
       public_description: source.content || null,
-      done: source.status === 'Completed',
+      done: source.status === 'COMPLETED',
       due_date: source.due_date
         ? source.due_date.toISOString().split('T')[0]
         : null,
@@ -147,11 +147,11 @@ export class PipedriveTaskMapper implements ITaskMapper {
       remote_id: task.id,
       subject: task.subject,
       content: task.public_description,
-      status: task.done ? 'Completed' : 'Pending',
-      due_date: task.due_date ? new Date(task.due_date) : undefined,
+      status: task.done ? 'COMPLETED' : 'PENDING',
+      due_date: task.due_date ? new Date(task.due_date) : null,
       finished_date: task.marked_as_done_time
         ? new Date(task.marked_as_done_time)
-        : undefined,
+        : null,
       field_mappings,
       ...opts,
     };

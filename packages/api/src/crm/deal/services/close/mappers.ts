@@ -135,12 +135,23 @@ export class CloseDealMapper implements IDealMapper {
         };
       }
     }
+    if (deal.status_id) {
+      const stage_id = await this.utils.getStageUuidFromRemoteId(
+        deal.status_id,
+        connectionId,
+      );
+      if (stage_id) {
+        opts = {
+          ...opts,
+          stage_id: stage_id,
+        };
+      }
+    }
     return {
       remote_id: deal.id,
       name: deal.note,
-      description: deal.note, // Placeholder if there's no direct mapping
+      description: deal.note,
       amount: parseFloat(`${deal.value || 0}`),
-      //TODO; stage_id: deal.properties.dealstage,
       field_mappings,
       ...opts,
     };

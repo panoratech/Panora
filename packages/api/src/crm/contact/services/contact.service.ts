@@ -631,17 +631,4 @@ export class ContactService {
       throw error;
     }
   }
-  //TODO
-  async updateContact(
-    id: string,
-    updateContactData: Partial<UnifiedContactInput>,
-  ): Promise<UnifiedContactOutput> {
-    try {
-    } catch (error) {}
-    // TODO: fetch the contact from the database using 'id'
-    // TODO: update the contact with 'updateContactData'
-    // TODO: save the updated contact back to the database
-    // TODO: return the updated contact
-    return;
-  }
 }

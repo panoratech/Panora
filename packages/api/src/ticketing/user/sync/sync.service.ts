@@ -219,7 +219,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
               email_address: user.email_address,
               teams: user.teams || [],
               modified_at: new Date(),
-              //TODO: id_tcg_account: user.account_id || '',
             },
           });
           unique_ticketing_user_id = res.id_tcg_user;
@@ -234,7 +233,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
             teams: user.teams || [],
             created_at: new Date(),
             modified_at: new Date(),
-            // id_tcg_account: user.account_id || '',
             remote_id: originId,
             id_connection: connection_id,
           };

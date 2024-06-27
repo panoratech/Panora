@@ -601,12 +601,4 @@ export class CompanyService {
       throw error;
     }
   }
-
-  //TODO
-  async updateCompany(
-    id_company: string,
-    data: Partial<UnifiedCompanyInput>,
-  ): Promise<UnifiedCompanyOutput> {
-    return;
-  }
 }

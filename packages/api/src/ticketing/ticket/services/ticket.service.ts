@@ -320,7 +320,6 @@ export class TicketService {
     }
   }
 
-  //TODO: given params return attachments and comments
   async getTicket(
     id_ticketing_ticket: string,
     linkedUserId: string,
@@ -564,18 +563,5 @@ export class TicketService {
     } catch (error) {
       throw error;
     }
-  }
-  //TODO
-  async updateTicket(
-    id: string,
-    updateTicketData: Partial<UnifiedTicketInput>,
-  ): Promise<UnifiedTicketOutput> {
-    try {
-    } catch (error) {}
-    // TODO: fetch the ticket from the database using 'id'
-    // TODO: update the ticket with 'updateTicketData'
-    // TODO: save the updated ticket back to the database
-    // TODO: return the updated ticket
-    return;
   }
 }

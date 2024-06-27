@@ -1,23 +1,23 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { CrmObject, ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedEngagementOutput } from '../types/model.unified';
-import { IEngagementService } from '../types';
-import { crm_engagements as CrmEngagement } from '@prisma/client';
-import { OriginalEngagementOutput } from '@@core/utils/types/original/original.crm';
-import { CRM_PROVIDERS } from '@panora/shared';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { OriginalEngagementOutput } from '@@core/utils/types/original/original.crm';
+import { ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { CRM_PROVIDERS } from '@panora/shared';
+import { crm_engagements as CrmEngagement } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IEngagementService } from '../types';
+import { UnifiedEngagementOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -153,6 +153,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
       const sourceObject: OriginalEngagementOutput[] = resp.data;
 
+      const targetType =
+        engagement_type === 'CALL'
+          ? 'engagement_call'
+          : engagement_type === 'MEETING'
+          ? 'engagement_meeting'
+          : 'engagement_email';
+
       await this.ingestService.ingestData<
         UnifiedEngagementOutput,
         OriginalEngagementOutput
@@ -161,7 +168,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         integrationId,
         connection.id_connection,
         'crm',
-        'engagement',
+        targetType,
         customFieldMappings,
       );
     } catch (error) {
@@ -226,10 +233,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
             data = { ...data, id_crm_company: engagement.company_id };
           }
 
-          /*TODO:
           if (engagement.contacts) {
-            data = { ...data, end_time: engagement.end_time };
-          }*/
+            data = { ...data, id_crm_contact: engagement.contacts };
+          }
           const res = await this.prisma.crm_engagements.update({
             where: {
               id_crm_engagement: existingEngagement.id_crm_engagement,
@@ -274,10 +280,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
             data = { ...data, id_crm_company: engagement.company_id };
           }
 
-          /*TODO:
           if (engagement.contacts) {
-            data = { ...data, end_time: engagement.end_time };
-          }*/
+            data = { ...data, id_crm_contact: engagement.contacts };
+          }
 
           const res = await this.prisma.crm_engagements.create({
             data: data,

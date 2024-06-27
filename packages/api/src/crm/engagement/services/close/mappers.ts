@@ -450,7 +450,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       if (contact_id) {
         opts = {
           ...opts,
-          contact_id: contact_id,
+          contacts: [contact_id],
         };
       }
     }
