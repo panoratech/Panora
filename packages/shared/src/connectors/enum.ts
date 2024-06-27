@@ -4,7 +4,8 @@ export enum CrmConnectors {
     HUBSPOT = 'hubspot',
     PIPEDRIVE = 'pipedrive',
     ATTIO = 'attio',
-    CLOSE = 'close'
+    CLOSE = 'close',
+    AFFINITY = 'affinity'
 }
 
 export enum TicketingConnectors {

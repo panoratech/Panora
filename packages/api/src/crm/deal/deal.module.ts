@@ -1,3 +1,4 @@
+import { AffinityService } from './services/affinity';
 import { Module } from '@nestjs/common';
 import { DealController } from './deal.controller';
 import { SyncService } from './sync/sync.service';
@@ -50,6 +51,7 @@ import { Utils } from '@crm/@lib/@utils';
     PipedriveService,
     HubspotService,
     CloseService,
+    AffinityService,
   ],
   exports: [
     SyncService,
