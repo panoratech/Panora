@@ -21,16 +21,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
 import useCreateApiKeyConnection from '@/hooks/queries/useCreateApiKeyConnection';
 import { LoadingSpinner } from './ui/loading-spinner';
+import { Label } from './ui/label';
 
 
 export interface DynamicCardProp {
@@ -39,13 +32,17 @@ export interface DynamicCardProp {
   category?: ConnectorCategory;
   optionalApiUrl?: string,
 }
+interface IApiKeyFormData {
+  apikey: string,
+  [key : string]: string
+}
 
 
-const formSchema = z.object({
-  apiKey: z.string().min(2, {
-    message: "Api Key must be at least 2 characters.",
-  })
-})
+// const formSchema = z.object({
+//   apiKey: z.string().min(2, {
+//     message: "Api Key must be at least 2 characters.",
+//   })
+// })
 
 const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : DynamicCardProp) => {
 
@@ -54,7 +51,10 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
   const [selectedProvider, setSelectedProvider] = useState<{
     provider: string;
     category: string;
-  }>();  
+  }>({
+    provider: '',
+    category: ''
+  });  
   
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -73,12 +73,14 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
   const {mutate : createApiKeyConnection} = useCreateApiKeyConnection();
 
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      apiKey: "",
-    },
-  })
+  // const form = useForm<z.infer<typeof formSchema>>({
+  //   resolver: zodResolver(formSchema),
+  //   defaultValues: {
+  //     apiKey: "",
+  //   },
+  // })
+  const {register,formState: {errors},handleSubmit,reset} = useForm<IApiKeyFormData>();
+
   
   const [data, setData] = useState<Provider[]>([]);
 
@@ -173,9 +175,14 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
     });
   }
 
-  const onApiKeySubmit = (values: z.infer<typeof formSchema>) => {
+  const onCloseApiKeyDialog = (dialogState : boolean) => {
+    setOpenApiKeyDialog(dialogState);
+    reset();
+  }
+
+  const onApiKeySubmit = (values: IApiKeyFormData) => {
     setErrorResponse({errorPresent:false,errorMessage:''});
-    setOpenApiKeyDialog(false);
+    onCloseApiKeyDialog(false);
     setLoading(true);
 
     // Creating API Key Connection
@@ -186,9 +193,7 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
         providerName: selectedProvider?.provider!,
         vertical: selectedProvider?.category!
       },
-      data: {
-        apikey: values.apiKey
-      },  
+      data: values,  
       api_url: optionalApiUrl ?? config.API_URL!
     },
     {
@@ -257,41 +262,61 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
         }
 
         {/* Dialog for apikey input */}
-        <Dialog open={openApiKeyDialog} onOpenChange={setOpenApiKeyDialog}>
+        <Dialog open={openApiKeyDialog} onOpenChange={onCloseApiKeyDialog}>
           <DialogContent>
           <DialogHeader>
             <DialogTitle>Enter a API key</DialogTitle>
           </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onApiKeySubmit)}>
+          {/* <Form {...form}> */}
+            <form onSubmit={handleSubmit(onApiKeySubmit)}>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-              <FormField
-                    control={form.control}
-                    name="apiKey"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Enter your API key for {selectedProvider?.provider}</FormLabel>
-                        <FormControl>
-                          <Input 
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                          placeholder="Your awesome key name" {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                />
+                <Label className={errors.apikey ? 'text-destructive' : ''}>Enter your API key for {selectedProvider?.provider}</Label>
+                <Input 
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                        placeholder="Your api key"
+                        {...register('apikey',{
+                          required: 'Api Key must be at least 2 characters',
+                          minLength: {
+                            value:2,
+                            message: 'Api Key must be at least 2 characters'
+                          }
+                        
+                        })}
+                  />
+                  <div>{errors.apikey && (<p className='text-sm font-medium text-destructive'>{errors.apikey.message}</p>)}</div>
+                  
+
+                {/* </div> */}
+                {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
+                (
+                  <>
+                  <Label className={errors[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {selectedProvider?.provider}</Label>
+                  <Input
+                        type='text'
+                        placeholder={`Your ${fieldName}`}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                        {...register(fieldName,{
+                          required: `${fieldName} must be at least 2 characters`,
+                          minLength:{
+                            value:2,
+                            message: `${fieldName} must be at least 2 characters`,
+                          }
+                        })}
+                  />
+                  {errors[fieldName] && (<p className='text-sm font-medium text-destructive'>{errors[fieldName]?.message}</p>)}
+                  </>
+                ))}
               </div>
             </div>
           <DialogFooter>
-            <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => setOpenApiKeyDialog(false)}>Cancel</Button>
+            <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCloseApiKeyDialog(false)}>Cancel</Button>
             <Button type='submit' size="sm" className="h-7 gap-1">
               Continue
             </Button>
           </DialogFooter>
             </form>
-          </Form>
+          {/* </Form> */}
           </DialogContent>
         </Dialog>
 
