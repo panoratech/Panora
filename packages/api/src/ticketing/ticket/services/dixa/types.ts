@@ -1,5 +1,5 @@
-export type dixaTicketInput = Partial<CreateConversationPayload>;
-export type dixaTicketOutput = Conversation;
+export type DixaTicketInput = Partial<CreateConversationPayload>;
+export type DixaTicketOutput = Conversation;
 
 interface CreateConversationPayload {
   requesterId: string;

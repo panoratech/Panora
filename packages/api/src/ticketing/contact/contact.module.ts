@@ -1,3 +1,4 @@
+import { DixaService } from './services/dixa';
 import { Module } from '@nestjs/common';
 import { SyncService } from './sync/sync.service';
 import { WebhookService } from '@@core/webhook/webhook.service';
@@ -46,6 +47,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     ZendeskService,
     FrontService,
     GorgiasService,
+    DixaService,
   ],
   exports: [
     SyncService,

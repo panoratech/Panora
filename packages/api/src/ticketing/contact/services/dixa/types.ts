@@ -1,10 +1,10 @@
-export interface dixaContactOutput {
+export interface DixaContactOutput {
   address: string;
   senderOverride: string;
   name: string;
   _type: string;
 }
 
-export interface dixaContactInput {
+export interface DixaContactInput {
   contact_endpoint_id: string;
 }

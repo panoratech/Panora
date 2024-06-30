@@ -1,4 +1,4 @@
-export interface dixaUserInput {
+export interface DixaUserInput {
   displayName: string;
   email: string;
   phoneNumber: string;
@@ -11,7 +11,7 @@ export interface dixaUserInput {
   externalId: string;
 }
 
-export interface dixaUserOutput {
+export interface DixaUserOutput {
   id: string;
   createdAt: string;
   displayName: string;

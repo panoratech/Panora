@@ -1,5 +1,5 @@
 import { ITicketMapper } from '@ticketing/ticket/types';
-import { dixaTicketInput, dixaTicketOutput } from './types';
+import { DixaTicketInput, DixaTicketOutput } from './types';
 import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
@@ -9,9 +9,9 @@ import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class dixaTicketMapper implements ITicketMapper {
+export class DixaTicketMapper implements ITicketMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
-    this.mappersRegistry.registerService('ticketing', 'ticket', 'dixa', this);
+    this.mappersRegistry.registerService('ticketing', 'ticket', 'Dixa', this);
   }
   async desunify(
     source: UnifiedTicketInput,
@@ -19,7 +19,7 @@ export class dixaTicketMapper implements ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<dixaTicketInput> {
+  ): Promise<DixaTicketInput> {
     const body_: any = {};
 
     if (source.comment.creator_type === 'user') {
@@ -30,7 +30,7 @@ export class dixaTicketMapper implements ITicketMapper {
     if (source.comment.attachments) {
       body_.attachments = source.comment.attachments;
     }
-    const result: dixaTicketInput = {
+    const result: DixaTicketInput = {
       _type: 'discussion',
       subject: source.name,
       message: {
@@ -69,7 +69,7 @@ export class dixaTicketMapper implements ITicketMapper {
   }
 
   async unify(
-    source: dixaTicketOutput | dixaTicketOutput[],
+    source: DixaTicketOutput | DixaTicketOutput[],
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -86,7 +86,7 @@ export class dixaTicketMapper implements ITicketMapper {
   }
 
   private async mapSingleTicketToUnified(
-    ticket: dixaTicketOutput,
+    ticket: DixaTicketOutput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -105,7 +105,7 @@ export class dixaTicketMapper implements ITicketMapper {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignment.agentId),
-        'dixa',
+        'Dixa',
       );
       if (user_id) {
         opts = { assigned_to: [user_id] };

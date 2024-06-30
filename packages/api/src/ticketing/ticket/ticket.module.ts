@@ -1,3 +1,4 @@
+import { DixaService } from './services/dixa';
 import { GitlabService } from './services/gitlab';
 import { Module } from '@nestjs/common';
 import { TicketController } from './ticket.controller';
@@ -53,6 +54,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     JiraService,
     GorgiasService,
     GitlabService,
+    DixaService,
   ],
   exports: [
     SyncService,

@@ -8,11 +8,11 @@ import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
-import { dixaTicketInput, dixaTicketOutput } from './types';
+import { DixaTicketInput, DixaTicketOutput } from './types';
 import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
-export class dixa implements ITicketService {
+export class DixaService implements ITicketService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -21,20 +21,20 @@ export class dixa implements ITicketService {
     private utils: Utils,
   ) {
     this.logger.setContext(
-      TicketingObject.ticket.toUpperCase() + ':' + dixa.name,
+      TicketingObject.ticket.toUpperCase() + ':' + DixaService.name,
     );
-    this.registry.registerService('dixa', this);
+    this.registry.registerService('Dixa', this);
   }
 
   async addTicket(
-    ticketData: dixaTicketInput,
+    ticketData: DixaTicketInput,
     linkedUserId: string,
-  ): Promise<ApiResponse<dixaTicketOutput>> {
+  ): Promise<ApiResponse<DixaTicketOutput>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'dixa',
+          provider_slug: 'Dixa',
           vertical: 'ticketing',
         },
       });
@@ -58,14 +58,14 @@ export class dixa implements ITicketService {
 
       return {
         data: resp.data,
-        message: 'dixa ticket created',
+        message: 'Dixa ticket created',
         statusCode: 201,
       };
     } catch (error) {
       handle3rdPartyServiceError(
         error,
         this.logger,
-        'dixa',
+        'Dixa',
         TicketingObject.ticket,
         ActionType.POST,
       );
@@ -75,12 +75,12 @@ export class dixa implements ITicketService {
   async syncTickets(
     linkedUserId: string,
     remote_ticket_id?: string,
-  ): Promise<ApiResponse<dixaTicketOutput[]>> {
+  ): Promise<ApiResponse<DixaTicketOutput[]>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'dixa',
+          provider_slug: 'Dixa',
           vertical: 'ticketing',
         },
       });
@@ -95,18 +95,18 @@ export class dixa implements ITicketService {
           },
         },
       );
-      this.logger.log(`Synced dixa tickets !`);
+      this.logger.log(`Synced Dixa tickets !`);
 
       return {
         data: resp.data,
-        message: 'dixa tickets retrieved',
+        message: 'Dixa tickets retrieved',
         statusCode: 200,
       };
     } catch (error) {
       handle3rdPartyServiceError(
         error,
         this.logger,
-        'dixa',
+        'Dixa',
         TicketingObject.ticket,
         ActionType.GET,
       );
