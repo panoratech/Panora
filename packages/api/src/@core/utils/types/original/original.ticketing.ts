@@ -1,4 +1,20 @@
 import {
+  DixaContactInput,
+  DixaContactOutput,
+} from '@ticketing/contact/services/dixa/types';
+import {
+  DixaTicketInput,
+  DixaTicketOutput,
+} from '@ticketing/ticket/services/dixa/types';
+import {
+  DixaUserInput,
+  DixaUserOutput,
+} from '@ticketing/user/services/dixa/types';
+import {
+  GitlabUserInput,
+  GitlabUserOutput,
+} from '@ticketing/user/services/gitlab/types';
+import {
   FrontAccountInput,
   FrontAccountOutput,
 } from '@ticketing/account/services/front/types';
@@ -137,7 +153,8 @@ export type OriginalTicketInput =
   | HubspotTicketInput
   | GorgiasTicketInput
   | JiraTicketInput
-  | GitlabTicketInput;
+  | GitlabTicketInput
+  | DixaTicketInput;
 //| JiraServiceMgmtTicketInput;
 
 /* comment */
@@ -153,7 +170,9 @@ export type OriginalUserInput =
   | ZendeskUserInput
   | FrontUserInput
   | GorgiasUserInput
-  | JiraUserInput;
+  | JiraUserInput
+  | DixaUserInput
+  | GitlabUserInput;
 //| JiraServiceMgmtUserInput;
 /* account */
 export type OriginalAccountInput = ZendeskAccountInput | FrontAccountInput;
@@ -161,7 +180,8 @@ export type OriginalAccountInput = ZendeskAccountInput | FrontAccountInput;
 export type OriginalContactInput =
   | ZendeskContactInput
   | FrontContactInput
-  | GorgiasContactInput;
+  | GorgiasContactInput
+  | DixaContactInput;
 
 /* tag */
 export type OriginalTagInput =
@@ -204,7 +224,8 @@ export type OriginalTicketOutput =
   | HubspotTicketOutput
   | GorgiasTicketOutput
   | JiraTicketOutput
-  | GitlabTicketOutput;
+  | GitlabTicketOutput
+  | DixaTicketOutput;
 
 /* comment */
 export type OriginalCommentOutput =
@@ -218,14 +239,17 @@ export type OriginalUserOutput =
   | ZendeskUserOutput
   | FrontUserOutput
   | GorgiasUserOutput
-  | JiraUserOutput;
+  | JiraUserOutput
+  | DixaUserOutput
+  | GitlabUserOutput;
 /* account */
 export type OriginalAccountOutput = ZendeskAccountOutput | FrontAccountOutput;
 /* contact */
 export type OriginalContactOutput =
   | ZendeskContactOutput
   | FrontContactOutput
-  | GorgiasContactOutput;
+  | GorgiasContactOutput
+  | DixaContactOutput;
 
 /* tag */
 export type OriginalTagOutput =
