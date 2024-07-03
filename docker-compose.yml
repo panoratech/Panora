@@ -23,7 +23,7 @@ services:
       - backend
       
   api:
-    image: panoradotdev/backend-api:selfhosted
+    image: panora.docker.scarf.sh/panoradotdev/backend-api:selfhosted
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
@@ -187,7 +187,7 @@ services:
       
 
   magic-link-frontend:
-    image: panoradotdev/frontend-magic-links:selfhosted
+    image: panora.docker.scarf.sh/panoradotdev/frontend-magic-links:selfhosted
     restart: always
     ports:
       - 81:80
@@ -199,7 +199,7 @@ services:
       - frontend
 
   webapp-next:
-    image: panoradotdev/frontend-webapp:selfhosted
+    image: panora.docker.scarf.sh/panoradotdev/frontend-webapp:selfhosted
     environment:
       NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
       NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
