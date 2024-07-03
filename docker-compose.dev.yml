@@ -235,6 +235,23 @@ services:
     volumes:
       - .:/app
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+      PGADMIN_DEFAULT_PASSWORD: strong-password
+    networks:
+     - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
   #ngrok:
     #image: ngrok/ngrok:latest
     #restart: always
@@ -260,6 +277,10 @@ services:
       - 911:3000
     volumes:
       - ./docs/:/app
+
+volumes:
+  local_pgdata:
+  pgadmin-data:
 
 networks:
   frontend:

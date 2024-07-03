@@ -5,3 +5,4 @@ x-speakeasy-name-override:
     methodNameOverride: list
   - operationId: ^new.*
     methodNameOverride: create
+    
