@@ -64,6 +64,7 @@ export class GitlabCollectionMapper implements ICollectionMapper {
   ): UnifiedCollectionOutput {
     const unifiedCollection: UnifiedCollectionOutput = {
       remote_id: String(collection.id),
+      remote_data: collection,
       name: collection.name,
       description: collection.name,
       collection_type: 'PROJECT',

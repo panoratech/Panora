@@ -79,6 +79,7 @@ export class JiraCommentMapper implements ICommentMapper {
 
     return {
       remote_id: comment.id,
+      remote_data: comment,
       body: comment.body,
       ...opts,
     };

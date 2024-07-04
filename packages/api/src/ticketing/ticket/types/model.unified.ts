@@ -1,5 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { UnifiedAttachmentInput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
 import { UnifiedCommentInput } from '@ticketing/comment/types/model.unified';
+import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedTicketInput {
@@ -60,14 +63,14 @@ export class UnifiedTicketInput {
   })
   @IsUUID()
   @IsOptional()
-  collections?: string[];
+  collections?: (string | UnifiedCollectionOutput)[];
 
   @ApiPropertyOptional({
     type: [String],
     description: 'The tags names of the ticket',
   })
   @IsOptional()
-  tags?: string[]; // tags names
+  tags?: (string | UnifiedTagOutput)[]; // tags names
 
   @ApiPropertyOptional({
     type: Date,
@@ -123,7 +126,7 @@ export class UnifiedTicketInput {
     description: 'The attachements UUIDs tied to the ticket',
   })
   @IsOptional()
-  attachments?: any[]; //UUIDs of Attachments objects
+  attachments?: (string | UnifiedAttachmentInput)[]; //UUIDs of Attachments objects
 
   @ApiPropertyOptional({
     type: {},

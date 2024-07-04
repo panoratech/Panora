@@ -1,22 +1,23 @@
-import { BoxFolderInput, BoxFolderOutput } from './types';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.file-storage';
+import { Utils } from '@filestorage/@lib/@utils';
+import { IFolderMapper } from '@filestorage/folder/types';
 import {
   UnifiedFolderInput,
   UnifiedFolderOutput,
 } from '@filestorage/folder/types/model.unified';
-import { IFolderMapper } from '@filestorage/folder/types';
-import { Utils } from '@filestorage/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
 import { Injectable } from '@nestjs/common';
-import { OriginalPermissionOutput } from '@@core/utils/types/original/original.file-storage';
-import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { BoxFolderInput, BoxFolderOutput } from './types';
+import { FileStorageObject } from '@filestorage/@lib/@types';
 
 @Injectable()
 export class BoxFolderMapper implements IFolderMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService('filestorage', 'folder', 'box', this);
   }
@@ -89,20 +90,27 @@ export class BoxFolderMapper implements IFolderMapper {
         field_mappings[mapping.slug] = folder[mapping.remote_id];
       }
     }
-    await this.ingestService.ingestData<
-      UnifiedPermissionOutput,
-      OriginalPermissionOutput
-    >(
-      [{ ...folder.shared_link, parent_folder_remote_id: String(folder.id) }],
-      'box',
-      connectionId,
-      'filestorage',
-      'sharedlink',
-      customFieldMappings,
-    );
+
+    let opts: any = {};
+    if (folder.shared_link) {
+      const sharedLinks = (await this.coreUnificationService.unify<
+        OriginalSharedLinkOutput[]
+      >({
+        sourceObject: [folder.shared_link],
+        targetType: FileStorageObject.sharedlink,
+        providerName: 'box',
+        vertical: 'filestorage',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedSharedLinkOutput[];
+      opts = {
+        shared_link: sharedLinks[0],
+      };
+    }
 
     return {
       remote_id: folder.id,
+      remote_data: folder,
       name: folder.name || null,
       size: folder.size?.toString() || null,
       folder_url: folder.shared_link?.url || null,
@@ -113,8 +121,9 @@ export class BoxFolderMapper implements IFolderMapper {
           folder.parent?.id,
           connectionId,
         )) || null,
-      permission_id: null,
+      permission: null,
       field_mappings,
+      ...opts,
       //remote_created_at: folder.created_at || null,
       //remote_modified_at: folder.modified_at || null,
     };

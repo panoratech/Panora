@@ -18,6 +18,7 @@ import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 import { IBaseSync } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -217,7 +218,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         if (existingComment) {
           // Update the existing comment
           let data: any = {
-            id_tcg_ticket: comment.ticket_id,
+            id_tcg_ticket: id_ticket,
             modified_at: new Date(),
           };
           if (comment.body) {
@@ -248,7 +249,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             id_tcg_comment: uuidv4(),
             created_at: new Date(),
             modified_at: new Date(),
-            id_tcg_ticket: comment.ticket_id,
+            id_tcg_ticket: id_ticket,
             remote_id: originId,
             id_connection: connection_id,
           };
@@ -276,73 +277,20 @@ export class SyncService implements OnModuleInit, IBaseSync {
         }
 
         // now insert the attachment of the comment inside tcg_attachments
-        // we should already have at least initial data (as it must have been inserted by the end linked user before adding comment)
-        // though we might sync comments that have been also directly been added to the provider without passing through Panora
-        // in this case just create a new attachment row !
-        if (comment.attachments && comment.attachments.length > 0) {
-          for (const attchmt of comment.attachments) {
-            let unique_ticketing_attachmt_id: string;
-            const existingAttachmt =
-              await this.prisma.tcg_attachments.findFirst({
-                where: {
-                  id_connection: connection_id,
-                  remote_id: attchmt.id,
-                },
-              });
-
-            if (existingAttachmt) {
-              // Update the existing attachmt
-              const res = await this.prisma.tcg_attachments.update({
-                where: {
-                  id_tcg_attachment: existingAttachmt.id_tcg_attachment,
-                },
-                data: {
-                  file_url: attchmt.file_url,
-                  id_tcg_comment: unique_ticketing_comment_id,
-                  id_tcg_ticket: id_ticket,
-                  modified_at: new Date(),
-                },
-              });
-              unique_ticketing_attachmt_id = res.id_tcg_attachment;
-            } else {
-              // Create a new attachment
-              // this.logger.log('attchmt not exists');
-              const data = {
-                id_tcg_attachment: uuidv4(),
-                remote_id: attchmt.id,
-                file_name: attchmt.file_name,
-                file_url: attchmt.file_url,
-                id_tcg_comment: unique_ticketing_comment_id,
-                created_at: new Date(),
-                modified_at: new Date(),
-                uploader: attchmt.uploader,
-                id_tcg_ticket: id_ticket,
-                id_connection: connection_id,
-              };
-              const res = await this.prisma.tcg_attachments.create({
-                data: data,
-              });
-              unique_ticketing_attachmt_id = res.id_tcg_attachment;
-            }
-
-            //TODO: insert remote_data in db i dont know the type of remote_data to extract the right source attachment object
-            /*await this.prisma.remote_data.upsert({
-              where: {
-                ressource_owner_id: unique_ticketing_attachmt_id,
-              },
-              create: {
-                id_remote_data: uuidv4(),
-                ressource_owner_id: unique_ticketing_attachmt_id,
-                format: 'json',
-                data: JSON.stringify(remote_data[i]),
-                created_at: new Date(),
-              },
-              update: {
-                data: JSON.stringify(remote_data[i]),
-                created_at: new Date(),
-              },
-            });*/
-          }
+        if (comment.attachments) {
+          await this.registry.getService('ticketing', 'attachment').saveToDb(
+            connection_id,
+            linkedUserId,
+            comment.attachments,
+            originSource,
+            comment.attachments.map((att: UnifiedAttachmentOutput) => {
+              return att.remote_data;
+            }),
+            {
+              object_name: 'comment',
+              value: unique_ticketing_comment_id,
+            },
+          );
         }
 
         //insert remote_data in db

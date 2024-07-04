@@ -1,23 +1,25 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { UnifiedTicketOutput } from '../types/model.unified';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { tcg_tickets as TicketingTicket } from '@prisma/client';
-import { ITicketService } from '../types';
-import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
-import { ServiceRegistry } from '../services/registry.service';
 import { TICKETING_PROVIDERS } from '@panora/shared';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { tcg_tickets as TicketingTicket } from '@prisma/client';
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
+import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { ITicketService } from '../types';
+import { UnifiedTicketOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -230,9 +232,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (ticket.type) {
             data = { ...data, ticket_type: ticket.type };
           }
-          if (ticket.tags) {
-            data = { ...data, tags: ticket.tags };
-          }
           if (ticket.priority) {
             data = { ...data, priority: ticket.priority };
           }
@@ -256,7 +255,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
         } else {
           // Create a new ticket
           this.logger.log('not existing ticket ' + ticket.name);
-
           let data: any = {
             id_tcg_ticket: uuidv4(),
             created_at: new Date(),
@@ -276,9 +274,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (ticket.type) {
             data = { ...data, ticket_type: ticket.type };
           }
-          if (ticket.tags) {
-            data = { ...data, tags: ticket.tags };
-          }
           if (ticket.priority) {
             data = { ...data, priority: ticket.priority };
           }
@@ -287,9 +282,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
           }
           if (ticket.assigned_to) {
             data = { ...data, assigned_to: ticket.assigned_to };
-          }
-          if (ticket.project_id) {
-            data = { ...data, collections: [ticket.project_id] };
           }
           /*
             parent_ticket: ticket.parent_ticket || 'd',
@@ -300,6 +292,74 @@ export class SyncService implements OnModuleInit, IBaseSync {
           });
           unique_ticketing_ticket_id = res.id_tcg_ticket;
           tickets_results = [...tickets_results, res];
+        }
+
+        if (ticket.collections[0]) {
+          let collections: string[] = [];
+          if (typeof ticket.collections[0] == 'string') {
+            collections.push(ticket.collections[0]);
+          } else {
+            const coll = await this.registry
+              .getService('ticketing', 'collection')
+              .saveToDb(
+                connection_id,
+                linkedUserId,
+                ticket.collections,
+                originSource,
+                ticket.collections.map((col: UnifiedCollectionOutput) => {
+                  return col.remote_data;
+                }),
+              );
+            collections = coll.map((c) => c.id_tcg_collection as string);
+          }
+          await this.prisma.tcg_tickets.update({
+            where: {
+              id_tcg_ticket: unique_ticketing_ticket_id,
+            },
+            data: {
+              collections: collections,
+            },
+          });
+        }
+
+        // now insert the attachment of the ticket inside tcg_attachments
+        if (ticket.attachments) {
+          await this.registry.getService('ticketing', 'attachment').saveToDb(
+            connection_id,
+            linkedUserId,
+            ticket.attachments,
+            originSource,
+            ticket.attachments.map((att: UnifiedAttachmentOutput) => {
+              return att.remote_data;
+            }),
+            {
+              object_name: 'ticket',
+              value: unique_ticketing_ticket_id,
+            },
+          );
+        }
+
+        // insert tag inside db
+        if (ticket.tags) {
+          const tags = await this.registry
+            .getService('ticketing', 'tag')
+            .saveToDb(
+              connection_id,
+              linkedUserId,
+              ticket.tags,
+              originSource,
+              ticket.tags.map((att: UnifiedTagOutput) => {
+                return att.remote_data;
+              }),
+            );
+          await this.prisma.tcg_tickets.update({
+            where: {
+              id_tcg_ticket: unique_ticketing_ticket_id,
+            },
+            data: {
+              tags: tags.map((tag) => tag.id_tcg_tag as string),
+            },
+          });
         }
 
         // check duplicate or existing values

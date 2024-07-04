@@ -740,7 +740,7 @@ model fs_shared_links {
   expires_at         DateTime? @db.Timestamptz(6)
   created_at         DateTime  @db.Timestamptz(6)
   modified_at        DateTime  @db.Timestamptz(6)
-}
+} 
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ats_activities {

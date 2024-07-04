@@ -315,6 +315,13 @@ export class CommentService {
         [key]: value,
       }));*/
 
+      // Fetch attachment IDs associated with the ticket
+      const attachments = await this.prisma.tcg_attachments.findMany({
+        where: {
+          id_tcg_ticket: comment.id_tcg_ticket,
+        },
+      });
+
       // Transform to UnifiedCommentOutput format
       const unifiedComment: UnifiedCommentOutput = {
         id: comment.id_tcg_comment,
@@ -325,7 +332,7 @@ export class CommentService {
         ticket_id: comment.id_tcg_ticket,
         contact_id: comment.id_tcg_contact, // uuid of Contact object
         user_id: comment.id_tcg_user, // uuid of User object
-        attachments: comment.id_tcg_attachment,
+        attachments: attachments || null,
         remote_id: comment.remote_id,
         created_at: comment.created_at,
         modified_at: comment.modified_at,
@@ -441,7 +448,11 @@ export class CommentService {
             fieldMappingsMap,
             ([key, value]) => ({ [key]: value }),
           );*/
-
+          const attachments = await this.prisma.tcg_attachments.findMany({
+            where: {
+              id_tcg_ticket: comment.id_tcg_ticket,
+            },
+          });
           // Transform to UnifiedCommentOutput format
           return {
             id: comment.id_tcg_comment,
@@ -452,7 +463,7 @@ export class CommentService {
             ticket_id: comment.id_tcg_ticket,
             contact_id: comment.id_tcg_contact, // uuid of Contact object
             user_id: comment.id_tcg_user, // uuid of User object
-            attachements: comment.id_tcg_attachment,
+            attachments: attachments || null,
             remote_id: comment.remote_id,
             created_at: comment.created_at,
             modified_at: comment.modified_at,

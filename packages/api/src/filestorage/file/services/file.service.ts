@@ -260,6 +260,26 @@ export class FileService {
         [key]: value,
       }));
 
+      let permission;
+      if (file.id_fs_permission) {
+        const perm = await this.prisma.fs_permissions.findUnique({
+          where: {
+            id_fs_permission: file.id_fs_permission,
+          },
+        });
+        permission = perm;
+      }
+
+      let sharedLink;
+      if (file.id_shared_link) {
+        const sl = await this.prisma.fs_shared_links.findUnique({
+          where: {
+            id_fs_shared_link: file.id_shared_link,
+          },
+        });
+        sharedLink = sl;
+      }
+
       // Transform to UnifiedFileOutput format
       const unifiedFile: UnifiedFileOutput = {
         id: file.id_fs_file,
@@ -269,7 +289,8 @@ export class FileService {
         mime_type: file.mime_type,
         size: String(file.size),
         folder_id: file.id_fs_folder,
-        permission_id: file.id_fs_permission,
+        permission: permission || null,
+        shared_link: sharedLink || null,
         field_mappings: field_mappings,
         remote_id: file.remote_id,
         created_at: file.created_at,
@@ -392,6 +413,26 @@ export class FileService {
             ([key, value]) => ({ [key]: value }),
           );
 
+          let permission;
+          if (file.id_fs_permission) {
+            const perm = await this.prisma.fs_permissions.findUnique({
+              where: {
+                id_fs_permission: file.id_fs_permission,
+              },
+            });
+            permission = perm;
+          }
+
+          let sharedLink;
+          if (file.id_shared_link) {
+            const sl = await this.prisma.fs_shared_links.findUnique({
+              where: {
+                id_fs_shared_link: file.id_shared_link,
+              },
+            });
+            sharedLink = sl;
+          }
+
           // Transform to UnifiedFileOutput format
           return {
             id: file.id_fs_file,
@@ -401,7 +442,8 @@ export class FileService {
             mime_type: file.mime_type,
             size: String(file.size),
             folder_id: file.id_fs_folder,
-            permission_id: file.id_fs_permission,
+            permission: permission || null,
+            shared_link: sharedLink || null,
             field_mappings: field_mappings,
             remote_id: file.remote_id,
             created_at: file.created_at,
@@ -449,14 +491,5 @@ export class FileService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async updateFile(
-    id: string,
-    updateFileData: Partial<UnifiedFileInput>,
-  ): Promise<UnifiedFileOutput> {
-    try {
-    } catch (error) {}
-    return;
   }
 }

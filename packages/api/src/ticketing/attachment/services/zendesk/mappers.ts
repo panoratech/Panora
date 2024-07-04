@@ -1,12 +1,12 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { Injectable } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
 import { IAttachmentMapper } from '@ticketing/attachment/types';
 import {
   UnifiedAttachmentInput,
   UnifiedAttachmentOutput,
 } from '@ticketing/attachment/types/model.unified';
 import { ZendeskAttachmentOutput } from './types';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { Injectable } from '@nestjs/common';
-import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class ZendeskAttachmentMapper implements IAttachmentMapper {
@@ -62,24 +62,11 @@ export class ZendeskAttachmentMapper implements IAttachmentMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedAttachmentOutput> {
-    let opts = {};
-    if (attachment.parent_remote_id) {
-      // we might find a comment id tied to it
-      const id_comment = await this.utils.getCommentUuidFromRemoteId(
-        attachment.parent_remote_id,
-        connectionId,
-      );
-      if (id_comment) {
-        opts = {
-          comment_id: id_comment,
-        };
-      }
-    }
     return {
       remote_id: String(attachment.id),
+      remote_data: attachment,
       file_name: attachment.file_name,
       file_url: attachment.url,
-      ...opts,
     };
   }
 }

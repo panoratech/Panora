@@ -10,6 +10,8 @@ import { Injectable } from '@nestjs/common';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
 import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { TicketingObject } from '@ticketing/@lib/@types';
 
 @Injectable()
 export class ZendeskTicketMapper implements ITicketMapper {
@@ -17,6 +19,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
     private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -155,15 +158,19 @@ export class ZendeskTicketMapper implements ITicketMapper {
     }
 
     if (ticket.tags) {
-      //insert tags without remote id as it doesnt have...
-      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
-        ticket.tags,
-        'zendesk',
-        connectionId,
-        'ticketing',
-        'tag',
-        [],
-      );
+      const tags = (await this.coreUnificationService.unify<
+        OriginalTagOutput[]
+      >({
+        sourceObject: ticket.tags,
+        targetType: TicketingObject.tag,
+        providerName: 'zendesk',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedTagOutput[];
+      opts = {
+        tags: tags,
+      };
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
@@ -174,7 +181,6 @@ export class ZendeskTicketMapper implements ITicketMapper {
       description: ticket.description,
       due_date: ticket.due_at ? new Date(ticket.due_at) : undefined,
       parent_ticket: null,
-      tags: ticket.tags || null,
       completed_at: new Date(ticket.updated_at),
       priority: ticket.priority,
       field_mappings: field_mappings,

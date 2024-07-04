@@ -357,6 +357,43 @@ export class TicketService {
         [key]: value,
       }));
 
+      let tagsArray;
+      if (ticket.tags) {
+        const fetchedTags = await Promise.all(
+          ticket.tags.map(async (tagUuid) => {
+            const tag = await this.prisma.tcg_tags.findUnique({
+              where: {
+                id_tcg_tag: tagUuid,
+              },
+            });
+            return tag;
+          }),
+        );
+        tagsArray = await Promise.all(fetchedTags);
+      }
+
+      let collectionsArray;
+      if (ticket.collections) {
+        const fetchedCollections = await Promise.all(
+          ticket.collections.map(async (collUuid) => {
+            const coll = await this.prisma.tcg_collections.findUnique({
+              where: {
+                id_tcg_collection: collUuid,
+              },
+            });
+            return coll;
+          }),
+        );
+        collectionsArray = await Promise.all(fetchedCollections);
+      }
+
+      // Fetch attachment IDs associated with the ticket
+      const attachments = await this.prisma.tcg_attachments.findMany({
+        where: {
+          id_tcg_ticket: ticket.id_tcg_ticket,
+        },
+      });
+
       // Transform to UnifiedTicketOutput format
       const unifiedTicket: UnifiedTicketOutput = {
         id: ticket.id_tcg_ticket,
@@ -366,19 +403,17 @@ export class TicketService {
         due_date: ticket.due_date || null,
         type: ticket.ticket_type || null,
         parent_ticket: ticket.parent_ticket || null,
-        tags: ticket.tags || null,
         completed_at: ticket.completed_at || null,
         priority: ticket.priority || null,
         assigned_to: ticket.assigned_to || null,
-        collections: ticket.collections || null,
         field_mappings: field_mappings,
+        tags: tagsArray || null,
+        collections: collectionsArray || null,
+        attachments: attachments || null,
         remote_id: ticket.remote_id,
         created_at: ticket.created_at,
         modified_at: ticket.modified_at,
       };
-      if (ticket.id_tcg_attachment) {
-        unifiedTicket.attachments = ticket.id_tcg_attachment;
-      }
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -495,28 +530,62 @@ export class TicketService {
             ([key, value]) => ({ [key]: value }),
           );
 
+          let tagsArray;
+          if (ticket.tags) {
+            const fetchedTags = await Promise.all(
+              ticket.tags.map(async (tagUuid) => {
+                const tag = await this.prisma.tcg_tags.findUnique({
+                  where: {
+                    id_tcg_tag: tagUuid,
+                  },
+                });
+                return tag;
+              }),
+            );
+            tagsArray = await Promise.all(fetchedTags);
+          }
+
+          let collectionsArray;
+          if (ticket.collections) {
+            const fetchedCollections = await Promise.all(
+              ticket.collections.map(async (collUuid) => {
+                const coll = await this.prisma.tcg_collections.findUnique({
+                  where: {
+                    id_tcg_collection: collUuid,
+                  },
+                });
+                return coll;
+              }),
+            );
+            collectionsArray = await Promise.all(fetchedCollections);
+          }
+
+          // Fetch attachment IDs associated with the ticket
+          const attachments = await this.prisma.tcg_attachments.findMany({
+            where: {
+              id_tcg_ticket: ticket.id_tcg_ticket,
+            },
+          });
           // Transform to UnifiedTicketOutput format
           const unifiedTicket: UnifiedTicketOutput = {
             id: ticket.id_tcg_ticket,
-            name: ticket.name || '',
-            status: ticket.status || '',
-            description: ticket.description || '',
+            name: ticket.name || null,
+            status: ticket.status || null,
+            description: ticket.description || null,
             due_date: ticket.due_date || null,
-            type: ticket.ticket_type || '',
-            parent_ticket: ticket.parent_ticket || '',
-            tags: ticket.tags || [],
+            type: ticket.ticket_type || null,
+            parent_ticket: ticket.parent_ticket || null,
             completed_at: ticket.completed_at || null,
-            priority: ticket.priority || '',
+            priority: ticket.priority || null,
             assigned_to: ticket.assigned_to || [],
-            collections: ticket.collections || null,
+            tags: tagsArray || null,
+            collections: collectionsArray || null,
+            attachments: attachments || null,
             field_mappings: field_mappings,
             remote_id: ticket.remote_id,
             created_at: ticket.created_at,
             modified_at: ticket.modified_at,
           };
-          if (ticket.id_tcg_attachment) {
-            unifiedTicket.attachments = ticket.id_tcg_attachment;
-          }
           return unifiedTicket;
         }),
       );

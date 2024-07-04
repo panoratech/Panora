@@ -39,6 +39,8 @@ export class IngestDataService {
       customFieldMappings,
     })) as T[];
 
+    if (unifiedObject == null) {
+    }
     const { linkedUserId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionId(
         connectionId,

@@ -75,7 +75,6 @@ export class CoreUnification {
       case ConnectorCategory.FileStorage:
         targetType_ = targetType as FileStorageObject;
         const filestorageRegistry = this.registry.getService('filestorage');
-
         return filestorageRegistry.unify({
           sourceObject,
           targetType_,

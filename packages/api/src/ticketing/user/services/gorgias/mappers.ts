@@ -56,6 +56,7 @@ export class GorgiasUserMapper implements IUserMapper {
 
     const unifiedUser: UnifiedUserOutput = {
       remote_id: String(user.id),
+      remote_data: user,
       name: `${user.firstname} ${user.lastname}`,
       email_address: user.email,
       field_mappings,

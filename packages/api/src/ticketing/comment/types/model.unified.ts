@@ -1,5 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import {
+  UnifiedAttachmentInput,
+  UnifiedAttachmentOutput,
+} from '@ticketing/attachment/types/model.unified';
 import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UnifiedCommentInput {
@@ -65,7 +68,7 @@ export class UnifiedCommentInput {
     description: 'The attachements UUIDs tied to the comment',
   })
   @IsOptional()
-  attachments?: any[]; //UUIDs of Attachments objects
+  attachments?: (string | UnifiedAttachmentOutput)[]; //UUIDs of Attachments objects
 }
 
 export class UnifiedCommentOutput extends UnifiedCommentInput {
@@ -89,13 +92,6 @@ export class UnifiedCommentOutput extends UnifiedCommentInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
-
-  @ApiPropertyOptional({
-    type: [UnifiedAttachmentOutput],
-    description: 'The attachments tied to the comment',
-  })
-  @IsOptional()
-  attachments?: string[] | UnifiedAttachmentOutput[]; // Attachments objects
 
   @ApiPropertyOptional({
     type: {},

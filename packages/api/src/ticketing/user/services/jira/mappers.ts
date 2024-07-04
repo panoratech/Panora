@@ -49,6 +49,7 @@ export class JiraUserMapper implements IUserMapper {
   ): UnifiedUserOutput {
     const unifiedUser: UnifiedUserOutput = {
       remote_id: user.accountId,
+      remote_data: user,
       name: `${user.displayName}`,
       email_address: user.email || null,
     };

@@ -49,6 +49,7 @@ export class GorgiasTagMapper implements ITagMapper {
   ): UnifiedTagOutput {
     const unifiedTag: UnifiedTagOutput = {
       remote_id: String(tag.id),
+      remote_data: tag,
       name: tag.name,
     };
 

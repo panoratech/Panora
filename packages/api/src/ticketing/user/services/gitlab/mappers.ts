@@ -57,6 +57,7 @@ export class GitlabUserMapper implements IUserMapper {
 
     const unifiedUser: UnifiedUserOutput = {
       remote_id: String(user.id),
+      remote_data: user,
       name: user.name,
       email_address: user.email || null,
       field_mappings,

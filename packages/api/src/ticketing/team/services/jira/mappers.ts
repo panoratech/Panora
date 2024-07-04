@@ -49,6 +49,7 @@ export class JiraTeamMapper implements ITeamMapper {
   ): UnifiedTeamOutput {
     const unifiedTeam: UnifiedTeamOutput = {
       remote_id: String(team.groupId),
+      remote_data: team,
       name: team.name,
     };
 

@@ -49,6 +49,7 @@ export class FrontTagMapper implements ITagMapper {
   ): UnifiedTagOutput {
     const unifiedTag: UnifiedTagOutput = {
       remote_id: tag.id,
+      remote_data: tag,
       name: tag.name,
     };
 

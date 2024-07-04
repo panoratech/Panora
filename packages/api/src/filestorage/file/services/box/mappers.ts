@@ -7,16 +7,22 @@ import { IFileMapper } from '@filestorage/file/types';
 import { Utils } from '@filestorage/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
-import { OriginalPermissionOutput } from '@@core/utils/types/original/original.file-storage';
+import {
+  OriginalPermissionOutput,
+  OriginalSharedLinkOutput,
+} from '@@core/utils/types/original/original.file-storage';
 import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { FileStorageObject } from '@filestorage/@lib/@types';
+import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
 
 @Injectable()
 export class BoxFileMapper implements IFileMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService('filestorage', 'file', 'box', this);
   }
@@ -68,21 +74,26 @@ export class BoxFileMapper implements IFileMapper {
         field_mappings[mapping.slug] = file[mapping.remote_id];
       }
     }
-
-    await this.ingestService.ingestData<
-      UnifiedPermissionOutput,
-      OriginalPermissionOutput
-    >(
-      [{ ...file.shared_link, parent_file_remote_id: String(file.id) }],
-      'box',
-      connectionId,
-      'filestorage',
-      'sharedlink',
-      customFieldMappings,
-    );
+    let opts: any = {};
+    if (file.shared_link) {
+      const sharedLinks = (await this.coreUnificationService.unify<
+        OriginalSharedLinkOutput[]
+      >({
+        sourceObject: [file.shared_link],
+        targetType: FileStorageObject.sharedlink,
+        providerName: 'box',
+        vertical: 'filestorage',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedSharedLinkOutput[];
+      opts = {
+        shared_link: sharedLinks[0],
+      };
+    }
 
     return {
       remote_id: file.id,
+      remote_data: file,
       name: file.name || null,
       type: file.extension || null,
       file_url: file.shared_link?.url || null,
@@ -93,8 +104,9 @@ export class BoxFileMapper implements IFileMapper {
           file.parent?.id,
           connectionId,
         )) || null,
-      permission_id: null,
+      permission: null,
       field_mappings,
+      ...opts,
       //remote_created_at: file.created_at || null,
       //remote_modified_at: file.modified_at || null,
     };

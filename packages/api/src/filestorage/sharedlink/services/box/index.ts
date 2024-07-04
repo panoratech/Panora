@@ -26,7 +26,7 @@ export class BoxService implements ISharedLinkService {
 
   async syncSharedLinks(
     linkedUserId: string,
-    remote_object_id: string, // folder id or file id
+    extra?: { object_name: 'folder' | 'file'; value: string },
     custom_properties?: string[],
   ): Promise<ApiResponse<BoxSharedLinkOutput[]>> {
     try {
@@ -37,20 +37,25 @@ export class BoxService implements ISharedLinkService {
           vertical: 'filestorage',
         },
       });
-      let type: string;
-      const a = await this.prisma.fs_folders.findFirst({
-        where: {
-          remote_id: remote_object_id,
-          id_connection: connection.id_connection,
-        },
-      });
-      if (a) {
-        type = 'folders';
-      } else {
-        type = 'files';
+      let remote_id;
+      if (extra.object_name == 'folder') {
+        const a = await this.prisma.fs_folders.findUnique({
+          where: {
+            id_fs_folder: extra.value,
+          },
+        });
+        remote_id = a.remote_id;
+      }
+      if (extra.object_name == 'file') {
+        const a = await this.prisma.fs_files.findUnique({
+          where: {
+            id_fs_file: extra.value,
+          },
+        });
+        remote_id = a.remote_id;
       }
       const resp = await axios.get(
-        `${connection.account_url}/${type}/${remote_object_id}?fields=shared_link`,
+        `${connection.account_url}/${extra.object_name}s/${remote_id}?fields=shared_link`,
         {
           headers: {
             'Content-Type': 'application/json',

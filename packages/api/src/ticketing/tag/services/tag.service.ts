@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { UnifiedTagOutput } from '../types/model.unified';
 
+// todo: return id_tcg_ticket ?
 @Injectable()
 export class TagService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {

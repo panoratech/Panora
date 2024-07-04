@@ -1,6 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedCommentInput, UnifiedCommentOutput } from './model.unified';
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, AtomicActionDone } from '@@core/utils/types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 
 export interface ICommentService {

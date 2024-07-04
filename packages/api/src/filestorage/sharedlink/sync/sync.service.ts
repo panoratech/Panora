@@ -1,23 +1,17 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { ApiResponse } from '@@core/utils/types';
-import { ISharedLinkService } from '../types';
-import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.file-storage';
-import { UnifiedSharedLinkOutput } from '../types/model.unified';
-import { fs_shared_links as FileStorageSharedLink } from '@prisma/client';
-import { FILESTORAGE_PROVIDERS } from '@panora/shared';
-import { FileStorageObject } from '@filestorage/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { fs_shared_links as FileStorageSharedLink } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { UnifiedSharedLinkOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -35,158 +29,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('filestorage', 'sharedlink', this);
   }
-
-  async onModuleInit() {
-    try {
-      await this.bullQueueService.queueSyncJob(
-        'filestorage-sync-sharedlinks',
-        '0 0 * * *',
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @Cron('0 */8 * * *') // every 8 hours
-  async syncSharedLinks(user_id?: string) {
-    try {
-      this.logger.log('Syncing shared links...');
-      const users = user_id
-        ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
-        : await this.prisma.users.findMany();
-      if (users && users.length > 0) {
-        for (const user of users) {
-          const projects = await this.prisma.projects.findMany({
-            where: {
-              id_user: user.id_user,
-            },
-          });
-          for (const project of projects) {
-            const id_project = project.id_project;
-            const linkedUsers = await this.prisma.linked_users.findMany({
-              where: {
-                id_project: id_project,
-              },
-            });
-            linkedUsers.map(async (linkedUser) => {
-              try {
-                const providers = FILESTORAGE_PROVIDERS;
-                for (const provider of providers) {
-                  try {
-                    const connection = await this.prisma.connections.findFirst({
-                      where: {
-                        id_linked_user: linkedUser.id_linked_user,
-                        provider_slug: provider.toLowerCase(),
-                      },
-                    });
-                    //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
-                    const folders = await this.prisma.fs_folders.findMany({
-                      where: {
-                        id_connection: connection.id_connection,
-                      },
-                    });
-                    const files = await this.prisma.fs_files.findMany({
-                      where: {
-                        id_connection: connection.id_connection,
-                      },
-                    });
-                    for (const folder of folders) {
-                      await this.syncSharedLinksForLinkedUser(
-                        provider,
-                        linkedUser.id_linked_user,
-                        folder.id_fs_folder,
-                      );
-                    }
-                    for (const file of files) {
-                      await this.syncSharedLinksForLinkedUser(
-                        provider,
-                        linkedUser.id_linked_user,
-                        file.id_fs_file,
-                      );
-                    }
-                  } catch (error) {
-                    throw error;
-                  }
-                }
-              } catch (error) {
-                throw error;
-              }
-            });
-          }
-        }
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async syncSharedLinksForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    folder_or_file_id?: string,
-  ) {
-    try {
-      this.logger.log(
-        `Syncing ${integrationId} shared links for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'filestorage',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping shared links syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'filestorage.shared_link',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
-      const service: ISharedLinkService =
-        this.serviceRegistry.getService(integrationId);
-      if (!service) return;
-      const resp: ApiResponse<OriginalSharedLinkOutput[]> =
-        await service.syncSharedLinks(
-          linkedUserId,
-          folder_or_file_id,
-          remoteProperties,
-        );
-
-      const sourceObject: OriginalSharedLinkOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
-        UnifiedSharedLinkOutput,
-        OriginalSharedLinkOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'filestorage',
-        'sharedlink',
-        customFieldMappings,
-        { file_or_folder_id: folder_or_file_id },
-      );
-    } catch (error) {
-      throw error;
-    }
+  // syncs are performed within File/Folder objects so its not useful to do it here
+  onModuleInit() {
+    return;
   }
 
   async saveToDb(
@@ -195,50 +40,36 @@ export class SyncService implements OnModuleInit, IBaseSync {
     sharedLinks: UnifiedSharedLinkOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
-    file_or_folder_id: string,
+    extra?: {
+      object_name: 'file' | 'folder';
+      value: string;
+    },
   ): Promise<FileStorageSharedLink[]> {
     try {
-      //TODO
       let shared_links_results: FileStorageSharedLink[] = [];
       for (let i = 0; i < sharedLinks.length; i++) {
         const sharedLink = sharedLinks[i];
-        //const originId = sharedLink.remote_id;
-        const index = file_or_folder_id;
-        if (!index || index === '') {
-          throw new ReferenceError(`Origin id not there, found ${index}`);
-        }
-        const a = await this.prisma.fs_files.findUnique({
-          where: {
-            id_fs_file: file_or_folder_id,
-          },
-        });
-        const b = await this.prisma.fs_folders.findUnique({
-          where: {
-            id_fs_folder: file_or_folder_id,
-          },
-        });
-        let existingSharedLink;
-        if (a) {
-          existingSharedLink = await this.prisma.fs_shared_links.findFirst({
+        const originId = sharedLink.remote_id;
+
+        let existingSl;
+        if (!originId) {
+          existingSl = await this.prisma.fs_shared_links.findFirst({
             where: {
-              id_fs_file: file_or_folder_id,
+              url: sharedLink.url,
               id_connection: connection_id,
             },
           });
         } else {
-          if (b) {
-            existingSharedLink = await this.prisma.fs_shared_links.findFirst({
-              where: {
-                id_fs_folder: file_or_folder_id,
-                id_connection: connection_id,
-              },
-            });
-          }
+          existingSl = await this.prisma.fs_shared_links.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
         }
 
         let unique_fs_shared_link_id: string;
-
-        if (existingSharedLink) {
+        if (existingSl) {
           // Update the existing shared link
           let data: any = {
             modified_at: new Date(),
@@ -249,19 +80,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (sharedLink.download_url) {
             data = { ...data, download_url: sharedLink.download_url };
           }
-          if (b) {
-            data = {
-              ...data,
-              folder_id: sharedLink.folder_id || file_or_folder_id,
-            };
-          }
-          if (a) {
-            data = {
-              ...data,
-              file_id: sharedLink.file_id || file_or_folder_id,
-            };
-          }
-
           if (sharedLink.scope) {
             data = { ...data, scope: sharedLink.scope };
           }
@@ -276,7 +94,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           }
           const res = await this.prisma.fs_shared_links.update({
             where: {
-              id_fs_shared_link: existingSharedLink.id_fs_shared_link,
+              id_fs_shared_link: existingSl.id_fs_shared_link,
             },
             data: data,
           });
@@ -298,18 +116,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
           }
           if (sharedLink.download_url) {
             data = { ...data, download_url: sharedLink.download_url };
-          }
-          if (sharedLink.folder_id) {
-            data = {
-              ...data,
-              folder_id: sharedLink.folder_id || file_or_folder_id,
-            };
-          }
-          if (sharedLink.file_id) {
-            data = {
-              ...data,
-              file_id: sharedLink.file_id || file_or_folder_id,
-            };
           }
           if (sharedLink.scope) {
             data = { ...data, scope: sharedLink.scope };

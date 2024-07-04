@@ -1,24 +1,23 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
 import { ITicketMapper } from '@ticketing/ticket/types';
-import { GitlabTicketOutput, GitlabTicketInput } from './types';
 import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { Injectable } from '@nestjs/common';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
-import { OriginalCollectionOutput } from '@@core/utils/types/original/original.ticketing';
-import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
+import { GitlabTicketInput, GitlabTicketOutput } from './types';
 
 @Injectable()
 export class GitlabTicketMapper implements ITicketMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'gitlab', this);
   }
@@ -124,16 +123,20 @@ export class GitlabTicketMapper implements ITicketMapper {
       }
     }
 
-    const tags = ticket.labels;
-    if (tags) {
-      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
-        tags,
-        'gitlab',
-        connectionId,
-        'ticketing',
-        'tag',
-        [],
-      );
+    if (ticket.labels) {
+      const tags = (await this.coreUnificationService.unify<
+        OriginalTagOutput[]
+      >({
+        sourceObject: ticket.labels,
+        targetType: TicketingObject.tag,
+        providerName: 'gitlab',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedTagOutput[];
+      opts = {
+        tags: tags,
+      };
     }
 
     if (ticket.project_id) {
@@ -148,10 +151,10 @@ export class GitlabTicketMapper implements ITicketMapper {
 
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: String(ticket.id),
+      remote_data: ticket,
       name: ticket.title,
       description: ticket.description || null,
       due_date: new Date(ticket.created_at),
-      tags: tags || null,
       field_mappings,
       ...opts,
     };

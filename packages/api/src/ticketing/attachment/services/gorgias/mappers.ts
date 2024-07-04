@@ -62,23 +62,10 @@ export class GorgiasAttachmentMapper implements IAttachmentMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedAttachmentOutput> {
-    let opts = {};
-    if (attachment.parent_remote_id) {
-      // we might find a comment id tied to it
-      const id_comment = await this.utils.getCommentUuidFromRemoteId(
-        attachment.parent_remote_id,
-        connectionId,
-      );
-      if (id_comment) {
-        opts = {
-          comment_id: id_comment,
-        };
-      }
-    }
     return {
+      remote_data: attachment,
       file_name: attachment.name,
       file_url: attachment.url,
-      ...opts,
     };
   }
 }

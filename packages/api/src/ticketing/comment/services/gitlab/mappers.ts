@@ -1,7 +1,8 @@
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
 import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { ICommentMapper } from '@ticketing/comment/types';
@@ -16,7 +17,7 @@ export class GitlabCommentMapper implements ICommentMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -81,23 +82,19 @@ export class GitlabCommentMapper implements ICommentMapper {
     let opts;
 
     if (comment.attachment && comment.attachment.length > 0) {
-      const results = await this.ingestService.ingestData<
-        UnifiedAttachmentOutput,
-        OriginalAttachmentOutput
-      >(
-        comment.attachment.map((attach) => ({
-          ...attach,
-          parent_remote_id: String(comment.id),
-        })),
-        'gitlab',
-        connectionId,
-        'ticketing',
-        'attachment',
-        [],
-      );
-      const attachment_ids: string[] = results.map((res) => res.id);
-
-      opts = { ...opts, attachments: attachment_ids };
+      const attachments = (await this.coreUnificationService.unify<
+        OriginalAttachmentOutput[]
+      >({
+        sourceObject: comment.attachment,
+        targetType: TicketingObject.attachment,
+        providerName: 'gitlab',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedAttachmentOutput[];
+      opts = {
+        attachments: attachments,
+      };
     }
     if (comment.author.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
@@ -120,6 +117,7 @@ export class GitlabCommentMapper implements ICommentMapper {
 
     return {
       remote_id: String(comment.id),
+      remote_data: comment,
       body: comment.body || null,
       is_private: comment.internal,
       creator_type: 'USER',

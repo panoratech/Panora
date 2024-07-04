@@ -1,22 +1,23 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
 import { ITicketMapper } from '@ticketing/ticket/types';
-import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
 import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { Injectable } from '@nestjs/common';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
 
 @Injectable()
 export class GorgiasTicketMapper implements ITicketMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -143,26 +144,30 @@ export class GorgiasTicketMapper implements ITicketMapper {
         opts = { assigned_to: [user_id] };
       }
     }
-    const tags = ticket.tags?.map((tag) => tag.name);
-    if (tags) {
-      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
-        tags,
-        'gorgias',
-        connectionId,
-        'ticketing',
-        'tag',
-        [],
-      );
+    if (ticket.tags) {
+      const tags = (await this.coreUnificationService.unify<
+        OriginalTagOutput[]
+      >({
+        sourceObject: ticket.tags,
+        targetType: TicketingObject.tag,
+        providerName: 'gorgias',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedTagOutput[];
+      opts = {
+        tags: tags,
+      };
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: String(ticket.id),
+      remote_data: ticket,
       name: ticket.subject,
       status: ticket.status,
       description: ticket.subject,
       field_mappings,
       due_date: new Date(ticket.created_datetime),
-      tags: tags,
       ...opts,
     };
 

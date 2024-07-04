@@ -1,23 +1,21 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { SyncError, throwTypedError } from '@@core/utils/errors';
-import { Cron } from '@nestjs/schedule';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { OriginalCollectionOutput } from '@@core/utils/types/original/original.ticketing';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { TICKETING_PROVIDERS } from '@panora/shared';
+import { tcg_collections as TicketingCollection } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedCollectionOutput } from '../types/model.unified';
 import { ICollectionService } from '../types';
-import { OriginalCollectionOutput } from '@@core/utils/types/original/original.ticketing';
-import { tcg_collections as TicketingCollection } from '@prisma/client';
-import { TICKETING_PROVIDERS } from '@panora/shared';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { UnifiedCollectionOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -154,6 +152,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     data: UnifiedCollectionOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
+    id_ticket?: string,
   ): Promise<TicketingCollection[]> {
     try {
       let collections_results: TicketingCollection[] = [];
@@ -165,7 +164,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingTeam = await this.prisma.tcg_collections.findFirst({
+        const existingCollection = await this.prisma.tcg_collections.findFirst({
           where: {
             remote_id: originId,
             id_connection: connection_id,
@@ -174,14 +173,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
         let unique_ticketing_collection_id: string;
 
-        if (existingTeam) {
+        if (existingCollection) {
           // Update the existing ticket
           const res = await this.prisma.tcg_collections.update({
             where: {
-              id_tcg_collection: existingTeam.id_tcg_collection,
+              id_tcg_collection: existingCollection.id_tcg_collection,
             },
             data: {
-              name: existingTeam.name,
+              name: existingCollection.name,
               description: collection.description,
               collection_type: collection.collection_type,
               modified_at: new Date(),
@@ -200,6 +199,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             created_at: new Date(),
             modified_at: new Date(),
             remote_id: originId,
+            id_tcg_ticket: id_ticket || null,
             id_connection: connection_id,
           };
           const res = await this.prisma.tcg_collections.create({

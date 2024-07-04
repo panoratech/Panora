@@ -17,6 +17,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFileService } from '../types';
 import { UnifiedFileOutput } from '../types/model.unified';
+import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
+import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -229,9 +231,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (file.folder_id) {
             data = { ...data, folder_id: file.folder_id };
           }
-          if (file.permission_id) {
-            data = { ...data, permission_id: file.permission_id };
-          }
           const res = await this.prisma.fs_files.update({
             where: {
               id_fs_file: existingFile.id_fs_file,
@@ -270,16 +269,69 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (file.folder_id) {
             data = { ...data, folder_id: file.folder_id };
           }
-          if (file.permission_id) {
-            data = { ...data, permission_id: file.permission_id };
-          }
-
           const newFile = await this.prisma.fs_files.create({
             data: data,
           });
 
           unique_fs_file_id = newFile.id_fs_file;
           files_results = [...files_results, newFile];
+        }
+
+        let sl_id;
+        if (file.shared_link) {
+          if (typeof file.shared_link == 'string') {
+            sl_id = file.shared_link;
+          } else {
+            const slinks = await this.registry
+              .getService('filestorage', 'sharedlink')
+              .saveToDb(
+                connection_id,
+                linkedUserId,
+                [file.shared_link],
+                originSource,
+                [file.shared_link].map((att: UnifiedSharedLinkOutput) => {
+                  return att.remote_data;
+                }),
+              );
+            sl_id = slinks[0].id_fs_shared_link;
+          }
+          await this.prisma.fs_files.update({
+            where: {
+              id_fs_file: unique_fs_file_id,
+            },
+            data: {
+              id_fs_shared_link: sl_id,
+            },
+          });
+        }
+
+        let permission_id;
+        if (file.permission) {
+          if (typeof file.permission == 'string') {
+            permission_id = file.permission;
+          } else {
+            const perms = await this.registry
+              .getService('filestorage', 'permission')
+              .saveToDb(
+                connection_id,
+                linkedUserId,
+                [file.permission],
+                originSource,
+                [file.permission].map((att: UnifiedPermissionOutput) => {
+                  return att.remote_data;
+                }),
+                { object_name: 'file', value: unique_fs_file_id },
+              );
+            permission_id = perms[0].id_fs_permission;
+          }
+          await this.prisma.fs_files.update({
+            where: {
+              id_fs_file: unique_fs_file_id,
+            },
+            data: {
+              id_fs_permission: permission_id,
+            },
+          });
         }
 
         // check duplicate or existing values

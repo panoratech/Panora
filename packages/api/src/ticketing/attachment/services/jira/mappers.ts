@@ -63,18 +63,6 @@ export class JiraAttachmentMapper implements IAttachmentMapper {
     }[],
   ): Promise<UnifiedAttachmentOutput> {
     let opts = {};
-    if (attachment.parent_remote_id) {
-      // we might find a comment id tied to it
-      const id_ticket = await this.utils.getTicketUuidFromRemoteId(
-        attachment.parent_remote_id,
-        connectionId,
-      );
-      if (id_ticket) {
-        opts = {
-          ticket_id: id_ticket,
-        };
-      }
-    }
     if (attachment.author.accountId) {
       // todo : determiner qui est l'uploader ?
       const id_user = await this.utils.getUserUuidFromRemoteId(
@@ -89,6 +77,7 @@ export class JiraAttachmentMapper implements IAttachmentMapper {
     }
     return {
       remote_id: attachment.id,
+      remote_data: attachment,
       file_name: attachment.name,
       file_url: attachment.url,
       ...opts,

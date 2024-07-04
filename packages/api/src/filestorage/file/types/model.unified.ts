@@ -1,3 +1,5 @@
+import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
+import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
@@ -34,7 +36,14 @@ export class UnifiedFileInput {
     description: 'The UUID of the permission tied to the file',
   })
   @IsString()
-  permission_id: string;
+  permission: string | UnifiedPermissionOutput;
+
+  @ApiProperty({
+    type: String,
+    description: 'The UUID of the shared link tied to the file',
+  })
+  @IsString()
+  shared_link: string | UnifiedSharedLinkOutput;
 
   @ApiPropertyOptional({
     type: {},

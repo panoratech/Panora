@@ -16,6 +16,8 @@ import {
   OriginalCollectionOutput,
 } from '@@core/utils/types/original/original.ticketing';
 import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { TicketingObject } from '@ticketing/@lib/@types';
 
 @Injectable()
 export class JiraTicketMapper implements ITicketMapper {
@@ -23,6 +25,7 @@ export class JiraTicketMapper implements ITicketMapper {
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
     private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'jira', this);
   }
@@ -123,61 +126,61 @@ export class JiraTicketMapper implements ITicketMapper {
     if (user_id) {
       opts = { assigned_to: [user_id] };
     }
+
     if (ticket.fields.labels) {
-      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
-        ticket.fields.labels,
-        'jira',
-        connectionId,
-        'ticketing',
-        'tag',
-        [],
-      );
+      const tags = (await this.coreUnificationService.unify<
+        OriginalTagOutput[]
+      >({
+        sourceObject: ticket.fields.labels,
+        targetType: TicketingObject.tag,
+        providerName: 'jira',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedTagOutput[];
+      opts = {
+        tags: tags,
+      };
     }
 
-    let attachment_uuids: string[] = [];
-
-    if (ticket.fields.attachment) {
-      const results = await this.ingestService.ingestData<
-        UnifiedAttachmentOutput,
-        OriginalAttachmentOutput
-      >(
-        ticket.fields.attachment.map((attach) => ({
-          ...attach,
-          parent_remote_id: String(ticket.id),
-        })),
-        'jira',
-        connectionId,
-        'ticketing',
-        'attachment',
-        [],
-      );
-      attachment_uuids = results.map((res) => res.id);
+    if (ticket.fields.attachment && ticket.fields.attachment.length > 0) {
+      const attachments = (await this.coreUnificationService.unify<
+        OriginalAttachmentOutput[]
+      >({
+        sourceObject: ticket.fields.attachment,
+        targetType: TicketingObject.attachment,
+        providerName: 'jira',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedAttachmentOutput[];
+      opts = {
+        attachments: attachments,
+      };
     }
 
-    let collection_uuids: string[] = [];
     if (ticket.fields.project) {
-      const results = await this.ingestService.ingestData<
-        UnifiedCollectionOutput,
-        OriginalCollectionOutput
-      >(
-        [ticket.fields.project],
-        'jira',
-        connectionId,
-        'ticketing',
-        'collection',
-        [],
-      );
-      collection_uuids = results.map((res) => res.id);
+      const collections = (await this.coreUnificationService.unify<
+        OriginalCollectionOutput[]
+      >({
+        sourceObject: [ticket.fields.project],
+        targetType: TicketingObject.collection,
+        providerName: 'jira',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedCollectionOutput[];
+      opts = {
+        collections: collections,
+      };
     }
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: ticket.id,
+      remote_data: ticket,
       name: ticket.fields.description,
       status: ticket.fields.status.name,
       description: ticket.fields.description,
       due_date: new Date(ticket.fields.duedate),
-      attachments: attachment_uuids || null,
-      collections: collection_uuids || null,
-      tags: ticket.fields.labels,
       field_mappings: [], //TODO
       ...opts,
     };

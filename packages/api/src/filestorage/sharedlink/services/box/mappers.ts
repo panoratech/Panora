@@ -77,41 +77,16 @@ export class BoxSharedLinkMapper implements ISharedLinkMapper {
         field_mappings[mapping.slug] = sharedlink[mapping.remote_id];
       }
     }
-    let opts = {};
-    if (sharedlink.parent_folder_remote_id) {
-      // we might find a comment id tied to it
-      const id_folder = await this.utils.getFolderIdFromRemote(
-        sharedlink.parent_folder_remote_id,
-        connectionId,
-      );
-      if (id_folder) {
-        opts = {
-          folder_id: id_folder,
-        };
-      }
-    }
-    if (sharedlink.parent_file_remote_id) {
-      // we might find a comment id tied to it
-      const id_file = await this.utils.getFileIdFromRemote(
-        sharedlink.parent_file_remote_id,
-        connectionId,
-      );
-      if (id_file) {
-        opts = {
-          file_id: id_file,
-        };
-      }
-    }
 
     return {
       remote_id: null, // todo null value in sync
+      remote_data: sharedlink,
       url: sharedlink.url || null,
       download_url: sharedlink.download_url || null,
       scope: sharedlink.access,
       password_protected: sharedlink.is_password_enabled,
       password: null,
       field_mappings,
-      ...opts,
       //remote_created_at: sharedlink.created_at || null,
       //remote_modified_at: sharedlink.modified_at || null,
     };

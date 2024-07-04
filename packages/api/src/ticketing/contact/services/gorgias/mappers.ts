@@ -58,6 +58,7 @@ export class GorgiasContactMapper implements IContactMapper {
   ): UnifiedContactOutput {
     const unifiedContact: UnifiedContactOutput = {
       remote_id: String(contact.id),
+      remote_data: contact,
       name: contact.name,
       email_address: contact.email,
     };

@@ -1,22 +1,23 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
 import { ITicketMapper } from '@ticketing/ticket/types';
-import { GithubTicketInput, GithubTicketOutput } from './types';
 import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { Injectable } from '@nestjs/common';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { GithubTicketInput, GithubTicketOutput } from './types';
 
 @Injectable()
 export class GithubTicketMapper implements ITicketMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'github', this);
   }
@@ -86,7 +87,7 @@ export class GithubTicketMapper implements ITicketMapper {
           }
         }
 
-        const opts: any = {};
+        let opts: any = {};
 
         if (ticket.assignees && ticket.assignees.length > 0) {
           opts.assigned_to = [];
@@ -100,19 +101,29 @@ export class GithubTicketMapper implements ITicketMapper {
             }
           }
         }
-        const labels = ticket.labels.map((label) => label.name);
-        if (labels) {
-          await this.ingestService.ingestData<
-            UnifiedTagOutput,
-            OriginalTagOutput
-          >(ticket.labels, 'github', connectionId, 'ticketing', 'tag', []);
+
+        if (ticket.labels) {
+          const tags = (await this.coreUnificationService.unify<
+            OriginalTagOutput[]
+          >({
+            sourceObject: ticket.labels,
+            targetType: TicketingObject.tag,
+            providerName: 'github',
+            vertical: 'ticketing',
+            connectionId: connectionId,
+            customFieldMappings: [],
+          })) as UnifiedTagOutput[];
+          opts = {
+            tags: tags,
+          };
         }
+
         const unifiedTicket: UnifiedTicketOutput = {
           remote_id: String(ticket.id),
+          remote_data: ticket,
           name: ticket.title,
           description: ticket.body,
           status: ticket.state,
-          tags: labels || null,
           field_mappings: field_mappings,
           ...opts,
         };

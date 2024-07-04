@@ -49,6 +49,7 @@ export class FrontTeamMapper implements ITeamMapper {
   ): UnifiedTeamOutput {
     const unifiedTeam: UnifiedTeamOutput = {
       remote_id: team.id,
+      remote_data: team,
       name: team.name,
     };
 

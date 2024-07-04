@@ -26,6 +26,10 @@ export class SyncService implements IBaseSync {
     data: UnifiedAttachmentOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
+    extra: {
+      object_name: 'ticket' | 'comment';
+      value: string;
+    },
   ): Promise<TicketingAttachment[]> {
     try {
       let attachments_results: TicketingAttachment[] = [];
@@ -34,24 +38,42 @@ export class SyncService implements IBaseSync {
         const originId = attachment.remote_id;
 
         if (!originId || originId == '') {
+          // todo create a remote id with namespace
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
-
-        const existingAttachment = await this.prisma.tcg_attachments.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        let existingAttachment;
+        if (!originId) {
+          existingAttachment = await this.prisma.tcg_attachments.findFirst({
+            where: {
+              file_name: attachment.file_name,
+              file_url: attachment.file_name,
+              id_connection: connection_id,
+            },
+          });
+        } else {
+          existingAttachment = await this.prisma.tcg_attachments.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
 
         let unique_ticketing_attachment_id: string;
-
+        const opts: any = {};
+        if (extra.object_name == 'ticket') {
+          opts.ticket_id = extra.value;
+        }
+        if (extra.object_name == 'comment') {
+          opts.comment_id = extra.value;
+        }
         if (existingAttachment) {
           const data: any = {
             id_tcg_ticket: existingAttachment.id_tcg_attachment,
             file_name: existingAttachment.file_name,
             file_url: existingAttachment.file_url,
             uploader: existingAttachment.uploader,
+            ...opts,
             modified_at: new Date(),
           };
           if (attachment.comment_id) {
@@ -78,7 +100,8 @@ export class SyncService implements IBaseSync {
             uploader: existingAttachment.uploader,
             created_at: new Date(),
             modified_at: new Date(),
-            remote_id: originId,
+            remote_id: originId || null,
+            ...opts,
             id_connection: connection_id,
           };
           if (attachment.comment_id) {

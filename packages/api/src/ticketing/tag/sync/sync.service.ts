@@ -1,24 +1,22 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { SyncError, throwTypedError } from '@@core/utils/errors';
-import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedTagOutput } from '../types/model.unified';
-import { ITagService } from '../types';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
-import { tcg_tags as TicketingTag } from '@prisma/client';
-import { TICKETING_PROVIDERS } from '@panora/shared';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { TICKETING_PROVIDERS } from '@panora/shared';
+import { tcg_tags as TicketingTag } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { ITagService } from '../types';
+import { UnifiedTagOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -192,16 +190,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const tag = tags[i];
         const originId = tag.remote_id;
 
-        if (!originId || originId == '') {
-          return;
+        let existingTag;
+        if (!originId) {
+          existingTag = await this.prisma.tcg_tags.findFirst({
+            where: {
+              name: tag.name,
+              id_connection: connection_id,
+            },
+          });
+        } else {
+          existingTag = await this.prisma.tcg_tags.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
         }
-
-        const existingTag = await this.prisma.tcg_tags.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
 
         let unique_ticketing_tag_id: string;
 
@@ -228,7 +232,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             created_at: new Date(),
             modified_at: new Date(),
             id_tcg_ticket: id_ticket,
-            remote_id: originId,
+            remote_id: originId || null,
             id_connection: connection_id,
           };
           const res = await this.prisma.tcg_tags.create({

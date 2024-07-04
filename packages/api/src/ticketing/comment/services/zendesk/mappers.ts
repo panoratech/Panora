@@ -10,12 +10,16 @@ import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { ZendeskAttachmentOutput } from '@ticketing/attachment/services/zendesk/types';
 @Injectable()
 export class ZendeskCommentMapper implements ICommentMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
     private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -97,23 +101,19 @@ export class ZendeskCommentMapper implements ICommentMapper {
     let opts;
 
     if (comment.attachments && comment.attachments.length > 0) {
-      const results = await this.ingestService.ingestData<
-        UnifiedAttachmentOutput,
-        OriginalAttachmentOutput
-      >(
-        comment.attachments.map((attach) => ({
-          ...attach,
-          parent_remote_id: String(comment.id),
-        })),
-        'zendesk',
-        connectionId,
-        'ticketing',
-        'attachment',
-        [],
-      );
-      const attachment_ids: string[] = results.map((res) => res.id);
-
-      opts = { ...opts, attachments: attachment_ids };
+      const attachments = (await this.coreUnificationService.unify<
+        OriginalAttachmentOutput[]
+      >({
+        sourceObject: comment.attachments,
+        targetType: TicketingObject.attachment,
+        providerName: 'zendesk',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedAttachmentOutput[];
+      opts = {
+        attachments: attachments,
+      };
     }
 
     if (comment.author_id) {
@@ -137,6 +137,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
 
     return {
       remote_id: String(comment.id),
+      remote_data: comment,
       body: comment.body || null,
       html_body: comment.html_body || null,
       is_private: !comment.public,

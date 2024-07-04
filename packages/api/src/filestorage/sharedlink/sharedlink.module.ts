@@ -6,12 +6,10 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { Module } from '@nestjs/common';
 import { ServiceRegistry } from './services/registry.service';
 import { SharedLinkService } from './services/sharedlink.service';
-import { SharedlinkController } from './sharedlink.controller';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
-  controllers: [SharedlinkController],
   providers: [
     SharedLinkService,
     LoggerService,

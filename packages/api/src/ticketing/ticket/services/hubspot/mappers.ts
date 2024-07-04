@@ -94,6 +94,7 @@ export class HubspotTicketMapper implements ITicketMapper {
     }
     return {
       remote_id: ticket.id,
+      remote_data: ticket,
       name: ticket.properties.name,
       status: null,
       description: ticket.properties.description,

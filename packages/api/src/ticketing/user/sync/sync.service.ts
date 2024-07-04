@@ -217,7 +217,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             data: {
               name: user.name,
               email_address: user.email_address,
-              teams: user.teams || [],
+              teams: user.teams || null,
               modified_at: new Date(),
             },
           });
@@ -230,7 +230,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             id_tcg_user: uuidv4(),
             name: user.name,
             email_address: user.email_address,
-            teams: user.teams || [],
+            teams: user.teams || null,
             created_at: new Date(),
             modified_at: new Date(),
             remote_id: originId,

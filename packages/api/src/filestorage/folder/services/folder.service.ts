@@ -264,6 +264,25 @@ export class FolderService {
       const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
         [key]: value,
       }));
+      let permission;
+      if (folder.id_fs_permission) {
+        const perm = await this.prisma.fs_permissions.findUnique({
+          where: {
+            id_fs_permission: folder.id_fs_permission,
+          },
+        });
+        permission = perm;
+      }
+
+      let sharedLink;
+      if (folder.id_shared_link) {
+        const sl = await this.prisma.fs_shared_links.findUnique({
+          where: {
+            id_fs_shared_link: folder.id_shared_link,
+          },
+        });
+        sharedLink = sl;
+      }
 
       // Transform to UnifiedFolderOutput format
       const unifiedFolder: UnifiedFolderOutput = {
@@ -274,7 +293,8 @@ export class FolderService {
         description: folder.description,
         parent_folder_id: folder.parent_folder,
         drive_id: folder.id_fs_drive,
-        permission_id: folder.id_fs_permission,
+        permission: permission || null,
+        shared_link: sharedLink || null,
         field_mappings: field_mappings,
         remote_id: folder.remote_id,
         created_at: folder.created_at,
@@ -392,6 +412,26 @@ export class FolderService {
             ([key, value]) => ({ [key]: value }),
           );
 
+          let permission;
+          if (folder.id_fs_permission) {
+            const perm = await this.prisma.fs_permissions.findUnique({
+              where: {
+                id_fs_permission: folder.id_fs_permission,
+              },
+            });
+            permission = perm;
+          }
+
+          let sharedLink;
+          if (folder.id_shared_link) {
+            const sl = await this.prisma.fs_shared_links.findUnique({
+              where: {
+                id_fs_shared_link: folder.id_shared_link,
+              },
+            });
+            sharedLink = sl;
+          }
+
           // Transform to UnifiedFolderOutput format
           return {
             id: folder.id_fs_folder,
@@ -401,7 +441,8 @@ export class FolderService {
             description: folder.description,
             parent_folder_id: folder.parent_folder,
             drive_id: folder.id_fs_drive,
-            permission_id: folder.id_fs_permission,
+            permission: permission || null,
+            shared_link: sharedLink || null,
             field_mappings: field_mappings,
             remote_id: folder.remote_id,
             created_at: folder.created_at,
