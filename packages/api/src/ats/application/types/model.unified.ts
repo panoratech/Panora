@@ -127,4 +127,7 @@ export class UnifiedApplicationOutput extends UnifiedApplicationInput {
   })
   @IsOptional()
   modified_at?: any;
+
+  remote_created_at: string;
+  remote_modified_at: string;
 }

@@ -1,3 +1,6 @@
+import { Email, Phone, Url } from '@ats/@lib/@types';
+import { UnifiedAttachmentOutput } from '@ats/attachment/types/model.unified';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -97,7 +100,7 @@ export class UnifiedCandidateInput {
   })
   @IsString({ each: true })
   @IsOptional()
-  attachments?: string[];
+  attachments?: (string | UnifiedAttachmentOutput)[];
 
   @ApiPropertyOptional({
     type: [String],
@@ -113,28 +116,28 @@ export class UnifiedCandidateInput {
   })
   @IsString({ each: true })
   @IsOptional()
-  tags?: string[];
+  tags?: (string | UnifiedTagOutput)[];
 
   @ApiPropertyOptional({
     type: [],
     description: 'The urls of the candidate',
   })
   @IsOptional()
-  urls?: { type: string; value: string }[];
+  urls?: Url[];
 
   @ApiPropertyOptional({
     type: [],
     description: 'The phone numbers of the candidate',
   })
   @IsOptional()
-  phone_numbers?: { type: string; value: string }[];
+  phone_numbers?: Phone[];
 
   @ApiPropertyOptional({
     type: [],
     description: 'The email addresses of the candidate',
   })
   @IsOptional()
-  email_addresses?: { type: string; value: string }[];
+  email_addresses?: Email[];
 
   @ApiPropertyOptional({
     type: {},

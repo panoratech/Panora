@@ -195,7 +195,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (job.type) {
             data = { ...data, type: job.type };
           }
-          if (job.confidential !== undefined) {
+          if (job.confidential) {
             data = { ...data, confidential: job.confidential };
           }
           if (job.departments) {

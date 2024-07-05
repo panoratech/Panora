@@ -79,7 +79,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
     }
 
     if (source.tags) {
-      result.tags = source.tags.map((tag) => ({ name: tag }));
+      result.tags = (source.tags as string[]).map((tag) => ({ name: tag }));
     }
 
     if (customFieldMappings && source.field_mappings) {

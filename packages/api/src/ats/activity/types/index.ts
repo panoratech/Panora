@@ -11,6 +11,7 @@ export interface IActivityService {
 
   syncActivities(
     linkedUserId: string,
+    candidate_id?: string,
     custom_properties?: string[],
   ): Promise<ApiResponse<OriginalActivityOutput[]>>;
 }

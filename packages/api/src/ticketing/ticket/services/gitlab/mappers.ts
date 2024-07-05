@@ -51,9 +51,9 @@ export class GitlabTicketMapper implements ITicketMapper {
         id: Number(data),
       };
     }
-
-    if (source.tags) {
-      result.labels = source.tags ? source.tags : [];
+    const tags = source.tags as string[];
+    if (tags) {
+      result.labels = tags;
     }
 
     // TODO - Custom fields mapping

@@ -1,21 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { OriginalCandidateOutput } from '@@core/utils/types/original/original.ats';
+import { AtsObject } from '@ats/@lib/@types';
+import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { ICandidateService } from '../types';
 import {
   UnifiedCandidateInput,
   UnifiedCandidateOutput,
 } from '../types/model.unified';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { ApiResponse } from '@@core/utils/types';
-import { OriginalCandidateOutput } from '@@core/utils/types/original/original.ats';
-import { ICandidateService } from '../types';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { AtsObject } from '@ats/@lib/@types';
-import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
 export class CandidateService {
@@ -272,10 +270,6 @@ export class CandidateService {
           where: { id_ats_candidate: id_ats_candidate },
         });
 
-      const tags = await this.prisma.ats_candidate_tags.findMany({
-        where: { id_ats_candidate: id_ats_candidate },
-      });
-
       const urls = await this.prisma.ats_candidate_urls.findMany({
         where: { id_ats_candidate: id_ats_candidate },
       });
@@ -316,17 +310,17 @@ export class CandidateService {
           (application) => application.id_ats_application,
         ),
         email_addresses: emailAddresses.map((email) => ({
-          value: email.value,
-          type: email.type,
+          email_address: email.value,
+          email_address_type: email.type,
         })),
         phone_numbers: phoneNumbers.map((phone) => ({
-          value: phone.value,
-          type: phone.type,
+          phone_number: phone.value,
+          phone_type: phone.type,
         })),
-        tags: tags.map((tag) => tag.name),
+        tags: candidate.tags,
         urls: urls.map((url) => ({
-          value: url.value,
-          type: url.type,
+          url: url.value,
+          url_type: url.type,
         })),
         field_mappings: field_mappings,
       };
@@ -432,11 +426,6 @@ export class CandidateService {
             await this.prisma.ats_candidate_phone_numbers.findMany({
               where: { id_ats_candidate: candidate.id_ats_candidate },
             });
-
-          const tags = await this.prisma.ats_candidate_tags.findMany({
-            where: { id_ats_candidate: candidate.id_ats_candidate },
-          });
-
           const urls = await this.prisma.ats_candidate_urls.findMany({
             where: { id_ats_candidate: candidate.id_ats_candidate },
           });
@@ -480,17 +469,17 @@ export class CandidateService {
               (application) => application.id_ats_application,
             ),
             email_addresses: emailAddresses.map((email) => ({
-              value: email.value,
-              type: email.type,
+              email_address: email.value,
+              email_address_type: email.type,
             })),
             phone_numbers: phoneNumbers.map((phone) => ({
-              value: phone.value,
-              type: phone.type,
+              phone_number: phone.value,
+              phone_type: phone.type,
             })),
-            tags: tags.map((tag) => tag.name),
+            tags: candidate.tags,
             urls: urls.map((url) => ({
-              value: url.value,
-              type: url.type,
+              url: url.value,
+              url_type: url.type,
             })),
             field_mappings: field_mappings,
           };

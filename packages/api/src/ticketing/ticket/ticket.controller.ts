@@ -164,17 +164,4 @@ export class TicketController {
       throw new Error(error);
     }
   }
-
-  @ApiOperation({
-    operationId: 'update',
-    summary: 'Update a Ticket',
-  })
-  @UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  update(
-    @Query('id') id: string,
-    @Body() updateTicketData: Partial<UnifiedTicketInput>,
-  ) {
-    return this.ticketService.updateTicket(id, updateTicketData);
-  }
 }

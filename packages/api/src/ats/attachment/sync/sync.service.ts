@@ -162,6 +162,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     attachments: UnifiedAttachmentOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
+    candidate_id?: string,
   ): Promise<AtsAttachment[]> {
     try {
       let attachments_results: AtsAttachment[] = [];
@@ -205,8 +206,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
               remote_modified_at: attachment.remote_modified_at,
             };
           }
-          if (attachment.candidate_id) {
-            data = { ...data, candidate_id: attachment.candidate_id };
+          if (candidate_id) {
+            data = { ...data, candidate_id: candidate_id };
           }
           const res = await this.prisma.ats_attachments.update({
             where: {
@@ -246,8 +247,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
               remote_modified_at: attachment.remote_modified_at,
             };
           }
-          if (attachment.candidate_id) {
-            data = { ...data, candidate_id: attachment.candidate_id };
+          if (candidate_id) {
+            data = { ...data, candidate_id: candidate_id };
           }
 
           const newAttachment = await this.prisma.ats_attachments.create({

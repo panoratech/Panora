@@ -51,11 +51,26 @@ export class GroupService {
         [key]: value,
       }));
 
+      let usersArray;
+      if (group.users) {
+        const fetchedUsers = await Promise.all(
+          (group.users as string[]).map(async (uuid) => {
+            const user = await this.prisma.fs_users.findUnique({
+              where: {
+                id_fs_user: uuid,
+              },
+            });
+            return user;
+          }),
+        );
+        usersArray = await Promise.all(fetchedUsers);
+      }
+
       // Transform to UnifiedGroupOutput format
       const unifiedGroup: UnifiedGroupOutput = {
         id: group.id_fs_group,
         name: group.name,
-        users: group.users, // TODO fetch all users for this group id
+        users: usersArray,
         remote_was_deleted: group.remote_was_deleted,
         field_mappings: field_mappings,
         remote_id: group.remote_id,
@@ -180,11 +195,26 @@ export class GroupService {
             }),
           );
 
+          let usersArray;
+          if (group.users) {
+            const fetchedUsers = await Promise.all(
+              (group.users as string[]).map(async (uuid) => {
+                const user = await this.prisma.fs_users.findUnique({
+                  where: {
+                    id_fs_user: uuid,
+                  },
+                });
+                return user;
+              }),
+            );
+            usersArray = await Promise.all(fetchedUsers);
+          }
+
           // Transform to UnifiedGroupOutput format
           return {
             id: group.id_fs_group,
             name: group.name,
-            users: group.users, // TODO fetch all users for this group id
+            users: usersArray,
             remote_was_deleted: group.remote_was_deleted,
             field_mappings: field_mappings,
             remote_id: group.remote_id,

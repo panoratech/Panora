@@ -1,23 +1,22 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { ApiResponse } from '@@core/utils/types';
-import { IInterviewService } from '../types';
-import { OriginalInterviewOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedInterviewOutput } from '../types/model.unified';
-import { ats_interviews as AtsInterview } from '@prisma/client';
-import { ATS_PROVIDERS } from '@panora/shared';
-import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { OriginalInterviewOutput } from '@@core/utils/types/original/original.ats';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { ATS_PROVIDERS } from '@panora/shared';
+import { ats_interviews as AtsInterview } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IInterviewService } from '../types';
+import { UnifiedInterviewOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {

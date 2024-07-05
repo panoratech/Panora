@@ -1,21 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { OriginalApplicationOutput } from '@@core/utils/types/original/original.ats';
+import { AtsObject } from '@ats/@lib/@types';
+import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { IApplicationService } from '../types';
 import {
   UnifiedApplicationInput,
   UnifiedApplicationOutput,
 } from '../types/model.unified';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { ApiResponse } from '@@core/utils/types';
-import { OriginalApplicationOutput } from '@@core/utils/types/original/original.ats';
-import { IApplicationService } from '../types';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { AtsObject } from '@ats/@lib/@types';
-import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Injectable()
 export class ApplicationService {
@@ -262,21 +260,34 @@ export class ApplicationService {
         [key]: value,
       }));
 
+      const resOffers = await this.prisma.ats_offers.findMany({
+        where: {
+          id_ats_application: application.id_ats_application,
+        },
+      });
+      let offers;
+      if (resOffers && resOffers.length > 0) {
+        offers = resOffers.map((off) => {
+          return off.id_ats_offer;
+        });
+      }
       const unifiedApplication: UnifiedApplicationOutput = {
         id: application.id_ats_application,
-        applied_at: String(application.applied_at),
-        rejected_at: String(application.rejected_at),
-        offers: application.offers,
-        source: application.source,
-        credited_to: application.credited_to,
-        current_stage: application.current_stage,
-        reject_reason: application.reject_reason,
-        candidate_id: application.id_ats_candidate,
-        job_id: application.id_ats_job,
+        applied_at: String(application.applied_at) || null,
+        rejected_at: String(application.rejected_at) || null,
+        offers: offers || null,
+        source: application.source || null,
+        credited_to: application.credited_to || null,
+        current_stage: application.current_stage || null,
+        reject_reason: application.reject_reason || null,
+        candidate_id: application.id_ats_candidate || null,
+        job_id: application.id_ats_job || null,
         field_mappings: field_mappings,
-        remote_id: application.remote_id,
-        created_at: application.created_at,
-        modified_at: application.modified_at,
+        remote_id: application.remote_id || null,
+        created_at: application.created_at || null,
+        modified_at: application.modified_at || null,
+        remote_created_at: application.remote_created_at || null,
+        remote_modified_at: application.remote_modified_at || null,
       };
 
       let res: UnifiedApplicationOutput = unifiedApplication;
@@ -380,21 +391,35 @@ export class ApplicationService {
             ([key, value]) => ({ [key]: value }),
           );
 
+          const resOffers = await this.prisma.ats_offers.findMany({
+            where: {
+              id_ats_application: application.id_ats_application,
+            },
+          });
+          let offers;
+          if (resOffers && resOffers.length > 0) {
+            offers = resOffers.map((off) => {
+              return off.id_ats_offer;
+            });
+          }
+
           return {
             id: application.id_ats_application,
-            applied_at: String(application.applied_at),
-            rejected_at: String(application.rejected_at),
-            offers: application.offers,
-            source: application.source,
-            credited_to: application.credited_to,
-            current_stage: application.current_stage,
-            reject_reason: application.reject_reason,
-            candidate_id: application.id_ats_candidate,
-            job_id: application.id_ats_job,
+            applied_at: String(application.applied_at) || null,
+            rejected_at: String(application.rejected_at) || null,
+            offers: offers || null,
+            source: application.source || null,
+            credited_to: application.credited_to || null,
+            current_stage: application.current_stage || null,
+            reject_reason: application.reject_reason || null,
+            candidate_id: application.id_ats_candidate || null,
+            job_id: application.id_ats_job || null,
             field_mappings: field_mappings,
-            remote_id: application.remote_id,
-            created_at: application.created_at,
-            modified_at: application.modified_at,
+            remote_id: application.remote_id || null,
+            created_at: application.created_at || null,
+            modified_at: application.modified_at || null,
+            remote_created_at: application.remote_created_at || null,
+            remote_modified_at: application.remote_modified_at || null,
           };
         }),
       );

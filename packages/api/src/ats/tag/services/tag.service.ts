@@ -52,9 +52,8 @@ export class TagService {
 
       // Transform to UnifiedTagOutput format
       const unifiedTag: UnifiedTagOutput = {
-        id: tag.id_ats_tag,
+        id: tag.id_ats_candidate_tag,
         name: tag.name,
-        id_ats_candidate: tag.id_ats_candidate,
         field_mappings: field_mappings,
         remote_id: tag.remote_id,
         created_at: tag.created_at,
@@ -180,9 +179,8 @@ export class TagService {
 
           // Transform to UnifiedTagOutput format
           return {
-            id: tag.id_ats_tag,
+            id: tag.id_ats_candidate_tag,
             name: tag.name,
-            id_ats_candidate: tag.id_ats_candidate,
             remote_created_at: tag.remote_created_at,
             remote_modified_at: tag.remote_modified_at,
             field_mappings: field_mappings,

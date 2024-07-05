@@ -65,7 +65,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       result.status = source.status.toLowerCase() as 'open' | 'closed';
     }
     if (source.tags) {
-      result.tags = source.tags;
+      result.tags = source.tags as string[];
     }
     if (source.type) {
       result.type = source.type.toLowerCase() as

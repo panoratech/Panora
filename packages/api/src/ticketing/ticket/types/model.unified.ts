@@ -126,7 +126,7 @@ export class UnifiedTicketInput {
     description: 'The attachements UUIDs tied to the ticket',
   })
   @IsOptional()
-  attachments?: (string | UnifiedAttachmentInput)[]; //UUIDs of Attachments objects
+  attachments?: (string | UnifiedAttachmentInput)[];
 
   @ApiPropertyOptional({
     type: {},

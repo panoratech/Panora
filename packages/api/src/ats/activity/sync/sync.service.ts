@@ -82,10 +82,26 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 const providers = ATS_PROVIDERS;
                 for (const provider of providers) {
                   try {
-                    await this.syncActivitiesForLinkedUser(
-                      provider,
-                      linkedUser.id_linked_user,
-                    );
+                    const connection = await this.prisma.connections.findFirst({
+                      where: {
+                        id_linked_user: linkedUser.id_linked_user,
+                        provider_slug: provider.toLowerCase(),
+                      },
+                    });
+                    //call the sync comments for every candidate of the linkedUser (an acitivty is tied to a candidate)
+                    const candidates =
+                      await this.prisma.ats_candidates.findMany({
+                        where: {
+                          id_connection: connection.id_connection,
+                        },
+                      });
+                    for (const candidate of candidates) {
+                      await this.syncActivitiesForLinkedUser(
+                        provider,
+                        linkedUser.id_linked_user,
+                        candidate.id_ats_candidate,
+                      );
+                    }
                   } catch (error) {
                     throw error;
                   }
@@ -106,6 +122,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async syncActivitiesForLinkedUser(
     integrationId: string,
     linkedUserId: string,
+    id_candidate: string,
   ) {
     try {
       this.logger.log(
@@ -139,7 +156,11 @@ export class SyncService implements OnModuleInit, IBaseSync {
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
       const resp: ApiResponse<OriginalActivityOutput[]> =
-        await service.syncActivities(linkedUserId, remoteProperties);
+        await service.syncActivities(
+          linkedUserId,
+          id_candidate,
+          remoteProperties,
+        );
 
       const sourceObject: OriginalActivityOutput[] = resp.data;
 
@@ -153,6 +174,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         'ats',
         'activity',
         customFieldMappings,
+        { id_candidate: id_candidate },
       );
     } catch (error) {
       throw error;
@@ -165,6 +187,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     activities: UnifiedActivityOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
+    id_candidate?: string,
   ): Promise<AtsActivity[]> {
     try {
       let activities_results: AtsActivity[] = [];
@@ -188,25 +211,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
         if (existingActivity) {
           // Update the existing activity
           let data: any = {
+            id_candidate: id_candidate,
             modified_at: new Date(),
           };
           if (activity.activity_type) {
             data = { ...data, activity_type: activity.activity_type };
           }
           if (activity.body) {
-            data = { ...data, activity_type: activity.body };
+            data = { ...data, body: activity.body };
           }
           if (activity.remote_created_at) {
-            data = { ...data, activity_type: activity.remote_created_at };
+            data = { ...data, remote_created_at: activity.remote_created_at };
           }
           if (activity.subject) {
-            data = { ...data, activity_type: activity.subject };
+            data = { ...data, subject: activity.subject };
           }
           if (activity.visibility) {
-            data = { ...data, activity_type: activity.visibility };
-          }
-          if (activity.candidate_id) {
-            data = { ...data, id_ats_candidate: activity.candidate_id };
+            data = { ...data, visibility: activity.visibility };
           }
           const res = await this.prisma.ats_activities.update({
             where: {
@@ -232,21 +253,17 @@ export class SyncService implements OnModuleInit, IBaseSync {
             data = { ...data, activity_type: activity.activity_type };
           }
           if (activity.body) {
-            data = { ...data, activity_type: activity.body };
+            data = { ...data, body: activity.body };
           }
           if (activity.remote_created_at) {
-            data = { ...data, activity_type: activity.remote_created_at };
+            data = { ...data, remote_created_at: activity.remote_created_at };
           }
           if (activity.subject) {
-            data = { ...data, activity_type: activity.subject };
+            data = { ...data, subject: activity.subject };
           }
           if (activity.visibility) {
-            data = { ...data, activity_type: activity.visibility };
+            data = { ...data, visibility: activity.visibility };
           }
-          if (activity.candidate_id) {
-            data = { ...data, id_ats_candidate: activity.candidate_id };
-          }
-
           const newActivity = await this.prisma.ats_activities.create({
             data: data,
           });

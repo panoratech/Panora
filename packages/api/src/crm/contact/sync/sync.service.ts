@@ -212,9 +212,11 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (contact.first_name) {
             data = { ...data, first_name: contact.first_name };
           }
+
           if (contact.last_name) {
             data = { ...data, last_name: contact.last_name };
           }
+
           if (contact.user_id) {
             data = {
               ...data,

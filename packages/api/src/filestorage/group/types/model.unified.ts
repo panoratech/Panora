@@ -1,3 +1,4 @@
+import { UnifiedUserOutput } from '@filestorage/user/types/model.unified';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
@@ -8,7 +9,7 @@ export class UnifiedGroupInput {
 
   @ApiProperty({ type: [String], description: 'Uuids of users of the group' })
   @IsString()
-  users: string[];
+  users: (string | UnifiedUserOutput)[];
 
   @ApiProperty({
     type: Boolean,

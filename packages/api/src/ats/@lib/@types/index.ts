@@ -73,11 +73,8 @@ import {
   UnifiedScoreCardInput,
   UnifiedScoreCardOutput,
 } from '@ats/scorecard/types/model.unified';
-import { IScreeningQuestionService } from '@ats/screeningquestion/types';
-import {
-  UnifiedScreeningQuestionInput,
-  UnifiedScreeningQuestionOutput,
-} from '@ats/screeningquestion/types/model.unified';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsIn, IsOptional, IsString } from 'class-validator';
 
 export enum AtsObject {
   activity = 'activity',
@@ -123,8 +120,6 @@ export type UnifiedAts =
   | UnifiedRejectReasonOutput
   | UnifiedScoreCardInput
   | UnifiedScoreCardOutput
-  | UnifiedScreeningQuestionInput
-  | UnifiedScreeningQuestionOutput
   | UnifiedTagInput
   | UnifiedTagOutput
   | UnifiedUserInput
@@ -145,7 +140,47 @@ export type IAtsService =
   | IOfficeService
   | IRejectReasonService
   | IScoreCardService
-  | IScreeningQuestionService
   | ITagService
   | IUserService
   | IEeocsService;
+
+export class Email {
+  @ApiProperty({
+    type: String,
+    description: 'The email address',
+  })
+  @IsString()
+  email_address: string;
+
+  @ApiProperty({
+    type: String,
+    description:
+      'The email address type. Authorized values are either PERSONAL or WORK.',
+  })
+  @IsIn(['PERSONAL', 'WORK'])
+  @IsString()
+  email_address_type: string;
+}
+
+export class Phone {
+  @ApiProperty({
+    type: String,
+    description:
+      'The phone number starting with a plus (+) followed by the country code (e.g +336676778890 for France)',
+  })
+  @IsString()
+  phone_number: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The phone type. Authorized values are either MOBILE or WORK',
+  })
+  @IsIn(['MOBILE', 'WORK'])
+  @IsString()
+  phone_type: string;
+}
+
+export class Url {
+  url: string;
+  url_type: string;
+}

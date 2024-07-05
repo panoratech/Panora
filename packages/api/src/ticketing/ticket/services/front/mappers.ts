@@ -59,7 +59,7 @@ export class FrontTicketMapper implements ITicketMapper {
     }
 
     if (source.tags) {
-      result.tags = source.tags;
+      result.tags = source.tags as string[];
     }
 
     if (customFieldMappings && source.field_mappings) {

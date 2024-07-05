@@ -18,6 +18,9 @@ import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 import { IBaseSync } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { Utils } from '@ats/@lib/@utils';
+import { UnifiedAttachmentOutput } from '@ats/attachment/types/model.unified';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -31,6 +34,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
     private ingestService: IngestDataService,
+    private utils: Utils,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'candidate', this);
@@ -182,6 +186,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
         let unique_ats_candidate_id: string;
 
+        const { normalizedEmails, normalizedPhones } =
+          this.utils.normalizeEmailsAndNumbers(
+            candidate.email_addresses,
+            candidate.phone_numbers,
+          );
+        const normalizedUrls = this.utils.normalizeUrls(candidate.urls);
+
         if (existingCandidate) {
           // Update the existing candidate
           let data: any = {
@@ -202,10 +213,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (candidate.locations) {
             data = { ...data, locations: candidate.locations };
           }
-          if (candidate.is_private !== undefined) {
+          if (candidate.is_private) {
             data = { ...data, is_private: candidate.is_private };
           }
-          if (candidate.email_reachable !== undefined) {
+          if (candidate.email_reachable) {
             data = { ...data, email_reachable: candidate.email_reachable };
           }
           if (candidate.remote_created_at) {
@@ -229,6 +240,100 @@ export class SyncService implements OnModuleInit, IBaseSync {
             },
             data: data,
           });
+          if (normalizedEmails && normalizedEmails.length > 0) {
+            await Promise.all(
+              normalizedEmails.map(async (email) => {
+                const a =
+                  await this.prisma.ats_candidate_email_addresses.findFirst({
+                    where: {
+                      id_ats_candidate: res.id_ats_candidate,
+                      value: email.value,
+                    },
+                  });
+                if (a) {
+                  this.prisma.ats_candidate_email_addresses.update({
+                    where: {
+                      id_ats_candidate_email_address:
+                        a.id_ats_candidate_email_address,
+                    },
+                    data: {
+                      ...email,
+                      id_ats_candidate: res.id_ats_candidate,
+                    },
+                  });
+                } else {
+                  this.prisma.ats_candidate_email_addresses.create({
+                    data: {
+                      ...email,
+                      id_ats_candidate: res.id_ats_candidate,
+                    },
+                  });
+                }
+              }),
+            );
+          }
+          if (normalizedPhones && normalizedPhones.length > 0) {
+            await Promise.all(
+              normalizedPhones.map(async (phone) => {
+                const a =
+                  await this.prisma.ats_candidate_phone_numbers.findFirst({
+                    where: {
+                      id_ats_candidate: res.id_ats_candidate,
+                      value: phone.value,
+                    },
+                  });
+                if (a) {
+                  this.prisma.ats_candidate_phone_numbers.update({
+                    where: {
+                      id_ats_candidate_phone_number:
+                        a.id_ats_candidate_phone_number,
+                    },
+                    data: {
+                      ...phone,
+                      id_ats_candidate: res.id_ats_candidate,
+                    },
+                  });
+                } else {
+                  this.prisma.ats_candidate_phone_numbers.create({
+                    data: {
+                      ...phone,
+                      id_ats_candidate: res.id_ats_candidate,
+                    },
+                  });
+                }
+              }),
+            );
+          }
+          if (normalizedUrls && normalizedUrls.length > 0) {
+            await Promise.all(
+              normalizedUrls.map(async (url) => {
+                const a = await this.prisma.ats_candidate_urls.findFirst({
+                  where: {
+                    id_ats_candidate: res.id_ats_candidate,
+                    value: url.value,
+                  },
+                });
+                if (a) {
+                  this.prisma.ats_candidate_urls.update({
+                    where: {
+                      id_ats_candidate_url: a.id_ats_candidate_url,
+                    },
+                    data: {
+                      ...url,
+                      id_ats_candidate: res.id_ats_candidate,
+                    },
+                  });
+                } else {
+                  this.prisma.ats_candidate_urls.create({
+                    data: {
+                      ...url,
+                      id_ats_candidate: res.id_ats_candidate,
+                    },
+                  });
+                }
+              }),
+            );
+          }
           unique_ats_candidate_id = res.id_ats_candidate;
           candidates_results = [...candidates_results, res];
         } else {
@@ -258,10 +363,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (candidate.locations) {
             data = { ...data, locations: candidate.locations };
           }
-          if (candidate.is_private !== undefined) {
+          if (candidate.is_private) {
             data = { ...data, is_private: candidate.is_private };
           }
-          if (candidate.email_reachable !== undefined) {
+          if (candidate.email_reachable) {
             data = { ...data, email_reachable: candidate.email_reachable };
           }
           if (candidate.remote_created_at) {
@@ -284,8 +389,84 @@ export class SyncService implements OnModuleInit, IBaseSync {
             data: data,
           });
 
+          if (normalizedEmails && normalizedEmails.length > 0) {
+            await Promise.all(
+              normalizedEmails.map((email) =>
+                this.prisma.ats_candidate_email_addresses.create({
+                  data: {
+                    ...email,
+                    id_ats_candidate: newCandidate.id_ats_candidate,
+                  },
+                }),
+              ),
+            );
+          }
+
+          if (normalizedPhones && normalizedPhones.length > 0) {
+            await Promise.all(
+              normalizedPhones.map((phone) =>
+                this.prisma.ats_candidate_phone_numbers.create({
+                  data: {
+                    ...phone,
+                    id_ats_candidate: newCandidate.id_ats_candidate,
+                  },
+                }),
+              ),
+            );
+          }
+
+          if (normalizedUrls && normalizedUrls.length > 0) {
+            await Promise.all(
+              normalizedUrls.map((url) =>
+                this.prisma.ats_candidate_urls.create({
+                  data: {
+                    ...url,
+                    id_ats_candidate: newCandidate.id_ats_candidate,
+                  },
+                }),
+              ),
+            );
+          }
+
           unique_ats_candidate_id = newCandidate.id_ats_candidate;
           candidates_results = [...candidates_results, newCandidate];
+        }
+
+        // now insert the attachment of the candidate inside ats_candidate_attachments
+        if (candidate.attachments) {
+          await this.registry.getService('ats', 'attachment').saveToDb(
+            connection_id,
+            linkedUserId,
+            candidate.attachments,
+            originSource,
+            candidate.attachments.map((att: UnifiedAttachmentOutput) => {
+              return att.remote_data;
+            }),
+            {
+              candidate_id: unique_ats_candidate_id,
+            },
+          );
+        }
+
+        // insert tag inside db
+        if (candidate.tags) {
+          const tags = await this.registry.getService('ats', 'tag').saveToDb(
+            connection_id,
+            linkedUserId,
+            candidate.tags,
+            originSource,
+            candidate.tags.map((tag: UnifiedTagOutput) => {
+              return tag.remote_data;
+            }),
+          );
+          await this.prisma.ats_candidates.update({
+            where: {
+              id_ats_candidate: unique_ats_candidate_id,
+            },
+            data: {
+              tags: tags.map((tag) => tag.id_tcg_tag as string),
+            },
+          });
         }
 
         // check duplicate or existing values

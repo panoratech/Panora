@@ -33,7 +33,7 @@ export class GithubTicketMapper implements ITicketMapper {
       title: source.name,
       body: source.description,
       assignees: [],
-      labels: source.tags || [],
+      labels: (source.tags as string[]) || [],
     };
 
     // Assuming that 'assigned_to' contains user UUIDs that need to be converted to GitHub usernames

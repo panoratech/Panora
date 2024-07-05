@@ -64,7 +64,7 @@ export class JiraTicketMapper implements ITicketMapper {
     }
 
     if (source.tags) {
-      result.fields.labels = source.tags;
+      result.fields.labels = source.tags as string[];
     }
 
     // Map custom fields if applicable
