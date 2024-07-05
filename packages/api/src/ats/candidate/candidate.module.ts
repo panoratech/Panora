@@ -9,6 +9,7 @@ import { CandidateService } from './services/candidate.service';
 import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { AshbyService } from './services/ashby';
 
 @Module({
   controllers: [CandidateController],
@@ -23,6 +24,7 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     ConnectionUtils,
     IngestDataService,
     /* PROVIDERS SERVICES */
+    AshbyService,
   ],
   exports: [SyncService],
 })

@@ -9,6 +9,7 @@ import { TagService } from './services/tag.service';
 import { SyncService } from './sync/sync.service';
 import { TagController } from './tag.controller';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { AshbyService } from './services/ashby';
 
 @Module({
   controllers: [TagController],
@@ -23,6 +24,7 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     ConnectionUtils,
     IngestDataService,
     /* PROVIDERS SERVICES */
+    AshbyService,
   ],
   exports: [SyncService],
 })

@@ -9,6 +9,7 @@ import { UserService } from './services/user.service';
 import { SyncService } from './sync/sync.service';
 import { UserController } from './user.controller';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { AshbyService } from './services/ashby';
 
 @Module({
   controllers: [UserController],
@@ -23,6 +24,7 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     ConnectionUtils,
     IngestDataService,
     /* PROVIDERS SERVICES */
+    AshbyService,
   ],
   exports: [SyncService],
 })

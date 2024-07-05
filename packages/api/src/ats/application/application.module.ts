@@ -9,6 +9,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { AshbyService } from './services/ashby';
 
 @Module({
   controllers: [ApplicationController],
@@ -23,6 +24,7 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     ConnectionUtils,
     IngestDataService,
     /* PROVIDERS SERVICES */
+    AshbyService,
   ],
   exports: [SyncService],
 })

@@ -9,6 +9,7 @@ import { DepartmentService } from './services/department.service';
 import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { AshbyService } from './services/ashby';
 
 @Module({
   controllers: [DepartmentController],
@@ -23,6 +24,7 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     ConnectionUtils,
     IngestDataService,
     /* PROVIDERS SERVICES */
+    AshbyService,
   ],
   exports: [SyncService],
 })
