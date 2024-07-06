@@ -21,6 +21,7 @@ services:
     volumes:
       - ./pg_data:/var/lib/postgresql/data
       - ./packages/api/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./packages/api/scripts/automatic_timestamps.sql:/docker-entrypoint-initdb.d/automatic_timestamps.sql
       - ./packages/api/scripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
     networks:
       - backend

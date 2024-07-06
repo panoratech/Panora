@@ -109,6 +109,7 @@ CREATE TABLE tcg_users
  created_at      timestamp NULL,
  modified_at     timestamp NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_users PRIMARY KEY ( id_tcg_user )
 );
 
@@ -132,6 +133,7 @@ CREATE TABLE tcg_teams
  created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_teams PRIMARY KEY ( id_tcg_team )
 );
 
@@ -156,6 +158,7 @@ CREATE TABLE tcg_collections
  created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
  id_linked_user    uuid NOT NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_tcg_collections PRIMARY KEY ( id_tcg_collection )
 );
 
@@ -178,6 +181,7 @@ CREATE TABLE tcg_accounts
  created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_account PRIMARY KEY ( id_tcg_account )
 );
 
@@ -240,13 +244,14 @@ COMMENT ON COLUMN managed_webhooks.endpoint IS 'UUID that will be used in the fi
 
 CREATE TABLE fs_users
 (
- id_fs_user  uuid NOT NULL,
- name        text NULL,
- email       text NULL,
- is_me       boolean NOT NULL,
- remote_id   text NULL,
- created_at  timestamp NOT NULL,
- modified_at timestamp NOT NULL,
+ id_fs_user    uuid NOT NULL,
+ name          text NULL,
+ email         text NULL,
+ is_me         boolean NOT NULL,
+ remote_id     text NULL,
+ created_at    timestamp NOT NULL,
+ modified_at   timestamp NOT NULL,
+ id_connection uuid NOT NULL,
  CONSTRAINT PK_fs_users PRIMARY KEY ( id_fs_user )
 );
 
@@ -264,21 +269,18 @@ CREATE TABLE fs_shared_links
  id_fs_shared_link  uuid NOT NULL,
  url                text NULL,
  download_url       text NULL,
- id_fs_folder       uuid NULL,
- id_fs_file         uuid NULL,
  "scope"            text NULL,
  password_protected boolean NOT NULL,
  password           text NULL,
  expires_at         timestamp with time zone NULL,
  created_at         timestamp with time zone NOT NULL,
  modified_at        timestamp with time zone NOT NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_fs_shared_links PRIMARY KEY ( id_fs_shared_link )
 );
 
 
 
-COMMENT ON COLUMN fs_shared_links.id_fs_folder IS 'if the downloadable ressource is a folder';
-COMMENT ON COLUMN fs_shared_links.id_fs_file IS 'if the downloadable ressource is a file';
 COMMENT ON COLUMN fs_shared_links."scope" IS 'can be public, or company depending on the link';
 COMMENT ON COLUMN fs_shared_links.password IS 'encrypted password';
 
@@ -294,10 +296,11 @@ CREATE TABLE fs_permissions
  remote_id        text NULL,
  "user"           uuid NULL,
  "group"          uuid NULL,
- type             text[] NULL,
+ type             text NULL,
  roles            text[] NULL,
  created_at       timestamp NOT NULL,
  modified_at      timestamp NOT NULL,
+ id_connection    uuid NOT NULL,
  CONSTRAINT PK_fs_permissions PRIMARY KEY ( id_fs_permission )
 );
 
@@ -315,11 +318,12 @@ CREATE TABLE fs_groups
 (
  id_fs_group        uuid NOT NULL,
  name               text NULL,
- users              jsonb NULL,
+ users              text[] NULL,
  remote_id          text NULL,
  remote_was_deleted boolean NOT NULL,
  created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_fs_groups PRIMARY KEY ( id_fs_group )
 );
 
@@ -342,6 +346,7 @@ CREATE TABLE fs_drives
  remote_id         text NULL,
  created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_fs_drives PRIMARY KEY ( id_fs_drive )
 );
 
@@ -432,6 +437,7 @@ CREATE TABLE crm_users
  id_linked_user  uuid NULL,
  remote_id       text NULL,
  remote_platform text NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_crm_users PRIMARY KEY ( id_crm_user )
 );
 
@@ -453,6 +459,7 @@ CREATE TABLE crm_deals_stages
  id_linked_user     uuid NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_crm_deal_stages PRIMARY KEY ( id_crm_deals_stage )
 );
 
@@ -468,17 +475,17 @@ CREATE TABLE crm_deals_stages
 CREATE TABLE connector_sets
 (
  id_connector_set uuid NOT NULL,
- crm_hubspot      boolean,
- crm_zoho         boolean,
- crm_attio        boolean,
- crm_pipedrive    boolean,
- tcg_zendesk      boolean,
- tcg_jira         boolean,
- tcg_gorgias      boolean,
- tcg_gitlab       boolean,
- tcg_front        boolean,
- crm_zendesk      boolean,
- crm_close        boolean,
+ crm_hubspot      boolean NULL,
+ crm_zoho         boolean NULL,
+ crm_attio        boolean NULL,
+ crm_pipedrive    boolean NULL,
+ tcg_zendesk      boolean NULL,
+ tcg_jira         boolean NULL,
+ tcg_gorgias      boolean NULL,
+ tcg_gitlab       boolean NULL,
+ tcg_front        boolean NULL,
+ crm_zendesk      boolean NULL,
+ crm_close        boolean NULL,
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
@@ -531,6 +538,21 @@ CREATE TABLE ats_users
 
 
 COMMENT ON COLUMN ats_users.access_role IS 'The user''s role. Possible values include: SUPER_ADMIN, ADMIN, TEAM_MEMBER, LIMITED_TEAM_MEMBER, INTERVIEWER. In cases where there is no clear mapping, the original value passed through will be returned.';
+
+
+
+
+
+-- ************************************** ats_screening_questions
+
+CREATE TABLE ats_screening_questions
+(
+ id_ats_screening_question uuid NOT NULL,
+ CONSTRAINT PK_1 PRIMARY KEY ( id_ats_screening_question )
+);
+
+
+
 
 
 
@@ -649,6 +671,7 @@ CREATE TABLE ats_candidates
  is_private          boolean NULL,
  email_reachable     boolean NULL,
  locations           text NULL,
+ tags                text[] NULL,
  CONSTRAINT PK_ats_candidates PRIMARY KEY ( id_ats_candidate )
 );
 
@@ -659,6 +682,26 @@ COMMENT ON COLUMN ats_candidates.last_name IS 'candidate''s last name.';
 COMMENT ON COLUMN ats_candidates.company IS 'The candidate''s current company';
 COMMENT ON COLUMN ats_candidates.title IS 'The candidate''s current title';
 COMMENT ON COLUMN ats_candidates.email_reachable IS 'can the candidate be emailed';
+COMMENT ON COLUMN ats_candidates.tags IS 'array of id_ats_candidate_tag';
+
+
+
+
+
+-- ************************************** ats_candidate_tags
+
+CREATE TABLE ats_candidate_tags
+(
+ id_ats_candidate_tag uuid NOT NULL,
+ name                 text NULL,
+ remote_id            text NULL,
+ created_at           timestamp NOT NULL,
+ modified_at          timestamp NOT NULL,
+ CONSTRAINT PK_ats_candidate_tags PRIMARY KEY ( id_ats_candidate_tag )
+);
+
+
+
 
 
 
@@ -687,6 +730,7 @@ CREATE TABLE tcg_tickets
  creator_type    text NULL,
  id_tcg_user     uuid NULL,
  id_linked_user  uuid NOT NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_tickets PRIMARY KEY ( id_tcg_ticket )
 );
 
@@ -724,6 +768,7 @@ CREATE TABLE tcg_contacts
  modified_at     timestamp NULL,
  id_tcg_account  uuid NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_contact PRIMARY KEY ( id_tcg_contact ),
  CONSTRAINT FK_49 FOREIGN KEY ( id_tcg_account ) REFERENCES tcg_accounts ( id_tcg_account )
 );
@@ -763,8 +808,8 @@ CREATE INDEX FK_connectors_sets ON projects
 
 
 
-COMMENT ON COLUMN projects.sync_mode IS 'can be realtime or periodic_pull';
-COMMENT ON COLUMN projects.pull_frequency IS 'frequency in seconds for pulls
+COMMENT ON COLUMN projects.sync_mode IS 'Can be realtime or periodic_pull';
+COMMENT ON COLUMN projects.pull_frequency IS 'Frequency in seconds for pulls
 
 ex 3600 for one hour';
 
@@ -776,18 +821,25 @@ ex 3600 for one hour';
 
 CREATE TABLE fs_folders
 (
- id_fs_folder     uuid NOT NULL,
- folder_url       text NULL,
- "size"           bigint NULL,
- name             text NULL,
- description      text NULL,
- parent_folder    uuid NULL,
- remote_id        text NULL,
- created_at       timestamp NOT NULL,
- modified_at      timestamp NOT NULL,
- id_fs_drive      uuid NULL,
- id_fs_permission uuid NULL,
+ id_fs_folder      uuid NOT NULL,
+ folder_url        text NULL,
+ "size"            bigint NULL,
+ name              text NULL,
+ description       text NULL,
+ parent_folder     uuid NULL,
+ remote_id         text NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ id_fs_drive       uuid NULL,
+ id_connection     uuid NOT NULL,
+ id_fs_permission  uuid NULL,
+ id_fs_shared_link uuid NULL,
  CONSTRAINT PK_fs_folders PRIMARY KEY ( id_fs_folder )
+);
+
+CREATE INDEX FK_folder_shared_links ON fs_folders
+(
+ id_fs_shared_link
 );
 
 CREATE INDEX FK_fs_folder_driveID ON fs_folders
@@ -812,14 +864,15 @@ CREATE INDEX FK_fs_folder_permissionID ON fs_folders
 CREATE TABLE crm_contacts
 (
  id_crm_contact  uuid NOT NULL,
- first_name      text NOT NULL,
- last_name       text NOT NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
- remote_id       text NOT NULL,
- remote_platform text NOT NULL,
+ first_name      text NULL,
+ last_name       text NULL,
+ created_at      timestamp NULL,
+ modified_at     timestamp NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
  id_crm_user     uuid NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
  CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
@@ -851,6 +904,7 @@ CREATE TABLE crm_companies
  remote_platform     text NULL,
  id_crm_user         uuid NULL,
  id_linked_user      uuid NULL,
+ id_connection       uuid NOT NULL,
  CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
  CONSTRAINT FK_24 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
@@ -999,31 +1053,6 @@ CREATE INDEX FK_candidate_url_ID ON ats_candidate_urls
 
 
 
--- ************************************** ats_candidate_tags
-
-CREATE TABLE ats_candidate_tags
-(
- id_ats_candidate_tag uuid NOT NULL,
- name                 text NULL,
- id_ats_candidate     uuid NULL,
- remote_id            text NULL,
- created_at           timestamp NOT NULL,
- modified_at          timestamp NOT NULL,
- CONSTRAINT PK_ats_candidate_tags PRIMARY KEY ( id_ats_candidate_tag )
-);
-
-CREATE INDEX FK_candidates_candidatestags ON ats_candidate_tags
-(
- id_ats_candidate
-);
-
-
-
-
-
-
-
-
 -- ************************************** ats_candidate_phone_numbers
 
 CREATE TABLE ats_candidate_phone_numbers
@@ -1111,17 +1140,17 @@ CREATE TABLE ats_applications
 (
  id_ats_application uuid NOT NULL,
  remote_id          text NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
- id_ats_candidate   uuid NULL,
- id_ats_job         uuid NULL,
  applied_at         timestamp NULL,
  rejected_at        timestamp NULL,
- offers             text[] NOT NULL,
+ offers             text[] NULL,
  "source"           text NULL,
  credited_to        uuid NULL,
  current_stage      uuid NULL,
  reject_reason      text NULL,
+ id_ats_candidate   uuid NULL,
+ id_ats_job         uuid NULL,
+ created_at         timestamp NOT NULL,
+ modified_at        timestamp NOT NULL,
  CONSTRAINT PK_ats_applications PRIMARY KEY ( id_ats_application )
 );
 
@@ -1218,10 +1247,11 @@ CREATE TABLE tcg_tags
  name            text NULL,
  remote_id       text NULL,
  remote_platform text NULL,
+ id_tcg_ticket   uuid NULL,
  created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
- id_tcg_ticket   uuid NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_tags PRIMARY KEY ( id_tcg_tag ),
  CONSTRAINT FK_48 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
 );
@@ -1256,6 +1286,7 @@ CREATE TABLE tcg_comments
  id_tcg_contact    uuid NULL,
  id_tcg_user       uuid NULL,
  id_linked_user    uuid NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_tcg_comments PRIMARY KEY ( id_tcg_comment ),
  CONSTRAINT FK_41 FOREIGN KEY ( id_tcg_contact ) REFERENCES tcg_contacts ( id_tcg_contact ),
  CONSTRAINT FK_40_1 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket ),
@@ -1315,18 +1346,25 @@ COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME c
 
 CREATE TABLE fs_files
 (
- id_fs_file       uuid NOT NULL,
- name             text NULL,
- type             text NULL,
- file_url         text NULL,
- mime_type        text NULL,
- "size"           bigint NULL,
- remote_id        text NULL,
- id_fs_folder     uuid NULL,
- created_at       timestamp NOT NULL,
- modified_at      timestamp NOT NULL,
- id_fs_permission uuid NULL,
+ id_fs_file        uuid NOT NULL,
+ name              text NULL,
+ type              text NULL,
+ file_url          text NULL,
+ mime_type         text NULL,
+ "size"            bigint NULL,
+ remote_id         text NULL,
+ id_fs_permission  uuid NULL,
+ id_fs_folder      uuid NULL,
+ id_fs_shared_link uuid NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_fs_files PRIMARY KEY ( id_fs_file )
+);
+
+CREATE INDEX FK_file_shared_links ON fs_files
+(
+ id_fs_shared_link
 );
 
 CREATE INDEX FK_fs_file_FolderID ON fs_files
@@ -1351,13 +1389,14 @@ CREATE INDEX FK_fs_file_permissionID ON fs_files
 CREATE TABLE crm_phone_numbers
 (
  id_crm_phone_number uuid NOT NULL,
- phone_number        text NOT NULL,
- phone_type          text NOT NULL,
- owner_type          text NOT NULL,
+ phone_number        text NULL,
+ phone_type          text NULL,
+ owner_type          text NULL,
  created_at          timestamp NOT NULL,
  modified_at         timestamp NOT NULL,
  id_crm_company      uuid NULL,
  id_crm_contact      uuid NULL,
+ id_connection       uuid NOT NULL,
  CONSTRAINT PK_crm_contacts_phone_numbers PRIMARY KEY ( id_crm_phone_number ),
  CONSTRAINT FK_phonenumber_crm_contactID FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_17 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1399,6 +1438,7 @@ CREATE TABLE crm_engagements
  remote_platform   text NULL,
  id_crm_company    uuid NULL,
  id_crm_user       uuid NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_crm_engagement PRIMARY KEY ( id_crm_engagement ),
  CONSTRAINT FK_crm_engagement_crm_user FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1436,6 +1476,7 @@ CREATE TABLE crm_email_addresses
  modified_at        timestamp NOT NULL,
  id_crm_company     uuid NULL,
  id_crm_contact     uuid NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_crm_contact_email_addresses PRIMARY KEY ( id_crm_email ),
  CONSTRAINT FK_3 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_16 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1475,6 +1516,7 @@ CREATE TABLE crm_deals
  id_crm_deals_stage uuid NULL,
  id_linked_user     uuid NULL,
  id_crm_company     uuid NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_crm_deal PRIMARY KEY ( id_crm_deal ),
  CONSTRAINT FK_22 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_21 FOREIGN KEY ( id_crm_deals_stage ) REFERENCES crm_deals_stages ( id_crm_deals_stage ),
@@ -1516,11 +1558,12 @@ CREATE TABLE crm_addresses
  postal_code    text NULL,
  country        text NULL,
  address_type   text NULL,
+ id_crm_company uuid NULL,
+ id_crm_contact uuid NULL,
+ id_connection  uuid NOT NULL,
  created_at     timestamp NOT NULL,
  modified_at    timestamp NOT NULL,
  owner_type     text NOT NULL,
- id_crm_company uuid NULL,
- id_crm_contact uuid NULL,
  CONSTRAINT PK_crm_addresses PRIMARY KEY ( id_crm_address ),
  CONSTRAINT FK_14 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_15 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1585,8 +1628,6 @@ CREATE TABLE ats_interviews
 (
  id_ats_interview           uuid NOT NULL,
  status                     text NULL,
- id_ats_application         uuid NULL,
- id_ats_job_interview_stage uuid NULL,
  organized_by               uuid NULL,
  interviewers               text[] NULL,
  location                   text NULL,
@@ -1595,6 +1636,8 @@ CREATE TABLE ats_interviews
  remote_created_at          timestamp NULL,
  remote_updated_at          timestamp NULL,
  remote_id                  text NULL,
+ id_ats_application         uuid NULL,
+ id_ats_job_interview_stage uuid NULL,
  created_at                 timestamp NOT NULL,
  modified_at                timestamp NOT NULL,
  CONSTRAINT PK_ats_interviews PRIMARY KEY ( id_ats_interview )
@@ -1613,9 +1656,9 @@ CREATE INDEX FK_id_ats_job_interview_stageID ON ats_interviews
 
 
 COMMENT ON COLUMN ats_interviews.status IS 'The interview''s status. Possible values include: SCHEDULED, AWAITING_FEEDBACK, COMPLETE. In cases where there is no clear mapping, the original value passed through will be returned.';
-COMMENT ON COLUMN ats_interviews.id_ats_job_interview_stage IS 'The stage of the interview.';
 COMMENT ON COLUMN ats_interviews.organized_by IS 'The user organizing the interview. Data is a id_ats_user.';
 COMMENT ON COLUMN ats_interviews.interviewers IS 'Array of RemoteUser IDs.';
+COMMENT ON COLUMN ats_interviews.id_ats_job_interview_stage IS 'The stage of the interview.';
 
 
 
@@ -1668,6 +1711,7 @@ CREATE TABLE tcg_attachments
  id_linked_user    uuid NULL,
  id_tcg_ticket     uuid NULL,
  id_tcg_comment    uuid NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_tcg_attachments PRIMARY KEY ( id_tcg_attachment ),
  CONSTRAINT FK_51 FOREIGN KEY ( id_tcg_comment ) REFERENCES tcg_comments ( id_tcg_comment ),
  CONSTRAINT FK_50 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
@@ -1766,6 +1810,7 @@ CREATE TABLE crm_tasks
  id_linked_user  uuid NULL,
  remote_id       text NULL,
  remote_platform text NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_crm_task PRIMARY KEY ( id_crm_task ),
  CONSTRAINT FK_26 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_25 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
@@ -1809,6 +1854,7 @@ CREATE TABLE crm_notes
  remote_id       text NULL,
  remote_platform text NULL,
  id_crm_user     uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_crm_notes PRIMARY KEY ( id_crm_note ),
  CONSTRAINT FK_19 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_18 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
@@ -1849,6 +1895,7 @@ CREATE TABLE crm_engagement_contacts
  id_crm_engagement_contact uuid NOT NULL,
  id_crm_contact            uuid NULL,
  id_crm_engagement         uuid NOT NULL,
+ id_connection             uuid NOT NULL,
  CONSTRAINT PK_crm_engagement_contact PRIMARY KEY ( id_crm_engagement_contact ),
  CONSTRAINT FK_30 FOREIGN KEY ( id_crm_engagement ) REFERENCES crm_engagements ( id_crm_engagement )
 );
