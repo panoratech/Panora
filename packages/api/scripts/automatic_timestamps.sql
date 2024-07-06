@@ -12,21 +12,21 @@ $$ LANGUAGE plpgsql;
 DO $$
 DECLARE
     r RECORD;
-    table_name TEXT;
+    tname TEXT;
 BEGIN
     FOR r IN (
-        SELECT table_name
+        SELECT table_name AS tname
         FROM information_schema.columns
         WHERE column_name = 'modified_at'
     )
     LOOP
-        table_name := r.table_name;
+        tname := r.tname;
         
         EXECUTE format('
             CREATE TRIGGER set_timestamp_%I
             BEFORE INSERT OR UPDATE ON %I
             FOR EACH ROW
             EXECUTE FUNCTION update_timestamp();
-        ', table_name, table_name);
+        ', tname, tname);
     END LOOP;
 END $$;
