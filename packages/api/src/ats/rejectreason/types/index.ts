@@ -5,17 +5,15 @@ import {
 } from './model.unified';
 import { OriginalRejectReasonOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IRejectReasonService {
+export interface IRejectReasonService extends IBaseObjectService {
   addRejectReason(
     rejectreasonData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalRejectReasonOutput>>;
 
-  syncRejectReasons(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalRejectReasonOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalRejectReasonOutput[]>>;
 }
 
 export interface IRejectReasonMapper {

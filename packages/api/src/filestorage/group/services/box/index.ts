@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { BoxGroupInput, BoxGroupOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class BoxService implements IGroupService {
@@ -24,11 +25,9 @@ export class BoxService implements IGroupService {
     this.registry.registerService('box', this);
   }
 
-  async syncGroups(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<BoxGroupOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<BoxGroupOutput[]>> {
     try {
+      const { linkedUserId } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

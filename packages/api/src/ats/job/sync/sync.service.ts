@@ -98,52 +98,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncJobsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} jobs for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping jobs syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.job',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IJobService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalJobOutput[]> = await service.syncJobs(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalJobOutput[] = resp.data;
-
-      await this.ingestService.ingestData<UnifiedJobOutput, OriginalJobOutput>(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'job',
-        customFieldMappings,
-      );
+      await this.ingestService.syncForLinkedUser<
+        UnifiedJobOutput,
+        OriginalJobOutput,
+        IJobService
+      >(integrationId, linkedUserId, 'ats', 'job', service, []);
     } catch (error) {
       throw error;
     }
@@ -157,7 +120,55 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsJob[]> {
     try {
-      let jobs_results: AtsJob[] = [];
+      const jobs_results: AtsJob[] = [];
+
+      const updateOrCreateJob = async (
+        job: UnifiedJobOutput,
+        originId: string,
+      ) => {
+        const existingJob = await this.prisma.ats_jobs.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          name: job.name ?? null,
+          description: job.description ?? null,
+          code: job.code ?? null,
+          status: job.status ?? null,
+          type: job.type ?? null,
+          confidential: job.confidential ?? null,
+          departments: job.departments ?? null,
+          offices: job.offices ?? null,
+          managers: job.managers ?? null,
+          recruiters: job.recruiters ?? null,
+          remote_created_at: job.remote_created_at ?? null,
+          remote_updated_at: job.remote_updated_at ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingJob) {
+          return await this.prisma.ats_jobs.update({
+            where: {
+              id_ats_job: existingJob.id_ats_job,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.ats_jobs.create({
+            data: {
+              ...baseData,
+              id_ats_job: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < jobs.length; i++) {
         const job = jobs[i];
         const originId = job.remote_id;
@@ -166,178 +177,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingJob = await this.prisma.ats_jobs.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateJob(job, originId);
+        const job_id = res.id_ats_job;
+        jobs_results.push(res);
 
-        let unique_ats_job_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          job.field_mappings,
+          job_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingJob) {
-          // Update the existing job
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (job.name) {
-            data = { ...data, name: job.name };
-          }
-          if (job.description) {
-            data = { ...data, description: job.description };
-          }
-          if (job.code) {
-            data = { ...data, code: job.code };
-          }
-          if (job.status) {
-            data = { ...data, status: job.status };
-          }
-          if (job.type) {
-            data = { ...data, type: job.type };
-          }
-          if (job.confidential) {
-            data = { ...data, confidential: job.confidential };
-          }
-          if (job.departments) {
-            data = { ...data, departments: job.departments };
-          }
-          if (job.offices) {
-            data = { ...data, offices: job.offices };
-          }
-          if (job.managers) {
-            data = { ...data, managers: job.managers };
-          }
-          if (job.recruiters) {
-            data = { ...data, recruiters: job.recruiters };
-          }
-          if (job.remote_created_at) {
-            data = { ...data, remote_created_at: job.remote_created_at };
-          }
-          if (job.remote_updated_at) {
-            data = { ...data, remote_updated_at: job.remote_updated_at };
-          }
-          const res = await this.prisma.ats_jobs.update({
-            where: {
-              id_ats_job: existingJob.id_ats_job,
-            },
-            data: data,
-          });
-          unique_ats_job_id = res.id_ats_job;
-          jobs_results = [...jobs_results, res];
-        } else {
-          // Create a new job
-          this.logger.log('Job does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_job: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (job.name) {
-            data = { ...data, name: job.name };
-          }
-          if (job.description) {
-            data = { ...data, description: job.description };
-          }
-          if (job.code) {
-            data = { ...data, code: job.code };
-          }
-          if (job.status) {
-            data = { ...data, status: job.status };
-          }
-          if (job.type) {
-            data = { ...data, type: job.type };
-          }
-          if (job.confidential !== undefined) {
-            data = { ...data, confidential: job.confidential };
-          }
-          if (job.departments) {
-            data = { ...data, departments: job.departments };
-          }
-          if (job.offices) {
-            data = { ...data, offices: job.offices };
-          }
-          if (job.managers) {
-            data = { ...data, managers: job.managers };
-          }
-          if (job.recruiters) {
-            data = { ...data, recruiters: job.recruiters };
-          }
-          if (job.remote_created_at) {
-            data = { ...data, remote_created_at: job.remote_created_at };
-          }
-          if (job.remote_updated_at) {
-            data = { ...data, remote_updated_at: job.remote_updated_at };
-          }
-
-          const newJob = await this.prisma.ats_jobs.create({
-            data: data,
-          });
-
-          unique_ats_job_id = newJob.id_ats_job;
-          jobs_results = [...jobs_results, newJob];
-        }
-
-        // check duplicate or existing values
-        if (job.field_mappings && job.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_job_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(job.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_job_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_job_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(job_id, remote_data[i]);
       }
+
       return jobs_results;
     } catch (error) {
       throw error;

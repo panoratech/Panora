@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IUserService } from '@ticketing/user/types';
 import { JiraUserOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class JiraService implements IUserService {
@@ -24,11 +25,10 @@ export class JiraService implements IUserService {
     this.registry.registerService('jira', this);
   }
 
-  async syncUsers(
-    linkedUserId: string,
-    remote_user_id?: string,
-  ): Promise<ApiResponse<JiraUserOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<JiraUserOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

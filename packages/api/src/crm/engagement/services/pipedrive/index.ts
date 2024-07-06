@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { PipedriveEngagementInput, PipedriveEngagementOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class PipedriveService implements IEngagementService {
   constructor(
@@ -54,12 +55,13 @@ export class PipedriveService implements IEngagementService {
     }
   }
 
-  async syncEngagements(
-    linkedUserId: string,
-    engagement_type: string,
+  async sync(
+    data: SyncParam,
   ): Promise<ApiResponse<PipedriveEngagementOutput[]>> {
     try {
-      switch (engagement_type) {
+      const { linkedUserId, engagement_type } = data;
+
+      switch (engagement_type as string) {
         case 'CALL':
           return this.syncCalls(linkedUserId);
         case 'MEETING':

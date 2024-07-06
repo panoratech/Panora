@@ -46,12 +46,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
     },
   ): Promise<FileStorageSharedLink[]> {
     try {
-      let shared_links_results: FileStorageSharedLink[] = [];
-      for (let i = 0; i < sharedLinks.length; i++) {
-        const sharedLink = sharedLinks[i];
-        const originId = sharedLink.remote_id;
+      const shared_links_results: FileStorageSharedLink[] = [];
 
+      const updateOrCreateSharedLink = async (
+        sharedLink: UnifiedSharedLinkOutput,
+        originId: string,
+      ) => {
         let existingSl;
+
         if (!originId) {
           existingSl = await this.prisma.fs_shared_links.findFirst({
             where: {
@@ -68,134 +70,56 @@ export class SyncService implements OnModuleInit, IBaseSync {
           });
         }
 
-        let unique_fs_shared_link_id: string;
+        const baseData: any = {
+          url: sharedLink.url ?? null,
+          download_url: sharedLink.download_url ?? null,
+          scope: sharedLink.scope ?? null,
+          password_protected: sharedLink.password_protected ?? null,
+          password: sharedLink.password ?? null,
+          modified_at: new Date(),
+        };
+
         if (existingSl) {
-          // Update the existing shared link
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (sharedLink.url) {
-            data = { ...data, url: sharedLink.url };
-          }
-          if (sharedLink.download_url) {
-            data = { ...data, download_url: sharedLink.download_url };
-          }
-          if (sharedLink.scope) {
-            data = { ...data, scope: sharedLink.scope };
-          }
-          if (sharedLink.password_protected) {
-            data = {
-              ...data,
-              password_protected: sharedLink.password_protected,
-            };
-          }
-          if (sharedLink.password) {
-            data = { ...data, password: sharedLink.password };
-          }
-          const res = await this.prisma.fs_shared_links.update({
+          return await this.prisma.fs_shared_links.update({
             where: {
               id_fs_shared_link: existingSl.id_fs_shared_link,
             },
-            data: data,
+            data: baseData,
           });
-          unique_fs_shared_link_id = res.id_fs_shared_link;
-          shared_links_results = [...shared_links_results, res];
         } else {
-          // Create a new shared link
-          this.logger.log('Shared link does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_fs_shared_link: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            id_connection: connection_id,
-          };
-
-          if (sharedLink.url) {
-            data = { ...data, url: sharedLink.url };
-          }
-          if (sharedLink.download_url) {
-            data = { ...data, download_url: sharedLink.download_url };
-          }
-          if (sharedLink.scope) {
-            data = { ...data, scope: sharedLink.scope };
-          }
-          if (sharedLink.password_protected) {
-            data = {
-              ...data,
-              password_protected: sharedLink.password_protected,
-            };
-          }
-          if (sharedLink.password) {
-            data = { ...data, password: sharedLink.password };
-          }
-
-          const newSharedLink = await this.prisma.fs_shared_links.create({
-            data: data,
-          });
-
-          unique_fs_shared_link_id = newSharedLink.id_fs_shared_link;
-          shared_links_results = [...shared_links_results, newSharedLink];
-        }
-
-        // check duplicate or existing values
-        if (sharedLink.field_mappings && sharedLink.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
+          return await this.prisma.fs_shared_links.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_fs_shared_link_id,
+              ...baseData,
+              id_fs_shared_link: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
             },
           });
-
-          for (const [slug, value] of Object.entries(
-            sharedLink.field_mappings,
-          )) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
         }
+      };
 
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_fs_shared_link_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_fs_shared_link_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+      for (let i = 0; i < sharedLinks.length; i++) {
+        const sharedLink = sharedLinks[i];
+        const originId = sharedLink.remote_id;
+
+        const res = await updateOrCreateSharedLink(sharedLink, originId);
+        const shared_link_id = res.id_fs_shared_link;
+        shared_links_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          sharedLink.field_mappings,
+          shared_link_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          shared_link_id,
+          remote_data[i],
+        );
       }
       return shared_links_results;
     } catch (error) {

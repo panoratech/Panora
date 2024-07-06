@@ -13,6 +13,7 @@ import {
   HubspotCompanyInput,
   HubspotCompanyOutput,
 } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class HubspotService implements ICompanyService {
@@ -70,11 +71,9 @@ export class HubspotService implements ICompanyService {
     }
   }
 
-  async syncCompanies(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotCompanyOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotCompanyOutput[]>> {
     try {
+      const { linkedUserId, custom_properties } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

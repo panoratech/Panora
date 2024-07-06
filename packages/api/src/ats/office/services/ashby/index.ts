@@ -11,6 +11,7 @@ import { ServiceRegistry } from '../registry.service';
 import { AshbyOfficeInput, AshbyOfficeOutput } from './types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { OriginalOfficeOutput } from '@@core/utils/types/original/original.ats';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class AshbyService implements IOfficeService {
@@ -32,11 +33,10 @@ export class AshbyService implements IOfficeService {
     throw new Error('Method not implemented.');
   }
 
-  async syncOffices(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<AshbyOfficeOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<AshbyOfficeOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

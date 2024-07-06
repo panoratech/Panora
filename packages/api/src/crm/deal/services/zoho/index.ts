@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { ZohoDealInput, ZohoDealOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class ZohoService implements IDealService {
   constructor(
@@ -64,10 +65,10 @@ export class ZohoService implements IDealService {
     }
   }
 
-  async syncDeals(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoDealOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoDealOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

@@ -104,53 +104,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} departments for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping departments syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.department',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IDepartmentService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalDepartmentOutput[]> =
-        await service.syncDepartments(linkedUserId, remoteProperties);
 
-      const sourceObject: OriginalDepartmentOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedDepartmentOutput,
-        OriginalDepartmentOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'department',
-        customFieldMappings,
-      );
+        OriginalDepartmentOutput,
+        IDepartmentService
+      >(integrationId, linkedUserId, 'ats', 'department', service, []);
     } catch (error) {
       throw error;
     }
@@ -164,7 +126,44 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsDepartment[]> {
     try {
-      let departments_results: AtsDepartment[] = [];
+      const departments_results: AtsDepartment[] = [];
+
+      const updateOrCreateDepartment = async (
+        department: UnifiedDepartmentOutput,
+        originId: string,
+      ) => {
+        const existingDepartment = await this.prisma.ats_departments.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          name: department.name ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingDepartment) {
+          return await this.prisma.ats_departments.update({
+            where: {
+              id_ats_department: existingDepartment.id_ats_department,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.ats_departments.create({
+            data: {
+              ...baseData,
+              id_ats_department: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < departments.length; i++) {
         const department = departments[i];
         const originId = department.remote_id;
@@ -173,114 +172,25 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingDepartment = await this.prisma.ats_departments.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateDepartment(department, originId);
+        const department_id = res.id_ats_department;
+        departments_results.push(res);
 
-        let unique_ats_department_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          department.field_mappings,
+          department_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingDepartment) {
-          // Update the existing department
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (department.name) {
-            data = { ...data, name: department.name };
-          }
-          const res = await this.prisma.ats_departments.update({
-            where: {
-              id_ats_department: existingDepartment.id_ats_department,
-            },
-            data: data,
-          });
-          unique_ats_department_id = res.id_ats_department;
-          departments_results = [...departments_results, res];
-        } else {
-          // Create a new department
-          this.logger.log('Department does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_department: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (department.name) {
-            data = { ...data, name: department.name };
-          }
-
-          const newDepartment = await this.prisma.ats_departments.create({
-            data: data,
-          });
-
-          unique_ats_department_id = newDepartment.id_ats_department;
-          departments_results = [...departments_results, newDepartment];
-        }
-
-        // check duplicate or existing values
-        if (department.field_mappings && department.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_department_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(
-            department.field_mappings,
-          )) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_department_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_department_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          department_id,
+          remote_data[i],
+        );
       }
+
       return departments_results;
     } catch (error) {
       throw error;

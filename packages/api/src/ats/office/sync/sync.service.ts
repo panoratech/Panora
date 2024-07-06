@@ -98,53 +98,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncOfficesForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} offices for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping offices syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.office',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IOfficeService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalOfficeOutput[]> =
-        await service.syncOffices(linkedUserId, remoteProperties);
 
-      const sourceObject: OriginalOfficeOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedOfficeOutput,
-        OriginalOfficeOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'office',
-        customFieldMappings,
-      );
+        OriginalOfficeOutput,
+        IOfficeService
+      >(integrationId, linkedUserId, 'ats', 'office', service, []);
     } catch (error) {
       throw error;
     }
@@ -158,7 +120,45 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsOffice[]> {
     try {
-      let offices_results: AtsOffice[] = [];
+      const offices_results: AtsOffice[] = [];
+
+      const updateOrCreateOffice = async (
+        office: UnifiedOfficeOutput,
+        originId: string,
+      ) => {
+        const existingOffice = await this.prisma.ats_offices.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          name: office.name ?? null,
+          location: office.location ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingOffice) {
+          return await this.prisma.ats_offices.update({
+            where: {
+              id_ats_office: existingOffice.id_ats_office,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.ats_offices.create({
+            data: {
+              ...baseData,
+              id_ats_office: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < offices.length; i++) {
         const office = offices[i];
         const originId = office.remote_id;
@@ -167,118 +167,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingOffice = await this.prisma.ats_offices.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateOffice(office, originId);
+        const office_id = res.id_ats_office;
+        offices_results.push(res);
 
-        let unique_ats_office_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          office.field_mappings,
+          office_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingOffice) {
-          // Update the existing office
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (office.name) {
-            data = { ...data, name: office.name };
-          }
-          if (office.location) {
-            data = { ...data, location: office.location };
-          }
-          const res = await this.prisma.ats_offices.update({
-            where: {
-              id_ats_office: existingOffice.id_ats_office,
-            },
-            data: data,
-          });
-          unique_ats_office_id = res.id_ats_office;
-          offices_results = [...offices_results, res];
-        } else {
-          // Create a new office
-          this.logger.log('Office does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_office: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (office.name) {
-            data = { ...data, name: office.name };
-          }
-          if (office.location) {
-            data = { ...data, location: office.location };
-          }
-
-          const newOffice = await this.prisma.ats_offices.create({
-            data: data,
-          });
-
-          unique_ats_office_id = newOffice.id_ats_office;
-          offices_results = [...offices_results, newOffice];
-        }
-
-        // check duplicate or existing values
-        if (office.field_mappings && office.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_office_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(office.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_office_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_office_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(office_id, remote_data[i]);
       }
+
       return offices_results;
     } catch (error) {
       throw error;

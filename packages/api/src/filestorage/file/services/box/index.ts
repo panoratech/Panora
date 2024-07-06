@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { BoxFileInput, BoxFileOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class BoxService implements IFileService {
@@ -24,12 +25,9 @@ export class BoxService implements IFileService {
     this.registry.registerService('box', this);
   }
 
-  async syncFiles(
-    linkedUserId: string,
-    folder_id: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<BoxFileOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<BoxFileOutput[]>> {
     try {
+      const { linkedUserId, folder_id } = data;
       if (!folder_id) return;
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -40,7 +38,7 @@ export class BoxService implements IFileService {
       });
       const folder = await this.prisma.fs_folders.findUnique({
         where: {
-          id_fs_folder: folder_id,
+          id_fs_folder: folder_id as string,
         },
       });
       const resp = await axios.get(

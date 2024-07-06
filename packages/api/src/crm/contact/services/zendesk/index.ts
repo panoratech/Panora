@@ -9,6 +9,8 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskContactInput, ZendeskContactOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 @Injectable()
 export class ZendeskService implements IContactService {
   constructor(
@@ -21,6 +23,9 @@ export class ZendeskService implements IContactService {
       CrmObject.contact.toUpperCase() + ':' + ZendeskService.name,
     );
     this.registry.registerService('zendesk', this);
+  }
+  sync(data: SyncParam): Promise<ApiResponse<OriginalContactOutput[]>> {
+    throw new Error('Method not implemented.');
   }
 
   async addContact(
@@ -67,9 +72,11 @@ export class ZendeskService implements IContactService {
   }
 
   async syncContacts(
-    linkedUserId: string,
+    data: SyncParam,
   ): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

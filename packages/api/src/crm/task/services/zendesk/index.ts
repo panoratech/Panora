@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class ZendeskService implements ITaskService {
   constructor(
@@ -70,10 +71,10 @@ export class ZendeskService implements ITaskService {
     }
   }
 
-  async syncTasks(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZendeskTaskOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskTaskOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

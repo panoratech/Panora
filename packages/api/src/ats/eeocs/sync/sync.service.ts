@@ -98,55 +98,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncEeocsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} EEOCs for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping EEOCs syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.eeocs',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IEeocsService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalEeocsOutput[]> = await service.syncEeocss(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalEeocsOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedEeocsOutput,
-        OriginalEeocsOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'eecos',
-        customFieldMappings,
-      );
+        OriginalEeocsOutput,
+        IEeocsService
+      >(integrationId, linkedUserId, 'ats', 'eeocs', service, []);
     } catch (error) {
       throw error;
     }
@@ -160,7 +120,49 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsEeocs[]> {
     try {
-      let eeocs_results: AtsEeocs[] = [];
+      const eeocs_results: AtsEeocs[] = [];
+
+      const updateOrCreateEeoc = async (
+        eeoc: UnifiedEeocsOutput,
+        originId: string,
+      ) => {
+        const existingEeoc = await this.prisma.ats_eeocs.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          candidate_id: eeoc.candidate_id ?? null,
+          submitted_at: eeoc.submitted_at ?? null,
+          race: eeoc.race ?? null,
+          gender: eeoc.gender ?? null,
+          veteran_status: eeoc.veteran_status ?? null,
+          disability_status: eeoc.disability_status ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingEeoc) {
+          return await this.prisma.ats_eeocs.update({
+            where: {
+              id_ats_eeoc: existingEeoc.id_ats_eeoc,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.ats_eeocs.create({
+            data: {
+              ...baseData,
+              id_ats_eeoc: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < eeocs.length; i++) {
         const eeoc = eeocs[i];
         const originId = eeoc.remote_id;
@@ -169,142 +171,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingEeoc = await this.prisma.ats_eeocs.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateEeoc(eeoc, originId);
+        const eeoc_id = res.id_ats_eeoc;
+        eeocs_results.push(res);
 
-        let unique_ats_eeoc_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          eeoc.field_mappings,
+          eeoc_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingEeoc) {
-          // Update the existing EEOC
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (eeoc.candidate_id) {
-            data = { ...data, candidate_id: eeoc.candidate_id };
-          }
-          if (eeoc.submitted_at) {
-            data = { ...data, submitted_at: eeoc.submitted_at };
-          }
-          if (eeoc.race) {
-            data = { ...data, race: eeoc.race };
-          }
-          if (eeoc.gender) {
-            data = { ...data, gender: eeoc.gender };
-          }
-          if (eeoc.veteran_status) {
-            data = { ...data, veteran_status: eeoc.veteran_status };
-          }
-          if (eeoc.disability_status) {
-            data = { ...data, disability_status: eeoc.disability_status };
-          }
-          const res = await this.prisma.ats_eeocs.update({
-            where: {
-              id_ats_eeoc: existingEeoc.id_ats_eeoc,
-            },
-            data: data,
-          });
-          unique_ats_eeoc_id = res.id_ats_eeoc;
-          eeocs_results = [...eeocs_results, res];
-        } else {
-          // Create a new EEOC
-          this.logger.log('EEOC does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_eeoc: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (eeoc.candidate_id) {
-            data = { ...data, candidate_id: eeoc.candidate_id };
-          }
-          if (eeoc.submitted_at) {
-            data = { ...data, submitted_at: eeoc.submitted_at };
-          }
-          if (eeoc.race) {
-            data = { ...data, race: eeoc.race };
-          }
-          if (eeoc.gender) {
-            data = { ...data, gender: eeoc.gender };
-          }
-          if (eeoc.veteran_status) {
-            data = { ...data, veteran_status: eeoc.veteran_status };
-          }
-          if (eeoc.disability_status) {
-            data = { ...data, disability_status: eeoc.disability_status };
-          }
-
-          const newEeoc = await this.prisma.ats_eeocs.create({
-            data: data,
-          });
-
-          unique_ats_eeoc_id = newEeoc.id_ats_eeoc;
-          eeocs_results = [...eeocs_results, newEeoc];
-        }
-
-        // check duplicate or existing values
-        if (eeoc.field_mappings && eeoc.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_eeoc_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(eeoc.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_eeoc_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_eeoc_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(eeoc_id, remote_data[i]);
       }
+
       return eeocs_results;
     } catch (error) {
       throw error;

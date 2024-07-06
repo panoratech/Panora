@@ -2,18 +2,15 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedActivityInput, UnifiedActivityOutput } from './model.unified';
 import { OriginalActivityOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IActivityService {
+export interface IActivityService extends IBaseObjectService {
   addActivity(
     activityData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalActivityOutput>>;
 
-  syncActivities(
-    linkedUserId: string,
-    candidate_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalActivityOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalActivityOutput[]>>;
 }
 
 export interface IActivityMapper {

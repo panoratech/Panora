@@ -125,57 +125,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
     id_candidate: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} activities for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping activities syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.activity',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IActivityService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalActivityOutput[]> =
-        await service.syncActivities(
-          linkedUserId,
-          id_candidate,
-          remoteProperties,
-        );
 
-      const sourceObject: OriginalActivityOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedActivityOutput,
-        OriginalActivityOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'activity',
-        customFieldMappings,
-        { id_candidate: id_candidate },
-      );
+        OriginalActivityOutput,
+        IActivityService
+      >(integrationId, linkedUserId, 'ats', 'activity', service, [
+        {
+          paramName: 'id_candidate',
+          param: id_candidate,
+          shouldPassToIngest: true,
+          shouldPassToService: true,
+        },
+      ]);
     } catch (error) {
       throw error;
     }
@@ -190,15 +155,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
     id_candidate?: string,
   ): Promise<AtsActivity[]> {
     try {
-      let activities_results: AtsActivity[] = [];
-      for (let i = 0; i < activities.length; i++) {
-        const activity = activities[i];
-        const originId = activity.remote_id;
+      const activities_results: AtsActivity[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateActivity = async (
+        activity: UnifiedActivityOutput,
+        originId: string,
+      ) => {
         const existingActivity = await this.prisma.ats_activities.findFirst({
           where: {
             remote_id: originId,
@@ -206,129 +168,63 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
-        let unique_ats_activity_id: string;
+        const baseData: any = {
+          id_candidate: id_candidate ?? null,
+          activity_type: activity.activity_type ?? null,
+          body: activity.body ?? null,
+          remote_created_at: activity.remote_created_at ?? null,
+          subject: activity.subject ?? null,
+          visibility: activity.visibility ?? null,
+          modified_at: new Date(),
+        };
 
+        let res;
         if (existingActivity) {
-          // Update the existing activity
-          let data: any = {
-            id_candidate: id_candidate,
-            modified_at: new Date(),
-          };
-          if (activity.activity_type) {
-            data = { ...data, activity_type: activity.activity_type };
-          }
-          if (activity.body) {
-            data = { ...data, body: activity.body };
-          }
-          if (activity.remote_created_at) {
-            data = { ...data, remote_created_at: activity.remote_created_at };
-          }
-          if (activity.subject) {
-            data = { ...data, subject: activity.subject };
-          }
-          if (activity.visibility) {
-            data = { ...data, visibility: activity.visibility };
-          }
-          const res = await this.prisma.ats_activities.update({
+          res = await this.prisma.ats_activities.update({
             where: {
               id_ats_activity: existingActivity.id_ats_activity,
             },
-            data: data,
+            data: baseData,
           });
-          unique_ats_activity_id = res.id_ats_activity;
-          activities_results = [...activities_results, res];
         } else {
-          // Create a new activity
-          this.logger.log('activity not exists');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_activity: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (activity.activity_type) {
-            data = { ...data, activity_type: activity.activity_type };
-          }
-          if (activity.body) {
-            data = { ...data, body: activity.body };
-          }
-          if (activity.remote_created_at) {
-            data = { ...data, remote_created_at: activity.remote_created_at };
-          }
-          if (activity.subject) {
-            data = { ...data, subject: activity.subject };
-          }
-          if (activity.visibility) {
-            data = { ...data, visibility: activity.visibility };
-          }
-          const newActivity = await this.prisma.ats_activities.create({
-            data: data,
-          });
-
-          unique_ats_activity_id = newActivity.id_ats_activity;
-          activities_results = [...activities_results, newActivity];
-        }
-
-        // check duplicate or existing values
-        if (activity.field_mappings && activity.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
+          res = await this.prisma.ats_activities.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_activity_id,
+              ...baseData,
+              id_ats_activity: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
             },
           });
-
-          for (const [slug, value] of Object.entries(activity.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_activity_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_activity_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        return res;
+      };
+
+      for (let i = 0; i < activities.length; i++) {
+        const activity = activities[i];
+        const originId = activity.remote_id;
+
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
+        }
+
+        const res = await updateOrCreateActivity(activity, originId);
+        const activity_id = res.id_ats_activity;
+        activities_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          activity.field_mappings,
+          activity_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(activity_id, remote_data[i]);
       }
+
       return activities_results;
     } catch (error) {
       throw error;

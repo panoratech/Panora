@@ -104,53 +104,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} applications for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping applications syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.application',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IApplicationService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalApplicationOutput[]> =
-        await service.syncApplications(linkedUserId, remoteProperties);
 
-      const sourceObject: OriginalApplicationOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedApplicationOutput,
-        OriginalApplicationOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'application',
-        customFieldMappings,
-      );
+        OriginalApplicationOutput,
+        IApplicationService
+      >(integrationId, linkedUserId, 'ats', 'application', service, []);
     } catch (error) {
       throw error;
     }
@@ -164,15 +126,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsApplication[]> {
     try {
-      let applications_results: AtsApplication[] = [];
-      for (let i = 0; i < applications.length; i++) {
-        const application = applications[i];
-        const originId = application.remote_id;
+      const applications_results: AtsApplication[] = [];
 
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateApplication = async (
+        application: UnifiedApplicationOutput,
+        originId: string,
+      ) => {
         const existingApplication =
           await this.prisma.ats_applications.findFirst({
             where: {
@@ -181,158 +140,69 @@ export class SyncService implements OnModuleInit, IBaseSync {
             },
           });
 
-        let unique_ats_application_id: string;
+        const baseData: any = {
+          applied_at: application.applied_at ?? null,
+          rejected_at: application.rejected_at ?? null,
+          offers: application.offers ?? null,
+          source: application.source ?? null,
+          credited_to: application.credited_to ?? null,
+          current_stage: application.current_stage ?? null,
+          reject_reason: application.reject_reason ?? null,
+          candidate_id: application.candidate_id ?? null,
+          job_id: application.job_id ?? null,
+          modified_at: new Date(),
+        };
 
+        let res;
         if (existingApplication) {
-          // Update the existing application
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (application.applied_at) {
-            data = { ...data, applied_at: application.applied_at };
-          }
-          if (application.rejected_at) {
-            data = { ...data, rejected_at: application.rejected_at };
-          }
-          if (application.offers) {
-            data = { ...data, offers: application.offers };
-          }
-          if (application.source) {
-            data = { ...data, source: application.source };
-          }
-          if (application.credited_to) {
-            data = { ...data, credited_to: application.credited_to };
-          }
-          if (application.current_stage) {
-            data = { ...data, current_stage: application.current_stage };
-          }
-          if (application.reject_reason) {
-            data = { ...data, reject_reason: application.reject_reason };
-          }
-          if (application.candidate_id) {
-            data = { ...data, candidate_id: application.candidate_id };
-          }
-          if (application.job_id) {
-            data = { ...data, job_id: application.job_id };
-          }
-          const res = await this.prisma.ats_applications.update({
+          res = await this.prisma.ats_applications.update({
             where: {
               id_ats_application: existingApplication.id_ats_application,
             },
-            data: data,
+            data: baseData,
           });
-          unique_ats_application_id = res.id_ats_application;
-          applications_results = [...applications_results, res];
         } else {
-          // Create a new application
-          this.logger.log('Application does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_application: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (application.applied_at) {
-            data = { ...data, applied_at: application.applied_at };
-          }
-          if (application.rejected_at) {
-            data = { ...data, rejected_at: application.rejected_at };
-          }
-          if (application.offers) {
-            data = { ...data, offers: application.offers };
-          }
-          if (application.source) {
-            data = { ...data, source: application.source };
-          }
-          if (application.credited_to) {
-            data = { ...data, credited_to: application.credited_to };
-          }
-          if (application.current_stage) {
-            data = { ...data, current_stage: application.current_stage };
-          }
-          if (application.reject_reason) {
-            data = { ...data, reject_reason: application.reject_reason };
-          }
-          if (application.candidate_id) {
-            data = { ...data, candidate_id: application.candidate_id };
-          }
-          if (application.job_id) {
-            data = { ...data, job_id: application.job_id };
-          }
-
-          const newApplication = await this.prisma.ats_applications.create({
-            data: data,
-          });
-
-          unique_ats_application_id = newApplication.id_ats_application;
-          applications_results = [...applications_results, newApplication];
-        }
-
-        // check duplicate or existing values
-        if (
-          application.field_mappings &&
-          application.field_mappings.length > 0
-        ) {
-          const entity = await this.prisma.entity.create({
+          res = await this.prisma.ats_applications.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_application_id,
+              ...baseData,
+              id_ats_application: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
             },
           });
-
-          for (const [slug, value] of Object.entries(
-            application.field_mappings,
-          )) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
         }
 
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_application_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_application_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        return res;
+      };
+
+      for (let i = 0; i < applications.length; i++) {
+        const application = applications[i];
+        const originId = application.remote_id;
+
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
+        }
+
+        const res = await updateOrCreateApplication(application, originId);
+        const application_id = res.id_ats_application;
+        applications_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          application.field_mappings,
+          application_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          application_id,
+          remote_data[i],
+        );
       }
+
       return applications_results;
     } catch (error) {
       throw error;

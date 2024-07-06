@@ -10,6 +10,7 @@ import { EnvironmentService } from '@@core/@core-services/environment/environmen
 import { ServiceRegistry } from '../registry.service';
 import { IContactService } from '@ticketing/contact/types';
 import { ZendeskContactOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZendeskService implements IContactService {
@@ -26,11 +27,10 @@ export class ZendeskService implements IContactService {
     this.registry.registerService('zendesk', this);
   }
 
-  async syncContacts(
-    linkedUserId: string,
-    remote_account_id?: string,
-  ): Promise<ApiResponse<ZendeskContactOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
+      const { linkedUserId, account_id, webhook_remote_identifier } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -38,6 +38,20 @@ export class ZendeskService implements IContactService {
           vertical: 'ticketing',
         },
       });
+      let remote_account_id;
+      if (account_id) {
+        const res = await this.prisma.tcg_accounts.findFirst({
+          where: {
+            id_tcg_account: account_id,
+          },
+        });
+        if (res) {
+          remote_account_id = res.remote_id;
+        } else {
+          remote_account_id = webhook_remote_identifier as string;
+        }
+      }
+
       const request_url = remote_account_id
         ? `${connection.account_url}/users/${remote_account_id}.json`
         : `${connection.account_url}/users.json`;

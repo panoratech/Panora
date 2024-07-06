@@ -10,6 +10,7 @@ import { EnvironmentService } from '@@core/@core-services/environment/environmen
 import { ServiceRegistry } from '../registry.service';
 import { ITeamService } from '@ticketing/team/types';
 import { ZendeskTeamOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZendeskService implements ITeamService {
@@ -26,11 +27,10 @@ export class ZendeskService implements ITeamService {
     this.registry.registerService('zendesk', this);
   }
 
-  async syncTeams(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<ZendeskTeamOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskTeamOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

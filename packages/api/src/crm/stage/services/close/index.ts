@@ -9,6 +9,8 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class CloseService implements IStageService {
@@ -24,12 +26,10 @@ export class CloseService implements IStageService {
     this.registry.registerService('close', this);
   }
 
-  async syncStages(
-    linkedUserId: string,
-    deal_id: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<CloseStageOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<CloseStageOutput[]>> {
     try {
+      const { linkedUserId, deal_id } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -39,7 +39,7 @@ export class CloseService implements IStageService {
       });
 
       const res = await this.prisma.crm_deals.findUnique({
-        where: { id_crm_deal: deal_id },
+        where: { id_crm_deal: deal_id as string },
       });
       const baseURL = `${connection.account_url}/activity/status_change/opportunity/?opportunity_id=${res.remote_id}`;
 

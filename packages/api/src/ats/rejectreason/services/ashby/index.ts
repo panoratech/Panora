@@ -11,6 +11,7 @@ import { ServiceRegistry } from '../registry.service';
 import { AshbyRejectReasonInput, AshbyRejectReasonOutput } from './types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { OriginalRejectReasonOutput } from '@@core/utils/types/original/original.ats';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class AshbyService implements IRejectReasonService {
@@ -32,11 +33,10 @@ export class AshbyService implements IRejectReasonService {
     throw new Error('Method not implemented.');
   }
 
-  async syncRejectReasons(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<AshbyRejectReasonOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<AshbyRejectReasonOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

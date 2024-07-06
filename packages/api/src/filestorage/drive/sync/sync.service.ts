@@ -100,55 +100,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncDrivesForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} drives for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'filestorage',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping drives syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'filestorage.drive',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IDriveService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalDriveOutput[]> = await service.syncDrives(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalDriveOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedDriveOutput,
-        OriginalDriveOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'filestorage',
-        'drive',
-        customFieldMappings,
-      );
+        OriginalDriveOutput,
+        IDriveService
+      >(integrationId, linkedUserId, 'filestorage', 'drive', service, []);
     } catch (error) {
       throw error;
     }
@@ -162,7 +122,46 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<FileStorageDrive[]> {
     try {
-      let drives_results: FileStorageDrive[] = [];
+      const drives_results: FileStorageDrive[] = [];
+
+      const updateOrCreateDrive = async (
+        drive: UnifiedDriveOutput,
+        originId: string,
+      ) => {
+        const existingDrive = await this.prisma.fs_drives.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          name: drive.name ?? null,
+          remote_created_at: drive.remote_created_at ?? null,
+          drive_url: drive.drive_url ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingDrive) {
+          return await this.prisma.fs_drives.update({
+            where: {
+              id_fs_drive: existingDrive.id_fs_drive,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.fs_drives.create({
+            data: {
+              ...baseData,
+              id_fs_drive: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < drives.length; i++) {
         const drive = drives[i];
         const originId = drive.remote_id;
@@ -171,123 +170,20 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingDrive = await this.prisma.fs_drives.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateDrive(drive, originId);
+        const drive_id = res.id_fs_drive;
+        drives_results.push(res);
 
-        let unique_fs_drive_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          drive.field_mappings,
+          drive_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingDrive) {
-          // Update the existing drive
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (drive.name) {
-            data = { ...data, name: drive.name };
-          }
-          if (drive.remote_created_at) {
-            data = { ...data, remote_created_at: drive.remote_created_at };
-          }
-          if (drive.drive_url) {
-            data = { ...data, drive_url: drive.drive_url };
-          }
-          const res = await this.prisma.fs_drives.update({
-            where: {
-              id_fs_drive: existingDrive.id_fs_drive,
-            },
-            data: data,
-          });
-          unique_fs_drive_id = res.id_fs_drive;
-          drives_results = [...drives_results, res];
-        } else {
-          // Create a new drive
-          this.logger.log('Drive does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_fs_drive: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (drive.name) {
-            data = { ...data, name: drive.name };
-          }
-          if (drive.remote_created_at) {
-            data = { ...data, remote_created_at: drive.remote_created_at };
-          }
-          if (drive.drive_url) {
-            data = { ...data, drive_url: drive.drive_url };
-          }
-
-          const newDrive = await this.prisma.fs_drives.create({
-            data: data,
-          });
-
-          unique_fs_drive_id = newDrive.id_fs_drive;
-          drives_results = [...drives_results, newDrive];
-        }
-
-        // check duplicate or existing values
-        if (drive.field_mappings && drive.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_fs_drive_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(drive.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_fs_drive_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_fs_drive_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(drive_id, remote_data[i]);
       }
       return drives_results;
     } catch (error) {

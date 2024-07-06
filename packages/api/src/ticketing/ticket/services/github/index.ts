@@ -9,6 +9,7 @@ import axios from 'axios';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GithubTicketInput, GithubTicketOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 //TODO
 @Injectable()
@@ -66,12 +67,10 @@ export class GithubService implements ITicketService {
       );
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<GithubTicketOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GithubTicketOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

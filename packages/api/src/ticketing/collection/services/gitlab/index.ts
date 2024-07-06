@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ICollectionService } from '@ticketing/collection/types';
 import { GitlabCollectionInput, GitlabCollectionOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GitlabService implements ICollectionService {
@@ -24,10 +25,10 @@ export class GitlabService implements ICollectionService {
     this.registry.registerService('gitlab', this);
   }
 
-  async syncCollections(
-    linkedUserId: string,
-  ): Promise<ApiResponse<GitlabCollectionOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GitlabCollectionOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ITagService } from '@ticketing/tag/types';
 import { FrontTagOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class FrontService implements ITagService {
@@ -24,11 +25,10 @@ export class FrontService implements ITagService {
     this.registry.registerService('front', this);
   }
 
-  async syncTags(
-    linkedUserId: string,
-    id_ticket: string,
-  ): Promise<ApiResponse<FrontTagOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<FrontTagOutput[]>> {
     try {
+      const { linkedUserId, id_ticket } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -39,7 +39,7 @@ export class FrontService implements ITagService {
 
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
-          id_tcg_ticket: id_ticket,
+          id_tcg_ticket: id_ticket as string,
         },
         select: {
           remote_id: true,

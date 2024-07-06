@@ -11,6 +11,7 @@ import { ServiceRegistry } from '../registry.service';
 import { AshbyActivityInput, AshbyActivityOutput } from './types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { OriginalActivityOutput } from '@@core/utils/types/original/original.ats';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class AshbyService implements IActivityService {
@@ -32,12 +33,9 @@ export class AshbyService implements IActivityService {
     throw new Error('Method not implemented.');
   }
 
-  async syncActivities(
-    linkedUserId: string,
-    candidate_id: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<AshbyActivityOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<AshbyActivityOutput[]>> {
     try {
+      const { linkedUserId, candidate_id } = data;
       if (!candidate_id) return;
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -48,7 +46,7 @@ export class AshbyService implements IActivityService {
       });
       const candidate = await this.prisma.ats_candidates.findUnique({
         where: {
-          id_ats_candidate: candidate_id,
+          id_ats_candidate: candidate_id as string,
         },
       });
       const resp = await axios.post(

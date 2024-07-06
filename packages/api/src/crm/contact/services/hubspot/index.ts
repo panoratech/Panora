@@ -13,6 +13,7 @@ import {
   HubspotContactInput,
   HubspotContactOutput,
 } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class HubspotService implements IContactService {
@@ -71,11 +72,10 @@ export class HubspotService implements IContactService {
     }
   }
 
-  async syncContacts(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotContactOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotContactOutput[]>> {
     try {
+      const { linkedUserId, custom_properties } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

@@ -5,18 +5,15 @@ import {
 } from './model.unified';
 import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface ISharedLinkService {
+export interface ISharedLinkService extends IBaseObjectService {
   addSharedLink?(
     sharedlinkData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalSharedLinkOutput>>;
 
-  syncSharedLinks(
-    linkedUserId: string,
-    extra?: { object_name: 'folder' | 'file'; value: string },
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalSharedLinkOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalSharedLinkOutput[]>>;
 }
 
 export interface ISharedLinkMapper {

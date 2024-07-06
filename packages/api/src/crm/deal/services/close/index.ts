@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { CloseDealInput, CloseDealOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class CloseService implements IDealService {
   constructor(
@@ -63,11 +64,10 @@ export class CloseService implements IDealService {
     }
   }
 
-  async syncDeals(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<CloseDealOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<CloseDealOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       //crm.schemas.deals.read","crm.objects.deals.read
       const connection = await this.prisma.connections.findFirst({
         where: {

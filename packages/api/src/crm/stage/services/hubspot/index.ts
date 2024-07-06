@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class HubspotService implements IStageService {
@@ -24,12 +25,10 @@ export class HubspotService implements IStageService {
     this.registry.registerService('hubspot', this);
   }
 
-  async syncStages(
-    linkedUserId: string,
-    deal_id: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotStageOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotStageOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

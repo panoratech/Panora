@@ -105,54 +105,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
   //todo: HANDLE DATA REMOVED FROM PROVIDER
   async syncTasksForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} tasks for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'crm',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping tasks syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'crm.task',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: ITaskService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalTaskOutput[]> = await service.syncTasks(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalTaskOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedTaskOutput,
-        OriginalTaskOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'crm',
-        'task',
-        customFieldMappings,
-      );
+        OriginalTaskOutput,
+        ITaskService
+      >(integrationId, linkedUserId, 'crm', 'task', service, []);
     } catch (error) {
       throw error;
     }
@@ -166,15 +127,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<CrmTask[]> {
     try {
-      let tasks_results: CrmTask[] = [];
-      for (let i = 0; i < data.length; i++) {
-        const task = data[i];
-        const originId = task.remote_id;
+      const tasks_results: CrmTask[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateTask = async (
+        task: UnifiedTaskOutput,
+        originId: string,
+      ) => {
         const existingTask = await this.prisma.crm_tasks.findFirst({
           where: {
             remote_id: originId,
@@ -182,143 +140,60 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
-        let unique_crm_task_id: string;
+        const baseData: any = {
+          subject: task.subject ?? null,
+          content: task.content ?? null,
+          status: task.status ?? null,
+          due_date: task.due_date ?? null,
+          finished_date: task.finished_date ?? null,
+          id_crm_deal: task.deal_id ?? null,
+          id_crm_user: task.user_id ?? null,
+          id_crm_company: task.company_id ?? null,
+          modified_at: new Date(),
+        };
 
         if (existingTask) {
-          // Update the existing task
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (task.subject) {
-            data = { ...data, subject: task.subject };
-          }
-          if (task.content) {
-            data = { ...data, content: task.content };
-          }
-          if (task.status) {
-            data = { ...data, status: task.status };
-          }
-          if (task.due_date) {
-            data = { ...data, due_date: task.due_date };
-          }
-          if (task.finished_date) {
-            data = { ...data, finished_date: task.finished_date };
-          }
-          if (task.deal_id) {
-            data = { ...data, id_crm_deal: task.deal_id };
-          }
-          if (task.user_id) {
-            data = { ...data, id_crm_user: task.user_id };
-          }
-          if (task.company_id) {
-            data = { ...data, id_crm_company: task.company_id };
-          }
-
-          const res = await this.prisma.crm_tasks.update({
+          return await this.prisma.crm_tasks.update({
             where: {
               id_crm_task: existingTask.id_crm_task,
             },
-            data: data,
+            data: baseData,
           });
-          unique_crm_task_id = res.id_crm_task;
-          tasks_results = [...tasks_results, res];
         } else {
-          // Create a new task
-          this.logger.log('task not exists');
-          let data: any = {
-            id_crm_task: uuidv4(),
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (task.subject) {
-            data = { ...data, subject: task.subject };
-          }
-          if (task.content) {
-            data = { ...data, content: task.content };
-          }
-          if (task.status) {
-            data = { ...data, status: task.status };
-          }
-          if (task.due_date) {
-            data = { ...data, due_date: task.due_date };
-          }
-          if (task.finished_date) {
-            data = { ...data, finished_date: task.finished_date };
-          }
-          if (task.deal_id) {
-            data = { ...data, id_crm_deal: task.deal_id };
-          }
-          if (task.user_id) {
-            data = { ...data, id_crm_user: task.user_id };
-          }
-          if (task.company_id) {
-            data = { ...data, id_crm_company: task.company_id };
-          }
-          const res = await this.prisma.crm_tasks.create({
-            data: data,
-          });
-          unique_crm_task_id = res.id_crm_task;
-          tasks_results = [...tasks_results, res];
-        }
-        // check duplicate or existing values
-        if (task.field_mappings && task.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
+          return await this.prisma.crm_tasks.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_crm_task_id,
+              ...baseData,
+              id_crm_task: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
             },
           });
+        }
+      };
 
-          for (const [slug, value] of Object.entries(task.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
+      for (let i = 0; i < data.length; i++) {
+        const task = data[i];
+        const originId = task.remote_id;
 
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_crm_task_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_crm_task_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        const res = await updateOrCreateTask(task, originId);
+        const task_id = res.id_crm_task;
+        tasks_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          task.field_mappings,
+          task_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(task_id, remote_data[i]);
       }
       return tasks_results;
     } catch (error) {

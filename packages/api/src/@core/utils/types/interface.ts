@@ -1,4 +1,9 @@
-import { TargetObject, Unified, UnifyReturnType } from '@@core/utils/types';
+import {
+  ApiResponse,
+  TargetObject,
+  Unified,
+  UnifyReturnType,
+} from '@@core/utils/types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifySourceType } from '@@core/utils/types/unify.output';
 
@@ -45,4 +50,14 @@ export interface IBaseSync {
     remote_data: Record<string, any>[],
     ...rest: any
   ): Promise<any[]>;
+
+  removeInDb?(connection_id: string, remote_id: string): Promise<void>;
+}
+
+export type SyncParam = {
+  linkedUserId: string;
+  [key: string]: any;
+};
+export interface IBaseObjectService {
+  sync(data: SyncParam): Promise<ApiResponse<any>>;
 }

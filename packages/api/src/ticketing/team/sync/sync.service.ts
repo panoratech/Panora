@@ -1,19 +1,14 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ApiResponse } from '@@core/utils/types';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { IBaseSync } from '@@core/utils/types/interface';
 import { OriginalTeamOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { tcg_teams as TicketingTeam } from '@prisma/client';
-import { TicketingObject } from '@ticketing/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ITeamService } from '../types';
@@ -24,10 +19,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private webhook: WebhookService,
-    private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
-    private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
     private ingestService: IngestDataService,
@@ -105,54 +97,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
   //todo: HANDLE DATA REMOVED FROM PROVIDER
   async syncTeamsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} teams for linkedTeam ${linkedUserId}`,
-      );
-      // check if linkedTeam has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ticketing',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping teams syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ticketing.team',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: ITeamService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalTeamOutput[]> = await service.syncTeams(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalTeamOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedTeamOutput,
-        OriginalTeamOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ticketing',
-        'team',
-        customFieldMappings,
-      );
+        OriginalTeamOutput,
+        ITeamService
+      >(integrationId, linkedUserId, 'ticketing', 'team', service, []);
     } catch (error) {
       throw error;
     }
@@ -166,15 +119,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<TicketingTeam[]> {
     try {
-      let teams_results: TicketingTeam[] = [];
-      for (let i = 0; i < teams.length; i++) {
-        const team = teams[i];
-        const originId = team.remote_id;
+      const teams_results: TicketingTeam[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateTeam = async (
+        team: UnifiedTeamOutput,
+        originId: string,
+        connection_id: string,
+      ) => {
         const existingTeam = await this.prisma.tcg_teams.findFirst({
           where: {
             remote_id: originId,
@@ -182,97 +133,54 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
-        let unique_ticketing_team_id: string;
+        const baseData: any = {
+          name: team.name ?? null,
+          description: team.description ?? null,
+          modified_at: new Date(),
+        };
 
         if (existingTeam) {
-          // Update the existing ticket
-          const res = await this.prisma.tcg_teams.update({
+          return await this.prisma.tcg_teams.update({
             where: {
               id_tcg_team: existingTeam.id_tcg_team,
             },
-            data: {
-              name: existingTeam.name,
-              description: team.description,
-              modified_at: new Date(),
-            },
+            data: baseData,
           });
-          unique_ticketing_team_id = res.id_tcg_team;
-          teams_results = [...teams_results, res];
         } else {
-          // Create a new team
-          this.logger.log('not existing team ' + team.name);
-          const data = {
-            id_tcg_team: uuidv4(),
-            name: team.name,
-            description: team.description,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-          const res = await this.prisma.tcg_teams.create({
-            data: data,
-          });
-          teams_results = [...teams_results, res];
-          unique_ticketing_team_id = res.id_tcg_team;
-        }
-
-        // check duplicate or existing values
-        if (team.field_mappings && team.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
+          return await this.prisma.tcg_teams.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ticketing_team_id,
+              ...baseData,
+              id_tcg_team: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
             },
           });
+        }
+      };
 
-          for (const [slug, value] of Object.entries(team.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
+      for (let i = 0; i < teams.length; i++) {
+        const team = teams[i];
+        const originId = team.remote_id;
 
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ticketing_team_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_team_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        const res = await updateOrCreateTeam(team, originId, connection_id);
+        const team_id = res.id_tcg_team;
+        teams_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          team.field_mappings,
+          team_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(team_id, remote_data[i]);
       }
       return teams_results;
     } catch (error) {

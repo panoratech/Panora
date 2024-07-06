@@ -10,6 +10,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
 import * as fs from 'fs';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GorgiasService implements ITicketService {
@@ -106,11 +107,10 @@ export class GorgiasService implements ITicketService {
     }
   }
 
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-  ): Promise<ApiResponse<GorgiasTicketOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GorgiasTicketOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

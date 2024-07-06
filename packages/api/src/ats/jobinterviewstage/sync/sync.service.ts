@@ -104,53 +104,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} job interview stages for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping job interview stages syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.job_interview_stage',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IJobInterviewStageService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalJobInterviewStageOutput[]> =
-        await service.syncJobInterviewStages(linkedUserId, remoteProperties);
 
-      const sourceObject: OriginalJobInterviewStageOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedJobInterviewStageOutput,
-        OriginalJobInterviewStageOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'jobinterviewstage',
-        customFieldMappings,
-      );
+        OriginalJobInterviewStageOutput,
+        IJobInterviewStageService
+      >(integrationId, linkedUserId, 'ats', 'jobinterviewstage', service, []);
     } catch (error) {
       throw error;
     }
@@ -164,15 +126,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsJobInterviewStage[]> {
     try {
-      let jobInterviewStages_results: AtsJobInterviewStage[] = [];
-      for (let i = 0; i < jobInterviewStages.length; i++) {
-        const jobInterviewStage = jobInterviewStages[i];
-        const originId = jobInterviewStage.remote_id;
+      const jobInterviewStages_results: AtsJobInterviewStage[] = [];
 
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateJobInterviewStage = async (
+        jobInterviewStage: UnifiedJobInterviewStageOutput,
+        originId: string,
+      ) => {
         const existingJobInterviewStage =
           await this.prisma.ats_job_interview_stages.findFirst({
             where: {
@@ -181,130 +140,64 @@ export class SyncService implements OnModuleInit, IBaseSync {
             },
           });
 
-        let unique_ats_job_interview_stage_id: string;
+        const baseData: any = {
+          name: jobInterviewStage.name ?? null,
+          stage_order: jobInterviewStage.stage_order ?? null,
+          job_id: jobInterviewStage.job_id ?? null,
+          modified_at: new Date(),
+        };
 
         if (existingJobInterviewStage) {
-          // Update the existing job interview stage
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (jobInterviewStage.name) {
-            data = { ...data, name: jobInterviewStage.name };
-          }
-          if (jobInterviewStage.stage_order) {
-            data = { ...data, stage_order: jobInterviewStage.stage_order };
-          }
-          if (jobInterviewStage.job_id) {
-            data = { ...data, job_id: jobInterviewStage.job_id };
-          }
-          const res = await this.prisma.ats_job_interview_stages.update({
+          return await this.prisma.ats_job_interview_stages.update({
             where: {
               id_ats_job_interview_stage:
                 existingJobInterviewStage.id_ats_job_interview_stage,
             },
-            data: data,
+            data: baseData,
           });
-          unique_ats_job_interview_stage_id = res.id_ats_job_interview_stage;
-          jobInterviewStages_results = [...jobInterviewStages_results, res];
         } else {
-          // Create a new job interview stage
-          this.logger.log(
-            'Job interview stage does not exist, creating a new one',
-          );
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_job_interview_stage: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (jobInterviewStage.name) {
-            data = { ...data, name: jobInterviewStage.name };
-          }
-          if (jobInterviewStage.stage_order) {
-            data = { ...data, stage_order: jobInterviewStage.stage_order };
-          }
-          if (jobInterviewStage.job_id) {
-            data = { ...data, job_id: jobInterviewStage.job_id };
-          }
-
-          const newJobInterviewStage =
-            await this.prisma.ats_job_interview_stages.create({
-              data: data,
-            });
-
-          unique_ats_job_interview_stage_id =
-            newJobInterviewStage.id_ats_job_interview_stage;
-          jobInterviewStages_results = [
-            ...jobInterviewStages_results,
-            newJobInterviewStage,
-          ];
-        }
-
-        // check duplicate or existing values
-        if (
-          jobInterviewStage.field_mappings &&
-          jobInterviewStage.field_mappings.length > 0
-        ) {
-          const entity = await this.prisma.entity.create({
+          return await this.prisma.ats_job_interview_stages.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_job_interview_stage_id,
+              ...baseData,
+              id_ats_job_interview_stage: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
             },
           });
+        }
+      };
 
-          for (const [slug, value] of Object.entries(
-            jobInterviewStage.field_mappings,
-          )) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
+      for (let i = 0; i < jobInterviewStages.length; i++) {
+        const jobInterviewStage = jobInterviewStages[i];
+        const originId = jobInterviewStage.remote_id;
 
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_job_interview_stage_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_job_interview_stage_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        const res = await updateOrCreateJobInterviewStage(
+          jobInterviewStage,
+          originId,
+        );
+        const job_interview_stage_id = res.id_ats_job_interview_stage;
+        jobInterviewStages_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          jobInterviewStage.field_mappings,
+          job_interview_stage_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          job_interview_stage_id,
+          remote_data[i],
+        );
       }
+
       return jobInterviewStages_results;
     } catch (error) {
       throw error;

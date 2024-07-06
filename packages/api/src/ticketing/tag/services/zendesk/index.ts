@@ -10,6 +10,7 @@ import { EnvironmentService } from '@@core/@core-services/environment/environmen
 import { ServiceRegistry } from '../registry.service';
 import { ITagService } from '@ticketing/tag/types';
 import { ZendeskTagOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZendeskService implements ITagService {
@@ -26,11 +27,10 @@ export class ZendeskService implements ITagService {
     this.registry.registerService('zendesk', this);
   }
 
-  async syncTags(
-    linkedUserId: string,
-    id_ticket: string,
-  ): Promise<ApiResponse<ZendeskTagOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskTagOutput[]>> {
     try {
+      const { linkedUserId, id_ticket } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -41,7 +41,7 @@ export class ZendeskService implements ITagService {
 
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
-          id_tcg_ticket: id_ticket,
+          id_tcg_ticket: id_ticket as string,
         },
         select: {
           remote_id: true,

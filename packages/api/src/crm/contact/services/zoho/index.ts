@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { ZohoContactInput, ZohoContactOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZohoService implements IContactService {
@@ -65,10 +66,10 @@ export class ZohoService implements IContactService {
     }
   }
 
-  async syncContacts(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoContactOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoContactOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

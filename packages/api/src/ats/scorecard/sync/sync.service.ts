@@ -104,53 +104,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} score cards for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping score cards syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.score_card',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IScoreCardService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalScoreCardOutput[]> =
-        await service.syncScoreCards(linkedUserId, remoteProperties);
 
-      const sourceObject: OriginalScoreCardOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedScoreCardOutput,
-        OriginalScoreCardOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'scorecard',
-        customFieldMappings,
-      );
+        OriginalScoreCardOutput,
+        IScoreCardService
+      >(integrationId, linkedUserId, 'ats', 'scorecard', service, []);
     } catch (error) {
       throw error;
     }
@@ -164,7 +126,48 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsScoreCard[]> {
     try {
-      let scoreCards_results: AtsScoreCard[] = [];
+      const scoreCards_results: AtsScoreCard[] = [];
+
+      const updateOrCreateScoreCard = async (
+        scoreCard: UnifiedScoreCardOutput,
+        originId: string,
+      ) => {
+        const existingScoreCard = await this.prisma.ats_scorecards.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          overall_recommendation: scoreCard.overall_recommendation ?? null,
+          application_id: scoreCard.application_id ?? null,
+          interview_id: scoreCard.interview_id ?? null,
+          remote_created_at: scoreCard.remote_created_at ?? null,
+          submitted_at: scoreCard.submitted_at ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingScoreCard) {
+          return await this.prisma.ats_scorecards.update({
+            where: {
+              id_ats_scorecard: existingScoreCard.id_ats_scorecard,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.ats_scorecards.create({
+            data: {
+              ...baseData,
+              id_ats_scorecard: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < scoreCards.length; i++) {
         const scoreCard = scoreCards[i];
         const originId = scoreCard.remote_id;
@@ -173,143 +176,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingScoreCard = await this.prisma.ats_scorecards.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateScoreCard(scoreCard, originId);
+        const score_card_id = res.id_ats_scorecard;
+        scoreCards_results.push(res);
 
-        let unique_ats_score_card_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          scoreCard.field_mappings,
+          score_card_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingScoreCard) {
-          // Update the existing score card
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (scoreCard.overall_recommendation) {
-            data = {
-              ...data,
-              overall_recommendation: scoreCard.overall_recommendation,
-            };
-          }
-          if (scoreCard.application_id) {
-            data = { ...data, application_id: scoreCard.application_id };
-          }
-          if (scoreCard.interview_id) {
-            data = { ...data, interview_id: scoreCard.interview_id };
-          }
-          if (scoreCard.remote_created_at) {
-            data = { ...data, remote_created_at: scoreCard.remote_created_at };
-          }
-          if (scoreCard.submitted_at) {
-            data = { ...data, submitted_at: scoreCard.submitted_at };
-          }
-          const res = await this.prisma.ats_scorecards.update({
-            where: {
-              id_ats_scorecard: existingScoreCard.id_ats_scorecard,
-            },
-            data: data,
-          });
-          unique_ats_score_card_id = res.id_ats_scorecard;
-          scoreCards_results = [...scoreCards_results, res];
-        } else {
-          // Create a new score card
-          this.logger.log('Score card does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_score_card: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (scoreCard.overall_recommendation) {
-            data = {
-              ...data,
-              overall_recommendation: scoreCard.overall_recommendation,
-            };
-          }
-          if (scoreCard.application_id) {
-            data = { ...data, application_id: scoreCard.application_id };
-          }
-          if (scoreCard.interview_id) {
-            data = { ...data, interview_id: scoreCard.interview_id };
-          }
-          if (scoreCard.remote_created_at) {
-            data = { ...data, remote_created_at: scoreCard.remote_created_at };
-          }
-          if (scoreCard.submitted_at) {
-            data = { ...data, submitted_at: scoreCard.submitted_at };
-          }
-
-          const newScoreCard = await this.prisma.ats_scorecards.create({
-            data: data,
-          });
-
-          unique_ats_score_card_id = newScoreCard.id_ats_scorecard;
-          scoreCards_results = [...scoreCards_results, newScoreCard];
-        }
-
-        // check duplicate or existing values
-        if (scoreCard.field_mappings && scoreCard.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_score_card_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(
-            scoreCard.field_mappings,
-          )) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_score_card_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_score_card_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          score_card_id,
+          remote_data[i],
+        );
       }
       return scoreCards_results;
     } catch (error) {

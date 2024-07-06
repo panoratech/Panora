@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZohoService implements IStageService {
@@ -25,10 +26,10 @@ export class ZohoService implements IStageService {
   }
 
   //todo: stages name are tied to deals object
-  async syncStages(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoStageOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoStageOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

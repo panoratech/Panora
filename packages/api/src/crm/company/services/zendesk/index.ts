@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskCompanyInput, ZendeskCompanyOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class ZendeskService implements ICompanyService {
   constructor(
@@ -66,10 +67,9 @@ export class ZendeskService implements ICompanyService {
     }
   }
 
-  async syncCompanies(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZendeskCompanyOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskCompanyOutput[]>> {
     try {
+      const { linkedUserId } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

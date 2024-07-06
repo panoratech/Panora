@@ -2,10 +2,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { ApiResponse } from '@@core/utils/types';
 import { IBaseSync } from '@@core/utils/types/interface';
 import { OriginalCollectionOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -22,9 +19,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
-    private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
     private ingestService: IngestDataService,
@@ -105,42 +100,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} collections for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedTeam has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ticketing',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping collections syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-
       const service: ICollectionService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalCollectionOutput[]> =
-        await service.syncCollections(linkedUserId);
 
-      const sourceObject: OriginalCollectionOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedCollectionOutput,
-        OriginalCollectionOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ticketing',
-        'collection',
-        [],
-      );
+        OriginalCollectionOutput,
+        ICollectionService
+      >(integrationId, linkedUserId, 'ticketing', 'collection', service, []);
     } catch (error) {
       throw error;
     }
@@ -155,15 +123,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
     id_ticket?: string,
   ): Promise<TicketingCollection[]> {
     try {
-      let collections_results: TicketingCollection[] = [];
-      for (let i = 0; i < data.length; i++) {
-        const collection = data[i];
-        const originId = collection.remote_id;
+      const collections_results: TicketingCollection[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateCollection = async (
+        collection: UnifiedCollectionOutput,
+        originId: string,
+        connection_id: string,
+        id_ticket?: string,
+      ) => {
         const existingCollection = await this.prisma.tcg_collections.findFirst({
           where: {
             remote_id: originId,
@@ -171,61 +138,57 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
-        let unique_ticketing_collection_id: string;
+        const baseData: any = {
+          name: collection.name ?? null,
+          description: collection.description ?? null,
+          collection_type: collection.collection_type ?? null,
+          modified_at: new Date(),
+          id_tcg_ticket: id_ticket ?? null,
+        };
 
         if (existingCollection) {
-          // Update the existing ticket
-          const res = await this.prisma.tcg_collections.update({
+          return await this.prisma.tcg_collections.update({
             where: {
               id_tcg_collection: existingCollection.id_tcg_collection,
             },
             data: {
-              name: existingCollection.name,
-              description: collection.description,
-              collection_type: collection.collection_type,
-              modified_at: new Date(),
+              ...baseData,
             },
           });
-          unique_ticketing_collection_id = res.id_tcg_collection;
-          collections_results = [...collections_results, res];
         } else {
-          // Create a new collection
-          this.logger.log('not existing collection ' + collection.name);
-          const data = {
-            id_tcg_collection: uuidv4(),
-            name: collection.name,
-            description: collection.description,
-            collection_type: collection.collection_type,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_tcg_ticket: id_ticket || null,
-            id_connection: connection_id,
-          };
-          const res = await this.prisma.tcg_collections.create({
-            data: data,
+          return await this.prisma.tcg_collections.create({
+            data: {
+              ...baseData,
+              id_tcg_collection: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
+            },
           });
-          collections_results = [...collections_results, res];
-          unique_ticketing_collection_id = res.id_tcg_collection;
+        }
+      };
+
+      for (let i = 0; i < data.length; i++) {
+        const collection = data[i];
+        const originId = collection.remote_id;
+
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ticketing_collection_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_collection_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        const res = await updateOrCreateCollection(
+          collection,
+          originId,
+          connection_id,
+          id_ticket,
+        );
+        const collection_id = res.id_tcg_collection;
+        collections_results.push(res);
+
+        await this.ingestService.processRemoteData(
+          collection_id,
+          remote_data[i],
+        );
       }
       return collections_results;
     } catch (error) {

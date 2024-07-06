@@ -99,54 +99,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
   //todo: HANDLE DATA REMOVED FROM PROVIDER
   async syncDealsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} deals for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'crm',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping deals syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'crm.deal',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IDealService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalDealOutput[]> = await service.syncDeals(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalDealOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedDealOutput,
-        OriginalDealOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'crm',
-        'deal',
-        customFieldMappings,
-      );
+        OriginalDealOutput,
+        IDealService
+      >(integrationId, linkedUserId, 'crm', 'deal', service, []);
     } catch (error) {
       throw error;
     }
@@ -160,15 +121,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<CrmDeal[]> {
     try {
-      let deals_results: CrmDeal[] = [];
-      for (let i = 0; i < data.length; i++) {
-        const deal = data[i];
-        const originId = deal.remote_id;
+      const deals_results: CrmDeal[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateDeal = async (
+        deal: UnifiedDealOutput,
+        originId: string,
+      ) => {
         const existingDeal = await this.prisma.crm_deals.findFirst({
           where: {
             remote_id: originId,
@@ -176,137 +134,58 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
-        let unique_crm_deal_id: string;
+        const baseData: any = {
+          name: deal.name ?? null,
+          description: deal.description ?? null,
+          amount: deal.amount ?? null,
+          id_crm_user: deal.user_id ?? null,
+          id_crm_deals_stage: deal.stage_id ?? null,
+          id_crm_company: deal.company_id ?? null,
+          modified_at: new Date(),
+        };
 
         if (existingDeal) {
-          // Update the existing deal
-          let data: any = {
-            modified_at: new Date(),
-            description: '',
-            amount: deal.amount,
-          };
-          if (deal.name) {
-            data = { ...data, name: deal.name };
-          }
-          if (deal.description) {
-            data = { ...data, description: deal.description };
-          }
-          if (deal.amount) {
-            data = { ...data, amount: deal.amount };
-          }
-          if (deal.user_id) {
-            data = { ...data, id_crm_user: deal.user_id };
-          }
-          if (deal.stage_id) {
-            data = { ...data, id_crm_deals_stage: deal.stage_id };
-          }
-          if (deal.company_id) {
-            data = { ...data, id_crm_company: deal.company_id };
-          }
-
-          const res = await this.prisma.crm_deals.update({
+          return await this.prisma.crm_deals.update({
             where: {
               id_crm_deal: existingDeal.id_crm_deal,
             },
-            data: data,
+            data: baseData,
           });
-          unique_crm_deal_id = res.id_crm_deal;
-          deals_results = [...deals_results, res];
         } else {
-          // Create a new deal
-          this.logger.log('deal not exists');
-          let data: any = {
-            id_crm_deal: uuidv4(),
-            created_at: new Date(),
-            modified_at: new Date(),
-            description: '',
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          this.logger.log('deal name is ' + deal.name);
-
-          if (deal.name) {
-            data = { ...data, name: deal.name };
-          }
-          if (deal.description) {
-            data = { ...data, description: deal.description };
-          }
-          if (deal.amount) {
-            data = { ...data, amount: deal.amount };
-          }
-          if (deal.user_id) {
-            data = { ...data, id_crm_user: deal.user_id };
-          }
-          if (deal.stage_id) {
-            data = { ...data, id_crm_deals_stage: deal.stage_id };
-          }
-          if (deal.company_id) {
-            data = { ...data, id_crm_company: deal.company_id };
-          }
-          const res = await this.prisma.crm_deals.create({
-            data: data,
-          });
-          unique_crm_deal_id = res.id_crm_deal;
-          deals_results = [...deals_results, res];
-        }
-
-        // check duplicate or existing values
-        if (deal.field_mappings && deal.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
+          return await this.prisma.crm_deals.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_crm_deal_id,
+              ...baseData,
+              id_crm_deal: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
             },
           });
+        }
+      };
 
-          for (const [slug, value] of Object.entries(deal.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
+      for (let i = 0; i < data.length; i++) {
+        const deal = data[i];
+        const originId = deal.remote_id;
 
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_crm_deal_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_crm_deal_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        const res = await updateOrCreateDeal(deal, originId);
+        const deal_id = res.id_crm_deal;
+        deals_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          deal.field_mappings,
+          deal_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(deal_id, remote_data[i]);
       }
       return deals_results;
     } catch (error) {

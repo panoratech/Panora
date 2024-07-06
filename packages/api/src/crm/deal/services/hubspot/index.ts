@@ -13,6 +13,7 @@ import {
   HubspotDealOutput,
   commonDealHubspotProperties,
 } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class HubspotService implements IDealService {
   constructor(
@@ -72,11 +73,10 @@ export class HubspotService implements IDealService {
     }
   }
 
-  async syncDeals(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotDealOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotDealOutput[]>> {
     try {
+      const { linkedUserId, custom_properties } = data;
+
       //crm.schemas.deals.read","crm.objects.deals.read
       const connection = await this.prisma.connections.findFirst({
         where: {

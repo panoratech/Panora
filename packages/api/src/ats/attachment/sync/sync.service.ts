@@ -104,53 +104,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} attachments for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping attachments syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.attachment',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IAttachmentService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalAttachmentOutput[]> =
-        await service.syncAttachments(linkedUserId, remoteProperties);
 
-      const sourceObject: OriginalAttachmentOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedAttachmentOutput,
-        OriginalAttachmentOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'attachment',
-        customFieldMappings,
-      );
+        OriginalAttachmentOutput,
+        IAttachmentService
+      >(integrationId, linkedUserId, 'ats', 'attachment', service, []);
     } catch (error) {
       throw error;
     }
@@ -165,7 +127,54 @@ export class SyncService implements OnModuleInit, IBaseSync {
     candidate_id?: string,
   ): Promise<AtsAttachment[]> {
     try {
-      let attachments_results: AtsAttachment[] = [];
+      const attachments_results: AtsAttachment[] = [];
+
+      const updateOrCreateAttachment = async (
+        attachment: UnifiedAttachmentOutput,
+        originId: string,
+      ) => {
+        const existingAttachment =
+          await this.prisma.ats_candidate_attachments.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+
+        const baseData: any = {
+          file_url: attachment.file_url ?? null,
+          file_name: attachment.file_name ?? null,
+          file_type: attachment.file_type ?? null,
+          remote_created_at: attachment.remote_created_at ?? null,
+          remote_modified_at: attachment.remote_modified_at ?? null,
+          candidate_id: candidate_id ?? null,
+          modified_at: new Date(),
+        };
+
+        let res;
+        if (existingAttachment) {
+          res = await this.prisma.ats_candidate_attachments.update({
+            where: {
+              id_ats_candidate_attachment:
+                existingAttachment.id_ats_candidate_attachment,
+            },
+            data: baseData,
+          });
+        } else {
+          res = await this.prisma.ats_candidate_attachments.create({
+            data: {
+              ...baseData,
+              id_ats_attachment: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
+
+        return res;
+      };
+
       for (let i = 0; i < attachments.length; i++) {
         const attachment = attachments[i];
         const originId = attachment.remote_id;
@@ -174,150 +183,25 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingAttachment = await this.prisma.ats_attachments.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateAttachment(attachment, originId);
+        const attachment_id = res.id_ats_attachment;
+        attachments_results.push(res);
 
-        let unique_ats_attachment_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          attachment.field_mappings,
+          attachment_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingAttachment) {
-          // Update the existing attachment
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (attachment.file_url) {
-            data = { ...data, file_url: attachment.file_url };
-          }
-          if (attachment.file_name) {
-            data = { ...data, file_name: attachment.file_name };
-          }
-          if (attachment.file_type) {
-            data = { ...data, file_type: attachment.file_type };
-          }
-          if (attachment.remote_created_at) {
-            data = { ...data, remote_created_at: attachment.remote_created_at };
-          }
-          if (attachment.remote_modified_at) {
-            data = {
-              ...data,
-              remote_modified_at: attachment.remote_modified_at,
-            };
-          }
-          if (candidate_id) {
-            data = { ...data, candidate_id: candidate_id };
-          }
-          const res = await this.prisma.ats_attachments.update({
-            where: {
-              id_ats_attachment: existingAttachment.id_ats_attachment,
-            },
-            data: data,
-          });
-          unique_ats_attachment_id = res.id_ats_attachment;
-          attachments_results = [...attachments_results, res];
-        } else {
-          // Create a new attachment
-          this.logger.log('Attachment does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_attachment: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (attachment.file_url) {
-            data = { ...data, file_url: attachment.file_url };
-          }
-          if (attachment.file_name) {
-            data = { ...data, file_name: attachment.file_name };
-          }
-          if (attachment.file_type) {
-            data = { ...data, file_type: attachment.file_type };
-          }
-          if (attachment.remote_created_at) {
-            data = { ...data, remote_created_at: attachment.remote_created_at };
-          }
-          if (attachment.remote_modified_at) {
-            data = {
-              ...data,
-              remote_modified_at: attachment.remote_modified_at,
-            };
-          }
-          if (candidate_id) {
-            data = { ...data, candidate_id: candidate_id };
-          }
-
-          const newAttachment = await this.prisma.ats_attachments.create({
-            data: data,
-          });
-
-          unique_ats_attachment_id = newAttachment.id_ats_attachment;
-          attachments_results = [...attachments_results, newAttachment];
-        }
-
-        // check duplicate or existing values
-        if (attachment.field_mappings && attachment.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_attachment_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(
-            attachment.field_mappings,
-          )) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_attachment_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_attachment_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          attachment_id,
+          remote_data[i],
+        );
       }
+
       return attachments_results;
     } catch (error) {
       throw error;

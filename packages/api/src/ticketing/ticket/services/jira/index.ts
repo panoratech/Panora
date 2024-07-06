@@ -1,15 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
+import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
-import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { JiraTicketInput, JiraTicketOutput } from './types';
-import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class JiraService implements ITicketService {
@@ -18,7 +18,6 @@ export class JiraService implements ITicketService {
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
-    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + JiraService.name,
@@ -71,11 +70,10 @@ export class JiraService implements ITicketService {
       );
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-  ): Promise<ApiResponse<JiraTicketOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<JiraTicketOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

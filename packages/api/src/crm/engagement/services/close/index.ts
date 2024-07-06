@@ -18,6 +18,7 @@ import {
   CloseEngagementMeetingOutput,
   CloseEngagementOutput,
 } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class CloseService implements IEngagementService {
@@ -191,19 +192,17 @@ export class CloseService implements IEngagementService {
     }
   }
 
-  async syncEngagements(
-    linkedUserId: string,
-    engagement_type: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<CloseEngagementOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<CloseEngagementOutput[]>> {
     try {
-      switch (engagement_type) {
+      const { linkedUserId, engagement_type } = data;
+
+      switch (engagement_type as string) {
         case 'CALL':
-          return this.syncCalls(linkedUserId, custom_properties);
+          return this.syncCalls(linkedUserId);
         case 'MEETING':
-          return this.syncMeetings(linkedUserId, custom_properties);
+          return this.syncMeetings(linkedUserId);
         case 'EMAIL':
-          return this.syncEmails(linkedUserId, custom_properties);
+          return this.syncEmails(linkedUserId);
         default:
           break;
       }
@@ -218,7 +217,7 @@ export class CloseService implements IEngagementService {
     }
   }
 
-  private async syncCalls(linkedUserId: string, custom_properties?: string[]) {
+  private async syncCalls(linkedUserId: string) {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -256,10 +255,7 @@ export class CloseService implements IEngagementService {
     }
   }
 
-  private async syncMeetings(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ) {
+  private async syncMeetings(linkedUserId: string) {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -296,7 +292,7 @@ export class CloseService implements IEngagementService {
     }
   }
 
-  private async syncEmails(linkedUserId: string, custom_properties?: string[]) {
+  private async syncEmails(linkedUserId: string) {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {

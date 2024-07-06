@@ -75,17 +75,6 @@ export type UnifiedCrm =
   | UnifiedUserInput
   | UnifiedUserOutput;
 
-/*export const unificationMapping = {
-  [CrmObject.contact]: contactUnificationMapping,
-  [CrmObject.deal]: dealUnificationMapping,
-  [CrmObject.company]: companyUnificationMapping,
-  [CrmObject.engagement]: engagementUnificationMapping,
-  [CrmObject.note]: noteUnificationMapping,
-  [CrmObject.stage]: stageUnificationMapping,
-  [CrmObject.task]: taskUnificationMapping,
-  [CrmObject.user]: userUnificationMapping,
-};*/
-
 export type ICrmService =
   | IContactService
   | IUserService

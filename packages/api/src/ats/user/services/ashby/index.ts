@@ -11,6 +11,7 @@ import { ServiceRegistry } from '../registry.service';
 import { AshbyUserInput, AshbyUserOutput } from './types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { OriginalUserOutput } from '@@core/utils/types/original/original.ats';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class AshbyService implements IUserService {
@@ -32,11 +33,10 @@ export class AshbyService implements IUserService {
     throw new Error('Method not implemented.');
   }
 
-  async syncUsers(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<AshbyUserOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<AshbyUserOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

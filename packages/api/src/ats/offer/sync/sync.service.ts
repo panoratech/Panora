@@ -98,55 +98,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncOffersForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} offers for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping offers syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.offer',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IOfferService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalOfferOutput[]> = await service.syncOffers(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalOfferOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedOfferOutput,
-        OriginalOfferOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'offer',
-        customFieldMappings,
-      );
+        OriginalOfferOutput,
+        IOfferService
+      >(integrationId, linkedUserId, 'ats', 'offer', service, []);
     } catch (error) {
       throw error;
     }
@@ -160,7 +120,51 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsOffer[]> {
     try {
-      let offers_results: AtsOffer[] = [];
+      const offers_results: AtsOffer[] = [];
+
+      const updateOrCreateOffer = async (
+        offer: UnifiedOfferOutput,
+        originId: string,
+      ) => {
+        const existingOffer = await this.prisma.ats_offers.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          created_by: offer.created_by ?? null,
+          remote_created_at: offer.remote_created_at ?? null,
+          closed_at: offer.closed_at ?? null,
+          sent_at: offer.sent_at ?? null,
+          start_date: offer.start_date ?? null,
+          status: offer.status ?? null,
+          application_id: offer.application_id ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingOffer) {
+          return await this.prisma.ats_offers.update({
+            where: {
+              id_ats_offer: existingOffer.id_ats_offer,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.ats_offers.create({
+            data: {
+              ...baseData,
+              id_ats_offer: uuidv4(),
+              created_at: new Date(),
+              id_linked_user: linkedUserId,
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < offers.length; i++) {
         const offer = offers[i];
         const originId = offer.remote_id;
@@ -169,149 +173,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingOffer = await this.prisma.ats_offers.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateOffer(offer, originId);
+        const offer_id = res.id_ats_offer;
+        offers_results.push(res);
 
-        let unique_ats_offer_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          offer.field_mappings,
+          offer_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingOffer) {
-          // Update the existing offer
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (offer.created_by) {
-            data = { ...data, created_by: offer.created_by };
-          }
-          if (offer.remote_created_at) {
-            data = { ...data, remote_created_at: offer.remote_created_at };
-          }
-          if (offer.closed_at) {
-            data = { ...data, closed_at: offer.closed_at };
-          }
-          if (offer.sent_at) {
-            data = { ...data, sent_at: offer.sent_at };
-          }
-          if (offer.start_date) {
-            data = { ...data, start_date: offer.start_date };
-          }
-          if (offer.status) {
-            data = { ...data, status: offer.status };
-          }
-          if (offer.application_id) {
-            data = { ...data, application_id: offer.application_id };
-          }
-          const res = await this.prisma.ats_offers.update({
-            where: {
-              id_ats_offer: existingOffer.id_ats_offer,
-            },
-            data: data,
-          });
-          unique_ats_offer_id = res.id_ats_offer;
-          offers_results = [...offers_results, res];
-        } else {
-          // Create a new offer
-          this.logger.log('Offer does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_offer: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            id_linked_user: linkedUserId,
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (offer.created_by) {
-            data = { ...data, created_by: offer.created_by };
-          }
-          if (offer.remote_created_at) {
-            data = { ...data, remote_created_at: offer.remote_created_at };
-          }
-          if (offer.closed_at) {
-            data = { ...data, closed_at: offer.closed_at };
-          }
-          if (offer.sent_at) {
-            data = { ...data, sent_at: offer.sent_at };
-          }
-          if (offer.start_date) {
-            data = { ...data, start_date: offer.start_date };
-          }
-          if (offer.status) {
-            data = { ...data, status: offer.status };
-          }
-          if (offer.application_id) {
-            data = { ...data, application_id: offer.application_id };
-          }
-
-          const newOffer = await this.prisma.ats_offers.create({
-            data: data,
-          });
-
-          unique_ats_offer_id = newOffer.id_ats_offer;
-          offers_results = [...offers_results, newOffer];
-        }
-
-        // check duplicate or existing values
-        if (offer.field_mappings && offer.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_offer_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(offer.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_offer_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_offer_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(offer_id, remote_data[i]);
       }
+
       return offers_results;
     } catch (error) {
       throw error;

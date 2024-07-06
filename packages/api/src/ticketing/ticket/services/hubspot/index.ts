@@ -13,6 +13,7 @@ import {
   HubspotTicketOutput,
   commonHubspotProperties,
 } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class HubspotService implements ITicketService {
@@ -67,12 +68,10 @@ export class HubspotService implements ITicketService {
       );
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotTicketOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotTicketOutput[]>> {
     try {
+      const { linkedUserId, custom_properties } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { BoxSharedLinkInput, BoxSharedLinkOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class BoxService implements ISharedLinkService {
@@ -24,12 +25,11 @@ export class BoxService implements ISharedLinkService {
     this.registry.registerService('box', this);
   }
 
-  async syncSharedLinks(
-    linkedUserId: string,
-    extra?: { object_name: 'folder' | 'file'; value: string },
-    custom_properties?: string[],
-  ): Promise<ApiResponse<BoxSharedLinkOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<BoxSharedLinkOutput[]>> {
     try {
+      const { linkedUserId, extra } = data;
+      //  TODO: where it comes from ??  extra?: { object_name: 'folder' | 'file'; value: string },
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

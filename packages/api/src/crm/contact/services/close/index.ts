@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { CloseContactInput, CloseContactOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class CloseService implements IContactService {
@@ -64,11 +65,10 @@ export class CloseService implements IContactService {
     }
   }
 
-  async syncContacts(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<CloseContactOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<CloseContactOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

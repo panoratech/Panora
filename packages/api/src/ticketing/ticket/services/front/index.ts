@@ -9,6 +9,7 @@ import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
 import { Utils } from '@ticketing/@lib/@utils';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class FrontService implements ITicketService {
@@ -161,11 +162,11 @@ export class FrontService implements ITicketService {
       );*/
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-  ): Promise<ApiResponse<FrontTicketOutput[]>> {
+
+  async sync(data: SyncParam): Promise<ApiResponse<FrontTicketOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

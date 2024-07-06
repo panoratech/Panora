@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class ZendeskService implements IEngagementService {
   constructor(
@@ -93,12 +94,11 @@ export class ZendeskService implements IEngagementService {
     }
   }
 
-  async syncEngagements(
-    linkedUserId: string,
-    engagement_type: string,
-  ): Promise<ApiResponse<ZendeskEngagementOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskEngagementOutput[]>> {
     try {
-      switch (engagement_type) {
+      const { linkedUserId, engagement_type } = data;
+
+      switch (engagement_type as string) {
         case 'CALL':
           return this.syncCalls(linkedUserId);
         case 'MEETING':

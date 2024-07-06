@@ -2,17 +2,15 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedTaskInput, UnifiedTaskOutput } from './model.unified';
 import { OriginalTaskOutput } from '@@core/utils/types/original/original.crm';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface ITaskService {
+export interface ITaskService extends IBaseObjectService {
   addTask(
     taskData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalTaskOutput>>;
 
-  syncTasks(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTaskOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalTaskOutput[]>>;
 }
 
 export interface ITaskMapper {

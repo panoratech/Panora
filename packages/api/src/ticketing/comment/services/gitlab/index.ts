@@ -11,6 +11,8 @@ import { GitlabCommentInput, GitlabCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
 import { Utils } from '@ticketing/@lib/@utils';
 import * as fs from 'fs';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 
 @Injectable()
 export class GitlabService implements ICommentService {
@@ -126,11 +128,10 @@ export class GitlabService implements ICommentService {
       );
     }
   }
-  async syncComments(
-    linkedUserId: string,
-    id_ticket: string,
-  ): Promise<ApiResponse<GitlabCommentOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GitlabCommentOutput[]>> {
     try {
+      const { linkedUserId, id_ticket } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -141,7 +142,7 @@ export class GitlabService implements ICommentService {
       //retrieve ticket remote id so we can retrieve the comments in the original software
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
-          id_tcg_ticket: id_ticket,
+          id_tcg_ticket: id_ticket as string,
         },
         select: {
           remote_id: true,
@@ -157,7 +158,7 @@ export class GitlabService implements ICommentService {
       // Retrieve the uuid of issue from remote_data
       const remote_data = await this.prisma.remote_data.findFirst({
         where: {
-          ressource_owner_id: id_ticket,
+          ressource_owner_id: id_ticket as string,
         },
       });
       const { iid } = JSON.parse(remote_data.data);

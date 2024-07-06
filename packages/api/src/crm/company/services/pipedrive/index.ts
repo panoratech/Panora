@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { PipedriveCompanyInput, PipedriveCompanyOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class PipedriveService implements ICompanyService {
@@ -65,10 +66,9 @@ export class PipedriveService implements ICompanyService {
     return;
   }
 
-  async syncCompanies(
-    linkedUserId: string,
-  ): Promise<ApiResponse<PipedriveCompanyOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<PipedriveCompanyOutput[]>> {
     try {
+      const { linkedUserId } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

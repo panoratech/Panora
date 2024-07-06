@@ -20,6 +20,7 @@ import {
   commonCallHubspotProperties,
   commonMeetingHubspotProperties,
 } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class HubspotService implements IEngagementService {
@@ -199,13 +200,11 @@ export class HubspotService implements IEngagementService {
     }
   }
 
-  async syncEngagements(
-    linkedUserId: string,
-    engagement_type: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotEngagementOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotEngagementOutput[]>> {
     try {
-      switch (engagement_type) {
+      const { linkedUserId, custom_properties, engagement_type } = data;
+
+      switch (engagement_type as string) {
         case 'CALL':
           return this.syncCalls(linkedUserId, custom_properties);
         case 'MEETING':

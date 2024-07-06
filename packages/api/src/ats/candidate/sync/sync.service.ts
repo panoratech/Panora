@@ -108,53 +108,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} candidates for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping candidates syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.candidate',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: ICandidateService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalCandidateOutput[]> =
-        await service.syncCandidates(linkedUserId, remoteProperties);
 
-      const sourceObject: OriginalCandidateOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedCandidateOutput,
-        OriginalCandidateOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'candidate',
-        customFieldMappings,
-      );
+        OriginalCandidateOutput,
+        ICandidateService
+      >(integrationId, linkedUserId, 'ats', 'candidate', service, []);
     } catch (error) {
       throw error;
     }
@@ -168,23 +130,127 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsCandidate[]> {
     try {
-      let candidates_results: AtsCandidate[] = [];
-      for (let i = 0; i < candidates.length; i++) {
-        const candidate = candidates[i];
-        const originId = candidate.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
+      const candidates_results: AtsCandidate[] = [];
+      const updateOrCreateEmails = async (
+        candidateId: string,
+        emails: any[],
+      ) => {
+        if (emails && emails.length > 0) {
+          await Promise.all(
+            emails.map(async (email) => {
+              const existingEmail =
+                await this.prisma.ats_candidate_email_addresses.findFirst({
+                  where: {
+                    id_ats_candidate: candidateId,
+                    value: email.value,
+                  },
+                });
+              if (existingEmail) {
+                await this.prisma.ats_candidate_email_addresses.update({
+                  where: {
+                    id_ats_candidate_email_address:
+                      existingEmail.id_ats_candidate_email_address,
+                  },
+                  data: {
+                    ...email,
+                    id_ats_candidate: candidateId,
+                  },
+                });
+              } else {
+                await this.prisma.ats_candidate_email_addresses.create({
+                  data: {
+                    ...email,
+                    id_ats_candidate: candidateId,
+                  },
+                });
+              }
+            }),
+          );
         }
+      };
 
+      const updateOrCreatePhones = async (
+        candidateId: string,
+        phones: any[],
+      ) => {
+        if (phones && phones.length > 0) {
+          await Promise.all(
+            phones.map(async (phone) => {
+              const existingPhone =
+                await this.prisma.ats_candidate_phone_numbers.findFirst({
+                  where: {
+                    id_ats_candidate: candidateId,
+                    value: phone.value,
+                  },
+                });
+              if (existingPhone) {
+                await this.prisma.ats_candidate_phone_numbers.update({
+                  where: {
+                    id_ats_candidate_phone_number:
+                      existingPhone.id_ats_candidate_phone_number,
+                  },
+                  data: {
+                    ...phone,
+                    id_ats_candidate: candidateId,
+                  },
+                });
+              } else {
+                await this.prisma.ats_candidate_phone_numbers.create({
+                  data: {
+                    ...phone,
+                    id_ats_candidate: candidateId,
+                  },
+                });
+              }
+            }),
+          );
+        }
+      };
+
+      const updateOrCreateUrls = async (candidateId: string, urls: any[]) => {
+        if (urls && urls.length > 0) {
+          await Promise.all(
+            urls.map(async (url) => {
+              const existingUrl =
+                await this.prisma.ats_candidate_urls.findFirst({
+                  where: {
+                    id_ats_candidate: candidateId,
+                    value: url.value,
+                  },
+                });
+              if (existingUrl) {
+                await this.prisma.ats_candidate_urls.update({
+                  where: {
+                    id_ats_candidate_url: existingUrl.id_ats_candidate_url,
+                  },
+                  data: {
+                    ...url,
+                    id_ats_candidate: candidateId,
+                  },
+                });
+              } else {
+                await this.prisma.ats_candidate_urls.create({
+                  data: {
+                    ...url,
+                    id_ats_candidate: candidateId,
+                  },
+                });
+              }
+            }),
+          );
+        }
+      };
+
+      const updateOrCreateCandidate = async (
+        candidate: UnifiedCandidateOutput,
+        originId: string,
+      ) => {
         const existingCandidate = await this.prisma.ats_candidates.findFirst({
           where: {
             remote_id: originId,
             id_connection: connection_id,
           },
         });
-
-        let unique_ats_candidate_id: string;
 
         const { normalizedEmails, normalizedPhones } =
           this.utils.normalizeEmailsAndNumbers(
@@ -193,275 +259,87 @@ export class SyncService implements OnModuleInit, IBaseSync {
           );
         const normalizedUrls = this.utils.normalizeUrls(candidate.urls);
 
+        const baseData: any = {
+          first_name: candidate.first_name ?? null,
+          last_name: candidate.last_name ?? null,
+          company: candidate.company ?? null,
+          title: candidate.title ?? null,
+          locations: candidate.locations ?? null,
+          is_private: candidate.is_private ?? null,
+          email_reachable: candidate.email_reachable ?? null,
+          remote_created_at: candidate.remote_created_at ?? null,
+          remote_modified_at: candidate.remote_modified_at ?? null,
+          last_interaction_at: candidate.last_interaction_at ?? null,
+          modified_at: new Date(),
+        };
+
+        let res;
         if (existingCandidate) {
-          // Update the existing candidate
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (candidate.first_name) {
-            data = { ...data, first_name: candidate.first_name };
-          }
-          if (candidate.last_name) {
-            data = { ...data, last_name: candidate.last_name };
-          }
-          if (candidate.company) {
-            data = { ...data, company: candidate.company };
-          }
-          if (candidate.title) {
-            data = { ...data, title: candidate.title };
-          }
-          if (candidate.locations) {
-            data = { ...data, locations: candidate.locations };
-          }
-          if (candidate.is_private) {
-            data = { ...data, is_private: candidate.is_private };
-          }
-          if (candidate.email_reachable) {
-            data = { ...data, email_reachable: candidate.email_reachable };
-          }
-          if (candidate.remote_created_at) {
-            data = { ...data, remote_created_at: candidate.remote_created_at };
-          }
-          if (candidate.remote_modified_at) {
-            data = {
-              ...data,
-              remote_modified_at: candidate.remote_modified_at,
-            };
-          }
-          if (candidate.last_interaction_at) {
-            data = {
-              ...data,
-              last_interaction_at: candidate.last_interaction_at,
-            };
-          }
-          const res = await this.prisma.ats_candidates.update({
+          res = await this.prisma.ats_candidates.update({
             where: {
               id_ats_candidate: existingCandidate.id_ats_candidate,
             },
-            data: data,
+            data: baseData,
           });
-          if (normalizedEmails && normalizedEmails.length > 0) {
-            await Promise.all(
-              normalizedEmails.map(async (email) => {
-                const a =
-                  await this.prisma.ats_candidate_email_addresses.findFirst({
-                    where: {
-                      id_ats_candidate: res.id_ats_candidate,
-                      value: email.value,
-                    },
-                  });
-                if (a) {
-                  this.prisma.ats_candidate_email_addresses.update({
-                    where: {
-                      id_ats_candidate_email_address:
-                        a.id_ats_candidate_email_address,
-                    },
-                    data: {
-                      ...email,
-                      id_ats_candidate: res.id_ats_candidate,
-                    },
-                  });
-                } else {
-                  this.prisma.ats_candidate_email_addresses.create({
-                    data: {
-                      ...email,
-                      id_ats_candidate: res.id_ats_candidate,
-                    },
-                  });
-                }
-              }),
-            );
-          }
-          if (normalizedPhones && normalizedPhones.length > 0) {
-            await Promise.all(
-              normalizedPhones.map(async (phone) => {
-                const a =
-                  await this.prisma.ats_candidate_phone_numbers.findFirst({
-                    where: {
-                      id_ats_candidate: res.id_ats_candidate,
-                      value: phone.value,
-                    },
-                  });
-                if (a) {
-                  this.prisma.ats_candidate_phone_numbers.update({
-                    where: {
-                      id_ats_candidate_phone_number:
-                        a.id_ats_candidate_phone_number,
-                    },
-                    data: {
-                      ...phone,
-                      id_ats_candidate: res.id_ats_candidate,
-                    },
-                  });
-                } else {
-                  this.prisma.ats_candidate_phone_numbers.create({
-                    data: {
-                      ...phone,
-                      id_ats_candidate: res.id_ats_candidate,
-                    },
-                  });
-                }
-              }),
-            );
-          }
-          if (normalizedUrls && normalizedUrls.length > 0) {
-            await Promise.all(
-              normalizedUrls.map(async (url) => {
-                const a = await this.prisma.ats_candidate_urls.findFirst({
-                  where: {
-                    id_ats_candidate: res.id_ats_candidate,
-                    value: url.value,
-                  },
-                });
-                if (a) {
-                  this.prisma.ats_candidate_urls.update({
-                    where: {
-                      id_ats_candidate_url: a.id_ats_candidate_url,
-                    },
-                    data: {
-                      ...url,
-                      id_ats_candidate: res.id_ats_candidate,
-                    },
-                  });
-                } else {
-                  this.prisma.ats_candidate_urls.create({
-                    data: {
-                      ...url,
-                      id_ats_candidate: res.id_ats_candidate,
-                    },
-                  });
-                }
-              }),
-            );
-          }
-          unique_ats_candidate_id = res.id_ats_candidate;
-          candidates_results = [...candidates_results, res];
         } else {
-          // Create a new candidate
-          this.logger.log('Candidate does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_candidate: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (candidate.first_name) {
-            data = { ...data, first_name: candidate.first_name };
-          }
-          if (candidate.last_name) {
-            data = { ...data, last_name: candidate.last_name };
-          }
-          if (candidate.company) {
-            data = { ...data, company: candidate.company };
-          }
-          if (candidate.title) {
-            data = { ...data, title: candidate.title };
-          }
-          if (candidate.locations) {
-            data = { ...data, locations: candidate.locations };
-          }
-          if (candidate.is_private) {
-            data = { ...data, is_private: candidate.is_private };
-          }
-          if (candidate.email_reachable) {
-            data = { ...data, email_reachable: candidate.email_reachable };
-          }
-          if (candidate.remote_created_at) {
-            data = { ...data, remote_created_at: candidate.remote_created_at };
-          }
-          if (candidate.remote_modified_at) {
-            data = {
-              ...data,
-              remote_modified_at: candidate.remote_modified_at,
-            };
-          }
-          if (candidate.last_interaction_at) {
-            data = {
-              ...data,
-              last_interaction_at: candidate.last_interaction_at,
-            };
-          }
-
-          const newCandidate = await this.prisma.ats_candidates.create({
-            data: data,
+          res = await this.prisma.ats_candidates.create({
+            data: {
+              ...baseData,
+              id_ats_candidate: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
+            },
           });
-
-          if (normalizedEmails && normalizedEmails.length > 0) {
-            await Promise.all(
-              normalizedEmails.map((email) =>
-                this.prisma.ats_candidate_email_addresses.create({
-                  data: {
-                    ...email,
-                    id_ats_candidate: newCandidate.id_ats_candidate,
-                  },
-                }),
-              ),
-            );
-          }
-
-          if (normalizedPhones && normalizedPhones.length > 0) {
-            await Promise.all(
-              normalizedPhones.map((phone) =>
-                this.prisma.ats_candidate_phone_numbers.create({
-                  data: {
-                    ...phone,
-                    id_ats_candidate: newCandidate.id_ats_candidate,
-                  },
-                }),
-              ),
-            );
-          }
-
-          if (normalizedUrls && normalizedUrls.length > 0) {
-            await Promise.all(
-              normalizedUrls.map((url) =>
-                this.prisma.ats_candidate_urls.create({
-                  data: {
-                    ...url,
-                    id_ats_candidate: newCandidate.id_ats_candidate,
-                  },
-                }),
-              ),
-            );
-          }
-
-          unique_ats_candidate_id = newCandidate.id_ats_candidate;
-          candidates_results = [...candidates_results, newCandidate];
         }
 
-        // now insert the attachment of the candidate inside ats_candidate_attachments
+        const candidateId = res.id_ats_candidate;
+
+        await updateOrCreateEmails(candidateId, normalizedEmails);
+        await updateOrCreatePhones(candidateId, normalizedPhones);
+        await updateOrCreateUrls(candidateId, normalizedUrls);
+
+        return res;
+      };
+
+      for (let i = 0; i < candidates.length; i++) {
+        const candidate = candidates[i];
+        const originId = candidate.remote_id;
+
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
+        }
+
+        const res = await updateOrCreateCandidate(candidate, originId);
+        const candidate_id = res.id_ats_candidate;
+        candidates_results.push(res);
+
+        // Process attachments
         if (candidate.attachments) {
           await this.registry.getService('ats', 'attachment').saveToDb(
             connection_id,
             linkedUserId,
             candidate.attachments,
             originSource,
-            candidate.attachments.map((att: UnifiedAttachmentOutput) => {
-              return att.remote_data;
-            }),
-            {
-              candidate_id: unique_ats_candidate_id,
-            },
+            candidate.attachments.map(
+              (att: UnifiedAttachmentOutput) => att.remote_data,
+            ),
+            { candidate_id },
           );
         }
 
-        // insert tag inside db
+        // Process tags
         if (candidate.tags) {
           const tags = await this.registry.getService('ats', 'tag').saveToDb(
             connection_id,
             linkedUserId,
             candidate.tags,
             originSource,
-            candidate.tags.map((tag: UnifiedTagOutput) => {
-              return tag.remote_data;
-            }),
+            candidate.tags.map((tag: UnifiedTagOutput) => tag.remote_data),
           );
           await this.prisma.ats_candidates.update({
             where: {
-              id_ats_candidate: unique_ats_candidate_id,
+              id_ats_candidate: candidate_id,
             },
             data: {
               tags: tags.map((tag) => tag.id_tcg_tag as string),
@@ -469,65 +347,21 @@ export class SyncService implements OnModuleInit, IBaseSync {
           });
         }
 
-        // check duplicate or existing values
-        if (candidate.field_mappings && candidate.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_candidate_id,
-            },
-          });
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          candidate.field_mappings,
+          candidate_id,
+          originSource,
+          linkedUserId,
+        );
 
-          for (const [slug, value] of Object.entries(
-            candidate.field_mappings,
-          )) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_candidate_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_candidate_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          candidate_id,
+          remote_data[i],
+        );
       }
+
       return candidates_results;
     } catch (error) {
       throw error;

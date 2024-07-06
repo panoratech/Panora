@@ -11,6 +11,7 @@ import { ServiceRegistry } from '../registry.service';
 import { AshbyDepartmentInput, AshbyDepartmentOutput } from './types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { OriginalDepartmentOutput } from '@@core/utils/types/original/original.ats';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class AshbyService implements IDepartmentService {
@@ -32,11 +33,10 @@ export class AshbyService implements IDepartmentService {
     throw new Error('Method not implemented.');
   }
 
-  async syncDepartments(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<AshbyDepartmentOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<AshbyDepartmentOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

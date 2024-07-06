@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ICollectionService } from '@ticketing/collection/types';
 import { JiraCollectionOutput, JiraCollectionInput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class JiraService implements ICollectionService {
@@ -24,10 +25,10 @@ export class JiraService implements ICollectionService {
     this.registry.registerService('jira', this);
   }
 
-  async syncCollections(
-    linkedUserId: string,
-  ): Promise<ApiResponse<JiraCollectionOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<JiraCollectionOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

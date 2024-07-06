@@ -10,6 +10,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { ICompanyService } from '@crm/company/types';
 import { ServiceRegistry } from '../registry.service';
 import { AttioCompanyInput, AttioCompanyOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class AttioService implements ICompanyService {
@@ -23,6 +25,9 @@ export class AttioService implements ICompanyService {
       CrmObject.company.toUpperCase() + ':' + AttioService.name,
     );
     this.registry.registerService('attio', this);
+  }
+  sync(data: SyncParam): Promise<ApiResponse<OriginalCompanyOutput[]>> {
+    throw new Error('Method not implemented.');
   }
 
   async addCompany(
@@ -69,9 +74,11 @@ export class AttioService implements ICompanyService {
   }
 
   async syncCompanies(
-    linkedUserId: string,
+    data: SyncParam,
   ): Promise<ApiResponse<AttioCompanyOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

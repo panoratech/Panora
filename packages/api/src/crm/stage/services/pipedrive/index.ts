@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class PipedriveService implements IStageService {
@@ -24,11 +25,10 @@ export class PipedriveService implements IStageService {
     this.registry.registerService('pipedrive', this);
   }
 
-  async syncStages(
-    linkedUserId: string,
-    deal_id: string,
-  ): Promise<ApiResponse<PipedriveStageOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<PipedriveStageOutput[]>> {
     try {
+      const { linkedUserId, deal_id } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -37,7 +37,7 @@ export class PipedriveService implements IStageService {
         },
       });
       const res = await this.prisma.crm_deals.findUnique({
-        where: { id_crm_deal: deal_id },
+        where: { id_crm_deal: deal_id as string },
       });
 
       const deals = await axios.get(`${connection.account_url}/deals`, {

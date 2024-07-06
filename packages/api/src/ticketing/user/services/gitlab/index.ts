@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IUserService } from '@ticketing/user/types';
 import { GitlabUserOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GitlabService implements IUserService {
@@ -24,9 +25,9 @@ export class GitlabService implements IUserService {
     this.registry.registerService('gitlab', this);
   }
 
-  async syncUsers(
-    linkedUserId: string,
-  ): Promise<ApiResponse<GitlabUserOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GitlabUserOutput[]>> {
+    const { linkedUserId } = data;
+
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {

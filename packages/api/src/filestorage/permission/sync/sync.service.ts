@@ -48,21 +48,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
     },
   ): Promise<FileStoragePermission[]> {
     try {
-      let permissions_results: FileStoragePermission[] = [];
-      for (let i = 0; i < permissions.length; i++) {
-        const permission = permissions[i];
-        const originId = permission.remote_id;
+      const permissions_results: FileStoragePermission[] = [];
 
+      const updateOrCreatePermission = async (
+        permission: UnifiedPermissionOutput,
+        originId: string,
+        extra: { object_name: 'file' | 'folder'; value: string },
+      ) => {
         let existingPermission;
+
         if (!originId) {
-          // check if perm exists for the file or folder id in question
-          if (extra.object_name == 'file') {
+          if (extra.object_name === 'file') {
             const file = await this.prisma.fs_files.findUnique({
               where: {
                 id_fs_file: extra.value,
               },
             });
-            if (file.id_fs_permission) {
+            if (file?.id_fs_permission) {
               existingPermission = await this.prisma.fs_permissions.findUnique({
                 where: {
                   id_fs_permission: file.id_fs_permission,
@@ -75,7 +77,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 id_fs_folder: extra.value,
               },
             });
-            if (folder.id_fs_permission) {
+            if (folder?.id_fs_permission) {
               existingPermission = await this.prisma.fs_permissions.findUnique({
                 where: {
                   id_fs_permission: folder.id_fs_permission,
@@ -92,124 +94,55 @@ export class SyncService implements OnModuleInit, IBaseSync {
           });
         }
 
-        let unique_fs_permission_id: string;
+        const baseData: any = {
+          roles: permission.roles ?? null,
+          type: permission.type ?? null,
+          user_id: permission.user_id ?? null,
+          group_id: permission.group_id ?? null,
+          modified_at: new Date(),
+        };
 
         if (existingPermission) {
-          // Update the existing permission
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (permission.roles) {
-            data = { ...data, roles: permission.roles };
-          }
-          if (permission.type) {
-            data = { ...data, type: permission.type };
-          }
-          if (permission.user_id) {
-            data = { ...data, user_id: permission.user_id };
-          }
-          if (permission.group_id) {
-            data = { ...data, group_id: permission.group_id };
-          }
-          const res = await this.prisma.fs_permissions.update({
+          return await this.prisma.fs_permissions.update({
             where: {
               id_fs_permission: existingPermission.id_fs_permission,
             },
-            data: data,
+            data: baseData,
           });
-          unique_fs_permission_id = res.id_fs_permission;
-          permissions_results = [...permissions_results, res];
         } else {
-          // Create a new permission
-          this.logger.log('Permission does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_fs_permission: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId || null,
-            id_connection: connection_id,
-          };
-
-          if (permission.roles) {
-            data = { ...data, roles: permission.roles };
-          }
-          if (permission.type) {
-            data = { ...data, type: permission.type };
-          }
-          if (permission.user_id) {
-            data = { ...data, user_id: permission.user_id };
-          }
-          if (permission.group_id) {
-            data = { ...data, group_id: permission.group_id };
-          }
-
-          const newPermission = await this.prisma.fs_permissions.create({
-            data: data,
-          });
-
-          unique_fs_permission_id = newPermission.id_fs_permission;
-          permissions_results = [...permissions_results, newPermission];
-        }
-
-        // check duplicate or existing values
-        if (permission.field_mappings && permission.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
+          return await this.prisma.fs_permissions.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_fs_permission_id,
+              ...baseData,
+              id_fs_permission: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
             },
           });
-
-          for (const [slug, value] of Object.entries(
-            permission.field_mappings,
-          )) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
         }
+      };
 
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_fs_permission_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_fs_permission_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+      for (let i = 0; i < permissions.length; i++) {
+        const permission = permissions[i];
+        const originId = permission.remote_id;
+
+        const res = await updateOrCreatePermission(permission, originId, extra);
+        const permission_id = res.id_fs_permission;
+        permissions_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          permission.field_mappings,
+          permission_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          permission_id,
+          remote_data[i],
+        );
       }
       return permissions_results;
     } catch (error) {

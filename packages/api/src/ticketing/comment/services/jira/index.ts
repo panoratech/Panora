@@ -10,6 +10,7 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { JiraCommentInput, JiraCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
 import { Utils } from '@ticketing/@lib/@utils';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class JiraService implements ICommentService {
@@ -120,11 +121,10 @@ export class JiraService implements ICommentService {
       );
     }
   }
-  async syncComments(
-    linkedUserId: string,
-    id_ticket: string,
-  ): Promise<ApiResponse<JiraCommentOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<JiraCommentOutput[]>> {
     try {
+      const { linkedUserId, id_ticket } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -135,7 +135,7 @@ export class JiraService implements ICommentService {
       //retrieve ticket remote id so we can retrieve the comments in the original software
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
-          id_tcg_ticket: id_ticket,
+          id_tcg_ticket: id_ticket as string,
         },
         select: {
           remote_id: true,

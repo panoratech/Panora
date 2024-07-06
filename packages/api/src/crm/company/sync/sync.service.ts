@@ -107,52 +107,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
     linkedUserId: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} companies for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'crm',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping companies syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'crm.company',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: ICompanyService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalCompanyOutput[]> =
-        await service.syncCompanies(linkedUserId, remoteProperties);
 
-      const sourceObject: OriginalCompanyOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedCompanyOutput,
-        OriginalCompanyOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'crm',
-        'company',
-        customFieldMappings,
-      );
+        OriginalCompanyOutput,
+        ICompanyService
+      >(integrationId, linkedUserId, 'crm', 'company', service, []);
     } catch (error) {
       throw error;
     }
@@ -166,15 +129,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<CrmCompany[]> {
     try {
-      let companies_results: CrmCompany[] = [];
-      for (let i = 0; i < data.length; i++) {
-        const company = data[i];
-        const originId = company.remote_id;
+      const companies_results: CrmCompany[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateCompany = async (
+        company: UnifiedCompanyOutput,
+        originId: string,
+      ) => {
         const existingCompany = await this.prisma.crm_companies.findFirst({
           where: {
             remote_id: originId,
@@ -197,34 +157,20 @@ export class SyncService implements OnModuleInit, IBaseSync {
           company.addresses,
         );
 
-        let unique_crm_company_id: string;
+        const baseData: any = {
+          name: company.name ?? null,
+          industry: company.industry ?? null,
+          number_of_employees: company.number_of_employees ?? null,
+          id_crm_user: company.user_id ?? null,
+          modified_at: new Date(),
+        };
 
         if (existingCompany) {
-          // Update the existing company
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (company.name) {
-            data = { ...data, name: company.name };
-          }
-          if (company.industry) {
-            data = { ...data, industry: company.industry };
-          }
-          if (company.number_of_employees) {
-            data = {
-              ...data,
-              number_of_employees: company.number_of_employees,
-            };
-          }
-          if (company.user_id) {
-            data = { ...data, id_crm_user: company.user_id };
-          }
-
           const res = await this.prisma.crm_companies.update({
             where: {
               id_crm_company: existingCompany.id_crm_company,
             },
-            data: data,
+            data: baseData,
           });
 
           if (normalizedEmails && normalizedEmails.length > 0) {
@@ -245,7 +191,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                   return this.prisma.crm_email_addresses.create({
                     data: {
                       ...email,
-                      id_crm_company: existingCompany.id_crm_company, // Assuming 'uuid' is the ID of the related contact
+                      id_crm_company: existingCompany.id_crm_company,
                     },
                   });
                 }
@@ -293,45 +239,24 @@ export class SyncService implements OnModuleInit, IBaseSync {
                   return this.prisma.crm_addresses.create({
                     data: {
                       ...addy,
-                      id_crm_company: existingCompany.id_crm_company, // Assuming 'uuid' is the ID of the related contact
+                      id_crm_company: existingCompany.id_crm_company,
                     },
                   });
                 }
               }),
             );
           }
-          unique_crm_company_id = res.id_crm_company;
-          companies_results = [...companies_results, res];
+          return res;
         } else {
-          // Create a new company
-          this.logger.log('company not exists');
           const uuid = uuidv4();
-          let data: any = {
-            id_crm_company: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (company.name) {
-            data = { ...data, name: company.name };
-          }
-          if (company.industry) {
-            data = { ...data, industry: company.industry };
-          }
-          if (company.number_of_employees) {
-            data = {
-              ...data,
-              number_of_employees: company.number_of_employees,
-            };
-          }
-          if (company.user_id) {
-            data = { ...data, id_crm_user: company.user_id };
-          }
-
           const newCompany = await this.prisma.crm_companies.create({
-            data: data,
+            data: {
+              ...baseData,
+              id_crm_company: uuid,
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
+            },
           });
 
           if (normalizedEmails && normalizedEmails.length > 0) {
@@ -372,66 +297,32 @@ export class SyncService implements OnModuleInit, IBaseSync {
               ),
             );
           }
-          unique_crm_company_id = newCompany.id_crm_company;
-          companies_results = [...companies_results, newCompany];
+          return newCompany;
+        }
+      };
+
+      for (let i = 0; i < data.length; i++) {
+        const company = data[i];
+        const originId = company.remote_id;
+
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        // check duplicate or existing values
-        if (company.field_mappings && company.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_crm_company_id,
-            },
-          });
+        const res = await updateOrCreateCompany(company, originId);
+        const company_id = res.id_crm_company;
+        companies_results.push(res);
 
-          for (const [slug, value] of Object.entries(company.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          company.field_mappings,
+          company_id,
+          originSource,
+          linkedUserId,
+        );
 
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_crm_company_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_crm_company_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(company_id, remote_data[i]);
       }
       return companies_results;
     } catch (error) {

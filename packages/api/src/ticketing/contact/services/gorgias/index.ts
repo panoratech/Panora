@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IContactService } from '@ticketing/contact/types';
 import { GorgiasContactOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GorgiasService implements IContactService {
@@ -24,13 +25,9 @@ export class GorgiasService implements IContactService {
     this.registry.registerService('gorgias', this);
   }
 
-  async syncContacts(
-    linkedUserId: string,
-    remote_account_id: string,
-  ): Promise<ApiResponse<GorgiasContactOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GorgiasContactOutput[]>> {
     try {
-      if (!remote_account_id)
-        throw new ReferenceError('remote account id not found');
+      const { linkedUserId } = data;
 
       const connection = await this.prisma.connections.findFirst({
         where: {

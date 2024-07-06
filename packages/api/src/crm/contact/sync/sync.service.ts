@@ -109,52 +109,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
   //todo: HANDLE DATA REMOVED FROM PROVIDER
   async syncContactsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} contacts for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'crm',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping contacts syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'crm.contact',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalContactOutput[]> =
-        await service.syncContacts(linkedUserId, remoteProperties);
 
-      const sourceObject: OriginalContactOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
+        UnifiedContactOutput,
         OriginalContactOutput,
-        OriginalContactOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'crm',
-        'contact',
-        customFieldMappings,
-      );
+        IContactService
+      >(integrationId, linkedUserId, 'crm', 'contact', service, []);
     } catch (error) {
       throw error;
     }
@@ -168,15 +131,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<CrmContact[]> {
     try {
-      let contacts_results: CrmContact[] = [];
-      for (let i = 0; i < data.length; i++) {
-        const contact = data[i];
-        const originId = contact.remote_id;
+      const contacts_results: CrmContact[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateContact = async (
+        contact: UnifiedContactOutput,
+        originId: string,
+      ) => {
         const existingContact = await this.prisma.crm_contacts.findFirst({
           where: {
             remote_id: originId,
@@ -199,36 +159,19 @@ export class SyncService implements OnModuleInit, IBaseSync {
           contact.addresses,
         );
 
-        let unique_crm_contact_id: string;
+        const baseData: any = {
+          first_name: contact.first_name ?? null,
+          last_name: contact.last_name ?? null,
+          id_crm_user: contact.user_id ?? null,
+          modified_at: new Date(),
+        };
 
         if (existingContact) {
-          // Update the existing contact
-          let data: any = {
-            modified_at: new Date(),
-            first_name: '',
-            last_name: '',
-          };
-
-          if (contact.first_name) {
-            data = { ...data, first_name: contact.first_name };
-          }
-
-          if (contact.last_name) {
-            data = { ...data, last_name: contact.last_name };
-          }
-
-          if (contact.user_id) {
-            data = {
-              ...data,
-              id_crm_user: contact.user_id,
-            };
-          }
-
           const res = await this.prisma.crm_contacts.update({
             where: {
               id_crm_contact: existingContact.id_crm_contact,
             },
-            data: data,
+            data: baseData,
           });
 
           if (normalizedEmails && normalizedEmails.length > 0) {
@@ -249,7 +192,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                   return this.prisma.crm_email_addresses.create({
                     data: {
                       ...email,
-                      id_crm_contact: existingContact.id_crm_contact, // Assuming 'uuid' is the ID of the related contact
+                      id_crm_contact: existingContact.id_crm_contact,
                     },
                   });
                 }
@@ -275,7 +218,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                   return this.prisma.crm_phone_numbers.create({
                     data: {
                       ...phone,
-                      id_crm_contact: existingContact.id_crm_contact, // Assuming 'uuid' is the ID of the related contact
+                      id_crm_contact: existingContact.id_crm_contact,
                     },
                   });
                 }
@@ -297,45 +240,24 @@ export class SyncService implements OnModuleInit, IBaseSync {
                   return this.prisma.crm_addresses.create({
                     data: {
                       ...addy,
-                      id_crm_contact: existingContact.id_crm_contact, // Assuming 'uuid' is the ID of the related contact
+                      id_crm_contact: existingContact.id_crm_contact,
                     },
                   });
                 }
               }),
             );
           }
-
-          unique_crm_contact_id = res.id_crm_contact;
-          contacts_results = [...contacts_results, res];
+          return res;
         } else {
-          // Create a new contact
-          this.logger.log('not existing contact ' + contact.first_name);
           const uuid = uuidv4();
-          let data: any = {
-            id_crm_contact: uuid,
-            first_name: '',
-            last_name: '',
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (contact.first_name) {
-            data = { ...data, first_name: contact.first_name };
-          }
-          if (contact.last_name) {
-            data = { ...data, last_name: contact.last_name };
-          }
-          if (contact.user_id) {
-            data = {
-              ...data,
-              id_crm_user: contact.user_id,
-            };
-          }
-
           const newContact = await this.prisma.crm_contacts.create({
-            data: data,
+            data: {
+              ...baseData,
+              id_crm_contact: uuid,
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
+            },
           });
 
           if (normalizedEmails && normalizedEmails.length > 0) {
@@ -376,66 +298,32 @@ export class SyncService implements OnModuleInit, IBaseSync {
               ),
             );
           }
-
-          unique_crm_contact_id = newContact.id_crm_contact;
-          contacts_results = [...contacts_results, newContact];
+          return newContact;
         }
-        // check duplicate or existing values
-        if (contact.field_mappings && contact.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_crm_contact_id,
-            },
-          });
+      };
 
-          for (const [slug, value] of Object.entries(contact.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
+      for (let i = 0; i < data.length; i++) {
+        const contact = data[i];
+        const originId = contact.remote_id;
 
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_crm_contact_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_crm_contact_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        const res = await updateOrCreateContact(contact, originId);
+        const contact_id = res.id_crm_contact;
+        contacts_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          contact.field_mappings,
+          contact_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(contact_id, remote_data[i]);
       }
       return contacts_results;
     } catch (error) {

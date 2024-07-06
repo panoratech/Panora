@@ -98,55 +98,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncUsersForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} users for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ats',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping users syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ats.user',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IUserService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalUserOutput[]> = await service.syncUsers(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalUserOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedUserOutput,
-        OriginalUserOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ats',
-        'user',
-        customFieldMappings,
-      );
+        OriginalUserOutput,
+        IUserService
+      >(integrationId, linkedUserId, 'ats', 'user', service, []);
     } catch (error) {
       throw error;
     }
@@ -160,7 +120,50 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<AtsUser[]> {
     try {
-      let users_results: AtsUser[] = [];
+      const users_results: AtsUser[] = [];
+
+      const updateOrCreateUser = async (
+        user: UnifiedUserOutput,
+        originId: string,
+      ) => {
+        const existingUser = await this.prisma.ats_users.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          first_name: user.first_name ?? null,
+          last_name: user.last_name ?? null,
+          email: user.email ?? null,
+          disabled: user.disabled ?? null,
+          access_role: user.access_role ?? null,
+          remote_created_at: user.remote_created_at ?? null,
+          remote_modified_at: user.remote_modified_at ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingUser) {
+          return await this.prisma.ats_users.update({
+            where: {
+              id_ats_user: existingUser.id_ats_user,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.ats_users.create({
+            data: {
+              ...baseData,
+              id_ats_user: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < users.length; i++) {
         const user = users[i];
         const originId = user.remote_id;
@@ -169,147 +172,20 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingUser = await this.prisma.ats_users.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateUser(user, originId);
+        const user_id = res.id_ats_user;
+        users_results.push(res);
 
-        let unique_ats_user_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          user.field_mappings,
+          user_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingUser) {
-          // Update the existing user
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (user.first_name) {
-            data = { ...data, first_name: user.first_name };
-          }
-          if (user.last_name) {
-            data = { ...data, last_name: user.last_name };
-          }
-          if (user.email) {
-            data = { ...data, email: user.email };
-          }
-          if (user.disabled !== undefined) {
-            data = { ...data, disabled: user.disabled };
-          }
-          if (user.access_role) {
-            data = { ...data, access_role: user.access_role };
-          }
-          if (user.remote_created_at) {
-            data = { ...data, remote_created_at: user.remote_created_at };
-          }
-          if (user.remote_modified_at) {
-            data = { ...data, remote_modified_at: user.remote_modified_at };
-          }
-          const res = await this.prisma.ats_users.update({
-            where: {
-              id_ats_user: existingUser.id_ats_user,
-            },
-            data: data,
-          });
-          unique_ats_user_id = res.id_ats_user;
-          users_results = [...users_results, res];
-        } else {
-          // Create a new user
-          this.logger.log('User does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_ats_user: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (user.first_name) {
-            data = { ...data, first_name: user.first_name };
-          }
-          if (user.last_name) {
-            data = { ...data, last_name: user.last_name };
-          }
-          if (user.email) {
-            data = { ...data, email: user.email };
-          }
-          if (user.disabled !== undefined) {
-            data = { ...data, disabled: user.disabled };
-          }
-          if (user.access_role) {
-            data = { ...data, access_role: user.access_role };
-          }
-          if (user.remote_created_at) {
-            data = { ...data, remote_created_at: user.remote_created_at };
-          }
-          if (user.remote_modified_at) {
-            data = { ...data, remote_modified_at: user.remote_modified_at };
-          }
-
-          const newUser = await this.prisma.ats_users.create({
-            data: data,
-          });
-
-          unique_ats_user_id = newUser.id_ats_user;
-          users_results = [...users_results, newUser];
-        }
-
-        // check duplicate or existing values
-        if (user.field_mappings && user.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ats_user_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(user.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ats_user_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ats_user_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(user_id, remote_data[i]);
       }
       return users_results;
     } catch (error) {

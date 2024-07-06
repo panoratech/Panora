@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ITeamService } from '@ticketing/team/types';
 import { GorgiasTeamOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GorgiasService implements ITeamService {
@@ -24,10 +25,10 @@ export class GorgiasService implements ITeamService {
     this.registry.registerService('gorgias', this);
   }
 
-  async syncTeams(
-    linkedUserId: string,
-  ): Promise<ApiResponse<GorgiasTeamOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GorgiasTeamOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

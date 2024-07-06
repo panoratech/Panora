@@ -10,6 +10,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskTicketInput, ZendeskTicketOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZendeskService implements ITicketService {
@@ -115,12 +116,9 @@ export class ZendeskService implements ITicketService {
     }
   }
 
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<ZendeskTicketOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskTicketOutput[]>> {
     try {
+      const { linkedUserId, webhook_remote_identifier } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -128,6 +126,7 @@ export class ZendeskService implements ITicketService {
           vertical: 'ticketing',
         },
       });
+      const remote_ticket_id = webhook_remote_identifier as string;
 
       const request_url = remote_ticket_id
         ? `${connection.account_url}/tickets/${remote_ticket_id}.json`

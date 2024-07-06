@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { BoxUserInput, BoxUserOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class BoxService implements IUserService {
@@ -24,12 +25,10 @@ export class BoxService implements IUserService {
     this.registry.registerService('box', this);
   }
 
-  async syncUsers(
-    linkedUserId: string,
-    group_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<BoxUserOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<BoxUserOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       // to sync all users we start from root user ("0") and recurse through it
       const connection = await this.prisma.connections.findFirst({
         where: {

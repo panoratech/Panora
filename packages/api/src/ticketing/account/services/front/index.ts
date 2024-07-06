@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IAccountService } from '@ticketing/account/types';
 import { FrontAccountOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class FrontService implements IAccountService {
@@ -24,11 +25,10 @@ export class FrontService implements IAccountService {
     this.registry.registerService('front', this);
   }
 
-  async syncAccounts(
-    linkedUserId: string,
-    remote_account_id?: string,
-  ): Promise<ApiResponse<FrontAccountOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<FrontAccountOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

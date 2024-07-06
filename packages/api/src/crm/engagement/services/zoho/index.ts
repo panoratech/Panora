@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZohoService implements IEngagementService {
@@ -65,10 +66,10 @@ export class ZohoService implements IEngagementService {
     }
   }
 
-  async syncEngagements(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoEngagementOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoEngagementOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

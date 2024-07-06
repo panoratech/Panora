@@ -128,56 +128,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
     deal_id: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} stages for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'crm',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping stages syncing... No ${integrationId} connection was found for linked stage ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'crm.stage',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IStageService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalStageOutput[]> = await service.syncStages(
-        linkedUserId,
-        deal_id,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalStageOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedStageOutput,
-        OriginalStageOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'crm',
-        'stage',
-        customFieldMappings,
-        { id_deal: deal_id },
-      );
+        OriginalStageOutput,
+        IStageService
+      >(integrationId, linkedUserId, 'crm', 'stage', service, [
+        {
+          param: deal_id,
+          paramName: 'deal_id',
+          shouldPassToIngest: true,
+          shouldPassToService: true,
+        },
+      ]);
     } catch (error) {
       throw error;
     }
@@ -192,15 +158,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
     deal_id: string,
   ): Promise<CrmStage[]> {
     try {
-      let stages_results: CrmStage[] = [];
-      for (let i = 0; i < data.length; i++) {
-        const stage = data[i];
-        const originId = stage.remote_id;
+      const stages_results: CrmStage[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateStage = async (
+        stage: UnifiedStageOutput,
+        originId: string,
+      ) => {
         const existingStage = await this.prisma.crm_deals.findFirst({
           where: {
             id_crm_deal: deal_id,
@@ -209,40 +172,28 @@ export class SyncService implements OnModuleInit, IBaseSync {
             id_crm_deals_stage: true,
           },
         });
-        // TODO: stage
-        let unique_crm_stage_id: string;
 
-        if (existingStage.id_crm_deals_stage) {
-          // Update the existing stage
-          let data: any = {
-            modified_at: new Date(),
-          };
+        const baseData: any = {
+          stage_name: stage.stage_name ?? null,
+          modified_at: new Date(),
+        };
 
-          if (stage.stage_name) {
-            data = { ...data, stage_name: stage.stage_name };
-          }
-
-          const res = await this.prisma.crm_deals_stages.update({
+        if (existingStage?.id_crm_deals_stage) {
+          return await this.prisma.crm_deals_stages.update({
             where: {
               id_crm_deals_stage: existingStage.id_crm_deals_stage,
             },
-            data: data,
+            data: baseData,
           });
-          unique_crm_stage_id = res.id_crm_deals_stage;
-          stages_results = [...stages_results, res];
         } else {
-          // it doesnt mean the stage does not exist as we know that 1 stage can have multiple deals associated
-          // so first we have to check if the stage exists or not inside our db
-          // if it exists we just have to map its id to the crm_deals table otherwise we cretae a new entry in crmdeals_stage
           const isExistingStage = await this.prisma.crm_deals_stages.findFirst({
             where: {
               remote_id: originId,
               id_connection: connection_id,
             },
           });
+
           if (isExistingStage) {
-            //we just have to update the crm_deals row by mapping it to its stage id
-            this.logger.log('stage already exists, just mapping it');
             await this.prisma.crm_deals.update({
               where: {
                 id_crm_deal: deal_id,
@@ -251,94 +202,54 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 id_crm_deals_stage: isExistingStage.id_crm_deals_stage,
               },
             });
-            unique_crm_stage_id = isExistingStage.id_crm_deals_stage;
-            stages_results = [...stages_results, isExistingStage];
+            return isExistingStage;
           } else {
-            this.logger.log('stage not exists');
-            let data: any = {
-              id_crm_deals_stage: uuidv4(),
-              created_at: new Date(),
-              modified_at: new Date(),
-              remote_id: originId || '',
-              id_connection: connection_id,
-            };
-
-            if (stage.stage_name) {
-              data = { ...data, stage_name: stage.stage_name };
-            }
-            const res = await this.prisma.crm_deals_stages.create({
-              data: data,
+            const newStage = await this.prisma.crm_deals_stages.create({
+              data: {
+                ...baseData,
+                id_crm_deals_stage: uuidv4(),
+                created_at: new Date(),
+                remote_id: originId ?? '',
+                id_connection: connection_id,
+              },
             });
-            //now update the crm_deals table with the newly crated stage
+
             await this.prisma.crm_deals.update({
               where: {
                 id_crm_deal: deal_id,
               },
               data: {
-                id_crm_deals_stage: res.id_crm_deals_stage,
-              },
-            });
-            unique_crm_stage_id = res.id_crm_deals_stage;
-            stages_results = [...stages_results, res];
-          }
-        }
-
-        // check duplicate or existing values
-        if (stage.field_mappings && stage.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_crm_stage_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(stage.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
+                id_crm_deals_stage: newStage.id_crm_deals_stage,
               },
             });
 
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
+            return newStage;
           }
         }
+      };
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_crm_stage_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_crm_stage_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+      for (let i = 0; i < data.length; i++) {
+        const stage = data[i];
+        const originId = stage.remote_id;
+
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
+        }
+
+        const res = await updateOrCreateStage(stage, originId);
+        const stage_id = res.id_crm_deals_stage;
+        stages_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          stage.field_mappings,
+          stage_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(stage_id, remote_data[i]);
       }
       return stages_results;
     } catch (error) {

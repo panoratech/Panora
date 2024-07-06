@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class PipedriveService implements INoteService {
@@ -64,10 +65,10 @@ export class PipedriveService implements INoteService {
     }
   }
 
-  async syncNotes(
-    linkedUserId: string,
-  ): Promise<ApiResponse<PipedriveNoteOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<PipedriveNoteOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,

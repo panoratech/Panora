@@ -9,6 +9,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { BoxFolderInput, BoxFolderOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class BoxService implements IFolderService {
@@ -104,11 +105,9 @@ export class BoxService implements IFolderService {
     }
   }
 
-  async syncFolders(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<BoxFolderOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<BoxFolderOutput[]>> {
     try {
+      const { linkedUserId } = data;
       // to sync all folders we start from root folder ("0") and recurse through it
       const results = await this.recursiveGetBoxFolders('0', linkedUserId);
       this.logger.log(`Synced box folders !`);

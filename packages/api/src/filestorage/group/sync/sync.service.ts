@@ -102,55 +102,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncGroupsForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} groups for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'filestorage',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping groups syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'filestorage.group',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IGroupService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalGroupOutput[]> = await service.syncGroups(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalGroupOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedGroupOutput,
-        OriginalGroupOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'filestorage',
-        'group',
-        customFieldMappings,
-      );
+        OriginalGroupOutput,
+        IGroupService
+      >(integrationId, linkedUserId, 'filestorage', 'group', service, []);
     } catch (error) {
       throw error;
     }
@@ -164,7 +124,46 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<FileStorageGroup[]> {
     try {
-      let groups_results: FileStorageGroup[] = [];
+      const groups_results: FileStorageGroup[] = [];
+
+      const updateOrCreateGroup = async (
+        group: UnifiedGroupOutput,
+        originId: string,
+      ) => {
+        const existingGroup = await this.prisma.fs_groups.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          name: group.name ?? null,
+          users: group.users ?? null,
+          remote_was_deleted: group.remote_was_deleted ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingGroup) {
+          return await this.prisma.fs_groups.update({
+            where: {
+              id_fs_group: existingGroup.id_fs_group,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.fs_groups.create({
+            data: {
+              ...baseData,
+              id_fs_group: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < groups.length; i++) {
         const group = groups[i];
         const originId = group.remote_id;
@@ -173,123 +172,20 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingGroup = await this.prisma.fs_groups.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateGroup(group, originId);
+        const group_id = res.id_fs_group;
+        groups_results.push(res);
 
-        let unique_fs_group_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          group.field_mappings,
+          group_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingGroup) {
-          // Update the existing group
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (group.name) {
-            data = { ...data, name: group.name };
-          }
-          if (group.users) {
-            data = { ...data, users: group.users };
-          }
-          if (group.remote_was_deleted) {
-            data = { ...data, remote_was_deleted: group.remote_was_deleted };
-          }
-          const res = await this.prisma.fs_groups.update({
-            where: {
-              id_fs_group: existingGroup.id_fs_group,
-            },
-            data: data,
-          });
-          unique_fs_group_id = res.id_fs_group;
-          groups_results = [...groups_results, res];
-        } else {
-          // Create a new group
-          this.logger.log('Group does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_fs_group: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (group.name) {
-            data = { ...data, name: group.name };
-          }
-          if (group.users) {
-            data = { ...data, users: group.users };
-          }
-          if (group.remote_was_deleted) {
-            data = { ...data, remote_was_deleted: group.remote_was_deleted };
-          }
-
-          const newGroup = await this.prisma.fs_groups.create({
-            data: data,
-          });
-
-          unique_fs_group_id = newGroup.id_fs_group;
-          groups_results = [...groups_results, newGroup];
-        }
-
-        // check duplicate or existing values
-        if (group.field_mappings && group.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_fs_group_id,
-            },
-          });
-
-          for (const [slug, value] of Object.entries(group.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_fs_group_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_fs_group_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(group_id, remote_data[i]);
       }
       return groups_results;
     } catch (error) {

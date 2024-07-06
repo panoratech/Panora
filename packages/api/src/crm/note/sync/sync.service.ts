@@ -104,54 +104,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
   //todo: HANDLE DATA REMOVED FROM PROVIDER
   async syncNotesForLinkedUser(integrationId: string, linkedUserId: string) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} notes for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'crm',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping notes syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'crm.note',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: INoteService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalNoteOutput[]> = await service.syncNotes(
-        linkedUserId,
-        remoteProperties,
-      );
 
-      const sourceObject: OriginalNoteOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedNoteOutput,
-        OriginalNoteOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'crm',
-        'note',
-        customFieldMappings,
-      );
+        OriginalNoteOutput,
+        INoteService
+      >(integrationId, linkedUserId, 'crm', 'note', service, []);
     } catch (error) {
       throw error;
     }
@@ -165,15 +126,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<CrmNote[]> {
     try {
-      let notes_results: CrmNote[] = [];
-      for (let i = 0; i < data.length; i++) {
-        const note = data[i];
-        const originId = note.remote_id;
+      const notes_results: CrmNote[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateNote = async (
+        note: UnifiedNoteOutput,
+        originId: string,
+      ) => {
         const existingNote = await this.prisma.crm_notes.findFirst({
           where: {
             remote_id: originId,
@@ -181,125 +139,57 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
-        let unique_crm_note_id: string;
+        const baseData: any = {
+          content: note.content ?? null,
+          id_crm_contact: note.contact_id ?? null,
+          id_crm_company: note.company_id ?? null,
+          id_crm_deal: note.deal_id ?? null,
+          id_crm_user: note.user_id ?? null,
+          modified_at: new Date(),
+        };
 
         if (existingNote) {
-          // Update the existing note
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (note.content) {
-            data = { ...data, content: note.content };
-          }
-          if (note.contact_id) {
-            data = { ...data, id_crm_contact: note.contact_id };
-          }
-          if (note.company_id) {
-            data = { ...data, id_crm_company: note.company_id };
-          }
-          if (note.deal_id) {
-            data = { ...data, id_crm_deal: note.deal_id };
-          }
-          if (note.user_id) {
-            data = { ...data, id_crm_user: note.user_id };
-          }
-
-          const res = await this.prisma.crm_notes.update({
+          return await this.prisma.crm_notes.update({
             where: {
               id_crm_note: existingNote.id_crm_note,
             },
-            data: data,
+            data: baseData,
           });
-          unique_crm_note_id = res.id_crm_note;
-          notes_results = [...notes_results, res];
         } else {
-          // Create a new note
-          this.logger.log('note not exists');
-          let data: any = {
-            id_crm_note: uuidv4(),
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-          if (note.content) {
-            data = { ...data, content: note.content };
-          }
-          if (note.contact_id) {
-            data = { ...data, id_crm_contact: note.contact_id };
-          }
-          if (note.company_id) {
-            data = { ...data, id_crm_company: note.company_id };
-          }
-          if (note.deal_id) {
-            data = { ...data, id_crm_deal: note.deal_id };
-          }
-          if (note.user_id) {
-            data = { ...data, id_crm_user: note.user_id };
-          }
-
-          const res = await this.prisma.crm_notes.create({
-            data: data,
-          });
-          unique_crm_note_id = res.id_crm_note;
-          notes_results = [...notes_results, res];
-        }
-        // check duplicate or existing values
-        if (note.field_mappings && note.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
+          return await this.prisma.crm_notes.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_crm_note_id,
+              ...baseData,
+              id_crm_note: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
             },
           });
+        }
+      };
 
-          for (const [slug, value] of Object.entries(note.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
+      for (let i = 0; i < data.length; i++) {
+        const note = data[i];
+        const originId = note.remote_id;
 
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_crm_note_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_crm_note_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        const res = await updateOrCreateNote(note, originId);
+        const note_id = res.id_crm_note;
+        notes_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          note.field_mappings,
+          note_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(note_id, remote_data[i]);
       }
       return notes_results;
     } catch (error) {

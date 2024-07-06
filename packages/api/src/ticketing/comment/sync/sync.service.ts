@@ -1,34 +1,26 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { IBaseSync } from '@@core/utils/types/interface';
+import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { tcg_comments as TicketingComment } from '@prisma/client';
-import { UnifiedCommentOutput } from '../types/model.unified';
-import { ICommentService } from '../types';
-import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
-import { ServiceRegistry } from '../services/registry.service';
 import { TICKETING_PROVIDERS } from '@panora/shared';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { tcg_comments as TicketingComment } from '@prisma/client';
 import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { ICommentService } from '../types';
+import { UnifiedCommentOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private webhook: WebhookService,
-    private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
-    private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
     private ingestService: IngestDataService,
@@ -125,53 +117,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
     id_ticket: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} comments for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ticketing',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping comments syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ticketing.comment',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: ICommentService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalCommentOutput[]> =
-        await service.syncComments(linkedUserId, id_ticket, remoteProperties);
 
-      const sourceObject: OriginalCommentOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedCommentOutput,
-        OriginalCommentOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'tikceting',
-        'comment',
-        customFieldMappings,
-        { id_ticket: id_ticket },
-      );
+        OriginalCommentOutput,
+        ICommentService
+      >(integrationId, linkedUserId, 'ticketing', 'comment', service, [
+        {
+          param: id_ticket,
+          paramName: 'id_ticket',
+          shouldPassToService: true,
+          shouldPassToIngest: true,
+        },
+      ]);
     } catch (error) {
       throw error;
     }
@@ -186,15 +147,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
     id_ticket?: string,
   ): Promise<TicketingComment[]> {
     try {
-      let comments_results: TicketingComment[] = [];
-      for (let i = 0; i < comments.length; i++) {
-        const comment = comments[i];
-        const originId = comment.remote_id;
+      const comments_results: TicketingComment[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateComment = async (
+        comment: UnifiedCommentOutput,
+        originId: string,
+        connection_id: string,
+        id_ticket?: string,
+      ) => {
         const existingComment = await this.prisma.tcg_comments.findFirst({
           where: {
             remote_id: originId,
@@ -202,81 +162,61 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
-        let unique_ticketing_comment_id: string;
         const opts =
           comment.creator_type === 'CONTACT' && comment.contact_id
-            ? {
-                id_tcg_contact: comment.contact_id,
-              }
+            ? { id_tcg_contact: comment.contact_id }
             : comment.creator_type === 'USER' && comment.user_id
-            ? {
-                id_tcg_user: comment.user_id,
-              }
+            ? { id_tcg_user: comment.user_id }
             : {};
-        //case where nothing is passed for creator or a not authorized value;
+
+        const baseData: any = {
+          id_tcg_ticket: id_ticket ?? null,
+          modified_at: new Date(),
+          body: comment.body ?? null,
+          html_body: comment.html_body ?? null,
+          is_private: comment.is_private ?? null,
+          creator_type: comment.creator_type ?? null,
+          ...opts,
+        };
 
         if (existingComment) {
-          // Update the existing comment
-          let data: any = {
-            id_tcg_ticket: id_ticket,
-            modified_at: new Date(),
-          };
-          if (comment.body) {
-            data = { ...data, body: comment.body };
-          }
-          if (comment.html_body) {
-            data = { ...data, html_body: comment.html_body };
-          }
-          if (comment.is_private) {
-            data = { ...data, is_private: comment.is_private };
-          }
-          if (comment.creator_type) {
-            data = { ...data, creator_type: comment.creator_type };
-          }
-          data = { ...data, ...opts };
-          const res = await this.prisma.tcg_comments.update({
+          return await this.prisma.tcg_comments.update({
             where: {
               id_tcg_comment: existingComment.id_tcg_comment,
             },
-            data: data,
+            data: baseData,
           });
-          unique_ticketing_comment_id = res.id_tcg_comment;
-          comments_results = [...comments_results, res];
         } else {
-          // Create a new comment
-          this.logger.log('comment not exists');
-          let data: any = {
-            id_tcg_comment: uuidv4(),
-            created_at: new Date(),
-            modified_at: new Date(),
-            id_tcg_ticket: id_ticket,
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (comment.body) {
-            data = { ...data, body: comment.body };
-          }
-          if (comment.html_body) {
-            data = { ...data, html_body: comment.html_body };
-          }
-          if (comment.is_private) {
-            data = { ...data, is_private: comment.is_private };
-          }
-          if (comment.creator_type) {
-            data = { ...data, creator_type: comment.creator_type };
-          }
-
-          data = { ...data, ...opts };
-
-          const res = await this.prisma.tcg_comments.create({
-            data: data,
+          return await this.prisma.tcg_comments.create({
+            data: {
+              ...baseData,
+              id_tcg_comment: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
+            },
           });
-          comments_results = [...comments_results, res];
-          unique_ticketing_comment_id = res.id_tcg_comment;
+        }
+      };
+
+      for (let i = 0; i < comments.length; i++) {
+        const comment = comments[i];
+        const originId = comment.remote_id;
+
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        // now insert the attachment of the comment inside tcg_attachments
+        const res = await updateOrCreateComment(
+          comment,
+          originId,
+          connection_id,
+          id_ticket,
+        );
+        const comment_id = res.id_tcg_comment;
+        comments_results.push(res);
+
+        // Save attachments if present
         if (comment.attachments) {
           await this.registry.getService('ticketing', 'attachment').saveToDb(
             connection_id,
@@ -288,28 +228,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
             }),
             {
               object_name: 'comment',
-              value: unique_ticketing_comment_id,
+              value: comment_id,
             },
           );
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ticketing_comment_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_comment_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        await this.ingestService.processRemoteData(comment_id, remote_data[i]);
       }
       return comments_results;
     } catch (error) {

@@ -123,54 +123,28 @@ export class SyncService implements OnModuleInit, IBaseSync {
     id_ticket: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} tags for linkedTag ${linkedUserId}`,
-      );
-      // check if linkedTag has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ticketing',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping tags syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ticketing.tag',
-        );
-
       const service: ITagService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalTagOutput[]> = await service.syncTags(
-        linkedUserId,
-        id_ticket,
-      );
 
-      const sourceObject: OriginalTagOutput[] = resp.data;
+      await this.ingestService.syncForLinkedUser<
+        UnifiedTagOutput,
+        OriginalTagOutput,
+        ITagService
+      >(integrationId, linkedUserId, 'ticketing', 'tag', service, [
+        {
+          param: id_ticket,
+          paramName: 'id_ticket',
+          shouldPassToService: true,
+          shouldPassToIngest: true,
+        },
+      ]);
 
-      await this.ingestService.ingestData<UnifiedTagOutput, OriginalTagOutput>(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'ticketing',
-        'tag',
-        customFieldMappings,
-        { id_ticket: id_ticket },
-      );
       //TODO; do it in every file
-      if (!sourceObject || sourceObject.length == 0) {
+      /*if (!sourceObject || sourceObject.length == 0) {
         this.logger.warn('Source object is empty, returning :) ....');
         return;
-      }
+      }*/
     } catch (error) {
       throw error;
     }
@@ -185,11 +159,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
     id_ticket: string,
   ): Promise<TicketingTag[]> {
     try {
-      let tags_results: TicketingTag[] = [];
-      for (let i = 0; i < tags.length; i++) {
-        const tag = tags[i];
-        const originId = tag.remote_id;
+      const tags_results: TicketingTag[] = [];
 
+      const updateOrCreateTag = async (
+        tag: UnifiedTagOutput,
+        originId: string,
+        connection_id: string,
+        id_ticket: string,
+      ) => {
         let existingTag;
         if (!originId) {
           existingTag = await this.prisma.tcg_tags.findFirst({
@@ -207,97 +184,55 @@ export class SyncService implements OnModuleInit, IBaseSync {
           });
         }
 
-        let unique_ticketing_tag_id: string;
+        const baseData: any = {
+          name: tag.name ?? null,
+          modified_at: new Date(),
+          id_tcg_ticket: id_ticket ?? null,
+        };
 
         if (existingTag) {
-          // Update the existing ticket
-          const res = await this.prisma.tcg_tags.update({
+          return await this.prisma.tcg_tags.update({
             where: {
               id_tcg_tag: existingTag.id_tcg_tag,
             },
-            data: {
-              name: existingTag.name,
-              modified_at: new Date(),
-            },
+            data: baseData,
           });
-          unique_ticketing_tag_id = res.id_tcg_tag;
-          tags_results = [...tags_results, res];
         } else {
-          // Create a new tag
-          this.logger.log('not existing tag ' + tag.name);
-
-          const data = {
-            id_tcg_tag: uuidv4(),
-            name: tag.name,
-            created_at: new Date(),
-            modified_at: new Date(),
-            id_tcg_ticket: id_ticket,
-            remote_id: originId || null,
-            id_connection: connection_id,
-          };
-          const res = await this.prisma.tcg_tags.create({
-            data: data,
-          });
-          tags_results = [...tags_results, res];
-          unique_ticketing_tag_id = res.id_tcg_tag;
-        }
-
-        // check duplicate or existing values
-        if (tag.field_mappings && tag.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
+          return await this.prisma.tcg_tags.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ticketing_tag_id,
+              ...baseData,
+              id_tcg_tag: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
             },
           });
-
-          for (const [slug, value] of Object.entries(tag.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
         }
+      };
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ticketing_tag_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_tag_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+      for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        const originId = tag.remote_id;
+
+        const res = await updateOrCreateTag(
+          tag,
+          originId,
+          connection_id,
+          id_ticket,
+        );
+        const tag_id = res.id_tcg_tag;
+        tags_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          tag.field_mappings,
+          tag_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(tag_id, remote_data[i]);
       }
       return tags_results;
     } catch (error) {

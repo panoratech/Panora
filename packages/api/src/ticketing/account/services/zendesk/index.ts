@@ -10,6 +10,7 @@ import { EnvironmentService } from '@@core/@core-services/environment/environmen
 import { ServiceRegistry } from '../registry.service';
 import { IAccountService } from '@ticketing/account/types';
 import { ZendeskAccountOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZendeskService implements IAccountService {
@@ -26,11 +27,10 @@ export class ZendeskService implements IAccountService {
     this.registry.registerService('zendesk', this);
   }
 
-  async syncAccounts(
-    linkedUserId: string,
-    remote_account_id?: string,
-  ): Promise<ApiResponse<ZendeskAccountOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskAccountOutput[]>> {
     try {
+      const { linkedUserId, webhook_remote_identifier } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -38,6 +38,7 @@ export class ZendeskService implements IAccountService {
           vertical: 'ticketing',
         },
       });
+      const remote_account_id = webhook_remote_identifier as string;
       const request_url = remote_account_id
         ? `${connection.account_url}/organizations/${remote_account_id}.json`
         : `${connection.account_url}/organizations.json`;

@@ -126,57 +126,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
     folder_id?: string,
   ) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} files for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'filestorage',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping files syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-        return;
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'filestorage.file',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
       const service: IFileService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
-      const resp: ApiResponse<OriginalFileOutput[]> = await service.syncFiles(
-        linkedUserId,
-        folder_id,
-        remoteProperties,
-      );
-      if (!resp) return;
 
-      const sourceObject: OriginalFileOutput[] = resp.data;
-
-      await this.ingestService.ingestData<
+      await this.ingestService.syncForLinkedUser<
         UnifiedFileOutput,
-        OriginalFileOutput
-      >(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        'filestorage',
-        'file',
-        customFieldMappings,
-      );
+        OriginalFileOutput,
+        IFileService
+      >(integrationId, linkedUserId, 'filestorage', 'file', service, [
+        {
+          paramName: 'id_folder',
+          param: folder_id,
+          shouldPassToIngest: false,
+          shouldPassToService: true,
+        },
+      ]);
     } catch (error) {
       throw error;
     }
@@ -190,7 +155,49 @@ export class SyncService implements OnModuleInit, IBaseSync {
     remote_data: Record<string, any>[],
   ): Promise<FileStorageFile[]> {
     try {
-      let files_results: FileStorageFile[] = [];
+      const files_results: FileStorageFile[] = [];
+
+      const updateOrCreateFile = async (
+        file: UnifiedFileOutput,
+        originId: string,
+      ) => {
+        const existingFile = await this.prisma.fs_files.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          name: file.name ?? null,
+          type: file.type ?? null,
+          file_url: file.file_url ?? null,
+          mime_type: file.mime_type ?? null,
+          size: file.size ?? null,
+          folder_id: file.folder_id ?? null,
+          modified_at: new Date(),
+        };
+
+        if (existingFile) {
+          return await this.prisma.fs_files.update({
+            where: {
+              id_fs_file: existingFile.id_fs_file,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.fs_files.create({
+            data: {
+              ...baseData,
+              id_fs_file: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const originId = file.remote_id;
@@ -199,87 +206,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingFile = await this.prisma.fs_files.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        const res = await updateOrCreateFile(file, originId);
+        const file_id = res.id_fs_file;
+        files_results.push(res);
 
-        let unique_fs_file_id: string;
-
-        if (existingFile) {
-          // Update the existing file
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (file.name) {
-            data = { ...data, name: file.name };
-          }
-          if (file.type) {
-            data = { ...data, type: file.type };
-          }
-          if (file.file_url) {
-            data = { ...data, file_url: file.file_url };
-          }
-          if (file.mime_type) {
-            data = { ...data, mime_type: file.mime_type };
-          }
-          if (file.size) {
-            data = { ...data, size: file.size };
-          }
-          if (file.folder_id) {
-            data = { ...data, folder_id: file.folder_id };
-          }
-          const res = await this.prisma.fs_files.update({
-            where: {
-              id_fs_file: existingFile.id_fs_file,
-            },
-            data: data,
-          });
-          unique_fs_file_id = res.id_fs_file;
-          files_results = [...files_results, res];
-        } else {
-          // Create a new file
-          this.logger.log('File does not exist, creating a new one');
-          const uuid = uuidv4();
-          let data: any = {
-            id_fs_file: uuid,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_id: originId,
-            id_connection: connection_id,
-          };
-
-          if (file.name) {
-            data = { ...data, name: file.name };
-          }
-          if (file.type) {
-            data = { ...data, type: file.type };
-          }
-          if (file.file_url) {
-            data = { ...data, file_url: file.file_url };
-          }
-          if (file.mime_type) {
-            data = { ...data, mime_type: file.mime_type };
-          }
-          if (file.size) {
-            data = { ...data, size: file.size };
-          }
-          if (file.folder_id) {
-            data = { ...data, folder_id: file.folder_id };
-          }
-          const newFile = await this.prisma.fs_files.create({
-            data: data,
-          });
-
-          unique_fs_file_id = newFile.id_fs_file;
-          files_results = [...files_results, newFile];
-        }
-
-        let sl_id;
         if (file.shared_link) {
-          if (typeof file.shared_link == 'string') {
+          let sl_id;
+          if (typeof file.shared_link === 'string') {
             sl_id = file.shared_link;
           } else {
             const slinks = await this.registry
@@ -289,15 +222,15 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 linkedUserId,
                 [file.shared_link],
                 originSource,
-                [file.shared_link].map((att: UnifiedSharedLinkOutput) => {
-                  return att.remote_data;
-                }),
+                [file.shared_link].map(
+                  (att: UnifiedSharedLinkOutput) => att.remote_data,
+                ),
               );
             sl_id = slinks[0].id_fs_shared_link;
           }
           await this.prisma.fs_files.update({
             where: {
-              id_fs_file: unique_fs_file_id,
+              id_fs_file: file_id,
             },
             data: {
               id_fs_shared_link: sl_id,
@@ -305,9 +238,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
           });
         }
 
-        let permission_id;
         if (file.permission) {
-          if (typeof file.permission == 'string') {
+          let permission_id;
+          if (typeof file.permission === 'string') {
             permission_id = file.permission;
           } else {
             const perms = await this.registry
@@ -317,16 +250,16 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 linkedUserId,
                 [file.permission],
                 originSource,
-                [file.permission].map((att: UnifiedPermissionOutput) => {
-                  return att.remote_data;
-                }),
-                { object_name: 'file', value: unique_fs_file_id },
+                [file.permission].map(
+                  (att: UnifiedPermissionOutput) => att.remote_data,
+                ),
+                { object_name: 'file', value: file_id },
               );
             permission_id = perms[0].id_fs_permission;
           }
           await this.prisma.fs_files.update({
             where: {
-              id_fs_file: unique_fs_file_id,
+              id_fs_file: file_id,
             },
             data: {
               id_fs_permission: permission_id,
@@ -334,62 +267,16 @@ export class SyncService implements OnModuleInit, IBaseSync {
           });
         }
 
-        // check duplicate or existing values
-        if (file.field_mappings && file.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_fs_file_id,
-            },
-          });
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          file.field_mappings,
+          file_id,
+          originSource,
+          linkedUserId,
+        );
 
-          for (const [slug, value] of Object.entries(file.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        // insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_fs_file_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_fs_file_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process remote data
+        await this.ingestService.processRemoteData(file_id, remote_data[i]);
       }
       return files_results;
     } catch (error) {
