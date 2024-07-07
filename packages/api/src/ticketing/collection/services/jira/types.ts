@@ -1,5 +1,5 @@
-export type JiraCollectionOutput = {
-  avatarUrls: AvatarUrls;
+export type JiraCollectionInput = {
+  avatarUrls?: Partial<AvatarUrls>;
   id: string;
   insight?: Insight;
   key: string;
@@ -29,4 +29,4 @@ type ProjectCategory = {
   self: string;
 };
 
-export type JiraCollectionInput = null;
+export type JiraCollectionOutput = Partial<JiraCollectionInput>;

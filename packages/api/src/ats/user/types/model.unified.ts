@@ -7,6 +7,13 @@ import {
   IsDateString,
 } from 'class-validator';
 
+export type UserAccessRole =
+  | 'SUPER_ADMIN'
+  | 'ADMIN'
+  | 'TEAM_MEMBER'
+  | 'LIMITED_TEAM_MEMBER'
+  | 'INTERVIEWER';
+
 export class UnifiedUserInput {
   @ApiPropertyOptional({
     type: String,
@@ -43,7 +50,7 @@ export class UnifiedUserInput {
   })
   @IsString()
   @IsOptional()
-  access_role?: string;
+  access_role?: UserAccessRole;
 
   @ApiPropertyOptional({
     type: String,

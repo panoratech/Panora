@@ -1,5 +1,6 @@
 import { AshbyInterviewInput, AshbyInterviewOutput } from './types';
 import {
+  InterviewStatus,
   UnifiedInterviewInput,
   UnifiedInterviewOutput,
 } from '@ats/interview/types/model.unified';
@@ -78,7 +79,7 @@ export class AshbyInterviewMapper implements IInterviewMapper {
     return {
       remote_id: interview.id,
       remote_data: interview,
-      status: interview.status || null, //todo
+      status: (interview.status as InterviewStatus) || null, //todo
       application_id:
         (await this.utils.getApplicationUuidFromRemoteId(
           interview.applicationId,

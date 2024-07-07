@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedJobOutput } from '../types/model.unified';
+import { JobStatus, JobType, UnifiedJobOutput } from '../types/model.unified';
 
 @Injectable()
 export class JobService {
@@ -57,8 +57,8 @@ export class JobService {
         name: job.name,
         description: job.description,
         code: job.code,
-        status: job.status,
-        type: job.type,
+        status: job.status as JobStatus,
+        type: job.type as JobType,
         confidential: job.confidential,
         departments: job.ats_departments,
         offices: job.ats_offices,
@@ -195,8 +195,8 @@ export class JobService {
             name: job.name,
             description: job.description,
             code: job.code,
-            status: job.status,
-            type: job.type,
+            status: job.status as JobStatus,
+            type: job.type as JobType,
             confidential: job.confidential,
             departments: job.ats_departments,
             offices: job.ats_offices,

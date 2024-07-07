@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
+export type TaskStatus = 'PENDING' | 'COMPLETED';
 export class UnifiedTaskInput {
   @ApiProperty({ type: String, description: 'The subject of the task' })
   @IsString()
@@ -18,7 +19,7 @@ export class UnifiedTaskInput {
   @IsIn(['PENDING', 'COMPLETED'], {
     message: 'Type must be either PENDING or COMPLETED',
   })
-  status: string;
+  status: TaskStatus;
 
   @ApiPropertyOptional({ description: 'The due date of the task' })
   @IsOptional()

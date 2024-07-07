@@ -3,6 +3,7 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  AttachmentType,
   UnifiedAttachmentInput,
   UnifiedAttachmentOutput,
 } from '../types/model.unified';
@@ -96,7 +97,7 @@ export class AttachmentService {
         const data: any = {
           file_url: target_attachment.file_url,
           file_name: target_attachment.file_name,
-          file_type: target_attachment.file_type,
+          file_type: target_attachment.attachment_type,
           remote_created_at: target_attachment.remote_created_at,
           remote_modified_at: target_attachment.remote_modified_at,
           modified_at: new Date(),
@@ -116,7 +117,7 @@ export class AttachmentService {
           id_ats_candidate_attachment: uuidv4(),
           file_url: target_attachment.file_url,
           file_name: target_attachment.file_name,
-          file_type: target_attachment.file_type,
+          file_type: target_attachment.attachment_type,
           remote_created_at: target_attachment.remote_created_at,
           remote_modified_at: target_attachment.remote_modified_at,
           created_at: new Date(),
@@ -264,7 +265,7 @@ export class AttachmentService {
         id: attachment.id_ats_candidate_attachment,
         file_url: attachment.file_url,
         file_name: attachment.file_name,
-        file_type: attachment.file_type,
+        attachment_type: attachment.file_type as AttachmentType,
         remote_created_at: String(attachment.remote_created_at),
         remote_modified_at: String(attachment.remote_modified_at),
         candidate_id: attachment.id_ats_candidate,
@@ -382,7 +383,7 @@ export class AttachmentService {
             id: attachment.id_ats_candidate_attachment,
             file_url: attachment.file_url,
             file_name: attachment.file_name,
-            file_type: attachment.file_type,
+            attachment_type: attachment.file_type as AttachmentType,
             remote_created_at: String(attachment.remote_created_at),
             remote_modified_at: String(attachment.remote_modified_at),
             candidate_id: attachment.id_ats_candidate,

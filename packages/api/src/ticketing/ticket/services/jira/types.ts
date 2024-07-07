@@ -110,7 +110,7 @@ interface Issue {
     attachment: Attachment[];
     'sub-tasks': Partial<SubTask>[];
     description: any;
-    project: Project;
+    project: Partial<Project>;
     comment: Partial<Comment>[];
     issuelinks: Partial<IssueLink>[];
     worklog: Partial<Worklog>[];
@@ -127,6 +127,7 @@ interface Issue {
   id: string;
   key: string;
   self: string;
+  [key: string]: any;
 }
 
 interface Watcher {

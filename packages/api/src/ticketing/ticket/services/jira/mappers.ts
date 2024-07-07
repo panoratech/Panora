@@ -1,6 +1,7 @@
 import { ITicketMapper } from '@ticketing/ticket/types';
 import { JiraTicketInput, JiraTicketOutput } from './types';
 import {
+  TicketType,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
@@ -30,6 +31,19 @@ export class JiraTicketMapper implements ITicketMapper {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'jira', this);
   }
 
+  mapToIssueTypeName(data: TicketType) {
+    switch (data) {
+      case 'BUG':
+        return 'Bug';
+      case 'SUBTASK':
+        return 'Sub-task';
+      case 'TASK':
+        return 'Task';
+      case 'TO-DO':
+        return 'Story';
+    }
+  }
+
   async desunify(
     source: UnifiedTicketInput,
     customFieldMappings?: {
@@ -37,19 +51,22 @@ export class JiraTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<JiraTicketInput> {
-    if (!source.project_id) {
+    if (!source.collections[0]) {
       throw new ReferenceError(
         'a project key/id is mandatory for Jira ticket creation',
       );
     }
+    const project_name = await this.utils.getCollectionNameFromUuid(
+      source.collections[0] as string,
+    );
     const result: JiraTicketInput = {
       fields: {
         project: {
-          key: source.project_id || null,
+          key: project_name || undefined,
         },
         description: source.description,
         issuetype: {
-          name: source.type || null,
+          name: this.mapToIssueTypeName(source.type) || null,
         },
       },
     };
@@ -65,6 +82,10 @@ export class JiraTicketMapper implements ITicketMapper {
 
     if (source.tags) {
       result.fields.labels = source.tags as string[];
+    }
+
+    if (source.attachments) {
+      result.attachments = source.attachments as string[]; // dummy assigning we'll insert them in the service func
     }
 
     // Map custom fields if applicable

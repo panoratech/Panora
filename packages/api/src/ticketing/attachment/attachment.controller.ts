@@ -160,8 +160,8 @@ export class AttachmentController {
 
   @ApiOperation({
     operationId: 'create',
-    summary: 'Create a Attachment',
-    description: 'Create a attachment in any supported Ticketing software',
+    summary: 'Create an Attachment',
+    description: 'Create an attachment in any supported Ticketing software',
   })
   @ApiHeader({
     name: 'x-connection-token',

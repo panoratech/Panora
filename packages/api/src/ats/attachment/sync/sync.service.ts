@@ -11,7 +11,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IAttachmentService } from '../types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ats';
 import { UnifiedAttachmentOutput } from '../types/model.unified';
-import { ats_attachments as AtsAttachment } from '@prisma/client';
+import { ats_candidate_attachments as AtsAttachment } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';

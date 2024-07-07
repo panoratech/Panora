@@ -3,6 +3,7 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  InterviewStatus,
   UnifiedInterviewInput,
   UnifiedInterviewOutput,
 } from '../types/model.unified';
@@ -274,7 +275,7 @@ export class InterviewService {
       // Transform to UnifiedInterviewOutput format
       const unifiedInterview: UnifiedInterviewOutput = {
         id: interview.id_ats_interview,
-        status: interview.status,
+        status: interview.status as InterviewStatus,
         application_id: interview.id_ats_application,
         job_interview_stage_id: interview.id_ats_job_interview_stage,
         organized_by: interview.organized_by,
@@ -410,7 +411,7 @@ export class InterviewService {
           // Transform to UnifiedInterviewOutput format
           return {
             id: interview.id_ats_interview,
-            status: interview.status,
+            status: interview.status as InterviewStatus,
             application_id: interview.id_ats_application,
             job_interview_stage_id: interview.id_ats_job_interview_stage,
             organized_by: interview.organized_by,

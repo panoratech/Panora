@@ -24,7 +24,7 @@ export class JiraCommentMapper implements ICommentMapper {
       body: source.body,
     };
     if (source.attachments) {
-      result.attachments = source.attachments;
+      result.attachments = source.attachments as string[];
     }
     return result;
   }

@@ -5,6 +5,8 @@ import {
 } from '@ticketing/attachment/types/model.unified';
 import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
+export type CommentCreatorType = 'USER' | 'CONTACT';
+
 export class UnifiedCommentInput {
   @ApiProperty({ type: String, description: 'The body of the comment' })
   @IsString()
@@ -35,7 +37,7 @@ export class UnifiedCommentInput {
     message: 'Type must be either USER or CONTACT',
   })
   @IsOptional()
-  creator_type?: string;
+  creator_type?: CommentCreatorType;
 
   @ApiPropertyOptional({
     type: String,

@@ -4,7 +4,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
-import { CrmObject } from '@crm/@lib/@types';
+import { CrmObject, Industry } from '@crm/@lib/@types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -393,7 +393,7 @@ export class CompanyService {
       const unifiedCompany: UnifiedCompanyOutput = {
         id: company.id_crm_company,
         name: company.name,
-        industry: company.industry,
+        industry: company.industry as Industry,
         number_of_employees: Number(company.number_of_employees),
         user_id: company.id_crm_user, // uuid of User object
         field_mappings: field_mappings,
@@ -539,7 +539,7 @@ export class CompanyService {
           return {
             id: company.id_crm_company,
             name: company.name,
-            industry: company.industry,
+            industry: company.industry as Industry,
             number_of_employees: Number(company.number_of_employees),
             user_id: company.id_crm_user, // uuid of User object
             field_mappings: field_mappings,

@@ -30,7 +30,7 @@ export class GitlabTicketMapper implements ITicketMapper {
     }[],
   ): Promise<GitlabTicketInput> {
     const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(
-      source.collections[0],
+      source.collections[0] as string,
     );
 
     const result: GitlabTicketInput = {

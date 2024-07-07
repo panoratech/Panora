@@ -45,7 +45,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
   ): Promise<ZendeskEngagementInput> {
     const result: ZendeskEngagementInput = {
       summary: source.content || null,
-      incoming: source.direction === 'incoming', // Example mapping
+      incoming: source.direction === 'INBOUND',
     };
 
     if (source.start_at && source.end_time) {

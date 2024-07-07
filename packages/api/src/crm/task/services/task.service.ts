@@ -8,7 +8,11 @@ import { CrmObject } from '@crm/@lib/@types';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { ITaskService } from '../types';
-import { UnifiedTaskInput, UnifiedTaskOutput } from '../types/model.unified';
+import {
+  TaskStatus,
+  UnifiedTaskInput,
+  UnifiedTaskOutput,
+} from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
@@ -297,7 +301,7 @@ export class TaskService {
         id: task.id_crm_task,
         subject: task.subject,
         content: task.content,
-        status: task.status,
+        status: task.status as TaskStatus,
         due_date: task.due_date,
         finished_date: task.finished_date,
         company_id: task.id_crm_company,
@@ -432,7 +436,7 @@ export class TaskService {
             id: task.id_crm_task,
             subject: task.subject,
             content: task.content,
-            status: task.status,
+            status: task.status as TaskStatus,
             due_date: task.due_date,
             finished_date: task.finished_date,
             company_id: task.id_crm_company,

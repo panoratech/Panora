@@ -48,7 +48,7 @@ export class JiraTagMapper implements ITagMapper {
     }[],
   ): UnifiedTagOutput {
     const unifiedTag: UnifiedTagOutput = {
-      remote_id: tag.id,
+      remote_id: tag.id ?? null,
       remote_data: tag,
       name: tag.name,
     };

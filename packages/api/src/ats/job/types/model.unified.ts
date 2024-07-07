@@ -8,6 +8,8 @@ import {
   IsArray,
 } from 'class-validator';
 
+export type JobStatus = 'OPEN' | 'CLOSED' | 'DRAFT' | 'ARCHIVED' | 'PENDING';
+export type JobType = 'POSTING' | 'REQUISITION' | 'PROFILE';
 export class UnifiedJobInput {
   @ApiPropertyOptional({ type: String, description: 'The name of the job' })
   @IsString()
@@ -30,12 +32,12 @@ export class UnifiedJobInput {
   @ApiPropertyOptional({ type: String, description: 'The status of the job' })
   @IsString()
   @IsOptional()
-  status?: string;
+  status?: JobStatus;
 
   @ApiPropertyOptional({ type: String, description: 'The type of the job' })
   @IsString()
   @IsOptional()
-  type?: string;
+  type?: JobType;
 
   @ApiPropertyOptional({
     type: Boolean,

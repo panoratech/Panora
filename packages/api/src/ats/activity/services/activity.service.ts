@@ -10,6 +10,8 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { IActivityService } from '../types';
 import {
+  ActivityType,
+  ActivityVisibility,
   UnifiedActivityInput,
   UnifiedActivityOutput,
 } from '../types/model.unified';
@@ -246,10 +248,10 @@ export class ActivityService {
 
       const unifiedActivity: UnifiedActivityOutput = {
         id: activity.id_ats_activity,
-        activity_type: activity.activity_type,
+        activity_type: activity.activity_type as ActivityType,
         subject: activity.subject,
         body: activity.body,
-        visibility: activity.visibility,
+        visibility: activity.visibility as ActivityVisibility,
         candidate_id: activity.id_ats_candidate,
         remote_created_at: String(activity.remote_created_at),
         field_mappings: field_mappings,
@@ -359,10 +361,10 @@ export class ActivityService {
 
           return {
             id: activity.id_ats_activity,
-            activity_type: activity.activity_type,
+            activity_type: activity.activity_type as ActivityType,
             subject: activity.subject,
             body: activity.body,
-            visibility: activity.visibility,
+            visibility: activity.visibility as ActivityVisibility,
             candidate_id: activity.id_ats_candidate,
             remote_created_at: String(activity.remote_created_at),
             field_mappings: field_mappings,

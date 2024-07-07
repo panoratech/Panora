@@ -43,12 +43,12 @@ export class GorgiasService implements ITicketService {
       const modifiedComments = await Promise.all(
         comments.map(async (comment) => {
           let uploads = [];
-          const uuids = comment.attachments as any[];
+          const uuids = comment.attachments as string[];
           if (uuids && uuids.length > 0) {
             const attachmentPromises = uuids.map(async (uuid) => {
               const res = await this.prisma.tcg_attachments.findUnique({
                 where: {
-                  id_tcg_attachment: uuid.extra,
+                  id_tcg_attachment: uuid,
                 },
               });
               if (!res) {

@@ -7,6 +7,7 @@ import { Utils } from '@crm/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { ICompanyMapper } from '@crm/company/types';
+import { Industry } from '@crm/@lib/@types';
 
 @Injectable()
 export class ZohoCompanyMapper implements ICompanyMapper {
@@ -123,7 +124,7 @@ export class ZohoCompanyMapper implements ICompanyMapper {
           owner_type: 'company',
         },
       ],
-      industry: company.Industry, //TODO: map to correct industry
+      industry: company.Industry as Industry, //TODO: map to correct industry
       user_id: await this.utils.getUserUuidFromRemoteId(
         company.Owner.id,
         connectionId,

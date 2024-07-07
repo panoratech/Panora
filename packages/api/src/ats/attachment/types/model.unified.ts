@@ -1,6 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
 
+export type AttachmentType =
+  | 'RESUME'
+  | 'COVER_LETTER'
+  | 'OFFER_LETTER'
+  | 'OTHER';
 export class UnifiedAttachmentInput {
   @ApiPropertyOptional({ type: String, description: 'The URL of the file' })
   @IsString()
@@ -15,7 +20,7 @@ export class UnifiedAttachmentInput {
   @ApiPropertyOptional({ type: String, description: 'The type of the file' })
   @IsString()
   @IsOptional()
-  file_type?: string;
+  attachment_type?: AttachmentType;
 
   @ApiPropertyOptional({
     type: String,

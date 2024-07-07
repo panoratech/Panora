@@ -9,10 +9,12 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { ICommentService } from '../types';
 import {
+  CommentCreatorType,
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 
 @Injectable()
 export class CommentService {
@@ -21,6 +23,7 @@ export class CommentService {
     private logger: LoggerService,
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
+    private registry: CoreSyncRegistry,
     private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(CommentService.name);
@@ -40,7 +43,6 @@ export class CommentService {
         },
       });
 
-      //CHECKS
       if (!linkedUser) throw new ReferenceError('Linked User Not Found');
       const tick = unifiedCommentData.ticket_id;
       //check if contact_id and account_id refer to real uuids
@@ -88,19 +90,36 @@ export class CommentService {
       }
 
       const attachmts = unifiedCommentData.attachments;
-      //CHEK IF attachments contains valid Attachment uuids
       if (attachmts && attachmts.length > 0) {
-        attachmts.map(async (attachmt) => {
-          const search = await this.prisma.tcg_attachments.findUnique({
-            where: {
-              id_tcg_attachment: attachmt,
-            },
+        if (typeof attachmts[0] === 'string') {
+          // we have string array
+          // check if attachments contains valid Attachment uuids
+          attachmts.map(async (uuid: string) => {
+            const search = await this.prisma.tcg_attachments.findUnique({
+              where: {
+                id_tcg_attachment: uuid,
+              },
+            });
+            if (!search)
+              throw new ReferenceError(
+                'You inserted an attachment_id which does not exist',
+              );
           });
-          if (!search)
-            throw new ReferenceError(
-              'You inserted an attachment_id which does not exist',
+        } else {
+          // we have a nested attachment object to process
+          const attchms_res = await this.registry
+            .getService('ticketing', 'attachment')
+            .saveToDb(
+              connection_id,
+              linkedUserId,
+              attachmts,
+              integrationId,
+              [],
             );
-        });
+          unifiedCommentData.attachments = attchms_res.map(
+            (att) => att.id_tcg_attachment,
+          );
+        }
       }
 
       //desunify the data according to the target obj wanted
@@ -155,11 +174,11 @@ export class CommentService {
 
       let unique_ticketing_comment_id: string;
       const opts =
-        target_comment.creator_type === 'contact'
+        target_comment.creator_type === 'CONTACT'
           ? {
               id_tcg_contact: unifiedCommentData.contact_id,
             }
-          : target_comment.creator_type === 'user'
+          : target_comment.creator_type === 'USER'
           ? {
               id_tcg_user: unifiedCommentData.user_id,
             }
@@ -224,6 +243,22 @@ export class CommentService {
         unique_ticketing_comment_id = res.id_tcg_comment;
       }
 
+      // update parent comment id on attachment objects
+
+      const uuids = unifiedCommentData.attachments as string[];
+
+      await Promise.all(
+        uuids.map(async (uuid) => {
+          const res = await this.prisma.tcg_attachments.update({
+            where: {
+              id_tcg_attachment: uuid,
+            },
+            data: {
+              id_tcg_comment: unique_ticketing_comment_id,
+            },
+          });
+        }),
+      );
       //insert remote_data in db
       await this.prisma.remote_data.upsert({
         where: {
@@ -328,7 +363,7 @@ export class CommentService {
         body: comment.body,
         html_body: comment.html_body,
         is_private: comment.is_private,
-        creator_type: comment.creator_type as 'user' | 'contact',
+        creator_type: comment.creator_type as CommentCreatorType,
         ticket_id: comment.id_tcg_ticket,
         contact_id: comment.id_tcg_contact, // uuid of Contact object
         user_id: comment.id_tcg_user, // uuid of User object
@@ -459,7 +494,7 @@ export class CommentService {
             body: comment.body,
             html_body: comment.html_body,
             is_private: comment.is_private,
-            creator_type: comment.creator_type as 'user' | 'contact',
+            creator_type: comment.creator_type as CommentCreatorType,
             ticket_id: comment.id_tcg_ticket,
             contact_id: comment.id_tcg_contact, // uuid of Contact object
             user_id: comment.id_tcg_user, // uuid of User object

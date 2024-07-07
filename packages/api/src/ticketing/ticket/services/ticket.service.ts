@@ -10,10 +10,14 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { ITicketService } from '../types';
 import {
+  TicketPriority,
+  TicketStatus,
+  TicketType,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 
 @Injectable()
 export class TicketService {
@@ -23,6 +27,7 @@ export class TicketService {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private registry: CoreSyncRegistry,
     private coreUnification: CoreUnification,
   ) {
     this.logger.setContext(TicketService.name);
@@ -84,6 +89,38 @@ export class TicketService {
               'You inserted an assignee which does not exist',
             );
         });
+      }
+      const attachmts = unifiedTicketData.attachments;
+      if (attachmts && attachmts.length > 0) {
+        if (typeof attachmts[0] === 'string') {
+          // we have string array
+          // check if attachments contains valid Attachment uuids
+          attachmts.map(async (uuid: string) => {
+            const search = await this.prisma.tcg_attachments.findUnique({
+              where: {
+                id_tcg_attachment: uuid,
+              },
+            });
+            if (!search)
+              throw new ReferenceError(
+                'You inserted an attachment_id which does not exist',
+              );
+          });
+        } else {
+          // we have a nested attachment object to process
+          const attchms_res = await this.registry
+            .getService('ticketing', 'attachment')
+            .saveToDb(
+              connection_id,
+              linkedUserId,
+              attachmts,
+              integrationId,
+              [],
+            );
+          unifiedTicketData.attachments = attchms_res.map(
+            (att) => att.id_tcg_attachment,
+          );
+        }
       }
       // Retrieve custom field mappings
       // get potential fieldMappings and extract the original properties name
@@ -398,13 +435,13 @@ export class TicketService {
       const unifiedTicket: UnifiedTicketOutput = {
         id: ticket.id_tcg_ticket,
         name: ticket.name || null,
-        status: ticket.status || null,
+        status: (ticket.status as TicketStatus) || null,
         description: ticket.description || null,
         due_date: ticket.due_date || null,
-        type: ticket.ticket_type || null,
+        type: (ticket.ticket_type as TicketType) || null,
         parent_ticket: ticket.parent_ticket || null,
         completed_at: ticket.completed_at || null,
-        priority: ticket.priority || null,
+        priority: (ticket.priority as TicketPriority) || null,
         assigned_to: ticket.assigned_to || null,
         field_mappings: field_mappings,
         tags: tagsArray || null,
@@ -570,13 +607,13 @@ export class TicketService {
           const unifiedTicket: UnifiedTicketOutput = {
             id: ticket.id_tcg_ticket,
             name: ticket.name || null,
-            status: ticket.status || null,
+            status: (ticket.status as TicketStatus) || null,
             description: ticket.description || null,
             due_date: ticket.due_date || null,
-            type: ticket.ticket_type || null,
+            type: (ticket.ticket_type as TicketType) || null,
             parent_ticket: ticket.parent_ticket || null,
             completed_at: ticket.completed_at || null,
-            priority: ticket.priority || null,
+            priority: (ticket.priority as TicketPriority) || null,
             assigned_to: ticket.assigned_to || [],
             tags: tagsArray || null,
             collections: collectionsArray || null,

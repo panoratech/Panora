@@ -42,43 +42,9 @@ export class GorgiasService implements ICommentService {
         },
       });
 
-      let uploads = [];
-      const uuids = commentData.attachments as any[];
-      if (uuids && uuids.length > 0) {
-        const attachmentPromises = uuids.map(async (uuid) => {
-          const res = await this.prisma.tcg_attachments.findUnique({
-            where: {
-              id_tcg_attachment: uuid.extra,
-            },
-          });
-          if (!res) {
-            throw new ReferenceError(
-              `tcg_attachment not found for uuid ${uuid}`,
-            );
-          }
-          // Assuming you want to construct the right binary attachment here
-          // For now, we'll just return the URL
-          const stats = fs.statSync(res.file_url);
-          return {
-            url: res.file_url,
-            name: res.file_name,
-            size: stats.size,
-            content_type: 'application/pdf', //todo
-          };
-        });
-        uploads = await Promise.all(attachmentPromises);
-      }
-
-      // Assuming you want to modify the comment object here
-      // For now, we'll just add the uploads to the comment
-      const data = {
-        ...commentData,
-        attachments: uploads,
-      };
-
       const resp = await axios.post(
         `${connection.account_url}/tickets/${remoteIdTicket}/messages`,
-        JSON.stringify(data),
+        JSON.stringify(commentData),
         {
           headers: {
             'Content-Type': 'application/json',

@@ -46,13 +46,9 @@ export class GorgiasTicketMapper implements ITicketMapper {
           channel: source.type ?? 'email',
           body_html: source.comment.html_body || null,
           body_text: source.comment.body || null,
-          attachments: source.comment.attachments
-            ? source.comment.attachments.map((att) => ({
-                extra: att,
-              }))
-            : [],
+          attachments: (source.attachments as string[]) ?? [],
           sender:
-            source.comment.creator_type === 'user'
+            source.comment.creator_type === 'USER'
               ? {
                   id: Number(
                     await this.utils.getAsigneeRemoteIdFromUserUuid(

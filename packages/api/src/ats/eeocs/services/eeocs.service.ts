@@ -2,7 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedEeocsOutput } from '../types/model.unified';
+import {
+  EeocsDisabilityStatus,
+  EeocsGender,
+  EeocsRace,
+  EeocsVeteranStatus,
+  UnifiedEeocsOutput,
+} from '../types/model.unified';
 
 @Injectable()
 export class EeocsService {
@@ -56,10 +62,10 @@ export class EeocsService {
         id: eeocs.id_ats_eeoc,
         candidate_id: eeocs.id_ats_candidate,
         submitted_at: String(eeocs.submitted_at),
-        race: eeocs.race,
-        gender: eeocs.gender,
-        veteran_status: eeocs.veteran_status,
-        disability_status: eeocs.disability_status,
+        race: eeocs.race as EeocsRace,
+        gender: eeocs.gender as EeocsGender,
+        veteran_status: eeocs.veteran_status as EeocsVeteranStatus,
+        disability_status: eeocs.disability_status as EeocsDisabilityStatus,
         field_mappings: field_mappings,
         remote_id: eeocs.remote_id,
         created_at: eeocs.created_at,
@@ -188,10 +194,10 @@ export class EeocsService {
             id: eeocs.id_ats_eeoc,
             candidate_id: eeocs.id_ats_candidate,
             submitted_at: String(eeocs.submitted_at),
-            race: eeocs.race,
-            gender: eeocs.gender,
-            veteran_status: eeocs.veteran_status,
-            disability_status: eeocs.disability_status,
+            race: eeocs.race as EeocsRace,
+            gender: eeocs.gender as EeocsGender,
+            veteran_status: eeocs.veteran_status as EeocsVeteranStatus,
+            disability_status: eeocs.disability_status as EeocsDisabilityStatus,
             field_mappings: field_mappings,
             remote_id: eeocs.remote_id,
             created_at: eeocs.created_at,

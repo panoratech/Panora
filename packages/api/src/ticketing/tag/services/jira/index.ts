@@ -46,23 +46,21 @@ export class JiraService implements ITagService {
         },
       });
 
-      //todo: TAGS
-      const resp = await axios.get(`${connection.account_url}/conversations`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const resp = await axios.get(
+        `${connection.account_url}/issue/${ticket.remote_id}?fields=labels`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
       this.logger.log(`Synced jira tags !`);
 
-      const conversation = resp.data._results.find(
-        (c) => c.id === ticket.remote_id,
-      );
-
       return {
-        data: conversation.tags,
+        data: resp.data.fields.labels,
         message: 'Jira tags retrieved',
         statusCode: 200,
       };

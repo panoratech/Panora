@@ -6,6 +6,8 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  PermissionRole,
+  PermissionType,
   UnifiedPermissionInput,
   UnifiedPermissionOutput,
 } from '../types/model.unified';
@@ -66,8 +68,8 @@ export class PermissionService {
         id: permission.id_fs_permission,
         user_id: permission.user,
         group_id: permission.group,
-        type: permission.type,
-        roles: permission.roles,
+        type: permission.type as PermissionType,
+        roles: permission.roles as PermissionRole[],
         field_mappings: field_mappings,
         remote_id: permission.remote_id,
         created_at: permission.created_at,
@@ -195,8 +197,8 @@ export class PermissionService {
             id: permission.id_fs_permission,
             user_id: permission.user,
             group_id: permission.group,
-            type: permission.type,
-            roles: permission.roles,
+            type: permission.type as PermissionType,
+            roles: permission.roles as PermissionRole[],
             field_mappings: field_mappings,
             remote_id: permission.remote_id,
             created_at: permission.created_at,

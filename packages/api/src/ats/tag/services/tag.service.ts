@@ -10,27 +10,27 @@ export class TagService {
   }
 
   async getTag(
-    id_ats_tag: string,
+    id_ats_candidate_tag: string,
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTagOutput> {
     try {
-      const tag = await this.prisma.ats_tags.findUnique({
+      const tag = await this.prisma.ats_candidate_tags.findUnique({
         where: {
-          id_ats_tag: id_ats_tag,
+          id_ats_candidate_tag: id_ats_candidate_tag,
         },
       });
 
       if (!tag) {
-        throw new Error(`Tag with ID ${id_ats_tag} not found.`);
+        throw new Error(`Tag with ID ${id_ats_candidate_tag} not found.`);
       }
 
       // Fetch field mappings for the tag
       const values = await this.prisma.value.findMany({
         where: {
           entity: {
-            ressource_owner_id: tag.id_ats_tag,
+            ressource_owner_id: tag.id_ats_candidate_tag,
           },
         },
         include: {
@@ -64,7 +64,7 @@ export class TagService {
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
-            ressource_owner_id: tag.id_ats_tag,
+            ressource_owner_id: tag.id_ats_candidate_tag,
           },
         });
         const remote_data = JSON.parse(resp.data);
@@ -111,10 +111,10 @@ export class TagService {
       let next_cursor = null;
 
       if (cursor) {
-        const isCursorPresent = await this.prisma.ats_tag.findFirst({
+        const isCursorPresent = await this.prisma.ats_candidate_tags.findFirst({
           where: {
             id_connection: connection_id,
-            id_ats_tag: cursor,
+            id_ats_candidate_tag: cursor,
           },
         });
         if (!isCursorPresent) {
@@ -122,11 +122,11 @@ export class TagService {
         }
       }
 
-      const tags = await this.prisma.ats_tags.findMany({
+      const tags = await this.prisma.ats_candidate_tags.findMany({
         take: limit + 1,
         cursor: cursor
           ? {
-              id_ats_tag: cursor,
+              id_ats_candidate_tag: cursor,
             }
           : undefined,
         orderBy: {
@@ -138,9 +138,9 @@ export class TagService {
       });
 
       if (tags.length === limit + 1) {
-        next_cursor = Buffer.from(tags[tags.length - 1].id_ats_tag).toString(
-          'base64',
-        );
+        next_cursor = Buffer.from(
+          tags[tags.length - 1].id_ats_candidate_tag,
+        ).toString('base64');
         tags.pop();
       }
 
@@ -154,7 +154,7 @@ export class TagService {
           const values = await this.prisma.value.findMany({
             where: {
               entity: {
-                ressource_owner_id: tag.id_ats_tag,
+                ressource_owner_id: tag.id_ats_candidate_tag,
               },
             },
             include: {

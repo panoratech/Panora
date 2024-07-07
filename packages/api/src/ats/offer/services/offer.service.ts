@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedOfferOutput } from '../types/model.unified';
+import { OfferStatus, UnifiedOfferOutput } from '../types/model.unified';
 
 @Injectable()
 export class OfferService {
@@ -59,7 +59,7 @@ export class OfferService {
         closed_at: String(offer.closed_at),
         sent_at: String(offer.sent_at),
         start_date: String(offer.start_date),
-        status: offer.status,
+        status: offer.status as OfferStatus,
         application_id: offer.id_ats_application,
         field_mappings: field_mappings,
         remote_id: offer.remote_id,
@@ -191,7 +191,7 @@ export class OfferService {
             closed_at: String(offer.closed_at),
             sent_at: String(offer.sent_at),
             start_date: String(offer.start_date),
-            status: offer.status,
+            status: offer.status as OfferStatus,
             application_id: offer.id_ats_application,
             field_mappings: field_mappings,
             remote_id: offer.remote_id,

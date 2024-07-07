@@ -104,7 +104,6 @@ export class AshbyAttachmentMapper implements IAttachmentMapper {
       remote_data: attachment,
       file_url: url || null,
       file_name: attachment.name || null,
-      file_type: null, // todo
     };
   }
 }

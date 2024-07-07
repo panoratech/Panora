@@ -1,6 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
+export type CollectionType = 'PROJECT' | 'LIST';
+
 export class UnifiedCollectionInput {
   @ApiProperty({
     type: String,
@@ -26,7 +28,7 @@ export class UnifiedCollectionInput {
     message: 'Type must be either PROJECT or LIST',
   })
   @IsOptional()
-  collection_type?: string;
+  collection_type?: CollectionType;
 }
 
 export class UnifiedCollectionOutput extends UnifiedCollectionInput {

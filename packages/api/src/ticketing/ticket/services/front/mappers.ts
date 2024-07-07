@@ -7,6 +7,7 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ITicketMapper } from '@ticketing/ticket/types';
 import {
+  TicketStatus,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
@@ -30,13 +31,13 @@ export class FrontTicketMapper implements ITicketMapper {
   ): Promise<FrontTicketInput> {
     const body_: any = {};
 
-    if (source.comment.creator_type === 'user') {
+    if (source.comment.creator_type === 'USER') {
       body_.author_id = await this.utils.getAsigneeRemoteIdFromUserUuid(
         source.comment.user_id,
       );
     }
-    if (source.comment.attachments) {
-      body_.attachments = source.comment.attachments;
+    if (source.attachments) {
+      body_.attachments = source.attachments as string[];
     }
     const result: FrontTicketInput = {
       type: 'discussion',
@@ -144,7 +145,7 @@ export class FrontTicketMapper implements ITicketMapper {
       remote_id: ticket.id,
       remote_data: ticket,
       name: ticket.subject,
-      status: ticket.status,
+      status: ticket.status as TicketStatus,
       description: ticket.subject,
       due_date: null,
       field_mappings: field_mappings,

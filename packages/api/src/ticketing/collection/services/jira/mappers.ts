@@ -59,7 +59,7 @@ export class JiraCollectionMapper implements ICollectionMapper {
     const unifiedCollection: UnifiedCollectionOutput = {
       remote_id: collection.id,
       remote_data: collection,
-      name: collection.name,
+      name: collection.key,
       description: collection.name,
       collection_type: 'PROJECT',
     };

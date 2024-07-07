@@ -1,6 +1,7 @@
 import { ITicketMapper } from '@ticketing/ticket/types';
 import { HubspotTicketInput, HubspotTicketOutput } from './types';
 import {
+  TicketPriority,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
@@ -102,7 +103,7 @@ export class HubspotTicketMapper implements ITicketMapper {
       type: null,
       parent_ticket: null,
       completed_at: new Date(ticket.properties.hs_lastmodifieddate),
-      priority: ticket.properties.hs_ticket_priority,
+      priority: ticket.properties.hs_ticket_priority as TicketPriority,
       ...opts,
       field_mappings: field_mappings,
     };

@@ -9,6 +9,8 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { IEngagementService } from '../types';
 import {
+  EngagementDirection,
+  EngagementType,
   UnifiedEngagementInput,
   UnifiedEngagementOutput,
 } from '../types/model.unified';
@@ -312,11 +314,11 @@ export class EngagementService {
       const unifiedEngagement: UnifiedEngagementOutput = {
         id: engagement.id_crm_engagement,
         content: engagement.content,
-        direction: engagement.direction,
+        direction: engagement.direction as EngagementDirection,
         subject: engagement.subject,
         start_at: engagement.start_at,
         end_time: engagement.end_time,
-        type: engagement.type,
+        type: engagement.type as EngagementType,
         company_id: engagement.id_crm_company,
         field_mappings: field_mappings,
         remote_id: engagement.remote_id,
@@ -447,11 +449,11 @@ export class EngagementService {
           return {
             id: engagement.id_crm_engagement,
             content: engagement.content,
-            direction: engagement.direction,
+            direction: engagement.direction as EngagementDirection,
             subject: engagement.subject,
             start_at: engagement.start_at,
             end_time: engagement.end_time,
-            type: engagement.type,
+            type: engagement.type as EngagementType,
             company_id: engagement.id_crm_company,
             field_mappings: field_mappings,
             remote_id: engagement.remote_id,

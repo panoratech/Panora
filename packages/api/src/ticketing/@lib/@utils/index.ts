@@ -149,6 +149,21 @@ export class Utils {
     }
   }
 
+  async getCollectionNameFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.tcg_collections.findFirst({
+        where: {
+          id_tcg_collection: uuid,
+        },
+      });
+      if (!res) return undefined;
+
+      return res.name;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getTicketUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.tcg_tickets.findFirst({

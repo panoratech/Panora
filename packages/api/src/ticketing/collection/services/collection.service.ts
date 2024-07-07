@@ -4,7 +4,10 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedCollectionOutput } from '../types/model.unified';
+import {
+  CollectionType,
+  UnifiedCollectionOutput,
+} from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 
@@ -37,7 +40,7 @@ export class CollectionService {
         id: collection.id_tcg_collection,
         name: collection.name,
         description: collection.description,
-        collection_type: collection.collection_type,
+        collection_type: collection.collection_type as CollectionType,
         remote_id: collection.remote_id,
         created_at: collection.created_at,
         modified_at: collection.modified_at,
@@ -133,7 +136,7 @@ export class CollectionService {
             id: collection.id_tcg_collection,
             name: collection.name,
             description: collection.description,
-            collection_type: collection.collection_type,
+            collection_type: collection.collection_type as CollectionType,
             remote_id: collection.remote_id,
             created_at: collection.created_at,
             modified_at: collection.modified_at,

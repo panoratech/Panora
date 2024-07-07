@@ -1,14 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
+export type PermissionType = 'USER' | 'GROUP' | 'COMPANY' | 'ANYONE';
+export type PermissionRole = 'READ' | 'WRITE' | 'OWNER';
+
 export class UnifiedPermissionInput {
   @ApiProperty({ type: [String], description: 'The roles of the permission' })
   @IsString()
-  roles: string[];
+  roles: PermissionRole[];
 
   @ApiProperty({ type: String, description: 'The type of the permission' })
   @IsString()
-  type: string;
+  type: PermissionType;
 
   @ApiProperty({
     type: String,

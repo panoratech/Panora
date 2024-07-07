@@ -98,7 +98,7 @@ export class FileService {
           mime_type: target_file.mime_type,
           size: target_file.size,
           folder_id: target_file.folder_id,
-          permission_id: target_file.permission_id,
+          permission_id: target_file.permission as string,
           modified_at: new Date(),
         };
 
@@ -119,7 +119,7 @@ export class FileService {
           mime_type: target_file.mime_type,
           size: target_file.size,
           folder_id: target_file.folder_id,
-          permission_id: target_file.permission_id,
+          permission_id: target_file.permission as string,
           created_at: new Date(),
           modified_at: new Date(),
           remote_id: target_file.remote_id,
@@ -271,10 +271,10 @@ export class FileService {
       }
 
       let sharedLink;
-      if (file.id_shared_link) {
+      if (file.id_fs_shared_link) {
         const sl = await this.prisma.fs_shared_links.findUnique({
           where: {
-            id_fs_shared_link: file.id_shared_link,
+            id_fs_shared_link: file.id_fs_shared_link,
           },
         });
         sharedLink = sl;
@@ -284,7 +284,6 @@ export class FileService {
       const unifiedFile: UnifiedFileOutput = {
         id: file.id_fs_file,
         name: file.name,
-        type: file.type,
         file_url: file.file_url,
         mime_type: file.mime_type,
         size: String(file.size),
@@ -424,10 +423,10 @@ export class FileService {
           }
 
           let sharedLink;
-          if (file.id_shared_link) {
+          if (file.id_fs_shared_link) {
             const sl = await this.prisma.fs_shared_links.findUnique({
               where: {
-                id_fs_shared_link: file.id_shared_link,
+                id_fs_shared_link: file.id_fs_shared_link,
               },
             });
             sharedLink = sl;
@@ -437,7 +436,6 @@ export class FileService {
           return {
             id: file.id_fs_file,
             name: file.name,
-            type: file.type,
             file_url: file.file_url,
             mime_type: file.mime_type,
             size: String(file.size),

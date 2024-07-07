@@ -41,6 +41,12 @@ export interface IUnification {
   }): Promise<UnifyReturnType>;
 }
 
+export type SyncLinkedUserType = {
+  integrationId: string;
+  linkedUserId: string;
+  [key: string]: any;
+};
+
 export interface IBaseSync {
   saveToDb(
     connection_id: string,
@@ -50,6 +56,10 @@ export interface IBaseSync {
     remote_data: Record<string, any>[],
     ...rest: any
   ): Promise<any[]>;
+
+  kickstartSync?(...params: any[]): Promise<void>;
+
+  syncForLinkedUser?(param: SyncLinkedUserType): Promise<void>;
 
   removeInDb?(connection_id: string, remote_id: string): Promise<void>;
 }

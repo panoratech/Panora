@@ -1,5 +1,6 @@
 import { AshbyJobInput, AshbyJobOutput } from './types';
 import {
+  JobStatus,
   UnifiedJobInput,
   UnifiedJobOutput,
 } from '@ats/job/types/model.unified';
@@ -91,7 +92,7 @@ export class AshbyJobMapper implements IJobMapper {
       name: job.title || null,
       description: null,
       code: null,
-      status: job.status || null, //todo
+      status: (job.status as JobStatus) || null, //todo
       type: null,
       confidential: job.confidential || null,
       departments: department ? [department] : null,

@@ -11,6 +11,8 @@ import {
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { GorgiasCommentInput, GorgiasCommentOutput } from './types';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import * as fs from 'fs';
 
 @Injectable()
 export class GorgiasCommentMapper implements ICommentMapper {
@@ -18,6 +20,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
     private coreUnificationService: CoreUnification,
+    private prisma: PrismaService,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -34,6 +37,34 @@ export class GorgiasCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): Promise<GorgiasCommentInput> {
+    let uploads = [];
+    if (source.attachments) {
+      const uuids = source.attachments as string[];
+      if (uuids && uuids.length > 0) {
+        const attachmentPromises = uuids.map(async (uuid) => {
+          const res = await this.prisma.tcg_attachments.findUnique({
+            where: {
+              id_tcg_attachment: uuid,
+            },
+          });
+          if (!res) {
+            throw new ReferenceError(
+              `tcg_attachment not found for uuid ${uuid}`,
+            );
+          }
+          // Assuming you want to construct the right binary attachment here
+          // For now, we'll just return the URL
+          const stats = fs.statSync(res.file_url);
+          return {
+            url: res.file_url,
+            name: res.file_name,
+            size: stats.size,
+            content_type: 'application/pdf', //todo
+          };
+        });
+        uploads = await Promise.all(attachmentPromises);
+      }
+    }
     const result: GorgiasCommentInput = {
       sender: {
         id:
@@ -49,8 +80,10 @@ export class GorgiasCommentMapper implements ICommentMapper {
       channel: 'chat',
       body_html: source.html_body,
       body_text: source.body,
-      attachments: source.attachments,
     };
+    if (uploads && uploads.length > 0) {
+      result.attachments = uploads;
+    }
     return result;
   }
 

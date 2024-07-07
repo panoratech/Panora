@@ -38,8 +38,6 @@ export class JiraService implements ITicketService {
         },
       });
 
-      //Add comment by calling the unified comment function but first insert the ticket base data
-
       const resp = await axios.post(
         `${connection.account_url}/issue`,
         JSON.stringify(ticketData),
@@ -53,7 +51,56 @@ export class JiraService implements ITicketService {
         },
       );
 
-      // Add comment if someone wants to add one when creation of the ticket
+      // todo: Add comment if someone wants to add one when creation of the ticket
+
+      // Process attachments
+      let uploads = [];
+      const uuids = ticketData.attachments;
+      if (uuids && uuids.length > 0) {
+        uploads = await Promise.all(
+          uuids.map(async (uuid) => {
+            const attachment = await this.prisma.tcg_attachments.findUnique({
+              where: {
+                id_tcg_attachment: uuid,
+              },
+            });
+            if (!attachment) {
+              throw new ReferenceError(
+                `tcg_attachment not found for uuid ${uuid}`,
+              );
+            }
+            // TODO: Construct the right binary attachment
+            // Get the AWS S3 right file
+            // TODO: Check how to send a stream of a URL
+            return attachment.file_url; //await this.utils.fetchFileStreamFromURL(attachment.file_url);
+          }),
+        );
+      }
+
+      if (uploads.length > 0) {
+        const formData = new FormData();
+
+        uploads.forEach((fileStream, index) => {
+          //const stats = fs.statSync(fileStream);
+          //const fileSizeInBytes = stats.size;
+          formData.append('file', fileStream); //, { knownLength: fileSizeInBytes });
+        });
+
+        // Send request with attachments
+        const resp_ = await axios.post(
+          `${connection.account_url}/issue/${resp.data.id}/attachments`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Atlassian-Token': 'no-check',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          },
+        );
+      }
 
       return {
         data: resp.data,

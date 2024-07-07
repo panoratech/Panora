@@ -1,6 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
+export type EngagementDirection = 'INBOUND' | 'OUTBOUND';
+export type EngagementType = 'EMAIL' | 'CALL' | 'MEETING';
+
 export class UnifiedEngagementInput {
   @ApiPropertyOptional({
     type: String,
@@ -19,7 +22,7 @@ export class UnifiedEngagementInput {
     message: 'Direction must be either INBOUND or OUTBOUND',
   })
   @IsOptional()
-  direction?: string;
+  direction?: EngagementDirection;
 
   @ApiPropertyOptional({
     type: String,
@@ -45,7 +48,7 @@ export class UnifiedEngagementInput {
   @IsIn(['EMAIL', 'CALL', 'MEETING'], {
     message: 'Type must be either EMAIL, CALL or MEETING',
   })
-  type: string;
+  type?: EngagementType;
 
   @ApiPropertyOptional({
     type: String,

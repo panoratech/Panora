@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { UnifiedUserOutput, UserAccessRole } from '../types/model.unified';
 
 @Injectable()
 export class UserService {
@@ -58,7 +58,7 @@ export class UserService {
         last_name: user.last_name,
         email: user.email,
         disabled: user.disabled,
-        access_role: user.access_role,
+        access_role: user.access_role as UserAccessRole,
         remote_created_at: String(user.remote_created_at),
         remote_modified_at: String(user.remote_modified_at),
         field_mappings: field_mappings,
@@ -190,7 +190,7 @@ export class UserService {
             last_name: user.last_name,
             email: user.email,
             disabled: user.disabled,
-            access_role: user.access_role,
+            access_role: user.access_role as UserAccessRole,
             remote_created_at: String(user.remote_created_at),
             remote_modified_at: String(user.remote_modified_at),
             field_mappings: field_mappings,

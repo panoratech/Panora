@@ -166,17 +166,4 @@ export class ContactController {
       throw new Error(error);
     }
   }
-
-  @ApiOperation({
-    operationId: 'update',
-    summary: 'Update a CRM Contact',
-  })
-  @UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  update(
-    @Query('id') id: string,
-    @Body() updateContactData: Partial<UnifiedContactInput>,
-  ) {
-    return this.contactService.updateContact(id, updateContactData);
-  }
 }

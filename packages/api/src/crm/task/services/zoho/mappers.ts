@@ -1,6 +1,7 @@
 import { ITaskMapper } from '@crm/task/types';
 import { ZohoTaskInput, ZohoTaskOutput } from './types';
 import {
+  TaskStatus,
   UnifiedTaskInput,
   UnifiedTaskOutput,
 } from '@crm/task/types/model.unified';
@@ -105,7 +106,10 @@ export class ZohoTaskMapper implements ITaskMapper {
       remote_id: task.id,
       content: task.Description,
       subject: task.Subject,
-      status: task.Status === 'Completed' ? 'COMPLETED' : 'IN PROGRESS',
+      status:
+        task.Status === 'Completed'
+          ? 'COMPLETED'
+          : ('IN PROGRESS' as TaskStatus),
       finished_date: new Date(task.Closed_Time),
       due_date: new Date(task.Due_Date),
       field_mappings,

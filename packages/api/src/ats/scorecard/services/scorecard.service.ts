@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedScoreCardOutput } from '../types/model.unified';
+import {
+  ScoreCardRecommendation,
+  UnifiedScoreCardOutput,
+} from '../types/model.unified';
 
 @Injectable()
 export class ScoreCardService {
@@ -54,7 +57,8 @@ export class ScoreCardService {
       // Transform to UnifiedScoreCardOutput format
       const unifiedScoreCard: UnifiedScoreCardOutput = {
         id: scorecard.id_ats_scorecard,
-        overall_recommendation: scorecard.overall_recommendation,
+        overall_recommendation:
+          scorecard.overall_recommendation as ScoreCardRecommendation,
         application_id: scorecard.id_ats_application,
         interview_id: scorecard.id_ats_interview,
         remote_created_at: String(scorecard.remote_created_at),
@@ -185,7 +189,8 @@ export class ScoreCardService {
           // Transform to UnifiedScoreCardOutput format
           return {
             id: scorecard.id_ats_scorecard,
-            overall_recommendation: scorecard.overall_recommendation,
+            overall_recommendation:
+              scorecard.overall_recommendation as ScoreCardRecommendation,
             application_id: scorecard.id_ats_application,
             interview_id: scorecard.id_ats_interview,
             remote_created_at: String(scorecard.remote_created_at),

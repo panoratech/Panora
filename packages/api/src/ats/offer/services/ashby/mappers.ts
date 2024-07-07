@@ -1,5 +1,6 @@
 import { AshbyOfferInput, AshbyOfferOutput } from './types';
 import {
+  OfferStatus,
   UnifiedOfferInput,
   UnifiedOfferOutput,
 } from '@ats/offer/types/model.unified';
@@ -65,7 +66,7 @@ export class AshbyOfferMapper implements IOfferMapper {
       remote_data: offer,
       closed_at: offer.decidedAt,
       start_date: offer.latestVersion.startDate,
-      status: offer.offerStatus || null,
+      status: (offer.offerStatus as OfferStatus) || null,
       application_id:
         (await this.utils.getApplicationUuidFromRemoteId(
           offer.applicationId,

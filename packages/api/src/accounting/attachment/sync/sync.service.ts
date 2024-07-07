@@ -22,6 +22,19 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ) {
     this.logger.setContext(SyncService.name);
   }
+  saveToDb(
+    connection_id: string,
+    linkedUserId: string,
+    data: any[],
+    originSource: string,
+    remote_data: Record<string, any>[],
+    ...rest: any
+  ): Promise<any[]> {
+    throw new Error('Method not implemented.');
+  }
+  removeInDb?(connection_id: string, remote_id: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
 
   async onModuleInit() {
     // Initialization logic

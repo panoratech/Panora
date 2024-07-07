@@ -31,7 +31,7 @@ export class FrontCommentMapper implements ICommentMapper {
     const result: FrontCommentInput = {
       body: source.body,
       author_id: await this.utils.getUserRemoteIdFromUuid(source.user_id), // for Front it must be a User
-      attachments: source.attachments,
+      attachments: source.attachments as string[],
     };
     return result;
   }

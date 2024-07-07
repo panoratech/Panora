@@ -11,7 +11,6 @@ import { OfferModule } from './offer/offer.module';
 import { OfficeModule } from './office/office.module';
 import { RejectReasonModule } from './rejectreason/rejectreason.module';
 import { ScoreCardModule } from './scorecard/scorecard.module';
-import { ScreeningQuestionModule } from './screeningquestion/screeningquestion.module';
 import { TagModule } from './tag/tag.module';
 import { UserModule } from './user/user.module';
 import { EeocsModule } from './eeocs/eeocs.module';
@@ -30,7 +29,6 @@ import { EeocsModule } from './eeocs/eeocs.module';
     OfficeModule,
     RejectReasonModule,
     ScoreCardModule,
-    ScreeningQuestionModule,
     TagModule,
     UserModule,
     EeocsModule,
@@ -48,7 +46,6 @@ import { EeocsModule } from './eeocs/eeocs.module';
     OfficeModule,
     RejectReasonModule,
     ScoreCardModule,
-    ScreeningQuestionModule,
     TagModule,
     UserModule,
     EeocsModule,

@@ -115,7 +115,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       }
     }
     if (company.address) {
-      res.addresses[0] = {
+      opts.addresses[0] = {
         street_1: company.address,
         city: company.address_locality,
         country: company.address_country,

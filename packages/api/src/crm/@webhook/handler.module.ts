@@ -3,6 +3,7 @@ import { EnvironmentService } from '@@core/@core-services/environment/environmen
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { Module } from '@nestjs/common';
 import { CrmWebhookHandlerService } from './handler.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [],

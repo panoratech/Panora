@@ -100,7 +100,7 @@ export class FolderService {
           description: target_folder.description,
           parent_folder: target_folder.parent_folder_id,
           id_fs_drive: target_folder.drive_id,
-          id_fs_permission: target_folder.permission_id,
+          id_fs_permission: target_folder.permission as string,
           modified_at: new Date(),
         };
 
@@ -121,7 +121,7 @@ export class FolderService {
           description: target_folder.description,
           parent_folder: target_folder.parent_folder_id,
           id_fs_drive: target_folder.drive_id,
-          id_fs_permission: target_folder.permission_id,
+          id_fs_permission: target_folder.permission as string,
           created_at: new Date(),
           modified_at: new Date(),
           remote_id: target_folder.remote_id,
@@ -275,10 +275,10 @@ export class FolderService {
       }
 
       let sharedLink;
-      if (folder.id_shared_link) {
+      if (folder.id_fs_shared_link) {
         const sl = await this.prisma.fs_shared_links.findUnique({
           where: {
-            id_fs_shared_link: folder.id_shared_link,
+            id_fs_shared_link: folder.id_fs_shared_link,
           },
         });
         sharedLink = sl;
@@ -423,10 +423,10 @@ export class FolderService {
           }
 
           let sharedLink;
-          if (folder.id_shared_link) {
+          if (folder.id_fs_shared_link) {
             const sl = await this.prisma.fs_shared_links.findUnique({
               where: {
-                id_fs_shared_link: folder.id_shared_link,
+                id_fs_shared_link: folder.id_fs_shared_link,
               },
             });
             sharedLink = sl;

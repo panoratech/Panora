@@ -28,5 +28,16 @@ export class SyncService implements OnModuleInit, IBaseSync {
     // Initialization logic
   }
 
+  saveToDb(
+    connection_id: string,
+    linkedUserId: string,
+    data: any[],
+    originSource: string,
+    remote_data: Record<string, any>[],
+    ...rest: any
+  ): Promise<any[]> {
+    throw new Error('Method not implemented.');
+  }
+
   // Additional methods and logic
 }

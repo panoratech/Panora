@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
+export type ScoreCardRecommendation =
+  | 'DEFINITELY_NO'
+  | 'NO'
+  | 'YES'
+  | 'STRONG_YES'
+  | 'NO_DECISION';
 
 export class UnifiedScoreCardInput {
   @ApiPropertyOptional({
@@ -8,7 +14,7 @@ export class UnifiedScoreCardInput {
   })
   @IsString()
   @IsOptional()
-  overall_recommendation?: string;
+  overall_recommendation?: ScoreCardRecommendation;
 
   @ApiPropertyOptional({
     type: String,

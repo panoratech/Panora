@@ -54,7 +54,8 @@ export class ZendeskCommentMapper implements ICommentMapper {
     }
 
     if (source.attachments) {
-      result.uploads = source.attachments; //we let the array of uuids on purpose (it will be modified in the given service on the fly!)
+      // it is a string array of uuids of attachmts objects
+      result.uploads = source.attachments as string[];
     }
 
     if (source.html_body) {

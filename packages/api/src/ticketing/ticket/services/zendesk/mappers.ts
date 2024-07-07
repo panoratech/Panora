@@ -42,7 +42,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       comment: {
         body: source.comment.body || null,
         public: !source.comment.is_private || true,
-        uploads: source.comment.attachments || [], //fetch token attachments for this uuid, would be done on the fly in dest service
+        uploads: (source.attachments as string[]) ?? [], //fetch token attachments for this uuid, would be done on the fly in dest service
       },
     };
     if (source.comment.html_body) {

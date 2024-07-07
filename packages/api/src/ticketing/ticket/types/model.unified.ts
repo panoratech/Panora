@@ -5,6 +5,10 @@ import { UnifiedCommentInput } from '@ticketing/comment/types/model.unified';
 import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
+export type TicketType = 'BUG' | 'SUBTASK' | 'TASK' | 'TO-DO';
+export type TicketStatus = 'OPEN' | 'CLOSED';
+export type TicketPriority = 'HIGH' | 'MEDIUM' | 'LOW';
+
 export class UnifiedTicketInput {
   @ApiProperty({
     type: String,
@@ -22,7 +26,7 @@ export class UnifiedTicketInput {
     message: 'Type must be either OPEN or CLOSED',
   })
   @IsOptional()
-  status?: string;
+  status?: TicketStatus;
 
   @ApiProperty({
     type: String,
@@ -43,11 +47,11 @@ export class UnifiedTicketInput {
     description:
       'The type of the ticket. Authorized values are PROBLEM, QUESTION, or TASK',
   })
-  @IsIn(['PROBLEM', 'QUESTION', 'TASK'], {
-    message: 'Type must be either PROBLEM, QUESTION or TASK',
+  @IsIn(['BUG', 'SUBTASK', 'TASK', 'TO-DO'], {
+    message: 'Type must be either BUG, SUBTASK, TASK or TO-DO',
   })
   @IsOptional()
-  type?: string;
+  type?: TicketType;
 
   @ApiPropertyOptional({
     type: String,
@@ -88,7 +92,7 @@ export class UnifiedTicketInput {
     message: 'Type must be either HIGH, MEDIUM or LOW',
   })
   @IsOptional()
-  priority?: string;
+  priority?: TicketPriority;
 
   @ApiPropertyOptional({
     type: [String],

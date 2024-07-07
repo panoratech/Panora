@@ -2,6 +2,7 @@ import { AshbyUserInput, AshbyUserOutput } from './types';
 import {
   UnifiedUserInput,
   UnifiedUserOutput,
+  UserAccessRole,
 } from '@ats/user/types/model.unified';
 import { IUserMapper } from '@ats/user/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -67,7 +68,7 @@ export class AshbyUserMapper implements IUserMapper {
       last_name: user.lastName || null,
       email: user.email || null,
       disabled: user.isEnabled || null,
-      access_role: user.globalRole || null, // todo
+      access_role: (user.globalRole as UserAccessRole) || null, // todo
       remote_modified_at: user.updatedAt || null,
     };
   }
