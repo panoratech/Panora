@@ -1944,7 +1944,6 @@ CREATE TABLE fs_files
 (
  id_fs_file       uuid NOT NULL,
  name             text NULL,
- type             text NULL,
  file_url         text NULL,
  mime_type        text NULL,
  "size"           bigint NULL,
