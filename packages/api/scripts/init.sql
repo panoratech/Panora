@@ -721,12 +721,38 @@ CREATE TABLE acc_vendor_credits
  company              uuid NULL,
  tracking_categories  text[] NULL,
  accounting_period    uuid NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_vendor_credit )
+ CONSTRAINT PK_acc_vendor_credits PRIMARY KEY ( id_acc_vendor_credit )
 );
 
 
 
 COMMENT ON COLUMN acc_vendor_credits.company IS 'The company the vendor credit belongs to.';
+
+
+
+
+
+-- ************************************** acc_vendor_credit_lines
+
+CREATE TABLE acc_vendor_credit_lines
+(
+ id_acc_vendor_credit_line uuid NOT NULL,
+ net_amount                bigint NULL,
+ tracking_categories       text[] NULL,
+ description               text NULL,
+ account                   uuid NULL,
+ id_acc_account            uuid NULL,
+ exchange_rate             text NULL,
+ id_acc_company_info       uuid NULL,
+ remote_id                 text NULL,
+ created_at                timestamp with time zone NOT NULL,
+ modified_at               timestamp with time zone NOT NULL,
+ id_acc_vendor_credit      uuid NULL,
+ CONSTRAINT PK_acc_vendor_credit_lines PRIMARY KEY ( id_acc_vendor_credit_line )
+);
+
+
+
 
 
 
@@ -782,8 +808,8 @@ CREATE TABLE acc_tracking_categories
  status                   text NULL,
  category_type            text NULL,
  parent_category          uuid NULL,
- created_at               timestamp NOT NULL,
- modified_at              timestamp NOT NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
  id_connection            uuid NOT NULL,
  CONSTRAINT PK_acc_tracking_categories PRIMARY KEY ( id_acc_tracking_category )
 );
@@ -811,7 +837,7 @@ CREATE TABLE acc_tax_rates
  id_connection      uuid NOT NULL,
  created_at         timestamp with time zone NOT NULL,
  modified_at        timestamp with time zone NOT NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_tax_rate )
+ CONSTRAINT PK_acc_tax_rates PRIMARY KEY ( id_acc_tax_rate )
 );
 
 
@@ -835,7 +861,7 @@ CREATE TABLE acc_report_items
  remote_id          text NULL,
  created_at         timestamp with time zone NOT NULL,
  modified_at        timestamp with time zone NOT NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_report_item )
+ CONSTRAINT PK_acc_report_items PRIMARY KEY ( id_acc_report_item )
 );
 
 
@@ -861,7 +887,7 @@ CREATE TABLE acc_income_statements
  created_at              timestamp with time zone NOT NULL,
  modified_at             timestamp with time zone NOT NULL,
  id_connection           uuid NOT NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_income_statement )
+ CONSTRAINT PK_acc_income_statements PRIMARY KEY ( id_acc_income_statement )
 );
 
 
@@ -895,7 +921,7 @@ CREATE TABLE acc_credit_notes
  modified_at              time with time zone NOT NULL,
  created_at               time with time zone NOT NULL,
  id_connection            uuid NOT NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_credit_note )
+ CONSTRAINT PK_acc_credit_notes PRIMARY KEY ( id_acc_credit_note )
 );
 
 
@@ -919,11 +945,11 @@ CREATE TABLE acc_company_infos
  fiscal_year_end_month int NULL,
  fiscal_year_end_day   int NULL,
  currency              text NULL,
- remote_created_at     timestamp NULL,
+ remote_created_at     timestamp with time zone NULL,
  remote_id             text NULL,
  urls                  text[] NULL,
- created_at            timestamp NOT NULL,
- modified_at           timestamp NOT NULL,
+ created_at            timestamp with time zone NOT NULL,
+ modified_at           timestamp with time zone NOT NULL,
  id_connection         uuid NOT NULL,
  tracking_categories   text[] NULL,
  CONSTRAINT PK_acc_company_infos PRIMARY KEY ( id_acc_company_info )
@@ -953,7 +979,7 @@ CREATE TABLE acc_cash_flow_statements
  modified_at                 timestamp with time zone NOT NULL,
  created_at                  timestamp with time zone NOT NULL,
  id_connection               uuid NOT NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_cash_flow_statement )
+ CONSTRAINT PK_acc_cash_flow_statements PRIMARY KEY ( id_acc_cash_flow_statement )
 );
 
 
@@ -975,7 +1001,7 @@ CREATE TABLE acc_balance_sheets_report_items
  value                             bigint NULL,
  parent_item                       uuid NULL,
  id_acc_company_info               uuid NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_balance_sheets_report_item )
+ CONSTRAINT PK_acc_balance_sheets_report_items PRIMARY KEY ( id_acc_balance_sheets_report_item )
 );
 
 
@@ -991,13 +1017,13 @@ COMMENT ON COLUMN acc_balance_sheets_report_items.parent_item IS 'uuid of anothe
 CREATE TABLE acc_accounting_periods
 (
  id_acc_accounting_period uuid NOT NULL,
- remote_id                string NULL,
- created_at               timestamp NOT NULL,
- modified_at              timestamp NOT NULL,
+ remote_id                text NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
  name                     text NULL,
  status                   text NULL,
- start_date               timestamp NULL,
- end_date                 timestamp NULL,
+ start_date               timestamp with time zone NULL,
+ end_date                 timestamp with time zone NULL,
  id_connection            uuid NOT NULL,
  CONSTRAINT PK_acc_accounting_periods PRIMARY KEY ( id_acc_accounting_period )
 );
@@ -1512,37 +1538,6 @@ COMMENT ON COLUMN ats_activities.id_ats_candidate IS 'The activity’s candidate
 
 
 
--- ************************************** acc_vendor_credit_lines
-
-CREATE TABLE acc_vendor_credit_lines
-(
- id_acc_vendor_credit_line uuid NOT NULL,
- id_acc_vendor_credit      uuid NOT NULL,
- net_amount                bigint NULL,
- tracking_categories       text[] NULL,
- description               text NULL,
- account                   uuid NULL,
- id_acc_account            uuid NULL,
- exchange_rate             text NULL,
- id_acc_company_info       uuid NULL,
- remote_id                 text NULL,
- created_at                timestamp with time zone NOT NULL,
- modified_at               timestamp with time zone NOT NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_vendor_credit_line )
-);
-
-CREATE INDEX FK_1 ON acc_vendor_credit_lines
-(
- id_acc_vendor_credit
-);
-
-
-
-
-
-
-
-
 -- ************************************** acc_transactions_lines_items
 
 CREATE TABLE acc_transactions_lines_items
@@ -1563,7 +1558,7 @@ CREATE TABLE acc_transactions_lines_items
  created_at                     time with time zone NOT NULL,
  modified_at                    time with time zone NOT NULL,
  id_acc_transaction             uuid NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_transactions_lines_item )
+ CONSTRAINT PK_acc_transactions_lines_items PRIMARY KEY ( id_acc_transactions_lines_item )
 );
 
 CREATE INDEX FK_acc_transactions_lineItems ON acc_transactions_lines_items
@@ -1604,7 +1599,7 @@ CREATE TABLE acc_purchase_orders
  modified_at              timestamp with time zone NOT NULL,
  id_connection            uuid NOT NULL,
  id_acc_accounting_period uuid NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_purchase_order )
+ CONSTRAINT PK_acc_purchase_orders PRIMARY KEY ( id_acc_purchase_order )
 );
 
 CREATE INDEX FK_purchaseOrder_accountingPeriod ON acc_purchase_orders
@@ -1683,8 +1678,8 @@ CREATE TABLE acc_contacts
  id_acc_company_info uuid NULL,
  id_connection       uuid NOT NULL,
  remote_id           text NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  CONSTRAINT PK_acc_contacts PRIMARY KEY ( id_acc_contact )
 );
 
@@ -1715,7 +1710,7 @@ CREATE TABLE acc_cash_flow_statement_report_items
  modified_at                            timestamp with time zone NOT NULL,
  created_at                             timestamp with time zone NOT NULL,
  id_acc_cash_flow_statement             uuid NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_cash_flow_statement_report_item )
+ CONSTRAINT PK_acc_cash_flow_statement_report_items PRIMARY KEY ( id_acc_cash_flow_statement_report_item )
 );
 
 CREATE INDEX FK_cashflow_statement_acc_cash_flow_statement_report_item ON acc_cash_flow_statement_report_items
@@ -1784,8 +1779,8 @@ CREATE TABLE acc_accounts
  parent_account      uuid NULL,
  remote_id           text NULL,
  id_acc_company_info uuid NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  id_connection       uuid NOT NULL,
  CONSTRAINT PK_acc_accounts PRIMARY KEY ( id_acc_account )
 );
@@ -2312,7 +2307,7 @@ CREATE TABLE acc_purchase_orders_line_items
  exchange_rate                    text NULL,
  id_acc_account                   uuid NULL,
  id_acc_company                   uuid NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_purchase_orders_line_item )
+ CONSTRAINT PK_acc_purchase_orders_line_items PRIMARY KEY ( id_acc_purchase_orders_line_item )
 );
 
 CREATE INDEX FK_purchaseorder_purchaseorderLineItems ON acc_purchase_orders_line_items
@@ -2334,8 +2329,8 @@ CREATE TABLE acc_phone_numbers
  id_acc_phone_number uuid NOT NULL,
  "number"            text NULL,
  type                text NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  id_acc_company_info uuid NULL,
  id_acc_contact      uuid NOT NULL,
  id_connection       uuid NOT NULL,
@@ -2377,10 +2372,10 @@ CREATE TABLE acc_journal_entries_lines
  created_at                  timestamp with time zone NOT NULL,
  modified_at                 timestamp with time zone NOT NULL,
  id_acc_journal_entry        uuid NOT NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_journal_entries_line )
+ CONSTRAINT PK_acc_journal_entries_lines PRIMARY KEY ( id_acc_journal_entries_line )
 );
 
-CREATE INDEX FK_1 ON acc_journal_entries_lines
+CREATE INDEX FK_journal_entries_entries_lines ON acc_journal_entries_lines
 (
  id_acc_journal_entry
 );
@@ -2401,13 +2396,13 @@ CREATE TABLE acc_items
  status              text NULL,
  unit_price          bigint NULL,
  purchase_price      bigint NULL,
- remote_updated_at   timestamp NULL,
+ remote_updated_at   timestamp with time zone NULL,
  remote_id           text NULL,
  sales_account       uuid NULL,
  purchase_account    uuid NULL,
  id_acc_company_info uuid NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  id_connection       uuid NOT NULL,
  CONSTRAINT PK_acc_items PRIMARY KEY ( id_acc_item )
 );
@@ -2442,9 +2437,9 @@ CREATE TABLE acc_invoices
  id_acc_invoice           uuid NOT NULL,
  type                     text NULL,
  "number"                 text NULL,
- issue_date               timestamp NULL,
- due_date                 timestamp NULL,
- paid_on_date             timestamp NULL,
+ issue_date               timestamp with time zone NULL,
+ due_date                 timestamp with time zone NULL,
+ paid_on_date             timestamp with time zone NULL,
  memo                     text NULL,
  currency                 text NULL,
  exchange_rate            text NULL,
@@ -2454,11 +2449,11 @@ CREATE TABLE acc_invoices
  total_tax_amount         bigint NULL,
  total_amount             bigint NULL,
  balance                  bigint NULL,
- remote_updated_at        timestamp NULL,
+ remote_updated_at        timestamp with time zone NULL,
  remote_id                text NULL,
- created_at               timestamp NOT NULL,
- modified_at              timestamp NOT NULL,
- id_connection            uuis NOT NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ id_connection            uuid NOT NULL,
  id_acc_contact           uuid NULL,
  id_acc_accounting_period uuid NULL,
  tracking_categories      text[] NULL,
@@ -2490,7 +2485,7 @@ COMMENT ON COLUMN acc_invoices.status IS 'The status of the invoice. Possible va
 CREATE TABLE acc_expenses
 (
  id_acc_expense      uuid NOT NULL,
- transaction_date    timestamp NULL,
+ transaction_date    timestamp with time zone NULL,
  total_amount        bigint NULL,
  sub_total           bigint NULL,
  total_tax_amount    bigint NULL,
@@ -2501,9 +2496,9 @@ CREATE TABLE acc_expenses
  id_acc_contact      uuid NULL,
  id_acc_company_info uuid NULL,
  remote_id           text NULL,
- remote_created_at   timestamp NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ remote_created_at   timestamp with time zone NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  id_connection       uuid NOT NULL,
  tracking_categories text[] NULL,
  CONSTRAINT PK_acc_expenses PRIMARY KEY ( id_acc_expense )
@@ -2543,8 +2538,8 @@ CREATE TABLE acc_attachments
  file_url          text NULL,
  remote_id         text NULL,
  id_acc_account    uuid NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  id_connection     uuid NOT NULL,
  CONSTRAINT PK_acc_attachments PRIMARY KEY ( id_acc_attachment )
 );
@@ -2574,8 +2569,8 @@ CREATE TABLE acc_addresses
  country_subdivision text NULL,
  country             text NULL,
  zip                 text NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  id_acc_contact      uuid NULL,
  id_acc_company_info uuid NULL,
  id_connection       uuid NOT NULL,
@@ -2910,18 +2905,18 @@ CREATE TABLE acc_payments
 (
  id_acc_payment           uuid NOT NULL,
  id_acc_invoice           uuid NULL,
- transaction_date         timestamp NULL,
+ transaction_date         timestamp with time zone NULL,
  id_acc_contact           uuid NULL,
  id_acc_account           uuid NULL,
  currency                 text NULL,
  exchange_rate            text NULL,
  total_amount             bigint NULL,
  type                     text NULL,
- remote_updated_at        timestamp NULL,
+ remote_updated_at        timestamp with time zone NULL,
  id_acc_company_info      uuid NULL,
  id_acc_accounting_period uuid NULL,
- created_at               timestamp NOT NULL,
- modified_at              timestamp NOT NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
  id_connection            uuid NOT NULL,
  tracking_categories      text[] NULL,
  CONSTRAINT PK_acc_payments PRIMARY KEY ( id_acc_payment )
@@ -2977,8 +2972,8 @@ CREATE TABLE acc_invoices_line_items
  exchange_rate             text NULL,
  id_acc_invoice            uuid NOT NULL,
  id_acc_item               uuid NOT NULL,
- created_at                timestamp NOT NULL,
- modified_at               timestamp NOT NULL,
+ created_at                timestamp with time zone NOT NULL,
+ modified_at               timestamp with time zone NOT NULL,
  id_connection             uuid NOT NULL,
  acc_tracking_categories   text[] NULL,
  CONSTRAINT PK_acc_invoices_line_items PRIMARY KEY ( id_acc_invoices_line_item )
@@ -3012,10 +3007,10 @@ CREATE TABLE acc_expense_lines
  currency            text NULL,
  description         text NULL,
  exchange_rate       text NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  id_connection       uuid NOT NULL,
- CONSTRAINT PK_1 PRIMARY KEY ( id_acc_expense_line )
+ CONSTRAINT PK_acc_expense_lines PRIMARY KEY ( id_acc_expense_line )
 );
 
 CREATE INDEX FK_acc_expense_expense_lines_index ON acc_expense_lines
@@ -3119,12 +3114,12 @@ CREATE TABLE acc_payments_line_items
  acc_payments_line_item uuid NOT NULL,
  id_acc_payment         uuid NOT NULL,
  applied_amount         bigint NULL,
- applied_date           timestamp NULL,
+ applied_date           timestamp with time zone NULL,
  related_object_id      uuid NULL,
  related_object_type    text NULL,
  remote_id              text NULL,
- created_at             timestamp NOT NULL,
- modified_at            timestamp NOT NULL,
+ created_at             timestamp with time zone NOT NULL,
+ modified_at            timestamp with time zone NOT NULL,
  id_connection          uuid NOT NULL,
  CONSTRAINT PK_acc_payments_line_items PRIMARY KEY ( acc_payments_line_item )
 );
