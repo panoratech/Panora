@@ -26,7 +26,7 @@ export class HubspotService implements ITicketService {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + HubspotService.name,
     );
-    this.registry.registerService('hubspot_t', this);
+    this.registry.registerService('hubspot', this);
   }
   async addTicket(
     ticketData: HubspotTicketInput,

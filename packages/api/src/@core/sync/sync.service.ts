@@ -27,6 +27,9 @@ export class CoreSyncService {
         case ConnectorCategory.FileStorage:
           await this.handleFileStorageSync(provider, linkedUserId);
           break;
+        case ConnectorCategory.Ats:
+          await this.handleAtsSync(provider, linkedUserId);
+          break;
       }
     } catch (error) {
       throw error;
@@ -245,6 +248,10 @@ export class CoreSyncService {
   }
 
   async handleFileStorageSync(provider: string, linkedUserId: string) {
+    //TODO
+  }
+
+  async handleAtsSync(provider: string, linkedUserId: string) {
     //TODO
   }
 
