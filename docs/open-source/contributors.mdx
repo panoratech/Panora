@@ -36,21 +36,16 @@ We made a docker file that builds Panora from sources, specifically to help you 
 
     - `HUBSPOT_CRM_CLOUD_CLIENT_ID = client_id_value_pasted_from_hubspot_developer_app`
     - `HUBSPOT_CRM_CLOUD_CLIENT_SECRET = client_secret_value_pasted_from_hubspot_developer_app`
-
   </Step>
-  <Step title="Removed previously installed dependencies">
+  <Step title="Remove previously installed dependencies">
     ```bash 
     rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
     ```
-    <Info>For Mac users only: <br/>
-      ```bash 
-      echo -e "node-linker=hoisted\n package-import-method=clone-or-copy" > .npmrc 
-      ```
-    <Info/>
+    <Info>For Mac users only: ```echo -e "node-linker=hoisted\n package-import-method=clone-or-copy" > .npmrc```</Info>
   </Step>
   <Step title="(Optional) Enable Grok">
-    If you have to create an oAuth app for a provider and needs an **https** redirect uri you must enable Grok service and use your secure domain from them (it proxies requests to `localhost:3000`): <br/>
-    - Add your auth token and domain from your Ngrok dashboard to the `ngrok.yml` file.<br/>
+    If you have to create an oAuth app for a provider and needs an **https** redirect uri you must enable Grok service and use your secure domain from them (it proxies requests to `localhost:3000`):
+    - Add your auth token and domain from your Ngrok dashboard to the `ngrok.yml` file.
     - Uncomment the Grok service inside the `docker-compose.dev.yml` file.
   </Step>
   <Step title="Start the Dockerfile">
@@ -258,8 +253,8 @@ Now you must test Panora unified endpoints with the new connector built.
           You need a set of credentials that you'll set in `.env` if you use oAuth (check above how it works). 
           Check [this guide](/core-concepts/magic-links) to create a connection through it.
           To activate your new connector on the magic link, visit this [**file**](https://github.com/panoratech/Panora/blob/main/packages/shared/src/connectors/metadata.ts#L6) :
-          and change your connector status to `active: true`.   
-          <br/>
+          and change your connector status to `active: true`. 
+            
           **If the connector uses API KEY auth:**<br/>
           You currently have to do a POST request to create a connection.<br/>
           Create your query encoded URI by computing this:<br/>
