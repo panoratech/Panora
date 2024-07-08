@@ -20,6 +20,28 @@ export class AshbyOfferMapper implements IOfferMapper {
     this.mappersRegistry.registerService('ats', 'offer', 'ashby', this);
   }
 
+  mapToOfferStatus(
+    data:
+      | 'WaitingOnApprovalStart'
+      | 'WaitingOnOfferApproval'
+      | 'WaitingOnApprovalDefinition'
+      | 'WaitingOnCandidateResponse'
+      | 'CandidateRejected'
+      | 'CandidateAccepted'
+      | 'OfferCancelled',
+  ): OfferStatus | string {
+    switch (data) {
+      case 'OfferCancelled':
+        return 'DEPRECATED';
+      case 'CandidateAccepted':
+        return 'APPROVED';
+      case 'CandidateRejected':
+        return 'DENIED';
+      default:
+        return data;
+    }
+  }
+
   async desunify(
     source: UnifiedOfferInput,
     customFieldMappings?: {
@@ -66,7 +88,7 @@ export class AshbyOfferMapper implements IOfferMapper {
       remote_data: offer,
       closed_at: offer.decidedAt,
       start_date: offer.latestVersion.startDate,
-      status: (offer.offerStatus as OfferStatus) || null,
+      status: this.mapToOfferStatus(offer.offerStatus as any) ?? null,
       application_id:
         (await this.utils.getApplicationUuidFromRemoteId(
           offer.applicationId,

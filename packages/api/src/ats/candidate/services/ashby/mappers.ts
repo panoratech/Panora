@@ -98,6 +98,22 @@ export class AshbyCandidateMapper implements ICandidateMapper {
         attachments: attachments,
       };
     }
+    if (candidate.resumeFileHandle) {
+      candidate.resumeFileHandle.resume = true;
+      const attachments = (await this.coreUnificationService.unify<
+        OriginalAttachmentOutput[]
+      >({
+        sourceObject: [candidate.resumeFileHandle],
+        targetType: AtsObject.attachment,
+        providerName: 'ashby',
+        vertical: 'ats',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedAttachmentOutput[];
+      opts = {
+        attachments: [opts.attachments, ...attachments],
+      };
+    }
     if (candidate.tags && candidate.tags.length > 0) {
       const tags = (await this.coreUnificationService.unify<
         OriginalTagOutput[]

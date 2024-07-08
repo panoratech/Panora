@@ -93,7 +93,6 @@ export class FileService {
       if (existingFile) {
         const data: any = {
           name: target_file.name,
-          type: target_file.type,
           file_url: target_file.file_url,
           mime_type: target_file.mime_type,
           size: target_file.size,
@@ -114,7 +113,6 @@ export class FileService {
         const data: any = {
           id_fs_file: uuidv4(),
           name: target_file.name,
-          type: target_file.type,
           file_url: target_file.file_url,
           mime_type: target_file.mime_type,
           size: target_file.size,
@@ -138,6 +136,8 @@ export class FileService {
           data: {
             id_entity: uuidv4(),
             ressource_owner_id: unique_fs_file_id,
+            created_at: new Date(),
+            modified_at: new Date(),
           },
         });
 
@@ -162,6 +162,8 @@ export class FileService {
                     id_attribute: attribute.id_attribute,
                   },
                 },
+                created_at: new Date(),
+                modified_at: new Date(),
                 entity: {
                   connect: {
                     id_entity: entity.id_entity,
@@ -270,16 +272,11 @@ export class FileService {
         permission = perm;
       }
 
-      let sharedLink;
-      if (file.id_fs_shared_link) {
-        const sl = await this.prisma.fs_shared_links.findUnique({
-          where: {
-            id_fs_shared_link: file.id_fs_shared_link,
-          },
-        });
-        sharedLink = sl;
-      }
-
+      const sharedLink = await this.prisma.fs_shared_links.findFirst({
+        where: {
+          id_fs_file: file.id_fs_file,
+        },
+      });
       // Transform to UnifiedFileOutput format
       const unifiedFile: UnifiedFileOutput = {
         id: file.id_fs_file,
@@ -422,15 +419,11 @@ export class FileService {
             permission = perm;
           }
 
-          let sharedLink;
-          if (file.id_fs_shared_link) {
-            const sl = await this.prisma.fs_shared_links.findUnique({
-              where: {
-                id_fs_shared_link: file.id_fs_shared_link,
-              },
-            });
-            sharedLink = sl;
-          }
+          const sharedLink = await this.prisma.fs_shared_links.findFirst({
+            where: {
+              id_fs_file: file.id_fs_file,
+            },
+          });
 
           // Transform to UnifiedFileOutput format
           return {

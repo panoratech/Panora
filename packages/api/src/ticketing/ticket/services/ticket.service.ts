@@ -272,6 +272,8 @@ export class TicketService {
           data: {
             id_entity: uuidv4(),
             ressource_owner_id: unique_ticketing_ticket_id,
+            created_at: new Date(),
+            modified_at: new Date(),
           },
         });
 
@@ -296,6 +298,8 @@ export class TicketService {
                     id_attribute: attribute.id_attribute,
                   },
                 },
+                created_at: new Date(),
+                modified_at: new Date(),
                 entity: {
                   connect: {
                     id_entity: entity.id_entity,
@@ -320,7 +324,6 @@ export class TicketService {
         },
         update: {
           data: JSON.stringify(source_ticket),
-          created_at: new Date(),
         },
       });
 

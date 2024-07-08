@@ -11,7 +11,7 @@ export class SyncProcessor {
   async handleSyncContacts(job: Job) {
     try {
       console.log(`Processing queue -> crm-sync-contacts ${job.id}`);
-      await this.syncService.syncContacts();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing crm contacts', error);
     }

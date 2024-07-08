@@ -23,6 +23,7 @@ import { WebhookModule } from './@core-services/webhooks/panora-webhooks/webhook
 import { ManagedWebhooksModule } from './@core-services/webhooks/third-parties-webhooks/managed-webhooks.module';
 import { CategoryConnectionRegistry } from './@core-services/registries/connections-categories.registry';
 import { IngestDataService } from './@core-services/unification/ingest-data.service';
+import { FieldMappingService } from './field-mapping/field-mapping.service';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { IngestDataService } from './@core-services/unification/ingest-data.serv
     UnificationRegistry,
     CoreUnification,
     CoreSyncRegistry,
+    IngestDataService,
     BullQueueModule,
   ],
   providers: [
@@ -70,6 +72,7 @@ import { IngestDataService } from './@core-services/unification/ingest-data.serv
     LoggerService,
     MappersRegistry,
     UnificationRegistry,
+    FieldMappingService,
     CoreUnification,
     CoreSyncRegistry,
     IngestDataService,

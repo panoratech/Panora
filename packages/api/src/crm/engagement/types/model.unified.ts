@@ -22,7 +22,7 @@ export class UnifiedEngagementInput {
     message: 'Direction must be either INBOUND or OUTBOUND',
   })
   @IsOptional()
-  direction?: EngagementDirection;
+  direction?: EngagementDirection | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -48,7 +48,7 @@ export class UnifiedEngagementInput {
   @IsIn(['EMAIL', 'CALL', 'MEETING'], {
     message: 'Type must be either EMAIL, CALL or MEETING',
   })
-  type?: EngagementType;
+  type?: EngagementType | string;
 
   @ApiPropertyOptional({
     type: String,

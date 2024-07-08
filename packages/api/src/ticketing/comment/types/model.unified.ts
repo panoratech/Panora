@@ -37,7 +37,7 @@ export class UnifiedCommentInput {
     message: 'Type must be either USER or CONTACT',
   })
   @IsOptional()
-  creator_type?: CommentCreatorType;
+  creator_type?: CommentCreatorType | string;
 
   @ApiPropertyOptional({
     type: String,

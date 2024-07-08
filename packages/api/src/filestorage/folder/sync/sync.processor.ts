@@ -11,7 +11,7 @@ export class SyncProcessor {
   async handleSyncFolders(job: Job) {
     try {
       console.log(`Processing queue -> filestorage-sync-folders ${job.id}`);
-      await this.syncService.syncFolders();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing filestorage folders', error);
     }

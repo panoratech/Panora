@@ -124,7 +124,7 @@ export class ZohoCompanyMapper implements ICompanyMapper {
           owner_type: 'company',
         },
       ],
-      industry: company.Industry as Industry, //TODO: map to correct industry
+      industry: company.Industry,
       user_id: await this.utils.getUserUuidFromRemoteId(
         company.Owner.id,
         connectionId,

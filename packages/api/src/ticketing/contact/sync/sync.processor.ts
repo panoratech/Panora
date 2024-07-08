@@ -10,7 +10,7 @@ export class SyncProcessor {
   async handleSyncContacts(job: Job) {
     try {
       console.log(`Processing queue -> ticketing-sync-contacts ${job.id}`);
-      await this.syncService.syncContacts();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ticketing contacts', error);
     }

@@ -29,6 +29,7 @@ import { ManagementConnectionsModule } from './management/management.connection.
 import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
 import { OAuthTokenRefreshService } from './@token-refresh/refresh.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
 
 @Module({
   controllers: [ConnectionsController],
@@ -64,6 +65,7 @@ import { OAuthTokenRefreshService } from './@token-refresh/refresh.service';
     CoreSyncService,
     ConnectionUtils,
     OAuthTokenRefreshService,
+    CategoryConnectionRegistry,
   ],
   exports: [
     CrmConnectionModule,
@@ -74,6 +76,12 @@ import { OAuthTokenRefreshService } from './@token-refresh/refresh.service';
     FilestorageConnectionModule,
     HrisConnectionModule,
     ManagementConnectionsModule,
+    LoggerService,
+    ValidateUserService,
+    CoreSyncService,
+    ConnectionUtils,
+    OAuthTokenRefreshService,
+    CategoryConnectionRegistry,
   ],
 })
 export class ConnectionsModule {}

@@ -7,7 +7,7 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ApiResponse } from '@@core/utils/types';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalFileOutput } from '@@core/utils/types/original/original.file-storage';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
@@ -49,7 +49,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
 
   @Cron('0 */8 * * *') // every 8 hours
-  async syncFiles(user_id?: string) {
+  async kickstartSync(user_id?: string) {
     try {
       this.logger.log('Syncing files...');
       const users = user_id
@@ -93,17 +93,17 @@ export class SyncService implements OnModuleInit, IBaseSync {
                       },
                     });
                     for (const folder of folders) {
-                      await this.syncFilesForLinkedUser(
-                        provider,
-                        linkedUser.id_linked_user,
-                        folder.id_fs_folder,
-                      );
+                      await this.syncForLinkedUser({
+                        integrationId: provider,
+                        linkedUserId: linkedUser.id_linked_user,
+                        folder_id: folder.id_fs_folder,
+                      });
                     }
                     // do a batch sync without folders as some providers might accept it
-                    await this.syncFilesForLinkedUser(
-                      provider,
-                      linkedUser.id_linked_user,
-                    );
+                    await this.syncForLinkedUser({
+                      integrationId: provider,
+                      linkedUserId: linkedUser.id_linked_user,
+                    });
                   } catch (error) {
                     throw error;
                   }
@@ -120,12 +120,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
     }
   }
 
-  async syncFilesForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    folder_id?: string,
-  ) {
+  async syncForLinkedUser(data: SyncLinkedUserType) {
     try {
+      const { integrationId, linkedUserId, folder_id } = data;
       const service: IFileService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
@@ -170,7 +167,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
         const baseData: any = {
           name: file.name ?? null,
-          type: file.type ?? null,
           file_url: file.file_url ?? null,
           mime_type: file.mime_type ?? null,
           size: file.size ?? null,
@@ -211,11 +207,17 @@ export class SyncService implements OnModuleInit, IBaseSync {
         files_results.push(res);
 
         if (file.shared_link) {
-          let sl_id;
           if (typeof file.shared_link === 'string') {
-            sl_id = file.shared_link;
+            await this.prisma.fs_shared_links.update({
+              where: {
+                id_fs_shared_link: file.shared_link,
+              },
+              data: {
+                id_fs_folder: file_id,
+              },
+            });
           } else {
-            const slinks = await this.registry
+            await this.registry
               .getService('filestorage', 'sharedlink')
               .saveToDb(
                 connection_id,
@@ -225,17 +227,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 [file.shared_link].map(
                   (att: UnifiedSharedLinkOutput) => att.remote_data,
                 ),
+                {
+                  extra: {
+                    object_name: 'file',
+                    value: file_id,
+                  },
+                },
               );
-            sl_id = slinks[0].id_fs_shared_link;
           }
-          await this.prisma.fs_files.update({
-            where: {
-              id_fs_file: file_id,
-            },
-            data: {
-              id_fs_shared_link: sl_id,
-            },
-          });
         }
 
         if (file.permission) {

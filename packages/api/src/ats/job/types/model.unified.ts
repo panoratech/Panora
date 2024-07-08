@@ -10,6 +10,7 @@ import {
 
 export type JobStatus = 'OPEN' | 'CLOSED' | 'DRAFT' | 'ARCHIVED' | 'PENDING';
 export type JobType = 'POSTING' | 'REQUISITION' | 'PROFILE';
+
 export class UnifiedJobInput {
   @ApiPropertyOptional({ type: String, description: 'The name of the job' })
   @IsString()

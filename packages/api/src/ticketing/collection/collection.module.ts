@@ -14,9 +14,12 @@ import { UnificationRegistry } from '@@core/@core-services/registries/unificatio
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [],
+  imports: [BullQueueModule],
   controllers: [CollectionController],
   providers: [
     CollectionService,
@@ -25,6 +28,8 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     WebhookService,
     EncryptionService,
     FieldMappingService,
+    CoreSyncRegistry,
+    
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,

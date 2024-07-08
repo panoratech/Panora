@@ -7,6 +7,7 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ITicketMapper } from '@ticketing/ticket/types';
 import {
+  TicketStatus,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
@@ -20,6 +21,15 @@ export class GithubTicketMapper implements ITicketMapper {
     private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'github', this);
+  }
+
+  mapToTicketStatus(data: 'open' | 'closed'): TicketStatus {
+    switch (data) {
+      case 'open':
+        return 'OPEN';
+      case 'closed':
+        return 'CLOSED';
+    }
   }
 
   async desunify(
@@ -123,7 +133,7 @@ export class GithubTicketMapper implements ITicketMapper {
           remote_data: ticket,
           name: ticket.title,
           description: ticket.body,
-          status: ticket.state,
+          status: this.mapToTicketStatus(ticket.state as any),
           field_mappings: field_mappings,
           ...opts,
         };

@@ -143,6 +143,8 @@ export class FolderService {
           data: {
             id_entity: uuidv4(),
             ressource_owner_id: unique_fs_folder_id,
+            created_at: new Date(),
+            modified_at: new Date(),
           },
         });
 
@@ -167,6 +169,8 @@ export class FolderService {
                     id_attribute: attribute.id_attribute,
                   },
                 },
+                created_at: new Date(),
+                modified_at: new Date(),
                 entity: {
                   connect: {
                     id_entity: entity.id_entity,
@@ -274,15 +278,11 @@ export class FolderService {
         permission = perm;
       }
 
-      let sharedLink;
-      if (folder.id_fs_shared_link) {
-        const sl = await this.prisma.fs_shared_links.findUnique({
-          where: {
-            id_fs_shared_link: folder.id_fs_shared_link,
-          },
-        });
-        sharedLink = sl;
-      }
+      const sharedLink = await this.prisma.fs_shared_links.findFirst({
+        where: {
+          id_fs_folder: folder.id_fs_folder,
+        },
+      });
 
       // Transform to UnifiedFolderOutput format
       const unifiedFolder: UnifiedFolderOutput = {
@@ -422,15 +422,11 @@ export class FolderService {
             permission = perm;
           }
 
-          let sharedLink;
-          if (folder.id_fs_shared_link) {
-            const sl = await this.prisma.fs_shared_links.findUnique({
-              where: {
-                id_fs_shared_link: folder.id_fs_shared_link,
-              },
-            });
-            sharedLink = sl;
-          }
+          const sharedLink = await this.prisma.fs_shared_links.findFirst({
+            where: {
+              id_fs_folder: folder.id_fs_folder,
+            },
+          });
 
           // Transform to UnifiedFolderOutput format
           return {

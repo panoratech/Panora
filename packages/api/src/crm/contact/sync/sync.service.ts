@@ -17,7 +17,7 @@ import { Utils } from '@crm/@lib/@utils';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
@@ -52,7 +52,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
   // @Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
-  async syncContacts(user_id?: string) {
+  async kickstartSync(user_id?: string) {
     try {
       this.logger.log(`Syncing contacts....`);
 
@@ -86,10 +86,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 );
                 for (const provider of providers) {
                   try {
-                    await this.syncContactsForLinkedUser(
-                      provider,
-                      linkedUser.id_linked_user,
-                    );
+                    await this.syncForLinkedUser({
+                      integrationId: provider,
+                      linkedUserId: linkedUser.id_linked_user,
+                    });
                   } catch (error) {
                     throw error;
                   }
@@ -107,8 +107,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncContactsForLinkedUser(integrationId: string, linkedUserId: string) {
+  async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
+      const { integrationId, linkedUserId } = param;
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
@@ -241,6 +242,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     data: {
                       ...addy,
                       id_crm_contact: existingContact.id_crm_contact,
+                      id_connection: connection_id,
                     },
                   });
                 }
@@ -293,6 +295,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                   data: {
                     ...addy,
                     id_crm_contact: newContact.id_crm_contact,
+                    id_connection: connection_id,
                   },
                 }),
               ),

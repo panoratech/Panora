@@ -20,6 +20,29 @@ export class AshbyInterviewMapper implements IInterviewMapper {
     this.mappersRegistry.registerService('ats', 'interview', 'ashby', this);
   }
 
+  mapToInterviewStatus(
+    data:
+      | 'NeedsScheduling'
+      | 'WaitingOnCandidateBooking'
+      | 'WaitingOnCandidateAvailability'
+      | 'CandidateAvailabilitySubmitted'
+      | 'Scheduled'
+      | 'WaitingOnFeedback'
+      | 'Complete'
+      | 'Cancelled',
+  ): InterviewStatus | string {
+    switch (data) {
+      case 'Complete':
+        return 'COMPLETED';
+      case 'WaitingOnFeedback':
+        return 'AWAITING_FEEDBACK';
+      case 'Scheduled':
+        return 'SCHEDULED';
+      default:
+        return data;
+    }
+  }
+
   async desunify(
     source: UnifiedInterviewInput,
     customFieldMappings?: {
@@ -79,7 +102,7 @@ export class AshbyInterviewMapper implements IInterviewMapper {
     return {
       remote_id: interview.id,
       remote_data: interview,
-      status: (interview.status as InterviewStatus) || null, //todo
+      status: this.mapToInterviewStatus(interview.status as any) ?? null,
       application_id:
         (await this.utils.getApplicationUuidFromRemoteId(
           interview.applicationId,

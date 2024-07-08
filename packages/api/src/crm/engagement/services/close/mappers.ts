@@ -9,6 +9,7 @@ import {
   CloseEngagementOutput,
 } from './types';
 import {
+  EngagementDirection,
   UnifiedEngagementInput,
   UnifiedEngagementOutput,
 } from '@crm/engagement/types/model.unified';
@@ -21,6 +22,25 @@ import { Injectable } from '@nestjs/common';
 export class CloseEngagementMapper implements IEngagementMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
     this.mappersRegistry.registerService('crm', 'engagement', 'close', this);
+  }
+
+  mapToTaskDirection(
+    data: 'outbound' | 'inbound',
+  ): EngagementDirection | string {
+    switch (data) {
+      case 'inbound':
+        return 'INBOUND';
+      case 'outbound':
+        return 'OUTBOUND';
+    }
+  }
+  reverseMapToTaskDirection(data: EngagementDirection): string {
+    switch (data) {
+      case 'INBOUND':
+        return 'inbound';
+      case 'OUTBOUND':
+        return 'outbound';
+    }
   }
 
   async desunify(
@@ -58,12 +78,13 @@ export class CloseEngagementMapper implements IEngagementMapper {
         : 0;
     const result: CloseEngagementCallInput = {
       note_html: source.content || null,
-      direction: (
-        (source.direction === 'OUTBOUND' ? 'outgoing' : source.direction) ||
-        null
-      ).toLowerCase(),
       duration: Math.floor(diffInMilliseconds / (1000 * 60)),
     };
+    if (source.direction) {
+      result.direction = this.reverseMapToTaskDirection(
+        source.direction as EngagementDirection,
+      );
+    }
 
     // Map HubSpot owner ID from user ID
     if (source.user_id) {
@@ -125,12 +146,12 @@ export class CloseEngagementMapper implements IEngagementMapper {
       to: [],
       bcc: [],
       cc: [],
-      direction: (
-        (source.direction === 'OUTBOUND' ? 'outgoing' : source.direction) ||
-        null
-      ).toLowerCase(),
     };
-
+    if (source.direction) {
+      result.direction = this.reverseMapToTaskDirection(
+        source.direction as EngagementDirection,
+      );
+    }
     // Map HubSpot owner ID from user ID
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
@@ -325,7 +346,9 @@ export class CloseEngagementMapper implements IEngagementMapper {
         };
       }
     }
-
+    if (engagement.direction) {
+      opts.direction = this.mapToTaskDirection(engagement.direction as any);
+    }
     return {
       remote_id: engagement.id,
       content: engagement.note_html || engagement.note,
@@ -333,7 +356,6 @@ export class CloseEngagementMapper implements IEngagementMapper {
       start_at: new Date(engagement.date_created),
       end_time: new Date(engagement.date_updated), // Assuming end time is mapped from last modified date
       type: 'CALL',
-      direction: engagement.direction,
       field_mappings,
       ...opts,
     };
@@ -401,7 +423,6 @@ export class CloseEngagementMapper implements IEngagementMapper {
         };
       }
     }
-
     return {
       remote_id: engagement.id,
       content: engagement.note,
@@ -466,6 +487,9 @@ export class CloseEngagementMapper implements IEngagementMapper {
         };
       }
     }
+    if (engagement.direction) {
+      opts.direction = this.mapToTaskDirection(engagement.direction as any);
+    }
 
     return {
       remote_id: engagement.id,
@@ -474,12 +498,6 @@ export class CloseEngagementMapper implements IEngagementMapper {
       start_at: new Date(engagement.date_created),
       end_time: new Date(engagement.date_updated), // Assuming end time can be mapped from last modified date
       type: 'EMAIL',
-      direction:
-        engagement.direction === 'outgoing'
-          ? 'OUTBOUND'
-          : engagement.direction === 'inbound'
-          ? 'INBOUND'
-          : null,
       field_mappings,
       ...opts,
     };

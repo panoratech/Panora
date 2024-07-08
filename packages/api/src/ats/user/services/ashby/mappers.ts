@@ -20,6 +20,25 @@ export class AshbyUserMapper implements IUserMapper {
     this.mappersRegistry.registerService('ats', 'user', 'ashby', this);
   }
 
+  mapToUserAccessRole(
+    data:
+      | 'Organization Admin'
+      | 'Elevated Access'
+      | 'Limited Access'
+      | 'External Recruiter',
+  ): UserAccessRole | string {
+    switch (data) {
+      case 'Organization Admin':
+        return 'SUPER_ADMIN';
+      case 'Elevated Access':
+        return 'ADMIN';
+      case 'Limited Access':
+        return 'LIMITED_TEAM_MEMBER';
+      case 'External Recruiter':
+        return 'INTERVIEWER';
+    }
+  }
+
   async desunify(
     source: UnifiedUserInput,
     customFieldMappings?: {
@@ -68,7 +87,7 @@ export class AshbyUserMapper implements IUserMapper {
       last_name: user.lastName || null,
       email: user.email || null,
       disabled: user.isEnabled || null,
-      access_role: (user.globalRole as UserAccessRole) || null, // todo
+      access_role: this.mapToUserAccessRole(user.globalRole as any),
       remote_modified_at: user.updatedAt || null,
     };
   }

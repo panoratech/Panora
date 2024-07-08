@@ -90,6 +90,8 @@ export class FieldMappingService {
           source: '',
           //id_entity: id_entity,
           scope: 'user', // [user | org] wide
+          created_at: new Date(),
+          modified_at: new Date(),
         },
       });
 
@@ -135,6 +137,8 @@ export class FieldMappingService {
           source: '',
           //id_entity: id_entity,
           scope: 'user', // [user | org] wide
+          created_at: new Date(),
+          modified_at: new Date(),
         },
       });
       const updatedAttribute = await this.prisma.attribute.update({
@@ -146,6 +150,7 @@ export class FieldMappingService {
           source: dto.source_provider,
           id_consumer: dto.linked_user_id.trim(),
           status: 'mapped',
+          modified_at: new Date(),
         },
       });
 

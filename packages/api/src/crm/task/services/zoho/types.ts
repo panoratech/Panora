@@ -15,12 +15,7 @@ interface ZohoTask {
   $approved: boolean;
   Remind_At: Reminder | null;
   Who_Id: RelatedPerson;
-  Status:
-    | 'Not Started'
-    | 'Deferred'
-    | 'In Progress'
-    | 'Completed'
-    | 'Waiting on someone else';
+  Status: string;
   $approval: ApprovalProcess;
   Modified_Time: string;
   Due_Date: string;

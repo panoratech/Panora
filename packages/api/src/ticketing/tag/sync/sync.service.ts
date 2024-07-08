@@ -7,7 +7,7 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ApiResponse } from '@@core/utils/types';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
@@ -50,7 +50,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   //its role is to fetch all tags from providers 3rd parties and save the info inside our db
   //@Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
-  async syncTags(user_id?: string) {
+  async kickstartSync(user_id?: string) {
     try {
       this.logger.log(`Syncing tags....`);
       const users = user_id
@@ -94,11 +94,11 @@ export class SyncService implements OnModuleInit, IBaseSync {
                       },
                     });
                     for (const ticket of tickets) {
-                      await this.syncTagsForLinkedUser(
-                        provider,
-                        linkedUser.id_linked_user,
-                        ticket.id_tcg_ticket,
-                      );
+                      await this.syncForLinkedUser({
+                        integrationId: provider,
+                        linkedUserId: linkedUser.id_linked_user,
+                        id_ticket: ticket.id_tcg_ticket,
+                      });
                     }
                   } catch (error) {
                     throw error;
@@ -117,12 +117,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncTagsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_ticket: string,
-  ) {
+  async syncForLinkedUser(data: SyncLinkedUserType) {
     try {
+      const { integrationId, linkedUserId, id_ticket } = data;
       const service: ITagService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;

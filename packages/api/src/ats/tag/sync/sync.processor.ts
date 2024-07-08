@@ -11,7 +11,7 @@ export class SyncProcessor {
   async handleSyncTags(job: Job) {
     try {
       console.log(`Processing queue -> ats-sync-tags ${job.id}`);
-      await this.syncService.syncTags();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ats tags', error);
     }

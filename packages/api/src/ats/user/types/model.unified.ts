@@ -5,6 +5,7 @@ import {
   IsString,
   IsBoolean,
   IsDateString,
+  IsIn,
 } from 'class-validator';
 
 export type UserAccessRole =
@@ -48,9 +49,15 @@ export class UnifiedUserInput {
     type: String,
     description: 'The access role of the user',
   })
-  @IsString()
+  @IsIn([
+    'SUPER_ADMIN',
+    'ADMIN',
+    'TEAM_MEMBER',
+    'LIMITED_TEAM_MEMBER',
+    'INTERVIEWER',
+  ])
   @IsOptional()
-  access_role?: UserAccessRole;
+  access_role?: UserAccessRole | string;
 
   @ApiPropertyOptional({
     type: String,

@@ -10,7 +10,7 @@ export class SyncProcessor {
   async handleSyncTags(job: Job) {
     try {
       console.log(`Processing queue -> ticketing-sync-tags ${job.id}`);
-      await this.syncService.syncTags();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ticketing tags', error);
     }

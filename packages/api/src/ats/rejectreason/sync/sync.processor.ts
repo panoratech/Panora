@@ -11,7 +11,7 @@ export class SyncProcessor {
   async handleSyncRejectReasons(job: Job) {
     try {
       console.log(`Processing queue -> ats-sync-reject-reasons ${job.id}`);
-      await this.syncService.syncRejectReasons();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ats reject reasons', error);
     }

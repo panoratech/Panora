@@ -14,6 +14,35 @@ export class ZohoTaskMapper implements ITaskMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
     this.mappersRegistry.registerService('crm', 'task', 'zoho', this);
   }
+
+  mapToTaskStatus(
+    data:
+      | 'Not Started'
+      | 'Deferred'
+      | 'In Progress'
+      | 'Completed'
+      | 'Waiting on someone else',
+  ): TaskStatus | string {
+    switch (data) {
+      case 'In Progress':
+        return 'PENDING';
+      case 'Not Started':
+        return 'PENDING';
+      case 'Completed':
+        return 'COMPLETED';
+      default:
+        return data;
+    }
+  }
+  reverseMapToTaskStatus(data: TaskStatus): string {
+    switch (data) {
+      case 'COMPLETED':
+        return 'Completed';
+      case 'PENDING':
+        return 'In Progress';
+    }
+  }
+
   async desunify(
     source: UnifiedTaskInput,
     customFieldMappings?: {
@@ -27,8 +56,7 @@ export class ZohoTaskMapper implements ITaskMapper {
       Subject: source.subject,
     };
     if (source.status) {
-      result.Status =
-        source.status === 'COMPLETED' ? 'Completed' : 'In Progress';
+      result.Status = this.reverseMapToTaskStatus(source.status as TaskStatus);
     }
     if (source.due_date) {
       result.Due_Date = source.due_date.toISOString();
@@ -106,10 +134,7 @@ export class ZohoTaskMapper implements ITaskMapper {
       remote_id: task.id,
       content: task.Description,
       subject: task.Subject,
-      status:
-        task.Status === 'Completed'
-          ? 'COMPLETED'
-          : ('IN PROGRESS' as TaskStatus),
+      status: this.mapToTaskStatus(task.Status as any),
       finished_date: new Date(task.Closed_Time),
       due_date: new Date(task.Due_Date),
       field_mappings,

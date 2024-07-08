@@ -206,6 +206,7 @@ export class ContactService {
                   data: {
                     ...addy,
                     id_crm_contact: existingContact.id_crm_contact, // Assuming 'uuid' is the ID of the related contact
+                    id_connection: connection_id,
                   },
                 });
               }
@@ -277,6 +278,7 @@ export class ContactService {
                 data: {
                   ...addy,
                   id_crm_contact: newContact.id_crm_contact,
+                  id_connection: connection_id,
                 },
               }),
             ),
@@ -295,6 +297,8 @@ export class ContactService {
           data: {
             id_entity: uuidv4(),
             ressource_owner_id: unique_crm_contact_id,
+            created_at: new Date(),
+            modified_at: new Date(),
           },
         });
 
@@ -319,6 +323,8 @@ export class ContactService {
                     id_attribute: attribute.id_attribute,
                   },
                 },
+                created_at: new Date(),
+                modified_at: new Date(),
                 entity: {
                   connect: {
                     id_entity: entity.id_entity,

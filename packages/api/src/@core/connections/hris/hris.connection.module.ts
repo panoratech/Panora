@@ -15,9 +15,11 @@ import { NamelyConnectionService } from './services/namely/namely.service';
 import { PayfitConnectionService } from './services/payfit/payfit.service';
 import { ServiceRegistry } from './services/registry.service';
 import { RipplingConnectionService } from './services/rippling/rippling.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, BullQueueModule],
   providers: [
     HrisConnectionsService,
     ServiceRegistry,
@@ -27,6 +29,7 @@ import { RipplingConnectionService } from './services/rippling/rippling.service'
     EncryptionService,
     ConnectionsStrategiesService,
     ConnectionUtils,
+    CategoryConnectionRegistry,
     // PROVIDERS SERVICES
     RipplingConnectionService,
     DeelConnectionService,

@@ -13,8 +13,10 @@ import { GoogleDriveConnectionService } from './services/google_drive/google_dri
 import { OneDriveConnectionService } from './services/onedrive/onedrive.service';
 import { ServiceRegistry } from './services/registry.service';
 import { SharepointConnectionService } from './services/sharepoint/sharepoint.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, BullQueueModule],
   providers: [
     FilestorageConnectionsService,
     ServiceRegistry,
@@ -24,6 +26,7 @@ import { SharepointConnectionService } from './services/sharepoint/sharepoint.se
     EncryptionService,
     ConnectionsStrategiesService,
     ConnectionUtils,
+    CategoryConnectionRegistry,
     // PROVIDERS SERVICES
     GoogleDriveConnectionService,
     DropboxConnectionService,

@@ -156,6 +156,8 @@ export class ApplicationService {
           data: {
             id_entity: uuidv4(),
             ressource_owner_id: unique_ats_application_id,
+            created_at: new Date(),
+            modified_at: new Date(),
           },
         });
 
@@ -178,6 +180,8 @@ export class ApplicationService {
                 attribute: {
                   connect: { id_attribute: attribute.id_attribute },
                 },
+                created_at: new Date(),
+                modified_at: new Date(),
                 entity: { connect: { id_entity: entity.id_entity } },
               },
             });
@@ -286,8 +290,8 @@ export class ApplicationService {
         remote_id: application.remote_id || null,
         created_at: application.created_at || null,
         modified_at: application.modified_at || null,
-        remote_created_at: application.remote_created_at || null,
-        remote_modified_at: application.remote_modified_at || null,
+        remote_created_at: null,
+        remote_modified_at: null,
       };
 
       let res: UnifiedApplicationOutput = unifiedApplication;
@@ -418,8 +422,8 @@ export class ApplicationService {
             remote_id: application.remote_id || null,
             created_at: application.created_at || null,
             modified_at: application.modified_at || null,
-            remote_created_at: application.remote_created_at || null,
-            remote_modified_at: application.remote_modified_at || null,
+            remote_created_at: null,
+            remote_modified_at: null,
           };
         }),
       );

@@ -13,7 +13,7 @@ export class SyncProcessor {
       console.log(
         `Processing queue -> ats-sync-job-interview-stages ${job.id}`,
       );
-      await this.syncService.syncJobInterviewStages();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ats job interview stages', error);
     }

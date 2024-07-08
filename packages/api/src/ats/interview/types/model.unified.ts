@@ -5,6 +5,7 @@ import {
   IsString,
   IsDateString,
   IsArray,
+  IsIn,
 } from 'class-validator';
 
 export type InterviewStatus = 'SCHEDULED' | 'AWAITING_FEEDBACK' | 'COMPLETED';
@@ -14,9 +15,9 @@ export class UnifiedInterviewInput {
     type: String,
     description: 'The status of the interview',
   })
-  @IsString()
+  @IsIn(['SCHEDULED', 'AWAITING_FEEDBACK', 'COMPLETED'])
   @IsOptional()
-  status?: InterviewStatus;
+  status?: InterviewStatus | string;
 
   @ApiPropertyOptional({
     type: String,

@@ -17,9 +17,10 @@ import { WaveFinancialConnectionService } from './services/wave_financial/wave_f
 import { XeroConnectionService } from './services/xero/xero.service';
 import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/webhook.module';
 import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, BullQueueModule],
   providers: [
     AccountingConnectionsService,
     LoggerService,

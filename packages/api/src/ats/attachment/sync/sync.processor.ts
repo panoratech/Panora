@@ -11,7 +11,7 @@ export class SyncProcessor {
   async handleSyncAttachments(job: Job) {
     try {
       console.log(`Processing queue -> ats-sync-attachments ${job.id}`);
-      await this.syncService.syncAttachments();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ats attachments', error);
     }

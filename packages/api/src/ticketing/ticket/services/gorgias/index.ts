@@ -119,7 +119,7 @@ export class GorgiasService implements ITicketService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}s/tickets`, {
+      const resp = await axios.get(`${connection.account_url}/tickets`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

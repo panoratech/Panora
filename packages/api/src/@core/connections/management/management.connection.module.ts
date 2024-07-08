@@ -10,8 +10,10 @@ import { NotionConnectionService } from './services/notion/notion.service';
 import { ServiceRegistry } from './services/registry.service';
 import { SlackConnectionService } from './services/slack/slack.service';
 import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/webhook.module';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, BullQueueModule],
   providers: [
     ManagementConnectionsService,
     LoggerService,
@@ -21,6 +23,7 @@ import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/we
     ServiceRegistry,
     ConnectionsStrategiesService,
     ConnectionUtils,
+    CategoryConnectionRegistry,
     //PROVIDERS SERVICES
     NotionConnectionService,
     SlackConnectionService,

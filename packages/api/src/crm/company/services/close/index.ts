@@ -82,7 +82,7 @@ export class CloseService implements ICompanyService {
 
       const commonPropertyNames = Object.keys(commonCompanyCloseProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/lead/`;
+      const baseURL = `${connection.account_url}/lead`;
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
         .join('&');

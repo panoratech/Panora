@@ -15,7 +15,7 @@ import { ats_offices as AtsOffice } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
@@ -45,7 +45,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
 
   @Cron('0 */8 * * *') // every 8 hours
-  async syncOffices(user_id?: string) {
+  async kickstartSync(user_id?: string) {
     try {
       this.logger.log('Syncing offices...');
       const users = user_id
@@ -76,10 +76,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 const providers = ATS_PROVIDERS;
                 for (const provider of providers) {
                   try {
-                    await this.syncOfficesForLinkedUser(
-                      provider,
-                      linkedUser.id_linked_user,
-                    );
+                    await this.syncForLinkedUser({
+                      integrationId: provider,
+                      linkedUserId: linkedUser.id_linked_user,
+                    });
                   } catch (error) {
                     throw error;
                   }
@@ -96,8 +96,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
     }
   }
 
-  async syncOfficesForLinkedUser(integrationId: string, linkedUserId: string) {
+  async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
+      const { integrationId, linkedUserId } = param;
       const service: IOfficeService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;

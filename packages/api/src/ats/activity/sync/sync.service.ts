@@ -1,7 +1,7 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
@@ -96,11 +96,11 @@ export class SyncService implements OnModuleInit, IBaseSync {
                         },
                       });
                     for (const candidate of candidates) {
-                      await this.syncActivitiesForLinkedUser(
-                        provider,
-                        linkedUser.id_linked_user,
-                        candidate.id_ats_candidate,
-                      );
+                      await this.syncForLinkedUser({
+                        integrationId: provider,
+                        linkedUserId: linkedUser.id_linked_user,
+                        id_candidate: candidate.id_ats_candidate,
+                      });
                     }
                   } catch (error) {
                     throw error;
@@ -119,12 +119,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncActivitiesForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_candidate: string,
-  ) {
+  async syncForLinkedUser(data: SyncLinkedUserType) {
     try {
+      const { integrationId, linkedUserId, id_candidate } = data;
       const service: IActivityService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;

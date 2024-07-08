@@ -11,7 +11,7 @@ export class SyncProcessor {
   async handleSyncInterviews(job: Job) {
     try {
       console.log(`Processing queue -> ats-sync-interviews ${job.id}`);
-      await this.syncService.syncInterviews();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ats interviews', error);
     }

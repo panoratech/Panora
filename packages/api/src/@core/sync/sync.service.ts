@@ -15,22 +15,17 @@ export class CoreSyncService {
   }
 
   //Initial sync which will execute when connection is successfully established
-  async initialSync(
-    vertical: string,
-    provider: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async initialSync(vertical: string, provider: string, linkedUserId: string) {
     try {
       switch (vertical) {
         case ConnectorCategory.Crm:
-          await this.handleCrmSync(provider, linkedUserId, id_project);
+          await this.handleCrmSync(provider, linkedUserId);
           break;
         case ConnectorCategory.Ticketing:
-          await this.handleTicketingSync(provider, linkedUserId, id_project);
+          await this.handleTicketingSync(provider, linkedUserId);
           break;
         case ConnectorCategory.FileStorage:
-          await this.handleFileStorageSync(provider, linkedUserId, id_project);
+          await this.handleFileStorageSync(provider, linkedUserId);
           break;
       }
     } catch (error) {
@@ -38,52 +33,51 @@ export class CoreSyncService {
     }
   }
 
-  async handleCrmSync(
-    provider: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async handleCrmSync(provider: string, linkedUserId: string) {
     const tasks = [
       () =>
-        this.registry
-          .getService('crm', 'user')
-          .syncUsersForLinkedUser(provider, linkedUserId, id_project),
+        this.registry.getService('crm', 'user').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.registry
-          .getService('crm', 'company')
-          .syncCompaniesForLinkedUser(provider, linkedUserId, id_project),
+        this.registry.getService('crm', 'company').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.registry
-          .getService('crm', 'contact')
-          .syncContactsForLinkedUser(provider, linkedUserId, id_project),
+        this.registry.getService('crm', 'contact').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.registry
-          .getService('crm', 'deal')
-          .syncDealsForLinkedUser(provider, linkedUserId, id_project),
+        this.registry.getService('crm', 'deal').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
     ];
 
     for (const type of ENGAGEMENTS_TYPE) {
       tasks.push(() =>
-        this.registry
-          .getService('crm', 'engagement')
-          .syncEngagementsForLinkedUser(
-            provider,
-            linkedUserId,
-            id_project,
-            type,
-          ),
+        this.registry.getService('crm', 'engagement').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+          engagement_type: type,
+        }),
       );
     }
 
     tasks.push(() =>
-      this.registry
-        .getService('crm', 'note')
-        .syncNotesForLinkedUser(provider, linkedUserId, id_project),
+      this.registry.getService('crm', 'note').syncForLinkedUser({
+        integrationId: provider,
+        linkedUserId: linkedUserId,
+      }),
     );
     tasks.push(() =>
-      this.registry
-        .getService('crm', 'task')
-        .syncTasksForLinkedUser(provider, linkedUserId, id_project),
+      this.registry.getService('crm', 'task').syncForLinkedUser({
+        integrationId: provider,
+        linkedUserId: linkedUserId,
+      }),
     );
 
     const connection = await this.prisma.connections.findFirst({
@@ -103,14 +97,11 @@ export class CoreSyncService {
     });
 
     const stageTasks = deals.map((deal) =>
-      this.registry
-        .getService('crm', 'stage')
-        .syncStagesForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-          deal.id_crm_deal,
-        ),
+      this.registry.getService('crm', 'stage').syncForLinkedUser({
+        integrationId: provider,
+        linkedUserId: linkedUserId,
+        deal_id: deal.id_crm_deal,
+      }),
     );
 
     const stageResults = await Promise.allSettled(stageTasks);
@@ -130,32 +121,33 @@ export class CoreSyncService {
     });
   }
 
-  async handleTicketingSync(
-    provider: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async handleTicketingSync(provider: string, linkedUserId: string) {
     const tasks = [
       () =>
-        this.registry
-          .getService('ticketing', 'ticket')
-          .syncTicketsForLinkedUser(provider, linkedUserId, id_project),
+        this.registry.getService('ticketing', 'ticket').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.registry
-          .getService('ticketing', 'user')
-          .syncUsersForLinkedUser(provider, linkedUserId, id_project),
+        this.registry.getService('ticketing', 'user').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.registry
-          .getService('ticketing', 'account')
-          .syncAccountsForLinkedUser(provider, linkedUserId, id_project),
+        this.registry.getService('ticketing', 'account').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.registry
-          .getService('ticketing', 'collection')
-          .syncCollectionsForLinkedUser(provider, linkedUserId, id_project),
+        this.registry.getService('ticketing', 'collection').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.registry
-          .getService('ticketing', 'team')
-          .syncTeamsForLinkedUser(provider, linkedUserId, id_project),
+        this.registry.getService('ticketing', 'team').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
     ];
 
     const connection = await this.prisma.connections.findFirst({
@@ -175,21 +167,19 @@ export class CoreSyncService {
     let contactTasks = [];
     if (accounts) {
       contactTasks = accounts.map((acc) =>
-        this.registry
-          .getService('ticketing', 'contact')
-          .syncContactsForLinkedUser(
-            provider,
-            linkedUserId,
-            id_project,
-            acc.id_tcg_account,
-          ),
+        this.registry.getService('ticketing', 'contact').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+          account_id: acc.id_tcg_account,
+        }),
       );
     } else {
       contactTasks = [
         () =>
-          this.registry
-            .getService('ticketing', 'contact')
-            .syncContactsForLinkedUser(provider, linkedUserId, id_project),
+          this.registry.getService('ticketing', 'contact').syncForLinkedUser({
+            integrationId: provider,
+            linkedUserId: linkedUserId,
+          }),
       ];
     }
 
@@ -202,25 +192,19 @@ export class CoreSyncService {
     });
 
     const ticketCommentTasks = tickets.map((ticket) =>
-      this.registry
-        .getService('ticketing', 'comment')
-        .syncCommentsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-          ticket.id_tcg_ticket,
-        ),
+      this.registry.getService('ticketing', 'comment').syncForLinkedUser({
+        integrationId: provider,
+        linkedUserId: linkedUserId,
+        id_ticket: ticket.id_tcg_ticket,
+      }),
     );
 
     const ticketTagsTasks = tickets.map((ticket) =>
-      this.registry
-        .getService('ticketing', 'tag')
-        .syncTagsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-          ticket.id_tcg_ticket,
-        ),
+      this.registry.getService('ticketing', 'tag').syncForLinkedUser({
+        integrationId: provider,
+        linkedUserId: linkedUserId,
+        id_ticket: ticket.id_tcg_ticket,
+      }),
     );
 
     const ticketCommentResults = await Promise.allSettled(ticketCommentTasks);
@@ -260,11 +244,7 @@ export class CoreSyncService {
     });
   }
 
-  async handleFileStorageSync(
-    provider: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async handleFileStorageSync(provider: string, linkedUserId: string) {
     //TODO
   }
 
@@ -284,66 +264,70 @@ export class CoreSyncService {
       switch (vertical.toLowerCase()) {
         case 'crm':
           tasks.push(
-            this.registry.getService('crm', 'company').syncCompanies(user_id),
+            this.registry.getService('crm', 'company').kickstartSync(user_id),
           );
           tasks.push(
-            this.registry.getService('crm', 'contact').syncContacts(user_id),
+            this.registry.getService('crm', 'contact').kickstartSync(user_id),
           );
           tasks.push(
-            this.registry.getService('crm', 'deal').syncDeals(user_id),
+            this.registry.getService('crm', 'deal').kickstartSync(user_id),
           );
           tasks.push(
             this.registry
               .getService('crm', 'engagement')
-              .syncEngagements(user_id),
+              .kickstartSync(user_id),
           );
           tasks.push(
-            this.registry.getService('crm', 'note').syncNotes(user_id),
+            this.registry.getService('crm', 'note').kickstartSync(user_id),
           );
           tasks.push(
-            this.registry.getService('crm', 'stage').syncStages(user_id),
+            this.registry.getService('crm', 'stage').kickstartSync(user_id),
           );
           tasks.push(
-            this.registry.getService('crm', 'task').syncTasks(user_id),
+            this.registry.getService('crm', 'task').kickstartSync(user_id),
           );
           tasks.push(
-            this.registry.getService('crm', 'user').syncUsers(user_id),
+            this.registry.getService('crm', 'user').kickstartSync(user_id),
           );
           break;
         case 'ticketing':
           tasks.push(
             this.registry
               .getService('ticketing', 'account')
-              .syncAccounts(user_id),
+              .kickstartSync(user_id),
           );
           tasks.push(
             this.registry
               .getService('ticketing', 'collection')
-              .syncCollections(user_id),
+              .kickstartSync(user_id),
           );
           tasks.push(
             this.registry
               .getService('ticketing', 'comment')
-              .syncComments(user_id),
+              .kickstartSync(user_id),
           );
           tasks.push(
             this.registry
               .getService('ticketing', 'contact')
-              .syncContacts(user_id),
+              .kickstartSync(user_id),
           );
           tasks.push(
-            this.registry.getService('ticketing', 'tag').syncTags(user_id),
+            this.registry.getService('ticketing', 'tag').kickstartSync(user_id),
           );
           tasks.push(
-            this.registry.getService('ticketing', 'team').syncTeams(user_id),
+            this.registry
+              .getService('ticketing', 'team')
+              .kickstartSync(user_id),
           );
           tasks.push(
             this.registry
               .getService('ticketing', 'ticket')
-              .syncTickets(user_id),
+              .kickstartSync(user_id),
           );
           tasks.push(
-            this.registry.getService('ticketing', 'user').syncUsers(user_id),
+            this.registry
+              .getService('ticketing', 'user')
+              .kickstartSync(user_id),
           );
           break;
       }

@@ -56,8 +56,8 @@ export class TagService {
         name: tag.name,
         field_mappings: field_mappings,
         remote_id: tag.remote_id,
-        created_at: tag.created_at,
-        modified_at: tag.modified_at,
+        created_at: String(tag.created_at),
+        modified_at: String(tag.modified_at),
       };
 
       let res: UnifiedTagOutput = unifiedTag;
@@ -181,12 +181,12 @@ export class TagService {
           return {
             id: tag.id_ats_candidate_tag,
             name: tag.name,
-            remote_created_at: tag.remote_created_at,
-            remote_modified_at: tag.remote_modified_at,
+            remote_created_at: null,
+            remote_modified_at: null,
             field_mappings: field_mappings,
             remote_id: tag.remote_id,
-            created_at: tag.created_at,
-            modified_at: tag.modified_at,
+            created_at: String(tag.created_at),
+            modified_at: String(tag.modified_at),
           };
         }),
       );

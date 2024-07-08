@@ -20,9 +20,12 @@ import { Utils } from '@ticketing/@lib/@utils';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [],
+  imports: [BullQueueModule],
   controllers: [TicketController],
   providers: [
     TicketService,
@@ -35,9 +38,11 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     ConnectionUtils,
     CoreUnification,
     UnificationRegistry,
+    CoreSyncRegistry,
     MappersRegistry,
     Utils,
     IngestDataService,
+    
     /* PROVIDERS SERVICES */
     ZendeskService,
     HubspotService,
@@ -53,6 +58,8 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     WebhookService,
     FieldMappingService,
     LoggerService,
+    CoreSyncRegistry,
+    IngestDataService,
   ],
 })
 export class TicketModule {}

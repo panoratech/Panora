@@ -146,7 +146,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
       );
 
       if (user_id) {
-        opts = { user_id: user_id, creator_type: 'user' };
+        opts = { user_id: user_id, creator_type: 'USER' };
       } else {
         const contact_id = await this.utils.getContactUuidFromRemoteId(
           String(comment.sender.id),

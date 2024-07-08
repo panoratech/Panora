@@ -14,9 +14,11 @@ import { LeverConnectionService } from './services/lever/lever.service';
 import { ServiceRegistry } from './services/registry.service';
 import { WorkdayConnectionService } from './services/workday/workday.service';
 import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/webhook.module';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, BullQueueModule],
   providers: [
     AtsConnectionsService,
     LoggerService,
@@ -25,6 +27,7 @@ import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/we
     EncryptionService,
     ServiceRegistry,
     ConnectionsStrategiesService,
+    CategoryConnectionRegistry,
     ConnectionUtils,
     //PROVIDERS SERVICES,
     GreenhouseConnectionService,

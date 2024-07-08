@@ -239,37 +239,26 @@ model crm_email_addresses {
   @@index([id_crm_company], map: "fk_contact_email_adress_companyid")
 }
 
-model crm_engagement_contacts {
-  id_crm_engagement_contact String          @id(map: "pk_crm_engagement_contact") @db.Uuid
-  id_crm_contact            String?         @db.Uuid
-  id_crm_engagement         String          @db.Uuid
-  id_connection             String          @db.Uuid
-  crm_engagements           crm_engagements @relation(fields: [id_crm_engagement], references: [id_crm_engagement], onDelete: NoAction, onUpdate: NoAction, map: "fk_30")
-
-  @@index([id_crm_engagement], map: "fk_crm_engagement_contacts_crmengagementid")
-  @@index([id_crm_contact], map: "fk_engagement_contact_crmcontactid")
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model crm_engagements {
-  id_crm_engagement       String                    @id(map: "pk_crm_engagement") @db.Uuid
-  content                 String?
-  type                    String?
-  direction               String?
-  subject                 String?
-  start_at                DateTime?                 @db.Timestamp(6)
-  end_time                DateTime?                 @db.Timestamp(6)
-  created_at              DateTime?                 @db.Timestamp(6)
-  modified_at             DateTime?                 @db.Timestamp(6)
-  remote_id               String?
-  id_linked_user          String?                   @db.Uuid
-  remote_platform         String?
-  id_crm_company          String?                   @db.Uuid
-  id_crm_user             String?                   @db.Uuid
-  id_connection           String                    @db.Uuid
-  crm_engagement_contacts crm_engagement_contacts[]
-  crm_companies           crm_companies?            @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_29")
-  crm_users               crm_users?                @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_crm_engagement_crm_user")
+  id_crm_engagement String         @id(map: "pk_crm_engagement") @db.Uuid
+  content           String?
+  type              String?
+  direction         String?
+  subject           String?
+  start_at          DateTime?      @db.Timestamp(6)
+  end_time          DateTime?      @db.Timestamp(6)
+  remote_id         String?
+  id_linked_user    String?        @db.Uuid
+  remote_platform   String?
+  id_crm_company    String?        @db.Uuid
+  id_crm_user       String?        @db.Uuid
+  id_connection     String         @db.Uuid
+  contacts          String[]
+  created_at        DateTime       @db.Timestamp(6)
+  modified_at       DateTime       @db.Timestamp(6)
+  crm_companies     crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_29")
+  crm_users         crm_users?     @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_crm_engagement_crm_user")
 
   @@index([id_crm_user], map: "fk_crm_engagement_crm_user_id")
   @@index([id_crm_company], map: "fk_crm_engagement_crmcompanyid")
@@ -783,9 +772,9 @@ model ats_activities {
   visibility        String?
   id_ats_candidate  String?   @db.Uuid
   remote_id         String?
-  remote_created_at DateTime? @db.Timestamp(6)
-  created_at        DateTime  @db.Timestamp(6)
-  modified_at       DateTime  @db.Timestamp(6)
+  remote_created_at DateTime? @db.Timestamptz(6)
+  created_at        DateTime  @db.Timestamptz(6)
+  modified_at       DateTime  @db.Timestamptz(6)
   id_connection     String    @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_activity_candidate")
@@ -795,8 +784,8 @@ model ats_activities {
 model ats_applications {
   id_ats_application String    @id(map: "pk_ats_applications") @db.Uuid
   remote_id          String?
-  applied_at         DateTime? @db.Timestamp(6)
-  rejected_at        DateTime? @db.Timestamp(6)
+  applied_at         DateTime? @db.Timestamptz(6)
+  rejected_at        DateTime? @db.Timestamptz(6)
   offers             String[]
   source             String?
   credited_to        String?   @db.Uuid
@@ -804,8 +793,8 @@ model ats_applications {
   reject_reason      String?
   id_ats_candidate   String?   @db.Uuid
   id_ats_job         String?   @db.Uuid
-  created_at         DateTime  @db.Timestamp(6)
-  modified_at        DateTime  @db.Timestamp(6)
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
   id_connection      String    @db.Uuid
 
   @@index([id_ats_job], map: "fk_ats_application_ats_job_id")
@@ -818,11 +807,11 @@ model ats_candidate_attachments {
   remote_id                   String?
   file_url                    String?
   file_name                   String?
-  remote_created_at           DateTime? @db.Timestamp(6)
-  remote_modified_at          DateTime? @db.Timestamp(6)
+  remote_created_at           DateTime? @db.Timestamptz(6)
+  remote_modified_at          DateTime? @db.Timestamptz(6)
   file_type                   String?
-  created_at                  DateTime  @db.Timestamp(6)
-  modified_at                 DateTime  @db.Timestamp(6)
+  created_at                  DateTime  @db.Timestamptz(6)
+  modified_at                 DateTime  @db.Timestamptz(6)
   id_ats_candidate            String    @db.Uuid
   id_connection               String    @db.Uuid
 
@@ -833,8 +822,8 @@ model ats_candidate_email_addresses {
   id_ats_candidate_email_address String   @id(map: "pk_ats_candidate_email_addresses") @db.Uuid
   value                          String?
   type                           String?
-  created_at                     DateTime @db.Timestamp(6)
-  modified_at                    DateTime @db.Timestamp(6)
+  created_at                     DateTime @db.Timestamptz(6)
+  modified_at                    DateTime @db.Timestamptz(6)
   id_ats_candidate               String   @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_candidate_email_id")
@@ -845,8 +834,8 @@ model ats_candidate_phone_numbers {
   id_ats_candidate_phone_number String   @id(map: "pk_ats_candidate_phone_numbers") @db.Uuid
   value                         String?
   type                          String?
-  created_at                    DateTime @db.Timestamp(6)
-  modified_at                   DateTime @db.Timestamp(6)
+  created_at                    DateTime @db.Timestamptz(6)
+  modified_at                   DateTime @db.Timestamptz(6)
   id_ats_candidate              String   @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_candidate_phone_id")
@@ -856,16 +845,17 @@ model ats_candidate_tags {
   id_ats_candidate_tag String   @id(map: "pk_ats_candidate_tags") @db.Uuid
   name                 String?
   remote_id            String?
-  created_at           DateTime @db.Timestamp(6)
-  modified_at          DateTime @db.Timestamp(6)
+  created_at           DateTime @db.Timestamptz(6)
+  modified_at          DateTime @db.Timestamptz(6)
+  id_connection        String   @db.Uuid
 }
 
 model ats_candidate_urls {
   id_ats_candidate_url String   @id(map: "pk_ats_candidate_urls") @db.Uuid
   value                String?
   type                 String?
-  created_at           DateTime @db.Timestamp(6)
-  modified_at          DateTime @db.Timestamp(6)
+  created_at           DateTime @db.Timestamptz(6)
+  modified_at          DateTime @db.Timestamptz(6)
   id_ats_candidate     String   @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_candidate_url_id")
@@ -875,15 +865,15 @@ model ats_candidate_urls {
 model ats_candidates {
   id_ats_candidate    String    @id(map: "pk_ats_candidates") @db.Uuid
   remote_id           String?
-  created_at          DateTime  @db.Timestamp(6)
-  modified_at         DateTime  @db.Timestamp(6)
+  created_at          DateTime  @db.Timestamptz(6)
+  modified_at         DateTime  @db.Timestamptz(6)
   first_name          String?
   last_name           String?
   company             String?
   title               String?
-  remote_created_at   DateTime? @db.Timestamp(6)
-  remote_modified_at  DateTime? @db.Timestamp(6)
-  last_interaction_at DateTime? @db.Timestamp(6)
+  remote_created_at   DateTime? @db.Timestamptz(6)
+  remote_modified_at  DateTime? @db.Timestamptz(6)
+  last_interaction_at DateTime? @db.Timestamptz(6)
   is_private          Boolean?
   email_reachable     Boolean?
   locations           String?
@@ -895,8 +885,8 @@ model ats_departments {
   id_ats_department String   @id(map: "pk_ats_departments") @db.Uuid
   name              String?
   remote_id         String?
-  created_at        DateTime @db.Timestamp(6)
-  modified_at       DateTime @db.Timestamp(6)
+  created_at        DateTime @db.Timestamptz(6)
+  modified_at       DateTime @db.Timestamptz(6)
   id_connection     String   @db.Uuid
 }
 
@@ -904,14 +894,14 @@ model ats_departments {
 model ats_eeocs {
   id_ats_eeoc       String    @id(map: "pk_ats_eeocs") @db.Uuid
   id_ats_candidate  String?   @db.Uuid
-  submitted_at      DateTime? @db.Timestamp(6)
+  submitted_at      DateTime? @db.Timestamptz(6)
   race              String?
   gender            String?
   veteran_status    String?
   disability_status String?
   remote_id         String?
-  created_at        DateTime  @db.Timestamp(6)
-  modified_at       DateTime  @db.Timestamp(6)
+  created_at        DateTime  @db.Timestamptz(6)
+  modified_at       DateTime  @db.Timestamptz(6)
   id_connection     String    @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_candidate_eeocsid")
@@ -924,15 +914,15 @@ model ats_interviews {
   organized_by               String?   @db.Uuid
   interviewers               String[]
   location                   String?
-  start_at                   DateTime? @db.Timestamp(6)
-  end_at                     DateTime? @db.Timestamp(6)
-  remote_created_at          DateTime? @db.Timestamp(6)
-  remote_updated_at          DateTime? @db.Timestamp(6)
+  start_at                   DateTime? @db.Timestamptz(6)
+  end_at                     DateTime? @db.Timestamptz(6)
+  remote_created_at          DateTime? @db.Timestamptz(6)
+  remote_updated_at          DateTime? @db.Timestamptz(6)
   remote_id                  String?
   id_ats_application         String?   @db.Uuid
   id_ats_job_interview_stage String?   @db.Uuid
-  created_at                 DateTime  @db.Timestamp(6)
-  modified_at                DateTime  @db.Timestamp(6)
+  created_at                 DateTime  @db.Timestamptz(6)
+  modified_at                DateTime  @db.Timestamptz(6)
   id_connection              String    @db.Uuid
 
   @@index([id_ats_application], map: "fk_applications_interviews")
@@ -945,8 +935,8 @@ model ats_job_interview_stages {
   name                       String?
   stage_order                Int?
   remote_id                  String?
-  created_at                 DateTime @db.Timestamp(6)
-  modified_at                DateTime @db.Timestamp(6)
+  created_at                 DateTime @db.Timestamptz(6)
+  modified_at                DateTime @db.Timestamptz(6)
   id_ats_job                 String?  @db.Uuid
   id_connection              String   @db.Uuid
 
@@ -967,10 +957,10 @@ model ats_jobs {
   managers          String[]
   recruiters        String[]
   remote_id         String?
-  remote_created_at DateTime? @db.Timestamp(6)
-  remote_updated_at DateTime? @db.Timestamp(6)
-  created_at        DateTime  @db.Timestamp(6)
-  modified_at       DateTime  @db.Timestamp(6)
+  remote_created_at DateTime? @db.Timestamptz(6)
+  remote_updated_at DateTime? @db.Timestamptz(6)
+  created_at        DateTime  @db.Timestamptz(6)
+  modified_at       DateTime  @db.Timestamptz(6)
   id_connection     String    @db.Uuid
 }
 
@@ -979,13 +969,13 @@ model ats_offers {
   id_ats_offer       String    @id(map: "pk_ats_offers") @db.Uuid
   remote_id          String?
   created_by         String?   @db.Uuid
-  remote_created_at  DateTime? @db.Timestamp(6)
-  closed_at          DateTime? @db.Timestamp(6)
-  sent_at            DateTime? @db.Timestamp(6)
-  start_date         DateTime? @db.Timestamp(6)
+  remote_created_at  DateTime? @db.Timestamptz(6)
+  closed_at          DateTime? @db.Timestamptz(6)
+  sent_at            DateTime? @db.Timestamptz(6)
+  start_date         DateTime? @db.Timestamptz(6)
   status             String?
-  created_at         DateTime  @db.Timestamp(6)
-  modified_at        DateTime  @db.Timestamp(6)
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
   id_ats_application String    @db.Uuid
   id_connection      String    @db.Uuid
 
@@ -996,8 +986,8 @@ model ats_offers {
 model ats_offices {
   id_ats_office String   @id(map: "pk_ats_offices") @db.Uuid
   remote_id     String?
-  created_at    DateTime @db.Timestamp(6)
-  modified_at   DateTime @db.Timestamp(6)
+  created_at    DateTime @db.Timestamptz(6)
+  modified_at   DateTime @db.Timestamptz(6)
   name          String?
   location      String?
   id_connection String   @db.Uuid
@@ -1007,8 +997,8 @@ model ats_reject_reasons {
   id_ats_reject_reason String   @id(map: "pk_ats_reject_reasons") @db.Uuid
   name                 String?
   remote_id            String?
-  modified_at          DateTime @db.Timestamp(6)
-  created_at           DateTime @db.Timestamp(6)
+  modified_at          DateTime @db.Timestamptz(6)
+  created_at           DateTime @db.Timestamptz(6)
   id_connection        String   @db.Uuid
 }
 
@@ -1019,10 +1009,10 @@ model ats_scorecards {
   id_ats_application     String?   @db.Uuid
   id_ats_interview       String?   @db.Uuid
   remote_id              String?
-  remote_created_at      DateTime? @db.Timestamp(6)
-  submitted_at           DateTime? @db.Timestamp(6)
-  created_at             DateTime  @db.Timestamp(6)
-  modified_at            DateTime  @db.Timestamp(6)
+  remote_created_at      DateTime? @db.Timestamptz(6)
+  submitted_at           DateTime? @db.Timestamptz(6)
+  created_at             DateTime  @db.Timestamptz(6)
+  modified_at            DateTime  @db.Timestamptz(6)
   id_connection          String    @db.Uuid
 
   @@index([id_ats_application], map: "fk_applications_scorecard")

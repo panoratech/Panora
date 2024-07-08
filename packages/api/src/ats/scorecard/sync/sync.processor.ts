@@ -11,7 +11,7 @@ export class SyncProcessor {
   async handleSyncScoreCards(job: Job) {
     try {
       console.log(`Processing queue -> ats-sync-score-cards ${job.id}`);
-      await this.syncService.syncScoreCards();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ats score cards', error);
     }

@@ -1,14 +1,20 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
+import {
+  IsUUID,
+  IsOptional,
+  IsString,
+  IsDateString,
+  IsIn,
+} from 'class-validator';
 
 export type ActivityType = 'NOTE' | 'EMAIL' | 'OTHER';
 export type ActivityVisibility = 'ADMIN_ONLY' | 'PUBLIC' | 'PRIVATE';
 
 export class UnifiedActivityInput {
   @ApiPropertyOptional({ type: String, description: 'The type of activity' })
-  @IsString()
+  @IsIn(['NOTE', 'EMAIL', 'OTHER'])
   @IsOptional()
-  activity_type?: ActivityType;
+  activity_type?: ActivityType | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -30,9 +36,9 @@ export class UnifiedActivityInput {
     type: String,
     description: 'The visibility of the activity',
   })
-  @IsString()
+  @IsIn(['ADMIN_ONLY', 'PUBLIC', 'PRIVATE'])
   @IsOptional()
-  visibility?: ActivityVisibility;
+  visibility?: ActivityVisibility | string;
 
   @ApiPropertyOptional({
     type: String,

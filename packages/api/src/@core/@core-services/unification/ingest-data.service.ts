@@ -1,4 +1,4 @@
-import { Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CoreSyncRegistry } from '../registries/core-sync.registry';
 import { CoreUnification } from './core-unification.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,6 +9,7 @@ import { WebhookService } from '../webhooks/panora-webhooks/webhook.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class IngestDataService {
@@ -199,6 +200,8 @@ export class IngestDataService {
         data: {
           id_entity: uuidv4(),
           ressource_owner_id: ressource_owner_id,
+          created_at: new Date(),
+          modified_at: new Date(),
         },
       });
 
@@ -218,6 +221,8 @@ export class IngestDataService {
               data: value || 'null',
               attribute: { connect: { id_attribute: attribute.id_attribute } },
               entity: { connect: { id_entity: entity.id_entity } },
+              created_at: new Date(),
+              modified_at: new Date(),
             },
           });
         }

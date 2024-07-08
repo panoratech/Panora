@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalCollectionOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
@@ -43,7 +43,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   //its role is to fetch all collections from providers 3rd parties and save the info inside our db
   // @Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
-  async syncCollections(user_id?: string) {
+  async kickstartSync(user_id?: string) {
     try {
       this.logger.log(`Syncing collections....`);
       const users = user_id
@@ -74,10 +74,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 const providers = TICKETING_PROVIDERS;
                 for (const provider of providers) {
                   try {
-                    await this.syncCollectionsForLinkedUser(
-                      provider,
-                      linkedUser.id_linked_user,
-                    );
+                    await this.syncForLinkedUser({
+                      integrationId: provider,
+                      linkedUserId: linkedUser.id_linked_user,
+                    });
                   } catch (error) {
                     throw error;
                   }
@@ -95,11 +95,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncCollectionsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-  ) {
+  async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
+      const { integrationId, linkedUserId } = param;
       const service: ICollectionService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;

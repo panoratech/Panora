@@ -14,14 +14,17 @@ import { MailchimpConnectionService } from './services/mailchimp/mailchimp.servi
 import { MarketingAutomationConnectionsService } from './services/marketingautomation.connection.service';
 import { PodiumConnectionService } from './services/podium/podium.service';
 import { ServiceRegistry } from './services/registry.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, BullQueueModule],
   providers: [
     MarketingAutomationConnectionsService,
     LoggerService,
     WebhookService,
     EnvironmentService,
+    CategoryConnectionRegistry,
     EncryptionService,
     ServiceRegistry,
     ConnectionsStrategiesService,

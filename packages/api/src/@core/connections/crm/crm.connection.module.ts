@@ -20,9 +20,11 @@ import { TeamworkConnectionService } from './services/teamwork/teamwork.service'
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
 import { ZohoConnectionService } from './services/zoho/zoho.service';
 import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/webhook.module';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, BullQueueModule],
   providers: [
     CrmConnectionsService,
     ServiceRegistry,
@@ -32,6 +34,7 @@ import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/we
     EncryptionService,
     ConnectionsStrategiesService,
     ConnectionUtils,
+    CategoryConnectionRegistry,
     // PROVIDERS SERVICES
     HubspotConnectionService,
     AttioConnectionService,

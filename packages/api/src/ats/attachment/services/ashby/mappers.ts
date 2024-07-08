@@ -103,6 +103,7 @@ export class AshbyAttachmentMapper implements IAttachmentMapper {
       remote_id: attachment.id,
       remote_data: attachment,
       file_url: url || null,
+      attachment_type: attachment.resume == true ? 'RESUME' : 'OTHER',
       file_name: attachment.name || null,
     };
   }

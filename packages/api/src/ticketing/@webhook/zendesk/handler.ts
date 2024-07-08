@@ -299,14 +299,14 @@ export class ZendeskHandlerService {
       if ('ticketId' in payload) {
         // ticket payload
         // TODO: update the ticket inside our db
-        await this.syncTicketsService.syncTicketsForLinkedUser(
-          connection.provider_slug.toLowerCase(),
-          connection.id_linked_user,
-          {
+        await this.syncTicketsService.syncForLinkedUser({
+          integrationId: connection.provider_slug.toLowerCase(),
+          linkedUserId: connection.id_linked_user,
+          wh_real_time_trigger: {
             action: 'UPDATE',
             data: { remote_id: payload.ticketId as string },
           },
-        );
+        });
       } else {
         //non-ticket payload
         const payload_ = payload as NonTicketPayload;
@@ -315,48 +315,48 @@ export class ZendeskHandlerService {
           case 'user':
             if (payload_.detail.role) {
               if (payload_.detail.role == 'end-user') {
-                await this.syncContactsService.syncContactsForLinkedUser(
-                  connection.provider_slug.toLowerCase(),
-                  connection.id_linked_user,
-                  payload_.detail.id,
-                  {
+                await this.syncContactsService.syncForLinkedUser({
+                  integrationId: connection.provider_slug.toLowerCase(),
+                  linkedUserId: connection.id_linked_user,
+                  account_id: payload_.detail.id,
+                  wh_real_time_trigger: {
                     action:
                       event_action.toLowerCase() == 'deleted'
                         ? 'DELETE'
                         : 'UPDATE',
                     data: { remote_id: payload_.detail.id as string },
                   },
-                );
+                });
               } else if (
                 payload_.detail.role == 'admin' ||
                 payload_.detail.role == 'agent'
               ) {
-                await this.syncUsersService.syncUsersForLinkedUser(
-                  connection.provider_slug.toLowerCase(),
-                  connection.id_linked_user,
-                  {
+                await this.syncUsersService.syncForLinkedUser({
+                  integrationId: connection.provider_slug.toLowerCase(),
+                  linkedUserId: connection.id_linked_user,
+                  wh_real_time_trigger: {
                     action:
                       event_action.toLowerCase() == 'deleted'
                         ? 'DELETE'
                         : 'UPDATE',
                     data: { remote_id: payload_.detail.id as string },
                   },
-                );
+                });
               } else {
                 break;
               }
             }
             break;
           case 'organization':
-            await this.syncAccountsService.syncAccountsForLinkedUser(
-              connection.provider_slug.toLowerCase(),
-              connection.id_linked_user,
-              {
+            await this.syncAccountsService.syncForLinkedUser({
+              integrationId: connection.provider_slug.toLowerCase(),
+              linkedUserId: connection.id_linked_user,
+              wh_real_time_trigger: {
                 action:
                   event_action.toLowerCase() == 'deleted' ? 'DELETE' : 'UPDATE',
                 data: { remote_id: payload_.detail.id as string },
               },
-            );
+            });
           default:
             break;
         }

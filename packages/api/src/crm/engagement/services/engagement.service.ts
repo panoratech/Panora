@@ -73,9 +73,9 @@ export class EngagementService {
       const engagement_contacts = unifiedEngagementData.contacts;
       if (engagement_contacts && engagement_contacts.length > 0) {
         engagement_contacts.map(async (contact) => {
-          const search = await this.prisma.crm_engagement_contacts.findUnique({
+          const search = await this.prisma.crm_contacts.findUnique({
             where: {
-              id_crm_engagement_contact: contact,
+              id_crm_contact: contact,
             },
           });
           if (!search)
@@ -324,7 +324,7 @@ export class EngagementService {
         remote_id: engagement.remote_id,
         created_at: engagement.created_at,
         modified_at: engagement.modified_at,
-        contacts: engagement.id_crm_contact,
+        contacts: engagement.contacts,
       };
 
       let res: UnifiedEngagementOutput = {
@@ -459,7 +459,7 @@ export class EngagementService {
             remote_id: engagement.remote_id,
             created_at: engagement.created_at,
             modified_at: engagement.modified_at,
-            contacts: engagement.id_crm_contact,
+            contacts: engagement.contacts,
           };
         }),
       );

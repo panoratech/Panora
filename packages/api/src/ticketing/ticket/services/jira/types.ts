@@ -122,6 +122,7 @@ interface Issue {
       description: string;
       [key: string]: any;
     }>;
+    priority: string;
     duedate: string;
   }>;
   id: string;

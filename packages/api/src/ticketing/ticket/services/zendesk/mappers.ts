@@ -1,6 +1,9 @@
 import { ITicketMapper } from '@ticketing/ticket/types';
 import { CustomField, ZendeskTicketInput, ZendeskTicketOutput } from './types';
 import {
+  TicketPriority,
+  TicketStatus,
+  TicketType,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
@@ -27,6 +30,75 @@ export class ZendeskTicketMapper implements ITicketMapper {
       'zendesk',
       this,
     );
+  }
+
+  mapToTicketPriority(
+    data: 'urgent' | 'high' | 'normal' | 'low',
+  ): TicketPriority {
+    switch (data) {
+      case 'low':
+        return 'LOW';
+      case 'normal':
+        return 'MEDIUM';
+      case 'high':
+        return 'HIGH';
+      case 'urgent':
+        return 'HIGH';
+    }
+  }
+  reverseMapToTicketPriority(data: TicketPriority): string {
+    switch (data) {
+      case 'LOW':
+        return 'low';
+      case 'MEDIUM':
+        return 'normal';
+      case 'HIGH':
+        return 'high';
+    }
+  }
+
+  reverseMapToTicketType(data: TicketType) {
+    switch (data) {
+      case 'BUG':
+        return 'problem';
+      case 'SUBTASK':
+        return 'task';
+      case 'TASK':
+        return 'task';
+      case 'TO-DO':
+        return 'task';
+    }
+  }
+  mapToIssueTypeName(
+    data: 'problem' | 'incident' | 'question' | 'task',
+  ): TicketType | string {
+    switch (data) {
+      case 'problem':
+        return 'BUG';
+      case 'incident':
+        return 'BUG';
+      case 'task':
+        return 'TASK';
+      default:
+        return data;
+    }
+  }
+
+  mapToTicketStatus(
+    data: 'new' | 'open' | 'pending' | 'hold' | 'solved' | 'closed',
+  ): TicketStatus | string {
+    switch (data) {
+      case 'new':
+        return 'OPEN';
+      case 'open':
+        return 'OPEN';
+      case 'solved':
+        return 'CLOSED';
+      case 'closed':
+        return 'CLOSED';
+      default:
+        return data;
+    }
   }
 
   async desunify(
@@ -57,9 +129,9 @@ export class ZendeskTicketMapper implements ITicketMapper {
       result.due_at = source.due_date?.toISOString();
     }
     if (source.priority) {
-      result.priority = (
-        source.priority == 'MEDIUM' ? 'normal' : source.priority.toLowerCase()
-      ) as 'urgent' | 'high' | 'normal' | 'low';
+      result.priority = this.reverseMapToTicketPriority(
+        source.priority as TicketPriority,
+      );
     }
     if (source.status) {
       result.status = source.status.toLowerCase() as 'open' | 'closed';
@@ -68,11 +140,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       result.tags = source.tags as string[];
     }
     if (source.type) {
-      result.type = source.type.toLowerCase() as
-        | 'problem'
-        | 'incident'
-        | 'question'
-        | 'task';
+      result.type = this.reverseMapToTicketType(source.type as TicketType);
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -152,8 +220,19 @@ export class ZendeskTicketMapper implements ITicketMapper {
     }
     if (ticket.type) {
       opts = {
-        type:
-          ticket.type === 'incident' ? 'PROBLEM' : ticket.type.toUpperCase(),
+        type: this.mapToIssueTypeName(ticket.type as any),
+      };
+    }
+
+    if (ticket.status) {
+      opts = {
+        status: this.mapToTicketStatus(ticket.status as any),
+      };
+    }
+
+    if (ticket.priority) {
+      opts = {
+        priority: this.mapToTicketPriority(ticket.priority as any),
       };
     }
 
@@ -176,13 +255,10 @@ export class ZendeskTicketMapper implements ITicketMapper {
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: String(ticket.id),
       name: ticket.subject,
-      status:
-        ticket.status === 'new' || ticket.status === 'open' ? 'OPEN' : 'CLOSED', // todo: handle pending status ?
       description: ticket.description,
       due_date: ticket.due_at ? new Date(ticket.due_at) : undefined,
       parent_ticket: null,
       completed_at: new Date(ticket.updated_at),
-      priority: ticket.priority,
       field_mappings: field_mappings,
       ...opts,
     };

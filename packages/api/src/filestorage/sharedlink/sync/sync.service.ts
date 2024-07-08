@@ -6,7 +6,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { fs_shared_links as FileStorageSharedLink } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
@@ -78,6 +78,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
           password: sharedLink.password ?? null,
           modified_at: new Date(),
         };
+
+        if (extra && extra.object_name == 'file') {
+          baseData.id_fs_file = extra.value;
+        }
+
+        if (extra && extra.object_name == 'folder') {
+          baseData.id_fs_folder = extra.value;
+        }
 
         if (existingSl) {
           return await this.prisma.fs_shared_links.update({

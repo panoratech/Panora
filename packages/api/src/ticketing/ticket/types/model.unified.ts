@@ -26,7 +26,7 @@ export class UnifiedTicketInput {
     message: 'Type must be either OPEN or CLOSED',
   })
   @IsOptional()
-  status?: TicketStatus;
+  status?: TicketStatus | string;
 
   @ApiProperty({
     type: String,
@@ -51,7 +51,7 @@ export class UnifiedTicketInput {
     message: 'Type must be either BUG, SUBTASK, TASK or TO-DO',
   })
   @IsOptional()
-  type?: TicketType;
+  type?: TicketType | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -92,7 +92,7 @@ export class UnifiedTicketInput {
     message: 'Type must be either HIGH, MEDIUM or LOW',
   })
   @IsOptional()
-  priority?: TicketPriority;
+  priority?: TicketPriority | string;
 
   @ApiPropertyOptional({
     type: [String],

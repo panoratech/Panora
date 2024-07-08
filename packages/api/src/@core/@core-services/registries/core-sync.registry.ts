@@ -1,4 +1,4 @@
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

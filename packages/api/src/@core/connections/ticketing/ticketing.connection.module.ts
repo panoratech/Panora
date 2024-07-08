@@ -22,9 +22,11 @@ import { ServiceRegistry } from './services/registry.service';
 import { TicketingConnectionsService } from './services/ticketing.connection.service';
 import { WrikeConnectionService } from './services/wrike/wrike.service';
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [WebhookModule, ManagedWebhooksModule],
+  imports: [WebhookModule, ManagedWebhooksModule, BullQueueModule],
   providers: [
     TicketingConnectionsService,
     LoggerService,
@@ -32,6 +34,7 @@ import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
     EncryptionService,
     ServiceRegistry,
     ConnectionsStrategiesService,
+    CategoryConnectionRegistry,
     ConnectionUtils,
     //PROVIDERS SERVICES
     ZendeskConnectionService,

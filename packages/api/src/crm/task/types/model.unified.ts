@@ -19,7 +19,7 @@ export class UnifiedTaskInput {
   @IsIn(['PENDING', 'COMPLETED'], {
     message: 'Type must be either PENDING or COMPLETED',
   })
-  status: TaskStatus;
+  status: TaskStatus | string;
 
   @ApiPropertyOptional({ description: 'The due date of the task' })
   @IsOptional()

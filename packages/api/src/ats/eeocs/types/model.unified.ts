@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
+import {
+  IsUUID,
+  IsOptional,
+  IsString,
+  IsDateString,
+  IsIn,
+} from 'class-validator';
 
 export type EeocsRace =
   | 'AMERICAN_INDIAN_OR_ALASKAN_NATIVE'
@@ -50,33 +56,50 @@ export class UnifiedEeocsInput {
     type: String,
     description: 'The race of the candidate',
   })
-  @IsString()
+  @IsIn([
+    'AMERICAN_INDIAN_OR_ALASKAN_NATIVE',
+    'ASIAN',
+    'BLACK_OR_AFRICAN_AMERICAN',
+    'HISPANIC_OR_LATINO',
+    'WHITE',
+    'NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER',
+    'TWO_OR_MORE_RACES',
+    'DECLINE_TO_SELF_IDENTIFY',
+  ])
   @IsOptional()
-  race?: EeocsRace;
+  race?: EeocsRace | string;
 
   @ApiPropertyOptional({
     type: String,
     description: 'The gender of the candidate',
   })
-  @IsString()
+  @IsIn(['MALE', 'FEMALE', 'NON_BINARY', 'OTHER', 'DECLINE_TO_SELF_IDENTIFY'])
   @IsOptional()
-  gender?: EeocsGender;
+  gender?: EeocsGender | string;
 
   @ApiPropertyOptional({
     type: String,
     description: 'The veteran status of the candidate',
   })
-  @IsString()
+  @IsIn([
+    'I_AM_NOT_A_PROTECTED_VETERAN',
+    'I_IDENTIFY_AS_ONE_OR_MORE_OF_THE_CLASSIFICATIONS_OF_A_PROTECTED_VETERAN',
+    'I_DONT_WISH_TO_ANSWER',
+  ])
   @IsOptional()
-  veteran_status?: EeocsVeteranStatus;
+  veteran_status?: EeocsVeteranStatus | string;
 
   @ApiPropertyOptional({
     type: String,
     description: 'The disability status of the candidate',
   })
-  @IsString()
+  @IsIn([
+    'YES_I_HAVE_A_DISABILITY_OR_PREVIOUSLY_HAD_A_DISABILITY',
+    'NO_I_DONT_HAVE_A_DISABILITY',
+    'I_DONT_WISH_TO_ANSWER',
+  ])
   @IsOptional()
-  disability_status?: EeocsDisabilityStatus;
+  disability_status?: EeocsDisabilityStatus | string;
 
   @ApiPropertyOptional({
     type: {},

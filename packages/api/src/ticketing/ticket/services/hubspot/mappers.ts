@@ -19,6 +19,30 @@ export class HubspotTicketMapper implements ITicketMapper {
       this,
     );
   }
+
+  mapToTicketPriority(
+    data: 'low' | 'medium' | 'high priority',
+  ): TicketPriority {
+    switch (data) {
+      case 'low':
+        return 'LOW';
+      case 'medium':
+        return 'MEDIUM';
+      case 'high priority':
+        return 'HIGH';
+    }
+  }
+  reverseMapToTicketPriority(data: TicketPriority): string {
+    switch (data) {
+      case 'LOW':
+        return 'low';
+      case 'MEDIUM':
+        return 'medium';
+      case 'HIGH':
+        return 'high priority';
+    }
+  }
+
   desunify(
     source: UnifiedTicketInput,
     customFieldMappings?: {
@@ -26,14 +50,17 @@ export class HubspotTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): HubspotTicketInput {
-    const result = {
+    const result: any = {
       subject: source.name,
       hs_pipeline: null,
       hubspot_owner_id: null,
       hs_pipeline_stage: null,
-      hs_ticket_priority: source.priority || 'MEDIUM',
     };
-
+    if (source.priority) {
+      result.hs_ticket_priority = this.reverseMapToTicketPriority(
+        source.priority as TicketPriority,
+      );
+    }
     if (customFieldMappings && source.field_mappings) {
       for (const key in source.field_mappings) {
         const mapping = customFieldMappings.find(
@@ -103,7 +130,9 @@ export class HubspotTicketMapper implements ITicketMapper {
       type: null,
       parent_ticket: null,
       completed_at: new Date(ticket.properties.hs_lastmodifieddate),
-      priority: ticket.properties.hs_ticket_priority as TicketPriority,
+      priority: this.mapToTicketPriority(
+        ticket.properties.hs_ticket_priority as any,
+      ),
       ...opts,
       field_mappings: field_mappings,
     };

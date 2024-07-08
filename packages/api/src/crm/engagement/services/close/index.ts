@@ -33,6 +33,7 @@ export class CloseService implements IEngagementService {
     );
     this.registry.registerService('close', this);
   }
+
   async addEngagement(
     engagementData: CloseEngagementInput,
     linkedUserId: string,

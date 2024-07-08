@@ -6,7 +6,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { fs_permissions as FileStoragePermission } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';

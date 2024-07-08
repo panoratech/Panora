@@ -62,6 +62,7 @@ interface ResumeFileHandle {
   id: string;
   name: string;
   handle: string;
+  [key: string]: any;
 }
 
 interface FileHandle {

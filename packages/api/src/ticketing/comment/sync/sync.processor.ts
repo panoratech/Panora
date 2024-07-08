@@ -10,7 +10,7 @@ export class SyncProcessor {
   async handleSyncComments(job: Job) {
     try {
       console.log(`Processing queue -> ticketing-sync-comments ${job.id}`);
-      await this.syncService.syncComments();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ticketing comments', error);
     }

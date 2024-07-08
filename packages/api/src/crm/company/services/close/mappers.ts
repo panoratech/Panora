@@ -84,7 +84,7 @@ export class CloseCompanyMapper implements ICompanyMapper {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
-        field_mappings[mapping.slug] = company[mapping.remote_id];
+        field_mappings[mapping.slug] = company[`custom.${mapping.remote_id}`];
       }
     }
     let opts: any = {};
@@ -102,7 +102,6 @@ export class CloseCompanyMapper implements ICompanyMapper {
     return {
       remote_id: company.id,
       name: company.name,
-      industry: company?.custom?.Industry || null,
       number_of_employees: company?.custom?.employees || null,
       addresses: company?.addresses?.map((address) => ({
         street_1: address.address_1,

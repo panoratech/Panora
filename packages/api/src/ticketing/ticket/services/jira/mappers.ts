@@ -1,6 +1,7 @@
 import { ITicketMapper } from '@ticketing/ticket/types';
 import { JiraTicketInput, JiraTicketOutput } from './types';
 import {
+  TicketPriority,
   TicketType,
   UnifiedTicketInput,
   UnifiedTicketOutput,
@@ -44,6 +45,33 @@ export class JiraTicketMapper implements ITicketMapper {
     }
   }
 
+  mapToTicketPriority(
+    data: 'Highest' | 'High' | 'Medium' | 'Low' | 'Lowest',
+  ): TicketPriority {
+    switch (data) {
+      case 'Low':
+        return 'LOW';
+      case 'Lowest':
+        return 'LOW';
+      case 'Medium':
+        return 'MEDIUM';
+      case 'Highest':
+        return 'HIGH';
+      case 'High':
+        return 'HIGH';
+    }
+  }
+  reverseMapToTicketPriority(data: TicketPriority): string {
+    switch (data) {
+      case 'LOW':
+        return 'Low';
+      case 'MEDIUM':
+        return 'Medium';
+      case 'HIGH':
+        return 'High';
+    }
+  }
+
   async desunify(
     source: UnifiedTicketInput,
     customFieldMappings?: {
@@ -66,7 +94,7 @@ export class JiraTicketMapper implements ITicketMapper {
         },
         description: source.description,
         issuetype: {
-          name: this.mapToIssueTypeName(source.type) || null,
+          name: this.mapToIssueTypeName(source.type as TicketType) || null,
         },
       },
     };
@@ -82,6 +110,12 @@ export class JiraTicketMapper implements ITicketMapper {
 
     if (source.tags) {
       result.fields.labels = source.tags as string[];
+    }
+
+    if (source.priority) {
+      result.fields.priority = this.reverseMapToTicketPriority(
+        source.priority as TicketPriority,
+      );
     }
 
     if (source.attachments) {
@@ -195,16 +229,21 @@ export class JiraTicketMapper implements ITicketMapper {
         collections: collections,
       };
     }
+
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: ticket.id,
       remote_data: ticket,
-      name: ticket.fields.description,
-      status: ticket.fields.status.name,
+      name: ticket.fields.summary,
       description: ticket.fields.description,
       due_date: new Date(ticket.fields.duedate),
       field_mappings: [], //TODO
       ...opts,
     };
+    if (ticket.fields.priority) {
+      unifiedTicket.priority = this.mapToTicketPriority(
+        ticket.fields.priority as any,
+      );
+    }
 
     return unifiedTicket;
   }

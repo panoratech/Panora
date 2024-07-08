@@ -10,7 +10,7 @@ export class SyncProcessor {
   async handleSyncDeals(job: Job) {
     try {
       console.log(`Processing queue -> crm-sync-deals ${job.id}`);
-      await this.syncService.syncDeals();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing crm deals', error);
     }

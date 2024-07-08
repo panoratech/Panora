@@ -28,7 +28,7 @@ export class UnifiedCollectionInput {
     message: 'Type must be either PROJECT or LIST',
   })
   @IsOptional()
-  collection_type?: CollectionType;
+  collection_type?: CollectionType | string;
 }
 
 export class UnifiedCollectionOutput extends UnifiedCollectionInput {

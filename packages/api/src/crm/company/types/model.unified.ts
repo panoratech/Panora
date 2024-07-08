@@ -20,7 +20,7 @@ export class UnifiedCompanyInput {
   })
   @IsEnum(Industry)
   @IsOptional()
-  industry?: Industry;
+  industry?: Industry | string;
 
   @ApiPropertyOptional({
     type: Number,

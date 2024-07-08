@@ -7,6 +7,7 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ITicketMapper } from '@ticketing/ticket/types';
 import {
+  TicketStatus,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
@@ -25,6 +26,15 @@ export class GorgiasTicketMapper implements ITicketMapper {
       'gorgias',
       this,
     );
+  }
+
+  mapToTicketStatus(data: 'open' | 'closed'): TicketStatus {
+    switch (data) {
+      case 'open':
+        return 'OPEN';
+      case 'closed':
+        return 'CLOSED';
+    }
   }
 
   async desunify(
@@ -160,7 +170,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
       remote_id: String(ticket.id),
       remote_data: ticket,
       name: ticket.subject,
-      status: ticket.status,
+      status: this.mapToTicketStatus(ticket.status as any),
       description: ticket.subject,
       field_mappings,
       due_date: new Date(ticket.created_datetime),

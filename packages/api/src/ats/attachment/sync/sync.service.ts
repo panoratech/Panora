@@ -15,7 +15,7 @@ import { ats_candidate_attachments as AtsAttachment } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
@@ -48,7 +48,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
 
   @Cron('0 */8 * * *') // every 8 hours
-  async syncAttachments(user_id?: string) {
+  async kickstartSync(user_id?: string) {
     try {
       this.logger.log('Syncing attachments...');
       const users = user_id
@@ -79,10 +79,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 const providers = ATS_PROVIDERS;
                 for (const provider of providers) {
                   try {
-                    await this.syncAttachmentsForLinkedUser(
-                      provider,
-                      linkedUser.id_linked_user,
-                    );
+                    await this.syncForLinkedUser({
+                      integrationId: provider,
+                      linkedUserId: linkedUser.id_linked_user,
+                    });
                   } catch (error) {
                     throw error;
                   }
@@ -99,11 +99,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
     }
   }
 
-  async syncAttachmentsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-  ) {
+  async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
+      const { integrationId, linkedUserId } = param;
       const service: IAttachmentService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
@@ -144,7 +142,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const baseData: any = {
           file_url: attachment.file_url ?? null,
           file_name: attachment.file_name ?? null,
-          file_type: attachment.file_type ?? null,
+          file_type: attachment.attachment_type ?? null,
           remote_created_at: attachment.remote_created_at ?? null,
           remote_modified_at: attachment.remote_modified_at ?? null,
           candidate_id: candidate_id ?? null,

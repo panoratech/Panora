@@ -15,5 +15,11 @@ import { ValidateUserService } from '@@core/utils/services/validate-user.service
     WebhookProcessor,
     ValidateUserService,
   ],
+  exports: [
+    WebhookService,
+    WebhookProcessor,
+    ValidateUserService,
+    LoggerService,
+  ],
 })
 export class WebhookModule {}

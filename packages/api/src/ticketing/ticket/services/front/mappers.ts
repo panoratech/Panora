@@ -22,6 +22,22 @@ export class FrontTicketMapper implements ITicketMapper {
   ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'front', this);
   }
+
+  mapToTicketStatus(
+    data: 'assigned' | 'archived' | 'unassigned' | 'deleted',
+  ): TicketStatus | string {
+    switch (data) {
+      case 'assigned':
+        return 'OPEN';
+      case 'archived':
+        return 'CLOSED';
+      case 'unassigned':
+        return 'unassigned';
+      case 'deleted':
+        return 'CLOSED';
+    }
+  }
+
   async desunify(
     source: UnifiedTicketInput,
     customFieldMappings?: {
@@ -145,7 +161,7 @@ export class FrontTicketMapper implements ITicketMapper {
       remote_id: ticket.id,
       remote_data: ticket,
       name: ticket.subject,
-      status: ticket.status as TicketStatus,
+      status: this.mapToTicketStatus(ticket.status as any),
       description: ticket.subject,
       due_date: null,
       field_mappings: field_mappings,

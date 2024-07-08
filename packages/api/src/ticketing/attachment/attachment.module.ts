@@ -11,9 +11,12 @@ import { AttachmentService } from './services/attachment.service';
 import { ServiceRegistry } from './services/registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [],
+  imports: [BullQueueModule],
   controllers: [AttachmentController],
   providers: [
     AttachmentService,
@@ -27,6 +30,8 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     UnificationRegistry,
     MappersRegistry,
     IngestDataService,
+    CoreSyncRegistry,
+    
     /* PROVIDERS SERVICES */
   ],
 })

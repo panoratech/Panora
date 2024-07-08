@@ -95,7 +95,6 @@ export class ConnectionsController {
           vertical.toLowerCase(),
           providerName,
           linkedUserId,
-          projectId,
         );
       }*/
     } catch (error) {
@@ -168,7 +167,6 @@ export class ConnectionsController {
           vertical.toLowerCase(),
           providerName,
           linkedUserId,
-          projectId,
         );
       }*/
     } catch (error) {

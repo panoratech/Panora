@@ -11,7 +11,7 @@ export class SyncProcessor {
   async handleSyncEeocs(job: Job) {
     try {
       console.log(`Processing queue -> ats-sync-eeocs ${job.id}`);
-      await this.syncService.syncEeocs();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ats eeocs', error);
     }

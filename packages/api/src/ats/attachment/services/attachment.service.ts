@@ -153,6 +153,8 @@ export class AttachmentService {
           data: {
             id_entity: uuidv4(),
             ressource_owner_id: unique_ats_attachment_id,
+            created_at: new Date(),
+            modified_at: new Date(),
           },
         });
 
@@ -175,6 +177,8 @@ export class AttachmentService {
                 attribute: {
                   connect: { id_attribute: attribute.id_attribute },
                 },
+                created_at: new Date(),
+                modified_at: new Date(),
                 entity: { connect: { id_entity: entity.id_entity } },
               },
             });

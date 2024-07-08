@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
@@ -43,7 +43,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
   //@Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
-  async syncContacts(user_id?: string) {
+  async kickstartSync(user_id?: string) {
     try {
       this.logger.log(`Syncing contacts....`);
       const users = user_id
@@ -77,17 +77,17 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     const accounts = await this.prisma.tcg_accounts.findMany();
                     if (accounts) {
                       for (const acc of accounts) {
-                        await this.syncContactsForLinkedUser(
-                          provider,
-                          linkedUser.id_linked_user,
-                          acc.id_tcg_account,
-                        );
+                        await this.syncForLinkedUser({
+                          integrationId: provider,
+                          linkedUserId: linkedUser.id_linked_user,
+                          account_id: acc.id_tcg_account,
+                        });
                       }
                     } else {
-                      await this.syncContactsForLinkedUser(
-                        provider,
-                        linkedUser.id_linked_user,
-                      );
+                      await this.syncForLinkedUser({
+                        integrationId: provider,
+                        linkedUserId: linkedUser.id_linked_user,
+                      });
                     }
                   } catch (error) {
                     throw error;
@@ -106,18 +106,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncContactsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    account_id?: string,
-    wh_real_time_trigger?: {
-      action: 'UPDATE' | 'DELETE';
-      data: {
-        remote_id: string;
-      };
-    },
-  ) {
+  async syncForLinkedUser(data: SyncLinkedUserType) {
     try {
+      const { integrationId, linkedUserId, account_id, wh_real_time_trigger } =
+        data;
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
 

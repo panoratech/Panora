@@ -11,7 +11,7 @@ export class SyncProcessor {
   async handleSyncGroups(job: Job) {
     try {
       console.log(`Processing queue -> filestorage-sync-groups ${job.id}`);
-      await this.syncService.syncGroups();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing filestorage groups', error);
     }

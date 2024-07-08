@@ -150,6 +150,8 @@ export class InterviewService {
           data: {
             id_entity: uuidv4(),
             ressource_owner_id: unique_ats_interview_id,
+            created_at: new Date(),
+            modified_at: new Date(),
           },
         });
 
@@ -174,6 +176,8 @@ export class InterviewService {
                     id_attribute: attribute.id_attribute,
                   },
                 },
+                created_at: new Date(),
+                modified_at: new Date(),
                 entity: {
                   connect: {
                     id_entity: entity.id_entity,

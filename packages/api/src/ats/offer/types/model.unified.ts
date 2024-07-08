@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
+import {
+  IsUUID,
+  IsOptional,
+  IsString,
+  IsDateString,
+  IsIn,
+} from 'class-validator';
 
 export type OfferStatus =
   | 'DRAFT'
@@ -54,9 +60,19 @@ export class UnifiedOfferInput {
   start_date?: string;
 
   @ApiPropertyOptional({ type: String, description: 'The status of the offer' })
-  @IsString()
+  @IsIn([
+    'DRAFT',
+    'APPROVAL_SENT',
+    'APPROVED',
+    'SENT',
+    'SENT_MANUALLY',
+    'OPENED',
+    'DENIED',
+    'SIGNED',
+    'DEPRECATED',
+  ])
   @IsOptional()
-  status?: OfferStatus;
+  status?: OfferStatus | string;
 
   @ApiPropertyOptional({
     type: String,

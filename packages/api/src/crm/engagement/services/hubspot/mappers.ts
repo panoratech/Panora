@@ -22,6 +22,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
     this.mappersRegistry.registerService('crm', 'engagement', 'hubspot', this);
   }
+
   async desunify(
     source: UnifiedEngagementInput,
     customFieldMappings?: {

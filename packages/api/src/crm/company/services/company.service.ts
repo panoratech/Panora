@@ -215,6 +215,7 @@ export class CompanyService {
                   data: {
                     ...addy,
                     id_crm_company: existingCompany.id_crm_company, // Assuming 'uuid' is the ID of the related contact
+                    id_connection: connection_id,
                   },
                 });
               }
@@ -287,6 +288,7 @@ export class CompanyService {
                 data: {
                   ...addy,
                   id_crm_company: newCompany.id_crm_company,
+                  id_connection: connection_id,
                 },
               }),
             ),

@@ -4,7 +4,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ServiceRegistry } from '../services/registry.service';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {

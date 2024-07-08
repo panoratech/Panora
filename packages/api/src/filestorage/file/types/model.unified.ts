@@ -8,10 +8,6 @@ export class UnifiedFileInput {
   @IsString()
   name: string;
 
-  @ApiProperty({ type: String, description: 'The type of the file' })
-  @IsString()
-  type: string;
-
   @ApiProperty({ type: String, description: 'The url of the file' })
   @IsString()
   file_url: string;

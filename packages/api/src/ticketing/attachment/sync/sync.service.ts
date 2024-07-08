@@ -1,7 +1,7 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { IBaseSync } from '@@core/utils/types/interface';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { Injectable } from '@nestjs/common';
 import { tcg_attachments as TicketingAttachment } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
