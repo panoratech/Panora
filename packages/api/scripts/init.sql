@@ -556,8 +556,8 @@ CREATE TABLE ats_reject_reasons
  id_ats_reject_reason uuid NOT NULL,
  name                 text NULL,
  remote_id            text NULL,
- modified_at          timestamp NOT NULL,
- created_at           timestamp NOT NULL,
+ modified_at          timestamp with time zone NOT NULL,
+ created_at           timestamp with time zone NOT NULL,
  id_connection        uuid NOT NULL,
  CONSTRAINT PK_ats_reject_reasons PRIMARY KEY ( id_ats_reject_reason )
 );
@@ -575,8 +575,8 @@ CREATE TABLE ats_offices
 (
  id_ats_office uuid NOT NULL,
  remote_id     text NULL,
- created_at    timestamp NOT NULL,
- modified_at   timestamp NOT NULL,
+ created_at    timestamp with time zone NOT NULL,
+ modified_at   timestamp with time zone NOT NULL,
  name          text NULL,
  location      text NULL,
  id_connection uuid NOT NULL,
@@ -606,10 +606,10 @@ CREATE TABLE ats_jobs
  managers          text[] NULL,
  recruiters        text[] NULL,
  remote_id         text NULL,
- remote_created_at timestamp NULL,
- remote_updated_at timestamp NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ remote_created_at timestamp with time zone NULL,
+ remote_updated_at timestamp with time zone NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  id_connection     uuid NOT NULL,
  CONSTRAINT PK_ats_jobs PRIMARY KEY ( id_ats_job )
 );
@@ -635,8 +635,8 @@ CREATE TABLE ats_departments
  id_ats_department uuid NOT NULL,
  name              text NULL,
  remote_id         text NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  id_connection     uuid NOT NULL,
  CONSTRAINT PK_ats_departments PRIMARY KEY ( id_ats_department )
 );
@@ -654,15 +654,15 @@ CREATE TABLE ats_candidates
 (
  id_ats_candidate    uuid NOT NULL,
  remote_id           text NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  first_name          text NULL,
  last_name           text NULL,
  company             text NULL,
  title               text NULL,
- remote_created_at   timestamp NULL,
- remote_modified_at  timestamp NULL,
- last_interaction_at timestamp NULL,
+ remote_created_at   timestamp with time zone NULL,
+ remote_modified_at  timestamp with time zone NULL,
+ last_interaction_at timestamp with time zone NULL,
  is_private          boolean NULL,
  email_reachable     boolean NULL,
  locations           text NULL,
@@ -691,8 +691,9 @@ CREATE TABLE ats_candidate_tags
  id_ats_candidate_tag uuid NOT NULL,
  name                 text NULL,
  remote_id            text NULL,
- created_at           timestamp NOT NULL,
- modified_at          timestamp NOT NULL,
+ created_at           timestamp with time zone NOT NULL,
+ modified_at          timestamp with time zone NOT NULL,
+ id_connection        uuid NOT NULL,
  CONSTRAINT PK_ats_candidate_tags PRIMARY KEY ( id_ats_candidate_tag )
 );
 
@@ -1301,8 +1302,8 @@ CREATE TABLE ats_job_interview_stages
  name                       text NULL,
  stage_order                int NULL,
  remote_id                  text NULL,
- created_at                 timestamp NOT NULL,
- modified_at                timestamp NOT NULL,
+ created_at                 timestamp with time zone NOT NULL,
+ modified_at                timestamp with time zone NOT NULL,
  id_ats_job                 uuid NULL,
  id_connection              uuid NOT NULL,
  CONSTRAINT PK_ats_job_interview_stages PRIMARY KEY ( id_ats_job_interview_stage )
@@ -1327,14 +1328,14 @@ CREATE TABLE ats_eeocs
 (
  id_ats_eeoc       uuid NOT NULL,
  id_ats_candidate  uuid NULL,
- submitted_at      timestamp NULL,
+ submitted_at      timestamp with time zone NULL,
  race              text NULL,
  gender            text NULL,
  veteran_status    text NULL,
  disability_status text NULL,
  remote_id         text NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  id_connection     uuid NOT NULL,
  CONSTRAINT PK_ats_eeocs PRIMARY KEY ( id_ats_eeoc )
 );
@@ -1362,8 +1363,8 @@ CREATE TABLE ats_candidate_urls
  id_ats_candidate_url uuid NOT NULL,
  value                text NULL,
  type                 text NULL,
- created_at           timestamp NOT NULL,
- modified_at          timestamp NOT NULL,
+ created_at           timestamp with time zone NOT NULL,
+ modified_at          timestamp with time zone NOT NULL,
  id_ats_candidate     uuid NOT NULL,
  CONSTRAINT PK_ats_candidate_urls PRIMARY KEY ( id_ats_candidate_url )
 );
@@ -1387,8 +1388,8 @@ CREATE TABLE ats_candidate_phone_numbers
  id_ats_candidate_phone_number uuid NOT NULL,
  value                         text NULL,
  type                          text NULL,
- created_at                    timestamp NOT NULL,
- modified_at                   timestamp NOT NULL,
+ created_at                    timestamp with time zone NOT NULL,
+ modified_at                   timestamp with time zone NOT NULL,
  id_ats_candidate              uuid NOT NULL,
  CONSTRAINT PK_ats_candidate_phone_numbers PRIMARY KEY ( id_ats_candidate_phone_number )
 );
@@ -1413,8 +1414,8 @@ CREATE TABLE ats_candidate_email_addresses
  id_ats_candidate_email_address uuid NOT NULL,
  value                          text NULL,
  type                           text NULL,
- created_at                     timestamp NOT NULL,
- modified_at                    timestamp NOT NULL,
+ created_at                     timestamp with time zone NOT NULL,
+ modified_at                    timestamp with time zone NOT NULL,
  id_ats_candidate               uuid NOT NULL,
  CONSTRAINT PK_ats_candidate_email_addresses PRIMARY KEY ( id_ats_candidate_email_address )
 );
@@ -1439,11 +1440,11 @@ CREATE TABLE ats_candidate_attachments
  remote_id                   text NULL,
  file_url                    text NULL,
  file_name                   text NULL,
- remote_created_at           timestamp NULL,
- remote_modified_at          timestamp NULL,
+ remote_created_at           timestamp with time zone NULL,
+ remote_modified_at          timestamp with time zone NULL,
  file_type                   text NULL,
- created_at                  timestamp NOT NULL,
- modified_at                 timestamp NOT NULL,
+ created_at                  timestamp with time zone NOT NULL,
+ modified_at                 timestamp with time zone NOT NULL,
  id_ats_candidate            uuid NOT NULL,
  id_connection               uuid NOT NULL,
  CONSTRAINT PK_ats_candidate_attachments PRIMARY KEY ( id_ats_candidate_attachment )
@@ -1468,8 +1469,8 @@ CREATE TABLE ats_applications
 (
  id_ats_application uuid NOT NULL,
  remote_id          text NULL,
- applied_at         timestamp NULL,
- rejected_at        timestamp NULL,
+ applied_at         timestamp with time zone NULL,
+ rejected_at        timestamp with time zone NULL,
  offers             text[] NULL,
  "source"           text NULL,
  credited_to        uuid NULL,
@@ -1477,8 +1478,8 @@ CREATE TABLE ats_applications
  reject_reason      text NULL,
  id_ats_candidate   uuid NULL,
  id_ats_job         uuid NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  id_connection      uuid NOT NULL,
  CONSTRAINT PK_ats_applications PRIMARY KEY ( id_ats_application )
 );
@@ -1514,9 +1515,9 @@ CREATE TABLE ats_activities
  visibility        text NULL,
  id_ats_candidate  uuid NULL,
  remote_id         text NULL,
- remote_created_at timestamp NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ remote_created_at timestamp with time zone NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  id_connection     uuid NOT NULL,
  CONSTRAINT PK_ats_activities PRIMARY KEY ( id_ats_activity )
 );
@@ -2020,14 +2021,15 @@ CREATE TABLE crm_engagements
  subject           text NULL,
  start_at          timestamp NULL,
  end_time          timestamp NULL,
- created_at        timestamp NULL,
- modified_at       timestamp NULL,
  remote_id         text NULL,
  id_linked_user    uuid NULL,
  remote_platform   text NULL,
  id_crm_company    uuid NULL,
  id_crm_user       uuid NULL,
  id_connection     uuid NOT NULL,
+ contacts          text[] NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
  CONSTRAINT PK_crm_engagement PRIMARY KEY ( id_crm_engagement ),
  CONSTRAINT FK_crm_engagement_crm_user FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -2048,6 +2050,7 @@ CREATE INDEX FK_crm_engagement_crmCompanyID ON crm_engagements
 COMMENT ON COLUMN crm_engagements.type IS 'can be (but not restricted to)
 
 MEETING, CALL, EMAIL';
+COMMENT ON COLUMN crm_engagements.contacts IS 'array of id_crm_contact (uuids)';
 
 
 
@@ -2186,13 +2189,13 @@ CREATE TABLE ats_offers
  id_ats_offer       uuid NOT NULL,
  remote_id          text NULL,
  created_by         uuid NULL,
- remote_created_at  timestamp NULL,
- closed_at          timestamp NULL,
- sent_at            timestamp NULL,
- start_date         timestamp NULL,
+ remote_created_at  timestamp with time zone NULL,
+ closed_at          timestamp with time zone NULL,
+ sent_at            timestamp with time zone NULL,
+ start_date         timestamp with time zone NULL,
  status             text NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  id_ats_application uuid NOT NULL,
  id_connection      uuid NOT NULL,
  CONSTRAINT PK_ats_offers PRIMARY KEY ( id_ats_offer )
@@ -2221,15 +2224,15 @@ CREATE TABLE ats_interviews
  organized_by               uuid NULL,
  interviewers               text[] NULL,
  location                   text NULL,
- start_at                   timestamp NULL,
- end_at                     timestamp NULL,
- remote_created_at          timestamp NULL,
- remote_updated_at          timestamp NULL,
+ start_at                   timestamp with time zone NULL,
+ end_at                     timestamp with time zone NULL,
+ remote_created_at          timestamp with time zone NULL,
+ remote_updated_at          timestamp with time zone NULL,
  remote_id                  text NULL,
  id_ats_application         uuid NULL,
  id_ats_job_interview_stage uuid NULL,
- created_at                 timestamp NOT NULL,
- modified_at                timestamp NOT NULL,
+ created_at                 timestamp with time zone NOT NULL,
+ modified_at                timestamp with time zone NOT NULL,
  id_connection              uuid NOT NULL,
  CONSTRAINT PK_ats_interviews PRIMARY KEY ( id_ats_interview )
 );
@@ -2790,35 +2793,6 @@ CREATE INDEX FK_crm_notes_crm_dealID ON crm_notes
 
 
 
--- ************************************** crm_engagement_contacts
-
-CREATE TABLE crm_engagement_contacts
-(
- id_crm_engagement_contact uuid NOT NULL,
- id_crm_contact            uuid NULL,
- id_crm_engagement         uuid NOT NULL,
- id_connection             uuid NOT NULL,
- CONSTRAINT PK_crm_engagement_contact PRIMARY KEY ( id_crm_engagement_contact ),
- CONSTRAINT FK_30 FOREIGN KEY ( id_crm_engagement ) REFERENCES crm_engagements ( id_crm_engagement )
-);
-
-CREATE INDEX FK_crm_engagement_contacts_crmEngagementID ON crm_engagement_contacts
-(
- id_crm_engagement
-);
-
-CREATE INDEX FK_engagement_contact_crmContactID ON crm_engagement_contacts
-(
- id_crm_contact
-);
-
-
-
-
-
-
-
-
 -- ************************************** connections
 
 CREATE TABLE connections
@@ -2870,10 +2844,10 @@ CREATE TABLE ats_scorecards
  id_ats_application     uuid NULL,
  id_ats_interview       uuid NULL,
  remote_id              text NULL,
- remote_created_at      timestamp NULL,
- submitted_at           timestamp NULL,
- created_at             timestamp NOT NULL,
- modified_at            timestamp NOT NULL,
+ remote_created_at      timestamp with time zone NULL,
+ submitted_at           timestamp with time zone NULL,
+ created_at             timestamp with time zone NOT NULL,
+ modified_at            timestamp with time zone NOT NULL,
  id_connection          uuid NOT NULL,
  CONSTRAINT PK_ats_scorecards PRIMARY KEY ( id_ats_scorecard )
 );
