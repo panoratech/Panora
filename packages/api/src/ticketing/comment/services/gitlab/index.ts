@@ -64,7 +64,7 @@ export class GitlabService implements ICommentService {
             url: res.file_url,
             name: res.file_name,
             size: stats.size,
-            content_type: 'application/pdf', //todo
+            content_type: this.utils.getMimeType(res.file_name),
           };
         });
         uploads = await Promise.all(attachmentPromises);

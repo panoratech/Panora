@@ -1,4 +1,5 @@
 import { Email, Phone, Url } from '@ats/@lib/@types';
+import { UnifiedApplicationOutput } from '@ats/application/types/model.unified';
 import { UnifiedAttachmentOutput } from '@ats/attachment/types/model.unified';
 import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -108,7 +109,7 @@ export class UnifiedCandidateInput {
   })
   @IsString({ each: true })
   @IsOptional()
-  applications?: string[];
+  applications?: (string | UnifiedApplicationOutput)[];
 
   @ApiPropertyOptional({
     type: [String],
@@ -120,7 +121,8 @@ export class UnifiedCandidateInput {
 
   @ApiPropertyOptional({
     type: [],
-    description: 'The urls of the candidate',
+    description:
+      'The urls of the candidate, possible values for Url type are WEBSITE, BLOG, LINKEDIN, GITHUB, or OTHER',
   })
   @IsOptional()
   urls?: Url[];

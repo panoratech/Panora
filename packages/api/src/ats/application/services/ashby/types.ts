@@ -1,4 +1,19 @@
-export interface AshbyApplicationInput {
+export type AshbyApplicationInput = Partial<{
+  canidateId: string;
+  jobId: string;
+  interviewPlanId: string;
+  interviewStageId: string;
+  sourceId: string;
+  creditedToUserId: string;
+  applicationHistory: {
+    stageId: string;
+    stageNumber: number;
+    enteredStageAt: Date;
+    archiveReasonId: string;
+  }[];
+}>;
+
+export type AshbyApplicationOutput = {
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -99,6 +114,4 @@ export interface AshbyApplicationInput {
       }>;
     };
   }>;
-}
-
-export type AshbyApplicationOutput = Partial<AshbyApplicationInput>;
+};

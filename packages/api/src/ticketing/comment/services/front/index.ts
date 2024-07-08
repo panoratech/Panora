@@ -11,7 +11,7 @@ import { FrontCommentInput, FrontCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
 import { Utils } from '@ticketing/@lib/@utils';
 import { SyncParam } from '@@core/utils/types/interface';
-import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class FrontService implements ICommentService {

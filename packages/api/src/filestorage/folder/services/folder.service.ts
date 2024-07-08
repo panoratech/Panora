@@ -13,6 +13,7 @@ import { FileStorageObject } from '@filestorage/@lib/@types';
 import { OriginalFolderOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class FolderService {
@@ -23,6 +24,7 @@ export class FolderService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(FolderService.name);
   }
@@ -35,12 +37,7 @@ export class FolderService {
     remote_data?: boolean,
   ): Promise<UnifiedFolderOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
-
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
@@ -83,121 +80,22 @@ export class FolderService {
       const source_folder = resp.data;
       const target_folder = unifiedObject[0];
 
-      const existingFolder = await this.prisma.fs_folders.findFirst({
-        where: {
-          remote_id: target_folder.remote_id,
-          id_connection: connection_id,
-        },
-      });
+      const unique_fs_folder_id = await this.saveOrUpdateFolder(
+        target_folder,
+        connection_id,
+      );
 
-      let unique_fs_folder_id: string;
+      await this.ingestService.processFieldMappings(
+        target_folder.field_mappings,
+        unique_fs_folder_id,
+        integrationId,
+        linkedUserId,
+      );
 
-      if (existingFolder) {
-        const data: any = {
-          folder_url: target_folder.folder_url,
-          size: target_folder.size,
-          name: target_folder.name,
-          description: target_folder.description,
-          parent_folder: target_folder.parent_folder_id,
-          id_fs_drive: target_folder.drive_id,
-          id_fs_permission: target_folder.permission as string,
-          modified_at: new Date(),
-        };
-
-        const res = await this.prisma.fs_folders.update({
-          where: {
-            id_fs_folder: existingFolder.id_fs_folder,
-          },
-          data: data,
-        });
-
-        unique_fs_folder_id = res.id_fs_folder;
-      } else {
-        const data: any = {
-          id_fs_folder: uuidv4(),
-          folder_url: target_folder.folder_url,
-          size: target_folder.size,
-          name: target_folder.name,
-          description: target_folder.description,
-          parent_folder: target_folder.parent_folder_id,
-          id_fs_drive: target_folder.drive_id,
-          id_fs_permission: target_folder.permission as string,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_folder.remote_id,
-          id_connection: connection_id,
-        };
-
-        const newFolder = await this.prisma.fs_folders.create({
-          data: data,
-        });
-
-        unique_fs_folder_id = newFolder.id_fs_folder;
-      }
-
-      if (
-        target_folder.field_mappings &&
-        target_folder.field_mappings.length > 0
-      ) {
-        const entity = await this.prisma.entity.create({
-          data: {
-            id_entity: uuidv4(),
-            ressource_owner_id: unique_fs_folder_id,
-            created_at: new Date(),
-            modified_at: new Date(),
-          },
-        });
-
-        for (const [slug, value] of Object.entries(
-          target_folder.field_mappings,
-        )) {
-          const attribute = await this.prisma.attribute.findFirst({
-            where: {
-              slug: slug,
-              source: integrationId,
-              id_consumer: linkedUserId,
-            },
-          });
-
-          if (attribute) {
-            await this.prisma.value.create({
-              data: {
-                id_value: uuidv4(),
-                data: value || 'null',
-                attribute: {
-                  connect: {
-                    id_attribute: attribute.id_attribute,
-                  },
-                },
-                created_at: new Date(),
-                modified_at: new Date(),
-                entity: {
-                  connect: {
-                    id_entity: entity.id_entity,
-                  },
-                },
-              },
-            });
-          }
-        }
-      }
-
-      await this.prisma.remote_data.upsert({
-        where: {
-          ressource_owner_id: unique_fs_folder_id,
-        },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_fs_folder_id,
-          format: 'json',
-          data: JSON.stringify(source_folder),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_folder),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_fs_folder_id,
+        source_folder,
+      );
 
       const result_folder = await this.getFolder(
         unique_fs_folder_id,
@@ -229,6 +127,50 @@ export class FolderService {
       return result_folder;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async saveOrUpdateFolder(
+    folder: UnifiedFolderOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingFolder = await this.prisma.fs_folders.findFirst({
+      where: { remote_id: folder.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      folder_url: folder.folder_url,
+      size: folder.size,
+      name: folder.name,
+      description: folder.description,
+      parent_folder: folder.parent_folder_id,
+      id_fs_drive: folder.drive_id,
+      id_fs_permission: folder.permission as string,
+      modified_at: new Date(),
+    };
+
+    if (existingFolder) {
+      const res = await this.prisma.fs_folders.update({
+        where: { id_fs_folder: existingFolder.id_fs_folder },
+        data: data,
+      });
+      return res.id_fs_folder;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = folder.remote_id;
+      data.id_connection = connection_id;
+      data.id_fs_folder = uuidv4();
+
+      const newFolder = await this.prisma.fs_folders.create({ data: data });
+      return newFolder.id_fs_folder;
     }
   }
 

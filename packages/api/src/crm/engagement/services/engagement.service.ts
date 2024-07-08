@@ -16,6 +16,7 @@ import {
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class EngagementService {
@@ -26,6 +27,7 @@ export class EngagementService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(EngagementService.name);
   }
@@ -38,54 +40,18 @@ export class EngagementService {
     remote_data?: boolean,
   ): Promise<UnifiedEngagementOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+      await this.validateCompanyId(unifiedEngagementData.company_id);
+      await this.validateEngagementType(unifiedEngagementData.type);
+      await this.validateEngagementContacts(unifiedEngagementData.contacts);
 
-      //CHECKS
-      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+      const customFieldMappings =
+        await this.fieldMappingService.getCustomFieldMappings(
+          integrationId,
+          linkedUserId,
+          'crm.engagement',
+        );
 
-      const company = unifiedEngagementData.company_id;
-      //check if contact_id and account_id refer to real uuids
-      if (company) {
-        const search = await this.prisma.crm_companies.findUnique({
-          where: {
-            id_crm_company: company,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a contact_id which does not exist',
-          );
-      }
-      const type = unifiedEngagementData.type.toUpperCase();
-      if (type) {
-        if (!ENGAGEMENTS_TYPE.includes(type))
-          throw new ReferenceError(
-            'You inserted a engagement type which does not exist',
-          );
-      } else {
-        throw new ReferenceError('You didnt insert a type for your engagement');
-      }
-
-      const engagement_contacts = unifiedEngagementData.contacts;
-      if (engagement_contacts && engagement_contacts.length > 0) {
-        engagement_contacts.map(async (contact) => {
-          const search = await this.prisma.crm_contacts.findUnique({
-            where: {
-              id_crm_contact: contact,
-            },
-          });
-          if (!search)
-            throw new ReferenceError(
-              'You inserted an id_crm_engagement_contact which does not exist',
-            );
-        });
-      }
-
-      //desunify the data according to the target obj wanted
       const desunifiedObject =
         await this.coreUnification.desunify<UnifiedEngagementInput>({
           sourceObject: unifiedEngagementData,
@@ -97,18 +63,15 @@ export class EngagementService {
 
       const service: IEngagementService =
         this.serviceRegistry.getService(integrationId);
-
       const resp: ApiResponse<OriginalEngagementOutput> =
-        await service.addEngagement(desunifiedObject, linkedUserId, type);
+        await service.addEngagement(
+          desunifiedObject,
+          linkedUserId,
+          unifiedEngagementData.type.toUpperCase(),
+        );
 
-      const targetType =
-        type === 'CALL'
-          ? CrmObject.engagement_call
-          : type === 'MEETING'
-          ? CrmObject.engagement_meeting
-          : CrmObject.engagement_email;
+      const targetType = this.getEngagementType(unifiedEngagementData.type);
 
-      //unify the data according to the target obj wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalEngagementOutput[]
       >({
@@ -120,125 +83,25 @@ export class EngagementService {
         customFieldMappings: [],
       })) as UnifiedEngagementOutput[];
 
-      // add the engagement inside our db
       const source_engagement = resp.data;
       const target_engagement = unifiedObject[0];
 
-      const existingEngagement = await this.prisma.crm_engagements.findFirst({
-        where: {
-          remote_id: target_engagement.remote_id,
-          id_connection: connection_id,
-        },
-      });
+      const unique_crm_engagement_id = await this.saveOrUpdateEngagement(
+        target_engagement,
+        connection_id,
+      );
 
-      let unique_crm_engagement_id: string;
+      await this.ingestService.processFieldMappings(
+        target_engagement.field_mappings,
+        unique_crm_engagement_id,
+        integrationId,
+        linkedUserId,
+      );
 
-      if (existingEngagement) {
-        // Update the existing engagement
-        let data: any = {
-          modified_at: new Date(),
-        };
-
-        if (target_engagement.content) {
-          data = { ...data, content: target_engagement.content };
-        }
-        if (target_engagement.direction) {
-          data = { ...data, direction: target_engagement.direction };
-        }
-        if (target_engagement.subject) {
-          data = { ...data, subject: target_engagement.subject };
-        }
-        if (target_engagement.start_at) {
-          data = { ...data, start_at: target_engagement.start_at };
-        }
-        if (target_engagement.end_time) {
-          data = { ...data, end_time: target_engagement.end_time };
-        }
-        if (target_engagement.type) {
-          data = {
-            ...data,
-            type: target_engagement.type,
-          };
-        }
-        if (target_engagement.company_id) {
-          data = { ...data, id_crm_company: target_engagement.company_id };
-        }
-
-        /*TODO:
-        if (target_engagement.contacts) {
-          data = { ...data, end_time: target_engagement.end_time };
-        }*/
-        const res = await this.prisma.crm_engagements.update({
-          where: {
-            id_crm_engagement: existingEngagement.id_crm_engagement,
-          },
-          data: data,
-        });
-        unique_crm_engagement_id = res.id_crm_engagement;
-      } else {
-        // Create a new engagement
-        this.logger.log('engagement not exists');
-        let data: any = {
-          id_crm_engagement: uuidv4(),
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_engagement.remote_id,
-          id_connection: connection_id,
-        };
-
-        if (target_engagement.content) {
-          data = { ...data, content: target_engagement.content };
-        }
-        if (target_engagement.direction) {
-          data = { ...data, direction: target_engagement.direction };
-        }
-        if (target_engagement.subject) {
-          data = { ...data, subject: target_engagement.subject };
-        }
-        if (target_engagement.start_at) {
-          data = { ...data, start_at: target_engagement.start_at };
-        }
-        if (target_engagement.end_time) {
-          data = { ...data, end_time: target_engagement.end_time };
-        }
-        if (target_engagement.type) {
-          data = {
-            ...data,
-            type: target_engagement.type,
-          };
-        }
-        if (target_engagement.company_id) {
-          data = { ...data, id_crm_company: target_engagement.company_id };
-        }
-
-        /*TODO:
-        if (target_engagement.contacts) {
-          data = { ...data, end_time: target_engagement.end_time };
-        }*/
-
-        const res = await this.prisma.crm_engagements.create({
-          data: data,
-        });
-        unique_crm_engagement_id = res.id_crm_engagement;
-      }
-
-      //insert remote_data in db
-      await this.prisma.remote_data.upsert({
-        where: {
-          ressource_owner_id: unique_crm_engagement_id,
-        },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_crm_engagement_id,
-          format: 'json',
-          data: JSON.stringify(source_engagement),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_engagement),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_crm_engagement_id,
+        source_engagement,
+      );
 
       const result_engagement = await this.getEngagement(
         unique_crm_engagement_id,
@@ -248,12 +111,11 @@ export class EngagementService {
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: status_resp,
-          type: 'crm.engagement.push', //sync, push or pull
+          type: 'crm.engagement.push', // sync, push or pull
           method: 'POST',
           url: '/crm/engagements',
           provider: integrationId,
@@ -271,6 +133,103 @@ export class EngagementService {
       return result_engagement;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async validateCompanyId(companyId?: string) {
+    if (companyId) {
+      const company = await this.prisma.crm_companies.findUnique({
+        where: { id_crm_company: companyId },
+      });
+      if (!company)
+        throw new ReferenceError(
+          'You inserted a company_id which does not exist',
+        );
+    }
+  }
+
+  async validateEngagementType(type?: string) {
+    const upperType = type?.toUpperCase();
+    if (upperType) {
+      if (!ENGAGEMENTS_TYPE.includes(upperType)) {
+        throw new ReferenceError(
+          'You inserted an engagement type which does not exist',
+        );
+      }
+    } else {
+      throw new ReferenceError('You did not insert a type for your engagement');
+    }
+  }
+
+  async validateEngagementContacts(contacts?: string[]) {
+    if (contacts && contacts.length > 0) {
+      await Promise.all(
+        contacts.map(async (contact) => {
+          const contactExists = await this.prisma.crm_contacts.findUnique({
+            where: { id_crm_contact: contact },
+          });
+          if (!contactExists) {
+            throw new ReferenceError(
+              'You inserted an id_crm_engagement_contact which does not exist',
+            );
+          }
+        }),
+      );
+    }
+  }
+
+  getEngagementType(type: string) {
+    const upperType = type.toUpperCase();
+    return upperType === 'CALL'
+      ? CrmObject.engagement_call
+      : upperType === 'MEETING'
+      ? CrmObject.engagement_meeting
+      : CrmObject.engagement_email;
+  }
+
+  async saveOrUpdateEngagement(
+    engagement: UnifiedEngagementOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingEngagement = await this.prisma.crm_engagements.findFirst({
+      where: { remote_id: engagement.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      modified_at: new Date(),
+      content: engagement.content,
+      direction: engagement.direction,
+      subject: engagement.subject,
+      start_at: engagement.start_at,
+      end_time: engagement.end_time,
+      type: engagement.type,
+      id_crm_company: engagement.company_id,
+    };
+
+    if (existingEngagement) {
+      const res = await this.prisma.crm_engagements.update({
+        where: { id_crm_engagement: existingEngagement.id_crm_engagement },
+        data: data,
+      });
+      return res.id_crm_engagement;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = engagement.remote_id;
+      data.id_connection = connection_id;
+      data.id_crm_engagement = uuidv4();
+
+      const newEngagement = await this.prisma.crm_engagements.create({
+        data: data,
+      });
+      return newEngagement.id_crm_engagement;
     }
   }
 
@@ -314,11 +273,11 @@ export class EngagementService {
       const unifiedEngagement: UnifiedEngagementOutput = {
         id: engagement.id_crm_engagement,
         content: engagement.content,
-        direction: engagement.direction as EngagementDirection,
+        direction: engagement.direction,
         subject: engagement.subject,
         start_at: engagement.start_at,
         end_time: engagement.end_time,
-        type: engagement.type as EngagementType,
+        type: engagement.type,
         company_id: engagement.id_crm_company,
         field_mappings: field_mappings,
         remote_id: engagement.remote_id,
@@ -449,11 +408,11 @@ export class EngagementService {
           return {
             id: engagement.id_crm_engagement,
             content: engagement.content,
-            direction: engagement.direction as EngagementDirection,
+            direction: engagement.direction,
             subject: engagement.subject,
             start_at: engagement.start_at,
             end_time: engagement.end_time,
-            type: engagement.type as EngagementType,
+            type: engagement.type,
             company_id: engagement.id_crm_company,
             field_mappings: field_mappings,
             remote_id: engagement.remote_id,
@@ -503,12 +462,5 @@ export class EngagementService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async updateEngagement(
-    id: string,
-    data: Partial<UnifiedEngagementInput>,
-  ): Promise<UnifiedEngagementOutput> {
-    return;
   }
 }

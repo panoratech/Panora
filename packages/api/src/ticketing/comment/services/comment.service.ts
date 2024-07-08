@@ -9,12 +9,12 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { ICommentService } from '../types';
 import {
-  CommentCreatorType,
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class CommentService {
@@ -25,6 +25,7 @@ export class CommentService {
     private serviceRegistry: ServiceRegistry,
     private registry: CoreSyncRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(CommentService.name);
   }
@@ -37,92 +38,18 @@ export class CommentService {
     remote_data?: boolean,
   ): Promise<UnifiedCommentOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+      await this.validateTicketId(unifiedCommentData.ticket_id);
+      await this.validateContactId(unifiedCommentData.contact_id);
+      await this.validateUserId(unifiedCommentData.user_id);
+      unifiedCommentData.attachments = await this.processAttachments(
+        unifiedCommentData.attachments,
+        connection_id,
+        linkedUserId,
+        integrationId,
+      );
 
-      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
-      const tick = unifiedCommentData.ticket_id;
-      //check if contact_id and account_id refer to real uuids
-      if (tick) {
-        const search = await this.prisma.tcg_tickets.findUnique({
-          where: {
-            id_tcg_ticket: tick,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a ticket_id which does not exist',
-          );
-      } else {
-        throw new ReferenceError(
-          'You must attach your comment to a ticket, specify a ticket_id',
-        );
-      }
-
-      const contact = unifiedCommentData.contact_id;
-      //check if contact_id and account_id refer to real uuids
-      if (contact) {
-        const search = await this.prisma.tcg_contacts.findUnique({
-          where: {
-            id_tcg_contact: contact,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a contact_id which does not exist',
-          );
-      }
-      const user = unifiedCommentData.user_id;
-      //check if contact_id and account_id refer to real uuids
-      if (user) {
-        const search = await this.prisma.tcg_users.findUnique({
-          where: {
-            id_tcg_user: user,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a user_id which does not exist',
-          );
-      }
-
-      const attachmts = unifiedCommentData.attachments;
-      if (attachmts && attachmts.length > 0) {
-        if (typeof attachmts[0] === 'string') {
-          // we have string array
-          // check if attachments contains valid Attachment uuids
-          attachmts.map(async (uuid: string) => {
-            const search = await this.prisma.tcg_attachments.findUnique({
-              where: {
-                id_tcg_attachment: uuid,
-              },
-            });
-            if (!search)
-              throw new ReferenceError(
-                'You inserted an attachment_id which does not exist',
-              );
-          });
-        } else {
-          // we have a nested attachment object to process
-          const attchms_res = await this.registry
-            .getService('ticketing', 'attachment')
-            .saveToDb(
-              connection_id,
-              linkedUserId,
-              attachmts,
-              integrationId,
-              [],
-            );
-          unifiedCommentData.attachments = attchms_res.map(
-            (att) => att.id_tcg_attachment,
-          );
-        }
-      }
-
-      //desunify the data according to the target obj wanted
+      // Desunify the data according to the target object wanted
       const desunifiedObject =
         await this.coreUnification.desunify<UnifiedCommentInput>({
           sourceObject: unifiedCommentData,
@@ -134,22 +61,18 @@ export class CommentService {
 
       const service: ICommentService =
         this.serviceRegistry.getService(integrationId);
-      //get remote_id of the ticket so the comment is inserted successfully
       const ticket = await this.prisma.tcg_tickets.findUnique({
-        where: {
-          id_tcg_ticket: unifiedCommentData.ticket_id,
-        },
-        select: {
-          remote_id: true,
-        },
+        where: { id_tcg_ticket: unifiedCommentData.ticket_id },
+        select: { remote_id: true },
       });
+
       const resp: ApiResponse<OriginalCommentOutput> = await service.addComment(
         desunifiedObject,
         linkedUserId,
         ticket.remote_id,
       );
 
-      //unify the data according to the target obj wanted
+      // Unify the data according to the target object wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalCommentOutput[]
       >({
@@ -161,121 +84,25 @@ export class CommentService {
         customFieldMappings: [],
       })) as UnifiedCommentOutput[];
 
-      // add the comment inside our db
+      // Add the comment inside our db
       const source_comment = resp.data;
       const target_comment = unifiedObject[0];
 
-      const existingComment = await this.prisma.tcg_comments.findFirst({
-        where: {
-          remote_id: target_comment.remote_id,
-          id_connection: connection_id,
-        },
-      });
-
-      let unique_ticketing_comment_id: string;
-      const opts =
-        target_comment.creator_type === 'CONTACT'
-          ? {
-              id_tcg_contact: unifiedCommentData.contact_id,
-            }
-          : target_comment.creator_type === 'USER'
-          ? {
-              id_tcg_user: unifiedCommentData.user_id,
-            }
-          : {}; //case where nothing is passed for creator or a not authorized value;
-
-      if (existingComment) {
-        // Update the existing comment
-        let data: any = {
-          id_tcg_ticket: unifiedCommentData.ticket_id,
-          modified_at: new Date(),
-        };
-        if (target_comment.body) {
-          data = { ...data, body: target_comment.body };
-        }
-        if (target_comment.html_body) {
-          data = { ...data, html_body: target_comment.html_body };
-        }
-        if (target_comment.is_private) {
-          data = { ...data, is_private: target_comment.is_private };
-        }
-        if (target_comment.creator_type) {
-          data = { ...data, creator_type: target_comment.creator_type };
-        }
-        data = { ...data, ...opts };
-
-        const res = await this.prisma.tcg_comments.update({
-          where: {
-            id_tcg_comment: existingComment.id_tcg_comment,
-          },
-          data: data,
-        });
-        unique_ticketing_comment_id = res.id_tcg_comment;
-      } else {
-        // Create a new comment
-        this.logger.log('comment not exists');
-        let data: any = {
-          id_tcg_comment: uuidv4(),
-          created_at: new Date(),
-          modified_at: new Date(),
-          id_tcg_ticket: unifiedCommentData.ticket_id,
-          remote_id: target_comment.remote_id,
-          id_connection: connection_id,
-        };
-
-        if (target_comment.body) {
-          data = { ...data, body: target_comment.body };
-        }
-        if (target_comment.html_body) {
-          data = { ...data, html_body: target_comment.html_body };
-        }
-        if (target_comment.is_private) {
-          data = { ...data, is_private: target_comment.is_private };
-        }
-        if (target_comment.creator_type) {
-          data = { ...data, creator_type: target_comment.creator_type };
-        }
-        data = { ...data, ...opts };
-
-        const res = await this.prisma.tcg_comments.create({
-          data: data,
-        });
-        unique_ticketing_comment_id = res.id_tcg_comment;
-      }
-
-      // update parent comment id on attachment objects
-
-      const uuids = unifiedCommentData.attachments as string[];
-
-      await Promise.all(
-        uuids.map(async (uuid) => {
-          const res = await this.prisma.tcg_attachments.update({
-            where: {
-              id_tcg_attachment: uuid,
-            },
-            data: {
-              id_tcg_comment: unique_ticketing_comment_id,
-            },
-          });
-        }),
+      const unique_ticketing_comment_id = await this.saveOrUpdateComment(
+        target_comment,
+        unifiedCommentData,
+        connection_id,
       );
-      //insert remote_data in db
-      await this.prisma.remote_data.upsert({
-        where: {
-          ressource_owner_id: unique_ticketing_comment_id,
-        },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_ticketing_comment_id,
-          format: 'json',
-          data: JSON.stringify(source_comment),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_comment),
-          created_at: new Date(),
-        },
-      });
+
+      await this.updateAttachmentParentId(
+        unifiedCommentData.attachments as string[],
+        unique_ticketing_comment_id,
+      );
+
+      await this.ingestService.processRemoteData(
+        unique_ticketing_comment_id,
+        source_comment,
+      );
 
       const result_comment = await this.getComment(
         unique_ticketing_comment_id,
@@ -285,12 +112,11 @@ export class CommentService {
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: status_resp,
-          type: 'ticketing.comment.push', //sync, push or pull
+          type: 'ticketing.comment.push', // sync, push or pull
           method: 'POST',
           url: '/ticketing/comments',
           provider: integrationId,
@@ -309,6 +135,146 @@ export class CommentService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async validateTicketId(ticketId?: string) {
+    if (ticketId) {
+      const ticket = await this.prisma.tcg_tickets.findUnique({
+        where: { id_tcg_ticket: ticketId },
+      });
+      if (!ticket)
+        throw new ReferenceError(
+          'You inserted a ticket_id which does not exist',
+        );
+    } else {
+      throw new ReferenceError(
+        'You must attach your comment to a ticket, specify a ticket_id',
+      );
+    }
+  }
+
+  async validateContactId(contactId?: string) {
+    if (contactId) {
+      const contact = await this.prisma.tcg_contacts.findUnique({
+        where: { id_tcg_contact: contactId },
+      });
+      if (!contact)
+        throw new ReferenceError(
+          'You inserted a contact_id which does not exist',
+        );
+    }
+  }
+
+  async validateUserId(userId?: string) {
+    if (userId) {
+      const user = await this.prisma.tcg_users.findUnique({
+        where: { id_tcg_user: userId },
+      });
+      if (!user)
+        throw new ReferenceError('You inserted a user_id which does not exist');
+    }
+  }
+
+  async processAttachments(
+    attachments: any[],
+    connection_id: string,
+    linkedUserId: string,
+    integrationId: string,
+  ): Promise<string[]> {
+    if (attachments && attachments.length > 0) {
+      if (typeof attachments[0] === 'string') {
+        await Promise.all(
+          attachments.map(async (uuid: string) => {
+            const attachment = await this.prisma.tcg_attachments.findUnique({
+              where: { id_tcg_attachment: uuid },
+            });
+            if (!attachment)
+              throw new ReferenceError(
+                'You inserted an attachment_id which does not exist',
+              );
+          }),
+        );
+        return attachments;
+      } else {
+        const attchms_res = await this.registry
+          .getService('ticketing', 'attachment')
+          .saveToDb(
+            connection_id,
+            linkedUserId,
+            attachments,
+            integrationId,
+            [],
+          );
+        return attchms_res.map((att) => att.id_tcg_attachment);
+      }
+    }
+    return [];
+  }
+
+  async saveOrUpdateComment(
+    comment: UnifiedCommentOutput,
+    unifiedCommentData: UnifiedCommentInput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingComment = await this.prisma.tcg_comments.findFirst({
+      where: { remote_id: comment.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      id_tcg_ticket: unifiedCommentData.ticket_id,
+      modified_at: new Date(),
+      body: comment.body,
+      html_body: comment.html_body,
+      is_private: comment.is_private,
+      creator_type: comment.creator_type,
+      ...this.getCommentCreatorOptions(comment, unifiedCommentData),
+    };
+
+    if (existingComment) {
+      const res = await this.prisma.tcg_comments.update({
+        where: { id_tcg_comment: existingComment.id_tcg_comment },
+        data: data,
+      });
+      return res.id_tcg_comment;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = comment.remote_id;
+      data.id_connection = connection_id;
+      data.id_tcg_comment = uuidv4();
+
+      const res = await this.prisma.tcg_comments.create({ data: data });
+      return res.id_tcg_comment;
+    }
+  }
+
+  getCommentCreatorOptions(
+    comment: UnifiedCommentOutput,
+    unifiedCommentData: UnifiedCommentInput,
+  ) {
+    return comment.creator_type === 'CONTACT'
+      ? { id_tcg_contact: unifiedCommentData.contact_id }
+      : comment.creator_type === 'USER'
+      ? { id_tcg_user: unifiedCommentData.user_id }
+      : {};
+  }
+
+  async updateAttachmentParentId(attachments: string[], commentId: string) {
+    await Promise.all(
+      attachments.map(async (uuid) => {
+        await this.prisma.tcg_attachments.update({
+          where: { id_tcg_attachment: uuid },
+          data: { id_tcg_comment: commentId },
+        });
+      }),
+    );
   }
 
   async getComment(
@@ -363,7 +329,7 @@ export class CommentService {
         body: comment.body,
         html_body: comment.html_body,
         is_private: comment.is_private,
-        creator_type: comment.creator_type as CommentCreatorType,
+        creator_type: comment.creator_type,
         ticket_id: comment.id_tcg_ticket,
         contact_id: comment.id_tcg_contact, // uuid of Contact object
         user_id: comment.id_tcg_user, // uuid of User object
@@ -494,7 +460,7 @@ export class CommentService {
             body: comment.body,
             html_body: comment.html_body,
             is_private: comment.is_private,
-            creator_type: comment.creator_type as CommentCreatorType,
+            creator_type: comment.creator_type,
             ticket_id: comment.id_tcg_ticket,
             contact_id: comment.id_tcg_contact, // uuid of Contact object
             user_id: comment.id_tcg_user, // uuid of User object

@@ -166,18 +166,4 @@ export class EngagementController {
       throw new Error(error);
     }
   }
-
-  @ApiOperation({
-    operationId: 'update',
-    summary: 'Update a Engagement',
-  })
-  @ApiCustomResponse(UnifiedEngagementOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  update(
-    @Query('id') id: string,
-    @Body() updateEngagementData: Partial<UnifiedEngagementInput>,
-  ) {
-    return this.engagementService.updateEngagement(id, updateEngagementData);
-  }
 }

@@ -158,12 +158,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
         activity: UnifiedActivityOutput,
         originId: string,
       ) => {
-        const existingActivity = await this.prisma.ats_activities.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        let existingActivity;
+        if (!originId) {
+          existingActivity = await this.prisma.ats_activities.findFirst({
+            where: {
+              subject: activity.subject,
+              id_ats_candidate: activity.candidate_id,
+              id_connection: connection_id,
+            },
+          });
+        } else {
+          existingActivity = await this.prisma.ats_activities.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
 
         const baseData: any = {
           id_candidate: id_candidate ?? null,
@@ -201,10 +212,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < activities.length; i++) {
         const activity = activities[i];
         const originId = activity.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateActivity(activity, originId);
         const activity_id = res.id_ats_activity;

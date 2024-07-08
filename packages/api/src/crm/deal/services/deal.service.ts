@@ -11,6 +11,7 @@ import { IDealService } from '../types';
 import { UnifiedDealInput, UnifiedDealOutput } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class DealService {
@@ -21,6 +22,7 @@ export class DealService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(DealService.name);
   }
@@ -33,44 +35,10 @@ export class DealService {
     remote_data?: boolean,
   ): Promise<UnifiedDealOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+      await this.validateStageId(unifiedDealData.stage_id);
+      await this.validateUserId(unifiedDealData.user_id);
 
-      //CHECKS
-      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
-
-      const stage = unifiedDealData.stage_id;
-      //check if contact_id and account_id refer to real uuids
-      if (stage) {
-        const search = await this.prisma.crm_deals_stages.findUnique({
-          where: {
-            id_crm_deals_stage: stage,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a stage_id which does not exist',
-          );
-      }
-
-      const user = unifiedDealData.user_id;
-      //check if contact_id and account_id refer to real uuids
-      if (user) {
-        const search = await this.prisma.crm_users.findUnique({
-          where: {
-            id_crm_user: user,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a user_id which does not exist',
-          );
-      }
-
-      //desunify the data according to the target obj wanted
       const desunifiedObject =
         await this.coreUnification.desunify<UnifiedDealInput>({
           sourceObject: unifiedDealData,
@@ -87,7 +55,6 @@ export class DealService {
         linkedUserId,
       );
 
-      //unify the data according to the target obj wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalDealOutput[]
       >({
@@ -99,105 +66,18 @@ export class DealService {
         customFieldMappings: [],
       })) as UnifiedDealOutput[];
 
-      // add the deal inside our db
       const source_deal = resp.data;
       const target_deal = unifiedObject[0];
 
-      const existingDeal = await this.prisma.crm_deals.findFirst({
-        where: {
-          remote_id: target_deal.remote_id,
-          id_connection: connection_id,
-        },
-      });
+      const unique_crm_deal_id = await this.saveOrUpdateDeal(
+        target_deal,
+        connection_id,
+      );
 
-      let unique_crm_deal_id: string;
-
-      if (existingDeal) {
-        // Update the existing deal
-        let data: any = {
-          amount: target_deal.amount,
-          modified_at: new Date(),
-        };
-        if (target_deal.name) {
-          data = { ...data, name: target_deal.name };
-        }
-        if (target_deal.description) {
-          data = { ...data, description: target_deal.description };
-        }
-        if (target_deal.amount) {
-          data = { ...data, amount: target_deal.amount };
-        }
-        if (target_deal.user_id) {
-          data = { ...data, id_crm_user: target_deal.user_id };
-        }
-        if (target_deal.stage_id) {
-          data = { ...data, id_crm_deals_stage: target_deal.stage_id };
-        }
-        if (target_deal.company_id) {
-          data = { ...data, id_crm_company: target_deal.company_id };
-        }
-
-        const res = await this.prisma.crm_deals.update({
-          where: {
-            id_crm_deal: existingDeal.id_crm_deal,
-          },
-          data: data,
-        });
-        unique_crm_deal_id = res.id_crm_deal;
-      } else {
-        // Create a new deal
-        this.logger.log('deal not exists');
-        let data: any = {
-          id_crm_deal: uuidv4(),
-          amount: target_deal.amount,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_deal.remote_id,
-          id_connection: connection_id,
-          description: '',
-        };
-
-        if (target_deal.name) {
-          data = { ...data, name: target_deal.name };
-        }
-        if (target_deal.description) {
-          data = { ...data, description: target_deal.description };
-        }
-        if (target_deal.amount) {
-          data = { ...data, amount: target_deal.amount };
-        }
-        if (target_deal.user_id) {
-          data = { ...data, id_crm_user: target_deal.user_id };
-        }
-        if (target_deal.stage_id) {
-          data = { ...data, id_crm_deals_stage: target_deal.stage_id };
-        }
-        if (target_deal.company_id) {
-          data = { ...data, id_crm_company: target_deal.company_id };
-        }
-        const res = await this.prisma.crm_deals.create({
-          data: data,
-        });
-        unique_crm_deal_id = res.id_crm_deal;
-      }
-
-      //insert remote_data in db
-      await this.prisma.remote_data.upsert({
-        where: {
-          ressource_owner_id: unique_crm_deal_id,
-        },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_crm_deal_id,
-          format: 'json',
-          data: JSON.stringify(source_deal),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_deal),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_crm_deal_id,
+        source_deal,
+      );
 
       const result_deal = await this.getDeal(
         unique_crm_deal_id,
@@ -207,12 +87,11 @@ export class DealService {
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: status_resp,
-          type: 'crm.deal.push', //sync, push or pull
+          type: 'crm.deal.push', // sync, push or pull
           method: 'POST',
           url: '/crm/deals',
           provider: integrationId,
@@ -221,15 +100,82 @@ export class DealService {
           id_linked_user: linkedUserId,
         },
       });
+
       await this.webhook.dispatchWebhook(
         result_deal,
         'crm.deal.created',
         linkedUser.id_project,
         event.id_event,
       );
+
       return result_deal;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async validateStageId(stageId?: string) {
+    if (stageId) {
+      const stage = await this.prisma.crm_deals_stages.findUnique({
+        where: { id_crm_deals_stage: stageId },
+      });
+      if (!stage)
+        throw new ReferenceError(
+          'You inserted a stage_id which does not exist',
+        );
+    }
+  }
+
+  async validateUserId(userId?: string) {
+    if (userId) {
+      const user = await this.prisma.crm_users.findUnique({
+        where: { id_crm_user: userId },
+      });
+      if (!user)
+        throw new ReferenceError('You inserted a user_id which does not exist');
+    }
+  }
+
+  async saveOrUpdateDeal(
+    deal: UnifiedDealOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingDeal = await this.prisma.crm_deals.findFirst({
+      where: { remote_id: deal.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      name: deal.name,
+      description: deal.description,
+      amount: deal.amount,
+      id_crm_user: deal.user_id,
+      id_crm_deals_stage: deal.stage_id,
+      id_crm_company: deal.company_id,
+      modified_at: new Date(),
+    };
+
+    if (existingDeal) {
+      const res = await this.prisma.crm_deals.update({
+        where: { id_crm_deal: existingDeal.id_crm_deal },
+        data: data,
+      });
+      return res.id_crm_deal;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = deal.remote_id;
+      data.id_connection = connection_id;
+      data.id_crm_deal = uuidv4();
+
+      const newDeal = await this.prisma.crm_deals.create({ data: data });
+      return newDeal.id_crm_deal;
     }
   }
 
@@ -457,12 +403,5 @@ export class DealService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async updateDeal(
-    id_dealing_deal: string,
-    data?: Partial<UnifiedDealInput>,
-  ): Promise<UnifiedDealOutput> {
-    return;
   }
 }

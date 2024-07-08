@@ -5,7 +5,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IActivityService extends IBaseObjectService {
-  addActivity(
+  addActivity?(
     activityData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalActivityOutput>>;

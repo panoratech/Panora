@@ -10,6 +10,8 @@ import { ITicketService } from '@ticketing/ticket/types';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { JiraTicketInput, JiraTicketOutput } from './types';
+import * as FormData from 'form-data';
+import * as fs from 'fs';
 
 @Injectable()
 export class JiraService implements ITicketService {
@@ -81,9 +83,9 @@ export class JiraService implements ITicketService {
         const formData = new FormData();
 
         uploads.forEach((fileStream, index) => {
-          //const stats = fs.statSync(fileStream);
-          //const fileSizeInBytes = stats.size;
-          formData.append('file', fileStream); //, { knownLength: fileSizeInBytes });
+          const stats = fs.statSync(fileStream);
+          const fileSizeInBytes = stats.size;
+          formData.append('file', fileStream, { knownLength: fileSizeInBytes });
         });
 
         // Send request with attachments

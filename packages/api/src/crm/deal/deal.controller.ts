@@ -162,18 +162,4 @@ export class DealController {
       throw new Error(error);
     }
   }
-
-  @ApiOperation({
-    operationId: 'update',
-    summary: 'Update a Deal',
-  })
-  @ApiCustomResponse(UnifiedDealOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateDealData: Partial<UnifiedDealInput>,
-  ) {
-    return this.dealService.updateDeal(id, updateDealData);
-  }
 }

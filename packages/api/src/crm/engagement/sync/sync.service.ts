@@ -155,12 +155,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
         engagement: UnifiedEngagementOutput,
         originId: string,
       ) => {
-        const existingEngagement = await this.prisma.crm_engagements.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        let existingEngagement;
+        if (!originId) {
+          existingEngagement = await this.prisma.crm_engagements.findFirst({
+            where: {
+              content: engagement.content,
+              id_connection: connection_id,
+            },
+          });
+        } else {
+          existingEngagement = await this.prisma.crm_engagements.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
 
         const baseData: any = {
           content: engagement.content ?? null,
@@ -197,10 +207,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < data.length; i++) {
         const engagement = data[i];
         const originId = engagement.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateEngagement(engagement, originId);
         const engagement_id = res.id_crm_engagement;

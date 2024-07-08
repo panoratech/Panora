@@ -11,6 +11,7 @@ import { EnvironmentService } from '@@core/@core-services/environment/environmen
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskTicketInput, ZendeskTicketOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class ZendeskService implements ITicketService {
@@ -20,6 +21,7 @@ export class ZendeskService implements ITicketService {
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + ZendeskService.name,
@@ -63,7 +65,7 @@ export class ZendeskService implements ITicketService {
 
             const resp = await axios.get(url, {
               headers: {
-                'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
+                'Content-Type': this.utils.getMimeType(res.file_name),
                 Authorization: `Bearer ${this.cryptoService.decrypt(
                   connection.access_token,
                 )}`,

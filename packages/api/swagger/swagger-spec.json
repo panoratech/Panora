@@ -1855,51 +1855,6 @@
             "JWT": []
           }
         ]
-      },
-      "patch": {
-        "operationId": "update",
-        "summary": "Update a Deal",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedDealOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "crm/deals"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
       }
     },
     "/crm/engagements": {
@@ -2039,51 +1994,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnifiedEngagementOutput"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "crm/engagements"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "patch": {
-        "operationId": "update",
-        "summary": "Update a Engagement",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedEngagementOutput"
-                        }
-                      }
-                    }
-                  ]
                 }
               }
             }
@@ -2665,51 +2575,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnifiedTaskOutput"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "crm/tasks"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "patch": {
-        "operationId": "update",
-        "summary": "Update a Task",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedTaskOutput"
-                        }
-                      }
-                    }
-                  ]
                 }
               }
             }
@@ -16638,7 +16503,7 @@
             }
           },
           "urls": {
-            "description": "The urls of the candidate",
+            "description": "The urls of the candidate, possible values for Url type are WEBSITE, BLOG, LINKEDIN, GITHUB, or OTHER",
             "type": "array",
             "items": {
               "type": "array"
@@ -16758,7 +16623,7 @@
             }
           },
           "urls": {
-            "description": "The urls of the candidate",
+            "description": "The urls of the candidate, possible values for Url type are WEBSITE, BLOG, LINKEDIN, GITHUB, or OTHER",
             "type": "array",
             "items": {
               "type": "array"

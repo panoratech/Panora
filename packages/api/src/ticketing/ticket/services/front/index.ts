@@ -10,6 +10,7 @@ import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
 import { Utils } from '@ticketing/@lib/@utils';
 import { SyncParam } from '@@core/utils/types/interface';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class FrontService implements ITicketService {
@@ -70,7 +71,7 @@ export class FrontService implements ITicketService {
       if (uploads.length > 0) {
         const dataBody = {
           ...restOfTicketData,
-          comment: { ...restOfTicketData.comment, attachments: uploads },
+          comment: { ...restOfTicketData.comment },
         };
         const formData = new FormData();
 
@@ -143,9 +144,6 @@ export class FrontService implements ITicketService {
           },
         );
       }
-
-      //now we can insert
-
       return {
         data: resp.data,
         message: 'Front ticket created',
@@ -153,13 +151,6 @@ export class FrontService implements ITicketService {
       };
     } catch (error) {
       throw error;
-      /*handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );*/
     }
   }
 
@@ -191,13 +182,6 @@ export class FrontService implements ITicketService {
       };
     } catch (error) {
       throw error;
-      /*handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );*/
     }
   }
 }

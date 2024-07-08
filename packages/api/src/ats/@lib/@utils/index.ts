@@ -41,6 +41,67 @@ export class Utils {
     }
   }
 
+  async getCandidateRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.ats_candidates.findUnique({
+        where: {
+          id_ats_candidate: uuid,
+        },
+      });
+      if (!res) {
+        return undefined;
+      }
+      return res.remote_id;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getUserRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.ats_users.findUnique({
+        where: {
+          id_ats_user: uuid,
+        },
+      });
+      if (!res) {
+        return undefined;
+      }
+      return res.remote_id;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getInterviewStageRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.ats_job_interview_stages.findUnique({
+        where: {
+          id_ats_job_interview_stage: uuid,
+        },
+      });
+      if (!res) {
+        return undefined;
+      }
+      return res.remote_id;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getJobRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.ats_jobs.findUnique({
+        where: {
+          id_ats_job: uuid,
+        },
+      });
+      if (!res) {
+        return undefined;
+      }
+      return res.remote_id;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getRejectReasonUuidFromRemoteId(
     remote_id: string,
     connection_id: string,

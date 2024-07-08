@@ -130,12 +130,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
         scoreCard: UnifiedScoreCardOutput,
         originId: string,
       ) => {
-        const existingScoreCard = await this.prisma.ats_scorecards.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        let existingScoreCard;
+        if (!originId) {
+          existingScoreCard = await this.prisma.ats_scorecards.findFirst({
+            where: {
+              overall_recommendation: scoreCard.overall_recommendation,
+              id_ats_application: scoreCard.application_id,
+              id_connection: connection_id,
+            },
+          });
+        } else {
+          existingScoreCard = await this.prisma.ats_scorecards.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
 
         const baseData: any = {
           overall_recommendation: scoreCard.overall_recommendation ?? null,
@@ -169,10 +180,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < scoreCards.length; i++) {
         const scoreCard = scoreCards[i];
         const originId = scoreCard.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateScoreCard(scoreCard, originId);
         const score_card_id = res.id_ats_scorecard;

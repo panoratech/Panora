@@ -26,12 +26,6 @@ export class AshbyService implements IActivityService {
     );
     this.registry.registerService('ashby', this);
   }
-  addActivity(
-    activityData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalActivityOutput>> {
-    throw new Error('Method not implemented.');
-  }
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyActivityOutput[]>> {
     try {

@@ -101,10 +101,6 @@ export class SyncService implements IBaseSync {
         const attachment = data[i];
         const originId = attachment.remote_id;
 
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
         const res = await updateOrCreateAttachment(
           attachment,
           originId,

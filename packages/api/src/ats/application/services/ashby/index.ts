@@ -26,11 +26,46 @@ export class AshbyService implements IApplicationService {
     );
     this.registry.registerService('ashby', this);
   }
-  addApplication(
-    applicationData: DesunifyReturnType,
+
+  async addApplication(
+    applicationData: AshbyApplicationInput,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalApplicationOutput>> {
-    throw new Error('Method not implemented.');
+  ): Promise<ApiResponse<AshbyApplicationOutput>> {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'ashby',
+          vertical: 'ats',
+        },
+      });
+      const resp = await axios.post(
+        `${connection.account_url}/application.create`,
+        JSON.stringify(applicationData),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+
+      return {
+        data: resp.data.results,
+        message: 'Ashby application created',
+        statusCode: 201,
+      };
+    } catch (error) {
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'ashby',
+        AtsObject.application,
+        ActionType.POST,
+      );
+    }
   }
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyApplicationOutput[]>> {

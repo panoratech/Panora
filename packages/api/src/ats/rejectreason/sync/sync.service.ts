@@ -129,13 +129,26 @@ export class SyncService implements OnModuleInit, IBaseSync {
         rejectReason: UnifiedRejectReasonOutput,
         originId: string,
       ) => {
-        const existingRejectReason =
-          await this.prisma.ats_reject_reasons.findFirst({
-            where: {
-              remote_id: originId,
-              id_connection: connection_id,
+        let existingRejectReason;
+        if (!originId) {
+          existingRejectReason = await this.prisma.ats_reject_reasons.findFirst(
+            {
+              where: {
+                name: rejectReason.name,
+                id_connection: connection_id,
+              },
             },
-          });
+          );
+        } else {
+          existingRejectReason = await this.prisma.ats_reject_reasons.findFirst(
+            {
+              where: {
+                remote_id: originId,
+                id_connection: connection_id,
+              },
+            },
+          );
+        }
 
         const baseData: any = {
           name: rejectReason.name ?? null,
@@ -165,10 +178,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < rejectReasons.length; i++) {
         const rejectReason = rejectReasons[i];
         const originId = rejectReason.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateRejectReason(rejectReason, originId);
         const reject_reason_id = res.id_ats_reject_reason;

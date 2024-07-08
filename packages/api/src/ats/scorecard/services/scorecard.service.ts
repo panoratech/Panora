@@ -57,8 +57,7 @@ export class ScoreCardService {
       // Transform to UnifiedScoreCardOutput format
       const unifiedScoreCard: UnifiedScoreCardOutput = {
         id: scorecard.id_ats_scorecard,
-        overall_recommendation:
-          scorecard.overall_recommendation as ScoreCardRecommendation,
+        overall_recommendation: scorecard.overall_recommendation,
         application_id: scorecard.id_ats_application,
         interview_id: scorecard.id_ats_interview,
         remote_created_at: String(scorecard.remote_created_at),
@@ -189,8 +188,7 @@ export class ScoreCardService {
           // Transform to UnifiedScoreCardOutput format
           return {
             id: scorecard.id_ats_scorecard,
-            overall_recommendation:
-              scorecard.overall_recommendation as ScoreCardRecommendation,
+            overall_recommendation: scorecard.overall_recommendation,
             application_id: scorecard.id_ats_application,
             interview_id: scorecard.id_ats_interview,
             remote_created_at: String(scorecard.remote_created_at),

@@ -11,6 +11,8 @@ import { JiraCommentInput, JiraCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
 import { Utils } from '@ticketing/@lib/@utils';
 import { SyncParam } from '@@core/utils/types/interface';
+import * as FormData from 'form-data';
+import * as fs from 'fs';
 
 @Injectable()
 export class JiraService implements ICommentService {
@@ -84,9 +86,9 @@ export class JiraService implements ICommentService {
         const formData = new FormData();
 
         uploads.forEach((fileStream, index) => {
-          //const stats = fs.statSync(fileStream);
-          //const fileSizeInBytes = stats.size;
-          formData.append('file', fileStream); //, { knownLength: fileSizeInBytes });
+          const stats = fs.statSync(fileStream);
+          const fileSizeInBytes = stats.size;
+          formData.append('file', fileStream, { knownLength: fileSizeInBytes });
         });
 
         // Send request with attachments

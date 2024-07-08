@@ -182,5 +182,5 @@ export class Phone {
 
 export class Url {
   url: string;
-  url_type: string;
+  url_type: 'WEBSITE' | 'BLOG' | 'LINKEDIN' | 'GITHUB' | 'OTHER' | string;
 }

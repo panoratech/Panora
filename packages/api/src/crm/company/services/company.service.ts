@@ -15,7 +15,7 @@ import {
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Injectable()
 export class CompanyService {
   constructor(
@@ -26,6 +26,7 @@ export class CompanyService {
     private serviceRegistry: ServiceRegistry,
     private utils: Utils,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(CompanyService.name);
   }
@@ -38,30 +39,9 @@ export class CompanyService {
     remote_data?: boolean,
   ): Promise<UnifiedCompanyOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+      await this.validateUserId(unifiedCompanyData.user_id);
 
-      //CHECKS
-      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
-
-      const user = unifiedCompanyData.user_id;
-      //check if user_id refer to real uuids
-      if (user) {
-        const search = await this.prisma.crm_users.findUnique({
-          where: {
-            id_crm_user: user,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a user_id which does not exist',
-          );
-      }
-
-      //desunify the data according to the target obj wanted
       const desunifiedObject =
         await this.coreUnification.desunify<UnifiedCompanyInput>({
           sourceObject: unifiedCompanyData,
@@ -73,13 +53,11 @@ export class CompanyService {
 
       const service: ICompanyService =
         this.serviceRegistry.getService(integrationId);
-
       const resp: ApiResponse<OriginalCompanyOutput> = await service.addCompany(
         desunifiedObject,
         linkedUserId,
       );
 
-      //unify the data according to the target obj wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalCompanyOutput[]
       >({
@@ -91,229 +69,18 @@ export class CompanyService {
         customFieldMappings: [],
       })) as UnifiedCompanyOutput[];
 
-      // add the company inside our db
       const source_company = resp.data;
       const target_company = unifiedObject[0];
 
-      const existingCompany = await this.prisma.crm_companies.findFirst({
-        where: {
-          remote_id: target_company.remote_id,
-          id_connection: connection_id,
-        },
-        include: {
-          crm_email_addresses: true,
-          crm_phone_numbers: true,
-          crm_addresses: true,
-        },
-      });
-
-      const { normalizedEmails, normalizedPhones } =
-        this.utils.normalizeEmailsAndNumbers(
-          target_company.email_addresses,
-          target_company.phone_numbers,
-        );
-
-      const normalizedAddresses = this.utils.normalizeAddresses(
-        target_company.addresses,
+      const unique_crm_company_id = await this.saveOrUpdateCompany(
+        target_company,
+        connection_id,
       );
 
-      let unique_crm_company_id: string;
-
-      if (existingCompany) {
-        // Update the existing company
-        let data: any = {
-          modified_at: new Date(),
-        };
-        if (target_company.name) {
-          data = { ...data, name: target_company.name };
-        }
-        if (target_company.industry) {
-          data = { ...data, industry: target_company.industry };
-        }
-        if (target_company.number_of_employees) {
-          data = {
-            ...data,
-            number_of_employees: target_company.number_of_employees,
-          };
-        }
-        if (target_company.user_id) {
-          data = { ...data, id_crm_user: target_company.user_id };
-        }
-
-        const res = await this.prisma.crm_companies.update({
-          where: {
-            id_crm_company: existingCompany.id_crm_company,
-          },
-          data: data,
-        });
-
-        this.logger.log(
-          'NORMALIZED EMAILS ARE => ' + JSON.stringify(normalizedEmails),
-        );
-
-        if (normalizedEmails && normalizedEmails.length > 0) {
-          await Promise.all(
-            normalizedEmails.map((email, index) => {
-              if (
-                existingCompany &&
-                existingCompany.crm_email_addresses[index]
-              ) {
-                return this.prisma.crm_email_addresses.update({
-                  where: {
-                    id_crm_email:
-                      existingCompany.crm_email_addresses[index].id_crm_email,
-                  },
-                  data: email,
-                });
-              } else {
-                return this.prisma.crm_email_addresses.create({
-                  data: {
-                    ...email,
-                    id_crm_company: existingCompany.id_crm_company, // Assuming 'uuid' is the ID of the related contact
-                  },
-                });
-              }
-            }),
-          );
-        }
-        if (normalizedPhones && normalizedPhones.length > 0) {
-          await Promise.all(
-            normalizedPhones.map((phone, index) => {
-              if (existingCompany && existingCompany.crm_phone_numbers[index]) {
-                return this.prisma.crm_phone_numbers.update({
-                  where: {
-                    id_crm_phone_number:
-                      existingCompany.crm_phone_numbers[index]
-                        .id_crm_phone_number,
-                  },
-                  data: phone,
-                });
-              } else {
-                return this.prisma.crm_phone_numbers.create({
-                  data: {
-                    ...phone,
-                    id_crm_company: existingCompany.id_crm_company, // Assuming 'uuid' is the ID of the related contact
-                  },
-                });
-              }
-            }),
-          );
-        }
-        if (normalizedAddresses && normalizedAddresses.length > 0) {
-          await Promise.all(
-            normalizedAddresses.map((addy, index) => {
-              if (existingCompany && existingCompany.crm_addresses[index]) {
-                return this.prisma.crm_addresses.update({
-                  where: {
-                    id_crm_address:
-                      existingCompany.crm_addresses[index].id_crm_address,
-                  },
-                  data: addy,
-                });
-              } else {
-                return this.prisma.crm_addresses.create({
-                  data: {
-                    ...addy,
-                    id_crm_company: existingCompany.id_crm_company, // Assuming 'uuid' is the ID of the related contact
-                    id_connection: connection_id,
-                  },
-                });
-              }
-            }),
-          );
-        }
-        unique_crm_company_id = res.id_crm_company;
-      } else {
-        // Create a new company
-        // this.logger.log('company not exists');
-        const uuid = uuidv4();
-        let data: any = {
-          id_crm_company: uuid,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_company.remote_id,
-          id_connection: connection_id,
-        };
-
-        if (target_company.name) {
-          data = { ...data, name: target_company.name };
-        }
-        if (target_company.industry) {
-          data = { ...data, industry: target_company.industry };
-        }
-        if (target_company.number_of_employees) {
-          data = {
-            ...data,
-            number_of_employees: target_company.number_of_employees,
-          };
-        }
-        if (target_company.user_id) {
-          data = { ...data, id_crm_user: target_company.user_id };
-        }
-
-        const newCompany = await this.prisma.crm_companies.create({
-          data: data,
-        });
-
-        if (normalizedEmails && normalizedEmails.length > 0) {
-          await Promise.all(
-            normalizedEmails.map((email) =>
-              this.prisma.crm_email_addresses.create({
-                data: {
-                  ...email,
-                  id_crm_company: newCompany.id_crm_company,
-                },
-              }),
-            ),
-          );
-        }
-
-        if (normalizedPhones && normalizedPhones.length > 0) {
-          await Promise.all(
-            normalizedPhones.map((phone) =>
-              this.prisma.crm_phone_numbers.create({
-                data: {
-                  ...phone,
-                  id_crm_company: newCompany.id_crm_company,
-                },
-              }),
-            ),
-          );
-        }
-
-        if (normalizedAddresses && normalizedAddresses.length > 0) {
-          await Promise.all(
-            normalizedAddresses.map((addy) =>
-              this.prisma.crm_addresses.create({
-                data: {
-                  ...addy,
-                  id_crm_company: newCompany.id_crm_company,
-                  id_connection: connection_id,
-                },
-              }),
-            ),
-          );
-        }
-        unique_crm_company_id = newCompany.id_crm_company;
-      }
-
-      //insert remote_data in db
-      await this.prisma.remote_data.upsert({
-        where: {
-          ressource_owner_id: unique_crm_company_id,
-        },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_crm_company_id,
-          format: 'json',
-          data: JSON.stringify(source_company),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_company),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_crm_company_id,
+        source_company,
+      );
 
       const result_company = await this.getCompany(
         unique_crm_company_id,
@@ -323,12 +90,11 @@ export class CompanyService {
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: status_resp,
-          type: 'crm.company.push', //sync, push or pull
+          type: 'crm.company.push',
           method: 'POST',
           url: '/crm/companies',
           provider: integrationId,
@@ -344,9 +110,222 @@ export class CompanyService {
         linkedUser.id_project,
         event.id_event,
       );
+
       return result_company;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async validateUserId(userId?: string) {
+    if (userId) {
+      const user = await this.prisma.crm_users.findUnique({
+        where: { id_crm_user: userId },
+      });
+      if (!user)
+        throw new ReferenceError('You inserted a user_id which does not exist');
+    }
+  }
+
+  async saveOrUpdateCompany(
+    company: UnifiedCompanyOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingCompany = await this.prisma.crm_companies.findFirst({
+      where: { remote_id: company.remote_id, id_connection: connection_id },
+      include: {
+        crm_email_addresses: true,
+        crm_phone_numbers: true,
+        crm_addresses: true,
+      },
+    });
+
+    const { normalizedEmails, normalizedPhones } =
+      this.utils.normalizeEmailsAndNumbers(
+        company.email_addresses,
+        company.phone_numbers,
+      );
+
+    const normalizedAddresses = this.utils.normalizeAddresses(
+      company.addresses,
+    );
+
+    const data: any = {
+      name: company.name,
+      industry: company.industry,
+      number_of_employees: company.number_of_employees,
+      id_crm_user: company.user_id,
+      modified_at: new Date(),
+    };
+
+    if (existingCompany) {
+      const res = await this.prisma.crm_companies.update({
+        where: { id_crm_company: existingCompany.id_crm_company },
+        data: data,
+      });
+
+      await this.updateRelatedEntities(
+        normalizedEmails,
+        normalizedPhones,
+        normalizedAddresses,
+        existingCompany.id_crm_company,
+        connection_id,
+        existingCompany,
+      );
+
+      return res.id_crm_company;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = company.remote_id;
+      data.id_connection = connection_id;
+      data.id_crm_company = uuidv4();
+
+      const newCompany = await this.prisma.crm_companies.create({ data: data });
+
+      await this.createRelatedEntities(
+        normalizedEmails,
+        normalizedPhones,
+        normalizedAddresses,
+        newCompany.id_crm_company,
+        connection_id,
+      );
+
+      return newCompany.id_crm_company;
+    }
+  }
+
+  async updateRelatedEntities(
+    normalizedEmails: any[],
+    normalizedPhones: any[],
+    normalizedAddresses: any[],
+    companyId: string,
+    connectionId: string,
+    existingCompany: any,
+  ) {
+    if (normalizedEmails && normalizedEmails.length > 0) {
+      await Promise.all(
+        normalizedEmails.map((email, index) => {
+          if (existingCompany.crm_email_addresses[index]) {
+            return this.prisma.crm_email_addresses.update({
+              where: {
+                id_crm_email:
+                  existingCompany.crm_email_addresses[index].id_crm_email,
+              },
+              data: email,
+            });
+          } else {
+            return this.prisma.crm_email_addresses.create({
+              data: {
+                ...email,
+                id_crm_company: companyId,
+              },
+            });
+          }
+        }),
+      );
+    }
+
+    if (normalizedPhones && normalizedPhones.length > 0) {
+      await Promise.all(
+        normalizedPhones.map((phone, index) => {
+          if (existingCompany.crm_phone_numbers[index]) {
+            return this.prisma.crm_phone_numbers.update({
+              where: {
+                id_crm_phone_number:
+                  existingCompany.crm_phone_numbers[index].id_crm_phone_number,
+              },
+              data: phone,
+            });
+          } else {
+            return this.prisma.crm_phone_numbers.create({
+              data: {
+                ...phone,
+                id_crm_company: companyId,
+              },
+            });
+          }
+        }),
+      );
+    }
+
+    if (normalizedAddresses && normalizedAddresses.length > 0) {
+      await Promise.all(
+        normalizedAddresses.map((addy, index) => {
+          if (existingCompany.crm_addresses[index]) {
+            return this.prisma.crm_addresses.update({
+              where: {
+                id_crm_address:
+                  existingCompany.crm_addresses[index].id_crm_address,
+              },
+              data: addy,
+            });
+          } else {
+            return this.prisma.crm_addresses.create({
+              data: {
+                ...addy,
+                id_crm_company: companyId,
+                id_connection: connectionId,
+              },
+            });
+          }
+        }),
+      );
+    }
+  }
+
+  async createRelatedEntities(
+    normalizedEmails: any[],
+    normalizedPhones: any[],
+    normalizedAddresses: any[],
+    companyId: string,
+    connectionId: string,
+  ) {
+    if (normalizedEmails && normalizedEmails.length > 0) {
+      await Promise.all(
+        normalizedEmails.map((email) =>
+          this.prisma.crm_email_addresses.create({
+            data: {
+              ...email,
+              id_crm_company: companyId,
+            },
+          }),
+        ),
+      );
+    }
+
+    if (normalizedPhones && normalizedPhones.length > 0) {
+      await Promise.all(
+        normalizedPhones.map((phone) =>
+          this.prisma.crm_phone_numbers.create({
+            data: {
+              ...phone,
+              id_crm_company: companyId,
+            },
+          }),
+        ),
+      );
+    }
+
+    if (normalizedAddresses && normalizedAddresses.length > 0) {
+      await Promise.all(
+        normalizedAddresses.map((addy) =>
+          this.prisma.crm_addresses.create({
+            data: {
+              ...addy,
+              id_crm_company: companyId,
+              id_connection: connectionId,
+            },
+          }),
+        ),
+      );
     }
   }
 
@@ -395,7 +374,7 @@ export class CompanyService {
       const unifiedCompany: UnifiedCompanyOutput = {
         id: company.id_crm_company,
         name: company.name,
-        industry: company.industry as Industry,
+        industry: company.industry,
         number_of_employees: Number(company.number_of_employees),
         user_id: company.id_crm_user, // uuid of User object
         field_mappings: field_mappings,
@@ -541,7 +520,7 @@ export class CompanyService {
           return {
             id: company.id_crm_company,
             name: company.name,
-            industry: company.industry as Industry,
+            industry: company.industry,
             number_of_employees: Number(company.number_of_employees),
             user_id: company.id_crm_user, // uuid of User object
             field_mappings: field_mappings,

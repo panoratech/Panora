@@ -12,6 +12,7 @@ import { ServiceRegistry } from '../registry.service';
 import { ZendeskCommentInput, ZendeskCommentOutput } from './types';
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { SyncParam } from '@@core/utils/types/interface';
+import { Utils } from '@ticketing/@lib/@utils';
 @Injectable()
 export class ZendeskService implements ICommentService {
   constructor(
@@ -20,6 +21,7 @@ export class ZendeskService implements ICommentService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.comment.toUpperCase() + ':' + ZendeskService.name,
@@ -73,7 +75,7 @@ export class ZendeskService implements ICommentService {
 
             const resp = await axios.get(url, {
               headers: {
-                'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
+                'Content-Type': this.utils.getMimeType(res.file_name),
                 Authorization: `Bearer ${this.cryptoService.decrypt(
                   connection.access_token,
                 )}`,

@@ -127,12 +127,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
         office: UnifiedOfficeOutput,
         originId: string,
       ) => {
-        const existingOffice = await this.prisma.ats_offices.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        let existingOffice;
+        if (!originId) {
+          existingOffice = await this.prisma.ats_offices.findFirst({
+            where: {
+              name: office.name,
+              id_connection: connection_id,
+            },
+          });
+        } else {
+          existingOffice = await this.prisma.ats_offices.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
 
         const baseData: any = {
           name: office.name ?? null,
@@ -163,10 +173,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < offices.length; i++) {
         const office = offices[i];
         const originId = office.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateOffice(office, originId);
         const office_id = res.id_ats_office;

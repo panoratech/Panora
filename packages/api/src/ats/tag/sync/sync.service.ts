@@ -126,12 +126,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
         tag: UnifiedTagOutput,
         originId: string,
       ) => {
-        const existingTag = await this.prisma.ats_candidate_tags.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        let existingTag;
+        if (!originId) {
+          existingTag = await this.prisma.ats_candidate_tags.findFirst({
+            where: {
+              name: tag.name,
+              id_connection: connection_id,
+            },
+          });
+        } else {
+          existingTag = await this.prisma.ats_candidate_tags.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
 
         const baseData: any = {
           name: tag.name ?? null,
@@ -161,10 +171,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < tags.length; i++) {
         const tag = tags[i];
         const originId = tag.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateTag(tag, originId);
         const tag_id = res.id_ats_candidate_tag;

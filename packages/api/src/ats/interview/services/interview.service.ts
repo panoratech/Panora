@@ -16,6 +16,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class InterviewService {
@@ -26,6 +27,7 @@ export class InterviewService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(InterviewService.name);
   }
@@ -38,11 +40,7 @@ export class InterviewService {
     remote_data?: boolean,
   ): Promise<UnifiedInterviewOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
 
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
@@ -84,127 +82,22 @@ export class InterviewService {
       const source_interview = resp.data;
       const target_interview = unifiedObject[0];
 
-      const existingInterview = await this.prisma.ats_interviews.findFirst({
-        where: {
-          remote_id: target_interview.remote_id,
-          id_connection: connection_id,
-        },
-      });
+      const unique_ats_interview_id = await this.saveOrUpdateInterview(
+        target_interview,
+        connection_id,
+      );
 
-      let unique_ats_interview_id: string;
+      await this.ingestService.processFieldMappings(
+        target_interview.field_mappings,
+        unique_ats_interview_id,
+        integrationId,
+        linkedUserId,
+      );
 
-      if (existingInterview) {
-        const data: any = {
-          status: target_interview.status,
-          application_id: target_interview.application_id,
-          job_interview_stage_id: target_interview.job_interview_stage_id,
-          organized_by: target_interview.organized_by,
-          interviewers: target_interview.interviewers,
-          location: target_interview.location,
-          start_at: target_interview.start_at,
-          end_at: target_interview.end_at,
-          remote_created_at: target_interview.remote_created_at,
-          remote_updated_at: target_interview.remote_updated_at,
-          modified_at: new Date(),
-        };
-
-        const res = await this.prisma.ats_interviews.update({
-          where: {
-            id_ats_interview: existingInterview.id_ats_interview,
-          },
-          data: data,
-        });
-
-        unique_ats_interview_id = res.id_ats_interview;
-      } else {
-        const data: any = {
-          id_ats_interview: uuidv4(),
-          status: target_interview.status,
-          application_id: target_interview.application_id,
-          job_interview_stage_id: target_interview.job_interview_stage_id,
-          organized_by: target_interview.organized_by,
-          interviewers: target_interview.interviewers,
-          location: target_interview.location,
-          start_at: target_interview.start_at,
-          end_at: target_interview.end_at,
-          remote_created_at: target_interview.remote_created_at,
-          remote_updated_at: target_interview.remote_updated_at,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_interview.remote_id,
-          id_connection: connection_id,
-        };
-
-        const newInterview = await this.prisma.ats_interviews.create({
-          data: data,
-        });
-
-        unique_ats_interview_id = newInterview.id_ats_interview;
-      }
-
-      if (
-        target_interview.field_mappings &&
-        target_interview.field_mappings.length > 0
-      ) {
-        const entity = await this.prisma.entity.create({
-          data: {
-            id_entity: uuidv4(),
-            ressource_owner_id: unique_ats_interview_id,
-            created_at: new Date(),
-            modified_at: new Date(),
-          },
-        });
-
-        for (const [slug, value] of Object.entries(
-          target_interview.field_mappings,
-        )) {
-          const attribute = await this.prisma.attribute.findFirst({
-            where: {
-              slug: slug,
-              source: integrationId,
-              id_consumer: linkedUserId,
-            },
-          });
-
-          if (attribute) {
-            await this.prisma.value.create({
-              data: {
-                id_value: uuidv4(),
-                data: value || 'null',
-                attribute: {
-                  connect: {
-                    id_attribute: attribute.id_attribute,
-                  },
-                },
-                created_at: new Date(),
-                modified_at: new Date(),
-                entity: {
-                  connect: {
-                    id_entity: entity.id_entity,
-                  },
-                },
-              },
-            });
-          }
-        }
-      }
-
-      await this.prisma.remote_data.upsert({
-        where: {
-          ressource_owner_id: unique_ats_interview_id,
-        },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_ats_interview_id,
-          format: 'json',
-          data: JSON.stringify(source_interview),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_interview),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_ats_interview_id,
+        source_interview,
+      );
 
       const result_interview = await this.getInterview(
         unique_ats_interview_id,
@@ -236,6 +129,55 @@ export class InterviewService {
       return result_interview;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async saveOrUpdateInterview(
+    interview: UnifiedInterviewOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingInterview = await this.prisma.ats_interviews.findFirst({
+      where: { remote_id: interview.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      status: interview.status,
+      application_id: interview.application_id,
+      job_interview_stage_id: interview.job_interview_stage_id,
+      organized_by: interview.organized_by,
+      interviewers: interview.interviewers,
+      location: interview.location,
+      start_at: interview.start_at,
+      end_at: interview.end_at,
+      remote_created_at: interview.remote_created_at,
+      remote_updated_at: interview.remote_updated_at,
+      modified_at: new Date(),
+    };
+
+    if (existingInterview) {
+      const res = await this.prisma.ats_interviews.update({
+        where: { id_ats_interview: existingInterview.id_ats_interview },
+        data: data,
+      });
+      return res.id_ats_interview;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = interview.remote_id;
+      data.id_connection = connection_id;
+      data.id_ats_interview = uuidv4();
+
+      const newInterview = await this.prisma.ats_interviews.create({
+        data: data,
+      });
+      return newInterview.id_ats_interview;
     }
   }
 
@@ -279,7 +221,7 @@ export class InterviewService {
       // Transform to UnifiedInterviewOutput format
       const unifiedInterview: UnifiedInterviewOutput = {
         id: interview.id_ats_interview,
-        status: interview.status as InterviewStatus,
+        status: interview.status,
         application_id: interview.id_ats_application,
         job_interview_stage_id: interview.id_ats_job_interview_stage,
         organized_by: interview.organized_by,
@@ -415,7 +357,7 @@ export class InterviewService {
           // Transform to UnifiedInterviewOutput format
           return {
             id: interview.id_ats_interview,
-            status: interview.status as InterviewStatus,
+            status: interview.status,
             application_id: interview.id_ats_application,
             job_interview_stage_id: interview.id_ats_job_interview_stage,
             organized_by: interview.organized_by,
@@ -472,14 +414,5 @@ export class InterviewService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async updateInterview(
-    id: string,
-    updateInterviewData: Partial<UnifiedInterviewInput>,
-  ): Promise<UnifiedInterviewOutput> {
-    try {
-    } catch (error) {}
-    return;
   }
 }

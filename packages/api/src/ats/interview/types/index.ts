@@ -5,7 +5,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IInterviewService extends IBaseObjectService {
-  addInterview(
+  addInterview?(
     interviewData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalInterviewOutput>>;

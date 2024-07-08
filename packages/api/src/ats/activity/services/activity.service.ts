@@ -16,7 +16,7 @@ import {
   UnifiedActivityOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
-
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Injectable()
 export class ActivityService {
   constructor(
@@ -26,6 +26,7 @@ export class ActivityService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(ActivityService.name);
   }
@@ -38,9 +39,7 @@ export class ActivityService {
     remote_data?: boolean,
   ): Promise<UnifiedActivityOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: { id_linked_user: linkedUserId },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
 
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
@@ -80,118 +79,22 @@ export class ActivityService {
       const source_activity = resp.data;
       const target_activity = unifiedObject[0];
 
-      const existingActivity = await this.prisma.ats_activities.findFirst({
-        where: {
-          remote_id: target_activity.remote_id,
-          id_connection: connection_id,
-        },
-      });
+      const unique_ats_activity_id = await this.saveOrUpdateActivity(
+        target_activity,
+        connection_id,
+      );
 
-      let unique_ats_activity_id: string;
+      await this.ingestService.processFieldMappings(
+        target_activity.field_mappings,
+        unique_ats_activity_id,
+        integrationId,
+        linkedUserId,
+      );
 
-      if (existingActivity) {
-        const data: any = {
-          activity_type: target_activity.activity_type,
-          subject: target_activity.subject,
-          body: target_activity.body,
-          visibility: target_activity.visibility,
-          remote_created_at: target_activity.remote_created_at,
-          modified_at: new Date(),
-        };
-
-        const res = await this.prisma.ats_activities.update({
-          where: { id_ats_activity: existingActivity.id_ats_activity },
-          data: data,
-        });
-
-        unique_ats_activity_id = res.id_ats_activity;
-      } else {
-        const data: any = {
-          id_ats_activity: uuidv4(),
-          activity_type: target_activity.activity_type,
-          subject: target_activity.subject,
-          body: target_activity.body,
-          visibility: target_activity.visibility,
-          remote_created_at: target_activity.remote_created_at,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_activity.remote_id,
-          id_connection: connection_id,
-        };
-
-        const newActivity = await this.prisma.ats_activities.create({
-          data: data,
-        });
-
-        unique_ats_activity_id = newActivity.id_ats_activity;
-      }
-
-      if (target_activity.candidate_id) {
-        await this.prisma.ats_applications.update({
-          where: {
-            id_ats_application: unique_ats_activity_id,
-          },
-          data: {
-            id_ats_candidate: target_activity.candidate_id,
-          },
-        });
-      }
-
-      if (
-        target_activity.field_mappings &&
-        target_activity.field_mappings.length > 0
-      ) {
-        const entity = await this.prisma.entity.create({
-          data: {
-            id_entity: uuidv4(),
-            ressource_owner_id: unique_ats_activity_id,
-            created_at: new Date(),
-            modified_at: new Date(),
-          },
-        });
-
-        for (const [slug, value] of Object.entries(
-          target_activity.field_mappings,
-        )) {
-          const attribute = await this.prisma.attribute.findFirst({
-            where: {
-              slug: slug,
-              source: integrationId,
-              id_consumer: linkedUserId,
-            },
-          });
-
-          if (attribute) {
-            await this.prisma.value.create({
-              data: {
-                id_value: uuidv4(),
-                data: value || 'null',
-                attribute: {
-                  connect: { id_attribute: attribute.id_attribute },
-                },
-                created_at: new Date(),
-                modified_at: new Date(),
-                entity: { connect: { id_entity: entity.id_entity } },
-              },
-            });
-          }
-        }
-      }
-
-      await this.prisma.remote_data.upsert({
-        where: { ressource_owner_id: unique_ats_activity_id },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_ats_activity_id,
-          format: 'json',
-          data: JSON.stringify(source_activity),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_activity),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_ats_activity_id,
+        source_activity,
+      );
 
       const result_activity = await this.getActivity(
         unique_ats_activity_id,
@@ -226,6 +129,50 @@ export class ActivityService {
     }
   }
 
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async saveOrUpdateActivity(
+    activity: UnifiedActivityOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingActivity = await this.prisma.ats_activities.findFirst({
+      where: { remote_id: activity.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      activity_type: activity.activity_type,
+      subject: activity.subject,
+      body: activity.body,
+      visibility: activity.visibility,
+      remote_created_at: activity.remote_created_at,
+      modified_at: new Date(),
+    };
+
+    if (existingActivity) {
+      const res = await this.prisma.ats_activities.update({
+        where: { id_ats_activity: existingActivity.id_ats_activity },
+        data: data,
+      });
+      return res.id_ats_activity;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = activity.remote_id;
+      data.id_connection = connection_id;
+      data.id_ats_activity = uuidv4();
+
+      const newActivity = await this.prisma.ats_activities.create({
+        data: data,
+      });
+      return newActivity.id_ats_activity;
+    }
+  }
+
   async getActivity(
     id_ats_activity: string,
     linkedUserId: string,
@@ -253,10 +200,10 @@ export class ActivityService {
 
       const unifiedActivity: UnifiedActivityOutput = {
         id: activity.id_ats_activity,
-        activity_type: activity.activity_type as ActivityType,
+        activity_type: activity.activity_type,
         subject: activity.subject,
         body: activity.body,
-        visibility: activity.visibility as ActivityVisibility,
+        visibility: activity.visibility,
         candidate_id: activity.id_ats_candidate,
         remote_created_at: String(activity.remote_created_at),
         field_mappings: field_mappings,
@@ -366,10 +313,10 @@ export class ActivityService {
 
           return {
             id: activity.id_ats_activity,
-            activity_type: activity.activity_type as ActivityType,
+            activity_type: activity.activity_type,
             subject: activity.subject,
             body: activity.body,
-            visibility: activity.visibility as ActivityVisibility,
+            visibility: activity.visibility,
             candidate_id: activity.id_ats_candidate,
             remote_created_at: String(activity.remote_created_at),
             field_mappings: field_mappings,

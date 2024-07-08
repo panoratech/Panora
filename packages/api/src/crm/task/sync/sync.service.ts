@@ -134,12 +134,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
         task: UnifiedTaskOutput,
         originId: string,
       ) => {
-        const existingTask = await this.prisma.crm_tasks.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        let existingTask;
+        if (!originId) {
+          existingTask = await this.prisma.crm_tasks.findFirst({
+            where: {
+              subject: task.subject,
+              content: task.content,
+              id_connection: connection_id,
+            },
+          });
+        } else {
+          existingTask = await this.prisma.crm_tasks.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
 
         const baseData: any = {
           subject: task.subject ?? null,
@@ -176,10 +187,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < data.length; i++) {
         const task = data[i];
         const originId = task.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateTask(task, originId);
         const task_id = res.id_crm_task;

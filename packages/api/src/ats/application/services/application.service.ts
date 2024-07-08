@@ -14,7 +14,7 @@ import {
   UnifiedApplicationOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
-
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -24,6 +24,7 @@ export class ApplicationService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(ApplicationService.name);
   }
@@ -36,9 +37,7 @@ export class ApplicationService {
     remote_data?: boolean,
   ): Promise<UnifiedApplicationOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: { id_linked_user: linkedUserId },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
 
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
@@ -78,55 +77,10 @@ export class ApplicationService {
       const source_application = resp.data;
       const target_application = unifiedObject[0];
 
-      const existingApplication = await this.prisma.ats_applications.findFirst({
-        where: {
-          remote_id: target_application.remote_id,
-          id_connection: connection_id,
-        },
-      });
-
-      let unique_ats_application_id: string;
-
-      if (existingApplication) {
-        const data: any = {
-          applied_at: target_application.applied_at,
-          rejected_at: target_application.rejected_at,
-          offers: target_application.offers,
-          source: target_application.source,
-          credited_to: target_application.credited_to,
-          current_stage: target_application.current_stage,
-          reject_reason: target_application.reject_reason,
-          modified_at: new Date(),
-        };
-
-        const res = await this.prisma.ats_applications.update({
-          where: { id_ats_application: existingApplication.id_ats_application },
-          data: data,
-        });
-
-        unique_ats_application_id = res.id_ats_application;
-      } else {
-        const data: any = {
-          id_ats_application: uuidv4(),
-          applied_at: target_application.applied_at,
-          rejected_at: target_application.rejected_at,
-          offers: target_application.offers,
-          source: target_application.source,
-          credited_to: target_application.credited_to,
-          current_stage: target_application.current_stage,
-          reject_reason: target_application.reject_reason,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_application.remote_id,
-          id_connection: connection_id,
-        };
-
-        const newApplication = await this.prisma.ats_applications.create({
-          data: data,
-        });
-
-        unique_ats_application_id = newApplication.id_ats_application;
-      }
+      const unique_ats_application_id = await this.saveOrUpdateApplication(
+        target_application,
+        connection_id,
+      );
 
       if (target_application.candidate_id) {
         await this.prisma.ats_applications.update({
@@ -138,71 +92,18 @@ export class ApplicationService {
           },
         });
       }
-      if (target_application.job_id) {
-        await this.prisma.ats_applications.update({
-          where: {
-            id_ats_application: unique_ats_application_id,
-          },
-          data: {
-            id_ats_job: target_application.job_id,
-          },
-        });
-      }
-      if (
-        target_application.field_mappings &&
-        target_application.field_mappings.length > 0
-      ) {
-        const entity = await this.prisma.entity.create({
-          data: {
-            id_entity: uuidv4(),
-            ressource_owner_id: unique_ats_application_id,
-            created_at: new Date(),
-            modified_at: new Date(),
-          },
-        });
 
-        for (const [slug, value] of Object.entries(
-          target_application.field_mappings,
-        )) {
-          const attribute = await this.prisma.attribute.findFirst({
-            where: {
-              slug: slug,
-              source: integrationId,
-              id_consumer: linkedUserId,
-            },
-          });
+      await this.ingestService.processFieldMappings(
+        target_application.field_mappings,
+        unique_ats_application_id,
+        integrationId,
+        linkedUserId,
+      );
 
-          if (attribute) {
-            await this.prisma.value.create({
-              data: {
-                id_value: uuidv4(),
-                data: value || 'null',
-                attribute: {
-                  connect: { id_attribute: attribute.id_attribute },
-                },
-                created_at: new Date(),
-                modified_at: new Date(),
-                entity: { connect: { id_entity: entity.id_entity } },
-              },
-            });
-          }
-        }
-      }
-
-      await this.prisma.remote_data.upsert({
-        where: { ressource_owner_id: unique_ats_application_id },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_ats_application_id,
-          format: 'json',
-          data: JSON.stringify(source_application),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_application),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_ats_application_id,
+        source_application,
+      );
 
       const result_application = await this.getApplication(
         unique_ats_application_id,
@@ -234,6 +135,53 @@ export class ApplicationService {
       return result_application;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async saveOrUpdateApplication(
+    application: UnifiedApplicationOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingApplication = await this.prisma.ats_applications.findFirst({
+      where: { remote_id: application.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      applied_at: application.applied_at,
+      rejected_at: application.rejected_at,
+      offers: application.offers,
+      source: application.source,
+      credited_to: application.credited_to,
+      current_stage: application.current_stage,
+      reject_reason: application.reject_reason,
+      id_ats_job: application.job_id,
+      modified_at: new Date(),
+    };
+
+    if (existingApplication) {
+      const res = await this.prisma.ats_applications.update({
+        where: { id_ats_application: existingApplication.id_ats_application },
+        data: data,
+      });
+      return res.id_ats_application;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = application.remote_id;
+      data.id_connection = connection_id;
+      data.id_ats_application = uuidv4();
+
+      const newApplication = await this.prisma.ats_applications.create({
+        data: data,
+      });
+      return newApplication.id_ats_application;
     }
   }
 

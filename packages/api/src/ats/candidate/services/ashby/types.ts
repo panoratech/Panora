@@ -1,4 +1,21 @@
-export interface AshbyCandidateInput {
+export type AshbyCandidateInput = {
+  name: string; // required
+  email?: string;
+  phoneNumber?: string;
+  linkedInUrl?: string;
+  githubUrl?: string;
+  website?: string;
+  alternateEmailAddresses?: string[];
+  sourceId?: string;
+  creditedToUserId?: string;
+  location?: {
+    city?: string;
+    region?: string;
+    country?: string;
+  };
+  createdAt?: string; // ISO date string
+};
+export interface AshbyCandidateOutput {
   id: string;
   createdAt: string;
   name: string;
@@ -26,9 +43,6 @@ export interface AshbyCandidateInput {
   timezone: string;
   primaryLocation: PrimaryLocation;
 }
-
-export type AshbyCandidateOutput = Partial<AshbyCandidateInput>;
-
 interface PrimaryEmailAddress {
   value: string;
   type: string;

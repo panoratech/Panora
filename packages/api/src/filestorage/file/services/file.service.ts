@@ -11,6 +11,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { FileStorageObject } from '@filestorage/@lib/@types';
 import { OriginalFileOutput } from '@@core/utils/types/original/original.file-storage';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class FileService {
@@ -21,6 +22,7 @@ export class FileService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(FileService.name);
   }
@@ -33,12 +35,7 @@ export class FileService {
     remote_data?: boolean,
   ): Promise<UnifiedFileOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
-
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
           integrationId,
@@ -81,116 +78,22 @@ export class FileService {
       const source_file = resp.data;
       const target_file = unifiedObject[0];
 
-      const existingFile = await this.prisma.fs_files.findFirst({
-        where: {
-          remote_id: target_file.remote_id,
-          id_connection: connection_id,
-        },
-      });
+      const unique_fs_file_id = await this.saveOrUpdateFile(
+        target_file,
+        connection_id,
+      );
 
-      let unique_fs_file_id: string;
+      await this.ingestService.processFieldMappings(
+        target_file.field_mappings,
+        unique_fs_file_id,
+        integrationId,
+        linkedUserId,
+      );
 
-      if (existingFile) {
-        const data: any = {
-          name: target_file.name,
-          file_url: target_file.file_url,
-          mime_type: target_file.mime_type,
-          size: target_file.size,
-          folder_id: target_file.folder_id,
-          permission_id: target_file.permission as string,
-          modified_at: new Date(),
-        };
-
-        const res = await this.prisma.fs_files.update({
-          where: {
-            id_fs_file: existingFile.id_fs_file,
-          },
-          data: data,
-        });
-
-        unique_fs_file_id = res.id_fs_file;
-      } else {
-        const data: any = {
-          id_fs_file: uuidv4(),
-          name: target_file.name,
-          file_url: target_file.file_url,
-          mime_type: target_file.mime_type,
-          size: target_file.size,
-          folder_id: target_file.folder_id,
-          permission_id: target_file.permission as string,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_file.remote_id,
-          id_connection: connection_id,
-        };
-
-        const newFile = await this.prisma.fs_files.create({
-          data: data,
-        });
-
-        unique_fs_file_id = newFile.id_fs_file;
-      }
-
-      if (target_file.field_mappings && target_file.field_mappings.length > 0) {
-        const entity = await this.prisma.entity.create({
-          data: {
-            id_entity: uuidv4(),
-            ressource_owner_id: unique_fs_file_id,
-            created_at: new Date(),
-            modified_at: new Date(),
-          },
-        });
-
-        for (const [slug, value] of Object.entries(
-          target_file.field_mappings,
-        )) {
-          const attribute = await this.prisma.attribute.findFirst({
-            where: {
-              slug: slug,
-              source: integrationId,
-              id_consumer: linkedUserId,
-            },
-          });
-
-          if (attribute) {
-            await this.prisma.value.create({
-              data: {
-                id_value: uuidv4(),
-                data: value || 'null',
-                attribute: {
-                  connect: {
-                    id_attribute: attribute.id_attribute,
-                  },
-                },
-                created_at: new Date(),
-                modified_at: new Date(),
-                entity: {
-                  connect: {
-                    id_entity: entity.id_entity,
-                  },
-                },
-              },
-            });
-          }
-        }
-      }
-
-      await this.prisma.remote_data.upsert({
-        where: {
-          ressource_owner_id: unique_fs_file_id,
-        },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_fs_file_id,
-          format: 'json',
-          data: JSON.stringify(source_file),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_file),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_fs_file_id,
+        source_file,
+      );
 
       const result_file = await this.getFile(
         unique_fs_file_id,
@@ -222,6 +125,49 @@ export class FileService {
       return result_file;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async saveOrUpdateFile(
+    file: UnifiedFileOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingFile = await this.prisma.fs_files.findFirst({
+      where: { remote_id: file.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      name: file.name,
+      file_url: file.file_url,
+      mime_type: file.mime_type,
+      size: file.size,
+      folder_id: file.folder_id,
+      permission_id: file.permission as string,
+      modified_at: new Date(),
+    };
+
+    if (existingFile) {
+      const res = await this.prisma.fs_files.update({
+        where: { id_fs_file: existingFile.id_fs_file },
+        data: data,
+      });
+      return res.id_fs_file;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = file.remote_id;
+      data.id_connection = connection_id;
+      data.id_fs_file = uuidv4();
+
+      const newFile = await this.prisma.fs_files.create({ data: data });
+      return newFile.id_fs_file;
     }
   }
 

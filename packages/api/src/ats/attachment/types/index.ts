@@ -1,5 +1,6 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
+  AttachmentType,
   UnifiedAttachmentInput,
   UnifiedAttachmentOutput,
 } from './model.unified';
@@ -8,9 +9,10 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IAttachmentService extends IBaseObjectService {
-  addAttachment(
+  addAttachment?(
     attachmentData: DesunifyReturnType,
     linkedUserId: string,
+    attachment_type?: AttachmentType | string,
   ): Promise<ApiResponse<OriginalAttachmentOutput>>;
 
   sync(data: SyncParam): Promise<ApiResponse<OriginalAttachmentOutput[]>>;

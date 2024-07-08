@@ -33,7 +33,6 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
     ConnectionUtils,
     IngestDataService,
     CoreSyncRegistry,
-    
     /* PROVIDERS SERVICES */
     BoxService,
   ],

@@ -163,17 +163,4 @@ export class TaskController {
       throw new Error(error);
     }
   }
-  @ApiOperation({
-    operationId: 'update',
-    summary: 'Update a Task',
-  })
-  @ApiCustomResponse(UnifiedTaskOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  update(
-    @Query('id') id: string,
-    @Body() updateTaskData: Partial<UnifiedTaskInput>,
-  ) {
-    return this.taskService.updateTask(id, updateTaskData);
-  }
 }

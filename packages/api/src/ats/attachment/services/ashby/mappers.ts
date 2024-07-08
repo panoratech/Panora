@@ -38,7 +38,12 @@ export class AshbyAttachmentMapper implements IAttachmentMapper {
       remote_id: string;
     }[],
   ): Promise<AshbyAttachmentInput> {
-    return;
+    return {
+      candidateId: await this.utils.getCandidateRemoteIdFromUuid(
+        source.candidate_id,
+      ),
+      file: source.file_name,
+    };
   }
 
   async unify(

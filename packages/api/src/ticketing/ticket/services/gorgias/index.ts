@@ -11,6 +11,7 @@ import { ServiceRegistry } from '../registry.service';
 import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
 import * as fs from 'fs';
 import { SyncParam } from '@@core/utils/types/interface';
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class GorgiasService implements ITicketService {
@@ -19,6 +20,7 @@ export class GorgiasService implements ITicketService {
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + GorgiasService.name,
@@ -63,7 +65,7 @@ export class GorgiasService implements ITicketService {
                 url: res.file_url,
                 name: res.file_name,
                 size: stats.size,
-                content_type: 'application/pdf', //todo
+                content_type: this.utils.getMimeType(res.file_name),
               };
             });
             uploads = await Promise.all(attachmentPromises);

@@ -33,7 +33,6 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
     EncryptionService,
     FieldMappingService,
     CoreSyncRegistry,
-    
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,

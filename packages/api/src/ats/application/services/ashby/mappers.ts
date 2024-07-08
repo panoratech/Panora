@@ -8,6 +8,7 @@ import { MappersRegistry } from '@@core/@core-services/registries/mappers.regist
 import { Injectable } from '@nestjs/common';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { Utils } from '@ats/@lib/@utils';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 
 @Injectable()
 export class AshbyApplicationMapper implements IApplicationMapper {
@@ -26,7 +27,35 @@ export class AshbyApplicationMapper implements IApplicationMapper {
       remote_id: string;
     }[],
   ): Promise<AshbyApplicationInput> {
-    return;
+    if (!source.candidate_id)
+      throw new ReferenceError(
+        'You must provide a candidate id to insert an application',
+      );
+    if (!source.job_id)
+      throw new ReferenceError(
+        'You must provide a job id to insert an application',
+      );
+
+    const candidateId = await this.utils.getCandidateRemoteIdFromUuid(
+      source.candidate_id,
+    );
+    const jobId = await this.utils.getJobRemoteIdFromUuid(source.job_id);
+    const res: any = {
+      canidateId: candidateId,
+      jobId: jobId,
+    };
+    if (source.credited_to) {
+      res.creditedToUserId = await this.utils.getUserRemoteIdFromUuid(
+        source.credited_to,
+      );
+    }
+    if (source.current_stage) {
+      res.interviewStageId = await this.utils.getInterviewStageRemoteIdFromUuid(
+        source.current_stage,
+      );
+    }
+
+    return res;
   }
 
   async unify(

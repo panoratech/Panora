@@ -130,12 +130,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
         department: UnifiedDepartmentOutput,
         originId: string,
       ) => {
-        const existingDepartment = await this.prisma.ats_departments.findFirst({
-          where: {
-            remote_id: originId,
-            id_connection: connection_id,
-          },
-        });
+        let existingDepartment;
+        if (!originId) {
+          existingDepartment = await this.prisma.ats_departments.findFirst({
+            where: {
+              name: department.name,
+              id_connection: connection_id,
+            },
+          });
+        } else {
+          existingDepartment = await this.prisma.ats_departments.findFirst({
+            where: {
+              remote_id: originId,
+              id_connection: connection_id,
+            },
+          });
+        }
 
         const baseData: any = {
           name: department.name ?? null,
@@ -165,10 +175,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < departments.length; i++) {
         const department = departments[i];
         const originId = department.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateDepartment(department, originId);
         const department_id = res.id_ats_department;

@@ -10,14 +10,14 @@ import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { AshbyService } from './services/ashby';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { Utils } from '@ats/@lib/@utils';
-
+import { ServiceRegistry as ApplicationServiceRegistry } from '@ats/application/services/registry.service';
+import { ServiceRegistry as AttachmentServiceRegistry } from '@ats/attachment/services/registry.service';
 @Module({
   imports: [BullQueueModule],
   controllers: [CandidateController],
@@ -35,7 +35,8 @@ import { Utils } from '@ats/@lib/@utils';
     ConnectionUtils,
     IngestDataService,
     CoreSyncRegistry,
-    
+    ApplicationServiceRegistry,
+    AttachmentServiceRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     AshbyService,

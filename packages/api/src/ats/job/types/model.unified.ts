@@ -6,6 +6,7 @@ import {
   IsBoolean,
   IsDateString,
   IsArray,
+  IsIn,
 } from 'class-validator';
 
 export type JobStatus = 'OPEN' | 'CLOSED' | 'DRAFT' | 'ARCHIVED' | 'PENDING';
@@ -31,14 +32,14 @@ export class UnifiedJobInput {
   code?: string;
 
   @ApiPropertyOptional({ type: String, description: 'The status of the job' })
-  @IsString()
+  @IsIn(['OPEN', 'CLOSED', 'DRAFT', 'ARCHIVED', 'PENDING'])
   @IsOptional()
-  status?: JobStatus;
+  status?: JobStatus | string;
 
   @ApiPropertyOptional({ type: String, description: 'The type of the job' })
-  @IsString()
+  @IsIn(['POSTING', 'REQUISITION', 'PROFILE'])
   @IsOptional()
-  type?: JobType;
+  type?: JobType | string;
 
   @ApiPropertyOptional({
     type: Boolean,

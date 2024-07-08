@@ -17,6 +17,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class AttachmentService {
@@ -27,6 +28,7 @@ export class AttachmentService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(AttachmentService.name);
   }
@@ -39,11 +41,7 @@ export class AttachmentService {
     remote_data?: boolean,
   ): Promise<UnifiedAttachmentOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
 
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
@@ -67,7 +65,11 @@ export class AttachmentService {
         integrationId,
       ) as IAttachmentService;
       const resp: ApiResponse<OriginalAttachmentOutput> =
-        await service.addAttachment(desunifiedObject, linkedUserId);
+        await service.addAttachment(
+          desunifiedObject,
+          linkedUserId,
+          unifiedAttachmentData.attachment_type,
+        );
 
       const unifiedObject = (await this.coreUnification.unify<
         OriginalAttachmentOutput[]
@@ -83,56 +85,10 @@ export class AttachmentService {
       const source_attachment = resp.data;
       const target_attachment = unifiedObject[0];
 
-      const existingAttachment =
-        await this.prisma.ats_candidate_attachments.findFirst({
-          where: {
-            remote_id: target_attachment.remote_id,
-            id_connection: connection_id,
-          },
-        });
-
-      let unique_ats_attachment_id: string;
-
-      if (existingAttachment) {
-        const data: any = {
-          file_url: target_attachment.file_url,
-          file_name: target_attachment.file_name,
-          file_type: target_attachment.attachment_type,
-          remote_created_at: target_attachment.remote_created_at,
-          remote_modified_at: target_attachment.remote_modified_at,
-          modified_at: new Date(),
-        };
-
-        const res = await this.prisma.ats_candidate_attachments.update({
-          where: {
-            id_ats_candidate_attachment:
-              existingAttachment.id_ats_candidate_attachment,
-          },
-          data: data,
-        });
-
-        unique_ats_attachment_id = res.id_ats_candidate_attachment;
-      } else {
-        const data: any = {
-          id_ats_candidate_attachment: uuidv4(),
-          file_url: target_attachment.file_url,
-          file_name: target_attachment.file_name,
-          file_type: target_attachment.attachment_type,
-          remote_created_at: target_attachment.remote_created_at,
-          remote_modified_at: target_attachment.remote_modified_at,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_attachment.remote_id,
-          id_connection: connection_id,
-        };
-
-        const newAttachment =
-          await this.prisma.ats_candidate_attachments.create({
-            data: data,
-          });
-
-        unique_ats_attachment_id = newAttachment.id_ats_candidate_attachment;
-      }
+      const unique_ats_attachment_id = await this.saveOrUpdateAttachment(
+        target_attachment,
+        connection_id,
+      );
 
       if (target_attachment.candidate_id) {
         await this.prisma.ats_candidate_attachments.update({
@@ -145,61 +101,17 @@ export class AttachmentService {
         });
       }
 
-      if (
-        target_attachment.field_mappings &&
-        target_attachment.field_mappings.length > 0
-      ) {
-        const entity = await this.prisma.entity.create({
-          data: {
-            id_entity: uuidv4(),
-            ressource_owner_id: unique_ats_attachment_id,
-            created_at: new Date(),
-            modified_at: new Date(),
-          },
-        });
+      await this.ingestService.processFieldMappings(
+        target_attachment.field_mappings,
+        unique_ats_attachment_id,
+        integrationId,
+        linkedUserId,
+      );
 
-        for (const [slug, value] of Object.entries(
-          target_attachment.field_mappings,
-        )) {
-          const attribute = await this.prisma.attribute.findFirst({
-            where: {
-              slug: slug,
-              source: integrationId,
-              id_consumer: linkedUserId,
-            },
-          });
-
-          if (attribute) {
-            await this.prisma.value.create({
-              data: {
-                id_value: uuidv4(),
-                data: value || 'null',
-                attribute: {
-                  connect: { id_attribute: attribute.id_attribute },
-                },
-                created_at: new Date(),
-                modified_at: new Date(),
-                entity: { connect: { id_entity: entity.id_entity } },
-              },
-            });
-          }
-        }
-      }
-
-      await this.prisma.remote_data.upsert({
-        where: { ressource_owner_id: unique_ats_attachment_id },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_ats_attachment_id,
-          format: 'json',
-          data: JSON.stringify(source_attachment),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_attachment),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_ats_attachment_id,
+        source_attachment,
+      );
 
       const result_attachment = await this.getAttachment(
         unique_ats_attachment_id,
@@ -231,6 +143,57 @@ export class AttachmentService {
       return result_attachment;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async saveOrUpdateAttachment(
+    attachment: UnifiedAttachmentOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingAttachment =
+      await this.prisma.ats_candidate_attachments.findFirst({
+        where: {
+          remote_id: attachment.remote_id,
+          id_connection: connection_id,
+        },
+      });
+
+    const data: any = {
+      file_url: attachment.file_url,
+      file_name: attachment.file_name,
+      file_type: attachment.attachment_type,
+      remote_created_at: attachment.remote_created_at,
+      remote_modified_at: attachment.remote_modified_at,
+      modified_at: new Date(),
+    };
+
+    if (existingAttachment) {
+      const res = await this.prisma.ats_candidate_attachments.update({
+        where: {
+          id_ats_candidate_attachment:
+            existingAttachment.id_ats_candidate_attachment,
+        },
+        data: data,
+      });
+      return res.id_ats_candidate_attachment;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = attachment.remote_id;
+      data.id_connection = connection_id;
+      data.id_ats_candidate_attachment = uuidv4();
+
+      const newAttachment = await this.prisma.ats_candidate_attachments.create({
+        data: data,
+      });
+      return newAttachment.id_ats_candidate_attachment;
     }
   }
 
@@ -269,7 +232,7 @@ export class AttachmentService {
         id: attachment.id_ats_candidate_attachment,
         file_url: attachment.file_url,
         file_name: attachment.file_name,
-        attachment_type: attachment.file_type as AttachmentType,
+        attachment_type: attachment.file_type,
         remote_created_at: String(attachment.remote_created_at),
         remote_modified_at: String(attachment.remote_modified_at),
         candidate_id: attachment.id_ats_candidate,
@@ -387,7 +350,7 @@ export class AttachmentService {
             id: attachment.id_ats_candidate_attachment,
             file_url: attachment.file_url,
             file_name: attachment.file_name,
-            attachment_type: attachment.file_type as AttachmentType,
+            attachment_type: attachment.file_type,
             remote_created_at: String(attachment.remote_created_at),
             remote_modified_at: String(attachment.remote_modified_at),
             candidate_id: attachment.id_ats_candidate,
@@ -433,14 +396,5 @@ export class AttachmentService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async updateAttachment(
-    id: string,
-    updateAttachmentData: Partial<UnifiedAttachmentInput>,
-  ): Promise<UnifiedAttachmentOutput> {
-    try {
-    } catch (error) {}
-    return;
   }
 }

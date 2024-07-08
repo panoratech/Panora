@@ -15,7 +15,6 @@ import {
 import { AtsObject } from '@ats/@lib/@types';
 import { UnifiedAttachmentOutput } from '@ats/attachment/types/model.unified';
 import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
-import { url } from 'inspector';
 
 @Injectable()
 export class AshbyCandidateMapper implements ICandidateMapper {
@@ -34,7 +33,43 @@ export class AshbyCandidateMapper implements ICandidateMapper {
       remote_id: string;
     }[],
   ): Promise<AshbyCandidateInput> {
-    return;
+    const data: any = {
+      name: `${source.first_name || ''} ${source.last_name || ''}`,
+    };
+    if (source.locations) {
+    }
+    if (source.email_addresses) {
+    }
+    if (source.phone_numbers) {
+      const number = source.phone_numbers[0];
+      data.phoneNumber = number.phone_number;
+    }
+
+    if (source.urls) {
+      for (const url of source.urls) {
+        switch (url.url_type) {
+          case 'LINKEDIN':
+            data.linkedInUrl = url.url;
+            break;
+          case 'GITHUB':
+            data.githubUrl = url.url;
+            break;
+          default:
+            data.website = url.url;
+            break;
+        }
+      }
+    }
+
+    if (source.locations) {
+      const tab = source.locations.split(',');
+      data.location = {
+        city: tab[0] ?? null,
+        region: tab[1] ?? null,
+        country: tab[2] ?? null,
+      };
+    }
+    return data;
   }
 
   async unify(

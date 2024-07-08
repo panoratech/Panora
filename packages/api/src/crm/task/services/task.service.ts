@@ -15,6 +15,7 @@ import {
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class TaskService {
@@ -25,6 +26,7 @@ export class TaskService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(TaskService.name);
   }
@@ -37,57 +39,18 @@ export class TaskService {
     remote_data?: boolean,
   ): Promise<UnifiedTaskOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+      await this.validateCompanyId(unifiedTaskData.company_id);
+      await this.validateUserId(unifiedTaskData.user_id);
+      await this.validateDealId(unifiedTaskData.deal_id);
 
-      //CHECKS
-      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+      const customFieldMappings =
+        await this.fieldMappingService.getCustomFieldMappings(
+          integrationId,
+          linkedUserId,
+          'crm.task',
+        );
 
-      const company = unifiedTaskData.company_id;
-      //check if contact_id and account_id refer to real uuids
-      if (company) {
-        const search = await this.prisma.crm_companies.findUnique({
-          where: {
-            id_crm_company: company,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a company_id which does not exist',
-          );
-      }
-      const user = unifiedTaskData.user_id;
-      //check if contact_id and account_id refer to real uuids
-      if (user) {
-        const search = await this.prisma.crm_users.findUnique({
-          where: {
-            id_crm_user: user,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a user_id which does not exist',
-          );
-      }
-
-      const deal = unifiedTaskData.deal_id;
-      //check if contact_id and account_id refer to real uuids
-      if (deal) {
-        const search = await this.prisma.crm_deals.findUnique({
-          where: {
-            id_crm_deal: deal,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a deal_id which does not exist',
-          );
-      }
-
-      //desunify the data according to the target obj wanted
       const desunifiedObject =
         await this.coreUnification.desunify<UnifiedTaskInput>({
           sourceObject: unifiedTaskData,
@@ -99,13 +62,11 @@ export class TaskService {
 
       const service: ITaskService =
         this.serviceRegistry.getService(integrationId);
-
       const resp: ApiResponse<OriginalTaskOutput> = await service.addTask(
         desunifiedObject,
         linkedUserId,
       );
 
-      //unify the data according to the target obj wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalTaskOutput[]
       >({
@@ -117,114 +78,18 @@ export class TaskService {
         customFieldMappings: [],
       })) as UnifiedTaskOutput[];
 
-      // add the task inside our db
       const source_task = resp.data;
       const target_task = unifiedObject[0];
 
-      const existingTask = await this.prisma.crm_tasks.findFirst({
-        where: {
-          remote_id: target_task.remote_id,
-          id_connection: connection_id,
-        },
-      });
+      const unique_crm_task_id = await this.saveOrUpdateTask(
+        target_task,
+        connection_id,
+      );
 
-      let unique_crm_task_id: string;
-
-      if (existingTask) {
-        // Update the existing task
-        let data: any = {
-          modified_at: new Date(),
-        };
-        if (target_task.subject) {
-          data = { ...data, subject: target_task.subject };
-        }
-        if (target_task.content) {
-          data = { ...data, content: target_task.content };
-        }
-        if (target_task.status) {
-          data = { ...data, status: target_task.status };
-        }
-        if (target_task.due_date) {
-          data = { ...data, due_date: target_task.due_date };
-        }
-        if (target_task.finished_date) {
-          data = { ...data, finished_date: target_task.finished_date };
-        }
-        if (target_task.deal_id) {
-          data = { ...data, id_crm_deal: target_task.deal_id };
-        }
-        if (target_task.user_id) {
-          data = { ...data, id_crm_user: target_task.user_id };
-        }
-        if (target_task.company_id) {
-          data = { ...data, id_crm_company: target_task.company_id };
-        }
-
-        const res = await this.prisma.crm_tasks.update({
-          where: {
-            id_crm_task: existingTask.id_crm_task,
-          },
-          data: data,
-        });
-        unique_crm_task_id = res.id_crm_task;
-      } else {
-        // Create a new task
-        this.logger.log('task not exists');
-        let data: any = {
-          id_crm_task: uuidv4(),
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_task.remote_id,
-          id_connection: connection_id,
-        };
-
-        if (target_task.subject) {
-          data = { ...data, subject: target_task.subject };
-        }
-        if (target_task.content) {
-          data = { ...data, content: target_task.content };
-        }
-        if (target_task.status) {
-          data = { ...data, status: target_task.status };
-        }
-        if (target_task.due_date) {
-          data = { ...data, due_date: target_task.due_date };
-        }
-        if (target_task.finished_date) {
-          data = { ...data, finished_date: target_task.finished_date };
-        }
-        if (target_task.deal_id) {
-          data = { ...data, id_crm_deal: target_task.deal_id };
-        }
-        if (target_task.user_id) {
-          data = { ...data, id_crm_user: target_task.user_id };
-        }
-        if (target_task.company_id) {
-          data = { ...data, id_crm_company: target_task.company_id };
-        }
-        const res = await this.prisma.crm_tasks.create({
-          data: data,
-        });
-        unique_crm_task_id = res.id_crm_task;
-      }
-
-      //insert remote_data in db
-      await this.prisma.remote_data.upsert({
-        where: {
-          ressource_owner_id: unique_crm_task_id,
-        },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_crm_task_id,
-          format: 'json',
-          data: JSON.stringify(source_task),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_task),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_crm_task_id,
+        source_task,
+      );
 
       const result_task = await this.getTask(
         unique_crm_task_id,
@@ -234,12 +99,11 @@ export class TaskService {
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-
       const event = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: status_resp,
-          type: 'crm.task.push', //sync, push or pull
+          type: 'crm.task.push', // sync, push or pull
           method: 'POST',
           url: '/crm/tasks',
           provider: integrationId,
@@ -257,6 +121,83 @@ export class TaskService {
       return result_task;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async validateCompanyId(companyId?: string) {
+    if (companyId) {
+      const company = await this.prisma.crm_companies.findUnique({
+        where: { id_crm_company: companyId },
+      });
+      if (!company)
+        throw new ReferenceError(
+          'You inserted a company_id which does not exist',
+        );
+    }
+  }
+
+  async validateUserId(userId?: string) {
+    if (userId) {
+      const user = await this.prisma.crm_users.findUnique({
+        where: { id_crm_user: userId },
+      });
+      if (!user)
+        throw new ReferenceError('You inserted a user_id which does not exist');
+    }
+  }
+
+  async validateDealId(dealId?: string) {
+    if (dealId) {
+      const deal = await this.prisma.crm_deals.findUnique({
+        where: { id_crm_deal: dealId },
+      });
+      if (!deal)
+        throw new ReferenceError('You inserted a deal_id which does not exist');
+    }
+  }
+
+  async saveOrUpdateTask(
+    task: UnifiedTaskOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingTask = await this.prisma.crm_tasks.findFirst({
+      where: { remote_id: task.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      modified_at: new Date(),
+      subject: task.subject,
+      content: task.content,
+      status: task.status,
+      due_date: task.due_date,
+      finished_date: task.finished_date,
+      id_crm_deal: task.deal_id,
+      id_crm_user: task.user_id,
+      id_crm_company: task.company_id,
+    };
+
+    if (existingTask) {
+      const res = await this.prisma.crm_tasks.update({
+        where: { id_crm_task: existingTask.id_crm_task },
+        data: data,
+      });
+      return res.id_crm_task;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = task.remote_id;
+      data.id_connection = connection_id;
+      data.id_crm_task = uuidv4();
+
+      const newTask = await this.prisma.crm_tasks.create({ data: data });
+      return newTask.id_crm_task;
     }
   }
 
@@ -301,7 +242,7 @@ export class TaskService {
         id: task.id_crm_task,
         subject: task.subject,
         content: task.content,
-        status: task.status as TaskStatus,
+        status: task.status,
         due_date: task.due_date,
         finished_date: task.finished_date,
         company_id: task.id_crm_company,
@@ -436,7 +377,7 @@ export class TaskService {
             id: task.id_crm_task,
             subject: task.subject,
             content: task.content,
-            status: task.status as TaskStatus,
+            status: task.status,
             due_date: task.due_date,
             finished_date: task.finished_date,
             company_id: task.id_crm_company,
@@ -488,12 +429,5 @@ export class TaskService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async updateTask(
-    id_task: string,
-    data: Partial<UnifiedTaskInput>,
-  ): Promise<UnifiedTaskOutput> {
-    return;
   }
 }

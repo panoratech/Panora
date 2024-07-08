@@ -4,7 +4,11 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ApiResponse } from '@@core/utils/types';
-import { OriginalCandidateOutput } from '@@core/utils/types/original/original.ats';
+import {
+  OriginalApplicationOutput,
+  OriginalAttachmentOutput,
+  OriginalCandidateOutput,
+} from '@@core/utils/types/original/original.ats';
 import { AtsObject } from '@ats/@lib/@types';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,16 +18,34 @@ import {
   UnifiedCandidateOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import {
+  UnifiedApplicationInput,
+  UnifiedApplicationOutput,
+} from '@ats/application/types/model.unified';
+import { ServiceRegistry as ApplicationServiceRegistry } from '@ats/application/services/registry.service';
+import { ServiceRegistry as AttachmentServiceRegistry } from '@ats/attachment/services/registry.service';
+import { IApplicationService } from '@ats/application/types';
+import {
+  UnifiedAttachmentInput,
+  UnifiedAttachmentOutput,
+} from '@ats/attachment/types/model.unified';
+import { IAttachmentService } from '@ats/attachment/types';
 
 @Injectable()
 export class CandidateService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
+    private registry: CoreSyncRegistry,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private applicationServiceRegistry: ApplicationServiceRegistry,
+    private attachmentServiceRegistry: AttachmentServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(CandidateService.name);
   }
@@ -36,9 +58,7 @@ export class CandidateService {
     remote_data?: boolean,
   ): Promise<UnifiedCandidateOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: { id_linked_user: linkedUserId },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
 
       const customFieldMappings =
         await this.fieldMappingService.getCustomFieldMappings(
@@ -78,139 +98,42 @@ export class CandidateService {
       const source_candidate = resp.data;
       const target_candidate = unifiedObject[0];
 
-      const existingCandidate = await this.prisma.ats_candidates.findFirst({
-        where: {
-          remote_id: target_candidate.remote_id,
-          id_connection: connection_id,
-        },
-      });
+      const unique_ats_candidate_id = await this.saveOrUpdateCandidate(
+        target_candidate,
+        connection_id,
+      );
 
-      let unique_ats_candidate_id: string;
+      await this.processAttachments(
+        unifiedCandidateData.attachments,
+        unique_ats_candidate_id,
+        connection_id,
+        linkedUserId,
+        integrationId,
+      );
 
-      if (existingCandidate) {
-        const data: any = {
-          first_name: target_candidate.first_name,
-          last_name: target_candidate.last_name,
-          company: target_candidate.company,
-          title: target_candidate.title,
-          remote_created_at: target_candidate.remote_created_at,
-          remote_modified_at: target_candidate.remote_modified_at,
-          last_interaction_at: target_candidate.last_interaction_at,
-          is_private: target_candidate.is_private,
-          email_reachable: target_candidate.email_reachable,
-          locations: target_candidate.locations,
-          modified_at: new Date(),
-        };
+      // now that we have inserted our candidate, we might have an application nested that we have to insert
+      await this.processApplication(
+        unifiedCandidateData.applications[0],
+        unique_ats_candidate_id,
+        connection_id,
+        linkedUserId,
+        integrationId,
+      );
 
-        const res = await this.prisma.ats_candidates.update({
-          where: { id_ats_candidate: existingCandidate.id_ats_candidate },
-          data: data,
-        });
+      // Update related objects, if any (e.g., tags)
+      // Assuming there is a method to handle tags and other related objects
 
-        unique_ats_candidate_id = res.id_ats_candidate;
-      } else {
-        const data: any = {
-          id_ats_candidate: uuidv4(),
-          first_name: target_candidate.first_name,
-          last_name: target_candidate.last_name,
-          company: target_candidate.company,
-          title: target_candidate.title,
-          remote_created_at: target_candidate.remote_created_at,
-          remote_modified_at: target_candidate.remote_modified_at,
-          last_interaction_at: target_candidate.last_interaction_at,
-          is_private: target_candidate.is_private,
-          email_reachable: target_candidate.email_reachable,
-          locations: target_candidate.locations,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_id: target_candidate.remote_id,
-          id_connection: connection_id,
-        };
+      await this.ingestService.processFieldMappings(
+        target_candidate.field_mappings,
+        unique_ats_candidate_id,
+        integrationId,
+        linkedUserId,
+      );
 
-        const newCandidate = await this.prisma.ats_candidates.create({
-          data: data,
-        });
-
-        unique_ats_candidate_id = newCandidate.id_ats_candidate;
-      }
-
-      //update related objects
-
-      /* tags / emails / numbers are synced inside their own services from remote parties
-      for (const tag of target_candidate.tags) {
-        await this.prisma.ats_candidate_tags.upsert({
-          where: {
-            id_ats_candidate: unique_ats_candidate_id,
-          },
-          update: {
-            name: tag,
-            modified_at: new Date(),
-          },
-          create: {
-            id_ats_candidate: unique_ats_candidate_id,
-            name: tag,
-            created_at: new Date(),
-            modified_at: new Date(),
-          },
-        });
-      }
-      */
-
-      if (
-        target_candidate.field_mappings &&
-        target_candidate.field_mappings.length > 0
-      ) {
-        const entity = await this.prisma.entity.create({
-          data: {
-            id_entity: uuidv4(),
-            ressource_owner_id: unique_ats_candidate_id,
-            created_at: new Date(),
-            modified_at: new Date(),
-          },
-        });
-
-        for (const [slug, value] of Object.entries(
-          target_candidate.field_mappings,
-        )) {
-          const attribute = await this.prisma.attribute.findFirst({
-            where: {
-              slug: slug,
-              source: integrationId,
-              id_consumer: linkedUserId,
-            },
-          });
-
-          if (attribute) {
-            await this.prisma.value.create({
-              data: {
-                id_value: uuidv4(),
-                data: value || 'null',
-                attribute: {
-                  connect: { id_attribute: attribute.id_attribute },
-                },
-                created_at: new Date(),
-                modified_at: new Date(),
-                entity: { connect: { id_entity: entity.id_entity } },
-              },
-            });
-          }
-        }
-      }
-
-      await this.prisma.remote_data.upsert({
-        where: { ressource_owner_id: unique_ats_candidate_id },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_ats_candidate_id,
-          format: 'json',
-          data: JSON.stringify(source_candidate),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_candidate),
-          created_at: new Date(),
-        },
-      });
+      await this.ingestService.processRemoteData(
+        unique_ats_candidate_id,
+        source_candidate,
+      );
 
       const result_candidate = await this.getCandidate(
         unique_ats_candidate_id,
@@ -240,6 +163,299 @@ export class CandidateService {
         event.id_event,
       );
       return result_candidate;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async processAttachments(
+    attachments: any[],
+    candidate_id: string,
+    connection_id: string,
+    linkedUserId: string,
+    integrationId: string,
+  ): Promise<string[]> {
+    try {
+      if (attachments && attachments.length > 0) {
+        if (typeof attachments[0] === 'string') {
+          await Promise.all(
+            attachments.map(async (uuid: string) => {
+              const attachment =
+                await this.prisma.ats_candidate_attachments.findUnique({
+                  where: { id_ats_candidate_attachment: uuid },
+                });
+              if (!attachment)
+                throw new ReferenceError(
+                  'You inserted an ats_attachment_id which does not exist',
+                );
+            }),
+          );
+          return attachments;
+        } else {
+          await Promise.all(
+            attachments.map(async (unified_attachmt) => {
+              unified_attachmt.candidate_id = candidate_id; // we insert the candidate_id on the fly as it may be mandatory for some providers when creating an application
+              const desunifiedObject =
+                await this.coreUnification.desunify<UnifiedAttachmentInput>({
+                  sourceObject: unified_attachmt,
+                  targetType: AtsObject.attachment,
+                  providerName: integrationId,
+                  vertical: 'ats',
+                  customFieldMappings: [],
+                });
+
+              const service = this.attachmentServiceRegistry.getService(
+                integrationId,
+              ) as IAttachmentService;
+
+              const attachment_type = unified_attachmt.attachment_type;
+
+              const resp: ApiResponse<OriginalAttachmentOutput> =
+                await service.addAttachment(
+                  desunifiedObject,
+                  linkedUserId,
+                  attachment_type,
+                );
+
+              const unifiedObject = (await this.coreUnification.unify<
+                OriginalAttachmentOutput[]
+              >({
+                sourceObject: [resp.data],
+                targetType: AtsObject.attachment,
+                providerName: integrationId,
+                vertical: 'ats',
+                connectionId: connection_id,
+                customFieldMappings: [],
+              })) as UnifiedAttachmentOutput[];
+
+              await this.saveOrUpdateAttachment(
+                unifiedObject[0],
+                connection_id,
+              );
+            }),
+          );
+        }
+      }
+      return [];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveOrUpdateAttachment(
+    att: UnifiedAttachmentOutput,
+    connection_id: string,
+  ): Promise<string> {
+    try {
+      let existingAtt;
+
+      if (att.remote_id) {
+        existingAtt = await this.prisma.ats_candidate_attachments.findFirst({
+          where: {
+            remote_id: att.remote_id,
+            id_connection: connection_id,
+          },
+        });
+      } else {
+        existingAtt = await this.prisma.ats_candidate_attachments.findFirst({
+          where: {
+            file_name: att.file_name,
+            file_url: att.file_url,
+            id_connection: connection_id,
+          },
+        });
+      }
+
+      const data: any = {
+        file_name: att.file_name,
+        file_url: att.file_url,
+        attachment_type: att.attachment_type,
+        id_ats_candidate: att.candidate_id,
+        modified_at: new Date(),
+      };
+
+      if (existingAtt) {
+        const res = await this.prisma.ats_candidate_attachments.update({
+          where: {
+            id_ats_candidate_attachment:
+              existingAtt.id_ats_candidate_attachment,
+          },
+          data: data,
+        });
+        return res.id_ats_candidate_attachment;
+      } else {
+        data.created_at = new Date();
+        data.remote_id = att.remote_id;
+        data.id_connection = connection_id;
+        data.id_ats_application = uuidv4();
+
+        const newApp = await this.prisma.ats_candidate_attachments.create({
+          data: data,
+        });
+        return newApp.id_ats_candidate_attachment;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveOrUpdateApplication(
+    application: UnifiedApplicationOutput,
+    connection_id: string,
+  ): Promise<string> {
+    try {
+      const existingApp = await this.prisma.ats_applications.findFirst({
+        where: {
+          remote_id: application.remote_id,
+          id_connection: connection_id,
+        },
+      });
+
+      const data: any = {
+        applied_at: application.applied_at,
+        rejected_at: application.rejected_at,
+        offers: application.offers,
+        source: application.source,
+        credited_to: application.credited_to,
+        current_stage: application.current_stage,
+        reject_reason: application.reject_reason,
+        id_ats_job: application.job_id,
+        id_ats_candidate: application.candidate_id,
+        modified_at: new Date(),
+      };
+
+      if (existingApp) {
+        const res = await this.prisma.ats_applications.update({
+          where: { id_ats_application: existingApp.id_ats_candidate },
+          data: data,
+        });
+        return res.id_ats_application;
+      } else {
+        data.created_at = new Date();
+        data.remote_id = application.remote_id;
+        data.id_connection = connection_id;
+        data.id_ats_application = uuidv4();
+
+        const newApp = await this.prisma.ats_applications.create({
+          data: data,
+        });
+        return newApp.id_ats_application;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async processApplication(
+    application: any,
+    candidate_id: string,
+    connection_id: string,
+    linkedUserId: string,
+    integrationId: string,
+  ) {
+    try {
+      if (application) {
+        if (typeof application === 'string') {
+          const app = await this.prisma.ats_applications.findUnique({
+            where: { id_ats_application: application },
+          });
+          if (!app)
+            throw new ReferenceError(
+              'You inserted an ats_application which does not exist',
+            );
+          await this.prisma.ats_applications.update({
+            where: {
+              id_ats_application: app.id_ats_application,
+            },
+            data: {
+              id_ats_candidate: candidate_id,
+            },
+          });
+        } else {
+          application.candidate_id = candidate_id; // we insert the candidate_id on the fly as it may be mandatory for some providers when creating an application
+          const desunifiedObject =
+            await this.coreUnification.desunify<UnifiedApplicationInput>({
+              sourceObject: application,
+              targetType: AtsObject.application,
+              providerName: integrationId,
+              vertical: 'ats',
+              customFieldMappings: [],
+            });
+
+          const service = this.applicationServiceRegistry.getService(
+            integrationId,
+          ) as IApplicationService;
+
+          const resp: ApiResponse<OriginalApplicationOutput> =
+            await service.addApplication(desunifiedObject, linkedUserId);
+
+          const unifiedObject = (await this.coreUnification.unify<
+            OriginalApplicationOutput[]
+          >({
+            sourceObject: [resp.data],
+            targetType: AtsObject.application,
+            providerName: integrationId,
+            vertical: 'ats',
+            connectionId: connection_id,
+            customFieldMappings: [],
+          })) as UnifiedApplicationOutput[];
+
+          await this.saveOrUpdateApplication(unifiedObject[0], connection_id);
+        }
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveOrUpdateCandidate(
+    candidate: UnifiedCandidateOutput,
+    connection_id: string,
+  ): Promise<string> {
+    try {
+      const existingCandidate = await this.prisma.ats_candidates.findFirst({
+        where: { remote_id: candidate.remote_id, id_connection: connection_id },
+      });
+
+      const data: any = {
+        first_name: candidate.first_name,
+        last_name: candidate.last_name,
+        company: candidate.company,
+        title: candidate.title,
+        remote_created_at: candidate.remote_created_at,
+        remote_modified_at: candidate.remote_modified_at,
+        last_interaction_at: candidate.last_interaction_at,
+        is_private: candidate.is_private,
+        email_reachable: candidate.email_reachable,
+        locations: candidate.locations,
+        modified_at: new Date(),
+      };
+
+      if (existingCandidate) {
+        const res = await this.prisma.ats_candidates.update({
+          where: { id_ats_candidate: existingCandidate.id_ats_candidate },
+          data: data,
+        });
+        return res.id_ats_candidate;
+      } else {
+        data.created_at = new Date();
+        data.remote_id = candidate.remote_id;
+        data.id_connection = connection_id;
+        data.id_ats_candidate = uuidv4();
+
+        const newCandidate = await this.prisma.ats_candidates.create({
+          data: data,
+        });
+        return newCandidate.id_ats_candidate;
+      }
     } catch (error) {
       throw error;
     }
@@ -524,14 +740,5 @@ export class CandidateService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async updateCandidate(
-    id: string,
-    updateCandidateData: Partial<UnifiedCandidateInput>,
-  ): Promise<UnifiedCandidateOutput> {
-    try {
-    } catch (error) {}
-    return;
   }
 }

@@ -9,8 +9,6 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { AshbyCandidateInput, AshbyCandidateOutput } from './types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { OriginalCandidateOutput } from '@@core/utils/types/original/original.ats';
 import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
@@ -26,11 +24,45 @@ export class AshbyService implements ICandidateService {
     );
     this.registry.registerService('ashby', this);
   }
-  addCandidate(
-    candidateData: DesunifyReturnType,
+  async addCandidate(
+    candidateData: AshbyCandidateInput,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalCandidateOutput>> {
-    throw new Error('Method not implemented.');
+  ): Promise<ApiResponse<AshbyCandidateOutput>> {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'ashby',
+          vertical: 'ats',
+        },
+      });
+      const resp = await axios.post(
+        `${connection.account_url}/candidate.create`,
+        JSON.stringify(candidateData),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+
+      return {
+        data: resp.data.results,
+        message: 'Ashby candidate created',
+        statusCode: 201,
+      };
+    } catch (error) {
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'ashby',
+        AtsObject.application,
+        ActionType.POST,
+      );
+    }
   }
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyCandidateOutput[]>> {
