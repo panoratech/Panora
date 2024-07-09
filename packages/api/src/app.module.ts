@@ -19,10 +19,11 @@ import { BullModule } from '@nestjs/bull';
 import { TicketingModule } from '@ticketing/ticketing.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { PrismaModule } from '@@core/prisma/prisma.module';
-
+import { RegistriesModule } from '@@core/utils/registry/registries.module';
 @Module({
   imports: [
     PrismaModule,
+    RegistriesModule,
     CoreModule,
     HrisModule,
     MarketingAutomationModule,
@@ -40,14 +41,14 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
     ConfigModule.forRoot({ isGlobal: true }),
     ...(process.env.DISTRIBUTION === 'managed'
       ? [
-          SentryModule.forRoot({
-            dsn: process.env.SENTRY_DSN,
-            debug: true,
-            environment: `${process.env.ENV}-${process.env.DISTRIBUTION}`,
-            release: `${process.env.DISTRIBUTION}`,
-            logLevels: ['debug'],
-          }),
-        ]
+        SentryModule.forRoot({
+          dsn: process.env.SENTRY_DSN,
+          debug: true,
+          environment: `${process.env.ENV}-${process.env.DISTRIBUTION}`,
+          release: `${process.env.DISTRIBUTION}`,
+          logLevels: ['debug'],
+        }),
+      ]
       : []),
     ScheduleModule.forRoot(),
     LoggerModule.forRoot({
@@ -61,18 +62,18 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
         transport:
           process.env.AXIOM_AGENT_STATUS === 'ENABLED'
             ? {
-                target: '@axiomhq/pino',
-                options: {
-                  dataset: process.env.AXIOM_DATASET,
-                  token: process.env.AXIOM_TOKEN,
-                },
-              }
-            : {
-                target: 'pino-pretty',
-                options: {
-                  singleLine: true,
-                },
+              target: '@axiomhq/pino',
+              options: {
+                dataset: process.env.AXIOM_DATASET,
+                token: process.env.AXIOM_TOKEN,
               },
+            }
+            : {
+              target: 'pino-pretty',
+              options: {
+                singleLine: true,
+              },
+            },
       },
     }),
     BullModule.forRoot({
@@ -111,4 +112,4 @@ import { PrismaModule } from '@@core/prisma/prisma.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

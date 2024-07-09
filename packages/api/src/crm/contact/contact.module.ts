@@ -20,6 +20,12 @@ import { UnificationRegistry } from '@@core/utils/registry/unification.registry'
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@crm/@lib/@utils';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { AttioContactMapper } from './services/attio/mappers';
+import { CloseContactMapper } from './services/close/mappers';
+import { HubspotContactMapper } from './services/hubspot/mappers';
+import { PipedriveContactMapper } from './services/pipedrive/mappers';
+import { ZendeskContactMapper } from './services/zendesk/mappers';
+import { ZohoContactMapper } from './services/zoho/mappers';
 
 @Module({
   imports: [
@@ -41,8 +47,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     EncryptionService,
     ServiceRegistry,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     ConnectionUtils,
     /* PROVIDERS SERVICES */
@@ -52,6 +58,13 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     PipedriveService,
     HubspotService,
     CloseService,
+    /* PROVIDERS MAPPERS */
+    AttioContactMapper,
+    CloseContactMapper,
+    HubspotContactMapper,
+    PipedriveContactMapper,
+    ZendeskContactMapper,
+    ZohoContactMapper
   ],
   exports: [
     SyncService,
@@ -61,4 +74,4 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     LoggerService,
   ],
 })
-export class ContactModule {}
+export class ContactModule { }

@@ -51,16 +51,16 @@ import { CoreUnification } from './utils/services/core.service';
     ConnectionsStrategiesModule,
     SyncModule,
     ProjectConnectorsModule,
-    MappersRegistry,
-    UnificationRegistry,
+    // MappersRegistry,
+    // UnificationRegistry,
     CoreUnification,
   ],
   providers: [
     EncryptionService,
     LoggerService,
-    MappersRegistry,
-    UnificationRegistry,
+    // MappersRegistry,
+    // UnificationRegistry,
     CoreUnification,
   ],
 })
-export class CoreModule {}
+export class CoreModule { }

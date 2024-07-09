@@ -15,7 +15,9 @@ import { FrontService } from './services/front';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { CoreUnification } from '@@core/utils/services/core.service';
-
+import { FrontAccountMapper } from './services/front/mappers';
+import { ZendeskAccountMapper } from './services/zendesk/mappers';
+import { Utils } from '@ticketing/@lib/@utils';
 @Module({
   imports: [
     BullModule.registerQueue(
@@ -37,11 +39,15 @@ import { CoreUnification } from '@@core/utils/services/core.service';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    Utils,
+    // UnificationRegistry,
+    // MappersRegistry,
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
+    /* PROVIDERS MAPPERS */
+    ZendeskAccountMapper,
+    FrontAccountMapper,
   ],
   exports: [
     SyncService,
@@ -51,4 +57,4 @@ import { CoreUnification } from '@@core/utils/services/core.service';
     LoggerService,
   ],
 })
-export class AccountModule {}
+export class AccountModule { }

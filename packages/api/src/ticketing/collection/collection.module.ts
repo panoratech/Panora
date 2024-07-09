@@ -15,6 +15,9 @@ import { JiraService } from './services/jira';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { CoreUnification } from '@@core/utils/services/core.service';
+import { GitlabCollectionMapper } from './services/gitlab/mappers';
+import { JiraCollectionMapper } from './services/jira/mappers';
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Module({
   imports: [
@@ -37,11 +40,15 @@ import { CoreUnification } from '@@core/utils/services/core.service';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    Utils,
+    // UnificationRegistry,
+    // MappersRegistry,
     /* PROVIDERS SERVICES */
     JiraService,
     GitlabService,
+    /* PROVIDERS MAPPERS */
+    JiraCollectionMapper,
+    GitlabCollectionMapper,
   ],
   exports: [
     SyncService,
@@ -51,4 +58,4 @@ import { CoreUnification } from '@@core/utils/services/core.service';
     LoggerService,
   ],
 })
-export class CollectionModule {}
+export class CollectionModule { }

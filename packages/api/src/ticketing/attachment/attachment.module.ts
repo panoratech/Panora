@@ -12,7 +12,11 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { CoreUnification } from '@@core/utils/services/core.service';
-
+import { FrontAttachmentMapper } from './services/front/mappers';
+import { GorgiasAttachmentMapper } from './services/gorgias/mappers';
+import { JiraAttachmentMapper } from './services/jira/mappers';
+import { ZendeskAttachmentMapper } from './services/zendesk/mappers';
+import { Utils } from '@ticketing/@lib/@utils';
 @Module({
   imports: [
     BullModule.registerQueue(
@@ -33,9 +37,18 @@ import { CoreUnification } from '@@core/utils/services/core.service';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    Utils,
+    // UnificationRegistry,
+    // MappersRegistry,
     /* PROVIDERS SERVICES */
+
+    /* PROVIDERS Mappers */
+    FrontAttachmentMapper,
+    GorgiasAttachmentMapper,
+    JiraAttachmentMapper,
+    ZendeskAttachmentMapper
+
+
   ],
 })
-export class AttachmentModule {}
+export class AttachmentModule { }
