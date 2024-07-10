@@ -238,6 +238,31 @@
         ]
       }
     },
+    "/auth/change-password": {
+      "post": {
+        "operationId": "changePassword",
+        "summary": "Change password",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/connections/oauth/callback": {
       "get": {
         "operationId": "handleOAuthCallback",
@@ -15992,6 +16017,26 @@
         },
         "required": [
           "projectId"
+        ]
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "old_password_hash": {
+            "type": "string"
+          },
+          "new_password_hash": {
+            "type": "string",
+            "minLength": 9
+          }
+        },
+        "required": [
+          "email",
+          "old_password_hash",
+          "new_password_hash"
         ]
       },
       "BodyDataType": {

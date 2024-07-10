@@ -17,6 +17,7 @@ import useProjectStore from "@/state/projectStore"
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from "react";
 import { toast } from "sonner";
+import ChangePasswordForm from "@/components/Auth/CustomLoginComponent/ChangePasswordForm";
 
 
 const Profile = () => {
@@ -52,7 +53,7 @@ const Profile = () => {
     }
 
     return (
-        <div className="p-10">
+        <div className="p-10 flex flex-col gap-8">
         <Card>
         <CardHeader>
             <CardTitle>Profile</CardTitle>
@@ -84,6 +85,7 @@ const Profile = () => {
             </div>
         </CardContent>
         </Card>
+        <ChangePasswordForm />
         </div> 
     ); 
 };
