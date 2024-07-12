@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IRejectReasonService extends IBaseObjectService {
-  addRejectReason(
-    rejectreasonData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalRejectReasonOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalRejectReasonOutput[]>>;
 }
 

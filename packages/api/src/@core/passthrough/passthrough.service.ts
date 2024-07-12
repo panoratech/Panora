@@ -4,6 +4,9 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { PassThroughRequestDto } from './dto/passthrough.dto';
 import { PassThroughResponse } from './types';
+import axios, { AxiosResponse } from 'axios';
+import { CONNECTORS_METADATA } from '@panora/shared';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class PassthroughService {
@@ -21,16 +24,15 @@ export class PassthroughService {
     linkedUserId: string,
     vertical: string,
   ): Promise<PassThroughResponse> {
-    // TODO
-    return;
-    /*try {
+    try {
+      //TODO;
       const { method, path, data, headers } = requestParams;
 
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
-          type: 'pull', 
+          type: 'pull',
           method: method,
           url: '/pasthrough',
           provider: integrationId,
@@ -56,13 +58,13 @@ export class PassthroughService {
         method,
         url: URL,
         data,
-        headers: {
+        headers /*: {
           ...headers,
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
             connection.access_token,
           )}`,
-        },
+        },*/,
       });
 
       const status_resp =
@@ -92,6 +94,6 @@ export class PassthroughService {
       };
     } catch (error) {
       throw error;
-    }*/
+    }
   }
 }

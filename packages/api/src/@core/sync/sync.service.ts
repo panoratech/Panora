@@ -248,11 +248,115 @@ export class CoreSyncService {
   }
 
   async handleFileStorageSync(provider: string, linkedUserId: string) {
-    //TODO
+    const tasks = [
+      () =>
+        this.registry.getService('filestorage', 'group').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('filestorage', 'user').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('filestorage', 'drive').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('filestorage', 'folder').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('filestorage', 'file').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+    ];
+    const results = await Promise.allSettled(tasks.map((task) => task()));
   }
 
   async handleAtsSync(provider: string, linkedUserId: string) {
-    //TODO
+    const tasks = [
+      () =>
+        this.registry.getService('ats', 'office').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'department').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'rejectreason').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'user').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'jobs').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'jobinterviewstage').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'candidate').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'tag').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'eeocs').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'attachment').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'activity').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'application').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'offer').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'interview').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'scorecard').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+    ];
+    const results = await Promise.allSettled(tasks.map((task) => task()));
   }
 
   // we must have a sync_jobs table with 7 (verticals) rows, one of each is syncing details

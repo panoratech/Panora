@@ -26,12 +26,6 @@ export class AshbyService implements IRejectReasonService {
     );
     this.registry.registerService('ashby', this);
   }
-  addRejectReason(
-    rejectreasonData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalRejectReasonOutput>> {
-    throw new Error('Method not implemented.');
-  }
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyRejectReasonOutput[]>> {
     try {
