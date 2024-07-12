@@ -18,6 +18,10 @@ import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@ticketing/@lib/@utils';
+import { FrontTagMapper } from './services/front/mappers';
+import { GorgiasTagMapper } from './services/gorgias/mappers';
+import { JiraTagMapper } from './services/jira/mappers';
+import { ZendeskTagMapper } from './services/zendesk/mappers';
 
 @Module({
   imports: [
@@ -40,14 +44,19 @@ import { Utils } from '@ticketing/@lib/@utils';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
     JiraService,
     GorgiasService,
+    /* PROVIDERS MAPPERS */
+    ZendeskTagMapper,
+    FrontTagMapper,
+    JiraTagMapper,
+    GorgiasTagMapper,
   ],
   exports: [
     SyncService,
@@ -57,4 +66,4 @@ import { Utils } from '@ticketing/@lib/@utils';
     LoggerService,
   ],
 })
-export class TagModule {}
+export class TagModule { }

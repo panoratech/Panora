@@ -19,6 +19,11 @@ import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@crm/@lib/@utils';
+import { CloseStageMapper } from './services/close/mappers';
+import { HubspotStageMapper } from './services/hubspot/mappers';
+import { PipedriveStageMapper } from './services/pipedrive/mappers';
+import { ZendeskStageMapper } from './services/zendesk/mappers';
+import { ZohoStageMapper } from './services/zoho/mappers';
 
 @Module({
   imports: [
@@ -41,8 +46,8 @@ import { Utils } from '@crm/@lib/@utils';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
@@ -50,6 +55,12 @@ import { Utils } from '@crm/@lib/@utils';
     PipedriveService,
     HubspotService,
     CloseService,
+    /* PROVIDERS MAPPERS */
+    ZendeskStageMapper,
+    ZohoStageMapper,
+    PipedriveStageMapper,
+    HubspotStageMapper,
+    CloseStageMapper,
   ],
   exports: [
     SyncService,
@@ -59,4 +70,4 @@ import { Utils } from '@crm/@lib/@utils';
     LoggerService,
   ],
 })
-export class StageModule {}
+export class StageModule { }

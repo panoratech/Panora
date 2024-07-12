@@ -19,6 +19,11 @@ import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@ticketing/@lib/@utils';
+import { FrontUserMapper } from './services/front/mappers';
+import { GitlabUserMapper } from './services/gitlab/mappers';
+import { GorgiasUserMapper } from './services/gorgias/mappers';
+import { JiraUserMapper } from './services/jira/mappers';
+import { ZendeskUserMapper } from './services/zendesk/mappers';
 
 @Module({
   imports: [
@@ -40,8 +45,8 @@ import { Utils } from '@ticketing/@lib/@utils';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
@@ -49,6 +54,12 @@ import { Utils } from '@ticketing/@lib/@utils';
     JiraService,
     GorgiasService,
     GitlabService,
+    /* PROVIDERS MAPPERS */
+    ZendeskUserMapper,
+    FrontUserMapper,
+    JiraUserMapper,
+    GorgiasUserMapper,
+    GitlabUserMapper,
   ],
   exports: [
     SyncService,
@@ -58,4 +69,4 @@ import { Utils } from '@ticketing/@lib/@utils';
     LoggerService,
   ],
 })
-export class UserModule {}
+export class UserModule { }

@@ -18,6 +18,10 @@ import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@ticketing/@lib/@utils';
+import { FrontTeamMapper } from './services/front/mappers';
+import { GorgiasTeamMapper } from './services/gorgias/mappers';
+import { JiraTeamMapper } from './services/jira/mappers';
+import { ZendeskTeamMapper } from './services/zendesk/mappers';
 
 @Module({
   imports: [
@@ -40,14 +44,19 @@ import { Utils } from '@ticketing/@lib/@utils';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
     JiraService,
     GorgiasService,
+    /* PROVIDERS MAPPERS */
+    ZendeskTeamMapper,
+    FrontTeamMapper,
+    JiraTeamMapper,
+    GorgiasTeamMapper,
   ],
   exports: [
     SyncService,
@@ -57,4 +66,4 @@ import { Utils } from '@ticketing/@lib/@utils';
     LoggerService,
   ],
 })
-export class TeamModule {}
+export class TeamModule { }

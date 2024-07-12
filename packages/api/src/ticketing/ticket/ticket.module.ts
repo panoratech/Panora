@@ -21,6 +21,13 @@ import { UnificationRegistry } from '@@core/utils/registry/unification.registry'
 import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { FrontTicketMapper } from './services/front/mappers';
+import { GithubTicketMapper } from './services/github/mappers';
+import { GitlabTicketMapper } from './services/gitlab/mappers';
+import { GorgiasTicketMapper } from './services/gorgias/mappers';
+import { HubspotTicketMapper } from './services/hubspot/mappers';
+import { JiraTicketMapper } from './services/jira/mappers';
+import { ZendeskTicketMapper } from './services/zendesk/mappers';
 
 @Module({
   imports: [
@@ -42,8 +49,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
@@ -53,6 +60,14 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     JiraService,
     GorgiasService,
     GitlabService,
+    /* PROVIDERS MAPPERS */
+    ZendeskTicketMapper,
+    HubspotTicketMapper,
+    FrontTicketMapper,
+    GithubTicketMapper,
+    JiraTicketMapper,
+    GorgiasTicketMapper,
+    GitlabTicketMapper,
   ],
   exports: [
     SyncService,
@@ -62,4 +77,4 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     LoggerService,
   ],
 })
-export class TicketModule {}
+export class TicketModule { }

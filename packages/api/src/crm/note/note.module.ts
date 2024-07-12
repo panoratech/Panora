@@ -19,6 +19,11 @@ import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@crm/@lib/@utils';
+import { CloseNoteMapper } from './services/close/mappers';
+import { HubspotNoteMapper } from './services/hubspot/mappers';
+import { PipedriveNoteMapper } from './services/pipedrive/mappers';
+import { ZendeskNoteMapper } from './services/zendesk/mappers';
+import { ZohoNoteMapper } from './services/zoho/mappers';
 
 @Module({
   imports: [
@@ -41,8 +46,8 @@ import { Utils } from '@crm/@lib/@utils';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
@@ -50,6 +55,12 @@ import { Utils } from '@crm/@lib/@utils';
     PipedriveService,
     HubspotService,
     CloseService,
+    /* PROVIDERS MAPPERS */
+    ZendeskNoteMapper,
+    ZohoNoteMapper,
+    PipedriveNoteMapper,
+    HubspotNoteMapper,
+    CloseNoteMapper,
   ],
   exports: [
     SyncService,
@@ -59,4 +70,4 @@ import { Utils } from '@crm/@lib/@utils';
     LoggerService,
   ],
 })
-export class NoteModule {}
+export class NoteModule { }

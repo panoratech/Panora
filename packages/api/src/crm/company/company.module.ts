@@ -20,6 +20,14 @@ import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@crm/@lib/@utils';
+import { AttioCompanyMapper } from './services/attio/mappers';
+import { CloseCompanyMapper } from './services/close/mappers';
+import { HubspotCompanyMapper } from './services/hubspot/mappers';
+import { PipedriveCompanyMapper } from './services/pipedrive/mappers';
+import { ZendeskCompanyMapper } from './services/zendesk/mappers';
+import { ZohoCompanyMapper } from './services/zoho/mappers';
+
+
 
 @Module({
   imports: [
@@ -40,8 +48,8 @@ import { Utils } from '@crm/@lib/@utils';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
@@ -50,6 +58,14 @@ import { Utils } from '@crm/@lib/@utils';
     HubspotService,
     AttioService,
     CloseService,
+    /* PROVIDERS MAPPERS */
+    AttioCompanyMapper,
+    CloseCompanyMapper,
+    HubspotCompanyMapper,
+    PipedriveCompanyMapper,
+    ZendeskCompanyMapper,
+    ZohoCompanyMapper
+
   ],
   exports: [
     SyncService,
@@ -59,4 +75,4 @@ import { Utils } from '@crm/@lib/@utils';
     LoggerService,
   ],
 })
-export class CompanyModule {}
+export class CompanyModule { }

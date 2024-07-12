@@ -19,6 +19,11 @@ import { UnificationRegistry } from '@@core/utils/registry/unification.registry'
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { FrontCommentMapper } from './services/front/mappers';
+import { GitlabCommentMapper } from './services/gitlab/mappers';
+import { GorgiasCommentMapper } from './services/gorgias/mappers';
+import { JiraCommentMapper } from './services/jira/mappers';
+import { ZendeskCommentMapper } from './services/zendesk/mappers';
 
 @Module({
   imports: [
@@ -41,8 +46,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
@@ -50,6 +55,12 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     JiraService,
     GorgiasService,
     GitlabService,
+    /* PROVIDERS MAPPERS */
+    ZendeskCommentMapper,
+    FrontCommentMapper,
+    JiraCommentMapper,
+    GorgiasCommentMapper,
+    GitlabCommentMapper,
   ],
   exports: [
     SyncService,
@@ -59,4 +70,4 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     LoggerService,
   ],
 })
-export class CommentModule {}
+export class CommentModule { }

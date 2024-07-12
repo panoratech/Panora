@@ -17,6 +17,9 @@ import { UnificationRegistry } from '@@core/utils/registry/unification.registry'
 import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { FrontContactMapper } from './services/front/mappers';
+import { GorgiasContactMapper } from './services/gorgias/mappers';
+import { ZendeskContactMapper } from './services/zendesk/mappers';
 
 @Module({
   imports: [
@@ -39,13 +42,17 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     ServiceRegistry,
     ConnectionUtils,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    // UnificationRegistry,
+    // MappersRegistry,
     Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
     GorgiasService,
+    /* PROVIDERS MAPPERS */
+    ZendeskContactMapper,
+    FrontContactMapper,
+    GorgiasContactMapper,
   ],
   exports: [
     SyncService,
@@ -55,4 +62,4 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     LoggerService,
   ],
 })
-export class ContactModule {}
+export class ContactModule { }
