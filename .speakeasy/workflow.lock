@@ -1,0 +1,29 @@
+speakeasyVersion: 1.335.0
+sources:
+    OpenAPI-Github-Main:
+        sourceNamespace: open-api-github-main
+        sourceRevisionDigest: sha256:75db7e525ded34da364e71a2abdb1dbb9ae3e1150706ddd31b38fb05ffca001b
+        sourceBlobDigest: sha256:33daaf46a1033bdb4aef13fc70eb3af040fd21f4c4eb04c82a3b4f9d59cbc0c2
+        tags:
+            - latest
+            - main
+targets:
+    my-first-target:
+        source: OpenAPI-Github-Main
+        sourceNamespace: open-api-github-main
+        sourceRevisionDigest: sha256:75db7e525ded34da364e71a2abdb1dbb9ae3e1150706ddd31b38fb05ffca001b
+        sourceBlobDigest: sha256:33daaf46a1033bdb4aef13fc70eb3af040fd21f4c4eb04c82a3b4f9d59cbc0c2
+        outLocation: /github/workspace/repo
+workflow:
+    workflowVersion: 1.0.0
+    speakeasyVersion: latest
+    sources:
+        OpenAPI-Github-Main:
+            inputs:
+                - location: https://raw.githubusercontent.com/panoratech/Panora/main/packages/api/swagger/swagger-spec.json
+            registry:
+                location: registry.speakeasyapi.dev/panora/panora/open-api-github-main
+    targets:
+        my-first-target:
+            target: typescript
+            source: OpenAPI-Github-Main

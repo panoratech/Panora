@@ -1,41 +1,31 @@
 {
-  "name": "Panora",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "packageManager": "pnpm@8.9.2",
+  "name": "openapi",
+  "version": "0.0.1",
+  "author": "Speakeasy",
+  "main": "./index.js",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/panoratech/Panora.git"
+  },
   "scripts": {
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "test": "echo \"Error: no test specified\"",
-    "prepare": "husky install",
-    "version": "changeset version",
-    "release": "pnpm run lint && pnpm run build && changeset publish",
-    "preinstall": "npx only-allow pnpm"
+    "lint": "eslint --max-warnings=0 src",
+    "build": "tsc",
+    "prepare": "npm run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "peerDependencies": {
+    "zod": ">= 3"
+  },
   "devDependencies": {
-    "eslint": "^8.52.0",
-    "husky": "^8.0.0",
-    "lint-staged": "^15.0.2"
-  },
-  "lint-staged": {
-    "!website-docs/**/*.{ts,tsx,js}": [],
-    "packages/*.{ts,tsx,js}": [
-      "eslint"
-    ]
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "@typescript-eslint/parser": "^7.7.1",
+    "eslint": "^8.57.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "typescript": "^5.4.5",
+    "zod": "^3.23.4"
   },
   "dependencies": {
-    "@changesets/cli": "^2.26.2",
-    "gitmoji-cli": "^9.0.0",
-    "optional": "^0.1.4",
-    "sharp": "^0.33.2",
-    "turbo": "^1.10.16"
-  },
-  "private": true,
-  "engines": {
-    "node": "20.9.0"
+    
   }
 }
